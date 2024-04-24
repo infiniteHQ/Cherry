@@ -1,8 +1,8 @@
 <a href="https://infinite.si">
   <h1 align="center">
     <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="./banner.png">
-      <img height="250px" src="./banner.png">
+      <source media="(prefers-color-scheme: dark)" srcset="./.github/imgs/banner.png">
+      <img height="250px" src="./.github/imgs/banner.png">
     </picture>
   </h1>
 </a>
@@ -12,6 +12,9 @@
 
 This is a simple & low level UI Kit for moderns low level applications running with a graphical user interface.
 Used by the Vortex Creation platform.
+
+## What this library can do
+![interface](/.github/imgs/interface.png)
 
 ## Buinding example
 ```
