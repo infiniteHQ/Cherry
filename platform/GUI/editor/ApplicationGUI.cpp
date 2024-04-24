@@ -444,7 +444,6 @@ namespace UIKit
 
 		if (m_Specification.CustomTitlebar)
 		{
-
 			GLFWmonitor *primaryMonitor = glfwGetPrimaryMonitor();
 			const GLFWvidmode *videoMode = glfwGetVideoMode(primaryMonitor);
 
@@ -779,7 +778,6 @@ if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Left)) {
 		// Handle dragging behavior
 		if (!isMaximized)
 		{
-
 			if (isDraggingWindow)
 			{
 				ImVec2 delta;
@@ -846,7 +844,6 @@ if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Left)) {
 
 		if (m_Specification.CustomTitlebar)
 		{
-
 			// Minimize Button
 
 			ImGui::Spring();
