@@ -1,0 +1,66 @@
+name: Build
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        build_type: [Release]
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Install Dependencies and Configure Build (ubuntu-latest)
+      if: matrix.os == 'ubuntu-latest'
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y git cmake make g++
+        # Install spdlog
+        git clone --depth 1 --branch v1.9.2 https://github.com/gabime/spdlog.git
+        cd spdlog
+        mkdir -p build && cd build
+        cmake ..
+        cmake --build .
+        sudo cmake --install .
+        cd ../..
+
+        # Install nlohmann json
+        git clone --depth 1 --branch v3.10.2 https://github.com/nlohmann/json.git
+        cd json
+        mkdir -p build && cd build
+        cmake ..
+        cmake --build .
+        sudo cmake --install .
+        cd ../..
+
+        # Install Vulkan SDK
+        wget -qO - https://packages.lunarg.com/lunarg-signing-key-pub.asc | sudo apt-key add -
+        sudo wget -qO /etc/apt/sources.list.d/lunarg-vulkan-1.2.170-bionic.list https://packages.lunarg.com/vulkan/1.2.170/lunarg-vulkan-1.2.170-bionic.list
+        sudo apt-get update
+        sudo apt-get install -y vulkan-sdk
+
+        # Initialize and update submodules
+        git submodule update --init --recursive
+
+        # Configure and build
+        mkdir -p build && cd build
+        cmake ..
+        cmake --build .
+        cd ${{ github.workspace }}
+
+    - name: Configure and Build Examples (macos-latest)
+      if: matrix.os == 'macos-latest'
+      run: |
+        cd "example"
+        mkdir -p build && cd build
+        cmake ..
+        make
+        cd ${{ github.workspace }}
