@@ -23,7 +23,7 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y git cmake make g++
-        sudo apt-get install -y libvulkan-dev libxrandr
+        sudo apt-get install -y libvulkan-dev libxrandr-dev
 
         # Initialize and update submodules
         git submodule update --init --recursive
