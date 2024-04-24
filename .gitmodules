@@ -10,3 +10,6 @@
 [submodule "lib/imgui"]
 	path = lib/imgui
 	url = https://github.com/infiniteHQ/imgui
+[submodule "lib/spdlog"]
+	path = lib/spdlog
+	url = https://github.com/gabime/spdlog
