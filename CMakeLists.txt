@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(libwalnut)
+project(libuikit)
 
 # ========= setup ================
 set(CMAKE_CXX_STANDARD 17)
@@ -25,41 +25,43 @@ set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 set(GLFW_VULKAN_STATIC ON CACHE BOOL "" FORCE)
-add_subdirectory(../glfw)
+add_subdirectory(lib/glfw)
 
 # glm
-add_subdirectory(../glm)
+add_subdirectory(lib/glm)
 
 # imgui
-add_subdirectory(../imgui)
+add_subdirectory(lib/imgui)
 
 #stb-image
-add_subdirectory(../stb-image)
+add_subdirectory(lib/stb-image)
 # ===============================
 
-# ========== walnut =============
+# ========== uikit =============
 # find all source files and headers
 file(
 	GLOB_RECURSE # recursive
-	WALNUT_SRC # variable to store the source files and headers
+	UIKIT_SRC # variable to store the source files and headers
 	CONFIGURE_DEPENDS # make a dependency
-	"${PROJECT_SOURCE_DIR}/Platform/*.h" "${PROJECT_SOURCE_DIR}/Platform/*.cpp"
-	"${PROJECT_SOURCE_DIR}/Source/*.h" "${PROJECT_SOURCE_DIR}/Source/*.cpp"
+	"${PROJECT_SOURCE_DIR}/platform/*.h" "${PROJECT_SOURCE_DIR}/platform/*.cpp"
+	"${PROJECT_SOURCE_DIR}/src/*.h" "${PROJECT_SOURCE_DIR}/src/*.cpp"
 )
 
-add_library(walnut STATIC ${WALNUT_SRC})
+add_library(uikit STATIC ${UIKIT_SRC})
 # =================================
 
 # ========= linking deps ==========
-target_link_libraries(walnut PUBLIC Vulkan::Vulkan)
-target_link_libraries(walnut PUBLIC glfw)
-target_link_libraries(walnut PUBLIC imgui)
-target_link_libraries(walnut PUBLIC glm)
-target_link_libraries(walnut PUBLIC stbimage)
-target_link_libraries(walnut PUBLIC spdlog::spdlog)
+target_link_libraries(uikit PUBLIC Vulkan::Vulkan)
+target_link_libraries(uikit PUBLIC glfw)
+target_link_libraries(uikit PUBLIC imgui)
+target_link_libraries(uikit PUBLIC glm)
+target_link_libraries(uikit PUBLIC stbimage)
+target_link_libraries(uikit PUBLIC spdlog::spdlog)
 # =================================
 
 # ========== include dir ==========
-target_include_directories(walnut PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src")
-target_include_directories(walnut PUBLIC "${PROJECT_SOURCE_DIR}/../stb_image")
+target_include_directories(uikit PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src")
+target_include_directories(uikit PUBLIC "${PROJECT_SOURCE_DIR}/lib/stb_image")
 # =================================
+
+
