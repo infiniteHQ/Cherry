@@ -18,7 +18,6 @@ endif()
 # ========= deps ================
 # vulkan loader
 find_package(Vulkan REQUIRED)
-find_package(spdlog REQUIRED)
 
 # glfw
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
@@ -32,6 +31,9 @@ add_subdirectory(lib/glm)
 
 # imgui
 add_subdirectory(lib/imgui)
+
+# spdlog
+add_subdirectory(lib/spdlog)
 
 #stb-image
 add_subdirectory(lib/stb-image)
@@ -56,7 +58,7 @@ target_link_libraries(uikit PUBLIC glfw)
 target_link_libraries(uikit PUBLIC imgui)
 target_link_libraries(uikit PUBLIC glm)
 target_link_libraries(uikit PUBLIC stbimage)
-target_link_libraries(uikit PUBLIC spdlog::spdlog)
+target_link_libraries(uikit PUBLIC spdlog)
 # =================================
 
 # ========== include dir ==========

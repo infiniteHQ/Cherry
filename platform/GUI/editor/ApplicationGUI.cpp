@@ -12,9 +12,9 @@
 #include <stdlib.h> // abort
 #define GLFW_INCLUDE_NONE
 #define GLFW_INCLUDE_VULKAN
-#include <GLFW/glfw3.h>
 #include <vulkan/vulkan.h>
-#include <glm/glm.hpp>
+#include "../../../lib/glm/glm/glm.hpp"
+#include "../../../lib/glfw/include/GLFW/glfw3.h"
 
 #include "ImGui/ImGuiTheme.h"
 

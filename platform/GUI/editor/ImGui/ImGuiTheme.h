@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../../../../lib/imgui/imgui.h"
-#include <glm/glm.hpp>
+#include "../../../../lib/glm/glm/glm.hpp"
 
 namespace UIKit::UI {
 
