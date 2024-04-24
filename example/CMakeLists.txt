@@ -38,13 +38,12 @@ add_library(editor
 )
 
 find_package(Vulkan REQUIRED)
-find_package(spdlog REQUIRED)
 target_link_libraries(editor PUBLIC Vulkan::Vulkan)
 target_link_libraries(editor PUBLIC glfw)
 target_link_libraries(editor PUBLIC imgui)
 target_link_libraries(editor PUBLIC glm)
 target_link_libraries(editor PUBLIC stbimage)
-target_link_libraries(editor PUBLIC spdlog::spdlog)
+target_link_libraries(editor PUBLIC spdlog)
 
 
 # Liaison avec la bibliothèque partagée
