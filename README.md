@@ -7,6 +7,7 @@
   </h1>
 </a>
 
+  <a title="'Build' workflow Status" href="https://github.com/infiniteHQ/uikit/actions?query=workflow%3Abuild"><img alt="'Build' workflow Status" src="https://img.shields.io/github/actions/workflow/status/infiniteHQ/uikit/.github/workflows/build.yml?longCache=true&style=for-the-badge&label=Build&logoColor=fff&logo=GitHub%20Actions&branch=master"></a>
 <a title="Code Quality" href="https://www.codefactor.io/repository/github/infinitehq/uikit"><img alt="Code Quality" src="https://img.shields.io/codefactor/grade/github/infinitehq/uikit?longCache=true&style=for-the-badge&label=Code%20Quality&logoColor=fff&logo=CodeFactor&branch=master"></a>
 
 
