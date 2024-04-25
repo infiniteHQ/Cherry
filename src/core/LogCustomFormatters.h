@@ -3,8 +3,6 @@
 #include "../../lib/glm/glm/glm.hpp"
 #include "../../lib/spdlog/include/spdlog/fmt/fmt.h"
 
-#include <spdlog/fmt/fmt.h>
-
 namespace fmt {
 
 	template<>

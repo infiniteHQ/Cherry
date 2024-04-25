@@ -2,7 +2,7 @@
 
 #include "../ApplicationGUI.h"
 
-#include <GLFW/glfw3.h>
+#include "../../../../lib/glfw/include/GLFW/glfw3.h"
 
 namespace UIKit {
 
