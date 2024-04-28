@@ -7,8 +7,12 @@
   </h1>
 </a>
 
-  <a title="'Build' workflow Status" href="https://github.com/infiniteHQ/uikit/actions?query=workflow%3Abuild"><img alt="'Build' workflow Status" src="https://img.shields.io/github/actions/workflow/status/infiniteHQ/uikit/.github/workflows/build.yml?longCache=true&style=for-the-badge&label=Build&logoColor=fff&logo=GitHub%20Actions&branch=master"></a>
+<div align="center">
 <a title="Code Quality" href="https://www.codefactor.io/repository/github/infinitehq/uikit"><img alt="Code Quality" src="https://img.shields.io/codefactor/grade/github/infinitehq/uikit?longCache=true&style=for-the-badge&label=Code%20Quality&logoColor=fff&logo=CodeFactor&branch=master"></a>
+  <a title="Discord Server" href="https://discord.gg/H2wptkecUg"><img alt="Discord Server" src="https://img.shields.io/discord/1095333825762046194?label=Discord&logo=Discord&logoColor=fff&style=for-the-badge"></a>
+<a title="'Build' workflow Status" href="https://img.shields.io/github/actions/workflow/status/infiniteHQ/uikit/build.yml"><img alt="Build" src="https://img.shields.io/github/actions/workflow/status/infiniteHQ/uikit/build.yml?longCache=true&style=for-the-badge&label=Build&logoColor=fff&logo=GitHub%20Actions&branch=main"></a>
+</div>
+
 
 
 This is a simple & low level UI Kit for moderns low level applications running with a graphical user interface.
@@ -17,7 +21,7 @@ Used by the Vortex Creation platform.
 ## What this library can do
 ![interface](/.github/imgs/interface.png)
 
-## Buinding example
+## Building example
 ```
 cd example
 mkdir build && cd build

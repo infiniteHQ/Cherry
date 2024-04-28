@@ -125,5 +125,5 @@ namespace UIKit {
 	};
 
 	// Implemented by CLIENT
-	Application* CreateApplication(int argc, char** argv);
+	static Application* CreateApplication(int argc, char** argv);
 }
