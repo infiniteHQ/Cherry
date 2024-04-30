@@ -9,7 +9,7 @@ namespace UIKit {
     extern UIKit::Application* CreateApplication(int argc, char** argv);
 }
 
-bool g_ApplicationRunning = true;
+inline bool g_ApplicationRunning = true;
 namespace UIKit {
 
 	// For multiple app usage
