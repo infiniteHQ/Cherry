@@ -12,6 +12,20 @@ namespace UIKit {
 bool g_ApplicationRunning = true;
 namespace UIKit {
 
+	// For multiple app usage
+	int ThirdMain(int argc, char** argv, UIKit::Application*(*create_app)(int argc, char** argv))
+	{
+		while (g_ApplicationRunning)
+		{
+			UIKit::Application* app = create_app(argc, argv);
+			app->Run();
+			delete app;
+		}
+
+		return 0;
+	}
+
+	// For single app usage
 	int Main(int argc, char** argv)
 	{
 		while (g_ApplicationRunning)
