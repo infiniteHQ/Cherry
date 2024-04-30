@@ -38,11 +38,5 @@ int APIENTRY WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, int cmd
 
 #else
 
-namespace VortexMaker{
-static int VortexInterface(int argc, char** argv)
-{
-	return UIKit::Main(argc, argv);
-}
-}
 #endif // defined(WL_PLATFORM_WINDOWS) && defined(WL_DIST)
 #endif // UIKIT_ENTRYPOINT_H

@@ -46,7 +46,7 @@ UIKit::Application *UIKit::CreateApplication(int argc, char **argv)
 int main(int argc, char *argv[])
 {
     std::thread mainthread;
-    std::thread Thread([&]() { VortexMaker::VortexInterface(argc, argv); });
+    std::thread Thread([&]() { UIKit::Main(argc, argv); });
     mainthread.swap(Thread);
 
     while(true){
