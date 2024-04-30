@@ -13,7 +13,7 @@ inline bool g_ApplicationRunning = true;
 namespace UIKit {
 
 	// For multiple app usage
-	int ThirdMain(int argc, char** argv, UIKit::Application*(*create_app)(int argc, char** argv))
+	static int ThirdMain(int argc, char** argv, UIKit::Application*(*create_app)(int argc, char** argv))
 	{
 		while (g_ApplicationRunning)
 		{
@@ -26,7 +26,7 @@ namespace UIKit {
 	}
 
 	// For single app usage
-	int Main(int argc, char** argv)
+	static int Main(int argc, char** argv)
 	{
 		while (g_ApplicationRunning)
 		{
