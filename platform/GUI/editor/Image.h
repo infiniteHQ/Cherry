@@ -22,9 +22,13 @@ namespace UIKit {
 	public:
 		Image(std::string_view path);
 		Image(uint32_t width, uint32_t height, ImageFormat format, const void* data = nullptr);
+		Image(uint32_t width, uint32_t height, ImageFormat format, ImGui_ImplVulkanH_Window* wd, const void* data = nullptr);
+		Image(uint32_t width, uint32_t height, ImageFormat format, const std::string& winname, const void* data = nullptr);
 		~Image();
 
 		void SetData(const void* data);
+		void SetData(const void* data, ImGui_ImplVulkanH_Window* wd);
+		void SetData(const void* data, const std::string& winname);
 
 		VkDescriptorSet GetDescriptorSet() const { return m_DescriptorSet; }
 

@@ -6,23 +6,110 @@
 #include <string>
 #include <vector>
 #include <queue>
+#include <iostream>
 #include <mutex>
 #include <memory>
 #include <functional>
 #include <filesystem>
 
+#include "UI/UI.h"
 #include "../../../lib/imgui/imgui.h"
 #include "../../../lib/imgui/imgui_internal.h"
 #include "../../../lib/imgui/backends/imgui_impl_vulkan.h"
+#include "../../../lib/glfw/include/GLFW/glfw3.h"
 #include "../../../lib/imgui/backends/imgui_impl_glfw.h"
 #include "../../../lib/stb-image/stb_image.h"
+#include "../../../lib/glm/glm/glm.hpp"
+
+#include "ImGui/ImGuiTheme.h"
 #include "vulkan/vulkan.h"
 
 void check_vk_result(VkResult err);
 
+static void AppPushTabStyle()
+{
+	ImGuiStyle &style = ImGui::GetStyle();
+	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(15.0f, 6.0f));
+	ImGui::PushStyleVar(ImGuiStyleVar_TabRounding, 3.0f);
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(15.0f, 6.0f));
+}
+static void AppPopTabStyle()
+{
+	ImGui::PopStyleVar(3);
+}
+
 struct GLFWwindow;
 
-namespace UIKit {
+namespace UIKit
+{
+
+	class Window
+	{
+	public:
+		Window(const std::string &name, int width, int height);
+
+		~Window()
+		{
+			// Détruisez la fenêtre GLFW
+			if (m_WindowHandle)
+			{
+				glfwDestroyWindow(m_WindowHandle);
+			}
+		}
+
+		VkCommandBuffer GetCommandBuffer(bool begin);
+		GLFWwindow *GetWindowHandle() const { return m_WindowHandle; }
+
+		void BeginFrame()
+		{
+			ImGui_ImplGlfw_NewFrame();
+			ImGui::NewFrame();
+		}
+
+		void EndFrame()
+		{
+			ImGui::Render();
+		}
+
+		void OnWindowResize(int width, int height);
+		void OnUpdate();
+
+		const std::string &GetName() const
+		{
+			return m_Name;
+		}
+
+		void CreateImage(std::shared_ptr<UIKit::Image> image, void *data);
+
+		void UI_DrawTitlebar(float &outTitlebarHeight);
+		void UI_DrawMenubar();
+
+		void CleanupVulkanWindow();
+
+		std::shared_ptr<UIKit::Image> m_AppHeaderIcon;
+		std::shared_ptr<UIKit::Image> m_IconClose;
+		std::shared_ptr<UIKit::Image> m_IconMinimize;
+		std::shared_ptr<UIKit::Image> m_IconMaximize;
+		std::shared_ptr<UIKit::Image> m_IconRestore;
+		int m_Width, m_Height;
+		ImGui_ImplVulkanH_Window m_WinData;
+
+		std::vector<std::vector<std::function<void()>>> s_ResourceFreeQueue;
+		uint32_t s_CurrentFrameIndex = 0;
+
+	private:
+		std::function<void()> m_MenubarCallback;
+		std::string m_Name;
+		GLFWwindow *m_WindowHandle;
+
+	private:
+	};
+
+	struct ParentWindow
+	{
+		std::vector<std::shared_ptr<Layer>> m_LayerStack;
+		std::string window_name;
+	};
 
 	struct ApplicationSpecification
 	{
@@ -46,22 +133,27 @@ namespace UIKit {
 	class Application
 	{
 	public:
-		Application(const ApplicationSpecification& applicationSpecification = ApplicationSpecification());
+		Application(const ApplicationSpecification &applicationSpecification = ApplicationSpecification());
 		~Application();
 
-		static Application& Get();
+		static Application &Get();
 
 		void Run();
-		void SetMenubarCallback(const std::function<void()>& menubarCallback) { m_MenubarCallback = menubarCallback; }
+		void SetMenubarCallback(const std::function<void()> &menubarCallback) { m_MenubarCallback = menubarCallback; }
 
-		template<typename T>
+		void NewWinInstance(const std::string &name);
+		template <typename T>
 		void PushLayer()
 		{
 			static_assert(std::is_base_of<Layer, T>::value, "Pushed type is not subclass of Layer!");
 			m_LayerStack.emplace_back(std::make_shared<T>())->OnAttach();
 		}
 
-		void PushLayer(const std::shared_ptr<Layer>& layer) { m_LayerStack.emplace_back(layer); layer->OnAttach(); }
+		void PushLayer(const std::shared_ptr<Layer> &layer)
+		{
+			m_LayerStack.emplace_back(layer);
+			layer->OnAttach();
+		}
 
 		void Close();
 
@@ -69,7 +161,7 @@ namespace UIKit {
 		std::shared_ptr<Image> GetApplicationIcon() const { return m_AppHeaderIcon; }
 
 		float GetTime();
-		GLFWwindow* GetWindowHandle() const { return m_WindowHandle; }
+		GLFWwindow *GetWindowHandle() const { return m_WindowHandle; }
 		bool IsTitleBarHovered() const { return m_TitleBarHovered; }
 
 		static VkInstance GetInstance();
@@ -77,42 +169,26 @@ namespace UIKit {
 		static VkDevice GetDevice();
 
 		static VkCommandBuffer GetCommandBuffer(bool begin);
+		static VkCommandBuffer GetCommandBuffer(bool begin, ImGui_ImplVulkanH_Window *wd);
+		static VkCommandBuffer GetCommandBufferOfWin(const std::string &win_name, bool begin);
 		static void FlushCommandBuffer(VkCommandBuffer commandBuffer);
 
-		static void SubmitResourceFree(std::function<void()>&& func);
+		static void SubmitResourceFree(std::function<void()> &&func);
 
-		static ImFont* GetFont(const std::string& name);
+		static ImFont *GetFont(const std::string &name);
 
-		template<typename Func>
-		void QueueEvent(Func&& func)
+		template <typename Func>
+		void QueueEvent(Func &&func)
 		{
 			m_EventQueue.push(func);
 		}
 
 		ApplicationSpecification m_Specification;
-		
-	private:
-		void Init();
-		void Shutdown();
-
-		// For custom titlebars
-		void UI_DrawTitlebar(float& outTitlebarHeight);
+		void UI_DrawTitlebar(float &outTitlebarHeight, Window *window);
 		void UI_DrawMenubar();
-	private:
-		GLFWwindow* m_WindowHandle = nullptr;
-		bool m_Running = false;
-		
-		float m_TimeStep = 0.0f;
-		float m_FrameTime = 0.0f;
-		float m_LastFrameTime = 0.0f;
-
-		bool m_TitleBarHovered = false;
 
 		std::vector<std::shared_ptr<Layer>> m_LayerStack;
-		std::function<void()> m_MenubarCallback;
-
-		std::mutex m_EventQueueMutex;
-		std::queue<std::function<void()>> m_EventQueue;
+		bool m_Running = false;
 
 		// Resources
 		// TODO(Yan): move out of application class since this can't be tied
@@ -122,8 +198,28 @@ namespace UIKit {
 		std::shared_ptr<UIKit::Image> m_IconMinimize;
 		std::shared_ptr<UIKit::Image> m_IconMaximize;
 		std::shared_ptr<UIKit::Image> m_IconRestore;
+		std::function<void()> m_MenubarCallback;
+
+	private:
+		void Init();
+		void Shutdown();
+		// For custom titlebars
+
+	private:
+		GLFWwindow *m_WindowHandle = nullptr;
+		std::vector<std::shared_ptr<Window>> m_Windows;
+		float m_TimeStep = 0.0f;
+		float m_FrameTime = 0.0f;
+		float m_LastFrameTime = 0.0f;
+
+		bool m_TitleBarHovered = false;
+
+		std::mutex m_EventQueueMutex;
+		std::queue<std::function<void()>> m_EventQueue;
+
+		void RenderWindow(Window *window);
 	};
 
 	// Implemented by CLIENT
-	static Application* CreateApplication(int argc, char** argv);
+	static Application *CreateApplication(int argc, char **argv);
 }

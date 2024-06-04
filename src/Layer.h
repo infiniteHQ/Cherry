@@ -1,3 +1,5 @@
+#include <string>
+
 #pragma once
 
 namespace UIKit {
@@ -12,6 +14,10 @@ namespace UIKit {
 
 		virtual void OnUpdate(float ts) {}
 		virtual void OnUIRender() {}
+
+		bool initialized = false;
+
+		std::string ParentWindow = "base";
 	};
 
 }
