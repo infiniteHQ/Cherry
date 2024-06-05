@@ -7,18 +7,12 @@
 
 /*
 TODO :
+Main windows cannot dock into another
+Inify Vulkan + GLFW + Imgui
+Si le dockspace d'une fenetre est connue parmis les windows, on fait rien, si il a changé, on refresh les imags, si il n'est pas connu on crée un nouvelle window et on attache la subwin dessus
+Make first use ever general rules.
 
-High level image generator api
-Correct isolation of bars betwen windows
-Move, Resize, Anchor of a window
-Auto window creation when undock subwindow in void
-
-FIXME :
-Menu bar dosent apear
-Each title bar of differetns wins are sync
-logo appear in the side of app
-Fix subwins with new image api
-
+Continue project/modules/templates managment with list detection & single inclue, make doc and start to create!
 */
 
 #include <stdio.h>	// printf, fprintf
@@ -274,7 +268,7 @@ static void SetupVulkanWindow(ImGui_ImplVulkanH_Window *wd, VkSurfaceKHR surface
 	ImGui_ImplVulkanH_CreateOrResizeWindow(g_Instance, g_PhysicalDevice, g_Device, wd, g_QueueFamily, g_Allocator, width, height, g_MinImageCount);
 }
 
-static void CleanupVulkan()
+static void CleanupVulkan(UIKit::Window* win)
 {
 	vkDestroyDescriptorPool(g_Device, g_DescriptorPool, g_Allocator);
 
@@ -290,96 +284,107 @@ static void CleanupVulkan()
 
 static UIKit::Application *app;
 
-static void CleanupVulkanWindow()
+static void CleanVulkanWindow(ImGui_ImplVulkanH_Window *wd, UIKit::Window* win)
+{
+	ImGui_ImplVulkanH_DestroyWindow(g_Instance, g_Device, wd, g_Allocator);
+}
+
+static void CleanupVulkanWindow(UIKit::Window* win)
 {
 	ImGui_ImplVulkanH_DestroyWindow(g_Instance, g_Device, &g_MainWindowData, g_Allocator);
 }
 
+
 static void FrameRender(ImGui_ImplVulkanH_Window *wd, std::shared_ptr<UIKit::Window> win, ImDrawData *draw_data)
 {
-	VkResult err;
+    VkResult err;
 
-	VkSemaphore image_acquired_semaphore = wd->FrameSemaphores[wd->SemaphoreIndex].ImageAcquiredSemaphore;
-	VkSemaphore render_complete_semaphore = wd->FrameSemaphores[wd->SemaphoreIndex].RenderCompleteSemaphore;
-	err = vkAcquireNextImageKHR(g_Device, wd->Swapchain, UINT64_MAX, image_acquired_semaphore, VK_NULL_HANDLE, &wd->FrameIndex);
+    VkSemaphore image_acquired_semaphore = wd->FrameSemaphores[wd->SemaphoreIndex].ImageAcquiredSemaphore;
+    VkSemaphore render_complete_semaphore = wd->FrameSemaphores[wd->SemaphoreIndex].RenderCompleteSemaphore;
+    err = vkAcquireNextImageKHR(g_Device, wd->Swapchain, UINT64_MAX, image_acquired_semaphore, VK_NULL_HANDLE, &wd->FrameIndex);
 
-	if (err == VK_ERROR_OUT_OF_DATE_KHR || err == VK_SUBOPTIMAL_KHR)
-	{
-		g_SwapChainRebuild = true;
-		return;
-	}
-	check_vk_result(err);
+    if (err == VK_ERROR_OUT_OF_DATE_KHR || err == VK_SUBOPTIMAL_KHR)
+    {
+        g_SwapChainRebuild = true;
+        return;
+    }
+    check_vk_result(err);
 
-	win->s_CurrentFrameIndex = (win->s_CurrentFrameIndex + 1) % wd->ImageCount;
+    win->s_CurrentFrameIndex = (win->s_CurrentFrameIndex + 1) % wd->ImageCount;
 
-	ImGui_ImplVulkanH_Frame *fd = &wd->Frames[wd->FrameIndex];
-	{
-		err = vkWaitForFences(g_Device, 1, &fd->Fence, VK_TRUE, UINT64_MAX); // wait indefinitely instead of periodically checking
-		check_vk_result(err);
+    ImGui_ImplVulkanH_Frame *fd = &wd->Frames[wd->FrameIndex];
+    {
+        err = vkWaitForFences(g_Device, 1, &fd->Fence, VK_TRUE, UINT64_MAX); // wait indefinitely instead of periodically checking
+        check_vk_result(err);
 
-		err = vkResetFences(g_Device, 1, &fd->Fence);
-		check_vk_result(err);
-	}
+        err = vkResetFences(g_Device, 1, &fd->Fence);
+        check_vk_result(err);
+    }
 
-	{
-		// Free resources in queue
-		for (auto &func : win->s_ResourceFreeQueue[win->s_CurrentFrameIndex])
-			func();
-		win->s_ResourceFreeQueue[win->s_CurrentFrameIndex].clear();
-	}
-	{
-		// Free command buffers allocated by Application::GetCommandBuffer
-		// These use g_MainWindowData.FrameIndex and not s_CurrentFrameIndex because they're tied to the swapchain image index
-		auto &allocatedCommandBuffers = s_AllocatedCommandBuffers[wd->FrameIndex];
-		if (allocatedCommandBuffers.size() > 0)
-		{
-			vkFreeCommandBuffers(g_Device, fd->CommandPool, (uint32_t)allocatedCommandBuffers.size(), allocatedCommandBuffers.data());
-			allocatedCommandBuffers.clear();
-		}
+    {
+        // Free resources in queue
+        for (auto &func : win->s_ResourceFreeQueue[win->s_CurrentFrameIndex])
+            func();
+        win->s_ResourceFreeQueue[win->s_CurrentFrameIndex].clear();
+    }
+    {
+        // Free command buffers allocated by Application::GetCommandBuffer
+        // These use g_MainWindowData.FrameIndex and not s_CurrentFrameIndex because they're tied to the swapchain image index
+        auto &allocatedCommandBuffers = s_AllocatedCommandBuffers[wd->FrameIndex];
+        if (allocatedCommandBuffers.size() > 0)
+        {
+            vkFreeCommandBuffers(g_Device, fd->CommandPool, (uint32_t)allocatedCommandBuffers.size(), allocatedCommandBuffers.data());
+            allocatedCommandBuffers.clear();
+        }
 
-		err = vkResetCommandPool(g_Device, fd->CommandPool, 0);
-		check_vk_result(err);
-		VkCommandBufferBeginInfo info = {};
-		info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-		info.flags |= VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
-		err = vkBeginCommandBuffer(fd->CommandBuffer, &info);
-		check_vk_result(err);
-	}
-	{
-		VkRenderPassBeginInfo info = {};
-		info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-		info.renderPass = wd->RenderPass;
-		info.framebuffer = fd->Framebuffer;
-		info.renderArea.extent.width = wd->Width;
-		info.renderArea.extent.height = wd->Height;
-		info.clearValueCount = 1;
-		info.pClearValues = &wd->ClearValue;
-		vkCmdBeginRenderPass(fd->CommandBuffer, &info, VK_SUBPASS_CONTENTS_INLINE);
-	}
+        err = vkResetCommandPool(g_Device, fd->CommandPool, 0);
+        check_vk_result(err);
+        VkCommandBufferBeginInfo info = {};
+        info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+        info.flags |= VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+        err = vkBeginCommandBuffer(fd->CommandBuffer, &info);
+        check_vk_result(err);
+    }
 
-	// Record dear imgui primitives into command buffer
-	ImGui_ImplVulkan_RenderDrawData(draw_data, fd->CommandBuffer);
+    VkClearValue clearColor;
+    clearColor.color = { {0.0f, 0.0f, 0.2f, 1.0f} }; // Couleur de fond bleue foncée
 
-	// Submit command buffer
-	vkCmdEndRenderPass(fd->CommandBuffer);
-	{
-		VkPipelineStageFlags wait_stage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-		VkSubmitInfo info = {};
-		info.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-		info.waitSemaphoreCount = 1;
-		info.pWaitSemaphores = &image_acquired_semaphore;
-		info.pWaitDstStageMask = &wait_stage;
-		info.commandBufferCount = 1;
-		info.pCommandBuffers = &fd->CommandBuffer;
-		info.signalSemaphoreCount = 1;
-		info.pSignalSemaphores = &render_complete_semaphore;
+    {
+        VkRenderPassBeginInfo info = {};
+        info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+        info.renderPass = wd->RenderPass;
+        info.framebuffer = fd->Framebuffer;
+        info.renderArea.extent.width = wd->Width;
+        info.renderArea.extent.height = wd->Height;
+        info.clearValueCount = 1;
+        info.pClearValues = &clearColor;
+        vkCmdBeginRenderPass(fd->CommandBuffer, &info, VK_SUBPASS_CONTENTS_INLINE);
+    }
 
-		err = vkEndCommandBuffer(fd->CommandBuffer);
-		check_vk_result(err);
-		err = vkQueueSubmit(g_Queue, 1, &info, fd->Fence);
-		check_vk_result(err);
-	}
+    // Record dear imgui primitives into command buffer
+    ImGui_ImplVulkan_RenderDrawData(draw_data, fd->CommandBuffer);
+
+    // Submit command buffer
+    vkCmdEndRenderPass(fd->CommandBuffer);
+    {
+        VkPipelineStageFlags wait_stage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+        VkSubmitInfo info = {};
+        info.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+        info.waitSemaphoreCount = 1;
+        info.pWaitSemaphores = &image_acquired_semaphore;
+        info.pWaitDstStageMask = &wait_stage;
+        info.commandBufferCount = 1;
+        info.pCommandBuffers = &fd->CommandBuffer;
+        info.signalSemaphoreCount = 1;
+        info.pSignalSemaphores = &render_complete_semaphore;
+
+        err = vkEndCommandBuffer(fd->CommandBuffer);
+        check_vk_result(err);
+        err = vkQueueSubmit(g_Queue, 1, &info, fd->Fence);
+        check_vk_result(err);
+    }
 }
+
 
 static void FramePresent(ImGui_ImplVulkanH_Window *wd)
 {
@@ -439,7 +444,7 @@ namespace UIKit
 
 		app = &this->Get();
 		this->m_Windows.push_back(std::make_shared<Window>("base", 1280, 720));
-		this->m_Windows.push_back(std::make_shared<Window>("additionnal", 480, 720));
+		//this->m_Windows.push_back(std::make_shared<Window>("additionnal", 1480, 720));
 	}
 
 	void Application::Shutdown()
@@ -474,8 +479,8 @@ namespace UIKit
 		ImGui_ImplGlfw_Shutdown();
 		ImGui::DestroyContext();
 
-		CleanupVulkanWindow();
-		CleanupVulkan();
+		//CleanupVulkanWindow();
+		//CleanupVulkan();
 
 		glfwDestroyWindow(m_WindowHandle);
 		glfwTerminate();
@@ -514,7 +519,8 @@ namespace UIKit
 		}
 
 		ImGui::SetItemAllowOverlap();
-		ImGui::BeginHorizontal("Titlebar", {ImGui::GetWindowWidth() - windowPadding.y * 2.0f, ImGui::GetFrameHeightWithSpacing()});
+		std::string label = "Titlebar" + this->GetName();
+		ImGui::BeginHorizontal(label.c_str(), {ImGui::GetWindowWidth() - windowPadding.y * 2.0f, ImGui::GetFrameHeightWithSpacing()});
 
 		static float moveOffsetX;
 		static float moveOffsetY;
@@ -619,6 +625,23 @@ namespace UIKit
 		ImGui::EndHorizontal();
 
 		outTitlebarHeight = titlebarHeight;
+	}
+
+	void Window::OnWindowResize(int width, int height)
+	{
+		m_Width = width;
+		m_Height = height;
+
+		// Mettre à jour la surface Vulkan avec la nouvelle taille
+		//SetupVulkanWindow(&m_WinData, m_WinData.Surface, m_Width, m_Height);
+	}
+
+	void Window::OnWindowMove(int xpos, int ypos)
+	{
+		// Mettre à jour les coordonnées de la fenêtre dans votre application si nécessaire
+		// Par exemple, vous pouvez stocker les nouvelles coordonnées dans une variable membre
+		// ou les transmettre à d'autres parties de votre application.
+		// Cela ne nécessite aucune action sur la surface Vulkan.
 	}
 
 	// REndre la title bar moovable comme le reste, fix l'erreur de double main win et rendre la fenetre dco:mplete
@@ -858,62 +881,94 @@ namespace UIKit
 			}
 		}
 	}
-	void Application::Run()
-	{
-		m_Running = true;
 
-		// ImGui_ImplVulkanH_Window *wd = &g_MainWindowData;
-		ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
-		ImGuiIO &io = ImGui::GetIO();
+void Application::Run()
+{
+    m_Running = true;
 
-		while (m_Running)
-		{
-			// !glfwWindowShouldClose(m_WindowHandle) &&
-			glfwPollEvents();
+    ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+    ImGuiIO &io = ImGui::GetIO();
 
-			ImGui_ImplVulkan_NewFrame();
-			ImGui_ImplGlfw_NewFrame();
-			ImGui::NewFrame();
+    while (m_Running) // Turn to false when windows == empty
+    {
+        // Poll and handle events (inputs, window resize, etc.)
+        glfwPollEvents();
 
-			for (auto &window : m_Windows)
-			{
-				RenderWindow(window.get());
-			}
+        {
+            std::scoped_lock<std::mutex> lock(m_EventQueueMutex);
 
-			ImGui::Render();
-			ImDrawData *main_draw_data = ImGui::GetDrawData();
-			const bool main_is_minimized = (main_draw_data->DisplaySize.x <= 0.0f || main_draw_data->DisplaySize.y <= 0.0f);
+            // Process custom event queue
+            while (m_EventQueue.size() > 0)
+            {
+                auto &func = m_EventQueue.front();
+                func();
+                m_EventQueue.pop();
+            }
+        }
 
-			for (auto win : this->m_Windows)
-			{
-				ImGui_ImplVulkanH_Window *wd = &win->m_WinData;
-				wd->ClearValue.color.float32[0] = clear_color.x * clear_color.w;
-				wd->ClearValue.color.float32[1] = clear_color.y * clear_color.w;
-				wd->ClearValue.color.float32[2] = clear_color.z * clear_color.w;
-				wd->ClearValue.color.float32[3] = clear_color.w;
+        for (auto &layer : m_LayerStack)
+            layer->OnUpdate(m_TimeStep);
 
-				if (!main_is_minimized)
-					FrameRender(wd, win, main_draw_data);
 
-				if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
-				{
-					ImGui::UpdatePlatformWindows();
-					ImGui::RenderPlatformWindowsDefault();
-				}
+        ImGui_ImplVulkan_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
 
-				if (!main_is_minimized)
-					FramePresent(wd);
-				else
-					std::this_thread::sleep_for(std::chrono::milliseconds(5));
-			}
+        for (auto window : m_Windows)
+        {
 
-			float time = GetTime();
-			m_FrameTime = time - m_LastFrameTime;
-			m_TimeStep = glm::min<float>(m_FrameTime, 0.0333f);
-			m_LastFrameTime = time;
-		}
-	}
+        // Resize swap chain?
+        if (g_SwapChainRebuild)
+        {
+            int width, height;
+            glfwGetFramebufferSize(m_WindowHandle, &width, &height);
+            if (width > 0 && height > 0)
+            {
+                ImGui_ImplVulkan_SetMinImageCount(g_MinImageCount);
+                ImGui_ImplVulkanH_CreateOrResizeWindow(g_Instance, g_PhysicalDevice, g_Device, &g_MainWindowData, g_QueueFamily, g_Allocator, width, height, g_MinImageCount);
+                g_MainWindowData.FrameIndex = 0;
 
+                // Clear allocated command buffers from here since entire pool is destroyed
+                s_AllocatedCommandBuffers.clear();
+                s_AllocatedCommandBuffers.resize(g_MainWindowData.ImageCount);
+
+                g_SwapChainRebuild = false;
+            }
+        }
+
+            RenderWindow(window.get());
+            ImGui::Render();
+            ImDrawData *main_draw_data = ImGui::GetDrawData();
+            const bool main_is_minimized = (main_draw_data->DisplaySize.x <= 0.0f || main_draw_data->DisplaySize.y <= 0.0f);
+            window->m_WinData.ClearValue.color.float32[0] = clear_color.x * clear_color.w;
+            window->m_WinData.ClearValue.color.float32[1] = clear_color.y * clear_color.w;
+            window->m_WinData.ClearValue.color.float32[2] = clear_color.z * clear_color.w;
+            window->m_WinData.ClearValue.color.float32[3] = clear_color.w;
+            if (!main_is_minimized)
+                FrameRender(&window->m_WinData, window, main_draw_data);
+
+            // Update and Render additional Platform Windows
+            if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+            {
+                ImGui::UpdatePlatformWindows();
+                ImGui::RenderPlatformWindowsDefault();
+            }
+
+            // Present Main Platform Window
+            if (!main_is_minimized)
+                FramePresent(&window->m_WinData);
+            else
+                std::this_thread::sleep_for(std::chrono::milliseconds(5));
+
+            float time = GetTime();
+            m_FrameTime = time - m_LastFrameTime;
+            m_TimeStep = glm::min<float>(m_FrameTime, 0.0333f);
+            m_LastFrameTime = time;
+        }
+    }
+}
+	
+	
 	Window::Window(const std::string &name, int width, int height)
 	{
 		this->m_Name = name;
@@ -966,23 +1021,16 @@ namespace UIKit
 			glfwSetWindowAttrib(m_WindowHandle, GLFW_RESIZABLE, app->m_Specification.WindowResizeable ? GLFW_TRUE : GLFW_FALSE);
 		}
 
-		// Redimensionnement de la fenêtre
-		glfwSetWindowSizeCallback(this->m_WindowHandle, [](GLFWwindow *window, int width, int height)
+		// GLFW : Déclaration des gestionnaires d'événements pour la fenêtre
+		glfwSetWindowSizeCallback(m_WindowHandle, [](GLFWwindow *window, int width, int height)
 								  {
-									  Window *win = static_cast<Window *>(glfwGetWindowUserPointer(window));
-									  win->m_Width = width;
-									  win->m_Height = height;
-									  // Ajouter du code supplémentaire pour gérer l'événement de redimensionnement si nécessaire
-									  // win->OnWindowResize(width, height); // Par exemple, une méthode pour gérer le redimensionnement
-								  });
+    Window* win = static_cast<Window*>(glfwGetWindowUserPointer(window));
+    win->OnWindowResize(width, height); });
 
-		// Déplacement de la fenêtre
-		glfwSetWindowPosCallback(this->m_WindowHandle, [](GLFWwindow *window, int xpos, int ypos)
+		glfwSetWindowPosCallback(m_WindowHandle, [](GLFWwindow *window, int xpos, int ypos)
 								 {
-									 Window *win = static_cast<Window *>(glfwGetWindowUserPointer(window));
-									 // Ajouter du code pour gérer le déplacement de la fenêtre si nécessaire
-								 });
-
+    Window* win = static_cast<Window*>(glfwGetWindowUserPointer(window));
+    win->OnWindowMove(xpos, ypos); });
 		// Setup Vulkan
 		if (!glfwVulkanSupported())
 		{
@@ -1001,22 +1049,6 @@ namespace UIKit
 		}
 
 		glfwSetWindowUserPointer(this->m_WindowHandle, this);
-
-		// Set callbacks for dragging and resizing
-		glfwSetWindowSizeCallback(this->m_WindowHandle, [](GLFWwindow *window, int width, int height)
-								  {
-									  Window *win = static_cast<Window *>(glfwGetWindowUserPointer(window));
-									  win->m_Width = width;
-									  win->m_Height = height;
-									  // Add additional code to handle resize event if needed
-								  });
-
-		glfwSetCursorPosCallback(this->m_WindowHandle, [](GLFWwindow *window, double xpos, double ypos)
-								 {
-									 // Handle custom dragging if using a custom titlebar
-									 Window *win = static_cast<Window *>(glfwGetWindowUserPointer(window));
-									 // Implement dragging logic here
-								 });
 
 		// Setup Vulkan
 		uint32_t extensions_count = 0;
@@ -1353,7 +1385,7 @@ namespace UIKit
 
 	void Application::RenderWindow(Window *window)
 	{
-		ImGui::SetCurrentContext(ImGui::GetCurrentContext());
+		//ImGui::SetCurrentContext(ImGui::GetCurrentContext());
 
 		// Configure window position and size
 		ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_FirstUseEver);
@@ -1378,8 +1410,10 @@ namespace UIKit
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 3.0f);
 
 		ImGui::PushStyleColor(ImGuiCol_MenuBarBg, ImVec4{0.0f, 0.0f, 0.0f, 0.0f});
-		std::string label = "DockSpaceWindow" + window->GetName();
+		std::string label = "DockSpaceWindow." + window->GetName();
+		ImGui::SetNextWindowDockID(0);
 		ImGui::Begin(label.c_str(), nullptr, window_flags);
+
 		ImGui::PopStyleColor(); // MenuBarBg
 		ImGui::PopStyleVar(2);
 
@@ -1404,8 +1438,8 @@ namespace UIKit
 
 		AppPushTabStyle();
 		ImGui::DockSpace(ImGui::GetID("MyDockspace"));
-
 		AppPopTabStyle();
+
 		style.WindowMinSize.x = minWinSizeX;
 
 		if (!m_Specification.CustomTitlebar)
@@ -1416,12 +1450,89 @@ namespace UIKit
 			if (!layer->initialized)
 			{
 				layer->ParentWindow = window->GetName();
+				layer->initialized = true;
+			}
+
+
+        static bool windowJustUndocked = false;
+
+layer->m_WindowControlCallbalck = [](ImGuiWindow *win)
+{
+    if (win)
+    {
+        std::cout << "==========================================" << std::endl;
+        std::cout << "[WINDOW] Name: " << win->Name << std::endl;
+        std::cout << "[WINDOW] Dock Node : " << win->DockNode << std::endl;
+        std::cout << "[WINDOW] Dock Tree Name : " << win->RootWindowDockTree->Name << std::endl;
+        std::string str = win->RootWindowDockTree->Name;
+        std::string str_finded = str.substr(str.find(".") + 1, str.size());
+        std::cout << "[WINDOW] Deducted tree name : " << str_finded << std::endl;
+
+        std::shared_ptr<Window> finded_win = nullptr;
+
+        for (auto win : app->m_Windows)
+        {
+            if (str_finded == win->GetName())
+            {
+                finded_win = win;
+            }
+        }
+
+        if (finded_win)
+        {
+            std::cout << "The window is attached to a parent window ! (" << finded_win->GetName() << ")" << std::endl;
+        }
+        else
+        {
+            std::cout << "The window is alone :(" << std::endl;
+            // Assign the subwindow in a new window !
+        }
+
+        std::cout << "[WINDOW] Dock ID : " << win->DockId << std::endl;
+        std::cout << "[WINDOW] Dock Host ID : " << win->DockNodeAsHost << std::endl;
+        std::cout << "[WINDOW] Identified Parent window : " << win->DockNodeAsHost << std::endl;
+
+        // Check if the window is being moved (header bar clicked and dragging)
+        if (ImGui::IsWindowHovered(ImGuiHoveredFlags_RootAndChildWindows) && ImGui::IsMouseDragging(ImGuiMouseButton_Left))
+        {
+            std::cout << "[WINDOW] The window is being moved!" << std::endl;
+        }
+        else
+        {
+            std::cout << "[WINDOW] The window is not being moved." << std::endl;
+        }
+
+        std::cout << "==========================================" << std::endl;
+    }
+    else
+    {
+        std::cout << "==========================================" << std::endl;
+        std::cout << "[WINDOW]: invalid" << std::endl;
+        std::cout << "==========================================" << std::endl;
+    }
+};
+
+			// ImGui::GetWindowDockID();
+			// Verifier si c'est dans un nouvel dockspace id, si oui, update le parent name et executer OnUIRefresh pour reload les images etc...
+			// Si il n'y en a pas, créer une nouvelle fenettre et docker la fenetre dans le nouvel id
+
+			// Update docking parent
+			if (layer->GetDockspaceNode())
+			{
+
+				std::cout << "Detected dockspace of " << layer->LayerName << " : " << layer->GetDockspaceNode()->ParentNode << std::endl;
+			}
+			else
+			{
+
+				std::cout << "Detected dockspace of " << layer->LayerName << " : " << "NULL" << std::endl;
 			}
 
 			if (layer->ParentWindow == window->GetName())
 			{
 				layer->OnUIRender();
 			}
+			// Set last dockspace id
 		}
 
 		ImGui::End();

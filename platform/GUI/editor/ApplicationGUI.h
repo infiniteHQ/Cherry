@@ -13,14 +13,6 @@
 #include <filesystem>
 
 #include "UI/UI.h"
-#include "../../../lib/imgui/imgui.h"
-#include "../../../lib/imgui/imgui_internal.h"
-#include "../../../lib/imgui/backends/imgui_impl_vulkan.h"
-#include "../../../lib/glfw/include/GLFW/glfw3.h"
-#include "../../../lib/imgui/backends/imgui_impl_glfw.h"
-#include "../../../lib/stb-image/stb_image.h"
-#include "../../../lib/glm/glm/glm.hpp"
-
 #include "ImGui/ImGuiTheme.h"
 #include "vulkan/vulkan.h"
 
@@ -60,6 +52,11 @@ namespace UIKit
 		VkCommandBuffer GetCommandBuffer(bool begin);
 		GLFWwindow *GetWindowHandle() const { return m_WindowHandle; }
 
+
+
+	void OnWindowResize(int width, int height);
+	void OnWindowMove(int xpos, int ypos);
+
 		void BeginFrame()
 		{
 			ImGui_ImplGlfw_NewFrame();
@@ -71,7 +68,6 @@ namespace UIKit
 			ImGui::Render();
 		}
 
-		void OnWindowResize(int width, int height);
 		void OnUpdate();
 
 		const std::string &GetName() const
@@ -97,12 +93,12 @@ namespace UIKit
 		std::vector<std::vector<std::function<void()>>> s_ResourceFreeQueue;
 		uint32_t s_CurrentFrameIndex = 0;
 
+		
+
 	private:
 		std::function<void()> m_MenubarCallback;
 		std::string m_Name;
 		GLFWwindow *m_WindowHandle;
-
-	private:
 	};
 
 	struct ParentWindow
@@ -199,6 +195,7 @@ namespace UIKit
 		std::shared_ptr<UIKit::Image> m_IconMaximize;
 		std::shared_ptr<UIKit::Image> m_IconRestore;
 		std::function<void()> m_MenubarCallback;
+		std::vector<std::shared_ptr<Window>> m_Windows;
 
 	private:
 		void Init();
@@ -207,7 +204,6 @@ namespace UIKit
 
 	private:
 		GLFWwindow *m_WindowHandle = nullptr;
-		std::vector<std::shared_ptr<Window>> m_Windows;
 		float m_TimeStep = 0.0f;
 		float m_FrameTime = 0.0f;
 		float m_LastFrameTime = 0.0f;
