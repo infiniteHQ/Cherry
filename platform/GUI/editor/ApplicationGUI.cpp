@@ -444,7 +444,7 @@ namespace UIKit
 
 		app = &this->Get();
 		this->m_Windows.push_back(std::make_shared<Window>("base", 1280, 720));
-		//this->m_Windows.push_back(std::make_shared<Window>("additionnal", 1480, 720));
+		this->m_Windows.push_back(std::make_shared<Window>("additionnal", 1480, 720));
 	}
 
 	void Application::Shutdown()
@@ -881,94 +881,61 @@ namespace UIKit
 			}
 		}
 	}
-
 void Application::Run()
-{
-    m_Running = true;
+	{
+		m_Running = true;
 
-    ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
-    ImGuiIO &io = ImGui::GetIO();
+		// ImGui_ImplVulkanH_Window *wd = &g_MainWindowData;
+		ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+		ImGuiIO &io = ImGui::GetIO();
 
-    while (m_Running) // Turn to false when windows == empty
-    {
-        // Poll and handle events (inputs, window resize, etc.)
-        glfwPollEvents();
+		while (m_Running)
+		{
+			// !glfwWindowShouldClose(m_WindowHandle) &&
+			glfwPollEvents();
 
-        {
-            std::scoped_lock<std::mutex> lock(m_EventQueueMutex);
+			ImGui_ImplVulkan_NewFrame();
+			ImGui_ImplGlfw_NewFrame();
+			ImGui::NewFrame();
 
-            // Process custom event queue
-            while (m_EventQueue.size() > 0)
-            {
-                auto &func = m_EventQueue.front();
-                func();
-                m_EventQueue.pop();
-            }
-        }
+			for (auto &window : m_Windows)
+			{
+				RenderWindow(window.get());
+			}
 
-        for (auto &layer : m_LayerStack)
-            layer->OnUpdate(m_TimeStep);
+			ImGui::Render();
+			ImDrawData *main_draw_data = ImGui::GetDrawData();
+			const bool main_is_minimized = (main_draw_data->DisplaySize.x <= 0.0f || main_draw_data->DisplaySize.y <= 0.0f);
 
+			for (auto win : this->m_Windows)
+			{
+				ImGui_ImplVulkanH_Window *wd = &win->m_WinData;
+				wd->ClearValue.color.float32[0] = clear_color.x * clear_color.w;
+				wd->ClearValue.color.float32[1] = clear_color.y * clear_color.w;
+				wd->ClearValue.color.float32[2] = clear_color.z * clear_color.w;
+				wd->ClearValue.color.float32[3] = clear_color.w;
 
-        ImGui_ImplVulkan_NewFrame();
-        ImGui_ImplGlfw_NewFrame();
-        ImGui::NewFrame();
+				if (!main_is_minimized)
+					FrameRender(wd, win, main_draw_data);
 
-        for (auto window : m_Windows)
-        {
+				if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+				{
+					ImGui::UpdatePlatformWindows();
+					ImGui::RenderPlatformWindowsDefault();
+				}
 
-        // Resize swap chain?
-        if (g_SwapChainRebuild)
-        {
-            int width, height;
-            glfwGetFramebufferSize(m_WindowHandle, &width, &height);
-            if (width > 0 && height > 0)
-            {
-                ImGui_ImplVulkan_SetMinImageCount(g_MinImageCount);
-                ImGui_ImplVulkanH_CreateOrResizeWindow(g_Instance, g_PhysicalDevice, g_Device, &g_MainWindowData, g_QueueFamily, g_Allocator, width, height, g_MinImageCount);
-                g_MainWindowData.FrameIndex = 0;
+				if (!main_is_minimized)
+					FramePresent(wd);
+				else
+					std::this_thread::sleep_for(std::chrono::milliseconds(5));
+			}
 
-                // Clear allocated command buffers from here since entire pool is destroyed
-                s_AllocatedCommandBuffers.clear();
-                s_AllocatedCommandBuffers.resize(g_MainWindowData.ImageCount);
-
-                g_SwapChainRebuild = false;
-            }
-        }
-
-            RenderWindow(window.get());
-            ImGui::Render();
-            ImDrawData *main_draw_data = ImGui::GetDrawData();
-            const bool main_is_minimized = (main_draw_data->DisplaySize.x <= 0.0f || main_draw_data->DisplaySize.y <= 0.0f);
-            window->m_WinData.ClearValue.color.float32[0] = clear_color.x * clear_color.w;
-            window->m_WinData.ClearValue.color.float32[1] = clear_color.y * clear_color.w;
-            window->m_WinData.ClearValue.color.float32[2] = clear_color.z * clear_color.w;
-            window->m_WinData.ClearValue.color.float32[3] = clear_color.w;
-            if (!main_is_minimized)
-                FrameRender(&window->m_WinData, window, main_draw_data);
-
-            // Update and Render additional Platform Windows
-            if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
-            {
-                ImGui::UpdatePlatformWindows();
-                ImGui::RenderPlatformWindowsDefault();
-            }
-
-            // Present Main Platform Window
-            if (!main_is_minimized)
-                FramePresent(&window->m_WinData);
-            else
-                std::this_thread::sleep_for(std::chrono::milliseconds(5));
-
-            float time = GetTime();
-            m_FrameTime = time - m_LastFrameTime;
-            m_TimeStep = glm::min<float>(m_FrameTime, 0.0333f);
-            m_LastFrameTime = time;
-        }
-    }
-}
-	
-	
+			float time = GetTime();
+			m_FrameTime = time - m_LastFrameTime;
+			m_TimeStep = glm::min<float>(m_FrameTime, 0.0333f);
+			m_LastFrameTime = time;
+		}
+	}
 	Window::Window(const std::string &name, int width, int height)
 	{
 		this->m_Name = name;
