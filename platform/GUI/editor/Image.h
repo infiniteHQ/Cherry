@@ -13,6 +13,7 @@ namespace UIKit {
 	enum class ImageFormat
 	{
 		None = 0,
+		
 		RGBA,
 		RGBA32F
 	};
@@ -20,15 +21,15 @@ namespace UIKit {
 	class Image
 	{
 	public:
-		Image(std::string_view path);
-		Image(uint32_t width, uint32_t height, ImageFormat format, const void* data = nullptr);
-		Image(uint32_t width, uint32_t height, ImageFormat format, ImGui_ImplVulkanH_Window* wd, const void* data = nullptr);
+		Image(std::string_view path, const std::string& winname);
 		Image(uint32_t width, uint32_t height, ImageFormat format, const std::string& winname, const void* data = nullptr);
+		Image(uint32_t width, uint32_t height, ImageFormat format, const void* data = nullptr) {};
+		Image(uint32_t width, uint32_t height, ImageFormat format, ImGui_ImplVulkanH_Window* wd, const std::string& winname, const void* data = nullptr);
 		~Image();
 
-		void SetData(const void* data);
+		//void SetData(const void* data);
 		void SetData(const void* data, ImGui_ImplVulkanH_Window* wd);
-		void SetData(const void* data, const std::string& winname);
+		void SetData(const void* ImGuiDataType);
 
 		VkDescriptorSet GetDescriptorSet() const { return m_DescriptorSet; }
 
@@ -61,7 +62,7 @@ namespace UIKit {
 		size_t m_AlignedSize = 0;
 
 		VkDescriptorSet m_DescriptorSet = nullptr;
-		
+		std::string m_Winname;
 
 		std::string m_Filepath;
 	};

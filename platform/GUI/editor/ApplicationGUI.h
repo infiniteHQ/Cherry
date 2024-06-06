@@ -68,6 +68,8 @@ namespace UIKit
 			ImGui::Render();
 		}
 
+		void LoadImages();
+
 		void OnUpdate();
 
 		const std::string &GetName() const
@@ -82,6 +84,14 @@ namespace UIKit
 
 		void CleanupVulkanWindow();
 
+
+		template <typename Func>
+		void QueueEvent(Func &&func)
+		{
+			m_EventQueue.push(func);
+		}
+
+
 		std::shared_ptr<UIKit::Image> m_AppHeaderIcon;
 		std::shared_ptr<UIKit::Image> m_IconClose;
 		std::shared_ptr<UIKit::Image> m_IconMinimize;
@@ -92,9 +102,24 @@ namespace UIKit
 
 		std::vector<std::vector<std::function<void()>>> s_ResourceFreeQueue;
 		uint32_t s_CurrentFrameIndex = 0;
-
 		
+ int g_MinImageCount = 2;
+ bool g_SwapChainRebuild = false;
+ VkAllocationCallbacks *g_Allocator = NULL;
+ VkInstance g_Instance = VK_NULL_HANDLE;
+ VkPhysicalDevice g_PhysicalDevice = VK_NULL_HANDLE;
+ uint32_t g_QueueFamily = (uint32_t)-1;
+ VkQueue g_Queue = VK_NULL_HANDLE;
+ VkDebugReportCallbackEXT g_DebugReport = VK_NULL_HANDLE;
+ VkPipelineCache g_PipelineCache = VK_NULL_HANDLE;
+ VkDescriptorPool g_DescriptorPool = VK_NULL_HANDLE;
 
+ VkDevice g_Device = VK_NULL_HANDLE;
+ std::vector<std::vector<VkCommandBuffer>> s_AllocatedCommandBuffers;
+
+		std::mutex m_EventQueueMutex;
+		std::queue<std::function<void()>> m_EventQueue;
+ ImGuiContext* m_ImGuiContext;
 	private:
 		std::function<void()> m_MenubarCallback;
 		std::string m_Name;
@@ -157,27 +182,21 @@ namespace UIKit
 		std::shared_ptr<Image> GetApplicationIcon() const { return m_AppHeaderIcon; }
 
 		float GetTime();
-		GLFWwindow *GetWindowHandle() const { return m_WindowHandle; }
+		GLFWwindow *GetWindowHandle(const std::string& winname) const;
 		bool IsTitleBarHovered() const { return m_TitleBarHovered; }
 
-		static VkInstance GetInstance();
-		static VkPhysicalDevice GetPhysicalDevice();
-		static VkDevice GetDevice();
+		static VkInstance GetInstance(const std::string& win);
+		static VkPhysicalDevice GetPhysicalDevice(const std::string& win);
+		static VkDevice GetDevice(const std::string& win);
 
-		static VkCommandBuffer GetCommandBuffer(bool begin);
-		static VkCommandBuffer GetCommandBuffer(bool begin, ImGui_ImplVulkanH_Window *wd);
+		//static VkCommandBuffer GetCommandBuffer(bool begin);
+		static VkCommandBuffer GetCommandBuffer(bool begin, ImGui_ImplVulkanH_Window *wd, const std::string& win);
 		static VkCommandBuffer GetCommandBufferOfWin(const std::string &win_name, bool begin);
-		static void FlushCommandBuffer(VkCommandBuffer commandBuffer);
+		static void FlushCommandBuffer(VkCommandBuffer commandBuffer, const std::string& win);
 
-		static void SubmitResourceFree(std::function<void()> &&func);
+		static void SubmitResourceFree(std::function<void()> &&func, const std::string& winname);
 
 		static ImFont *GetFont(const std::string &name);
-
-		template <typename Func>
-		void QueueEvent(Func &&func)
-		{
-			m_EventQueue.push(func);
-		}
 
 		ApplicationSpecification m_Specification;
 		void UI_DrawTitlebar(float &outTitlebarHeight, Window *window);
@@ -185,6 +204,10 @@ namespace UIKit
 
 		std::vector<std::shared_ptr<Layer>> m_LayerStack;
 		bool m_Running = false;
+
+
+
+		
 
 		// Resources
 		// TODO(Yan): move out of application class since this can't be tied
@@ -210,8 +233,6 @@ namespace UIKit
 
 		bool m_TitleBarHovered = false;
 
-		std::mutex m_EventQueueMutex;
-		std::queue<std::function<void()>> m_EventQueue;
 
 		void RenderWindow(Window *window);
 	};
