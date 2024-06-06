@@ -212,11 +212,6 @@ namespace UIKit
 		// Resources
 		// TODO(Yan): move out of application class since this can't be tied
 		//            to application lifetime
-		std::shared_ptr<UIKit::Image> m_AppHeaderIcon;
-		std::shared_ptr<UIKit::Image> m_IconClose;
-		std::shared_ptr<UIKit::Image> m_IconMinimize;
-		std::shared_ptr<UIKit::Image> m_IconMaximize;
-		std::shared_ptr<UIKit::Image> m_IconRestore;
 		std::function<void()> m_MenubarCallback;
 		std::vector<std::shared_ptr<Window>> m_Windows;
 

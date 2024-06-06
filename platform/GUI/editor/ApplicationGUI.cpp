@@ -430,8 +430,7 @@ namespace UIKit
 
 		app = &this->Get();
 		this->m_Windows.push_back(std::make_shared<Window>("base", 1280, 720));
-		this->m_Windows.push_back(std::make_shared<Window>("additionnal", 480, 720));
-		this->m_Windows.push_back(std::make_shared<Window>("additionnal22", 100, 600));
+		this->m_Windows.push_back(std::make_shared<Window>("additiojnnal22", 1000, 600));
 	}
 
 	void Application::Shutdown()
@@ -444,11 +443,11 @@ namespace UIKit
 		// Release resources
 		// NOTE(Yan): to avoid doing this manually, we shouldn't
 		//            store resources in this Application class
-		m_AppHeaderIcon.reset();
-		m_IconClose.reset();
-		m_IconMinimize.reset();
-		m_IconMaximize.reset();
-		m_IconRestore.reset();
+		//m_AppHeaderIcon.reset();
+		//m_IconClose.reset();
+		//m_IconMinimize.reset();
+		//m_IconMaximize.reset();
+		//m_IconRestore.reset();
 
 		// Cleanup
 		for (auto win : app->m_Windows)
@@ -877,6 +876,8 @@ namespace UIKit
 		ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 		ImGuiIO &io = ImGui::GetIO();
 
+				glfwPollEvents();
+
 		std::cout << "Loading images" << std::endl;
 		while (m_Running)
 		{
@@ -902,11 +903,10 @@ namespace UIKit
 
 				std::cout << window->GetWindowHandle() << std::endl;
 
-				glfwPollEvents();
-
 				ImGui_ImplVulkan_NewFrame();
 				ImGui_ImplGlfw_NewFrame();
 				ImGui::NewFrame();
+
 
 				RenderWindow(window.get());
 
