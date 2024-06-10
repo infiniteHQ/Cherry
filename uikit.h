@@ -11,4 +11,7 @@
 #include "./platform/GUI/editor/UI/UI.h"
 #include "./assets/icons.h"
 
+#include "./components/windows/windows.h"
+#include "./components/buttons/buttons.h"
+
 #endif // UIKIT_H

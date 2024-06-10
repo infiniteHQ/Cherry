@@ -372,8 +372,6 @@ static void FrameRender(ImGui_ImplVulkanH_Window *wd, UIKit::Window *win, ImDraw
 	}
 }
 
-
-
 static void FramePresent(ImGui_ImplVulkanH_Window *wd, UIKit::Window *win)
 {
 	if (win->g_SwapChainRebuild)
@@ -429,9 +427,10 @@ namespace UIKit
 
 	void Application::Init()
 	{
-
 		app = &this->Get();
 		this->m_Windows.push_back(std::make_shared<Window>("base", 1280, 720));
+		// this->m_Windows.push_back(std::make_shared<Window>("baseadditionnal", 600, 650));
+		// this->m_Windows.push_back(std::make_shared<Window>("baseadditiqsdonnal", 1200, 650));
 	}
 
 	void Application::Shutdown()
@@ -444,11 +443,11 @@ namespace UIKit
 		// Release resources
 		// NOTE(Yan): to avoid doing this manually, we shouldn't
 		//            store resources in this Application class
-		//m_AppHeaderIcon.reset();
-		//m_IconClose.reset();
-		//m_IconMinimize.reset();
-		//m_IconMaximize.reset();
-		//m_IconRestore.reset();
+		// m_AppHeaderIcon.reset();
+		// m_IconClose.reset();
+		// m_IconMinimize.reset();
+		// m_IconMaximize.reset();
+		// m_IconRestore.reset();
 
 		// Cleanup
 		for (auto win : app->m_Windows)
@@ -501,7 +500,7 @@ namespace UIKit
 		bgDrawList->AddRectFilled(titlebarMin, titlebarMax, UI::Colors::Theme::titlebar);
 		// DEBUG TITLEBAR BOUNDS
 		// fgDrawList->AddRect(titlebarMin, titlebarMax, UI::Colors::Theme::invalidPrefab);
-		
+
 		// Logo
 		{
 			const int logoWidth = 48;  // m_LogoTex->GetWidth();
@@ -858,100 +857,119 @@ namespace UIKit
 		}
 	}
 
-	void Application::Run() {
-    for (auto &window : m_Windows) {
-        window->LoadImages();
-    }
+	void Window::Render()
+	{
+		ImGuiIO &io = ImGui::GetIO();
+		ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+		// Ensure the current ImGui context is set for this window
+		ImGui::SetCurrentContext(this->m_ImGuiContext);
 
-    m_Running = true;
-
-    ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
-    ImGuiIO &io = ImGui::GetIO();
-
-    while (m_Running) {
         glfwPollEvents();
+        glfwMakeContextCurrent(this->GetWindowHandle());
 
-        for (auto &layer : m_LayerStack) {
-            layer->OnUpdate(m_TimeStep);
-        }
-
-        for (auto &window : m_Windows) {
-			
-			if (window->g_SwapChainRebuild)
+		if (this->g_SwapChainRebuild)
+		{
+			int width, height;
+			glfwGetFramebufferSize(this->GetWindowHandle(), &width, &height);
+			if (width > 0 && height > 0)
 			{
-				int width, height;
-				glfwGetFramebufferSize(window->GetWindowHandle(), &width, &height);
-				if (width > 0 && height > 0)
-				{
-					ImGui_ImplVulkan_SetMinImageCount(window->g_MinImageCount);
-					ImGui_ImplVulkanH_CreateOrResizeWindow(window->g_Instance, window->g_PhysicalDevice, window->g_Device, &window->m_WinData, window->g_QueueFamily, window->g_Allocator, window->m_WinData.Width, window->m_WinData.Height, window->g_MinImageCount);
-					window->m_WinData.FrameIndex = 0;
+				ImGui_ImplVulkan_SetMinImageCount(this->g_MinImageCount);
+				ImGui_ImplVulkanH_CreateOrResizeWindow(this->g_Instance, this->g_PhysicalDevice, this->g_Device, &this->m_WinData, this->g_QueueFamily, this->g_Allocator, this->m_WinData.Width, this->m_WinData.Height, this->g_MinImageCount);
+				this->m_WinData.FrameIndex = 0;
 
-					// Clear allocated command buffers from here since entire pool is destroyed
-					window->s_AllocatedCommandBuffers.clear();
-					window->s_AllocatedCommandBuffers.resize(window->m_WinData.ImageCount);
+				// Clear allocated command buffers from here since entire pool is destroyed
+				this->s_AllocatedCommandBuffers.clear();
+				this->s_AllocatedCommandBuffers.resize(this->m_WinData.ImageCount);
 
-					window->g_SwapChainRebuild = false;
-				}
+				this->g_SwapChainRebuild = false;
 			}
+		}
 
-			if(window->m_ResizePending)
+		if (this->m_ResizePending)
+		{
+			glfwSetWindowSize(this->GetWindowHandle(), this->m_PendingWidth, this->m_PendingHeight);
+			this->m_ResizePending = false;
+		}
+
+		ImGui_ImplVulkan_NewFrame();
+		ImGui_ImplGlfw_NewFrame();
+		ImGui::NewFrame();
+
+		{
+			std::scoped_lock<std::mutex> lock(this->m_EventQueueMutex);
+
+			while (!this->m_EventQueue.empty())
 			{
-				glfwSetWindowSize(window->GetWindowHandle(), window->m_PendingWidth, window->m_PendingHeight);
+				auto &func = this->m_EventQueue.front();
+				func();
+				this->m_EventQueue.pop();
 			}
+		}
 
+		app->RenderWindow(this);
 
-            // Ensure the current ImGui context is set for this window
-            ImGui::SetCurrentContext(window->m_ImGuiContext);
+		ImGui::Render();
 
-            {
-                std::scoped_lock<std::mutex> lock(window->m_EventQueueMutex);
+		ImDrawData *main_draw_data = ImGui::GetDrawData();
+		const bool main_is_minimized = (main_draw_data->DisplaySize.x <= 0.0f || main_draw_data->DisplaySize.y <= 0.0f);
 
-                while (!window->m_EventQueue.empty()) {
-                    auto &func = window->m_EventQueue.front();
-                    func();
-                    window->m_EventQueue.pop();
-                }
-            }
+		ImGui_ImplVulkanH_Window *wd = &this->m_WinData;
+		wd->ClearValue.color.float32[0] = clear_color.x * clear_color.w;
+		wd->ClearValue.color.float32[1] = clear_color.y * clear_color.w;
+		wd->ClearValue.color.float32[2] = clear_color.z * clear_color.w;
+		wd->ClearValue.color.float32[3] = clear_color.w;
 
+		if (!main_is_minimized)
+			FrameRender(wd, this, main_draw_data);
 
-            ImGui_ImplVulkan_NewFrame();
-            ImGui_ImplGlfw_NewFrame();
-            ImGui::NewFrame();
+		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+		{
+			ImGui::UpdatePlatformWindows();
+			ImGui::RenderPlatformWindowsDefault();
+		}
 
-            RenderWindow(window.get());
+		if (!main_is_minimized)
+			FramePresent(wd, this);
+		else
+			std::this_thread::sleep_for(std::chrono::milliseconds(5));
+	}
 
-            ImGui::Render();
+	void Application::Run()
+	{
+		for (auto &window : m_Windows)
+		{
+			window->LoadImages();
+		}
 
-            ImDrawData *main_draw_data = ImGui::GetDrawData();
-            const bool main_is_minimized = (main_draw_data->DisplaySize.x <= 0.0f || main_draw_data->DisplaySize.y <= 0.0f);
+		m_Running = true;
 
-            ImGui_ImplVulkanH_Window *wd = &window->m_WinData;
-            wd->ClearValue.color.float32[0] = clear_color.x * clear_color.w;
-            wd->ClearValue.color.float32[1] = clear_color.y * clear_color.w;
-            wd->ClearValue.color.float32[2] = clear_color.z * clear_color.w;
-            wd->ClearValue.color.float32[3] = clear_color.w;
-
-            if (!main_is_minimized)
-                FrameRender(wd, window.get(), main_draw_data);
-
-            if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
-                ImGui::UpdatePlatformWindows();
-                ImGui::RenderPlatformWindowsDefault();
-            }
-
-            if (!main_is_minimized)
-                FramePresent(wd, window.get());
-            else
-                std::this_thread::sleep_for(std::chrono::milliseconds(5));
-        }
-
-        float time = GetTime();
-        m_FrameTime = time - m_LastFrameTime;
-        m_TimeStep = glm::min<float>(m_FrameTime, 0.0333f);
-        m_LastFrameTime = time;
+		while (m_Running)
+{
+    // Poll for events for each window
+    for (auto &window : m_Windows)
+    {
     }
+
+    // Update layers
+    for (auto &layer : m_LayerStack)
+    {
+        layer->OnUpdate(m_TimeStep);
+    }
+
+    // Render each window
+    for (auto &window : m_Windows)
+    {
+        window->Render();
+    }
+
+    // Update time
+    float time = GetTime();
+    m_FrameTime = time - m_LastFrameTime;
+    m_TimeStep = glm::min<float>(m_FrameTime, 0.0333f);
+    m_LastFrameTime = time;
 }
+
+	}
 
 	Window::Window(const std::string &name, int width, int height)
 		: m_Name(name), m_Width(width), m_Height(height)
@@ -995,26 +1013,25 @@ namespace UIKit
 		}
 
 		glfwSetWindowUserPointer(m_WindowHandle, this);
-		
-		glfwSetWindowSizeCallback(m_WindowHandle, [](GLFWwindow *window, int width, int height)
+
+		/*glfwSetWindowSizeCallback(m_WindowHandle, [](GLFWwindow *window, int width, int height)
 {
-    Window *win = static_cast<Window *>(glfwGetWindowUserPointer(window));
-    if (win)
-    {
-        win->m_Width = width;
-        win->m_Height = height;
+	Window *win = static_cast<Window *>(glfwGetWindowUserPointer(window));
+	if (win)
+	{
+		win->m_Width = width;
+		win->m_Height = height;
 
-            ImGuiViewport* viewport = ImGui::FindViewportByPlatformHandle(window);
-        if (viewport)
-        {
-            viewport->Size = ImVec2(static_cast<float>(width), static_cast<float>(height));
-        }
+			ImGuiViewport* viewport = ImGui::FindViewportByPlatformHandle(window);
+		if (viewport)
+		{
+			viewport->Size = ImVec2(static_cast<float>(width), static_cast<float>(height));
+		}
 
-        // Recréez les ressources Vulkan nécessaires ici
-        win->OnWindowResize(window, width, height);
-    }
-});
-
+		// Recréez les ressources Vulkan nécessaires ici
+		win->OnWindowResize(window, width, height);
+	}
+});*/
 
 		glfwSetWindowPosCallback(m_WindowHandle, [](GLFWwindow *window, int xpos, int ypos)
 								 {
@@ -1028,31 +1045,30 @@ namespace UIKit
             }
         } });
 
-
-    // Set GLFW callbacks for mouse events
-    glfwSetCursorPosCallback(m_WindowHandle, [](GLFWwindow* window, double xpos, double ypos) {
+		// Set GLFW callbacks for mouse events
+		glfwSetCursorPosCallback(m_WindowHandle, [](GLFWwindow *window, double xpos, double ypos)
+								 {
         Window* win = static_cast<Window*>(glfwGetWindowUserPointer(window));
         if (win) {
             // Handle mouse cursor position event
             win->HandleMouseMove(xpos, ypos);
-        }
-    });
+        } });
 
-    glfwSetMouseButtonCallback(m_WindowHandle, [](GLFWwindow* window, int button, int action, int mods) {
+		glfwSetMouseButtonCallback(m_WindowHandle, [](GLFWwindow *window, int button, int action, int mods)
+								   {
         Window* win = static_cast<Window*>(glfwGetWindowUserPointer(window));
         if (win) {
             // Handle mouse button event
             win->HandleMouseButton(button, action, mods);
-        }
-    });
+        } });
 
-    glfwSetScrollCallback(m_WindowHandle, [](GLFWwindow* window, double xoffset, double yoffset) {
+		glfwSetScrollCallback(m_WindowHandle, [](GLFWwindow *window, double xoffset, double yoffset)
+							  {
         Window* win = static_cast<Window*>(glfwGetWindowUserPointer(window));
         if (win) {
             // Handle scroll event
             win->HandleMouseScroll(xoffset, yoffset);
-        }
-    });
+        } });
 
 		// Setup Vulkan
 		if (!glfwVulkanSupported())
@@ -1091,7 +1107,6 @@ namespace UIKit
 		s_AllocatedCommandBuffers.resize(wd->ImageCount);
 		s_ResourceFreeQueue.resize(wd->ImageCount);
 
-
 		// Create the ImGui context
 		IMGUI_CHECKVERSION();
 		m_ImGuiContext = ImGui::CreateContext();
@@ -1102,7 +1117,7 @@ namespace UIKit
 		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
 		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;	  // Enable Docking
 		io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;	  // Enable Multi-Viewport / Platform Windows
-		io.FontGlobalScale = 0.90f;
+		io.FontGlobalScale = 0.83f;
 
 		// Theme colors
 		UI::SetHazelTheme();
@@ -1188,25 +1203,26 @@ namespace UIKit
 		}
 	}
 
+	void Window::HandleMouseMove(double xpos, double ypos)
+	{
+		// Implement your mouse move handling logic here
+		std::cout << "POS " << xpos << ypos << " " << std::endl;
+	}
 
-void Window::HandleMouseMove(double xpos, double ypos)
-{
-    // Implement your mouse move handling logic here
-}
+	void Window::HandleMouseButton(int button, int action, int mods)
+	{
+		// Implement your mouse button handling logic here
+		std::cout << "CLICK BUTTOn " << button << action << " " << std::endl;
+	}
 
-void Window::HandleMouseButton(int button, int action, int mods)
-{
-    // Implement your mouse button handling logic here
-}
-
-void Window::HandleMouseScroll(double xoffset, double yoffset)
-{
-    // Implement your mouse scroll handling logic here
-}
+	void Window::HandleMouseScroll(double xoffset, double yoffset)
+	{
+		// Implement your mouse scroll handling logic here
+	}
 
 	void Window::LoadImages()
 	{
-		
+
 		{
 			uint32_t w, h;
 			void *data = Image::Decode(g_UIKitIcon, sizeof(g_UIKitIcon), w, h);
@@ -1238,7 +1254,6 @@ void Window::HandleMouseScroll(double xoffset, double yoffset)
 			this->m_IconClose = std::make_shared<UIKit::Image>(w, h, ImageFormat::RGBA, this->GetName(), data);
 			free(data);
 		}
-		
 	}
 
 	void Application::Close()
@@ -1246,7 +1261,8 @@ void Window::HandleMouseScroll(double xoffset, double yoffset)
 		m_Running = false;
 	}
 
-		std::shared_ptr<Image> Application::GetApplicationIcon(const std::string& window) const { 
+	std::shared_ptr<Image> Application::GetApplicationIcon(const std::string &window) const
+	{
 
 		for (auto win : app->m_Windows)
 		{
@@ -1256,7 +1272,7 @@ void Window::HandleMouseScroll(double xoffset, double yoffset)
 			}
 		}
 		return nullptr;
-		 }
+	}
 
 	bool Application::IsMaximized() const
 	{
@@ -1490,136 +1506,198 @@ void Window::HandleMouseScroll(double xoffset, double yoffset)
 		}
 	}
 
-	void Window::OnWindowResize(GLFWwindow* windowHandle, int width, int height) {
-			if (width == 0 || height == 0)
-        return;
+	void Window::OnWindowResize(GLFWwindow *windowHandle, int width, int height)
+	{
+		if (width == 0 || height == 0)
+			return;
 
-    vkDeviceWaitIdle(g_Device);
+		vkDeviceWaitIdle(g_Device);
 
-    this->CleanupVulkanWindow();
-    
-    VkSurfaceKHR surface;
-    if (glfwCreateWindowSurface(g_Instance, m_WindowHandle, g_Allocator, &surface) != VK_SUCCESS)
-    {
-        throw std::runtime_error("Failed to recreate window surface!");
-    }
+		this->CleanupVulkanWindow();
 
-    SetupVulkanWindow(&m_WinData, surface, width, height, this);
+		VkSurfaceKHR surface;
+		if (glfwCreateWindowSurface(g_Instance, m_WindowHandle, g_Allocator, &surface) != VK_SUCCESS)
+		{
+			throw std::runtime_error("Failed to recreate window surface!");
+		}
 
-    // Mettez à jour les ressources ImGui si nécessaire
-    ImGui_ImplVulkan_SetMinImageCount(g_MinImageCount);
-    ImGui_ImplVulkanH_CreateOrResizeWindow(g_Instance, g_PhysicalDevice, g_Device, &m_WinData, g_QueueFamily, g_Allocator, width, height, g_MinImageCount);
+		SetupVulkanWindow(&m_WinData, surface, width, height, this);
 
-}
+		// Mettez à jour les ressources ImGui si nécessaire
+		ImGui_ImplVulkan_SetMinImageCount(g_MinImageCount);
+		ImGui_ImplVulkanH_CreateOrResizeWindow(g_Instance, g_PhysicalDevice, g_Device, &m_WinData, g_QueueFamily, g_Allocator, width, height, g_MinImageCount);
+	}
 
-void Application::RenderWindow(Window *window)
-{
-    // Set the ImGui context for this window
-    ImGui::SetCurrentContext(window->m_ImGuiContext);
+	void Application::RenderWindow(Window *window)
+	{
+		// Set the ImGui context for this window
+		ImGui::SetCurrentContext(window->m_ImGuiContext);
 
-    ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDocking;
+		ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDocking;
 
-    ImGuiViewport *viewport = ImGui::GetMainViewport();
-    int width, height;
-    glfwGetWindowSize(window->GetWindowHandle(), &width, &height);
+		ImGuiViewport *viewport = ImGui::GetMainViewport();
+		int width, height;
+		glfwGetWindowSize(window->GetWindowHandle(), &width, &height);
 
-    ImGui::SetNextWindowPos(viewport->Pos);
-    ImGui::SetNextWindowSize(ImVec2((float)width, (float)height));
-    ImGui::SetNextWindowViewport(viewport->ID);
-    ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
-    ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+		ImGui::SetNextWindowPos(viewport->Pos);
+		ImGui::SetNextWindowSize(viewport->Size);
+		ImGui::SetNextWindowViewport(viewport->ID);
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
 
-    window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse;
-    window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
-    if (!m_Specification.CustomTitlebar && m_MenubarCallback)
-        window_flags |= ImGuiWindowFlags_MenuBar;
+		window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse;
+		window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+		if (!m_Specification.CustomTitlebar && m_MenubarCallback)
+			window_flags |= ImGuiWindowFlags_MenuBar;
 
-    const bool isMaximized = (bool)glfwGetWindowAttrib(window->GetWindowHandle(), GLFW_MAXIMIZED);
+		const bool isMaximized = (bool)glfwGetWindowAttrib(window->GetWindowHandle(), GLFW_MAXIMIZED);
 
-    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, isMaximized ? ImVec2(6.0f, 6.0f) : ImVec2(1.0f, 1.0f));
-    ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 3.0f);
-    ImGui::PushStyleColor(ImGuiCol_MenuBarBg, ImVec4{0.0f, 0.0f, 0.0f, 0.0f});
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, isMaximized ? ImVec2(6.0f, 6.0f) : ImVec2(1.0f, 1.0f));
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 3.0f);
+		ImGui::PushStyleColor(ImGuiCol_MenuBarBg, ImVec4{0.0f, 0.0f, 0.0f, 0.0f});
 
-    std::string label = "DockSpaceWindow." + window->GetName();
-    ImGui::SetNextWindowDockID(0);
-    ImGui::Begin(label.c_str(), nullptr, window_flags);
+		std::string label = "DockSpaceWindow." + window->GetName();
+		ImGui::SetNextWindowDockID(0);
+		ImGui::Begin(label.c_str(), nullptr, window_flags);
 
-    ImGuiWindow* win = ImGui::GetCurrentWindow();
+		ImGuiWindow *win = ImGui::GetCurrentWindow();
 
-    // Detect window resize
-    if (win->Size.x != window->m_PreviousWidth || win->Size.y != window->m_PreviousHeight) {
-        window->RequestResize(win->Size.x, win->Size.y);
-        window->m_PreviousWidth = win->Size.x;
-        window->m_PreviousHeight = win->Size.y;
-    }
+		ImGui::PopStyleColor(); // MenuBarBg
+		ImGui::PopStyleVar(2);
 
-    ImGui::PopStyleColor(); // MenuBarBg
-    ImGui::PopStyleVar(2);
+		{
+			ImGui::PushStyleColor(ImGuiCol_Border, IM_COL32(50, 50, 50, 255));
+			if (!isMaximized)
+				UI::RenderWindowOuterBorders(ImGui::GetCurrentWindow());
+			ImGui::PopStyleColor(); // ImGuiCol_Border
+		}
 
-    {
-        ImGui::PushStyleColor(ImGuiCol_Border, IM_COL32(50, 50, 50, 255));
-        if (!isMaximized)
-            UI::RenderWindowOuterBorders(ImGui::GetCurrentWindow());
-        ImGui::PopStyleColor(); // ImGuiCol_Border
-    }
+		if (m_Specification.CustomTitlebar)
+		{
+			float titleBarHeight;
+			window->UI_DrawTitlebar(titleBarHeight);
+			ImGui::SetCursorPosY(titleBarHeight);
+		}
 
-    if (m_Specification.CustomTitlebar)
-    {
-        float titleBarHeight;
-        window->UI_DrawTitlebar(titleBarHeight);
-        ImGui::SetCursorPosY(titleBarHeight);
-    }
+		ImGuiIO &io = ImGui::GetIO();
+		ImGuiStyle &style = ImGui::GetStyle();
+		float minWinSizeX = style.WindowMinSize.x;
+		style.WindowMinSize.x = 370.0f;
 
-    ImGuiIO &io = ImGui::GetIO();
-    ImGuiStyle &style = ImGui::GetStyle();
-    float minWinSizeX = style.WindowMinSize.x;
-    style.WindowMinSize.x = 370.0f;
+		AppPushTabStyle();
+		ImGui::DockSpace(ImGui::GetID("MyDockspace"));
+		AppPopTabStyle();
 
-    AppPushTabStyle();
-    ImGui::DockSpace(ImGui::GetID("MyDockspace"));
-    AppPopTabStyle();
+		style.WindowMinSize.x = minWinSizeX;
 
-    style.WindowMinSize.x = minWinSizeX;
+		if (!m_Specification.CustomTitlebar)
+			window->UI_DrawMenubar();
 
-    if (!m_Specification.CustomTitlebar)
-        window->UI_DrawMenubar();
+		for (auto &layer : m_LayerStack)
+		{
+			if (!layer->initialized)
+			{
+				layer->ParentWindow = window->GetName();
+				layer->initialized = true;
+			}
 
-    for (auto &layer : m_LayerStack)
-    {
-        if (!layer->initialized)
-        {
-            layer->ParentWindow = window->GetName();
-            layer->initialized = true;
-        }
+			static bool windowJustUndocked = false;
 
-        if (layer->ParentWindow == window->GetName())
-        {
-            layer->OnUIRender();
-        }
-    }
+			layer->m_WindowControlCallbalck = [](ImGuiWindow *win)
+			{
+				if (win)
+				{
+					std::cout << "==========================================" << std::endl;
+					std::cout << "[WINDOW] Name: " << win->Name << std::endl;
+					std::cout << "[WINDOW] Dock Node : " << win->DockNode << std::endl;
+					std::cout << "[WINDOW] Dock Tree Name : " << win->RootWindowDockTree->Name << std::endl;
+					std::string str = win->RootWindowDockTree->Name;
+					std::string str_finded = str.substr(str.find(".") + 1, str.size());
+					std::cout << "[WINDOW] Deducted tree name : " << str_finded << std::endl;
 
-    ImGui::End();
+					std::shared_ptr<Window> finded_win = nullptr;
 
-    // Check for mouse click in any ImGui window and handle dragging
-    if (ImGui::IsMouseClicked(ImGuiMouseButton_Left) && ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow) && !ImGui::IsAnyItemHovered()) {
-        window->m_IsDragging = true;
-        window->m_InitialMousePos = io.MousePos;
-        window->m_InitialWindowPos = ImVec2(win->Pos.x, win->Pos.y);
-    }
+					for (auto win : app->m_Windows)
+					{
+						if (str_finded == win->GetName())
+						{
+							finded_win = win;
+						}
+					}
 
-    if (window->m_IsDragging) {
-        if (ImGui::IsMouseDown(ImGuiMouseButton_Left)) {
-            ImVec2 delta = ImVec2(io.MousePos.x - window->m_InitialMousePos.x, io.MousePos.y - window->m_InitialMousePos.y);
-            if (delta.x != 0 || delta.y != 0) {  // Only update position if there is a change
-                ImVec2 newWindowPos = ImVec2(window->m_InitialWindowPos.x + delta.x, window->m_InitialWindowPos.y + delta.y);
-                glfwSetWindowPos(window->GetWindowHandle(), (int)newWindowPos.x, (int)newWindowPos.y);
-            }
-        } else {
-            window->m_IsDragging = false;
-        }
-    }
-}
+					if (finded_win)
+					{
+						std::cout << "The window is attached to a parent window ! (" << finded_win->GetName() << ")" << std::endl;
+					}
+					else
+					{
+						std::cout << "The window is alone :(" << std::endl;
+						// Assign the subwindow in a new window !
+					}
 
+					std::cout << "[WINDOW] Dock ID : " << win->DockId << std::endl;
+					std::cout << "[WINDOW] Dock Host ID : " << win->DockNodeAsHost << std::endl;
+					std::cout << "[WINDOW] Identified Parent window : " << win->DockNodeAsHost << std::endl;
+
+					// Check if the window is being moved (header bar clicked and dragging)
+					if (ImGui::IsWindowHovered(ImGuiHoveredFlags_RootAndChildWindows) && ImGui::IsMouseDragging(ImGuiMouseButton_Left))
+					{
+						std::cout << "[WINDOW] The window is being moved!" << std::endl;
+					}
+					else
+					{
+						std::cout << "[WINDOW] The window is not being moved." << std::endl;
+					}
+
+					std::cout << "==========================================" << std::endl;
+				}
+				else
+				{
+					std::cout << "==========================================" << std::endl;
+					std::cout << "[WINDOW]: invalid" << std::endl;
+					std::cout << "==========================================" << std::endl;
+				}
+			};
+
+			if (layer->ParentWindow == window->GetName())
+			{
+				layer->OnUIRender();
+			}
+		}
+
+		ImGui::End();
+
+		// Check for mouse click in any ImGui window and handle dragging
+		if (ImGui::IsMouseClicked(ImGuiMouseButton_Left) && ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow) && !ImGui::IsAnyItemHovered())
+		{
+			window->m_IsDragging = true;
+			window->m_InitialMousePos = io.MousePos;
+			window->m_InitialWindowPos = ImVec2(win->Pos.x, win->Pos.y);
+		}
+
+		if (window->m_IsDragging && !window->m_ResizePending)
+		{
+			if (ImGui::IsMouseDown(ImGuiMouseButton_Left))
+			{
+				ImVec2 delta = ImVec2(io.MousePos.x - window->m_InitialMousePos.x, io.MousePos.y - window->m_InitialMousePos.y);
+				if (delta.x != 0 || delta.y != 0)
+				{ // Only update position if there is a change
+					ImVec2 newWindowPos = ImVec2(window->m_InitialWindowPos.x + delta.x, window->m_InitialWindowPos.y + delta.y);
+					glfwSetWindowPos(window->GetWindowHandle(), (int)newWindowPos.x, (int)newWindowPos.y);
+				}
+			}
+			else
+			{
+				window->m_IsDragging = false;
+			}
+		}
+
+		// Detect window resize
+		if (win->Size.x != window->m_PreviousWidth || win->Size.y != window->m_PreviousHeight)
+		{
+			glfwSetWindowSize(window->GetWindowHandle(), win->Size.x, win->Size.y);
+		}
+	}
 
 	void Window::CleanupVulkanWindow()
 	{

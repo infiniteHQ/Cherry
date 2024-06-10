@@ -47,6 +47,7 @@ file(
 	CONFIGURE_DEPENDS # make a dependency
 	"${PROJECT_SOURCE_DIR}/platform/*.h" "${PROJECT_SOURCE_DIR}/platform/*.cpp"
 	"${PROJECT_SOURCE_DIR}/src/*.h" "${PROJECT_SOURCE_DIR}/src/*.cpp"
+	"${PROJECT_SOURCE_DIR}/components/*.h" "${PROJECT_SOURCE_DIR}/components/*.cpp"
 )
 
 add_library(uikit STATIC ${UIKIT_SRC})

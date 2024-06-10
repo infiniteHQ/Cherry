@@ -52,9 +52,8 @@ namespace UIKit
 		VkCommandBuffer GetCommandBuffer(bool begin);
 		GLFWwindow *GetWindowHandle() const { return m_WindowHandle; }
 
-
-	void OnWindowResize(GLFWwindow* windowHandle, int width, int height);
-	void OnWindowMove(int xpos, int ypos);
+		void OnWindowResize(GLFWwindow *windowHandle, int width, int height);
+		void OnWindowMove(int xpos, int ypos);
 
 		void BeginFrame()
 		{
@@ -83,59 +82,60 @@ namespace UIKit
 
 		void CleanupVulkanWindow();
 
-
 		template <typename Func>
 		void QueueEvent(Func &&func)
 		{
 			m_EventQueue.push(func);
 		}
 
+		bool m_ResizePending = false;
+		bool m_MovePending = false;
+		int m_PendingWidth = 0;
+		int m_PendingHeight = 0;
+		int m_PendingX = 0;
+		int m_PendingY = 0;
+		int m_PreviousWidth = 0;
+		int m_PreviousHeight = 0;
+		int m_PreviousX = 0;
+		int m_PreviousY = 0;
 
-    bool m_ResizePending = false;
-    bool m_MovePending = false;
-    int m_PendingWidth = 0;
-    int m_PendingHeight = 0;
-    int m_PendingX = 0;
-    int m_PendingY = 0;
-    int m_PreviousWidth = 0;
-    int m_PreviousHeight = 0;
-    int m_PreviousX = 0;
-    int m_PreviousY = 0;
+		void RequestResize(int width, int height)
+		{
+			m_ResizePending = true;
+			g_SwapChainRebuild = true;
+			m_PendingWidth = width;
+			m_PendingHeight = height;
+		}
 
-    void RequestResize(int width, int height) {
-        m_ResizePending = true;
-        g_SwapChainRebuild = true;
-        m_PendingWidth = width;
-        m_PendingHeight = height;
-    }
+		void RequestMove(int x, int y)
+		{
+			m_MovePending = true;
+			g_SwapChainRebuild = true;
+			m_PendingX = x;
+			m_PendingY = y;
+		}
 
+		void ApplyPendingResize()
+		{
+			if (m_ResizePending)
+			{
+				std::cout << "\33 RESIZE" << std::endl;
+				m_WinData.Width = m_PendingWidth;
+				m_WinData.Height = m_PendingHeight;
+				GLFWwindow *win = this->GetWindowHandle();
+				ImGui_ImplVulkanH_Window *wd = &this->m_WinData;
 
-    void RequestMove(int x, int y) {
-        m_MovePending = true;
-        g_SwapChainRebuild = true;
-        m_PendingX = x;
-        m_PendingY = y;
-    }
+				glfwSetWindowSize(win, m_WinData.Width, m_WinData.Height);
 
-    void ApplyPendingResize() {
-        if (m_ResizePending) {
-			std::cout << "\33 RESIZE" << std::endl;
-            m_WinData.Width = m_PendingWidth;
-            m_WinData.Height = m_PendingHeight;
-			GLFWwindow* win = this->GetWindowHandle();
-			ImGui_ImplVulkanH_Window* wd = &this->m_WinData;
+				m_ResizePending = false;
+			}
+		}
 
-			glfwSetWindowSize(win, m_WinData.Width, m_WinData.Height);
+		void HandleMouseMove(double xpos, double ypos);
+		void HandleMouseButton(int button, int action, int mods);
+		void HandleMouseScroll(double xoffset, double yoffset);
 
-            m_ResizePending = false;
-        }
-		
-    }
-
-void HandleMouseMove(double xpos, double ypos);
-void HandleMouseButton(int button, int action, int mods);
-void HandleMouseScroll(double xoffset, double yoffset);
-		
+		void Render();
 
 		std::shared_ptr<UIKit::Image> m_AppHeaderIcon;
 		std::shared_ptr<UIKit::Image> m_IconClose;
@@ -147,38 +147,37 @@ void HandleMouseScroll(double xoffset, double yoffset);
 
 		std::vector<std::vector<std::function<void()>>> s_ResourceFreeQueue;
 		uint32_t s_CurrentFrameIndex = 0;
-		
- int g_MinImageCount = 2;
- bool g_SwapChainRebuild = false;
- VkSwapchainKHR g_Swapchain;
- std::vector<VkImage> g_SwapchainImages;
- std::vector<VkImageView> g_SwapchainImageViews;
- VkFormat g_SwapchainImageFormat;
 
- VkAllocationCallbacks *g_Allocator = NULL;
- VkInstance g_Instance = VK_NULL_HANDLE;
- VkPhysicalDevice g_PhysicalDevice = VK_NULL_HANDLE;
- uint32_t g_QueueFamily = (uint32_t)-1;
- VkQueue g_Queue = VK_NULL_HANDLE;
- VkDebugReportCallbackEXT g_DebugReport = VK_NULL_HANDLE;
- VkPipelineCache g_PipelineCache = VK_NULL_HANDLE;
- VkDescriptorPool g_DescriptorPool = VK_NULL_HANDLE;
+		int g_MinImageCount = 2;
+		bool g_SwapChainRebuild = false;
+		VkSwapchainKHR g_Swapchain;
+		std::vector<VkImage> g_SwapchainImages;
+		std::vector<VkImageView> g_SwapchainImageViews;
+		VkFormat g_SwapchainImageFormat;
 
- VkDevice g_Device = VK_NULL_HANDLE;
- std::vector<std::vector<VkCommandBuffer>> s_AllocatedCommandBuffers;
-    bool m_IsDragging = false;
-    ImVec2 m_InitialMousePos;
-    ImVec2 m_InitialWindowPos;
+		VkAllocationCallbacks *g_Allocator = NULL;
+		VkInstance g_Instance = VK_NULL_HANDLE;
+		VkPhysicalDevice g_PhysicalDevice = VK_NULL_HANDLE;
+		uint32_t g_QueueFamily = (uint32_t)-1;
+		VkQueue g_Queue = VK_NULL_HANDLE;
+		VkDebugReportCallbackEXT g_DebugReport = VK_NULL_HANDLE;
+		VkPipelineCache g_PipelineCache = VK_NULL_HANDLE;
+		VkDescriptorPool g_DescriptorPool = VK_NULL_HANDLE;
+
+		VkDevice g_Device = VK_NULL_HANDLE;
+		std::vector<std::vector<VkCommandBuffer>> s_AllocatedCommandBuffers;
+		bool m_IsDragging = false;
+		ImVec2 m_InitialMousePos;
+		ImVec2 m_InitialWindowPos;
 
 		std::mutex m_EventQueueMutex;
 		std::queue<std::function<void()>> m_EventQueue;
- ImGuiContext* m_ImGuiContext;
+		ImGuiContext *m_ImGuiContext;
+
 	private:
 		std::function<void()> m_MenubarCallback;
 		std::string m_Name;
 		GLFWwindow *m_WindowHandle;
-
-
 	};
 
 	struct ParentWindow
@@ -234,22 +233,22 @@ void HandleMouseScroll(double xoffset, double yoffset);
 		void Close();
 
 		bool IsMaximized() const;
-		std::shared_ptr<Image> GetApplicationIcon(const std::string& window) const;
+		std::shared_ptr<Image> GetApplicationIcon(const std::string &window) const;
 
 		float GetTime();
-		GLFWwindow *GetWindowHandle(const std::string& winname) const;
+		GLFWwindow *GetWindowHandle(const std::string &winname) const;
 		bool IsTitleBarHovered() const { return m_TitleBarHovered; }
 
-		static VkInstance GetInstance(const std::string& win);
-		static VkPhysicalDevice GetPhysicalDevice(const std::string& win);
-		static VkDevice GetDevice(const std::string& win);
+		static VkInstance GetInstance(const std::string &win);
+		static VkPhysicalDevice GetPhysicalDevice(const std::string &win);
+		static VkDevice GetDevice(const std::string &win);
 
-		//static VkCommandBuffer GetCommandBuffer(bool begin);
-		static VkCommandBuffer GetCommandBuffer(bool begin, ImGui_ImplVulkanH_Window *wd, const std::string& win);
+		// static VkCommandBuffer GetCommandBuffer(bool begin);
+		static VkCommandBuffer GetCommandBuffer(bool begin, ImGui_ImplVulkanH_Window *wd, const std::string &win);
 		static VkCommandBuffer GetCommandBufferOfWin(const std::string &win_name, bool begin);
-		static void FlushCommandBuffer(VkCommandBuffer commandBuffer, const std::string& win);
+		static void FlushCommandBuffer(VkCommandBuffer commandBuffer, const std::string &win);
 
-		static void SubmitResourceFree(std::function<void()> &&func, const std::string& winname);
+		static void SubmitResourceFree(std::function<void()> &&func, const std::string &winname);
 
 		static ImFont *GetFont(const std::string &name);
 
@@ -260,8 +259,7 @@ void HandleMouseScroll(double xoffset, double yoffset);
 		std::vector<std::shared_ptr<Layer>> m_LayerStack;
 		bool m_Running = false;
 
-
-
+		void RenderWindow(Window *window);
 		// Resources
 		// TODO(Yan): move out of application class since this can't be tied
 		//            to application lifetime
@@ -280,9 +278,6 @@ void HandleMouseScroll(double xoffset, double yoffset);
 		float m_LastFrameTime = 0.0f;
 
 		bool m_TitleBarHovered = false;
-
-
-		void RenderWindow(Window *window);
 	};
 
 	// Implemented by CLIENT
