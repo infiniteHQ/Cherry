@@ -34,6 +34,12 @@ struct GLFWwindow;
 
 namespace UIKit
 {
+	enum class Window_Type
+	{
+		ENTIRE_WINDOW,
+		SIMPLE_WINDOW,
+	};
+
 
 	class Window
 	{
@@ -48,6 +54,7 @@ namespace UIKit
 				glfwDestroyWindow(m_WindowHandle);
 			}
 		}
+	void ProcessMouseEvents();
 
 		VkCommandBuffer GetCommandBuffer(bool begin);
 		GLFWwindow *GetWindowHandle() const { return m_WindowHandle; }
@@ -83,10 +90,7 @@ namespace UIKit
 		void CleanupVulkanWindow();
 
 		template <typename Func>
-		void QueueEvent(Func &&func)
-		{
-			m_EventQueue.push(func);
-		}
+		void QueueEvent(Func &&func);
 
 		bool m_ResizePending = false;
 		bool m_MovePending = false;
@@ -98,22 +102,11 @@ namespace UIKit
 		int m_PreviousHeight = 0;
 		int m_PreviousX = 0;
 		int m_PreviousY = 0;
+		int m_PosX = 0;
+		int m_PosY = 0;
 
-		void RequestResize(int width, int height)
-		{
-			m_ResizePending = true;
-			g_SwapChainRebuild = true;
-			m_PendingWidth = width;
-			m_PendingHeight = height;
-		}
-
-		void RequestMove(int x, int y)
-		{
-			m_MovePending = true;
-			g_SwapChainRebuild = true;
-			m_PendingX = x;
-			m_PendingY = y;
-		}
+		void RequestResize(int width, int height);
+		void RequestMove(int x, int y);
 
 		void ApplyPendingResize()
 		{
@@ -136,6 +129,8 @@ namespace UIKit
 		void HandleMouseScroll(double xoffset, double yoffset);
 
 		void Render();
+		void CalibrateStart();
+		void CalibrateEnd();
 
 		std::shared_ptr<UIKit::Image> m_AppHeaderIcon;
 		std::shared_ptr<UIKit::Image> m_IconClose;
@@ -145,34 +140,11 @@ namespace UIKit
 		int m_Width, m_Height;
 		ImGui_ImplVulkanH_Window m_WinData;
 
-		std::vector<std::vector<std::function<void()>>> s_ResourceFreeQueue;
-		uint32_t s_CurrentFrameIndex = 0;
-
-		int g_MinImageCount = 2;
-		bool g_SwapChainRebuild = false;
-		VkSwapchainKHR g_Swapchain;
-		std::vector<VkImage> g_SwapchainImages;
-		std::vector<VkImageView> g_SwapchainImageViews;
-		VkFormat g_SwapchainImageFormat;
-
-		VkAllocationCallbacks *g_Allocator = NULL;
-		VkInstance g_Instance = VK_NULL_HANDLE;
-		VkPhysicalDevice g_PhysicalDevice = VK_NULL_HANDLE;
-		uint32_t g_QueueFamily = (uint32_t)-1;
-		VkQueue g_Queue = VK_NULL_HANDLE;
-		VkDebugReportCallbackEXT g_DebugReport = VK_NULL_HANDLE;
-		VkPipelineCache g_PipelineCache = VK_NULL_HANDLE;
-		VkDescriptorPool g_DescriptorPool = VK_NULL_HANDLE;
-
-		VkDevice g_Device = VK_NULL_HANDLE;
-		std::vector<std::vector<VkCommandBuffer>> s_AllocatedCommandBuffers;
+    	VkPipelineLayout pipelineLayout;
+    	ImGuiViewport* m_Viewport = nullptr;
 		bool m_IsDragging = false;
 		ImVec2 m_InitialMousePos;
 		ImVec2 m_InitialWindowPos;
-
-		std::mutex m_EventQueueMutex;
-		std::queue<std::function<void()>> m_EventQueue;
-		ImGuiContext *m_ImGuiContext;
 
 	private:
 		std::function<void()> m_MenubarCallback;
@@ -246,10 +218,10 @@ namespace UIKit
 		// static VkCommandBuffer GetCommandBuffer(bool begin);
 		static VkCommandBuffer GetCommandBuffer(bool begin, ImGui_ImplVulkanH_Window *wd, const std::string &win);
 		static VkCommandBuffer GetCommandBufferOfWin(const std::string &win_name, bool begin);
+		static VkCommandBuffer GetCommandBuffer(const std::string &win_name, bool begin);
 		static void FlushCommandBuffer(VkCommandBuffer commandBuffer, const std::string &win);
 
 		static void SubmitResourceFree(std::function<void()> &&func, const std::string &winname);
-
 		static ImFont *GetFont(const std::string &name);
 
 		ApplicationSpecification m_Specification;
@@ -272,7 +244,7 @@ namespace UIKit
 		// For custom titlebars
 
 	private:
-		GLFWwindow *m_WindowHandle = nullptr;
+		//GLFWwindow *m_WindowHandle = nullptr;
 		float m_TimeStep = 0.0f;
 		float m_FrameTime = 0.0f;
 		float m_LastFrameTime = 0.0f;

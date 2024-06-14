@@ -29,6 +29,7 @@ namespace UIKit {
 
 		//void SetData(const void* data);
 		void SetData(const void* data, ImGui_ImplVulkanH_Window* wd);
+		void SetData(const void* data, const std::string& winname);
 		void SetData(const void* ImGuiDataType);
 
 		VkDescriptorSet GetDescriptorSet() const { return m_DescriptorSet; }

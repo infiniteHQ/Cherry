@@ -44,23 +44,31 @@ extern bool g_ApplicationRunning;
 #define IMGUI_VULKAN_DEBUG_REPORT
 #endif
 
-/*static VkAllocationCallbacks *win->g_Allocator = NULL;
-static VkInstance win->g_Instance = VK_NULL_HANDLE;
-static VkPhysicalDevice win->g_PhysicalDevice = VK_NULL_HANDLE;
-static VkDevice win->g_Device = VK_NULL_HANDLE;
-static uint32_t win->g_QueueFamily = (uint32_t)-1;
+static VkAllocationCallbacks *g_Allocator = NULL;
+static VkInstance g_Instance = VK_NULL_HANDLE;
+static VkPhysicalDevice g_PhysicalDevice = VK_NULL_HANDLE;
+static VkDevice g_Device = VK_NULL_HANDLE;
+static uint32_t g_QueueFamily = (uint32_t)-1;
 static VkQueue g_Queue = VK_NULL_HANDLE;
-static VkDebugReportCallbackEXT win->g_DebugReport = VK_NULL_HANDLE;
-static VkPipelineCache win->g_PipelineCache = VK_NULL_HANDLE;
-static VkDescriptorPool win->g_DescriptorPool = VK_NULL_HANDLE;*/
+static VkDebugReportCallbackEXT g_DebugReport = VK_NULL_HANDLE;
+static VkPipelineCache g_PipelineCache = VK_NULL_HANDLE;
+static VkDescriptorPool g_DescriptorPool = VK_NULL_HANDLE;
+static std::mutex m_EventQueueMutex;
+static std::queue<std::function<void()>> m_EventQueue;
+static int g_MinImageCount = 2;
+static bool g_SwapChainRebuild = false;
+static VkSwapchainKHR g_Swapchain;
+static std::vector<VkImage> g_SwapchainImages;
+static std::vector<VkImageView> g_SwapchainImageViews;
+static VkFormat g_SwapchainImageFormat;
 
 // Per-frame-in-flight
-// static std::vector<std::vector<VkCommandBuffer>> s_AllocatedCommandBuffers;
-// static std::vector<std::vector<std::function<void()>>> s_ResourceFreeQueue;
+static std::vector<std::vector<VkCommandBuffer>> s_AllocatedCommandBuffers;
+static std::vector<std::vector<std::function<void()>>> s_ResourceFreeQueue;
 
 // Unlike g_MainWindowData.FrameIndex, this is not the the swapchain image index
 // and is always guaranteed to increase (eg. 0, 1, 2, 0, 1, 2)
-// static uint32_t s_CurrentFrameIndex = 0;
+static uint32_t s_CurrentFrameIndex = 0;
 
 static std::unordered_map<std::string, ImFont *> s_Fonts;
 
@@ -89,7 +97,9 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL debug_report(VkDebugReportFlagsEXT flags, 
 }
 #endif // IMGUI_VULKAN_DEBUG_REPORT
 
-static void SetupVulkan(const char **extensions, uint32_t extensions_count, UIKit::Window *win)
+ImGuiContext *m_ImGuiContext;
+
+static void SetupVulkan(const char **extensions, uint32_t extensions_count)
 {
 	VkResult err;
 
@@ -113,12 +123,12 @@ static void SetupVulkan(const char **extensions, uint32_t extensions_count, UIKi
 		create_info.ppEnabledExtensionNames = extensions_ext;
 
 		// Create Vulkan Instance
-		err = vkCreateInstance(&create_info, win->g_Allocator, &win->g_Instance);
+		err = vkCreateInstance(&create_info, g_Allocator, &g_Instance);
 		check_vk_result(err);
 		free(extensions_ext);
 
 		// Get the function pointer (required for any extensions)
-		auto vkCreateDebugReportCallbackEXT = (PFN_vkCreateDebugReportCallbackEXT)vkGetInstanceProcAddr(win->g_Instance, "vkCreateDebugReportCallbackEXT");
+		auto vkCreateDebugReportCallbackEXT = (PFN_vkCreateDebugReportCallbackEXT)vkGetInstanceProcAddr(g_Instance, "vkCreateDebugReportCallbackEXT");
 		IM_ASSERT(vkCreateDebugReportCallbackEXT != NULL);
 
 		// Setup the debug report callback
@@ -127,25 +137,25 @@ static void SetupVulkan(const char **extensions, uint32_t extensions_count, UIKi
 		debug_report_ci.flags = VK_DEBUG_REPORT_ERROR_BIT_EXT | VK_DEBUG_REPORT_WARNING_BIT_EXT | VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT;
 		debug_report_ci.pfnCallback = debug_report;
 		debug_report_ci.pUserData = NULL;
-		err = vkCreateDebugReportCallbackEXT(win->g_Instance, &debug_report_ci, win->g_Allocator, &win->g_DebugReport);
+		err = vkCreateDebugReportCallbackEXT(g_Instance, &debug_report_ci, g_Allocator, &g_DebugReport);
 		check_vk_result(err);
 #else
 		// Create Vulkan Instance without any debug feature
-		err = vkCreateInstance(&create_info, win->g_Allocator, &win->g_Instance);
+		err = vkCreateInstance(&create_info, g_Allocator, &g_Instance);
 		check_vk_result(err);
-		IM_UNUSED(win->g_DebugReport);
+		IM_UNUSED(g_DebugReport);
 #endif
 	}
 
 	// Select GPU
 	{
 		uint32_t gpu_count;
-		err = vkEnumeratePhysicalDevices(win->g_Instance, &gpu_count, NULL);
+		err = vkEnumeratePhysicalDevices(g_Instance, &gpu_count, NULL);
 		check_vk_result(err);
 		IM_ASSERT(gpu_count > 0);
 
 		VkPhysicalDevice *gpus = (VkPhysicalDevice *)malloc(sizeof(VkPhysicalDevice) * gpu_count);
-		err = vkEnumeratePhysicalDevices(win->g_Instance, &gpu_count, gpus);
+		err = vkEnumeratePhysicalDevices(g_Instance, &gpu_count, gpus);
 		check_vk_result(err);
 
 		// If a number >1 of GPUs got reported, find discrete GPU if present, or use first one available. This covers
@@ -163,24 +173,24 @@ static void SetupVulkan(const char **extensions, uint32_t extensions_count, UIKi
 			}
 		}
 
-		win->g_PhysicalDevice = gpus[use_gpu];
+		g_PhysicalDevice = gpus[use_gpu];
 		free(gpus);
 	}
 
 	// Select graphics queue family
 	{
 		uint32_t count;
-		vkGetPhysicalDeviceQueueFamilyProperties(win->g_PhysicalDevice, &count, NULL);
+		vkGetPhysicalDeviceQueueFamilyProperties(g_PhysicalDevice, &count, NULL);
 		VkQueueFamilyProperties *queues = (VkQueueFamilyProperties *)malloc(sizeof(VkQueueFamilyProperties) * count);
-		vkGetPhysicalDeviceQueueFamilyProperties(win->g_PhysicalDevice, &count, queues);
+		vkGetPhysicalDeviceQueueFamilyProperties(g_PhysicalDevice, &count, queues);
 		for (uint32_t i = 0; i < count; i++)
 			if (queues[i].queueFlags & VK_QUEUE_GRAPHICS_BIT)
 			{
-				win->g_QueueFamily = i;
+				g_QueueFamily = i;
 				break;
 			}
 		free(queues);
-		IM_ASSERT(win->g_QueueFamily != (uint32_t)-1);
+		IM_ASSERT(g_QueueFamily != (uint32_t)-1);
 	}
 
 	// Create Logical Device (with 1 queue)
@@ -190,7 +200,7 @@ static void SetupVulkan(const char **extensions, uint32_t extensions_count, UIKi
 		const float queue_priority[] = {1.0f};
 		VkDeviceQueueCreateInfo queue_info[1] = {};
 		queue_info[0].sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-		queue_info[0].queueFamilyIndex = win->g_QueueFamily;
+		queue_info[0].queueFamilyIndex = g_QueueFamily;
 		queue_info[0].queueCount = 1;
 		queue_info[0].pQueuePriorities = queue_priority;
 		VkDeviceCreateInfo create_info = {};
@@ -199,9 +209,9 @@ static void SetupVulkan(const char **extensions, uint32_t extensions_count, UIKi
 		create_info.pQueueCreateInfos = queue_info;
 		create_info.enabledExtensionCount = device_extension_count;
 		create_info.ppEnabledExtensionNames = device_extensions;
-		err = vkCreateDevice(win->g_PhysicalDevice, &create_info, win->g_Allocator, &win->g_Device);
+		err = vkCreateDevice(g_PhysicalDevice, &create_info, g_Allocator, &g_Device);
 		check_vk_result(err);
-		vkGetDeviceQueue(win->g_Device, win->g_QueueFamily, 0, &win->g_Queue);
+		vkGetDeviceQueue(g_Device, g_QueueFamily, 0, &g_Queue);
 	}
 
 	// Create Descriptor Pool
@@ -225,7 +235,7 @@ static void SetupVulkan(const char **extensions, uint32_t extensions_count, UIKi
 		pool_info.maxSets = 1000 * IM_ARRAYSIZE(pool_sizes);
 		pool_info.poolSizeCount = (uint32_t)IM_ARRAYSIZE(pool_sizes);
 		pool_info.pPoolSizes = pool_sizes;
-		err = vkCreateDescriptorPool(win->g_Device, &pool_info, win->g_Allocator, &win->g_DescriptorPool);
+		err = vkCreateDescriptorPool(g_Device, &pool_info, g_Allocator, &g_DescriptorPool);
 		check_vk_result(err);
 	}
 }
@@ -238,7 +248,7 @@ static void SetupVulkanWindow(ImGui_ImplVulkanH_Window *wd, VkSurfaceKHR surface
 
 	// Check for WSI support
 	VkBool32 res;
-	vkGetPhysicalDeviceSurfaceSupportKHR(win->g_PhysicalDevice, win->g_QueueFamily, wd->Surface, &res);
+	vkGetPhysicalDeviceSurfaceSupportKHR(g_PhysicalDevice, g_QueueFamily, wd->Surface, &res);
 	if (res != VK_TRUE)
 	{
 		fprintf(stderr, "Error no WSI support on physical device 0\n");
@@ -248,7 +258,7 @@ static void SetupVulkanWindow(ImGui_ImplVulkanH_Window *wd, VkSurfaceKHR surface
 	// Select Surface Format
 	const VkFormat requestSurfaceImageFormat[] = {VK_FORMAT_B8G8R8A8_UNORM, VK_FORMAT_R8G8B8A8_UNORM, VK_FORMAT_B8G8R8_UNORM, VK_FORMAT_R8G8B8_UNORM};
 	const VkColorSpaceKHR requestSurfaceColorSpace = VK_COLORSPACE_SRGB_NONLINEAR_KHR;
-	wd->SurfaceFormat = ImGui_ImplVulkanH_SelectSurfaceFormat(win->g_PhysicalDevice, wd->Surface, requestSurfaceImageFormat, (size_t)IM_ARRAYSIZE(requestSurfaceImageFormat), requestSurfaceColorSpace);
+	wd->SurfaceFormat = ImGui_ImplVulkanH_SelectSurfaceFormat(g_PhysicalDevice, wd->Surface, requestSurfaceImageFormat, (size_t)IM_ARRAYSIZE(requestSurfaceImageFormat), requestSurfaceColorSpace);
 
 	// Select Present Mode
 #ifdef IMGUI_UNLIMITED_FRAME_RATE
@@ -256,37 +266,37 @@ static void SetupVulkanWindow(ImGui_ImplVulkanH_Window *wd, VkSurfaceKHR surface
 #else
 	VkPresentModeKHR present_modes[] = {VK_PRESENT_MODE_FIFO_KHR};
 #endif
-	wd->PresentMode = ImGui_ImplVulkanH_SelectPresentMode(win->g_PhysicalDevice, wd->Surface, &present_modes[0], IM_ARRAYSIZE(present_modes));
+	wd->PresentMode = ImGui_ImplVulkanH_SelectPresentMode(g_PhysicalDevice, wd->Surface, &present_modes[0], IM_ARRAYSIZE(present_modes));
 	// printf("[vulkan] Selected PresentMode = %d\n", wd->PresentMode);
 	// Create SwapChain, RenderPass, Framebuffer, etc.
-	IM_ASSERT(win->g_MinImageCount >= 2);
-	ImGui_ImplVulkanH_CreateOrResizeWindow(win->g_Instance, win->g_PhysicalDevice, win->g_Device, wd, win->g_QueueFamily, win->g_Allocator, width, height, win->g_MinImageCount);
+	IM_ASSERT(g_MinImageCount >= 2);
+	ImGui_ImplVulkanH_CreateOrResizeWindow(g_Instance, g_PhysicalDevice, g_Device, wd, g_QueueFamily, g_Allocator, width, height, g_MinImageCount);
 }
 
 static void CleanupVulkan(UIKit::Window *win)
 {
-	vkDestroyDescriptorPool(win->g_Device, win->g_DescriptorPool, win->g_Allocator);
+	vkDestroyDescriptorPool(g_Device, g_DescriptorPool, g_Allocator);
 
 #ifdef IMGUI_VULKAN_DEBUG_REPORT
 	// Remove the debug report callback
-	auto vkDestroyDebugReportCallbackEXT = (PFN_vkDestroyDebugReportCallbackEXT)vkGetInstanceProcAddr(win->g_Instance, "vkDestroyDebugReportCallbackEXT");
-	vkDestroyDebugReportCallbackEXT(win->g_Instance, win->g_DebugReport, win->g_Allocator);
+	auto vkDestroyDebugReportCallbackEXT = (PFN_vkDestroyDebugReportCallbackEXT)vkGetInstanceProcAddr(g_Instance, "vkDestroyDebugReportCallbackEXT");
+	vkDestroyDebugReportCallbackEXT(g_Instance, g_DebugReport, g_Allocator);
 #endif // IMGUI_VULKAN_DEBUG_REPORT
 
-	vkDestroyDevice(win->g_Device, win->g_Allocator);
-	vkDestroyInstance(win->g_Instance, win->g_Allocator);
+	vkDestroyDevice(g_Device, g_Allocator);
+	vkDestroyInstance(g_Instance, g_Allocator);
 }
 
 static UIKit::Application *app;
 
 static void CleanupVulkanWindow(UIKit::Window *win)
 {
-	ImGui_ImplVulkanH_DestroyWindow(win->g_Instance, win->g_Device, &win->m_WinData, win->g_Allocator);
+	ImGui_ImplVulkanH_DestroyWindow(g_Instance, g_Device, &win->m_WinData, g_Allocator);
 }
 
 static void CleanupSpecificVulkanWindow(UIKit::Window *win)
 {
-	ImGui_ImplVulkanH_DestroyWindow(win->g_Instance, win->g_Device, &win->m_WinData, win->g_Allocator);
+	ImGui_ImplVulkanH_DestroyWindow(g_Instance, g_Device, &win->m_WinData, g_Allocator);
 }
 
 static void FrameRender(ImGui_ImplVulkanH_Window *wd, UIKit::Window *win, ImDrawData *draw_data)
@@ -295,40 +305,40 @@ static void FrameRender(ImGui_ImplVulkanH_Window *wd, UIKit::Window *win, ImDraw
 
 	VkSemaphore image_acquired_semaphore = wd->FrameSemaphores[wd->SemaphoreIndex].ImageAcquiredSemaphore;
 	VkSemaphore render_complete_semaphore = wd->FrameSemaphores[wd->SemaphoreIndex].RenderCompleteSemaphore;
-	err = vkAcquireNextImageKHR(win->g_Device, wd->Swapchain, UINT64_MAX, image_acquired_semaphore, VK_NULL_HANDLE, &wd->FrameIndex);
+	err = vkAcquireNextImageKHR(g_Device, wd->Swapchain, UINT64_MAX, image_acquired_semaphore, VK_NULL_HANDLE, &wd->FrameIndex);
 
 	if (err == VK_ERROR_OUT_OF_DATE_KHR || err == VK_SUBOPTIMAL_KHR)
 	{
-		win->g_SwapChainRebuild = true;
+		g_SwapChainRebuild = true;
 		return;
 	}
 	check_vk_result(err);
 
-	win->s_CurrentFrameIndex = (win->s_CurrentFrameIndex + 1) % win->m_WinData.ImageCount;
+	s_CurrentFrameIndex = (s_CurrentFrameIndex + 1) % win->m_WinData.ImageCount;
 
 	ImGui_ImplVulkanH_Frame *fd = &wd->Frames[wd->FrameIndex];
 	{
-		err = vkWaitForFences(win->g_Device, 1, &fd->Fence, VK_TRUE, UINT64_MAX);
+		err = vkWaitForFences(g_Device, 1, &fd->Fence, VK_TRUE, UINT64_MAX);
 		check_vk_result(err);
 
-		err = vkResetFences(win->g_Device, 1, &fd->Fence);
+		err = vkResetFences(g_Device, 1, &fd->Fence);
 		check_vk_result(err);
 	}
 
 	{
-		for (auto &func : win->s_ResourceFreeQueue[win->m_WinData.FrameIndex])
+		for (auto &func : s_ResourceFreeQueue[win->m_WinData.FrameIndex])
 			func();
-		win->s_ResourceFreeQueue[win->m_WinData.FrameIndex].clear();
+		s_ResourceFreeQueue[win->m_WinData.FrameIndex].clear();
 	}
 	{
-		auto &allocatedCommandBuffers = win->s_AllocatedCommandBuffers[wd->FrameIndex];
+		auto &allocatedCommandBuffers = s_AllocatedCommandBuffers[wd->FrameIndex];
 		if (allocatedCommandBuffers.size() > 0)
 		{
-			vkFreeCommandBuffers(win->g_Device, fd->CommandPool, (uint32_t)allocatedCommandBuffers.size(), allocatedCommandBuffers.data());
+			vkFreeCommandBuffers(g_Device, fd->CommandPool, (uint32_t)allocatedCommandBuffers.size(), allocatedCommandBuffers.data());
 			allocatedCommandBuffers.clear();
 		}
 
-		err = vkResetCommandPool(win->g_Device, fd->CommandPool, 0);
+		err = vkResetCommandPool(g_Device, fd->CommandPool, 0);
 		check_vk_result(err);
 		VkCommandBufferBeginInfo info = {};
 		info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
@@ -367,14 +377,14 @@ static void FrameRender(ImGui_ImplVulkanH_Window *wd, UIKit::Window *win, ImDraw
 
 		err = vkEndCommandBuffer(fd->CommandBuffer);
 		check_vk_result(err);
-		err = vkQueueSubmit(win->g_Queue, 1, &info, fd->Fence);
+		err = vkQueueSubmit(g_Queue, 1, &info, fd->Fence);
 		check_vk_result(err);
 	}
 }
 
 static void FramePresent(ImGui_ImplVulkanH_Window *wd, UIKit::Window *win)
 {
-	if (win->g_SwapChainRebuild)
+	if (g_SwapChainRebuild)
 		return;
 	VkSemaphore render_complete_semaphore = wd->FrameSemaphores[wd->SemaphoreIndex].RenderCompleteSemaphore;
 	VkPresentInfoKHR info = {};
@@ -384,10 +394,10 @@ static void FramePresent(ImGui_ImplVulkanH_Window *wd, UIKit::Window *win)
 	info.swapchainCount = 1;
 	info.pSwapchains = &wd->Swapchain;
 	info.pImageIndices = &wd->FrameIndex;
-	VkResult err = vkQueuePresentKHR(win->g_Queue, &info);
+	VkResult err = vkQueuePresentKHR(g_Queue, &info);
 	if (err == VK_ERROR_OUT_OF_DATE_KHR || err == VK_SUBOPTIMAL_KHR)
 	{
-		win->g_SwapChainRebuild = true;
+		g_SwapChainRebuild = true;
 		return;
 	}
 	check_vk_result(err);
@@ -427,10 +437,69 @@ namespace UIKit
 
 	void Application::Init()
 	{
+		// Set main context application ptr
 		app = &this->Get();
-		this->m_Windows.push_back(std::make_shared<Window>("base", 1280, 720));
-		// this->m_Windows.push_back(std::make_shared<Window>("baseadditionnal", 600, 650));
-		// this->m_Windows.push_back(std::make_shared<Window>("baseadditiqsdonnal", 1200, 650));
+
+		// Intialize logging
+		Log::Init();
+
+		// Setup GLFW window
+		glfwSetErrorCallback(glfw_error_callback);
+		if (!glfwInit())
+		{
+			std::cerr << "Could not initalize GLFW!\n";
+			return;
+		}
+
+		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API); // Pas de contexte OpenGL
+
+		// Check if custom titlebar is enabled
+		bool customTitlebar = app->m_Specification.CustomTitlebar;
+		glfwWindowHint(GLFW_DECORATED, customTitlebar ? GLFW_FALSE : GLFW_TRUE);
+		glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
+
+		// Setup Vulkan instance, device, etc.
+		uint32_t extensions_count = 2;
+		const char **extensions = glfwGetRequiredInstanceExtensions(&extensions_count);
+		SetupVulkan(extensions, extensions_count);
+
+		// Create the ImGui context
+		IMGUI_CHECKVERSION();
+		if (!m_ImGuiContext)
+		{
+			m_ImGuiContext = ImGui::CreateContext();
+		}
+		ImGui::SetCurrentContext(m_ImGuiContext);
+
+		ImGuiIO &io = ImGui::GetIO();
+		(void)io;
+		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
+		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;	  // Enable Docking
+		io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;	  // Enable Multi-Viewport / Platform Windows
+		io.FontGlobalScale = 0.83f;
+
+		// Theme colors
+		UI::SetHazelTheme();
+
+		// Style
+		ImGuiStyle &style = ImGui::GetStyle();
+		style.WindowPadding = ImVec2(10.0f, 10.0f);
+		style.FramePadding = ImVec2(8.0f, 6.0f);
+		style.ItemSpacing = ImVec2(6.0f, 6.0f);
+		style.ChildRounding = 6.0f;
+		style.PopupRounding = 6.0f;
+		style.FrameRounding = 6.0f;
+		style.WindowTitleAlign = ImVec2(0.5f, 0.5f);
+
+		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+		{
+			style.WindowRounding = 0.0f;
+			style.Colors[ImGuiCol_WindowBg].w = 1.0f;
+		}
+
+		this->m_Windows.push_back(std::make_shared<Window>("base", 1800, 1000));
+
+		//this->m_Windows.push_back(std::make_shared<Window>("base221155", 1800, 200));
 	}
 
 	void Application::Shutdown()
@@ -452,16 +521,16 @@ namespace UIKit
 		// Cleanup
 		for (auto win : app->m_Windows)
 		{
-			VkResult err = vkDeviceWaitIdle(win->g_Device);
+			VkResult err = vkDeviceWaitIdle(g_Device);
 			check_vk_result(err);
 
 			// Free resources in queue
-			for (auto &queue : win->s_ResourceFreeQueue)
+			for (auto &queue : s_ResourceFreeQueue)
 			{
 				for (auto &func : queue)
 					func();
 			}
-			win->s_ResourceFreeQueue.clear();
+			s_ResourceFreeQueue.clear();
 		}
 
 		ImGui_ImplVulkan_Shutdown();
@@ -475,7 +544,7 @@ namespace UIKit
 			CleanupVulkan(win.get());
 		}
 
-		glfwDestroyWindow(m_WindowHandle);
+		// glfwDestroyWindow(m_WindowHandle);
 		glfwTerminate();
 
 		g_ApplicationRunning = false;
@@ -857,31 +926,108 @@ namespace UIKit
 		}
 	}
 
+	void Window::RequestResize(int width, int height)
+	{
+		m_ResizePending = true;
+		g_SwapChainRebuild = true;
+		m_PendingWidth = width;
+		m_PendingHeight = height;
+	}
+
+	void Window::RequestMove(int x, int y)
+	{
+		m_MovePending = true;
+		g_SwapChainRebuild = true;
+		m_PendingX = x;
+		m_PendingY = y;
+	}
+
+	// Fonction de rappel pour la gestion du clic de souris
+	void MouseButtonCallback(GLFWwindow *window, int button, int action, int mods)
+	{
+		std::cout << "DSDD" << std::endl;
+	}
+
+	// Fonction de rappel pour la gestion du mouvement de souris
+	void MouseMoveCallback(GLFWwindow *window, double xpos, double ypos)
+	{
+		std::cout << "MOVE" << std::endl;
+	}
+
+void Window::CalibrateStart() {
+    // Obtenez une référence vers le cadre actuel dans la liste des cadres de cette fenêtre
+    ImGui_ImplVulkanH_Frame* fd = &this->m_WinData.Frames[this->m_WinData.FrameIndex];
+
+    // Configuration de la passse de rendu (render pass)
+    VkRenderPassBeginInfo renderPassInfo = {};
+    renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+    renderPassInfo.renderPass = this->m_WinData.RenderPass;
+    renderPassInfo.framebuffer = fd->Framebuffer;
+    renderPassInfo.renderArea.offset = {0, 0};
+    renderPassInfo.renderArea.extent.width = this->m_WinData.Width;
+    renderPassInfo.renderArea.extent.height = this->m_WinData.Height;
+    renderPassInfo.clearValueCount = 1;
+    renderPassInfo.pClearValues = &this->m_WinData.ClearValue;
+
+    // Commencer la passe de rendu
+    vkCmdBeginRenderPass(fd->CommandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+
+    // Vous pouvez ajouter d'autres commandes de rendu ici
+
+
+    // Vous pouvez ajouter d'autres commandes de fin de rendu ici
+}
+
+
+		template <typename Func>
+		void Window::QueueEvent(Func &&func)
+		{
+			m_EventQueue.push(func);
+		}
+
+void Window::CalibrateEnd() {
+    std::cout << "CalibrateEnd called." << std::endl;
+
+    // Assurez-vous que this->m_WinData.FrameIndex est valide
+    if (this->m_WinData.FrameIndex < 0 ) {
+        std::cerr << "Error: Invalid frame index." << std::endl;
+        return;
+    }
+
+    // Obtenez une référence vers le cadre actuel dans la liste des cadres de cette fenêtre
+    ImGui_ImplVulkanH_Frame* fd = &this->m_WinData.Frames[this->m_WinData.FrameIndex];
+
+    // Vérifiez que fd et fd->CommandBuffer sont valides avant d'appeler vkCmdEndRenderPass
+    if (fd && fd->CommandBuffer) {
+        std::cout << "Calling vkCmdEndRenderPass." << std::endl;
+        //vkCmdEndRenderPass(fd->CommandBuffer);
+    } else {
+        std::cerr << "Error: Invalid fd or CommandBuffer." << std::endl;
+    }
+}
+
 	void Window::Render()
 	{
+
 		ImGuiIO &io = ImGui::GetIO();
 		ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 		// Ensure the current ImGui context is set for this window
-		ImGui::SetCurrentContext(this->m_ImGuiContext);
 
-        glfwPollEvents();
-        glfwMakeContextCurrent(this->GetWindowHandle());
-
-		if (this->g_SwapChainRebuild)
+		if (g_SwapChainRebuild)
 		{
 			int width, height;
 			glfwGetFramebufferSize(this->GetWindowHandle(), &width, &height);
 			if (width > 0 && height > 0)
 			{
-				ImGui_ImplVulkan_SetMinImageCount(this->g_MinImageCount);
-				ImGui_ImplVulkanH_CreateOrResizeWindow(this->g_Instance, this->g_PhysicalDevice, this->g_Device, &this->m_WinData, this->g_QueueFamily, this->g_Allocator, this->m_WinData.Width, this->m_WinData.Height, this->g_MinImageCount);
+				ImGui_ImplVulkan_SetMinImageCount(g_MinImageCount);
+				ImGui_ImplVulkanH_CreateOrResizeWindow(g_Instance, g_PhysicalDevice, g_Device, &this->m_WinData, g_QueueFamily, g_Allocator, this->m_WinData.Width, this->m_WinData.Height, g_MinImageCount);
 				this->m_WinData.FrameIndex = 0;
 
 				// Clear allocated command buffers from here since entire pool is destroyed
-				this->s_AllocatedCommandBuffers.clear();
-				this->s_AllocatedCommandBuffers.resize(this->m_WinData.ImageCount);
+				s_AllocatedCommandBuffers.clear();
+				s_AllocatedCommandBuffers.resize(this->m_WinData.ImageCount);
 
-				this->g_SwapChainRebuild = false;
+				g_SwapChainRebuild = false;
 			}
 		}
 
@@ -891,18 +1037,14 @@ namespace UIKit
 			this->m_ResizePending = false;
 		}
 
-		ImGui_ImplVulkan_NewFrame();
-		ImGui_ImplGlfw_NewFrame();
-		ImGui::NewFrame();
-
 		{
-			std::scoped_lock<std::mutex> lock(this->m_EventQueueMutex);
+			std::scoped_lock<std::mutex> lock(m_EventQueueMutex);
 
-			while (!this->m_EventQueue.empty())
+			while (!m_EventQueue.empty())
 			{
-				auto &func = this->m_EventQueue.front();
+				auto &func = m_EventQueue.front();
 				func();
-				this->m_EventQueue.pop();
+				m_EventQueue.pop();
 			}
 		}
 
@@ -933,6 +1075,7 @@ namespace UIKit
 		else
 			std::this_thread::sleep_for(std::chrono::milliseconds(5));
 	}
+	
 
 	void Application::Run()
 	{
@@ -944,55 +1087,38 @@ namespace UIKit
 		m_Running = true;
 
 		while (m_Running)
-{
-    // Poll for events for each window
-    for (auto &window : m_Windows)
-    {
-    }
+		{
+			// Update layers
+			for (auto &layer : m_LayerStack)
+			{
+				layer->OnUpdate(m_TimeStep);
+			}
 
-    // Update layers
-    for (auto &layer : m_LayerStack)
-    {
-        layer->OnUpdate(m_TimeStep);
-    }
+			// Voir avec les queues, counters etc...
+			glfwPollEvents(); // Window count in vulkan setup :
+			
+			ImGui_ImplVulkan_NewFrame();
+			ImGui_ImplGlfw_NewFrame();
+			ImGui::NewFrame(); // Trouver le moyen de faire qu'une seul frame pour toutes les fenettres
+			// Render each window
+			for (auto &window : m_Windows)
+			{
+				window->CalibrateStart();
+				window->Render();
+				window->CalibrateEnd();
+			}
 
-    // Render each window
-    for (auto &window : m_Windows)
-    {
-        window->Render();
-    }
-
-    // Update time
-    float time = GetTime();
-    m_FrameTime = time - m_LastFrameTime;
-    m_TimeStep = glm::min<float>(m_FrameTime, 0.0333f);
-    m_LastFrameTime = time;
-}
-
+			// Update time
+			float time = GetTime();
+			m_FrameTime = time - m_LastFrameTime;
+			m_TimeStep = glm::min<float>(m_FrameTime, 0.0333f);
+			m_LastFrameTime = time;
+		}
 	}
 
 	Window::Window(const std::string &name, int width, int height)
 		: m_Name(name), m_Width(width), m_Height(height)
 	{
-
-		// Intialize logging
-		Log::Init();
-
-		// Setup GLFW window
-		glfwSetErrorCallback(glfw_error_callback);
-		if (!glfwInit())
-		{
-			std::cerr << "Could not initalize GLFW!\n";
-			return;
-		}
-
-		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API); // Pas de contexte OpenGL
-
-		// Check if custom titlebar is enabled
-		bool customTitlebar = app->m_Specification.CustomTitlebar;
-		glfwWindowHint(GLFW_DECORATED, customTitlebar ? GLFW_FALSE : GLFW_TRUE);
-		glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
-
 		m_WindowHandle = glfwCreateWindow(width, height, name.c_str(), nullptr, nullptr);
 		if (!m_WindowHandle)
 		{
@@ -1012,64 +1138,6 @@ namespace UIKit
 							 monitorY + (videoMode->height - height) / 2);
 		}
 
-		glfwSetWindowUserPointer(m_WindowHandle, this);
-
-		/*glfwSetWindowSizeCallback(m_WindowHandle, [](GLFWwindow *window, int width, int height)
-{
-	Window *win = static_cast<Window *>(glfwGetWindowUserPointer(window));
-	if (win)
-	{
-		win->m_Width = width;
-		win->m_Height = height;
-
-			ImGuiViewport* viewport = ImGui::FindViewportByPlatformHandle(window);
-		if (viewport)
-		{
-			viewport->Size = ImVec2(static_cast<float>(width), static_cast<float>(height));
-		}
-
-		// Recréez les ressources Vulkan nécessaires ici
-		win->OnWindowResize(window, width, height);
-	}
-});*/
-
-		glfwSetWindowPosCallback(m_WindowHandle, [](GLFWwindow *window, int xpos, int ypos)
-								 {
-        Window* win = static_cast<Window*>(glfwGetWindowUserPointer(window));
-        if (win)
-        {
-            ImGuiViewport* viewport = ImGui::FindViewportByPlatformHandle(window);
-            if (viewport)
-            {
-                viewport->Pos = ImVec2(static_cast<float>(xpos), static_cast<float>(ypos));
-            }
-        } });
-
-		// Set GLFW callbacks for mouse events
-		glfwSetCursorPosCallback(m_WindowHandle, [](GLFWwindow *window, double xpos, double ypos)
-								 {
-        Window* win = static_cast<Window*>(glfwGetWindowUserPointer(window));
-        if (win) {
-            // Handle mouse cursor position event
-            win->HandleMouseMove(xpos, ypos);
-        } });
-
-		glfwSetMouseButtonCallback(m_WindowHandle, [](GLFWwindow *window, int button, int action, int mods)
-								   {
-        Window* win = static_cast<Window*>(glfwGetWindowUserPointer(window));
-        if (win) {
-            // Handle mouse button event
-            win->HandleMouseButton(button, action, mods);
-        } });
-
-		glfwSetScrollCallback(m_WindowHandle, [](GLFWwindow *window, double xoffset, double yoffset)
-							  {
-        Window* win = static_cast<Window*>(glfwGetWindowUserPointer(window));
-        if (win) {
-            // Handle scroll event
-            win->HandleMouseScroll(xoffset, yoffset);
-        } });
-
 		// Setup Vulkan
 		if (!glfwVulkanSupported())
 		{
@@ -1088,11 +1156,6 @@ namespace UIKit
 			stbi_image_free(icon[0].pixels);
 		}
 
-		// Setup Vulkan instance, device, etc.
-		uint32_t extensions_count = 0;
-		const char **extensions = glfwGetRequiredInstanceExtensions(&extensions_count);
-		SetupVulkan(extensions, extensions_count, this);
-
 		VkSurfaceKHR surface;
 		if (glfwCreateWindowSurface(g_Instance, m_WindowHandle, g_Allocator, &surface) != VK_SUCCESS)
 		{
@@ -1106,37 +1169,6 @@ namespace UIKit
 		SetupVulkanWindow(wd, surface, w, h, this);
 		s_AllocatedCommandBuffers.resize(wd->ImageCount);
 		s_ResourceFreeQueue.resize(wd->ImageCount);
-
-		// Create the ImGui context
-		IMGUI_CHECKVERSION();
-		m_ImGuiContext = ImGui::CreateContext();
-		ImGui::SetCurrentContext(m_ImGuiContext);
-
-		ImGuiIO &io = ImGui::GetIO();
-		(void)io;
-		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
-		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;	  // Enable Docking
-		io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;	  // Enable Multi-Viewport / Platform Windows
-		io.FontGlobalScale = 0.83f;
-
-		// Theme colors
-		UI::SetHazelTheme();
-
-		// Style
-		ImGuiStyle &style = ImGui::GetStyle();
-		style.WindowPadding = ImVec2(10.0f, 10.0f);
-		style.FramePadding = ImVec2(8.0f, 6.0f);
-		style.ItemSpacing = ImVec2(6.0f, 6.0f);
-		style.ChildRounding = 6.0f;
-		style.PopupRounding = 6.0f;
-		style.FrameRounding = 6.0f;
-		style.WindowTitleAlign = ImVec2(0.5f, 0.5f);
-
-		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
-		{
-			style.WindowRounding = 0.0f;
-			style.Colors[ImGuiCol_WindowBg].w = 1.0f;
-		}
 
 		// Setup Platform/Renderer backends
 		ImGui_ImplGlfw_InitForVulkan(m_WindowHandle, true);
@@ -1156,6 +1188,7 @@ namespace UIKit
 		init_info.CheckVkResultFn = check_vk_result;
 		ImGui_ImplVulkan_Init(&init_info, wd->RenderPass);
 
+		ImGuiIO &io = ImGui::GetIO();
 		// Load default font
 		ImFontConfig fontConfig;
 		fontConfig.FontDataOwnedByAtlas = false;
@@ -1201,6 +1234,7 @@ namespace UIKit
 			check_vk_result(err);
 			ImGui_ImplVulkan_DestroyFontUploadObjects();
 		}
+
 	}
 
 	void Window::HandleMouseMove(double xpos, double ypos)
@@ -1222,14 +1256,12 @@ namespace UIKit
 
 	void Window::LoadImages()
 	{
-
 		{
 			uint32_t w, h;
 			void *data = Image::Decode(g_UIKitIcon, sizeof(g_UIKitIcon), w, h);
 			this->m_AppHeaderIcon = std::make_shared<UIKit::Image>(w, h, ImageFormat::RGBA, this->GetName(), data);
 			free(data);
 		}
-
 		{
 			uint32_t w, h;
 			void *data = Image::Decode(g_WindowMinimizeIcon, sizeof(g_WindowMinimizeIcon), w, h);
@@ -1263,7 +1295,6 @@ namespace UIKit
 
 	std::shared_ptr<Image> Application::GetApplicationIcon(const std::string &window) const
 	{
-
 		for (auto win : app->m_Windows)
 		{
 			if (win->GetName() == window)
@@ -1276,7 +1307,7 @@ namespace UIKit
 
 	bool Application::IsMaximized() const
 	{
-		return (bool)glfwGetWindowAttrib(m_WindowHandle, GLFW_MAXIMIZED);
+		//	return (bool)glfwGetWindowAttrib(m_WindowHandle, GLFW_MAXIMIZED);
 	}
 
 	float Application::GetTime()
@@ -1290,7 +1321,7 @@ namespace UIKit
 		{
 			if (win->GetName() == winname)
 			{
-				return win->g_Instance;
+				return g_Instance;
 			}
 		}
 		return nullptr;
@@ -1302,7 +1333,7 @@ namespace UIKit
 		{
 			if (win->GetName() == winname)
 			{
-				return win->g_PhysicalDevice;
+				return g_PhysicalDevice;
 			}
 		}
 		return nullptr;
@@ -1314,7 +1345,7 @@ namespace UIKit
 		{
 			if (win->GetName() == winname)
 			{
-				return win->g_Device;
+				return g_Device;
 			}
 		}
 		return nullptr;
@@ -1334,7 +1365,7 @@ namespace UIKit
 		cmdBufAllocateInfo.commandBufferCount = 1;
 
 		VkCommandBuffer &command_buffer = s_AllocatedCommandBuffers[wd->FrameIndex].emplace_back();
-		auto err = vkAllocateCommandBuffers(this->g_Device, &cmdBufAllocateInfo, &command_buffer);
+		auto err = vkAllocateCommandBuffers(g_Device, &cmdBufAllocateInfo, &command_buffer);
 
 		VkCommandBufferBeginInfo begin_info = {};
 		begin_info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
@@ -1343,6 +1374,41 @@ namespace UIKit
 		check_vk_result(err);
 
 		return command_buffer;
+	}
+
+	VkCommandBuffer Application::GetCommandBuffer(const std::string &win_name, bool begin)
+	{
+		ImGui_ImplVulkanH_Window *wd = nullptr;
+
+		for (auto window : app->m_Windows)
+		{
+			if (window->GetName() == win_name)
+			{
+				wd = &window->m_WinData;
+
+				// Use any command queue
+				VkCommandPool command_pool = wd->Frames[wd->FrameIndex].CommandPool;
+
+				VkCommandBufferAllocateInfo cmdBufAllocateInfo = {};
+				cmdBufAllocateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+				cmdBufAllocateInfo.commandPool = command_pool;
+				cmdBufAllocateInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+				cmdBufAllocateInfo.commandBufferCount = 1;
+
+				VkCommandBuffer &command_buffer = s_AllocatedCommandBuffers[wd->FrameIndex].emplace_back();
+				auto err = vkAllocateCommandBuffers(g_Device, &cmdBufAllocateInfo, &command_buffer);
+
+				VkCommandBufferBeginInfo begin_info = {};
+				begin_info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+				begin_info.flags |= VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+				err = vkBeginCommandBuffer(command_buffer, &begin_info);
+				check_vk_result(err);
+
+				return command_buffer;
+			}
+		}
+
+		return nullptr;
 	}
 
 	VkCommandBuffer Application::GetCommandBufferOfWin(const std::string &win_name, bool begin)
@@ -1368,8 +1434,8 @@ namespace UIKit
 						cmdBufAllocateInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
 						cmdBufAllocateInfo.commandBufferCount = 1;
 
-						VkCommandBuffer &command_buffer = win->s_AllocatedCommandBuffers[wd->FrameIndex].emplace_back();
-						auto err = vkAllocateCommandBuffers(win->g_Device, &cmdBufAllocateInfo, &command_buffer);
+						VkCommandBuffer &command_buffer = s_AllocatedCommandBuffers[wd->FrameIndex].emplace_back();
+						auto err = vkAllocateCommandBuffers(g_Device, &cmdBufAllocateInfo, &command_buffer);
 
 						VkCommandBufferBeginInfo begin_info = {};
 						begin_info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
@@ -1400,7 +1466,7 @@ namespace UIKit
 		cmdBufAllocateInfo.commandBufferCount = 1;
 
 		VkCommandBuffer &command_buffer = s_AllocatedCommandBuffers[wd->FrameIndex].emplace_back();
-		auto err = vkAllocateCommandBuffers(win->g_Device, &cmdBufAllocateInfo, &command_buffer);
+		auto err = vkAllocateCommandBuffers(g_Device, &cmdBufAllocateInfo, &command_buffer);
 
 		VkCommandBufferBeginInfo begin_info = {};
 		begin_info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
@@ -1427,8 +1493,8 @@ namespace UIKit
 				cmdBufAllocateInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
 				cmdBufAllocateInfo.commandBufferCount = 1;
 
-				VkCommandBuffer &command_buffer = win->s_AllocatedCommandBuffers[wd->FrameIndex].emplace_back();
-				auto err = vkAllocateCommandBuffers(win->g_Device, &cmdBufAllocateInfo, &command_buffer);
+				VkCommandBuffer &command_buffer = s_AllocatedCommandBuffers[wd->FrameIndex].emplace_back();
+				auto err = vkAllocateCommandBuffers(g_Device, &cmdBufAllocateInfo, &command_buffer);
 
 				VkCommandBufferBeginInfo begin_info = {};
 				begin_info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
@@ -1462,16 +1528,16 @@ namespace UIKit
 				fenceCreateInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
 				fenceCreateInfo.flags = 0;
 				VkFence fence;
-				err = vkCreateFence(win->g_Device, &fenceCreateInfo, nullptr, &fence);
+				err = vkCreateFence(g_Device, &fenceCreateInfo, nullptr, &fence);
 				check_vk_result(err);
 
-				err = vkQueueSubmit(win->g_Queue, 1, &end_info, fence);
+				err = vkQueueSubmit(g_Queue, 1, &end_info, fence);
 				check_vk_result(err);
 
-				err = vkWaitForFences(win->g_Device, 1, &fence, VK_TRUE, DEFAULT_FENCE_TIMEOUT);
+				err = vkWaitForFences(g_Device, 1, &fence, VK_TRUE, DEFAULT_FENCE_TIMEOUT);
 				check_vk_result(err);
 
-				vkDestroyFence(win->g_Device, fence, nullptr);
+				vkDestroyFence(g_Device, fence, nullptr);
 			}
 		}
 	}
@@ -1482,7 +1548,7 @@ namespace UIKit
 		{
 			if (win->GetName() == winname)
 			{
-				win->s_ResourceFreeQueue[win->s_CurrentFrameIndex].emplace_back(func);
+				s_ResourceFreeQueue[s_CurrentFrameIndex].emplace_back(func);
 			}
 		}
 	}
@@ -1531,7 +1597,7 @@ namespace UIKit
 	void Application::RenderWindow(Window *window)
 	{
 		// Set the ImGui context for this window
-		ImGui::SetCurrentContext(window->m_ImGuiContext);
+		ImGui::SetCurrentContext(m_ImGuiContext);
 
 		ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDocking;
 
@@ -1585,7 +1651,7 @@ namespace UIKit
 		style.WindowMinSize.x = 370.0f;
 
 		AppPushTabStyle();
-		ImGui::DockSpace(ImGui::GetID("MyDockspace"));
+		ImGui::DockSpace(ImGui::GetID("MainDockspace"));
 		AppPopTabStyle();
 
 		style.WindowMinSize.x = minWinSizeX;
@@ -1603,7 +1669,7 @@ namespace UIKit
 
 			static bool windowJustUndocked = false;
 
-			layer->m_WindowControlCallbalck = [](ImGuiWindow *win)
+			layer->m_WindowControlCallbalck = [window](ImGuiWindow *win)
 			{
 				if (win)
 				{
@@ -1667,7 +1733,7 @@ namespace UIKit
 
 		ImGui::End();
 
-		// Check for mouse click in any ImGui window and handle dragging
+		// N'execute pas ça si c'est la subwindow imguiqui n'est plus dockée au dockspace MainDockspace
 		if (ImGui::IsMouseClicked(ImGuiMouseButton_Left) && ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow) && !ImGui::IsAnyItemHovered())
 		{
 			window->m_IsDragging = true;
@@ -1701,7 +1767,7 @@ namespace UIKit
 
 	void Window::CleanupVulkanWindow()
 	{
-		ImGui_ImplVulkanH_DestroyWindow(this->g_Instance, this->g_Device, &m_WinData, this->g_Allocator);
+		ImGui_ImplVulkanH_DestroyWindow(g_Instance, g_Device, &m_WinData, g_Allocator);
 	}
 
 }
