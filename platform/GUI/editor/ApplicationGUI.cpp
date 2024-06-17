@@ -63,7 +63,6 @@ static std::vector<VkImageView> g_SwapchainImageViews;
 static VkFormat g_SwapchainImageFormat;
 
 // Per-frame-in-flight
-static std::vector<std::vector<VkCommandBuffer>> s_AllocatedCommandBuffers;
 static std::vector<std::vector<std::function<void()>>> s_ResourceFreeQueue;
 
 // Unlike g_MainWindowData.FrameIndex, this is not the the swapchain image index
@@ -310,13 +309,27 @@ static void FrameRender(ImGui_ImplVulkanH_Window *wd, UIKit::Window *win, ImDraw
 	if (err == VK_ERROR_OUT_OF_DATE_KHR || err == VK_SUBOPTIMAL_KHR)
 	{
 		g_SwapChainRebuild = true;
+
+	std::cout << "===== FRAME RENDER " + win->GetName() + " =====" << std::endl;
+	std::cout << "ABORDING" << std::endl;
+	std::cout << "=========================" << std::endl;
+
 		return;
 	}
 	check_vk_result(err);
 
+	ImGui_ImplVulkanH_Frame *fd = &wd->Frames[wd->FrameIndex];
+
+	std::cout << "===== FRAME RENDER " + win->GetName() + " =====" << std::endl;
+	std::cout << "wd : "<< wd << std::endl;
+	std::cout << "win : "<< win << std::endl;
+	std::cout << "fd : "<< fd << std::endl;
+	std::cout << "fd->CommandBuffer : "<< fd->CommandBuffer << std::endl;
+	std::cout << "draw_data : "<< draw_data << std::endl;
+	std::cout << "=========================" << std::endl;
+
 	s_CurrentFrameIndex = (s_CurrentFrameIndex + 1) % win->m_WinData.ImageCount;
 
-	ImGui_ImplVulkanH_Frame *fd = &wd->Frames[wd->FrameIndex];
 	{
 		err = vkWaitForFences(g_Device, 1, &fd->Fence, VK_TRUE, UINT64_MAX);
 		check_vk_result(err);
@@ -331,7 +344,7 @@ static void FrameRender(ImGui_ImplVulkanH_Window *wd, UIKit::Window *win, ImDraw
 		s_ResourceFreeQueue[win->m_WinData.FrameIndex].clear();
 	}
 	{
-		auto &allocatedCommandBuffers = s_AllocatedCommandBuffers[wd->FrameIndex];
+		auto &allocatedCommandBuffers = win->s_AllocatedCommandBuffers[wd->FrameIndex];
 		if (allocatedCommandBuffers.size() > 0)
 		{
 			vkFreeCommandBuffers(g_Device, fd->CommandPool, (uint32_t)allocatedCommandBuffers.size(), allocatedCommandBuffers.data());
@@ -380,10 +393,15 @@ static void FrameRender(ImGui_ImplVulkanH_Window *wd, UIKit::Window *win, ImDraw
 		err = vkQueueSubmit(g_Queue, 1, &info, fd->Fence);
 		check_vk_result(err);
 	}
+
 }
 
 static void FramePresent(ImGui_ImplVulkanH_Window *wd, UIKit::Window *win)
 {
+	std::cout << "===== FRAME PRESENT =====" << std::endl;
+	std::cout << "wd : "<< wd << std::endl;
+	std::cout << "win : "<< win << std::endl;
+	std::cout << "=========================" << std::endl;
 	if (g_SwapChainRebuild)
 		return;
 	VkSemaphore render_complete_semaphore = wd->FrameSemaphores[wd->SemaphoreIndex].RenderCompleteSemaphore;
@@ -498,8 +516,7 @@ namespace UIKit
 		}
 
 		this->m_Windows.push_back(std::make_shared<Window>("base", 1800, 1000));
-
-		//this->m_Windows.push_back(std::make_shared<Window>("base221155", 1800, 200));
+		this->m_Windows.push_back(std::make_shared<Window>("add", 1800, 200));
 	}
 
 	void Application::Shutdown()
@@ -954,57 +971,11 @@ namespace UIKit
 		std::cout << "MOVE" << std::endl;
 	}
 
-void Window::CalibrateStart() {
-    // Obtenez une référence vers le cadre actuel dans la liste des cadres de cette fenêtre
-    ImGui_ImplVulkanH_Frame* fd = &this->m_WinData.Frames[this->m_WinData.FrameIndex];
-
-    // Configuration de la passse de rendu (render pass)
-    VkRenderPassBeginInfo renderPassInfo = {};
-    renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-    renderPassInfo.renderPass = this->m_WinData.RenderPass;
-    renderPassInfo.framebuffer = fd->Framebuffer;
-    renderPassInfo.renderArea.offset = {0, 0};
-    renderPassInfo.renderArea.extent.width = this->m_WinData.Width;
-    renderPassInfo.renderArea.extent.height = this->m_WinData.Height;
-    renderPassInfo.clearValueCount = 1;
-    renderPassInfo.pClearValues = &this->m_WinData.ClearValue;
-
-    // Commencer la passe de rendu
-    vkCmdBeginRenderPass(fd->CommandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
-
-    // Vous pouvez ajouter d'autres commandes de rendu ici
-
-
-    // Vous pouvez ajouter d'autres commandes de fin de rendu ici
-}
-
-
 		template <typename Func>
 		void Window::QueueEvent(Func &&func)
 		{
 			m_EventQueue.push(func);
 		}
-
-void Window::CalibrateEnd() {
-    std::cout << "CalibrateEnd called." << std::endl;
-
-    // Assurez-vous que this->m_WinData.FrameIndex est valide
-    if (this->m_WinData.FrameIndex < 0 ) {
-        std::cerr << "Error: Invalid frame index." << std::endl;
-        return;
-    }
-
-    // Obtenez une référence vers le cadre actuel dans la liste des cadres de cette fenêtre
-    ImGui_ImplVulkanH_Frame* fd = &this->m_WinData.Frames[this->m_WinData.FrameIndex];
-
-    // Vérifiez que fd et fd->CommandBuffer sont valides avant d'appeler vkCmdEndRenderPass
-    if (fd && fd->CommandBuffer) {
-        std::cout << "Calling vkCmdEndRenderPass." << std::endl;
-        //vkCmdEndRenderPass(fd->CommandBuffer);
-    } else {
-        std::cerr << "Error: Invalid fd or CommandBuffer." << std::endl;
-    }
-}
 
 	void Window::Render()
 	{
@@ -1013,6 +984,7 @@ void Window::CalibrateEnd() {
 		ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 		// Ensure the current ImGui context is set for this window
 
+		g_SwapChainRebuild = true;
 		if (g_SwapChainRebuild)
 		{
 			int width, height;
@@ -1024,8 +996,8 @@ void Window::CalibrateEnd() {
 				this->m_WinData.FrameIndex = 0;
 
 				// Clear allocated command buffers from here since entire pool is destroyed
-				s_AllocatedCommandBuffers.clear();
-				s_AllocatedCommandBuffers.resize(this->m_WinData.ImageCount);
+				this->s_AllocatedCommandBuffers.clear();
+				this->s_AllocatedCommandBuffers.resize(this->m_WinData.ImageCount);
 
 				g_SwapChainRebuild = false;
 			}
@@ -1103,9 +1075,7 @@ void Window::CalibrateEnd() {
 			// Render each window
 			for (auto &window : m_Windows)
 			{
-				window->CalibrateStart();
 				window->Render();
-				window->CalibrateEnd();
 			}
 
 			// Update time
@@ -1167,7 +1137,7 @@ void Window::CalibrateEnd() {
 		glfwGetFramebufferSize(m_WindowHandle, &w, &h);
 		ImGui_ImplVulkanH_Window *wd = &m_WinData;
 		SetupVulkanWindow(wd, surface, w, h, this);
-		s_AllocatedCommandBuffers.resize(wd->ImageCount);
+		this->s_AllocatedCommandBuffers.resize(wd->ImageCount);
 		s_ResourceFreeQueue.resize(wd->ImageCount);
 
 		// Setup Platform/Renderer backends
@@ -1364,7 +1334,7 @@ void Window::CalibrateEnd() {
 		cmdBufAllocateInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
 		cmdBufAllocateInfo.commandBufferCount = 1;
 
-		VkCommandBuffer &command_buffer = s_AllocatedCommandBuffers[wd->FrameIndex].emplace_back();
+		VkCommandBuffer &command_buffer = this->s_AllocatedCommandBuffers[wd->FrameIndex].emplace_back();
 		auto err = vkAllocateCommandBuffers(g_Device, &cmdBufAllocateInfo, &command_buffer);
 
 		VkCommandBufferBeginInfo begin_info = {};
@@ -1395,7 +1365,7 @@ void Window::CalibrateEnd() {
 				cmdBufAllocateInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
 				cmdBufAllocateInfo.commandBufferCount = 1;
 
-				VkCommandBuffer &command_buffer = s_AllocatedCommandBuffers[wd->FrameIndex].emplace_back();
+				VkCommandBuffer &command_buffer = window->s_AllocatedCommandBuffers[wd->FrameIndex].emplace_back();
 				auto err = vkAllocateCommandBuffers(g_Device, &cmdBufAllocateInfo, &command_buffer);
 
 				VkCommandBufferBeginInfo begin_info = {};
@@ -1434,7 +1404,7 @@ void Window::CalibrateEnd() {
 						cmdBufAllocateInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
 						cmdBufAllocateInfo.commandBufferCount = 1;
 
-						VkCommandBuffer &command_buffer = s_AllocatedCommandBuffers[wd->FrameIndex].emplace_back();
+						VkCommandBuffer &command_buffer = win->s_AllocatedCommandBuffers[wd->FrameIndex].emplace_back();
 						auto err = vkAllocateCommandBuffers(g_Device, &cmdBufAllocateInfo, &command_buffer);
 
 						VkCommandBufferBeginInfo begin_info = {};
@@ -1465,7 +1435,7 @@ void Window::CalibrateEnd() {
 		cmdBufAllocateInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
 		cmdBufAllocateInfo.commandBufferCount = 1;
 
-		VkCommandBuffer &command_buffer = s_AllocatedCommandBuffers[wd->FrameIndex].emplace_back();
+		VkCommandBuffer &command_buffer = win->s_AllocatedCommandBuffers[wd->FrameIndex].emplace_back();
 		auto err = vkAllocateCommandBuffers(g_Device, &cmdBufAllocateInfo, &command_buffer);
 
 		VkCommandBufferBeginInfo begin_info = {};
@@ -1493,7 +1463,7 @@ void Window::CalibrateEnd() {
 				cmdBufAllocateInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
 				cmdBufAllocateInfo.commandBufferCount = 1;
 
-				VkCommandBuffer &command_buffer = s_AllocatedCommandBuffers[wd->FrameIndex].emplace_back();
+				VkCommandBuffer &command_buffer = win->s_AllocatedCommandBuffers[wd->FrameIndex].emplace_back();
 				auto err = vkAllocateCommandBuffers(g_Device, &cmdBufAllocateInfo, &command_buffer);
 
 				VkCommandBufferBeginInfo begin_info = {};

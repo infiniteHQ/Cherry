@@ -129,14 +129,13 @@ namespace UIKit
 		void HandleMouseScroll(double xoffset, double yoffset);
 
 		void Render();
-		void CalibrateStart();
-		void CalibrateEnd();
 
 		std::shared_ptr<UIKit::Image> m_AppHeaderIcon;
 		std::shared_ptr<UIKit::Image> m_IconClose;
 		std::shared_ptr<UIKit::Image> m_IconMinimize;
 		std::shared_ptr<UIKit::Image> m_IconMaximize;
 		std::shared_ptr<UIKit::Image> m_IconRestore;
+ std::vector<std::vector<VkCommandBuffer>> s_AllocatedCommandBuffers;
 		int m_Width, m_Height;
 		ImGui_ImplVulkanH_Window m_WinData;
 
@@ -201,6 +200,9 @@ namespace UIKit
 			m_LayerStack.emplace_back(layer);
 			layer->OnAttach();
 		}
+
+		void SpawnWindow();
+		void UnspawnWindow();
 
 		void Close();
 
