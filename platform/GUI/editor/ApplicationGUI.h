@@ -105,6 +105,8 @@ namespace UIKit
 		int m_PosX = 0;
 		int m_PosY = 0;
 
+		int WinID;
+
 		void RequestResize(int width, int height);
 		void RequestMove(int x, int y);
 
@@ -135,7 +137,8 @@ namespace UIKit
 		std::shared_ptr<UIKit::Image> m_IconMinimize;
 		std::shared_ptr<UIKit::Image> m_IconMaximize;
 		std::shared_ptr<UIKit::Image> m_IconRestore;
- std::vector<std::vector<VkCommandBuffer>> s_AllocatedCommandBuffers;
+ 		std::vector<std::vector<VkCommandBuffer>> s_AllocatedCommandBuffers;
+    	ImDrawData DrawData;
 		int m_Width, m_Height;
 		ImGui_ImplVulkanH_Window m_WinData;
 
@@ -166,6 +169,8 @@ namespace UIKit
 		std::filesystem::path IconPath;
 
 		bool WindowResizeable = true;
+
+		bool WindowOnlyClosable = false;
 
 		// Uses custom UIKit titlebar instead
 		// of Windows default
@@ -213,6 +218,17 @@ namespace UIKit
 		GLFWwindow *GetWindowHandle(const std::string &winname) const;
 		bool IsTitleBarHovered() const { return m_TitleBarHovered; }
 
+		Window* GetWindowByHandle(GLFWwindow* window_handle){
+			for(auto win : this->m_Windows)
+			{
+				if(win->GetWindowHandle() == window_handle)
+				{
+					return win.get();
+				}
+			}
+			return nullptr;
+		}
+
 		static VkInstance GetInstance(const std::string &win);
 		static VkPhysicalDevice GetPhysicalDevice(const std::string &win);
 		static VkDevice GetDevice(const std::string &win);
@@ -233,7 +249,7 @@ namespace UIKit
 		std::vector<std::shared_ptr<Layer>> m_LayerStack;
 		bool m_Running = false;
 
-		void RenderWindow(Window *window);
+		ImDrawData* RenderWindow(Window *window);
 		// Resources
 		// TODO(Yan): move out of application class since this can't be tied
 		//            to application lifetime
