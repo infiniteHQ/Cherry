@@ -40,6 +40,20 @@ namespace UIKit
 		SIMPLE_WINDOW,
 	};
 
+	struct WindowClickEvent
+	{
+		int button;
+		int action;
+		int mods;
+	};
+
+	struct WindowMoveEvent
+	{
+		double xpos;
+		double ypos;
+	};
+
+
 
 	class Window
 	{
@@ -104,6 +118,10 @@ namespace UIKit
 		int m_PreviousY = 0;
 		int m_PosX = 0;
 		int m_PosY = 0;
+		
+		
+		std::shared_ptr<WindowClickEvent> m_PendingClick = nullptr;
+		std::shared_ptr<WindowMoveEvent> m_PendingMove = nullptr;
 
 		int WinID;
 
@@ -114,7 +132,6 @@ namespace UIKit
 		{
 			if (m_ResizePending)
 			{
-				std::cout << "\33 RESIZE" << std::endl;
 				m_WinData.Width = m_PendingWidth;
 				m_WinData.Height = m_PendingHeight;
 				GLFWwindow *win = this->GetWindowHandle();
@@ -126,9 +143,6 @@ namespace UIKit
 			}
 		}
 
-		void HandleMouseMove(double xpos, double ypos);
-		void HandleMouseButton(int button, int action, int mods);
-		void HandleMouseScroll(double xoffset, double yoffset);
 
 		void Render();
 
