@@ -13,6 +13,3 @@
 [submodule "lib/fmt"]
 	path = lib/fmt
 	url = https://github.com/fmtlib/fmt
-[submodule "lib/imgui"]
-	path = lib/imgui
-	url = https://github.com/infiniteHQ/imgui/tree/490f5bdbe77e69fb1468f2345e7389b6e27c9d50
