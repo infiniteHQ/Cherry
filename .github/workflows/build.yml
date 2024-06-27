@@ -1,0 +1,36 @@
+name: Build
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        build_type: [Release]
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Install Dependencies and Configure Build (ubuntu-latest)
+      if: matrix.os == 'ubuntu-latest'
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y git cmake make g++
+        sudo apt-get install -y libvulkan-dev xorg-dev
+        sudo apt-get install -y libfmt-dev
+
+        # Initialize and update submodules
+        git submodule update --init --recursive
+
+        # Configure and build
+        cd "example"
+        mkdir -p build && cd build
+        cmake ..
+        make

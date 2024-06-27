@@ -15,4 +15,4 @@
 	url = https://github.com/fmtlib/fmt
 [submodule "lib/imgui"]
 	path = lib/imgui
-	url = https://github.com/infiniteHQ/imgui@490f5bd
+	url = https://github.com/infiniteHQ/imgui    
