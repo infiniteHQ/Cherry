@@ -106,6 +106,8 @@ namespace UIKit
 		template <typename Func>
 		void QueueEvent(Func &&func);
 
+		ImGuiContext *m_ImGuiContext;
+
 		bool m_ResizePending = false;
 		bool m_MovePending = false;
 		int m_PendingWidth = 0;
@@ -119,6 +121,16 @@ namespace UIKit
 		int m_PosX = 0;
 		int m_PosY = 0;
 		
+ std::mutex m_EventQueueMutex;
+ std::queue<std::function<void()>> m_EventQueue;
+ bool g_SwapChainRebuild = false;
+ VkSwapchainKHR g_Swapchain;
+ std::vector<VkImage> g_SwapchainImages;
+ std::vector<VkImageView> g_SwapchainImageViews;
+ VkFormat g_SwapchainImageFormat;
+ std::vector<std::vector<std::function<void()>>> s_ResourceFreeQueue;
+ uint32_t s_CurrentFrameIndex = 0;
+    std::vector<VkCommandBuffer> m_CommandBuffers;
 		
 		std::shared_ptr<WindowClickEvent> m_PendingClick = nullptr;
 		std::shared_ptr<WindowMoveEvent> m_PendingMove = nullptr;
@@ -202,6 +214,13 @@ namespace UIKit
 		~Application();
 
 		static Application &Get();
+void PollEvents()
+{
+    for (auto &window : m_Windows)
+    {
+        glfwPollEvents(); // Poll events in the main thread
+    }
+}
 
 		void Run();
 		void SetMenubarCallback(const std::function<void()> &menubarCallback) { m_MenubarCallback = menubarCallback; }

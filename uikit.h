@@ -13,5 +13,6 @@
 
 #include "./components/windows/windows.h"
 #include "./components/buttons/buttons.h"
+#include "./components/menubar/menubar.h"
 
 #endif // UIKIT_H
