@@ -43,7 +43,7 @@ find_package(SDL2 REQUIRED)
 include_directories(${SDL2_INCLUDE_DIRS})
 
 # Link SDL2 library
-target_link_libraries(example PUBLIC ${SDL2_LIBRARIES})
+target_link_libraries(editor PUBLIC ${SDL2_LIBRARIES})
 
 find_package(Vulkan REQUIRED)
 target_link_libraries(editor PUBLIC Vulkan::Vulkan)

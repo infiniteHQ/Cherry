@@ -12,7 +12,6 @@
 #include <functional>
 #include <filesystem>
 
-
 #include "ui/ui.hpp"
 #include "imgui/ImGuiTheme.h"
 #include "vulkan/vulkan.h"
@@ -68,6 +67,12 @@ namespace UIKit
 		DefaultSize
 	};
 
+	enum class AppWindowTypes
+	{
+		InstanciableWindow,
+		StaticWindow
+	};
+
 	struct EnumClassHash
 	{
 		template <typename T>
@@ -102,22 +107,23 @@ namespace UIKit
 	class AppWindow
 	{
 	public:
-		AppWindow(const std::string &name) : m_Name(name)
+		AppWindow() : m_ID("undefined"), m_Name("undefined")
 		{
 		}
 
-		AppWindow(const std::string &name, const std::string &icon) : m_Name(name), m_Icon(icon)
+		AppWindow(const std::string &id, const std::string &name) : m_ID(id), m_Name(name)
 		{
-			set_icon(m_Icon);
+		}
+
+		AppWindow(const std::string &id, const std::string &name, const std::string &icon) : m_ID(id), m_Name(name), m_Icon(icon)
+		{
+			SetIcon(m_Icon);
 		}
 		// AppWindow(const std::string& win_name, LOGO);
-		virtual void render() {};
-		virtual void menubar_left() {};
-		virtual void menubar_right() {};
 
 		void push_event();
-		void ctx_render(std::vector<std::shared_ptr<RedockRequest>> *reqs, const std::string &winname);
-		std::shared_ptr<RedockRequest> create_event(const std::string &parentWindow, DockEmplacement emplacement, const std::string &appWindow = "none")
+		void CtxRender(std::vector<std::shared_ptr<RedockRequest>> *reqs, const std::string &winname);
+		std::shared_ptr<RedockRequest> CreateEvent(const std::string &parentWindow, DockEmplacement emplacement, const std::string &appWindow = "none")
 		{
 			std::shared_ptr<RedockRequest> req = std::make_shared<RedockRequest>();
 			req->m_DockPlace = emplacement;
@@ -127,19 +133,40 @@ namespace UIKit
 			return req;
 		}
 
-		std::shared_ptr<UIKit::Image> get_img(const std::string &path);
-		ImTextureID *get_texture(const std::string &path);
+		std::shared_ptr<UIKit::Image> GetImage(const std::string &path);
+		ImTextureID *GetTexture(const std::string &path);
 
-		void set_simple_storage(const std::string &key, const std::string &value)
+		void SetSimpleStorage(const std::string &key, const std::string &value)
 		{
 			m_Storage[key] = value;
 		}
 
-		void set_window_storage(const std::string &key, const std::string &value)
+		float EstimateMenubarRightWidth()
+		{
+			ImVec2 initialCursorPos = ImGui::GetCursorPos();
+			ImGui::PushClipRect(ImVec2(0, 0), ImVec2(0, 0), false);
+			ImGuiID id = ImGui::GetID("TempID");
+
+			ImGui::PushID(id);
+			ImGui::SetCursorPosX(0.0f);
+			if (m_MenubarRight)
+			{
+				m_MenubarRight();
+			}
+			float width = ImGui::GetCursorPosX();
+			ImGui::PopID();
+
+			ImGui::PopClipRect();
+			ImGui::SetCursorPos(initialCursorPos);
+
+			return width;
+		}
+
+		void SetWindowStorage(const std::string &key, const std::string &value)
 		{
 			m_WindowStorage[key] = value;
 		}
-		std::string get_simple_storage(const std::string &key)
+		std::string GetSimpleStorage(const std::string &key)
 		{
 			if (m_Storage.find(key) != m_Storage.end())
 			{
@@ -150,7 +177,7 @@ namespace UIKit
 				return "undefined";
 			}
 		}
-		std::string get_window_storage(const std::string &key)
+		std::string GetWindowStorage(const std::string &key)
 		{
 			if (m_WindowStorage.find(key) != m_WindowStorage.end())
 			{
@@ -161,12 +188,12 @@ namespace UIKit
 				return "undefined";
 			}
 		}
-		void set_default_behavior(DefaultAppWindowBehaviors behavior, const std::string &value)
+		void SetDefaultBehavior(DefaultAppWindowBehaviors behavior, const std::string &value)
 		{
 			m_DefaultBehaviors[behavior] = value;
 		}
 
-		std::string get_default_behavior(DefaultAppWindowBehaviors behavior)
+		std::string GetDefaultBehavior(DefaultAppWindowBehaviors behavior)
 		{
 			if (m_DefaultBehaviors.find(behavior) != m_DefaultBehaviors.end())
 			{
@@ -178,6 +205,26 @@ namespace UIKit
 			}
 		}
 
+		void SetRenderCallback(const std::function<void()> &render)
+		{
+			m_Render = render;
+		}
+
+		void SetLeftMenubarCallback(const std::function<void()> &right_menubar)
+		{
+			m_MenubarLeft = right_menubar;
+		}
+
+		void SetRightMenubarCallback(const std::function<void()> &left_menubar)
+		{
+			m_MenubarRight = left_menubar;
+		}
+
+		void SetIcon(const std::string &name)
+		{
+			m_Icon = name;
+		}
+
 	public:
 		int treated = 0;
 
@@ -186,18 +233,15 @@ namespace UIKit
 		std::string m_DockParent = "unknow";
 		std::string m_DockPlace = "unknow";
 		std::string m_Name = "unknow";
+		std::string m_ID = "unknow";
 		// ImGuiWindow *m_ImGuiWindow;
 		ImGuiID m_DockSpaceID;
 
 		std::string m_Icon = "none";
 
-		void set_icon(const std::string &name)
-		{
-			m_Icon = name;
-		}
-
-		bool m_Closable;
-		bool m_Opened;
+		bool m_Closable = true;
+		bool m_Opened = true;
+		bool m_IsRendering = true;
 
 		bool m_IsDragging;
 		bool m_DockIsDraggingStarted;
@@ -207,6 +251,13 @@ namespace UIKit
 		// Number of unread notifs
 
 		// Default behavior
+
+		// Renders functions
+		std::function<void()> m_Render;
+		std::function<void()> m_MenubarRight;
+		std::function<void()> m_MenubarLeft;
+
+		std::function<void()> m_CloseEvent;
 
 	private:
 		std::unordered_map<std::string, std::string> m_Storage;
@@ -226,8 +277,8 @@ namespace UIKit
 		VkCommandBuffer GetCommandBuffer(bool begin);
 		SDL_Window *GetWindowHandle() const { return m_WindowHandler; }
 
-		//void OnWindowResize(GLFWwindow *windowHandle, int width, int height);
-		//void OnWindowMove(int xpos, int ypos);
+		// void OnWindowResize(GLFWwindow *windowHandle, int width, int height);
+		// void OnWindowMove(int xpos, int ypos);
 
 		void BeginFrame()
 		{
@@ -375,6 +426,8 @@ namespace UIKit
 
 		bool WindowOnlyClosable = false;
 
+		bool WindowSaves = false;
+
 		bool DisableTitle = false;
 		// Uses custom UIKit titlebar instead
 		// of Windows default
@@ -398,11 +451,12 @@ namespace UIKit
 		{
 			for (auto &window : m_Windows)
 			{
-				//glfwPollEvents(); // Poll events in the main thread
+				// glfwPollEvents(); // Poll events in the main thread
 			}
 		}
 
 		void Run();
+		void SetCloseCallback(const std::function<void()> &closeCallback) { m_CloseCallback = closeCallback; }
 		void SetMenubarCallback(const std::function<void()> &menubarCallback) { m_MenubarCallback = menubarCallback; }
 		void SetFramebarCallback(const std::function<void()> &framebarCallback) { m_FramebarCallback = framebarCallback; }
 		void SetCloseCallback(const std::function<bool()> &closeCallback) { m_CloseCallback = closeCallback; }
@@ -468,13 +522,16 @@ namespace UIKit
 		void RenderDockspace();
 		void InitializeWindowStates();
 		void SaveData();
-		void SetWindowSaveDataFile(const std::string& path);
+		void SetWindowSaveDataFile(const std::string &path);
 		void SynchronizeWindows();
 		std::vector<std::shared_ptr<Layer>> m_LayerStack;
-		void PutWindow(std::shared_ptr<AppWindow> win)
+
+		std::string PutWindow(std::shared_ptr<AppWindow> win)
 		{
 			m_AppWindows.push_back(win);
+			return "id";
 		}
+
 		ImDrawData *RenderWindow(Window *window);
 
 		// Resources
@@ -482,7 +539,9 @@ namespace UIKit
 		//            to application lifetime
 		std::function<void()> m_MenubarCallback;
 		std::function<void()> m_FramebarCallback;
-		std::function<bool()> m_CloseCallback; // true == closing application
+		std::function<void()> m_CloseCallback; // need to destroy all windows manually
+
+		bool m_ClosePending = false;
 
 		std::mutex m_WindowCreationMutex;
 		ImGuiContext *m_ImGuiMasterContext;

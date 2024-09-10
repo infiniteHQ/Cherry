@@ -118,7 +118,7 @@ static void PushRedockEvent(UIKit::WindowDragDropState *state)
     {
         if (app_win->m_Name == state->LastDraggingAppWindowHost)
         {
-            std::shared_ptr<UIKit::RedockRequest> req = app_win->create_event(
+            std::shared_ptr<UIKit::RedockRequest> req = app_win->CreateEvent(
                 state->LastDraggingWindow,
                 state->LastDraggingPlace,
                 state->LastDraggingAppWindow);
@@ -2690,13 +2690,25 @@ namespace UIKit
                     std::string label = "Close###" + this->GetName();
                     if (ImGui::InvisibleButton("Close", ImVec2(buttonWidth, buttonHeight)))
                     {
-                        Application::Get().Close();
+                        Application::Get().m_ClosePending = true;
                     }
 
                     UI::DrawButtonImage(this->get(g_WindowCloseIcon, "Close"), UI::Colors::Theme::text, UI::Colors::ColorWithMultipliedValue(UI::Colors::Theme::text, 1.4f), buttonColP);
                 }
 
                 ImGui::Spring(-1.0f, 18.0f);
+            }
+
+            if (Application::Get().m_ClosePending)
+            {
+                if (Application::Get().m_CloseCallback)
+                {
+                    Application::Get().m_CloseCallback();
+                }
+                else
+                {
+                    Application::Get().Close();
+                }
             }
         }
         ImGui::EndHorizontal();
@@ -2835,7 +2847,15 @@ namespace UIKit
             ImGui::BeginGroup();
             if (UI::BeginMenubar(menuBarRect))
             {
+
+                float oldsize = ImGui::GetFont()->Scale;
+                ImGui::GetFont()->Scale *= 0.84;
+                ImGui::PushFont(ImGui::GetFont());
+
                 app->m_MenubarCallback();
+
+                ImGui::GetFont()->Scale = oldsize;
+                ImGui::PopFont();
             }
 
             UI::EndMenubar();
@@ -2988,80 +3008,6 @@ namespace UIKit
         }
     }
 
-    class FirstWindow : public AppWindow
-    {
-    public:
-        FirstWindow(const std::string &name) : AppWindow(name)
-        {
-        }
-
-        FirstWindow(const std::string &name, const std::string &icon) : AppWindow(name)
-        {
-            set_icon("/usr/local/include/Vortex/imgs/vortex.png");
-        }
-
-        void menubar_left() override
-        {
-            static ImTextureID texture = this->get_img(m_Icon)->GetImGuiTextureID(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-
-            ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0.4f, 0.4f, 0.4f, 0.7f));
-            ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(62, 62, 62, 0));
-            ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(62, 62, 62, 0));
-            ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(62, 62, 62, 0));
-            ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(62, 62, 62, 0));
-            if (ImGui::UIKit_ImageButtonWithText(texture, "Save all", ImVec2(15, 15)))
-            {
-            }
-            if (ImGui::UIKit_ImageButtonWithText(texture, "Import", ImVec2(15, 15)))
-            {
-            }
-            ImGui::PopStyleColor(5);
-        }
-
-        void render() override
-        {
-            if (ImGui::BeginMenuBar())
-            {
-                ImGui::TextColored(ImVec4(1.0f, 1.0f, 1.0f, 0.5f), "Reporting task :\"");
-                ImGui::TextColored(ImVec4(1.0f, 1.0f, 1.0f, 0.5f), "\" with id : \"");
-                ImGui::TextColored(ImVec4(1.0f, 1.0f, 1.0f, 0.5f), "\"");
-
-                ImGui::EndMenuBar();
-            }
-            ImGui::Text("AA.BB.CC.DD.EE.FF 1");
-
-            ImGui::Button("qsd");
-        }
-    };
-
-    class SecondWindow : public AppWindow
-    {
-    public:
-        SecondWindow(const std::string &name) : AppWindow(name)
-        {
-            set_icon("file:///usr/local/include/Vortex/1.1/imgs/icon_star.png");
-            set_default_behavior(DefaultAppWindowBehaviors::DefaultDocking, "right");
-        }
-
-        void render() override
-        {
-            ImGui::Text("AA.BB.CC.DD.EE.FF 2");
-        }
-    };
-
-    class ThirdWindow : public AppWindow
-    {
-    public:
-        ThirdWindow(const std::string &name) : AppWindow(name)
-        {
-        }
-
-        void render() override
-        {
-            ImGui::Text("AA.BB.CC.DD.EE.FF 3");
-        }
-    };
-
     void Application::InitializeWindowStates()
     {
         if (!m_IsDataInitialized)
@@ -3119,10 +3065,10 @@ namespace UIKit
                         }
 
                         // Set app window properties
-                        appWindow->set_window_storage("dockplace", dockPlace);
-                        appWindow->set_window_storage("type", type);
-                        appWindow->set_window_storage("path", path);
-                        appWindow->set_window_storage("id", id);
+                        appWindow->SetWindowStorage("dockplace", dockPlace);
+                        appWindow->SetWindowStorage("type", type);
+                        appWindow->SetWindowStorage("path", path);
+                        appWindow->SetWindowStorage("id", id);
 
                         // Associate the app window with the parent window
                         appWindow->m_WinParent = windowName;
@@ -3171,9 +3117,9 @@ namespace UIKit
                 {
                     nlohmann::json appWindowJson;
                     appWindowJson["name"] = app_window->m_Name;
-                    appWindowJson["dockplace"] = app_window->get_window_storage("dockplace");
-                    appWindowJson["type"] = "cb_instance, static";
-                    appWindowJson["path"] = "/dsfsdf/DQSDQS";
+                    appWindowJson["dockplace"] = app_window->GetWindowStorage("dockplace");
+                    appWindowJson["type"] = "instanciable,static";
+                    appWindowJson["data"] = "All data : instance content browser relativity, etyc..;";
                     appWindowJson["id"] = "test_window";
 
                     appWindowsJson.push_back(appWindowJson);
@@ -3202,13 +3148,6 @@ namespace UIKit
     void Application::Run()
     {
         m_Running = true;
-
-        std::shared_ptr<FirstWindow> windodo = std::make_shared<FirstWindow>("FirstWindow", "/usr/local/include/Vortex/imgs/vortex.png");
-        std::shared_ptr<SecondWindow> windodos = std::make_shared<SecondWindow>("SecondWindow");
-        std::shared_ptr<ThirdWindow> windodoss = std::make_shared<ThirdWindow>("ThirdWindow");
-        this->PutWindow(windodo);
-        this->PutWindow(windodos);
-        this->PutWindow(windodoss);
 
         while (m_Running)
         {
@@ -3256,14 +3195,17 @@ namespace UIKit
             }
             std::cout << "================================================" << std::endl;*/
 
-            if (!m_IsDataInitialized)
+            if (s_Instance->m_Specification.WindowSaves)
             {
-                s_Instance->InitializeWindowStates();
-            }
+                if (!m_IsDataInitialized)
+                {
+                    s_Instance->InitializeWindowStates();
+                }
 
-            if (!s_Instance->m_IsDataSaved)
-            {
-                s_Instance->SaveData();
+                if (!s_Instance->m_IsDataSaved)
+                {
+                    s_Instance->SaveData();
+                }
             }
 
             if (c_CurrentDragDropState)
@@ -3507,7 +3449,7 @@ namespace UIKit
 
                 if (app_wins_inside == 0)
                 {
-                    it = m_Windows.erase(it);
+                    it = m_Windows.erase(it); // Crash
                 }
                 else
                 {
@@ -3747,7 +3689,7 @@ namespace UIKit
     {
         //	return (bool)glfwGetWindowAttrib(m_WindowHandle, GLFW_MAXIMIZED);
     }
-    
+
     float Application::GetTime()
     {
         return (float)SDL_GetTicks() / 1000.0f;
@@ -3994,7 +3936,7 @@ namespace UIKit
         return this->add(path)->GetImGuiTextureID();
     }
 
-    std::shared_ptr<UIKit::Image> AppWindow::get_img(const std::string &path)
+    std::shared_ptr<UIKit::Image> AppWindow::GetImage(const std::string &path)
     {
         for (auto &win : s_Instance->m_Windows)
         {
@@ -4006,13 +3948,13 @@ namespace UIKit
         return nullptr;
     }
 
-    ImTextureID *AppWindow::get_texture(const std::string &path)
+    ImTextureID *AppWindow::GetTexture(const std::string &path)
     {
         for (auto &win : s_Instance->m_Windows)
         {
             if (this->m_WinParent == win->GetName())
             {
-                ImTextureID logoID = this->get_img(m_Icon)->GetImGuiTextureID(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+                ImTextureID logoID = this->GetImage(m_Icon)->GetImGuiTextureID(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
                 return &logoID;
             }
         }
@@ -4375,7 +4317,7 @@ namespace UIKit
         {
             if (appwindow->m_WinParent == window->GetName())
             {
-                appwindow->ctx_render(&m_RedockRequests, window->GetName());
+                appwindow->CtxRender(&m_RedockRequests, window->GetName());
             }
         }
 
@@ -4491,8 +4433,19 @@ namespace UIKit
         this->m_SaveWindowData = true;
     }
 
-    void AppWindow::ctx_render(std::vector<std::shared_ptr<RedockRequest>> *reqs, const std::string &winname)
+    void AppWindow::CtxRender(std::vector<std::shared_ptr<RedockRequest>> *reqs, const std::string &winname)
     {
+        if (!m_IsRendering)
+        {
+            return;
+        }
+
+        if (!m_Opened)
+        {
+            m_CloseEvent;
+            m_IsRendering = false;
+        }
+
         ImGuiID dockspaceID = ImGui::GetID("MainDockspace");
 
         /*std::cout << "reqs size : " << reqs->size() << std::endl;
@@ -4530,7 +4483,7 @@ namespace UIKit
 
             ImGuiID parentDockID = dockspaceID;
 
-            set_window_storage("window", req->m_ParentAppWindow);
+            SetWindowStorage("window", req->m_ParentAppWindow);
 
             if (LastWindowPressed != "none")
             {
@@ -4574,19 +4527,19 @@ namespace UIKit
             {
             case DockEmplacement::DockUp:
                 newDockID = ImGui::DockBuilderSplitNode(parentDockID, ImGuiDir_Up, 0.5f, nullptr, &parentDockID);
-                set_window_storage("dockplace", "up");
+                SetWindowStorage("dockplace", "up");
                 break;
             case DockEmplacement::DockDown:
                 newDockID = ImGui::DockBuilderSplitNode(parentDockID, ImGuiDir_Down, 0.5f, nullptr, &parentDockID);
-                set_window_storage("dockplace", "down");
+                SetWindowStorage("dockplace", "down");
                 break;
             case DockEmplacement::DockLeft:
                 newDockID = ImGui::DockBuilderSplitNode(parentDockID, ImGuiDir_Left, 0.3f, nullptr, &parentDockID);
-                set_window_storage("dockplace", "left");
+                SetWindowStorage("dockplace", "left");
                 break;
             case DockEmplacement::DockRight:
                 newDockID = ImGui::DockBuilderSplitNode(parentDockID, ImGuiDir_Right, 0.3f, nullptr, &parentDockID);
-                set_window_storage("dockplace", "right");
+                SetWindowStorage("dockplace", "right");
                 break;
             case DockEmplacement::DockFull:
             default:
@@ -4603,19 +4556,19 @@ namespace UIKit
                 {
                 case DockEmplacement::DockUp:
                     newDockID = ImGui::DockBuilderSplitNode(parentDockID, ImGuiDir_Up, 0.5f, nullptr, &parentDockID);
-                    set_window_storage("dockplace", "up");
+                    SetWindowStorage("dockplace", "up");
                     break;
                 case DockEmplacement::DockDown:
                     newDockID = ImGui::DockBuilderSplitNode(parentDockID, ImGuiDir_Down, 0.5f, nullptr, &parentDockID);
-                    set_window_storage("dockplace", "down");
+                    SetWindowStorage("dockplace", "down");
                     break;
                 case DockEmplacement::DockLeft:
                     newDockID = ImGui::DockBuilderSplitNode(parentDockID, ImGuiDir_Left, 0.3f, nullptr, &parentDockID);
-                    set_window_storage("dockplace", "left");
+                    SetWindowStorage("dockplace", "left");
                     break;
                 case DockEmplacement::DockRight:
                     newDockID = ImGui::DockBuilderSplitNode(parentDockID, ImGuiDir_Right, 0.3f, nullptr, &parentDockID);
-                    set_window_storage("dockplace", "right");
+                    SetWindowStorage("dockplace", "right");
                     break;
                 default:
                     break;
@@ -4640,16 +4593,28 @@ namespace UIKit
 
         ImGui::PushStyleVar(ImGuiStyleVar_PopupRounding, 3.0f);
         ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10, 12));
-        if (this->get_img(m_Icon))
+        if (this->GetImage(m_Icon))
         {
-            static ImTextureID texture = this->get_img(m_Icon)->GetImGuiTextureID(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-            ImGui::UIKit_BeginLogoWindow(m_Name.c_str(), &texture, NULL, window_flags);
-
-            ImGui::ImageButton(this->get_img(m_Icon)->GetImGuiTextureID(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL), ImVec2(15, 15));
+            static ImTextureID texture = this->GetImage(m_Icon)->GetImGuiTextureID(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+            if (m_Closable)
+            {
+                ImGui::UIKit_BeginLogoWindow(m_Name.c_str(), &texture, &m_Opened, window_flags);
+            }
+            else
+            {
+                ImGui::UIKit_BeginLogoWindow(m_Name.c_str(), &texture, NULL, window_flags);
+            }
         }
         else
         {
-            ImGui::Begin(m_Name.c_str(), NULL, ImGuiWindowFlags_NoMove);
+            if (m_Closable)
+            {
+                ImGui::Begin(m_Name.c_str(), &m_Opened, window_flags);
+            }
+            else
+            {
+                ImGui::Begin(m_Name.c_str(), NULL, window_flags);
+            }
         }
 
         if (ImGui::BeginMenuBar())
@@ -4659,29 +4624,38 @@ namespace UIKit
             ImGui::PushFont(ImGui::GetFont());
 
             float menuBarHeight = ImGui::GetCurrentWindow()->MenuBarHeight();
-
             float buttonHeight = 24;
-
             float offsetY = (menuBarHeight - buttonHeight) * 0.5f;
 
-            ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10, 6));
+            ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10, 2));
 
             float initialCursorPosY = ImGui::GetCursorPosY();
-            ImGui::SetCursorPosY(ImGui::GetCursorPosY() + offsetY);
+            ImGui::SetCursorPosY(initialCursorPosY + offsetY);
 
-            this->menubar_left();
-            this->menubar_right();
+            if (m_MenubarLeft)
+            {
+                m_MenubarLeft();
+            }
 
-            ImGui::SetCursorPosY(initialCursorPosY);
+// Utilisation de la largeur estimée
+float x_size = EstimateMenubarRightWidth();
+float right_pos = ImGui::GetWindowWidth() - x_size - ImGui::GetStyle().ItemSpacing.x * 2;
+
+ImGui::SetCursorPosX(right_pos);
+
+if (m_MenubarRight)
+{
+    m_MenubarRight();
+}
 
             ImGui::PopStyleVar();
-
             ImGui::GetFont()->Scale = oldsize;
             ImGui::PopFont();
 
             ImGui::EndMenuBar();
         }
-        ImGui::PopStyleVar(2); // Pour les bords arrondis
+
+        ImGui::PopStyleVar(2);
 
         ImGuiContext *ctx = ImGui::GetCurrentContext();
 
@@ -4719,7 +4693,7 @@ namespace UIKit
                 wind->drag_dropstate.DragOwner = "none";
             }
         }
-        this->render();
+        this->m_Render;
 
         ImGui::End();
     }
