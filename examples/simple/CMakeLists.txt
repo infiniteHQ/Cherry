@@ -40,15 +40,13 @@ add_library(editor STATIC ${UIKIT_SRC})
 find_package(SDL2 REQUIRED)
 
 # Include SDL2 headers
-include_directories(${SDL2_INCLUDE_DIRS})
-
-# Link SDL2 library
-target_link_libraries(editor PUBLIC ${SDL2_LIBRARIES})
 
 find_package(Vulkan REQUIRED)
 target_link_libraries(editor PUBLIC Vulkan::Vulkan)
 target_link_libraries(editor PUBLIC imgui)
 target_link_libraries(editor PUBLIC glm)
+include_directories(${SDL2_INCLUDE_DIRS})
+target_link_libraries(editor PUBLIC ${SDL2_LIBRARIES})
 target_link_libraries(editor PUBLIC stbimage)
 target_link_libraries(editor PUBLIC spdlog)
 

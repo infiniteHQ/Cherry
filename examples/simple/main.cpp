@@ -40,6 +40,10 @@ public:
     {
         // Action du bouton
     }
+    if (ImGui::UIKit_ImageButtonWithText(texture, "CasserDuTerrio", ImVec2(20, 20))) // Augmenter la taille du bouton si nécessaire
+    {
+        // Action du bouton
+    }
     ImGui::PopStyleColor();
 
     // Styles pour les autres boutons

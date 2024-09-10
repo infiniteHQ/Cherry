@@ -4637,16 +4637,15 @@ namespace UIKit
                 m_MenubarLeft();
             }
 
-// Utilisation de la largeur estimée
-float x_size = EstimateMenubarRightWidth();
-float right_pos = ImGui::GetWindowWidth() - x_size - ImGui::GetStyle().ItemSpacing.x * 2;
+            float x_size = EstimateMenubarRightWidth();
+            float right_pos = ImGui::GetWindowWidth() - x_size - ImGui::GetStyle().ItemSpacing.x * 2;
 
-ImGui::SetCursorPosX(right_pos);
+            ImGui::SetCursorPosX(right_pos);
 
-if (m_MenubarRight)
-{
-    m_MenubarRight();
-}
+            if (m_MenubarRight)
+            {
+                m_MenubarRight();
+            }
 
             ImGui::PopStyleVar();
             ImGui::GetFont()->Scale = oldsize;
