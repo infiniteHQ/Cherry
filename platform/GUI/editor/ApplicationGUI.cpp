@@ -1,25 +1,43 @@
 #include "ApplicationGUI.h"
 #include "../../../src/core/Log.h"
+#include "../../../components/windows/windows.h"
+#include "../../../components/buttons/buttons.h"
 
-//
-// Adapted from Dear ImGui Vulkan example
-//
+/**
+ * @file ApplicationGUI.cpp
+ * @brief All sources of master window behaviors & render engine.
+ */
 
-/*
-TODO :
+/**
+┌────────────────────────────────────────────┐
+│                 To-do list                 │
+└────────────────────────────────────────────┘
+TODO : Window manager interactions
+TODO : Window manager interactions
+TODO : Default AppWindow behaviors (size, docking, etc...)
+TODO : Save AppWindow states (positions, parents, docking, etc...)
+TODO : Dockspace tabs menu callback and events/flags (flags : unsaved) (events: close)
+TODO : Better start of dragging to prevent dragging+mooving
 
-Move, Resize, Click (click callback, and link to imgui ctx ?)
-Window factory to spawn window when undock
-Cool widgets & ui elements !
+TODO : SubAppWindow managment + Car have many sub app windows to many AppWindow instances.
+TODO : Prebuild base sub app windows
+TODO : Headerless example, Simple example, Base exemple, Advanced exemple
+TODO : Set favicon
 
-*/
+
+┌────────────────────────────────────────────┐
+│                  Bug list                  │
+└────────────────────────────────────────────┘
+BUG : If we resize a window by the top or the left corners, the window will be resize by the opposite corner causing a infinite resize
+BUG : AppWindowHost not set properly when redocking
+**/
 
 #include <stdio.h>  // printf, fprintf
 #include <thread>   // thread
 #include <stdlib.h> // abort
-#define GLFW_INCLUDE_NONE
-#define GLFW_INCLUDE_VULKAN
 #include <vulkan/vulkan.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_vulkan.h>
 
 #include <iostream>
 
@@ -44,6 +62,13 @@ extern bool g_ApplicationRunning;
 #define IMGUI_VULKAN_DEBUG_REPORT
 #endif
 
+static bool found_valid_drop_zone_global = false;
+static bool c_DockIsDragging = false;
+static bool drag_rendered = false;
+static bool c_MasterSwapChainRebuild = false;
+static UIKit::WindowDragDropState *c_CurrentDragDropState;
+static std::vector<std::string> c_ImageList;
+
 static VkAllocationCallbacks *g_Allocator = NULL;
 static VkInstance g_Instance = VK_NULL_HANDLE;
 static VkPhysicalDevice g_PhysicalDevice = VK_NULL_HANDLE;
@@ -55,7 +80,13 @@ static VkPipelineCache g_PipelineCache = VK_NULL_HANDLE;
 static VkDescriptorPool g_DescriptorPool = VK_NULL_HANDLE;
 static int g_MinImageCount = 2;
 
-static int WinIDCount = 0;
+static std::shared_ptr<UIKit::Image> m_AppHeaderIcon;
+static std::shared_ptr<UIKit::Image> m_IconClose;
+static std::shared_ptr<UIKit::Image> m_IconMinimize;
+static std::shared_ptr<UIKit::Image> m_IconMaximize;
+static std::shared_ptr<UIKit::Image> m_IconRestore;
+
+static int WinIDCount = -1;
 
 // Per-frame-in-flight
 
@@ -75,6 +106,248 @@ void check_vk_result(VkResult err)
         abort();
 }
 
+// Docking
+static const float DOCKING_TRANSPARENT_PAYLOAD_ALPHA = 0.50f; // For use with io.ConfigDockingTransparentPayload. Apply to Viewport _or_ WindowBg in host viewport.
+static const float DOCKING_SPLITTER_SIZE = 2.0f;
+
+static std::shared_ptr<UIKit::RedockRequest> latest_req;
+
+static void PushRedockEvent(UIKit::WindowDragDropState *state)
+{
+    for (auto app_win : s_Instance->m_AppWindows)
+    {
+        if (app_win->m_Name == state->LastDraggingAppWindowHost)
+        {
+            std::shared_ptr<UIKit::RedockRequest> req = app_win->create_event(
+                state->LastDraggingWindow,
+                state->LastDraggingPlace,
+                state->LastDraggingAppWindow);
+            latest_req = req;
+            s_Instance->m_RedockRequests.push_back(req);
+        }
+    }
+}
+
+struct ImGuiDockPreviewData
+{
+    ImGuiDockNode FutureNode;
+    bool IsDropAllowed;
+    bool IsCenterAvailable;
+    bool IsSidesAvailable;   // Hold your breath, grammar freaks..
+    bool IsSplitDirExplicit; // Set when hovered the drop rect (vs. implicit SplitDir==None when hovered the window)
+    ImGuiDockNode *SplitNode;
+    ImGuiDir SplitDir;
+    float SplitRatio;
+    ImRect DropRectsDraw[ImGuiDir_COUNT + 1]; // May be slightly different from hit-testing drop rects used in DockNodeCalcDropRects()
+
+    ImGuiDockPreviewData() : FutureNode(0)
+    {
+        IsDropAllowed = IsCenterAvailable = IsSidesAvailable = IsSplitDirExplicit = false;
+        SplitNode = NULL;
+        SplitDir = ImGuiDir_None;
+        SplitRatio = 0.f;
+        for (int n = 0; n < IM_ARRAYSIZE(DropRectsDraw); n++)
+            DropRectsDraw[n] = ImRect(+FLT_MAX, +FLT_MAX, -FLT_MAX, -FLT_MAX);
+    }
+};
+
+void DockNodeCalcTabBarLayout(const ImGuiDockNode *node, ImRect *out_title_rect, ImRect *out_tab_bar_rect, ImVec2 *out_window_menu_button_pos, ImVec2 *out_close_button_pos)
+{
+    ImGuiContext &g = *GImGui;
+    ImGuiStyle &style = g.Style;
+
+    ImRect r = ImRect(node->Pos.x, node->Pos.y, node->Pos.x + node->Size.x, node->Pos.y + g.FontSize + g.Style.FramePadding.y * 2.0f);
+    if (out_title_rect)
+    {
+        *out_title_rect = r;
+    }
+
+    r.Min.x += style.WindowBorderSize;
+    r.Max.x -= style.WindowBorderSize;
+
+    float button_sz = g.FontSize;
+
+    ImVec2 window_menu_button_pos = r.Min;
+    r.Min.x += style.FramePadding.x;
+    r.Max.x -= style.FramePadding.x;
+    if (node->HasCloseButton)
+    {
+        r.Max.x -= button_sz;
+        if (out_close_button_pos)
+            *out_close_button_pos = ImVec2(r.Max.x - style.FramePadding.x, r.Min.y);
+    }
+    if (node->HasWindowMenuButton && style.WindowMenuButtonPosition == ImGuiDir_Left)
+    {
+        r.Min.x += button_sz + style.ItemInnerSpacing.x;
+    }
+    else if (node->HasWindowMenuButton && style.WindowMenuButtonPosition == ImGuiDir_Right)
+    {
+        r.Max.x -= button_sz + style.FramePadding.x;
+        window_menu_button_pos = ImVec2(r.Max.x, r.Min.y);
+    }
+    if (out_tab_bar_rect)
+    {
+        *out_tab_bar_rect = r;
+    }
+    if (out_window_menu_button_pos)
+    {
+        *out_window_menu_button_pos = window_menu_button_pos;
+    }
+}
+
+bool DockNodeIsDropAllowedOne(ImGuiWindow *payload, ImGuiWindow *host_window)
+{
+    if (host_window->DockNodeAsHost && host_window->DockNodeAsHost->IsDockSpace() && payload->BeginOrderWithinContext < host_window->BeginOrderWithinContext)
+        return false;
+
+    ImGuiWindowClass *host_class = host_window->DockNodeAsHost ? &host_window->DockNodeAsHost->WindowClass : &host_window->WindowClass;
+    ImGuiWindowClass *payload_class = &payload->WindowClass;
+    if (host_class->ClassId != payload_class->ClassId)
+    {
+        if (host_class->ClassId != 0 && host_class->DockingAllowUnclassed && payload_class->ClassId == 0)
+            return true;
+        if (payload_class->ClassId != 0 && payload_class->DockingAllowUnclassed && host_class->ClassId == 0)
+            return true;
+        return false;
+    }
+
+    // Prevent docking any window created above a popup
+    // Technically we should support it (e.g. in the case of a long-lived modal window that had fancy docking features),
+    // by e.g. adding a 'if (!ImGui::IsWindowWithinBeginStackOf(host_window, popup_window))' test.
+    // But it would requires more work on our end because the dock host windows is technically created in NewFrame()
+    // and our ->ParentXXX and ->RootXXX pointers inside windows are currently mislading or lacking.
+    ImGuiContext &g = *GImGui;
+    for (int i = g.OpenPopupStack.Size - 1; i >= 0; i--)
+        if (ImGuiWindow *popup_window = g.OpenPopupStack[i].Window)
+            if (ImGui::IsWindowWithinBeginStackOf(payload, popup_window)) // Payload is created from within a popup begin stack.
+                return false;
+
+    return true;
+}
+namespace ImGui
+{
+
+    void DockNodePreviewDockR(ImGuiWindow *host_window, ImGuiDockNode *host_node, ImGuiWindow *root_payload, const ImGuiDockPreviewData *data)
+    {
+        ImGuiContext &g = *GImGui;
+        IM_ASSERT(g.CurrentWindow == host_window); // Because we rely on font size to calculate tab sizes
+
+        // With this option, we only display the preview on the target viewport, and the payload viewport is made transparent.
+        // To compensate for the single layer obstructed by the payload, we'll increase the alpha of the preview nodes.
+        const bool is_transparent_payload = g.IO.ConfigDockingTransparentPayload;
+
+        // In case the two windows involved are on different viewports, we will draw the overlay on each of them.
+        int overlay_draw_lists_count = 0;
+        ImDrawList *overlay_draw_lists[2];
+        overlay_draw_lists[overlay_draw_lists_count++] = GetForegroundDrawList(host_window->Viewport);
+        if (host_window->Viewport != root_payload->Viewport && !is_transparent_payload)
+            overlay_draw_lists[overlay_draw_lists_count++] = GetForegroundDrawList(root_payload->Viewport);
+
+        // Draw main preview rectangle
+        const ImU32 overlay_col_main = GetColorU32(ImGuiCol_DockingPreview, is_transparent_payload ? 0.60f : 0.40f);
+        const ImU32 overlay_col_drop = GetColorU32(ImGuiCol_DockingPreview, is_transparent_payload ? 0.90f : 0.70f);
+        const ImU32 overlay_col_drop_hovered = GetColorU32(ImGuiCol_DockingPreview, is_transparent_payload ? 1.20f : 1.00f);
+        const ImU32 overlay_col_lines = GetColorU32(ImGuiCol_NavWindowingHighlight, is_transparent_payload ? 0.80f : 0.60f);
+
+        // Display area preview
+        const bool can_preview_tabs = (root_payload->DockNodeAsHost == NULL || root_payload->DockNodeAsHost->Windows.Size > 0);
+        if (data->IsDropAllowed)
+        {
+            ImRect overlay_rect = data->FutureNode.Rect();
+            if (data->SplitDir == ImGuiDir_None && can_preview_tabs)
+                overlay_rect.Min.y += GetFrameHeight();
+            if (data->SplitDir != ImGuiDir_None || data->IsCenterAvailable)
+                for (int overlay_n = 0; overlay_n < overlay_draw_lists_count; overlay_n++)
+                    overlay_draw_lists[overlay_n]->AddRectFilled(overlay_rect.Min, overlay_rect.Max, overlay_col_main, host_window->WindowRounding, CalcRoundingFlagsForRectInRect(overlay_rect, host_window->Rect(), DOCKING_SPLITTER_SIZE));
+        }
+
+        // Display tab shape/label preview unless we are splitting node (it generally makes the situation harder to read)
+        if (data->IsDropAllowed && can_preview_tabs && data->SplitDir == ImGuiDir_None && data->IsCenterAvailable)
+        {
+            // Compute target tab bar geometry so we can locate our preview tabs
+            ImRect tab_bar_rect;
+            DockNodeCalcTabBarLayout(&data->FutureNode, NULL, &tab_bar_rect, NULL, NULL);
+            ImVec2 tab_pos = tab_bar_rect.Min;
+            if (host_node && host_node->TabBar)
+            {
+                if (!host_node->IsHiddenTabBar() && !host_node->IsNoTabBar())
+                    tab_pos.x += host_node->TabBar->WidthAllTabs + g.Style.ItemInnerSpacing.x; // We don't use OffsetNewTab because when using non-persistent-order tab bar it is incremented with each Tab submission.
+                else
+                    tab_pos.x += g.Style.ItemInnerSpacing.x + TabItemCalcSize(host_node->Windows[0]->Name, host_node->Windows[0]->HasCloseButton).x;
+            }
+            else if (!(host_window->Flags & ImGuiWindowFlags_DockNodeHost))
+            {
+                tab_pos.x += g.Style.ItemInnerSpacing.x + TabItemCalcSize(host_window->Name, host_window->HasCloseButton).x; // Account for slight offset which will be added when changing from title bar to tab bar
+            }
+
+            // Draw tab shape/label preview (payload may be a loose window or a host window carrying multiple tabbed windows)
+            if (root_payload->DockNodeAsHost)
+                IM_ASSERT(root_payload->DockNodeAsHost->Windows.Size <= root_payload->DockNodeAsHost->TabBar->Tabs.Size);
+            ImGuiTabBar *tab_bar_with_payload = root_payload->DockNodeAsHost ? root_payload->DockNodeAsHost->TabBar : NULL;
+            const int payload_count = tab_bar_with_payload ? tab_bar_with_payload->Tabs.Size : 1;
+            for (int payload_n = 0; payload_n < payload_count; payload_n++)
+            {
+                // DockNode's TabBar may have non-window Tabs manually appended by user
+                ImGuiWindow *payload_window = tab_bar_with_payload ? tab_bar_with_payload->Tabs[payload_n].Window : root_payload;
+                if (tab_bar_with_payload && payload_window == NULL)
+                    continue;
+                if (!DockNodeIsDropAllowedOne(payload_window, host_window))
+                    continue;
+
+                // Calculate the tab bounding box for each payload window
+                ImVec2 tab_size = TabItemCalcSize(payload_window->Name, payload_window->HasCloseButton);
+                ImRect tab_bb(tab_pos.x, tab_pos.y, tab_pos.x + tab_size.x, tab_pos.y + tab_size.y);
+                tab_pos.x += tab_size.x + g.Style.ItemInnerSpacing.x;
+                const ImU32 overlay_col_text = GetColorU32(payload_window->DockStyle.Colors[ImGuiWindowDockStyleCol_Text]);
+                const ImU32 overlay_col_tabs = GetColorU32(payload_window->DockStyle.Colors[ImGuiWindowDockStyleCol_TabActive]);
+
+                PushStyleColor(ImGuiCol_Text, overlay_col_text);
+                for (int overlay_n = 0; overlay_n < overlay_draw_lists_count; overlay_n++)
+                {
+                    ImGuiTabItemFlags tab_flags = ImGuiTabItemFlags_Preview | ((payload_window->Flags & ImGuiWindowFlags_UnsavedDocument) ? ImGuiTabItemFlags_UnsavedDocument : 0);
+                    if (!tab_bar_rect.Contains(tab_bb))
+                        overlay_draw_lists[overlay_n]->PushClipRect(tab_bar_rect.Min, tab_bar_rect.Max);
+                    TabItemBackground(overlay_draw_lists[overlay_n], tab_bb, tab_flags, overlay_col_tabs);
+                    TabItemLabelAndCloseButton(overlay_draw_lists[overlay_n], tab_bb, tab_flags, g.Style.FramePadding, payload_window->Name, 0, 0, false, NULL, NULL);
+                    if (!tab_bar_rect.Contains(tab_bb))
+                        overlay_draw_lists[overlay_n]->PopClipRect();
+                }
+                PopStyleColor();
+            }
+        }
+
+        // Display drop boxes
+        const float overlay_rounding = ImMax(3.0f, g.Style.FrameRounding);
+        for (int dir = ImGuiDir_None; dir < ImGuiDir_COUNT; dir++)
+        {
+            // Assurer que les index sont corrects
+            ImRect draw_r = data->DropRectsDraw[dir];
+            if (!draw_r.IsInverted())
+            {
+                ImRect draw_r_in = draw_r;
+                draw_r_in.Expand(-2.0f);
+                ImU32 overlay_col = (data->SplitDir == (ImGuiDir)dir && data->IsSplitDirExplicit) ? overlay_col_drop_hovered : overlay_col_drop;
+                for (int overlay_n = 0; overlay_n < overlay_draw_lists_count; overlay_n++)
+                {
+                    ImVec2 center = ImFloor(draw_r_in.GetCenter());
+                    overlay_draw_lists[overlay_n]->AddRectFilled(draw_r.Min, draw_r.Max, overlay_col, overlay_rounding);
+                    overlay_draw_lists[overlay_n]->AddRect(draw_r_in.Min, draw_r_in.Max, overlay_col_lines, overlay_rounding);
+
+                    // Ajouter des lignes seulement pour les zones split
+                    if (dir == ImGuiDir_Left || dir == ImGuiDir_Right)
+                        overlay_draw_lists[overlay_n]->AddLine(ImVec2(center.x, draw_r_in.Min.y), ImVec2(center.x, draw_r_in.Max.y), overlay_col_lines);
+                    if (dir == ImGuiDir_Up || dir == ImGuiDir_Down)
+                        overlay_draw_lists[overlay_n]->AddLine(ImVec2(draw_r_in.Min.x, center.y), ImVec2(draw_r_in.Max.x, center.y), overlay_col_lines);
+                }
+            }
+
+            // Stop après avoir traité toutes les directions
+            if (dir == ImGuiDir_None && (host_node && (host_node->MergedFlags & ImGuiDockNodeFlags_NoSplit)) || g.IO.ConfigDockingNoSplit)
+                break;
+        }
+    }
+
+}
 #ifdef IMGUI_VULKAN_DEBUG_REPORT
 static VKAPI_ATTR VkBool32 VKAPI_CALL debug_report(VkDebugReportFlagsEXT flags, VkDebugReportObjectTypeEXT objectType, uint64_t object, size_t location, int32_t messageCode, const char *pLayerPrefix, const char *pMessage, void *pUserData)
 {
@@ -2015,6 +2288,7 @@ static void SetupVulkanWindow(ImGui_ImplVulkanH_Window *wd, VkSurfaceKHR surface
 #endif
     wd->PresentMode = ImGui_ImplVulkanH_SelectPresentMode(g_PhysicalDevice, wd->Surface, &present_modes[0], IM_ARRAYSIZE(present_modes));
     // printf("[vulkan] Selected PresentMode = %d\n", wd->PresentMode);
+
     // Create SwapChain, RenderPass, Framebuffer, etc.
     IM_ASSERT(g_MinImageCount >= 2);
     ImGui_ImplVulkanH_CreateOrResizeWindow(g_Instance, g_PhysicalDevice, g_Device, wd, g_QueueFamily, g_Allocator, width, height, g_MinImageCount);
@@ -2049,9 +2323,9 @@ static void CleanupSpecificVulkanWindow(UIKit::Window *win)
 static void FrameRender(ImGui_ImplVulkanH_Window *wd, UIKit::Window *win, ImDrawData *draw_data)
 {
     VkResult err;
-
     VkSemaphore image_acquired_semaphore = wd->FrameSemaphores[wd->SemaphoreIndex].ImageAcquiredSemaphore;
     VkSemaphore render_complete_semaphore = wd->FrameSemaphores[wd->SemaphoreIndex].RenderCompleteSemaphore;
+
     err = vkAcquireNextImageKHR(g_Device, wd->Swapchain, UINT64_MAX, image_acquired_semaphore, VK_NULL_HANDLE, &wd->FrameIndex);
 
     if (err == VK_ERROR_OUT_OF_DATE_KHR || err == VK_SUBOPTIMAL_KHR)
@@ -2060,6 +2334,7 @@ static void FrameRender(ImGui_ImplVulkanH_Window *wd, UIKit::Window *win, ImDraw
 
         return;
     }
+
     check_vk_result(err);
 
     ImGui_ImplVulkanH_Frame *fd = &wd->Frames[wd->FrameIndex];
@@ -2073,20 +2348,7 @@ static void FrameRender(ImGui_ImplVulkanH_Window *wd, UIKit::Window *win, ImDraw
         err = vkResetFences(g_Device, 1, &fd->Fence);
         check_vk_result(err);
     }
-
     {
-        for (auto &func : win->s_ResourceFreeQueue[win->m_WinData.FrameIndex])
-            func();
-        win->s_ResourceFreeQueue[win->m_WinData.FrameIndex].clear();
-    }
-    {
-        auto &allocatedCommandBuffers = win->s_AllocatedCommandBuffers[wd->FrameIndex];
-        if (allocatedCommandBuffers.size() > 0)
-        {
-            vkFreeCommandBuffers(g_Device, fd->CommandPool, (uint32_t)allocatedCommandBuffers.size(), allocatedCommandBuffers.data());
-            allocatedCommandBuffers.clear();
-        }
-
         err = vkResetCommandPool(g_Device, fd->CommandPool, 0);
         check_vk_result(err);
         VkCommandBufferBeginInfo info = {};
@@ -2130,7 +2392,6 @@ static void FrameRender(ImGui_ImplVulkanH_Window *wd, UIKit::Window *win, ImDraw
         check_vk_result(err);
     }
 }
-
 static void FramePresent(ImGui_ImplVulkanH_Window *wd, UIKit::Window *win)
 {
     if (win->g_SwapChainRebuild)
@@ -2151,6 +2412,25 @@ static void FramePresent(ImGui_ImplVulkanH_Window *wd, UIKit::Window *win)
     }
     check_vk_result(err);
     wd->SemaphoreIndex = (wd->SemaphoreIndex + 1) % wd->ImageCount; // Now we can use the next set of semaphores
+}
+
+static void CleanupVulkan()
+{
+    vkDestroyDescriptorPool(g_Device, g_DescriptorPool, g_Allocator);
+
+#ifdef IMGUI_VULKAN_DEBUG_REPORT
+    // Remove the debug report callback
+    auto vkDestroyDebugReportCallbackEXT = (PFN_vkDestroyDebugReportCallbackEXT)vkGetInstanceProcAddr(g_Instance, "vkDestroyDebugReportCallbackEXT");
+    vkDestroyDebugReportCallbackEXT(g_Instance, g_DebugReport, g_Allocator);
+#endif // IMGUI_VULKAN_DEBUG_REPORT
+
+    vkDestroyDevice(g_Device, g_Allocator);
+    vkDestroyInstance(g_Instance, g_Allocator);
+}
+
+static void CleanupVulkanWindow(ImGui_ImplVulkanH_Window *wd)
+{
+    ImGui_ImplVulkanH_DestroyWindow(g_Instance, g_Device, wd, g_Allocator);
 }
 
 static void glfw_error_callback(int error, const char *description)
@@ -2192,29 +2472,15 @@ namespace UIKit
         // Intialize logging
         Log::Init();
 
-        // Setup GLFW window
-        glfwSetErrorCallback(glfw_error_callback);
-        if (!glfwInit())
+        // Setup SDL
+        if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_GAMECONTROLLER) != 0)
         {
-            std::cerr << "Could not initalize GLFW!\n";
+            printf("Error: %s\n", SDL_GetError());
             return;
         }
 
-        glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API); // Pas de contexte OpenGL
-
-        // Check if custom titlebar is enabled
-        bool customTitlebar = app->m_Specification.CustomTitlebar;
-        glfwWindowHint(GLFW_DECORATED, customTitlebar ? GLFW_FALSE : GLFW_TRUE);
-        glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
-
-        // Setup Vulkan instance, device, etc.
-        uint32_t extensions_count = 2;
-        const char **extensions = glfwGetRequiredInstanceExtensions(&extensions_count);
-        SetupVulkan(extensions, extensions_count);
-
-        this->m_Windows.push_back(std::make_shared<Window>("base", app->m_Specification.Width, app->m_Specification.Height));
-        this->m_Windows.push_back(std::make_shared<Window>("b22ase", 1800, 1000));
-        // this->m_Windows.push_back(std::make_shared<Window>("b22a999se", 1800, 1000));
+        this->m_Windows.push_back(std::make_shared<Window>("0", app->m_Specification.Width, app->m_Specification.Height));
+        this->m_Windows.push_back(std::make_shared<Window>("1", app->m_Specification.Width, app->m_Specification.Height));
     }
 
     void Application::Shutdown()
@@ -2223,15 +2489,6 @@ namespace UIKit
             layer->OnDetach();
 
         m_LayerStack.clear();
-
-        // Release resources
-        // NOTE(Yan): to avoid doing this manually, we shouldn't
-        //            store resources in this Application class
-        // m_AppHeaderIcon.reset();
-        // m_IconClose.reset();
-        // m_IconMinimize.reset();
-        // m_IconMaximize.reset();
-        // m_IconRestore.reset();
 
         // Cleanup
         for (auto win : app->m_Windows)
@@ -2247,9 +2504,14 @@ namespace UIKit
             }
             win->s_ResourceFreeQueue.clear();
         }
+        m_IconRestore.reset();
+        m_AppHeaderIcon.reset();
+        m_IconClose.reset();
+        m_IconMinimize.reset();
+        m_IconMaximize.reset();
 
         ImGui_ImplVulkan_Shutdown();
-        ImGui_ImplGlfw_Shutdown();
+        ImGui_ImplSDL2_Shutdown();
         ImGui::DestroyContext();
 
         // Cleanup
@@ -2260,31 +2522,55 @@ namespace UIKit
         }
 
         // glfwDestroyWindow(m_WindowHandle);
-        glfwTerminate();
+        // glfwTerminate();
 
         g_ApplicationRunning = false;
 
         Log::Shutdown();
     }
+
     void Window::UI_DrawTitlebar(float &outTitlebarHeight)
     {
-        const float titlebarHeight = 58.0f;
+        float titlebarVerticalOffset = 0.0f;
 
-        const bool isMaximized = (bool)glfwGetWindowAttrib(this->GetWindowHandle(), GLFW_MAXIMIZED);
-        ;
-        float titlebarVerticalOffset = isMaximized ? -6.0f : 0.0f;
+        ImGui::SetCurrentContext(this->m_ImGuiContext); // Assurez-vous que vous avez le bon contexte pour la fenêtre active
+
+        const float titlebarHeight = 58.0f;
         const ImVec2 windowPadding = ImGui::GetCurrentWindow()->WindowPadding;
 
-        ImGui::SetCursorPos(ImVec2(windowPadding.x, windowPadding.y + titlebarVerticalOffset));
-        const ImVec2 titlebarMin = ImGui::GetCursorScreenPos();
-        const ImVec2 titlebarMax = {ImGui::GetCursorScreenPos().x + ImGui::GetWindowWidth() - windowPadding.y * 2.0f,
-                                    ImGui::GetCursorScreenPos().y + titlebarHeight};
-        auto *bgDrawList = ImGui::GetBackgroundDrawList();
+        ImVec2 titlebarMin = ImGui::GetCursorScreenPos();
+        ImVec2 titlebarMax = {titlebarMin.x + ImGui::GetWindowWidth() - windowPadding.y * 2.0f,
+                              titlebarMin.y + titlebarHeight};
+
+        // Détection du drag & drop pour déplacer la fenêtre
+        if (ImGui::IsMouseHoveringRect(titlebarMin, titlebarMax) && ImGui::IsMouseClicked(ImGuiMouseButton_Left))
+        {
+            this->isMoving = true;
+            ImVec2 mousePos = ImGui::GetMousePos();
+            this->clickOffset = ImVec2(mousePos.x - titlebarMin.x, mousePos.y - titlebarMin.y);
+        }
+
+        if (this->isMoving && ImGui::IsMouseDragging(ImGuiMouseButton_Left))
+        {
+            if (!m_Resizing)
+            {
+                ImVec2 mousePos = ImGui::GetMousePos();
+                SDL_Window *sdlWindow = this->GetWindowHandle();
+                SDL_SetWindowPosition(sdlWindow, static_cast<int>(mousePos.x - this->clickOffset.x), static_cast<int>(mousePos.y - this->clickOffset.y));
+            }
+        }
+
+        if (!ImGui::IsMouseDown(ImGuiMouseButton_Left))
+        {
+            this->isMoving = false;
+        }
+
         auto *fgDrawList = ImGui::GetForegroundDrawList();
+        auto *bgDrawList = ImGui::GetBackgroundDrawList();
+
         bgDrawList->AddRectFilled(titlebarMin, titlebarMax, UI::Colors::Theme::titlebar);
         // DEBUG TITLEBAR BOUNDS
         // fgDrawList->AddRect(titlebarMin, titlebarMax, UI::Colors::Theme::invalidPrefab);
-
         // Logo
         {
             const int logoWidth = 48;  // m_LogoTex->GetWidth();
@@ -2292,14 +2578,12 @@ namespace UIKit
             const ImVec2 logoOffset(16.0f + windowPadding.x, 5.0f + windowPadding.y + titlebarVerticalOffset);
             const ImVec2 logoRectStart = {ImGui::GetItemRectMin().x + logoOffset.x, ImGui::GetItemRectMin().y + logoOffset.y};
             const ImVec2 logoRectMax = {logoRectStart.x + logoWidth, logoRectStart.y + logoHeight};
-            fgDrawList->AddImage(m_AppHeaderIcon->GetDescriptorSet(), logoRectStart, logoRectMax);
+            fgDrawList->AddImage(this->get("/usr/local/include/Vortex/imgs/vortex.png")->GetDescriptorSet(), logoRectStart, logoRectMax);
         }
 
         ImGui::SetItemAllowOverlap();
         ImGui::BeginHorizontal("Titlebar", {ImGui::GetWindowWidth() - windowPadding.y * 2.0f, ImGui::GetFrameHeightWithSpacing()});
 
-        static float moveOffsetX;
-        static float moveOffsetY;
         const float w = ImGui::GetContentRegionAvail().x;
         const float buttonsAreaWidth = 94;
 
@@ -2317,6 +2601,7 @@ namespace UIKit
             ImGui::ResumeLayout();
         }
 
+        if (!app->m_Specification.DisableTitle)
         {
             // Centered Window title
             ImVec2 currentCursorPos = ImGui::GetCursorPos();
@@ -2330,81 +2615,89 @@ namespace UIKit
         const ImU32 buttonColN = UI::Colors::ColorWithMultipliedValue(UI::Colors::Theme::text, 0.9f);
         const ImU32 buttonColH = UI::Colors::ColorWithMultipliedValue(UI::Colors::Theme::text, 1.2f);
         const ImU32 buttonColP = UI::Colors::Theme::textDarker;
-        const float buttonWidth = 14.0f;
-        const float buttonHeight = 14.0f;
+        const float buttonWidth = 11.0f;
+        const float buttonHeight = 11.0f;
+
+        ImGui::Spring();
+        UI::ShiftCursorY(8.0f);
+
+        if (app->m_FramebarCallback)
+        {
+            app->m_FramebarCallback();
+        }
 
         if (app->m_Specification.CustomTitlebar)
         {
-            // Minimize Button
-            ImGui::Spring();
-            UI::ShiftCursorY(8.0f);
-
-            if (!app->m_Specification.WindowOnlyClosable)
             {
+                ImGui::Spring(-1.0f, 70.0f);
+                UI::ShiftCursorY(8.0f);
+
+                if (!app->m_Specification.WindowOnlyClosable)
                 {
-                    const int iconWidth = this->m_IconMinimize->GetWidth();
-                    const int iconHeight = this->m_IconMinimize->GetHeight();
+                    const int iconWidth = this->get(g_WindowMinimizeIcon, "Minimize")->GetWidth();
+                    const int iconHeight = this->get(g_WindowMinimizeIcon, "Minimize")->GetHeight();
                     const float padY = (buttonHeight - (float)iconHeight) / 2.0f;
 
+                    std::string label = "Minimize###" + this->GetName();
+                    if (ImGui::InvisibleButton("Minimize", ImVec2(buttonWidth, buttonHeight)))
                     {
-                        std::string label = "Minimize###" + this->GetName();
-                        if (ImGui::InvisibleButton("Minimize", ImVec2(buttonWidth, buttonHeight)))
+                        if (this->GetWindowHandle())
                         {
-                            // TODO: move this stuff to a better place, like Window class
-                            if (this->GetWindowHandle())
-                            {
-                                this->QueueEvent([windowHandle = this->GetWindowHandle()]()
-                                                 { glfwIconifyWindow(windowHandle); });
-                            }
+                            SDL_MinimizeWindow(this->GetWindowHandle());
                         }
                     }
 
-                    UI::DrawButtonImage(this->m_IconMinimize, buttonColN, buttonColH, buttonColP, UI::RectExpanded(UI::GetItemRect(), 0.0f, -padY));
+                    UI::DrawButtonImage(this->get(g_WindowMinimizeIcon, "Minimize"), buttonColN, buttonColH, buttonColP, UI::RectExpanded(UI::GetItemRect(), 0.0f, -padY));
                 }
             }
-            // Maximize Button
-            ImGui::Spring(-1.0f, 17.0f);
-            UI::ShiftCursorY(8.0f);
-            if (!app->m_Specification.WindowOnlyClosable)
             {
+                // Maximize / Restore Button
+                ImGui::Spring(-1.0f, 17.0f);
+                UI::ShiftCursorY(8.0f);
+
+                if (!app->m_Specification.WindowOnlyClosable)
                 {
-                    const int iconWidth = this->m_IconMaximize->GetWidth();
-                    const int iconHeight = this->m_IconMaximize->GetHeight();
+                    const int iconWidth = this->get(g_WindowMaximizeIcon, "Maximize")->GetWidth();
+                    const int iconHeight = this->get(g_WindowMaximizeIcon, "Maximize")->GetHeight();
 
-                    const bool isMaximized = (bool)glfwGetWindowAttrib(this->GetWindowHandle(), GLFW_MAXIMIZED);
+                    SDL_Window *sdlWindow = this->GetWindowHandle();
+                    bool isMaximized = SDL_GetWindowFlags(sdlWindow) & SDL_WINDOW_MAXIMIZED;
 
+                    std::string label = "Maximize###" + this->GetName();
+                    if (ImGui::InvisibleButton("Maximize", ImVec2(buttonWidth, buttonHeight)))
                     {
-
-                        std::string label = "Maximize###" + this->GetName();
-                        if (ImGui::InvisibleButton(label.c_str(), ImVec2(buttonWidth, buttonHeight)))
+                        if (isMaximized)
                         {
-                            this->QueueEvent([isMaximized, windowHandle = this->GetWindowHandle()]()
-                                             {
-					if (isMaximized)
-						glfwRestoreWindow(windowHandle);
-					else
-						glfwMaximizeWindow(windowHandle); });
+                            SDL_RestoreWindow(sdlWindow);
+                        }
+                        else
+                        {
+                            SDL_MaximizeWindow(sdlWindow);
                         }
                     }
-                    UI::DrawButtonImage(isMaximized ? this->m_IconRestore : this->m_IconMaximize, buttonColN, buttonColH, buttonColP);
+
+                    UI::DrawButtonImage(isMaximized ? this->get(g_WindowMaximizeIcon, "Maximize") : this->get(g_WindowRestoreIcon, "Restore"), buttonColN, buttonColH, buttonColP);
                 }
             }
-
             {
                 // Close Button
                 ImGui::Spring(-1.0f, 15.0f);
                 UI::ShiftCursorY(8.0f);
                 {
-                    const int iconWidth = this->m_IconClose->GetWidth();
-                    const int iconHeight = this->m_IconClose->GetHeight();
+                    const int iconWidth = this->get(g_WindowCloseIcon, "Maximize")->GetWidth();
+                    const int iconHeight = this->get(g_WindowCloseIcon, "Maximize")->GetHeight();
+
                     std::string label = "Close###" + this->GetName();
                     if (ImGui::InvisibleButton("Close", ImVec2(buttonWidth, buttonHeight)))
+                    {
                         Application::Get().Close();
+                    }
 
-                    UI::DrawButtonImage(this->m_IconClose, UI::Colors::Theme::text, UI::Colors::ColorWithMultipliedValue(UI::Colors::Theme::text, 1.4f), buttonColP);
+                    UI::DrawButtonImage(this->get(g_WindowCloseIcon, "Close"), UI::Colors::Theme::text, UI::Colors::ColorWithMultipliedValue(UI::Colors::Theme::text, 1.4f), buttonColP);
                 }
+
+                ImGui::Spring(-1.0f, 18.0f);
             }
-            ImGui::Spring(-1.0f, 18.0f);
         }
         ImGui::EndHorizontal();
 
@@ -2415,8 +2708,7 @@ namespace UIKit
     void Application::UI_DrawTitlebar(float &outTitlebarHeight, Window *window)
     {
         const float titlebarHeight = 58.0f;
-        const bool isMaximized = (bool)glfwGetWindowAttrib(window->GetWindowHandle(), GLFW_MAXIMIZED);
-        float titlebarVerticalOffset = isMaximized ? -6.0f : 0.0f;
+        float titlebarVerticalOffset = 0.0f;
         const ImVec2 windowPadding = ImGui::GetCurrentWindow()->WindowPadding;
 
         ImGui::SetCursorPos(ImVec2(windowPadding.x, windowPadding.y + titlebarVerticalOffset));
@@ -2437,7 +2729,7 @@ namespace UIKit
             const ImVec2 logoRectStart = {ImGui::GetItemRectMin().x + logoOffset.x, ImGui::GetItemRectMin().y + logoOffset.y};
             const ImVec2 logoRectMax = {logoRectStart.x + logoWidth, logoRectStart.y + logoHeight};
 
-            fgDrawList->AddImage(window->m_AppHeaderIcon->GetDescriptorSet(), logoRectStart, logoRectMax);
+            fgDrawList->AddImage(m_AppHeaderIcon->GetDescriptorSet(), logoRectStart, logoRectMax);
         }
 
         ImGui::BeginHorizontal("Titlebar", {ImGui::GetWindowWidth() - windowPadding.y * 2.0f, ImGui::GetFrameHeightWithSpacing()});
@@ -2468,7 +2760,6 @@ namespace UIKit
         static ImVec2 windowDragStartPos;
 
         int windowPosX, windowPosY;
-        glfwGetWindowPos(window->GetWindowHandle(), &windowPosX, &windowPosY);
         static ImVec2 windowPos{static_cast<float>(windowPosX), static_cast<float>(windowPosY)};
 
         // Title bar drag area
@@ -2476,13 +2767,6 @@ namespace UIKit
         ImGui::InvisibleButton("##titleBarDragZone", ImVec2(w - buttonsAreaWidth, titlebarHeight));
 
         m_TitleBarHovered = ImGui::IsItemHovered();
-
-        if (isMaximized)
-        {
-            float windowMousePosY = ImGui::GetMousePos().y - ImGui::GetCursorScreenPos().y;
-            if (windowMousePosY >= 0.0f && windowMousePosY <= 5.0f)
-                m_TitleBarHovered = true; // Account for the top-most pixels which don't register
-        }
 
         // Draw Menubar
         if (m_MenubarCallback)
@@ -2514,62 +2798,22 @@ namespace UIKit
         const ImU32 buttonColN = UI::Colors::ColorWithMultipliedValue(UI::Colors::Theme::text, 0.9f);
         const ImU32 buttonColH = UI::Colors::ColorWithMultipliedValue(UI::Colors::Theme::text, 1.2f);
         const ImU32 buttonColP = UI::Colors::Theme::textDarker;
-        const float buttonWidth = 14.0f;
-        const float buttonHeight = 14.0f;
+        const float buttonWidth = 11.0f;
+        const float buttonHeight = 11.0f;
 
         if (m_Specification.CustomTitlebar)
         {
-            // Minimize Button
-            ImGui::Spring();
-            UI::ShiftCursorY(8.0f);
-            {
-                const int iconWidth = window->m_IconMinimize->GetWidth();
-                const int iconHeight = window->m_IconMinimize->GetHeight();
-                const float padY = (buttonHeight - (float)iconHeight) / 2.0f;
-                if (ImGui::InvisibleButton("Minimize", ImVec2(buttonWidth, buttonHeight)))
-                {
-                    // TODO: move this stuff to a better place, like Window class
-                    if (window->GetWindowHandle())
-                    {
-                        window->QueueEvent([windowHandle = window->GetWindowHandle()]()
-                                           { glfwIconifyWindow(windowHandle); });
-                    }
-                }
-
-                UI::DrawButtonImage(window->m_IconMinimize, buttonColN, buttonColH, buttonColP, UI::RectExpanded(UI::GetItemRect(), 0.0f, -padY));
-            }
-
-            // Maximize Button
-            ImGui::Spring(-1.0f, 17.0f);
-            UI::ShiftCursorY(8.0f);
-            {
-                const int iconWidth = window->m_IconMaximize->GetWidth();
-                const int iconHeight = window->m_IconMaximize->GetHeight();
-
-                const bool isMaximized = (bool)glfwGetWindowAttrib(window->GetWindowHandle(), GLFW_MAXIMIZED);
-
-                if (ImGui::InvisibleButton("Maximize", ImVec2(buttonWidth, buttonHeight)))
-                {
-                    window->QueueEvent([isMaximized, windowHandle = window->GetWindowHandle()]()
-                                       {
-					if (isMaximized)
-						glfwRestoreWindow(windowHandle);
-					else
-						glfwMaximizeWindow(windowHandle); });
-                }
-                UI::DrawButtonImage(isMaximized ? window->m_IconRestore : window->m_IconMaximize, buttonColN, buttonColH, buttonColP);
-            }
 
             // Close Button
             ImGui::Spring(-1.0f, 15.0f);
             UI::ShiftCursorY(8.0f);
             {
-                const int iconWidth = window->m_IconClose->GetWidth();
-                const int iconHeight = window->m_IconClose->GetHeight();
+                const int iconWidth = m_IconClose->GetWidth();
+                const int iconHeight = m_IconClose->GetHeight();
                 if (ImGui::InvisibleButton("Close", ImVec2(buttonWidth, buttonHeight)))
                     Application::Get().Close();
 
-                UI::DrawButtonImage(window->m_IconClose, UI::Colors::Theme::text, UI::Colors::ColorWithMultipliedValue(UI::Colors::Theme::text, 1.4f), buttonColP);
+                UI::DrawButtonImage(m_IconClose, UI::Colors::Theme::text, UI::Colors::ColorWithMultipliedValue(UI::Colors::Theme::text, 1.4f), buttonColP);
             }
 
             ImGui::Spring(-1.0f, 18.0f);
@@ -2665,28 +2909,6 @@ namespace UIKit
         m_PendingY = y;
     }
 
-    // Fonction de rappel pour la gestion du clic de souris
-    void MouseButtonCallback(GLFWwindow *window, int button, int action, int mods)
-    {
-        std::cout << "OKKK" << std::endl;
-
-        Window *win = app->GetWindowByHandle(window);
-        if (win)
-        {
-            std::cout << "Click registered from " << win->GetName() << " ! : )" << std::endl;
-        }
-        else
-        {
-            std::cout << "Click null" << std::endl;
-        }
-    }
-
-    // Fonction de rappel pour la gestion du mouvement de souris
-    void MouseMoveCallback(GLFWwindow *window, double xpos, double ypos)
-    {
-        std::cout << "MOVE" << std::endl;
-    }
-
     template <typename Func>
     void Window::QueueEvent(Func &&func)
     {
@@ -2697,210 +2919,654 @@ namespace UIKit
     {
         ImGuiIO &io = ImGui::GetIO();
         ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+
+        static int counter = 0;
+        ImGui::Begin("Hello, world!"); // Create a window called "Hello, world!" and append into it.
+
+        ImGui::Text("This is some useful text."); // Dis
+
+        if (ImGui::Button("Button")) // Buttons return true when clicked (most widgets return true when edited/activated)
+            counter++;
+        ImGui::SameLine();
+        ImGui::Text("counter = %d", counter);
+
+        ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+        ImGui::End();
         // Ensure the current ImGui context is set for this window
 
-        g_SwapChainRebuild = true;
-        if (g_SwapChainRebuild)
-        {
-            int width, height;
-            glfwGetFramebufferSize(this->GetWindowHandle(), &width, &height);
-            if (width > 0 && height > 0)
-            {
-                ImGui_ImplVulkan_SetMinImageCount(g_MinImageCount);
-                ImGui_ImplVulkanH_CreateOrResizeWindow(g_Instance, g_PhysicalDevice, g_Device, &this->m_WinData, g_QueueFamily, g_Allocator, this->m_WinData.Width, this->m_WinData.Height, g_MinImageCount);
-                this->m_WinData.FrameIndex = 0;
-
-                // Clear allocated command buffers from here since entire pool is destroyed
-                this->s_AllocatedCommandBuffers.clear();
-                this->s_AllocatedCommandBuffers.resize(this->m_WinData.ImageCount);
-
-                g_SwapChainRebuild = false;
-            }
-        }
-
-        if (this->m_ResizePending)
-        {
-            glfwSetWindowSize(this->GetWindowHandle(), this->m_PendingWidth, this->m_PendingHeight);
-            this->m_ResizePending = false;
-        }
-
-        {
-            std::scoped_lock<std::mutex> lock(m_EventQueueMutex);
-
-            while (!m_EventQueue.empty())
-            {
-                auto &func = m_EventQueue.front();
-                func();
-                m_EventQueue.pop();
-            }
-        }
-
-        app->RenderWindow(this);
-
-        const bool main_is_minimized = (this->DrawData.DisplaySize.x <= 0.0f || this->DrawData.DisplaySize.y <= 0.0f);
-
+        ImGui::Render();
+        ImDrawData *main_draw_data = ImGui::GetDrawData();
         ImGui_ImplVulkanH_Window *wd = &this->m_WinData;
+        const bool main_is_minimized = (main_draw_data->DisplaySize.x <= 0.0f || main_draw_data->DisplaySize.y <= 0.0f);
         wd->ClearValue.color.float32[0] = clear_color.x * clear_color.w;
         wd->ClearValue.color.float32[1] = clear_color.y * clear_color.w;
         wd->ClearValue.color.float32[2] = clear_color.z * clear_color.w;
         wd->ClearValue.color.float32[3] = clear_color.w;
 
         if (!main_is_minimized)
-            FrameRender(wd, this, &this->DrawData);
+            FrameRender(wd, this, main_draw_data);
 
+        // Update and Render additional Platform Windows
         if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
         {
             ImGui::UpdatePlatformWindows();
             ImGui::RenderPlatformWindowsDefault();
         }
 
+        // Present Main Platform Window
         if (!main_is_minimized)
             FramePresent(wd, this);
-        else
-            std::this_thread::sleep_for(std::chrono::milliseconds(5));
     }
 
-
-std::mutex renderMutex;
-
-void RenderWindow(Window* window)
-{
-    std::lock_guard<std::mutex> lock(renderMutex);
-
-    ImGui::SetCurrentContext(window->m_ImGuiContext);
-
-    glfwPollEvents();
-    ImGui_ImplVulkan_NewFrame();
-    ImGui_ImplGlfw_NewFrame();
-    ImGui::NewFrame();
-
-    window->Render();
-
-    ImGui::Render();
-
-    if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+    std::string Application::SpawnWindow()
     {
-        ImGui::UpdatePlatformWindows();
-        ImGui::RenderPlatformWindowsDefault();
+        std::string name = std::to_string(WinIDCount);
+        ImGuiContext *res_ctx = ImGui::GetCurrentContext();
+
+        // Créer la nouvelle fenêtre
+        std::shared_ptr<Window> new_win = std::make_shared<Window>(name, app->m_Specification.Width, app->m_Specification.Height);
+
+        // Ajouter la nouvelle fenêtre à la liste des fenêtres
+        this->m_Windows.push_back(new_win);
+
+        // Restaurer le contexte ImGui
+        ImGui::SetCurrentContext(res_ctx);
+        return name;
+    }
+
+    void Application::SpawnWindow(const std::string &name)
+    {
+    }
+
+    void Application::UnspawnWindow(const std::string &name)
+    {
+        for (auto window : m_Windows)
+        {
+            if (name == window->GetName())
+            {
+            }
+        }
+    }
+
+    class FirstWindow : public AppWindow
+    {
+    public:
+        FirstWindow(const std::string &name) : AppWindow(name)
+        {
+        }
+
+        FirstWindow(const std::string &name, const std::string &icon) : AppWindow(name)
+        {
+            set_icon("/usr/local/include/Vortex/imgs/vortex.png");
+        }
+
+        void menubar_left() override
+        {
+            static ImTextureID texture = this->get_img(m_Icon)->GetImGuiTextureID(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+
+            ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0.4f, 0.4f, 0.4f, 0.7f));
+            ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(62, 62, 62, 0));
+            ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(62, 62, 62, 0));
+            ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(62, 62, 62, 0));
+            ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(62, 62, 62, 0));
+            if (ImGui::UIKit_ImageButtonWithText(texture, "Save all", ImVec2(15, 15)))
+            {
+            }
+            if (ImGui::UIKit_ImageButtonWithText(texture, "Import", ImVec2(15, 15)))
+            {
+            }
+            ImGui::PopStyleColor(5);
+        }
+
+        void render() override
+        {
+            if (ImGui::BeginMenuBar())
+            {
+                ImGui::TextColored(ImVec4(1.0f, 1.0f, 1.0f, 0.5f), "Reporting task :\"");
+                ImGui::TextColored(ImVec4(1.0f, 1.0f, 1.0f, 0.5f), "\" with id : \"");
+                ImGui::TextColored(ImVec4(1.0f, 1.0f, 1.0f, 0.5f), "\"");
+
+                ImGui::EndMenuBar();
+            }
+            ImGui::Text("AA.BB.CC.DD.EE.FF 1");
+
+            ImGui::Button("qsd");
+        }
+    };
+
+    class SecondWindow : public AppWindow
+    {
+    public:
+        SecondWindow(const std::string &name) : AppWindow(name)
+        {
+            set_icon("file:///usr/local/include/Vortex/1.1/imgs/icon_star.png");
+            set_default_behavior(DefaultAppWindowBehaviors::DefaultDocking, "right");
+        }
+
+        void render() override
+        {
+            ImGui::Text("AA.BB.CC.DD.EE.FF 2");
+        }
+    };
+
+    class ThirdWindow : public AppWindow
+    {
+    public:
+        ThirdWindow(const std::string &name) : AppWindow(name)
+        {
+        }
+
+        void render() override
+        {
+            ImGui::Text("AA.BB.CC.DD.EE.FF 3");
+        }
+    };
+
+void Application::InitializeWindowStates()
+{
+    if (!m_IsDataInitialized)
+    {
+        // Ensure that m_PreviousSaveData has been loaded from the file
+        if (s_Instance->m_PreviousSaveData.find("data") != s_Instance->m_PreviousSaveData.end())
+        {
+            // Retrieve the saved windows data
+            auto windowsJson = s_Instance->m_PreviousSaveData["data"].value("windows", nlohmann::json::array());
+
+            // Process each window
+            for (const auto& windowJson : windowsJson)
+            {
+                std::string windowName = windowJson.value("name", "");
+                bool opened = windowJson.value("opened", true);
+
+                // Find or create the window
+                auto it = std::find_if(m_Windows.begin(), m_Windows.end(), [&windowName](const std::shared_ptr<Window>& w) {
+                    return w->GetName() == windowName;
+                });
+
+                std::shared_ptr<Window> window;
+                if (it != m_Windows.end())
+                {
+                    window = *it;
+                }
+                else
+                {
+                    // Create a new window if not found
+                    //window = std::make_shared<Window>(windowName);
+                    //m_Windows.push_back(window);
+                }
+
+
+                // Retrieve and set up app windows
+                auto appWindowsJson = windowJson.value("app_windows", nlohmann::json::array());
+                for (const auto& appWindowJson : appWindowsJson)
+                {
+                    std::string appWindowName = appWindowJson.value("name", "");
+                    std::string dockPlace = appWindowJson.value("dockplace", "");
+                    std::string type = appWindowJson.value("type", "");
+                    std::string path = appWindowJson.value("path", "");
+                    std::string id = appWindowJson.value("id", "");
+
+                    // Find or create the app window
+                    auto appIt = std::find_if(s_Instance->m_AppWindows.begin(), s_Instance->m_AppWindows.end(), [&appWindowName](const std::shared_ptr<AppWindow>& aw) {
+                        return aw->m_Name == appWindowName;
+                    });
+
+                    std::shared_ptr<AppWindow> appWindow;
+                    if (appIt != s_Instance->m_AppWindows.end())
+                    {
+                        appWindow = *appIt;
+                    }
+                    else
+                    {
+                        //
+                    }
+
+                    // Set app window properties
+                    appWindow->set_window_storage("dockplace", dockPlace);
+                    appWindow->set_window_storage("type", type);
+                    appWindow->set_window_storage("path", path);
+                    appWindow->set_window_storage("id", id);
+
+                    // Associate the app window with the parent window
+                    appWindow->m_WinParent = windowName;
+                }
+            }
+
+            // Mark data as initialized
+            m_IsDataInitialized = true;
+        }
+        else
+        {
+            // Handle case where "data" is missing (optional)
+            //throw std::runtime_error("No valid data found in m_PreviousSaveData.");
+        }
     }
 }
 
-
-void Application::Run()
+void Application::SaveData()
 {
-    for (auto &window : m_Windows)
+    nlohmann::json jsonData;
+    
+    std::ifstream inputFile(this->m_WindowSaveDataPath);
+    if (inputFile)
     {
-        window->LoadImages();
+        inputFile >> jsonData;
+        inputFile.close();
     }
 
-    m_Running = true;
+    if (jsonData.find("data") == jsonData.end()) {
+        jsonData["data"] = nlohmann::json::object();
+    }
 
-    while (m_Running)
+    nlohmann::json windowsJson = nlohmann::json::array();
+
+    for (auto &window : m_Windows)
     {
+        nlohmann::json windowJson;
+        windowJson["name"] = window->GetName();
 
-        // Update layers
-        for (auto &layer : m_LayerStack)
+        nlohmann::json appWindowsJson = nlohmann::json::array();
+
+        for (auto &app_window : s_Instance->m_AppWindows)
         {
-            layer->OnUpdate(m_TimeStep);
-        }
-
-        // Render each window sequentially in the main thread
-        for (auto &window : m_Windows)
-        {
-            std::lock_guard<std::mutex> lock(renderMutex); // Ensure exclusive access
-
-        glfwPollEvents(); // Poll events in the main thread
-            ImGui::SetCurrentContext(window->m_ImGuiContext);
-
-            ImGui_ImplVulkan_NewFrame();
-            ImGui_ImplGlfw_NewFrame();
-            ImGui::NewFrame();
-
-            window->Render();
-
-            ImGui::Render();
-
-            if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+            if (app_window->m_WinParent == window->GetName())
             {
-                ImGui::UpdatePlatformWindows();
-                ImGui::RenderPlatformWindowsDefault();
+                nlohmann::json appWindowJson;
+                appWindowJson["name"] = app_window->m_Name;
+                appWindowJson["dockplace"] = app_window->get_window_storage("dockplace");
+                appWindowJson["type"] = "cb_instance, static";
+                appWindowJson["path"] = "/dsfsdf/DQSDQS";
+                appWindowJson["id"] = "test_window";
+
+                appWindowsJson.push_back(appWindowJson);
             }
         }
 
-        // Update time
-        float time = GetTime();
-        m_FrameTime = time - m_LastFrameTime;
-        m_TimeStep = glm::min<float>(m_FrameTime, 0.0333f);
-        m_LastFrameTime = time;
+        windowJson["app_windows"] = appWindowsJson;
+
+        windowsJson.push_back(windowJson);
     }
+
+    jsonData["data"]["windows"] = windowsJson;
+
+    s_Instance->m_IsDataSaved = true;
+
+    std::ofstream outputFile(this->m_WindowSaveDataPath);
+    if (!outputFile)
+    {
+        //throw std::runtime_error("Unable to open the file for writing: " + this->m_WindowSaveDataPath);
+    }
+
+    outputFile << jsonData.dump(4);
+    outputFile.close();
 }
 
- 
-    
-    
-    Window::Window(const std::string &name, int width, int height)
+    void Application::Run()
+    {
+        m_Running = true;
+
+        std::shared_ptr<FirstWindow> windodo = std::make_shared<FirstWindow>("FirstWindow", "/usr/local/include/Vortex/imgs/vortex.png");
+        std::shared_ptr<SecondWindow> windodos = std::make_shared<SecondWindow>("SecondWindow");
+        std::shared_ptr<ThirdWindow> windodoss = std::make_shared<ThirdWindow>("ThirdWindow");
+        this->PutWindow(windodo);
+        this->PutWindow(windodos);
+        this->PutWindow(windodoss);
+
+        while (m_Running)
+        {
+            found_valid_drop_zone_global = false;
+
+            /*std::cout << "=============== CURRENT DRAG/DROP STATE ================" << std::endl;
+            if (c_CurrentDragDropState)
+            {
+
+                std::cout << "Initiator Window (LastDraggingWindow): " << c_CurrentDragDropState->LastDraggingWindow << std::endl;
+                if (c_CurrentDragDropState->LastDraggingPlace == DockEmplacement::DockDown)
+                    std::cout << "Last Place : " << "DockDown" << std::endl;
+                if (c_CurrentDragDropState->LastDraggingPlace == DockEmplacement::DockUp)
+                    std::cout << "Last Place : " << "DockUp" << std::endl;
+                if (c_CurrentDragDropState->LastDraggingPlace == DockEmplacement::DockLeft)
+                    std::cout << "Last Place : " << "DockLeft" << std::endl;
+                if (c_CurrentDragDropState->LastDraggingPlace == DockEmplacement::DockRight)
+                    std::cout << "Last Place : " << "DockRight" << std::endl;
+                if (c_CurrentDragDropState->LastDraggingPlace == DockEmplacement::DockFull)
+                    std::cout << "Last Place : " << "DockFull" << std::endl;
+                if (c_CurrentDragDropState->LastDraggingPlace == DockEmplacement::DockBlank)
+                    std::cout << "Last Place : " << "DockBlank" << std::endl;
+
+                std::cout << "Initiator App Window : " << c_CurrentDragDropState->LastDraggingAppWindowHost << std::endl;
+                std::cout << "ImGui Detect if Pressed : " << ImGui::GetCurrentContext()->DockTabStaticSelection.Pressed << std::endl;
+                std::cout << "Target window to split: " << c_CurrentDragDropState->LastDraggingAppWindow << std::endl;
+                std::cout << "Is currently dragging : " << c_CurrentDragDropState->DockIsDragging << std::endl;
+            }
+            else
+            {
+                std::cout << "no data" << std::endl;
+            }
+            std::cout << "================================================" << std::endl;
+
+            std::cout << "=============== LATEST DOCK REQUEST =============" << std::endl;
+            if (latest_req)
+            {
+                std::cout << "LatestREQ m_ParentAppWindow : " << latest_req->m_ParentAppWindow << std::endl;
+                std::cout << "LatestREQ m_ParentAppWindowHost : " << latest_req->m_ParentAppWindowHost << std::endl;
+                std::cout << "LatestREQ m_ParentWindow : " << latest_req->m_ParentWindow << std::endl;
+            }
+            else
+            {
+                std::cout << "no data" << std::endl;
+            }
+            std::cout << "================================================" << std::endl;*/
+
+
+            if(!m_IsDataInitialized)
+            {
+                s_Instance->InitializeWindowStates();
+            }
+
+            if (!s_Instance->m_IsDataSaved)
+            {
+                s_Instance->SaveData();
+            }
+
+            if (c_CurrentDragDropState)
+            {
+                if (c_CurrentDragDropState->CreateNewWindow)
+                {
+                    std::string new_win_title = s_Instance->SpawnWindow();
+
+                    c_CurrentDragDropState->LastDraggingPlace = DockEmplacement::DockFull;
+                    c_CurrentDragDropState->LastDraggingAppWindow = "none";
+                    c_CurrentDragDropState->LastDraggingWindow = new_win_title;
+
+                    PushRedockEvent(c_CurrentDragDropState);
+
+                    // s_Instance->SyncImages();
+
+                    c_CurrentDragDropState->CreateNewWindow = false;
+                }
+            }
+
+            for (auto &window : m_Windows)
+            {
+                if (window->drag_dropstate.DockIsDragging)
+                {
+                    c_DockIsDragging = true;
+                }
+            }
+
+            for (auto &layer : m_LayerStack)
+            {
+                layer->OnUpdate(m_TimeStep);
+            }
+
+            for (auto &app_win : m_AppWindows)
+            {
+                if (app_win->m_WinParent == "unknow")
+                {
+                    app_win->m_WinParent = m_Windows[0]->GetName();
+                }
+            }
+
+            SDL_Event event;
+            while (SDL_PollEvent(&event))
+            {
+                SDL_Window *focusedWindow = SDL_GetMouseFocus();
+                Uint32 focusedWindowID = focusedWindow ? SDL_GetWindowID(focusedWindow) : 0;
+
+                bool eventHandled = false;
+
+                for (auto &window : m_Windows)
+                {
+                    Uint32 windowID = SDL_GetWindowID(window->GetWindowHandle());
+
+                    if (focusedWindowID != 0 && windowID != focusedWindowID)
+                    {
+                        continue;
+                    }
+
+                    ImGui::SetCurrentContext(window->m_ImGuiContext);
+                    ImGui_ImplSDL2_ProcessEvent(&event);
+
+                    if (event.type == SDL_QUIT)
+                    {
+                        m_Running = false;
+                        eventHandled = true;
+                        break;
+                    }
+
+                    if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE && event.window.windowID == windowID)
+                    {
+                        m_Running = false;
+                        eventHandled = true;
+                        break;
+                    }
+                }
+
+                if (eventHandled)
+                {
+                    break;
+                }
+            }
+
+            for (auto &req : m_RedockRequests)
+            {
+                for (auto &app_win : m_AppWindows)
+                {
+                    if (req->m_ParentAppWindowHost == app_win->m_Name)
+                    {
+                        bool parentFound = false;
+                        for (auto &win : m_Windows)
+                        {
+                            if (win->GetName() == req->m_ParentWindow)
+                            {
+                                app_win->m_WinParent = win->GetName();
+                                parentFound = true;
+
+                                /*if (app_win->m_ImGuiWindow)
+                                {
+                                    app_win->m_DockSpaceID = ImGui::GetID("MainDockspace");
+                                }*/
+                            }
+                        }
+
+                        if (!parentFound)
+                        {
+                            app_win->m_WinParent = "unknow";
+                            // app_win->m_DockSpaceID = ImGui::GetID("MainDockspace");
+                        }
+                    }
+                }
+            }
+
+            drag_rendered = false;
+
+            int i = 0;
+
+            for (auto &window : m_Windows)
+            {
+                ImGui::SetCurrentContext(window->m_ImGuiContext);
+
+                if (c_MasterSwapChainRebuild)
+                {
+                    window->g_SwapChainRebuild = true;
+                }
+
+                if (window->g_SwapChainRebuild)
+                {
+                    int width, height;
+                    SDL_GetWindowSize(window->GetWindowHandle(), &width, &height);
+                    if (width > 0 && height > 0)
+                    {
+                        ImGui_ImplVulkan_SetMinImageCount(g_MinImageCount);
+                        ImGui_ImplVulkanH_CreateOrResizeWindow(g_Instance, g_PhysicalDevice, g_Device, &window->m_WinData, g_QueueFamily, g_Allocator, width, height, g_MinImageCount);
+                        window->m_WinData.FrameIndex = 0;
+                        window->g_SwapChainRebuild = false;
+                    }
+                }
+
+                ImGui_ImplVulkan_NewFrame();
+                ImGui_ImplSDL2_NewFrame();
+
+                ImGui::SetCurrentContext(window->m_ImGuiContext);
+                ImGui::NewFrame();
+
+                app->RenderWindow(window.get());
+
+                if (c_DockIsDragging && c_CurrentDragDropState)
+                {
+                    SDL_GetGlobalMouseState(&c_CurrentDragDropState->mouseX, &c_CurrentDragDropState->mouseY);
+
+                    {
+
+                        float oldsize = ImGui::GetFont()->Scale;
+                        ImGui::GetFont()->Scale *= 0.84;
+                        ImGui::PushFont(ImGui::GetFont());
+
+                        ImVec4 grayColor = ImVec4(0.4f, 0.4f, 0.4f, 1.0f);              // Gris (50% blanc)
+                        ImVec4 graySeparatorColor = ImVec4(0.4f, 0.4f, 0.4f, 0.5f);     // Gris (50% blanc)
+                        ImVec4 darkBackgroundColor = ImVec4(0.15f, 0.15f, 0.15f, 1.0f); // Fond plus foncé
+                        ImVec4 lightBorderColor = ImVec4(0.2f, 0.2f, 0.2f, 1.0f);       // Bordure plus claire
+
+                        // Pousser le style pour le fond plus foncé
+                        ImGui::PushStyleColor(ImGuiCol_PopupBg, darkBackgroundColor);
+
+                        // Pousser le style pour la bordure plus claire
+                        ImGui::PushStyleColor(ImGuiCol_Border, lightBorderColor);
+
+                        ImGui::PushStyleVar(ImGuiStyleVar_PopupRounding, 3.0f);
+
+                        ImGui::SetNextWindowPos(ImVec2((float)c_CurrentDragDropState->mouseX - 75, (float)c_CurrentDragDropState->mouseY - 25)); // Positionner la fenêtre
+                        ImGui::SetNextWindowSize(ImVec2(170, 55));
+                        ImGui::OpenPopup("FloatingRectangle");
+                        if (ImGui::BeginPopup("FloatingRectangle"))
+                        {
+                            ImGui::Text(c_CurrentDragDropState->LastDraggingAppWindowHost.c_str());
+
+                            ImGui::GetFont()->Scale *= 0.64;
+                            ImGui::TextColored(ImVec4(0.5f, 0.5f, 0.5f, 1.0f), "This is the current state");
+
+                            ImGui::GetFont()->Scale *= 0.84;
+
+                            ImGui::EndPopup();
+                        }
+
+                        ImGui::PopStyleVar();    // Pour les bords arrondis
+                        ImGui::PopStyleColor(2); // Pour le fond et la bordure
+
+                        ImGui::GetFont()->Scale = oldsize;
+                        ImGui::PopFont();
+                    }
+                }
+
+                ImGui_ImplVulkanH_Window *wd = &window->m_WinData;
+                ImGuiIO &io = ImGui::GetIO();
+
+                ImGui::Render();
+                ImDrawData *main_draw_data = ImGui::GetDrawData();
+                const bool main_is_minimized = (main_draw_data->DisplaySize.x <= 0.0f || main_draw_data->DisplaySize.y <= 0.0f);
+
+                if (!main_is_minimized)
+                {
+                    FrameRender(wd, window.get(), main_draw_data);
+                }
+
+                if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+                {
+                    ImGui::UpdatePlatformWindows();
+                    ImGui::RenderPlatformWindowsDefault();
+                }
+
+                if (!main_is_minimized)
+                {
+                    FramePresent(wd, window.get());
+                }
+
+                i++;
+            }
+
+            // Mise à jour du temps
+            float time = GetTime();
+            m_FrameTime = time - m_LastFrameTime;
+            m_TimeStep = glm::min<float>(m_FrameTime, 0.0333f);
+            m_LastFrameTime = time;
+
+            c_MasterSwapChainRebuild = false;
+            c_DockIsDragging = false;
+
+            // Erase empty main windows
+            auto it = m_Windows.begin();
+            while (it != m_Windows.end())
+            {
+                int app_wins_inside = 0;
+
+                for (const auto &app_win : m_AppWindows)
+                {
+                    if ((*it)->GetName() == app_win->m_WinParent)
+                    {
+                        app_wins_inside++;
+                    }
+                }
+
+                if (app_wins_inside == 0)
+                {
+                    it = m_Windows.erase(it);
+                }
+                else
+                {
+                    ++it;
+                }
+            }
+        }
+
+        VkResult err;
+        for (auto &window : m_Windows)
+        {
+            ImGui::SetCurrentContext(window->m_ImGuiContext);
+            err = vkDeviceWaitIdle(g_Device);
+            check_vk_result(err);
+            ImGui_ImplVulkan_Shutdown();
+            ImGui_ImplSDL2_Shutdown();
+            ImGui::DestroyContext();
+            CleanupVulkanWindow(&window->m_WinData);
+        }
+        CleanupVulkan();
+    }
+
+    Window::Window(const std::string &name, int width, int height, bool cold_start = true)
         : m_Name(name), m_Width(width), m_Height(height)
     {
-        m_ImGuiContext = ImGui::CreateContext();
-        ImGui::SetCurrentContext(m_ImGuiContext);
-        
-        m_WindowHandle = glfwCreateWindow(width, height, name.c_str(), nullptr, nullptr);
-        if (!m_WindowHandle)
-        {
-            glfwTerminate();
-            throw std::runtime_error("Failed to create GLFW window");
-        }
-
-        this->WinID = WinIDCount;
-        WinIDCount++;
-
-        // Center the window if needed
-        if (app->m_Specification.CenterWindow)
-        {
-            GLFWmonitor *primaryMonitor = glfwGetPrimaryMonitor();
-            const GLFWvidmode *videoMode = glfwGetVideoMode(primaryMonitor);
-            int monitorX, monitorY;
-            glfwGetMonitorPos(primaryMonitor, &monitorX, &monitorY);
-            glfwSetWindowPos(m_WindowHandle,
-                             monitorX + (videoMode->width - width) / 2,
-                             monitorY + (videoMode->height - height) / 2);
-        }
+        SDL_WindowFlags window_flags = (SDL_WindowFlags)(SDL_WINDOW_VULKAN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_BORDERLESS);
+        m_WindowHandler = SDL_CreateWindow(m_Name.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, m_Width, m_Height, window_flags);
 
         // Setup Vulkan
-        if (!glfwVulkanSupported())
-        {
-            glfwDestroyWindow(m_WindowHandle);
-            glfwTerminate();
-            throw std::runtime_error("GLFW: Vulkan not supported!");
-        }
+        uint32_t extensions_count = 0;
+        SDL_Vulkan_GetInstanceExtensions(m_WindowHandler, &extensions_count, NULL);
+        const char **extensions = new const char *[extensions_count];
+        SDL_Vulkan_GetInstanceExtensions(m_WindowHandler, &extensions_count, extensions);
+        SetupVulkan(extensions, extensions_count);
+        delete[] extensions;
 
-        glfwSetMouseButtonCallback(this->GetWindowHandle(), MouseButtonCallback);
-
-        // Set icon
-        if (!app->m_Specification.IconPath.empty())
+        // Create Window Surface
+        VkResult err;
+        if (SDL_Vulkan_CreateSurface(m_WindowHandler, g_Instance, &m_Surface) == 0)
         {
-            GLFWimage icon[1];
-            int channels = 0;
-            icon[0].pixels = stbi_load("/usr/include/vortex/icon.png", &icon[0].width, &icon[0].height, &channels, 4);
-            glfwSetWindowIcon(m_WindowHandle, 1, icon);
-            stbi_image_free(icon[0].pixels);
-        }
-
-        VkSurfaceKHR surface;
-        if (glfwCreateWindowSurface(g_Instance, m_WindowHandle, g_Allocator, &surface) != VK_SUCCESS)
-        {
-            throw std::runtime_error("Failed to create window surface!");
+            printf("Failed to create Vulkan surface.\n");
+            return;
         }
 
         // Create Framebuffers
         int w, h;
-        glfwGetFramebufferSize(m_WindowHandle, &w, &h);
-        ImGui_ImplVulkanH_Window *wd = &m_WinData;
-        SetupVulkanWindow(wd, surface, w, h, this);
+        SDL_GetWindowSize(m_WindowHandler, &w, &h);
+        ImGui_ImplVulkanH_Window *wd = &this->m_WinData;
+        SetupVulkanWindow(wd, m_Surface, w, h, this);
         this->s_AllocatedCommandBuffers.resize(wd->ImageCount);
         s_ResourceFreeQueue.resize(wd->ImageCount);
 
-
+        // Setup Dear ImGui context
+        IMGUI_CHECKVERSION();
+        m_ImGuiContext = ImGui::CreateContext();
+        ImGui::SetCurrentContext(m_ImGuiContext);
 
         // Create the ImGui context
         ImGuiIO &io = ImGui::GetIO();
@@ -2910,38 +3576,9 @@ void Application::Run()
         io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;   // Enable Multi-Viewport / Platform Windows
         io.FontGlobalScale = 0.83f;
 
-        // Setup Platform/Renderer backends
-        ImGui_ImplGlfw_InitForVulkan(m_WindowHandle, true);
-
-        ImGui_ImplVulkan_InitInfo init_info = {};
-        init_info.Instance = g_Instance;
-        init_info.PhysicalDevice = g_PhysicalDevice;
-        init_info.Device = g_Device;
-        init_info.QueueFamily = g_QueueFamily;
-        init_info.Queue = g_Queue;
-        init_info.PipelineCache = g_PipelineCache;
-        init_info.DescriptorPool = g_DescriptorPool;
-        init_info.Subpass = 0;
-        init_info.MinImageCount = g_MinImageCount;
-        init_info.ImageCount = m_WinData.ImageCount;
-        init_info.MSAASamples = VK_SAMPLE_COUNT_1_BIT;
-        init_info.Allocator = g_Allocator;
-        init_info.CheckVkResultFn = check_vk_result;
-
-        ImGui_ImplVulkan_Init(&init_info, m_WinData.RenderPass);
-
-// Configure the ImGui PlatformIO for multi-viewport support
-if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
-{
-    ImGuiPlatformIO& platform_io = ImGui::GetPlatformIO();
-
-    // If you are rendering on a separate thread, you should also set:
-    // platform_io.Platform_RenderWindow = YourCustom_RenderWindowFunction;
-    // platform_io.Platform_SwapBuffers = YourCustom_SwapBuffersFunction;
-}
-        // Theme colors
+        // Setup Dear ImGui style
         UI::SetHazelTheme();
-
+        // ImGui::StyleColorsClassic();
         // Style
         ImGuiStyle &style = ImGui::GetStyle();
         style.WindowPadding = ImVec2(10.0f, 10.0f);
@@ -2974,12 +3611,30 @@ if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
         s_Fonts["HackRegular"] = io.Fonts->AddFontFromMemoryTTF((void *)g_HackRegular, sizeof(g_HackRegular), 20.0f, &fontConfig);
         io.FontDefault = hackFont;
 
-        // Upload Fonts
+        // Setup Platform/Renderer backends
+        ImGui_ImplSDL2_InitForVulkan(m_WindowHandler);
+        ImGui_ImplVulkan_InitInfo init_info = {};
+        init_info.Instance = g_Instance;
+        init_info.PhysicalDevice = g_PhysicalDevice;
+        init_info.Device = g_Device;
+        init_info.QueueFamily = g_QueueFamily;
+        init_info.Queue = g_Queue;
+        init_info.PipelineCache = g_PipelineCache;
+        init_info.DescriptorPool = g_DescriptorPool;
+        init_info.Subpass = 0;
+        init_info.MinImageCount = g_MinImageCount;
+        init_info.ImageCount = wd->ImageCount;
+        init_info.MSAASamples = VK_SAMPLE_COUNT_1_BIT;
+        init_info.Allocator = g_Allocator;
+        init_info.CheckVkResultFn = check_vk_result;
+        ImGui_ImplVulkan_Init(&init_info, wd->RenderPass);
+
         {
+            // Use any command queue
             VkCommandPool command_pool = wd->Frames[wd->FrameIndex].CommandPool;
             VkCommandBuffer command_buffer = wd->Frames[wd->FrameIndex].CommandBuffer;
 
-            VkResult err = vkResetCommandPool(g_Device, command_pool, 0);
+            err = vkResetCommandPool(g_Device, command_pool, 0);
             check_vk_result(err);
             VkCommandBufferBeginInfo begin_info = {};
             begin_info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
@@ -3002,38 +3657,74 @@ if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
             check_vk_result(err);
             ImGui_ImplVulkan_DestroyFontUploadObjects();
         }
+
+        WinIDCount++;
+        c_MasterSwapChainRebuild = true;
     }
 
-    void Window::LoadImages()
+    Window::~Window()
+    {
+
+        /*
+        if (m_ImGuiContext)
+        {
+            ImGui_ImplVulkan_Shutdown();
+            ImGui_ImplSDL2_Shutdown();
+            ImGui::DestroyContext(m_ImGuiContext);
+            m_ImGuiContext = nullptr;
+        }
+        */
+
+        if (m_Surface != VK_NULL_HANDLE)
+        {
+            vkDestroySurfaceKHR(g_Instance, m_Surface, nullptr);
+            m_Surface = VK_NULL_HANDLE;
+        }
+
+        if (g_Device != VK_NULL_HANDLE)
+        {
+            vkDeviceWaitIdle(g_Device);
+        }
+
+        if (m_WindowHandler)
+        {
+            SDL_DestroyWindow(m_WindowHandler);
+            m_WindowHandler = nullptr;
+        }
+
+        s_ResourceFreeQueue.clear();
+        m_CommandBuffers.clear();
+    }
+    void Application::LoadImages()
     {
         {
             uint32_t w, h;
             void *data = Image::Decode(g_UIKitIcon, sizeof(g_UIKitIcon), w, h);
-            this->m_AppHeaderIcon = std::make_shared<UIKit::Image>(w, h, ImageFormat::RGBA, this->GetName(), data);
+            m_AppHeaderIcon = std::make_shared<UIKit::Image>(w, h, ImageFormat::RGBA, data);
             free(data);
         }
         {
             uint32_t w, h;
             void *data = Image::Decode(g_WindowMinimizeIcon, sizeof(g_WindowMinimizeIcon), w, h);
-            this->m_IconMinimize = std::make_shared<UIKit::Image>(w, h, ImageFormat::RGBA, this->GetName(), data);
+            m_IconMinimize = std::make_shared<UIKit::Image>(w, h, ImageFormat::RGBA, data);
             free(data);
         }
         {
             uint32_t w, h;
             void *data = Image::Decode(g_WindowMaximizeIcon, sizeof(g_WindowMaximizeIcon), w, h);
-            this->m_IconMaximize = std::make_shared<UIKit::Image>(w, h, ImageFormat::RGBA, this->GetName(), data);
+            m_IconMaximize = std::make_shared<UIKit::Image>(w, h, ImageFormat::RGBA, data);
             free(data);
         }
         {
             uint32_t w, h;
             void *data = Image::Decode(g_WindowRestoreIcon, sizeof(g_WindowRestoreIcon), w, h);
-            this->m_IconRestore = std::make_shared<UIKit::Image>(w, h, ImageFormat::RGBA, this->GetName(), data);
+            m_IconRestore = std::make_shared<UIKit::Image>(w, h, ImageFormat::RGBA, data);
             free(data);
         }
         {
             uint32_t w, h;
             void *data = Image::Decode(g_WindowCloseIcon, sizeof(g_WindowCloseIcon), w, h);
-            this->m_IconClose = std::make_shared<UIKit::Image>(w, h, ImageFormat::RGBA, this->GetName(), data);
+            m_IconClose = std::make_shared<UIKit::Image>(w, h, ImageFormat::RGBA, data);
             free(data);
         }
     }
@@ -3049,7 +3740,7 @@ if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
         {
             if (win->GetName() == window)
             {
-                return win->m_AppHeaderIcon;
+                return m_AppHeaderIcon;
             }
         }
         return nullptr;
@@ -3065,47 +3756,25 @@ if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
         return (float)glfwGetTime();
     }
 
-    VkInstance Application::GetInstance(const std::string &winname)
+    VkInstance Application::GetInstance()
     {
-        for (auto win : app->m_Windows)
-        {
-            if (win->GetName() == winname)
-            {
-                return g_Instance;
-            }
-        }
-        return nullptr;
+        return g_Instance;
     }
 
-    VkPhysicalDevice Application::GetPhysicalDevice(const std::string &winname)
+    VkPhysicalDevice Application::GetPhysicalDevice()
     {
-        for (auto win : app->m_Windows)
-        {
-            if (win->GetName() == winname)
-            {
-                return g_PhysicalDevice;
-            }
-        }
-        return nullptr;
+        return g_PhysicalDevice;
     }
 
-    VkDevice Application::GetDevice(const std::string &winname)
+    VkDevice Application::GetDevice()
     {
-        for (auto win : app->m_Windows)
-        {
-            if (win->GetName() == winname)
-            {
-                return g_Device;
-            }
-        }
-        return nullptr;
+        return g_Device;
     }
 
     VkCommandBuffer Window::GetCommandBuffer(bool begin)
     {
         ImGui_ImplVulkanH_Window *wd = &this->m_WinData;
 
-        // Use any command queue
         VkCommandPool command_pool = wd->Frames[wd->FrameIndex].CommandPool;
 
         VkCommandBufferAllocateInfo cmdBufAllocateInfo = {};
@@ -3136,7 +3805,6 @@ if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
             {
                 wd = &window->m_WinData;
 
-                // Use any command queue
                 VkCommandPool command_pool = wd->Frames[wd->FrameIndex].CommandPool;
 
                 VkCommandBufferAllocateInfo cmdBufAllocateInfo = {};
@@ -3175,7 +3843,6 @@ if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
                     {
                         wd = &win->m_WinData;
 
-                        // Use any command queue
                         VkCommandPool command_pool = wd->Frames[wd->FrameIndex].CommandPool;
 
                         VkCommandBufferAllocateInfo cmdBufAllocateInfo = {};
@@ -3202,11 +3869,167 @@ if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
         return nullptr;
     }
 
-    /*VkCommandBuffer Application::GetCommandBuffer(bool begin)
+    static std::vector<uint8_t> loadPngHex(const std::string &path)
     {
-        ImGui_ImplVulkanH_Window *wd = &g_MainWindowData;
+        std::ifstream file(path, std::ios::binary);
 
-        // Use any command queue
+        if (!file)
+        {
+            return {};
+        }
+
+        file.seekg(0, std::ios::end);
+        size_t fileSize = file.tellg();
+        file.seekg(0, std::ios::beg);
+
+        std::vector<uint8_t> hexContent(fileSize);
+
+        file.read(reinterpret_cast<char *>(hexContent.data()), fileSize);
+
+        return hexContent;
+    }
+
+    std::shared_ptr<UIKit::Image> Window::add(const std::string &path)
+    {
+
+        if (path.empty() || path == "none")
+        {
+            return nullptr;
+        }
+
+        uint32_t w = 0, h = 0;
+
+        std::vector<uint8_t> hexTable = loadPngHex(path);
+        const uint8_t *hexData = hexTable.data();
+
+        if (std::find(c_ImageList.begin(), c_ImageList.end(), path) != c_ImageList.end())
+        {
+            c_ImageList.push_back(path);
+        }
+
+        if (!hexTable.empty())
+        {
+            void *data = UIKit::Image::Decode(hexData, hexTable.size(), w, h);
+            std::shared_ptr<UIKit::Image> _icon = std::make_shared<UIKit::Image>(w, h, UIKit::ImageFormat::RGBA, this->GetName(), data);
+
+            m_ImageList.push_back(std::make_pair(path, _icon));
+            IM_FREE(data);
+
+            return _icon;
+        }
+        return nullptr;
+    }
+
+    std::shared_ptr<UIKit::Image> Window::get(const std::string &path)
+    {
+        if (path.empty() || path == "none")
+        {
+            return nullptr;
+        }
+
+        for (auto &image : m_ImageList)
+        {
+            if (image.first == path)
+            {
+                return image.second;
+            }
+        }
+
+        return this->add(path);
+    }
+
+    std::shared_ptr<UIKit::Image> Window::add(const uint8_t data[], const std::string &name)
+    {
+        const uint8_t *hexData = data;
+        const size_t dataSize = sizeof(g_UIKitIcon);
+
+        if (std::find(c_ImageList.begin(), c_ImageList.end(), name) != c_ImageList.end())
+        {
+            c_ImageList.push_back(name);
+        }
+
+        uint32_t w, h;
+        ImGuiWindow *win = ImGui::GetCurrentWindow();
+        void *icondata = UIKit::Image::Decode(data, dataSize, w, h);
+
+        if (!icondata)
+        {
+            return nullptr;
+        }
+
+        std::shared_ptr<UIKit::Image> _icon = std::make_shared<UIKit::Image>(w, h, UIKit::ImageFormat::RGBA, this->GetName(), icondata);
+        m_ImageList.push_back(std::make_pair(name, _icon));
+
+        IM_FREE(icondata);
+
+        return _icon;
+    }
+
+    std::shared_ptr<UIKit::Image> Window::get(const uint8_t data[], const std::string &name)
+    {
+
+        for (auto &image : m_ImageList)
+        {
+            if (image.first == name)
+            {
+                return image.second;
+            }
+        }
+
+        return this->add(data, name);
+    }
+
+    ImTextureID Window::get_texture(const std::string &path)
+    {
+        if (path.empty() || path == "none")
+        {
+            return nullptr;
+        }
+
+        for (auto &image : m_ImageList)
+        {
+            if (image.first == path)
+            {
+                return image.second->GetImGuiTextureID();
+            }
+        }
+
+        return this->add(path)->GetImGuiTextureID();
+    }
+
+    std::shared_ptr<UIKit::Image> AppWindow::get_img(const std::string &path)
+    {
+        for (auto &win : s_Instance->m_Windows)
+        {
+            if (this->m_WinParent == win->GetName())
+            {
+                return win->get(path);
+            }
+        }
+        return nullptr;
+    }
+
+    ImTextureID *AppWindow::get_texture(const std::string &path)
+    {
+        for (auto &win : s_Instance->m_Windows)
+        {
+            if (this->m_WinParent == win->GetName())
+            {
+                ImTextureID logoID = this->get_img(m_Icon)->GetImGuiTextureID(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+                return &logoID;
+            }
+        }
+        return nullptr;
+    }
+
+    void Window::free()
+    {
+    }
+
+    VkCommandBuffer Application::GetCommandBuffer(bool begin)
+    {
+        ImGui_ImplVulkanH_Window *wd = &app->m_Windows[0]->m_WinData;
+
         VkCommandPool command_pool = wd->Frames[wd->FrameIndex].CommandPool;
 
         VkCommandBufferAllocateInfo cmdBufAllocateInfo = {};
@@ -3215,7 +4038,7 @@ if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
         cmdBufAllocateInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
         cmdBufAllocateInfo.commandBufferCount = 1;
 
-        VkCommandBuffer &command_buffer = win->s_AllocatedCommandBuffers[wd->FrameIndex].emplace_back();
+        VkCommandBuffer &command_buffer = app->m_Windows[0]->s_AllocatedCommandBuffers[wd->FrameIndex].emplace_back();
         auto err = vkAllocateCommandBuffers(g_Device, &cmdBufAllocateInfo, &command_buffer);
 
         VkCommandBufferBeginInfo begin_info = {};
@@ -3225,16 +4048,14 @@ if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
         check_vk_result(err);
 
         return command_buffer;
-    }*/
+    }
 
     VkCommandBuffer Application::GetCommandBuffer(bool begin, ImGui_ImplVulkanH_Window *wd, const std::string &winname)
     {
-
         for (auto win : app->m_Windows)
         {
             if (win->GetName() == winname)
             {
-                // Use any command queue
                 VkCommandPool command_pool = wd->Frames[wd->FrameIndex].CommandPool;
 
                 VkCommandBufferAllocateInfo cmdBufAllocateInfo = {};
@@ -3258,38 +4079,31 @@ if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
         return nullptr;
     }
 
-    void Application::FlushCommandBuffer(VkCommandBuffer commandBuffer, const std::string &winname)
+    void Application::FlushCommandBuffer(VkCommandBuffer commandBuffer)
     {
-        for (auto win : app->m_Windows)
-        {
-            if (win->GetName() == winname)
-            {
-                const uint64_t DEFAULT_FENCE_TIMEOUT = 100000000000;
+        const uint64_t DEFAULT_FENCE_TIMEOUT = 100000000000;
 
-                VkSubmitInfo end_info = {};
-                end_info.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-                end_info.commandBufferCount = 1;
-                end_info.pCommandBuffers = &commandBuffer;
-                auto err = vkEndCommandBuffer(commandBuffer);
-                check_vk_result(err);
+        VkSubmitInfo end_info = {};
+        end_info.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+        end_info.commandBufferCount = 1;
+        end_info.pCommandBuffers = &commandBuffer;
+        auto err = vkEndCommandBuffer(commandBuffer);
+        check_vk_result(err);
 
-                // Create fence to ensure that the command buffer has finished executing
-                VkFenceCreateInfo fenceCreateInfo = {};
-                fenceCreateInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
-                fenceCreateInfo.flags = 0;
-                VkFence fence;
-                err = vkCreateFence(g_Device, &fenceCreateInfo, nullptr, &fence);
-                check_vk_result(err);
+        VkFenceCreateInfo fenceCreateInfo = {};
+        fenceCreateInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+        fenceCreateInfo.flags = 0;
+        VkFence fence;
+        err = vkCreateFence(g_Device, &fenceCreateInfo, nullptr, &fence);
+        check_vk_result(err);
 
-                err = vkQueueSubmit(g_Queue, 1, &end_info, fence);
-                check_vk_result(err);
+        err = vkQueueSubmit(g_Queue, 1, &end_info, fence);
+        check_vk_result(err);
 
-                err = vkWaitForFences(g_Device, 1, &fence, VK_TRUE, DEFAULT_FENCE_TIMEOUT);
-                check_vk_result(err);
+        err = vkWaitForFences(g_Device, 1, &fence, VK_TRUE, DEFAULT_FENCE_TIMEOUT);
+        check_vk_result(err);
 
-                vkDestroyFence(g_Device, fence, nullptr);
-            }
-        }
+        vkDestroyFence(g_Device, fence, nullptr);
     }
 
     void Application::SubmitResourceFree(std::function<void()> &&func, const std::string &winname)
@@ -3311,7 +4125,7 @@ if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
         return s_Fonts.at(name);
     }
 
-    GLFWwindow *GetWindowHandle(const std::string &winname)
+    SDL_Window *GetWindowHandle(const std::string &winname)
     {
         for (auto win : app->m_Windows)
         {
@@ -3332,27 +4146,144 @@ if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
         this->CleanupVulkanWindow();
 
         VkSurfaceKHR surface;
-        if (glfwCreateWindowSurface(g_Instance, m_WindowHandle, g_Allocator, &surface) != VK_SUCCESS)
-        {
-            throw std::runtime_error("Failed to recreate window surface!");
-        }
 
         SetupVulkanWindow(&m_WinData, surface, width, height, this);
 
-        // Mettez à jour les ressources ImGui si nécessaire
         ImGui_ImplVulkan_SetMinImageCount(g_MinImageCount);
         ImGui_ImplVulkanH_CreateOrResizeWindow(g_Instance, g_PhysicalDevice, g_Device, &m_WinData, g_QueueFamily, g_Allocator, width, height, g_MinImageCount);
     }
 
+    void ShowDockingPreview(ImGuiID dockspaceID, Window *win, WindowDragDropState *dragState)
+    {
+        ImGuiContext *ctx = ImGui::GetCurrentContext();
+        if (ctx == nullptr)
+            return;
+
+        ImGuiDockNode *dock_node = ImGui::DockBuilderGetNode(dockspaceID);
+        if (dock_node == nullptr || !dock_node->IsVisible)
+            return;
+
+        auto ShowDropZones = [&](ImGuiDockNode *node)
+        {
+            if (node == nullptr || !node->IsVisible)
+                return;
+
+            ImGuiDockPreviewData preview_data;
+            preview_data.IsDropAllowed = true;
+            preview_data.IsCenterAvailable = true;
+            preview_data.IsSidesAvailable = true;
+
+            ImRect dock_rect = node->Rect();
+            ImVec2 c = ImFloor(ImVec2((dock_rect.Min.x + dock_rect.Max.x) * 0.5f, (dock_rect.Min.y + dock_rect.Max.y) * 0.5f));
+
+            float hs_w = 40.0f;
+            float hs_h = 25.0f;
+            ImVec2 off(hs_w + hs_h, hs_w + hs_h);
+
+            preview_data.DropRectsDraw[ImGuiDir_None] = ImRect(c.x - hs_w, c.y - hs_w, c.x + hs_w, c.y + hs_w);
+            preview_data.DropRectsDraw[ImGuiDir_Up] = ImRect(c.x - hs_w, c.y - off.y - hs_h, c.x + hs_w, c.y - off.y + hs_h);
+            preview_data.DropRectsDraw[ImGuiDir_Down] = ImRect(c.x - hs_w, c.y + off.y - hs_h, c.x + hs_w, c.y + off.y + hs_h);
+            preview_data.DropRectsDraw[ImGuiDir_Left] = ImRect(c.x - off.x - hs_h, c.y - hs_w, c.x - off.x + hs_h, c.y + hs_w);
+            preview_data.DropRectsDraw[ImGuiDir_Right] = ImRect(c.x + off.x - hs_h, c.y - hs_w, c.x + off.x + hs_h, c.y + hs_w);
+
+            ImGui::DockNodePreviewDockR(ImGui::GetCurrentWindow(), node, ImGui::GetCurrentWindow(), &preview_data);
+
+            ImDrawList *draw_list = ImGui::GetForegroundDrawList();
+
+            for (int dir = ImGuiDir_None; dir < ImGuiDir_COUNT; dir++)
+            {
+                ImRect drop_rect = preview_data.DropRectsDraw[dir];
+
+                if (drop_rect.Contains(ImVec2(c_CurrentDragDropState->mouseX, c_CurrentDragDropState->mouseY)) && preview_data.IsDropAllowed)
+                {
+                    found_valid_drop_zone_global = true;
+
+                    if (node->Windows.Size > 0)
+                    {
+                        c_CurrentDragDropState->LastDraggingAppWindow = node->Windows[0]->Name;
+                        c_CurrentDragDropState->LastDraggingWindow = win->GetName();
+                    }
+                    else
+                    {
+                        c_CurrentDragDropState->LastDraggingAppWindow = "none";
+                        c_CurrentDragDropState->LastDraggingWindow = win->GetName();
+                    }
+
+                    ImRect preview_rect;
+                    if (dir == ImGuiDir_None)
+                    {
+                        c_CurrentDragDropState->LastDraggingPlace = UIKit::DockEmplacement::DockFull;
+                        preview_rect = dock_rect;
+                    }
+                    else
+                    {
+                        switch (dir)
+                        {
+                        case ImGuiDir_Left:
+                            c_CurrentDragDropState->LastDraggingPlace = UIKit::DockEmplacement::DockLeft;
+                            preview_rect = ImRect(dock_rect.Min.x, dock_rect.Min.y, c.x, dock_rect.Max.y);
+                            break;
+                        case ImGuiDir_Up:
+                            c_CurrentDragDropState->LastDraggingPlace = UIKit::DockEmplacement::DockUp;
+                            preview_rect = ImRect(dock_rect.Min.x, dock_rect.Min.y, dock_rect.Max.x, c.y);
+                            break;
+                        case ImGuiDir_Right:
+                            c_CurrentDragDropState->LastDraggingPlace = UIKit::DockEmplacement::DockRight;
+                            preview_rect = ImRect(c.x, dock_rect.Min.y, dock_rect.Max.x, dock_rect.Max.y);
+                            break;
+                        case ImGuiDir_Down:
+                            c_CurrentDragDropState->LastDraggingPlace = UIKit::DockEmplacement::DockDown;
+                            preview_rect = ImRect(dock_rect.Min.x, c.y, dock_rect.Max.x, dock_rect.Max.y);
+                            break;
+                        default:
+                            c_CurrentDragDropState->LastDraggingPlace = UIKit::DockEmplacement::DockBlank;
+                            break;
+                        }
+                    }
+
+                    draw_list->AddRectFilled(preview_rect.Min, preview_rect.Max, IM_COL32(177, 255, 49, 128));
+                    draw_list->AddRect(preview_rect.Min, preview_rect.Max, IM_COL32(177, 255, 49, 255));
+
+                    break;
+                }
+            }
+
+            if (!found_valid_drop_zone_global)
+            {
+                c_CurrentDragDropState->LastDraggingPlace = UIKit::DockEmplacement::DockBlank;
+                c_CurrentDragDropState->LastDraggingWindow = win->GetName();
+            }
+        };
+
+        std::function<void(ImGuiDockNode *)> TraverseAndShowDropZones;
+        TraverseAndShowDropZones = [&](ImGuiDockNode *node)
+        {
+            if (node == nullptr)
+                return;
+
+            if (node->ChildNodes[0] || node->ChildNodes[1])
+            {
+                if (node->ChildNodes[0])
+                    TraverseAndShowDropZones(node->ChildNodes[0]);
+                if (node->ChildNodes[1])
+                    TraverseAndShowDropZones(node->ChildNodes[1]);
+            }
+            else
+            {
+                ShowDropZones(node);
+            }
+        };
+
+        TraverseAndShowDropZones(dock_node);
+    }
+
     ImDrawData *Application::RenderWindow(Window *window)
     {
-
         ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDocking;
 
         ImGuiViewport *viewport = ImGui::GetMainViewport();
         ImGuiViewportP *p_viewport = window->m_ImGuiContext->Viewports[window->WinID];
 
-        // Mark rendering data as invalid to prevent user who may have a handle on it to use it.
         for (int n = 0; n < window->m_ImGuiContext->Viewports.Size; n++)
         {
             ImGuiViewportP *viewport = window->m_ImGuiContext->Viewports[n];
@@ -3360,12 +4291,14 @@ if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
             viewport->DrawDataP.Clear();
         }
 
-        int width, height;
-        glfwGetWindowSize(window->GetWindowHandle(), &width, &height);
-
         ImGui::SetNextWindowPos(viewport->Pos);
         ImGui::SetNextWindowSize(viewport->Size);
         ImGui::SetNextWindowViewport(viewport->ID);
+
+        float minWidth = this->m_Specification.MinWidth;
+        float minHeight = this->m_Specification.MinHeight;
+        ImGui::SetNextWindowSizeConstraints(ImVec2(minWidth, minHeight), ImVec2(FLT_MAX, FLT_MAX));
+
         ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
         ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
 
@@ -3374,27 +4307,37 @@ if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
         if (!m_Specification.CustomTitlebar && m_MenubarCallback)
             window_flags |= ImGuiWindowFlags_MenuBar;
 
-        const bool isMaximized = (bool)glfwGetWindowAttrib(window->GetWindowHandle(), GLFW_MAXIMIZED);
-
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, isMaximized ? ImVec2(6.0f, 6.0f) : ImVec2(1.0f, 1.0f));
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(1.0f, 1.0f));
         ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 3.0f);
         ImGui::PushStyleColor(ImGuiCol_MenuBarBg, ImVec4{0.0f, 0.0f, 0.0f, 0.0f});
 
         std::string label = "DockSpaceWindow." + window->GetName();
         ImGui::SetNextWindowDockID(0);
         ImGui::Begin(label.c_str(), nullptr, window_flags);
+        window->m_ImGuiWindow = ImGui::GetCurrentWindow();
+
+        ImVec2 newSize = ImGui::GetWindowSize();
+
+        SDL_Window *sdlWindow = window->GetWindowHandle();
+        int sdlWidth, sdlHeight;
+        SDL_GetWindowSize(sdlWindow, &sdlWidth, &sdlHeight);
+
+        if (newSize.x < minWidth)
+            newSize.x = minWidth;
+        if (newSize.y < minHeight)
+            newSize.y = minHeight;
+
+        window->m_Resizing = false;
+        if (newSize.x != sdlWidth || newSize.y != sdlHeight)
+        {
+            window->m_Resizing = true;
+            SDL_SetWindowSize(sdlWindow, static_cast<int>(newSize.x), static_cast<int>(newSize.y));
+        }
 
         ImGuiWindow *win = ImGui::GetCurrentWindow();
 
         ImGui::PopStyleColor(); // MenuBarBg
         ImGui::PopStyleVar(2);
-
-        {
-            ImGui::PushStyleColor(ImGuiCol_Border, IM_COL32(50, 50, 50, 255));
-            if (!isMaximized)
-                UI::RenderWindowOuterBorders(ImGui::GetCurrentWindow());
-            ImGui::PopStyleColor(); // ImGuiCol_Border
-        }
 
         if (m_Specification.CustomTitlebar)
         {
@@ -3409,7 +4352,53 @@ if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
         style.WindowMinSize.x = 370.0f;
 
         AppPushTabStyle();
-        ImGui::DockSpace(ImGui::GetID("MainDockspace"));
+
+        ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+
+        ImGuiID dockspaceID = ImGui::GetID("MainDockspace");
+
+        float oldsize = ImGui::GetFont()->Scale;
+        ImGui::GetFont()->Scale *= 0.84;
+        ImGui::PushFont(ImGui::GetFont());
+
+        ImVec4 grayColor = ImVec4(0.4f, 0.4f, 0.4f, 1.0f);              // Gris (50% blanc)
+        ImVec4 graySeparatorColor = ImVec4(0.4f, 0.4f, 0.4f, 0.5f);     // Gris (50% blanc)
+        ImVec4 darkBackgroundColor = ImVec4(0.15f, 0.15f, 0.15f, 1.0f); // Fond plus foncé
+        ImVec4 lightBorderColor = ImVec4(0.2f, 0.2f, 0.2f, 1.0f);       // Bordure plus claire
+
+        // Pousser le style pour le fond plus foncé
+        ImGui::PushStyleColor(ImGuiCol_PopupBg, darkBackgroundColor);
+
+        // Pousser le style pour la bordure plus claire
+        ImGui::PushStyleColor(ImGuiCol_Border, lightBorderColor);
+
+        ImGui::PushStyleVar(ImGuiStyleVar_PopupRounding, 3.0f);
+        ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10.0f, 8.0f));
+
+        ImGui::DockSpace(dockspaceID, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_None);
+
+        ImGui::PopStyleVar(2);   // Pour les bords arrondis
+        ImGui::PopStyleColor(2); // Pour le fond et la bordure
+
+        ImGui::GetFont()->Scale = oldsize;
+        ImGui::PopFont();
+
+        ImVec2 mouse_pos = ImGui::GetMousePos();
+        ImDrawList *draw_list = ImGui::GetWindowDrawList();
+
+        if (c_DockIsDragging)
+        {
+            ShowDockingPreview(dockspaceID, window, c_CurrentDragDropState);
+        }
+
+        for (auto appwindow : m_AppWindows)
+        {
+            if (appwindow->m_WinParent == window->GetName())
+            {
+                appwindow->ctx_render(&m_RedockRequests, window->GetName());
+            }
+        }
+
         AppPopTabStyle();
 
         style.WindowMinSize.x = minWinSizeX;
@@ -3425,62 +4414,8 @@ if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
                 layer->initialized = true;
             }
 
-            static bool windowJustUndocked = false;
+            layer->m_WindowControlCallbalck = [window, io](ImGuiWindow *win) {
 
-            layer->m_WindowControlCallbalck = [window](ImGuiWindow *win)
-            {
-                if (win)
-                {
-                    std::cout << "==========================================" << std::endl;
-                    std::cout << "[WINDOW] Name: " << win->Name << std::endl;
-                    std::cout << "[WINDOW] Dock Node : " << win->DockNode << std::endl;
-                    std::cout << "[WINDOW] Dock Tree Name : " << win->RootWindowDockTree->Name << std::endl;
-                    std::string str = win->RootWindowDockTree->Name;
-                    std::string str_finded = str.substr(str.find(".") + 1, str.size());
-                    std::cout << "[WINDOW] Deducted tree name : " << str_finded << std::endl;
-
-                    std::shared_ptr<Window> finded_win = nullptr;
-
-                    for (auto win : app->m_Windows)
-                    {
-                        if (str_finded == win->GetName())
-                        {
-                            finded_win = win;
-                        }
-                    }
-
-                    if (finded_win)
-                    {
-                        std::cout << "The window is attached to a parent window ! (" << finded_win->GetName() << ")" << std::endl;
-                    }
-                    else
-                    {
-                        std::cout << "The window is alone :(" << std::endl;
-                        // Assign the subwindow in a new window !
-                    }
-
-                    std::cout << "[WINDOW] Dock ID : " << win->DockId << std::endl;
-                    std::cout << "[WINDOW] Dock Host ID : " << win->DockNodeAsHost << std::endl;
-                    std::cout << "[WINDOW] Identified Parent window : " << win->DockNodeAsHost << std::endl;
-
-                    // Check if the window is being moved (header bar clicked and dragging)
-                    if (ImGui::IsWindowHovered(ImGuiHoveredFlags_RootAndChildWindows) && ImGui::IsMouseDragging(ImGuiMouseButton_Left))
-                    {
-                        std::cout << "[WINDOW] The window is being moved!" << std::endl;
-                    }
-                    else
-                    {
-                        std::cout << "[WINDOW] The window is not being moved." << std::endl;
-                    }
-
-                    std::cout << "==========================================" << std::endl;
-                }
-                else
-                {
-                    std::cout << "==========================================" << std::endl;
-                    std::cout << "[WINDOW]: invalid" << std::endl;
-                    std::cout << "==========================================" << std::endl;
-                }
             };
 
             if (layer->ParentWindow == window->GetName())
@@ -3491,44 +4426,6 @@ if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
 
         ImGui::End();
 
-        // Don't execute this if it's the subwindow imgui which is no longer docked to the dockspace MainDockspace
-        if (ImGui::IsMouseClicked(ImGuiMouseButton_Left) && ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow) && !ImGui::IsAnyItemHovered())
-        {
-            window->m_IsDragging = true;
-            window->m_InitialMousePos = io.MousePos;
-            window->m_InitialWindowPos = ImVec2(win->Pos.x, win->Pos.y);
-        }
-
-        if (window->m_IsDragging && !window->m_ResizePending)
-        {
-            if (ImGui::IsMouseDown(ImGuiMouseButton_Left))
-            {
-                ImVec2 delta = ImVec2(io.MousePos.x - window->m_InitialMousePos.x, io.MousePos.y - window->m_InitialMousePos.y);
-                if (delta.x != 0 || delta.y != 0)
-                { // Only update position if there is a change
-                    ImVec2 newWindowPos = ImVec2(window->m_InitialWindowPos.x + delta.x, window->m_InitialWindowPos.y + delta.y);
-                    glfwSetWindowPos(window->GetWindowHandle(), (int)newWindowPos.x, (int)newWindowPos.y);
-                }
-            }
-            else
-            {
-                window->m_IsDragging = false;
-            }
-        }
-
-        // Detect window resize
-        if (win->Size.x != window->m_PreviousWidth || win->Size.y != window->m_PreviousHeight)
-        {
-            glfwSetWindowSize(window->GetWindowHandle(), win->Size.x, win->Size.y);
-        }
-
-        // Render Draw data
-        ImGui::Render();
-
-        // Copy the draw data for this window
-        window->DrawData = *ImGui::GetDrawData();
-        viewport->DrawData->Clear();
-
         return &window->DrawData;
     }
 
@@ -3537,6 +4434,315 @@ if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
         ImGui_ImplVulkanH_DestroyWindow(g_Instance, g_Device, &m_WinData, g_Allocator);
     }
 
+    static int finded = 0;
+    static std::string dd = "";
+    static std::string LastWindowPressed = "";
+
+    unsigned int SimpleHash(const std::string &str)
+    {
+        unsigned int hash = 0;
+        for (char c : str)
+        {
+            hash = (hash * 31) + static_cast<unsigned int>(c);
+        }
+        return hash;
+    }
+
+    ImU32 HashToColor(unsigned int hash)
+    {
+        ImU8 r = (hash & 0xFF0000) >> 16;
+        ImU8 g = (hash & 0x00FF00) >> 8;
+        ImU8 b = (hash & 0x0000FF);
+        ImU8 a = 255;
+
+        return IM_COL32(r, g, b, a);
+    }
+
+
+void Application::SetWindowSaveDataFile(const std::string &path)
+{
+    std::filesystem::path filePath(path);
+
+    if (!std::filesystem::exists(filePath.parent_path()))
+    {
+        std::filesystem::create_directories(filePath.parent_path());
+    }
+
+    if (std::filesystem::exists(filePath))
+    {
+        if (std::filesystem::is_regular_file(filePath))
+        {
+            std::ifstream inputFile(path);
+            if (!inputFile)
+            {
+                //throw std::runtime_error("Unable to open file for reading: " + path);
+            }
+
+            inputFile >> m_PreviousSaveData;
+            inputFile.close();
+
+            if (m_PreviousSaveData.find("data") == m_PreviousSaveData.end())
+            {
+                m_PreviousSaveData["data"] = nlohmann::json::object();
+            }
+        }
+        else
+        {
+            //throw std::runtime_error("The specified path is not a valid file: " + path);
+        }
+    }
+
+    std::ofstream outputFile(path);
+    if (!outputFile)
+    {
+        //throw std::runtime_error("Unable to create or open file: " + path);
+    }
+
+    nlohmann::json jsonData = {{"save", true}};
+
+    if (!m_PreviousSaveData.empty())
+    {
+        jsonData["data"] = m_PreviousSaveData["data"];
+    }
+
+    outputFile << jsonData.dump(4); 
+    outputFile.close();
+
+    this->m_WindowSaveDataPath = path;
+    this->m_SaveWindowData = true;
 }
 
-// Handle any inputs with events array and window manager ?
+
+    void AppWindow::ctx_render(std::vector<std::shared_ptr<RedockRequest>> *reqs, const std::string &winname)
+    {
+        ImGuiID dockspaceID = ImGui::GetID("MainDockspace");
+
+        /*std::cout << "reqs size : " << reqs->size() << std::endl;
+        std::cout << "last error  : " << dd << std::endl;
+        std::cout << "last boostrdqsd  : " << LastWindowPressed << std::endl;*/
+
+        if (!ImGui::DockBuilderGetNode(dockspaceID))
+        {
+            ImGui::DockBuilderRemoveNode(dockspaceID);
+            ImGui::DockBuilderAddNode(dockspaceID, ImGuiDockNodeFlags_DockSpace);
+            ImGui::DockBuilderSetNodeSize(dockspaceID, ImGui::GetMainViewport()->Size);
+            ImGui::DockBuilderFinish(dockspaceID);
+            s_Instance->m_IsDataSaved = false;
+        }
+
+        ImGuiWindow *currentWindow = ImGui::FindWindowByName(this->m_Name.c_str());
+
+        if (currentWindow && currentWindow->DockId == 0)
+        {
+            ImGui::SetNextWindowDockID(dockspaceID, ImGuiCond_Always);
+            s_Instance->m_IsDataSaved = false;
+        }
+
+        for (auto it = reqs->begin(); it != reqs->end();)
+        {
+            const auto &req = *it;
+
+            if (req->m_ParentAppWindowHost != this->m_Name)
+            {
+                ++it;
+                continue;
+            }
+
+            s_Instance->m_IsDataSaved = false;
+
+            ImGuiID parentDockID = dockspaceID;
+
+            set_window_storage("window", req->m_ParentAppWindow);
+
+            if (LastWindowPressed != "none")
+            {
+                ImGuiWindow *parent_window = nullptr;
+                ImVector<ImGuiWindow *> &windows = ImGui::GetCurrentContext()->Windows;
+
+                dd = "Starting search for " + LastWindowPressed;
+
+                for (int i = windows.Size - 1; i >= 0; --i)
+                {
+                    ImGuiWindow *window = windows[i];
+
+                    if (LastWindowPressed == window->Name)
+                    {
+                        finded++;
+                        parent_window = window;
+                        break;
+                    }
+                }
+
+                if (parent_window)
+                {
+                    parentDockID = parent_window->DockId;
+                    if (parentDockID == 0)
+                    {
+                        dd = "Parent window " + req->m_ParentAppWindow + " does not have a valid DockId.";
+                        ++it;
+                        continue;
+                    }
+                }
+                else
+                {
+                    dd = "Parent window not found: " + req->m_ParentAppWindow;
+                    ++it;
+                    continue;
+                }
+            }
+
+            ImGuiID newDockID = dockspaceID;
+            switch (req->m_DockPlace)
+            {
+            case DockEmplacement::DockUp:
+                newDockID = ImGui::DockBuilderSplitNode(parentDockID, ImGuiDir_Up, 0.5f, nullptr, &parentDockID);
+                set_window_storage("dockplace", "up");
+                break;
+            case DockEmplacement::DockDown:
+                newDockID = ImGui::DockBuilderSplitNode(parentDockID, ImGuiDir_Down, 0.5f, nullptr, &parentDockID);
+                set_window_storage("dockplace", "down");
+                break;
+            case DockEmplacement::DockLeft:
+                newDockID = ImGui::DockBuilderSplitNode(parentDockID, ImGuiDir_Left, 0.3f, nullptr, &parentDockID);
+                set_window_storage("dockplace", "left");
+                break;
+            case DockEmplacement::DockRight:
+                newDockID = ImGui::DockBuilderSplitNode(parentDockID, ImGuiDir_Right, 0.3f, nullptr, &parentDockID);
+                set_window_storage("dockplace", "right");
+                break;
+            case DockEmplacement::DockFull:
+            default:
+                newDockID = parentDockID;
+                break;
+            }
+
+            if (currentWindow && currentWindow->DockId != 0)
+            {
+                ImGuiID parentDockID = currentWindow->DockId;
+                ImGuiID newDockID = parentDockID;
+
+                switch (req->m_DockPlace)
+                {
+                case DockEmplacement::DockUp:
+                    newDockID = ImGui::DockBuilderSplitNode(parentDockID, ImGuiDir_Up, 0.5f, nullptr, &parentDockID);
+                    set_window_storage("dockplace", "up");
+                    break;
+                case DockEmplacement::DockDown:
+                    newDockID = ImGui::DockBuilderSplitNode(parentDockID, ImGuiDir_Down, 0.5f, nullptr, &parentDockID);
+                    set_window_storage("dockplace", "down");
+                    break;
+                case DockEmplacement::DockLeft:
+                    newDockID = ImGui::DockBuilderSplitNode(parentDockID, ImGuiDir_Left, 0.3f, nullptr, &parentDockID);
+                    set_window_storage("dockplace", "left");
+                    break;
+                case DockEmplacement::DockRight:
+                    newDockID = ImGui::DockBuilderSplitNode(parentDockID, ImGuiDir_Right, 0.3f, nullptr, &parentDockID);
+                    set_window_storage("dockplace", "right");
+                    break;
+                default:
+                    break;
+                }
+
+                if (newDockID != 0)
+                {
+                    ImGui::SetNextWindowDockID(newDockID, ImGuiCond_Always);
+                }
+                else
+                {
+                    ImGui::SetNextWindowDockID(parentDockID, ImGuiCond_Always);
+                }
+            }
+
+            ImGui::SetNextWindowDockID(newDockID, ImGuiCond_Always);
+
+            it = reqs->erase(it);
+        }
+
+        ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoMove;
+
+        ImGui::PushStyleVar(ImGuiStyleVar_PopupRounding, 3.0f);
+        ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10, 12));
+        if (this->get_img(m_Icon))
+        {
+            static ImTextureID texture = this->get_img(m_Icon)->GetImGuiTextureID(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+            ImGui::UIKit_BeginLogoWindow(m_Name.c_str(), &texture, NULL, window_flags);
+
+            ImGui::ImageButton(this->get_img(m_Icon)->GetImGuiTextureID(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL), ImVec2(15, 15));
+        }
+        else
+        {
+            ImGui::Begin(m_Name.c_str(), NULL, ImGuiWindowFlags_NoMove);
+        }
+
+        if (ImGui::BeginMenuBar())
+        {
+            float oldsize = ImGui::GetFont()->Scale;
+            ImGui::GetFont()->Scale *= 0.85;
+            ImGui::PushFont(ImGui::GetFont());
+
+            float menuBarHeight = ImGui::GetCurrentWindow()->MenuBarHeight();
+
+            float buttonHeight = 24;
+
+            float offsetY = (menuBarHeight - buttonHeight) * 0.5f;
+
+            ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10, 6));
+
+            float initialCursorPosY = ImGui::GetCursorPosY();
+            ImGui::SetCursorPosY(ImGui::GetCursorPosY() + offsetY);
+
+            this->menubar_left();
+            this->menubar_right();
+
+            ImGui::SetCursorPosY(initialCursorPosY);
+
+            ImGui::PopStyleVar();
+
+            ImGui::GetFont()->Scale = oldsize;
+            ImGui::PopFont();
+
+            ImGui::EndMenuBar();
+        }
+        ImGui::PopStyleVar(2); // Pour les bords arrondis
+
+        ImGuiContext *ctx = ImGui::GetCurrentContext();
+
+        std::shared_ptr<Window> wind;
+
+        for (auto &win : s_Instance->m_Windows)
+        {
+            if (win->GetName() == winname)
+            {
+                wind = win;
+            }
+        }
+
+        if (ctx->DockTabStaticSelection.Pressed)
+        {
+            wind->drag_dropstate.DockIsDragging = true;
+            wind->drag_dropstate.LastDraggingAppWindowHost = ctx->DockTabStaticSelection.TabName;
+            LastWindowPressed = wind->drag_dropstate.LastDraggingAppWindowHost;
+            // wind->drag_dropstate.LastDraggingAppWindow = ctx->DockTabStaticSelection.TabName;
+            wind->drag_dropstate.DragOwner = winname;
+            c_CurrentDragDropState = &wind->drag_dropstate;
+        }
+
+        if (wind->drag_dropstate.DragOwner == winname)
+        {
+            if (!ctx->DockTabStaticSelection.Pressed)
+            {
+                if (wind->drag_dropstate.LastDraggingPlace == DockEmplacement::DockBlank)
+                {
+                    wind->drag_dropstate.CreateNewWindow = true;
+                }
+                PushRedockEvent(c_CurrentDragDropState);
+
+                wind->drag_dropstate.DockIsDragging = false;
+                wind->drag_dropstate.DragOwner = "none";
+            }
+        }
+        this->render();
+
+        ImGui::End();
+    }
+}

@@ -8,7 +8,7 @@ namespace UIKit {
 		static uint32_t GetVulkanMemoryType(VkMemoryPropertyFlags properties, uint32_t type_bits, const std::string& winname)
 		{
 			VkPhysicalDeviceMemoryProperties prop;
-			vkGetPhysicalDeviceMemoryProperties(Application::GetPhysicalDevice(winname), &prop);
+			vkGetPhysicalDeviceMemoryProperties(Application::GetPhysicalDevice(), &prop);
 			for (uint32_t i = 0; i < prop.memoryTypeCount; i++)
 			{
 				if ((prop.memoryTypes[i].propertyFlags & properties) == properties && type_bits & (1 << i))
@@ -73,6 +73,14 @@ namespace UIKit {
 			SetData(data, winname);
 	}
 
+	Image::Image(uint32_t width, uint32_t height, ImageFormat format, const void* data)
+		: m_Width(width), m_Height(height), m_Format(format)
+	{
+		AllocateMemory(m_Width * m_Height * Utils::BytesPerPixel(m_Format));
+		if (data)
+			SetData(data);
+	}
+
 	Image::Image(uint32_t width, uint32_t height, ImageFormat format, ImGui_ImplVulkanH_Window* wd, const std::string& winname, const void* data)
 		: m_Width(width), m_Height(height), m_Format(format), m_Winname(winname)
 	{
@@ -89,7 +97,7 @@ namespace UIKit {
 
 	void Image::AllocateMemory(uint64_t size)
 	{
-		VkDevice device = Application::GetDevice(m_Winname);
+		VkDevice device = Application::GetDevice();
 
 		VkResult err;
 		
@@ -165,7 +173,7 @@ namespace UIKit {
 		Application::SubmitResourceFree([sampler = m_Sampler, imageView = m_ImageView, image = m_Image,
 			memory = m_Memory, stagingBuffer = m_StagingBuffer, stagingBufferMemory = m_StagingBufferMemory, winname = m_Winname]()
 		{
-			VkDevice device = Application::GetDevice(winname);
+			VkDevice device = Application::GetDevice();
 
 			vkDestroySampler(device, sampler, nullptr);
 			vkDestroyImageView(device, imageView, nullptr);
@@ -185,7 +193,7 @@ namespace UIKit {
 
 	void Image::SetData(const void* data)
 	{
-		VkDevice device = Application::GetDevice(m_Winname);
+		VkDevice device = Application::GetDevice();
 
 		size_t upload_size = m_Width * m_Height * Utils::BytesPerPixel(m_Format);
 
@@ -234,7 +242,7 @@ namespace UIKit {
 
 		// Copy to Image
 		{
-			VkCommandBuffer command_buffer = Application::GetCommandBufferOfWin(m_Winname, true);
+			VkCommandBuffer command_buffer = Application::GetCommandBuffer(true);
 			if(command_buffer)
 			{
 			VkImageMemoryBarrier copy_barrier = {};
@@ -272,14 +280,14 @@ namespace UIKit {
 			use_barrier.subresourceRange.layerCount = 1;
 			vkCmdPipelineBarrier(command_buffer, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, 0, 0, NULL, 0, NULL, 1, &use_barrier);
 
-			Application::FlushCommandBuffer(command_buffer, m_Winname);
+			Application::FlushCommandBuffer(command_buffer);
 			}
 		}
 	}
 
 	void Image::SetData(const void* data, ImGui_ImplVulkanH_Window* wd)
 	{
-		VkDevice device = Application::GetDevice(m_Winname);
+		VkDevice device = Application::GetDevice();
 
 		size_t upload_size = m_Width * m_Height * Utils::BytesPerPixel(m_Format);
 
@@ -365,15 +373,14 @@ namespace UIKit {
 			use_barrier.subresourceRange.layerCount = 1;
 			vkCmdPipelineBarrier(command_buffer, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, 0, 0, NULL, 0, NULL, 1, &use_barrier);
 
-			Application::FlushCommandBuffer(command_buffer, m_Winname);
+			Application::FlushCommandBuffer(command_buffer);
 		}
 	}
 
 
 	void Image::SetData(const void* data, const std::string& winname)
 	{
-		VkDevice device = Application::GetDevice(m_Winname);
-
+		VkDevice device = Application::GetDevice();
 		size_t upload_size = m_Width * m_Height * Utils::BytesPerPixel(m_Format);
 
 		VkResult err;
@@ -458,7 +465,7 @@ namespace UIKit {
 			use_barrier.subresourceRange.layerCount = 1;
 			vkCmdPipelineBarrier(command_buffer, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, 0, 0, NULL, 0, NULL, 1, &use_barrier);
 
-			Application::FlushCommandBuffer(command_buffer, m_Winname);
+			Application::FlushCommandBuffer(command_buffer);
 		}
 	}
 

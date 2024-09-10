@@ -6,7 +6,7 @@
 #include "../../../lib/imgui/imgui.h"
 #include "../../../lib/imgui/imgui_internal.h"
 #include "../../../lib/imgui/backends/imgui_impl_vulkan.h"
-#include "../../../lib/imgui/backends/imgui_impl_glfw.h"
+#include "../../../lib/imgui/backends/imgui_impl_sdl.h"
 
 namespace UIKit {
 
@@ -23,7 +23,7 @@ namespace UIKit {
 	public:
 		Image(std::string_view path, const std::string& winname);
 		Image(uint32_t width, uint32_t height, ImageFormat format, const std::string& winname, const void* data = nullptr);
-		Image(uint32_t width, uint32_t height, ImageFormat format, const void* data = nullptr) {};
+		Image(uint32_t width, uint32_t height, ImageFormat format, const void* data = nullptr);
 		Image(uint32_t width, uint32_t height, ImageFormat format, ImGui_ImplVulkanH_Window* wd, const std::string& winname, const void* data = nullptr);
 		~Image();
 

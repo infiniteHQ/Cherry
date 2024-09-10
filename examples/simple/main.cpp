@@ -1,5 +1,4 @@
-#include "../uikit.h"
-#include "../src/EntryPoint.h"
+#include "../../uikit.h"
 
 #include <thread>
 #include <memory>
@@ -22,10 +21,16 @@ UIKit::Application *UIKit::CreateApplication(int argc, char **argv)
   std::shared_ptr<Layer> layer = std::make_shared<Layer>();
   
   std::string name = "UIKit example";
-  spec.Name = name;
-  spec.CustomTitlebar = true;
+    spec.Name = name;
+    spec.MinHeight = 500;
+    spec.MinWidth = 500;
+    spec.CustomTitlebar = true;
+    spec.DisableTitle = true;
+    spec.IconPath = "icon.png";
+
 
   UIKit::Application *app = new UIKit::Application(spec);
+    app->SetWindowSaveDataFile("/home/diego/savedata.json");
 
   app->PushLayer(layer);
   app->SetMenubarCallback([app, layer]()

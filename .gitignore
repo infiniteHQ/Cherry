@@ -1,2 +1,6 @@
-example/build
+examples/tiny/build
+examples/simple/build
+examples/minimal/build
+examples/advanced/build
+
 .vscode
