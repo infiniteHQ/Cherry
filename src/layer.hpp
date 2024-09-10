@@ -6,7 +6,6 @@
 #include "../lib/imgui/imgui.h"
 #include "../lib/imgui/imgui_internal.h"
 #include "../lib/imgui/backends/imgui_impl_vulkan.h"
-#include "../lib/glfw/include/GLFW/glfw3.h"
 #include "../lib/stb-image/stb_image.h"
 #include "../lib/glm/glm/glm.hpp"
 #include "../lib/json/single_include/nlohmann/json.hpp"

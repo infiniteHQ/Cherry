@@ -31,8 +31,6 @@ static void AppPopTabStyle()
 	ImGui::PopStyleVar(3);
 }
 
-struct GLFWwindow;
-
 namespace UIKit
 {
 	enum class Window_Type
@@ -228,8 +226,8 @@ namespace UIKit
 		VkCommandBuffer GetCommandBuffer(bool begin);
 		SDL_Window *GetWindowHandle() const { return m_WindowHandler; }
 
-		void OnWindowResize(GLFWwindow *windowHandle, int width, int height);
-		void OnWindowMove(int xpos, int ypos);
+		//void OnWindowResize(GLFWwindow *windowHandle, int width, int height);
+		//void OnWindowMove(int xpos, int ypos);
 
 		void BeginFrame()
 		{
@@ -400,7 +398,7 @@ namespace UIKit
 		{
 			for (auto &window : m_Windows)
 			{
-				glfwPollEvents(); // Poll events in the main thread
+				//glfwPollEvents(); // Poll events in the main thread
 			}
 		}
 
@@ -435,7 +433,6 @@ namespace UIKit
 		std::shared_ptr<Image> GetApplicationIcon(const std::string &window) const;
 
 		float GetTime();
-		GLFWwindow *GetWindowHandle(const std::string &winname) const;
 		bool IsTitleBarHovered() const { return m_TitleBarHovered; }
 
 		Window *GetWindowByHandle(SDL_Window *window_handle)

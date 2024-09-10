@@ -3062,144 +3062,142 @@ namespace UIKit
         }
     };
 
-void Application::InitializeWindowStates()
-{
-    if (!m_IsDataInitialized)
+    void Application::InitializeWindowStates()
     {
-        // Ensure that m_PreviousSaveData has been loaded from the file
-        if (s_Instance->m_PreviousSaveData.find("data") != s_Instance->m_PreviousSaveData.end())
+        if (!m_IsDataInitialized)
         {
-            // Retrieve the saved windows data
-            auto windowsJson = s_Instance->m_PreviousSaveData["data"].value("windows", nlohmann::json::array());
-
-            // Process each window
-            for (const auto& windowJson : windowsJson)
+            // Ensure that m_PreviousSaveData has been loaded from the file
+            if (s_Instance->m_PreviousSaveData.find("data") != s_Instance->m_PreviousSaveData.end())
             {
-                std::string windowName = windowJson.value("name", "");
-                bool opened = windowJson.value("opened", true);
+                // Retrieve the saved windows data
+                auto windowsJson = s_Instance->m_PreviousSaveData["data"].value("windows", nlohmann::json::array());
 
-                // Find or create the window
-                auto it = std::find_if(m_Windows.begin(), m_Windows.end(), [&windowName](const std::shared_ptr<Window>& w) {
-                    return w->GetName() == windowName;
-                });
-
-                std::shared_ptr<Window> window;
-                if (it != m_Windows.end())
+                // Process each window
+                for (const auto &windowJson : windowsJson)
                 {
-                    window = *it;
-                }
-                else
-                {
-                    // Create a new window if not found
-                    //window = std::make_shared<Window>(windowName);
-                    //m_Windows.push_back(window);
-                }
+                    std::string windowName = windowJson.value("name", "");
+                    bool opened = windowJson.value("opened", true);
 
+                    // Find or create the window
+                    auto it = std::find_if(m_Windows.begin(), m_Windows.end(), [&windowName](const std::shared_ptr<Window> &w)
+                                           { return w->GetName() == windowName; });
 
-                // Retrieve and set up app windows
-                auto appWindowsJson = windowJson.value("app_windows", nlohmann::json::array());
-                for (const auto& appWindowJson : appWindowsJson)
-                {
-                    std::string appWindowName = appWindowJson.value("name", "");
-                    std::string dockPlace = appWindowJson.value("dockplace", "");
-                    std::string type = appWindowJson.value("type", "");
-                    std::string path = appWindowJson.value("path", "");
-                    std::string id = appWindowJson.value("id", "");
-
-                    // Find or create the app window
-                    auto appIt = std::find_if(s_Instance->m_AppWindows.begin(), s_Instance->m_AppWindows.end(), [&appWindowName](const std::shared_ptr<AppWindow>& aw) {
-                        return aw->m_Name == appWindowName;
-                    });
-
-                    std::shared_ptr<AppWindow> appWindow;
-                    if (appIt != s_Instance->m_AppWindows.end())
+                    std::shared_ptr<Window> window;
+                    if (it != m_Windows.end())
                     {
-                        appWindow = *appIt;
+                        window = *it;
                     }
                     else
                     {
-                        //
+                        // Create a new window if not found
+                        // window = std::make_shared<Window>(windowName);
+                        // m_Windows.push_back(window);
                     }
 
-                    // Set app window properties
-                    appWindow->set_window_storage("dockplace", dockPlace);
-                    appWindow->set_window_storage("type", type);
-                    appWindow->set_window_storage("path", path);
-                    appWindow->set_window_storage("id", id);
+                    // Retrieve and set up app windows
+                    auto appWindowsJson = windowJson.value("app_windows", nlohmann::json::array());
+                    for (const auto &appWindowJson : appWindowsJson)
+                    {
+                        std::string appWindowName = appWindowJson.value("name", "");
+                        std::string dockPlace = appWindowJson.value("dockplace", "");
+                        std::string type = appWindowJson.value("type", "");
+                        std::string path = appWindowJson.value("path", "");
+                        std::string id = appWindowJson.value("id", "");
 
-                    // Associate the app window with the parent window
-                    appWindow->m_WinParent = windowName;
+                        // Find or create the app window
+                        auto appIt = std::find_if(s_Instance->m_AppWindows.begin(), s_Instance->m_AppWindows.end(), [&appWindowName](const std::shared_ptr<AppWindow> &aw)
+                                                  { return aw->m_Name == appWindowName; });
+
+                        std::shared_ptr<AppWindow> appWindow;
+                        if (appIt != s_Instance->m_AppWindows.end())
+                        {
+                            appWindow = *appIt;
+                        }
+                        else
+                        {
+                            //
+                        }
+
+                        // Set app window properties
+                        appWindow->set_window_storage("dockplace", dockPlace);
+                        appWindow->set_window_storage("type", type);
+                        appWindow->set_window_storage("path", path);
+                        appWindow->set_window_storage("id", id);
+
+                        // Associate the app window with the parent window
+                        appWindow->m_WinParent = windowName;
+                    }
+                }
+
+                // Mark data as initialized
+                m_IsDataInitialized = true;
+            }
+            else
+            {
+                // Handle case where "data" is missing (optional)
+                // throw std::runtime_error("No valid data found in m_PreviousSaveData.");
+            }
+        }
+    }
+
+    void Application::SaveData()
+    {
+        nlohmann::json jsonData;
+
+        std::ifstream inputFile(this->m_WindowSaveDataPath);
+        if (inputFile)
+        {
+            inputFile >> jsonData;
+            inputFile.close();
+        }
+
+        if (jsonData.find("data") == jsonData.end())
+        {
+            jsonData["data"] = nlohmann::json::object();
+        }
+
+        nlohmann::json windowsJson = nlohmann::json::array();
+
+        for (auto &window : m_Windows)
+        {
+            nlohmann::json windowJson;
+            windowJson["name"] = window->GetName();
+
+            nlohmann::json appWindowsJson = nlohmann::json::array();
+
+            for (auto &app_window : s_Instance->m_AppWindows)
+            {
+                if (app_window->m_WinParent == window->GetName())
+                {
+                    nlohmann::json appWindowJson;
+                    appWindowJson["name"] = app_window->m_Name;
+                    appWindowJson["dockplace"] = app_window->get_window_storage("dockplace");
+                    appWindowJson["type"] = "cb_instance, static";
+                    appWindowJson["path"] = "/dsfsdf/DQSDQS";
+                    appWindowJson["id"] = "test_window";
+
+                    appWindowsJson.push_back(appWindowJson);
                 }
             }
 
-            // Mark data as initialized
-            m_IsDataInitialized = true;
+            windowJson["app_windows"] = appWindowsJson;
+
+            windowsJson.push_back(windowJson);
         }
-        else
+
+        jsonData["data"]["windows"] = windowsJson;
+
+        s_Instance->m_IsDataSaved = true;
+
+        std::ofstream outputFile(this->m_WindowSaveDataPath);
+        if (!outputFile)
         {
-            // Handle case where "data" is missing (optional)
-            //throw std::runtime_error("No valid data found in m_PreviousSaveData.");
-        }
-    }
-}
-
-void Application::SaveData()
-{
-    nlohmann::json jsonData;
-    
-    std::ifstream inputFile(this->m_WindowSaveDataPath);
-    if (inputFile)
-    {
-        inputFile >> jsonData;
-        inputFile.close();
-    }
-
-    if (jsonData.find("data") == jsonData.end()) {
-        jsonData["data"] = nlohmann::json::object();
-    }
-
-    nlohmann::json windowsJson = nlohmann::json::array();
-
-    for (auto &window : m_Windows)
-    {
-        nlohmann::json windowJson;
-        windowJson["name"] = window->GetName();
-
-        nlohmann::json appWindowsJson = nlohmann::json::array();
-
-        for (auto &app_window : s_Instance->m_AppWindows)
-        {
-            if (app_window->m_WinParent == window->GetName())
-            {
-                nlohmann::json appWindowJson;
-                appWindowJson["name"] = app_window->m_Name;
-                appWindowJson["dockplace"] = app_window->get_window_storage("dockplace");
-                appWindowJson["type"] = "cb_instance, static";
-                appWindowJson["path"] = "/dsfsdf/DQSDQS";
-                appWindowJson["id"] = "test_window";
-
-                appWindowsJson.push_back(appWindowJson);
-            }
+            // throw std::runtime_error("Unable to open the file for writing: " + this->m_WindowSaveDataPath);
         }
 
-        windowJson["app_windows"] = appWindowsJson;
-
-        windowsJson.push_back(windowJson);
+        outputFile << jsonData.dump(4);
+        outputFile.close();
     }
-
-    jsonData["data"]["windows"] = windowsJson;
-
-    s_Instance->m_IsDataSaved = true;
-
-    std::ofstream outputFile(this->m_WindowSaveDataPath);
-    if (!outputFile)
-    {
-        //throw std::runtime_error("Unable to open the file for writing: " + this->m_WindowSaveDataPath);
-    }
-
-    outputFile << jsonData.dump(4);
-    outputFile.close();
-}
 
     void Application::Run()
     {
@@ -3258,8 +3256,7 @@ void Application::SaveData()
             }
             std::cout << "================================================" << std::endl;*/
 
-
-            if(!m_IsDataInitialized)
+            if (!m_IsDataInitialized)
             {
                 s_Instance->InitializeWindowStates();
             }
@@ -3750,10 +3747,10 @@ void Application::SaveData()
     {
         //	return (bool)glfwGetWindowAttrib(m_WindowHandle, GLFW_MAXIMIZED);
     }
-
+    
     float Application::GetTime()
     {
-        return (float)glfwGetTime();
+        return (float)SDL_GetTicks() / 1000.0f;
     }
 
     VkInstance Application::GetInstance()
@@ -4136,23 +4133,6 @@ void Application::SaveData()
         }
     }
 
-    void Window::OnWindowResize(GLFWwindow *windowHandle, int width, int height)
-    {
-        if (width == 0 || height == 0)
-            return;
-
-        vkDeviceWaitIdle(g_Device);
-
-        this->CleanupVulkanWindow();
-
-        VkSurfaceKHR surface;
-
-        SetupVulkanWindow(&m_WinData, surface, width, height, this);
-
-        ImGui_ImplVulkan_SetMinImageCount(g_MinImageCount);
-        ImGui_ImplVulkanH_CreateOrResizeWindow(g_Instance, g_PhysicalDevice, g_Device, &m_WinData, g_QueueFamily, g_Allocator, width, height, g_MinImageCount);
-    }
-
     void ShowDockingPreview(ImGuiID dockspaceID, Window *win, WindowDragDropState *dragState)
     {
         ImGuiContext *ctx = ImGui::GetCurrentContext();
@@ -4458,60 +4438,58 @@ void Application::SaveData()
         return IM_COL32(r, g, b, a);
     }
 
-
-void Application::SetWindowSaveDataFile(const std::string &path)
-{
-    std::filesystem::path filePath(path);
-
-    if (!std::filesystem::exists(filePath.parent_path()))
+    void Application::SetWindowSaveDataFile(const std::string &path)
     {
-        std::filesystem::create_directories(filePath.parent_path());
-    }
+        std::filesystem::path filePath(path);
 
-    if (std::filesystem::exists(filePath))
-    {
-        if (std::filesystem::is_regular_file(filePath))
+        if (!std::filesystem::exists(filePath.parent_path()))
         {
-            std::ifstream inputFile(path);
-            if (!inputFile)
+            std::filesystem::create_directories(filePath.parent_path());
+        }
+
+        if (std::filesystem::exists(filePath))
+        {
+            if (std::filesystem::is_regular_file(filePath))
             {
-                //throw std::runtime_error("Unable to open file for reading: " + path);
+                std::ifstream inputFile(path);
+                if (!inputFile)
+                {
+                    // throw std::runtime_error("Unable to open file for reading: " + path);
+                }
+
+                inputFile >> m_PreviousSaveData;
+                inputFile.close();
+
+                if (m_PreviousSaveData.find("data") == m_PreviousSaveData.end())
+                {
+                    m_PreviousSaveData["data"] = nlohmann::json::object();
+                }
             }
-
-            inputFile >> m_PreviousSaveData;
-            inputFile.close();
-
-            if (m_PreviousSaveData.find("data") == m_PreviousSaveData.end())
+            else
             {
-                m_PreviousSaveData["data"] = nlohmann::json::object();
+                // throw std::runtime_error("The specified path is not a valid file: " + path);
             }
         }
-        else
+
+        std::ofstream outputFile(path);
+        if (!outputFile)
         {
-            //throw std::runtime_error("The specified path is not a valid file: " + path);
+            // throw std::runtime_error("Unable to create or open file: " + path);
         }
+
+        nlohmann::json jsonData = {{"save", true}};
+
+        if (!m_PreviousSaveData.empty())
+        {
+            jsonData["data"] = m_PreviousSaveData["data"];
+        }
+
+        outputFile << jsonData.dump(4);
+        outputFile.close();
+
+        this->m_WindowSaveDataPath = path;
+        this->m_SaveWindowData = true;
     }
-
-    std::ofstream outputFile(path);
-    if (!outputFile)
-    {
-        //throw std::runtime_error("Unable to create or open file: " + path);
-    }
-
-    nlohmann::json jsonData = {{"save", true}};
-
-    if (!m_PreviousSaveData.empty())
-    {
-        jsonData["data"] = m_PreviousSaveData["data"];
-    }
-
-    outputFile << jsonData.dump(4); 
-    outputFile.close();
-
-    this->m_WindowSaveDataPath = path;
-    this->m_SaveWindowData = true;
-}
-
 
     void AppWindow::ctx_render(std::vector<std::shared_ptr<RedockRequest>> *reqs, const std::string &winname)
     {

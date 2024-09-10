@@ -47,7 +47,6 @@ target_link_libraries(example PUBLIC ${SDL2_LIBRARIES})
 
 find_package(Vulkan REQUIRED)
 target_link_libraries(editor PUBLIC Vulkan::Vulkan)
-target_link_libraries(editor PUBLIC glfw)
 target_link_libraries(editor PUBLIC imgui)
 target_link_libraries(editor PUBLIC glm)
 target_link_libraries(editor PUBLIC stbimage)
