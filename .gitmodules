@@ -16,3 +16,6 @@
 [submodule "lib/imgui"]
 	path = lib/imgui
 	url = https://github.com/infiniteHQ/imgui    
+[submodule "lib/json"]
+	path = lib/json
+	url = https://github.com/nlohmann/json
