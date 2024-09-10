@@ -1,6 +1,10 @@
 examples/tiny/build
+examples/tiny/imgui.ini
 examples/simple/build
+examples/simple/imgui.ini
 examples/minimal/build
+examples/minimal/imgui.ini
 examples/advanced/build
+examples/advanced/imgui.ini
 
 .vscode
