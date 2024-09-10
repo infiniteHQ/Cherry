@@ -24,13 +24,11 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y git cmake make g++
         sudo apt-get install -y libvulkan-dev xorg-dev
-        sudo apt-get install -y libfmt-dev
+        sudo apt-get install -y libfmt-dev libsdl2-dev
 
         # Initialize and update submodules
         git submodule update --init --recursive
 
         # Configure and build
-        cd "example"
-        mkdir -p build && cd build
-        cmake ..
-        make
+        cd "examples/simple"
+        sudo bash build.sh
