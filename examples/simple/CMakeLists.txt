@@ -39,6 +39,7 @@ add_library(editor STATIC ${UIKIT_SRC})
 
 # Find SDL2
 find_package(SDL2 REQUIRED)
+find_package(SDL2_image REQUIRED)
 
 # Include SDL2 headers
 
@@ -48,6 +49,7 @@ target_link_libraries(editor PUBLIC imgui)
 target_link_libraries(editor PUBLIC glm)
 include_directories(${SDL2_INCLUDE_DIRS})
 target_link_libraries(editor PUBLIC ${SDL2_LIBRARIES})
+target_link_libraries(editor PUBLIC SDL2_image) 
 target_link_libraries(editor PUBLIC stbimage)
 target_link_libraries(editor PUBLIC spdlog)
 

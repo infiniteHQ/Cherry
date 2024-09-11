@@ -13,22 +13,16 @@
 │                 To-do list                 │
 └────────────────────────────────────────────┘
 TODO : Window manager interactions
-TODO : Window manager interactions
 TODO : Default AppWindow behaviors (size, docking, etc...)
 TODO : Save AppWindow states (positions, parents, docking, etc...)
 TODO : Dockspace tabs menu callback and events/flags (flags : unsaved) (events: close)
 TODO : Better start of dragging to prevent dragging+mooving
 
-TODO : SubAppWindow managment + Car have many sub app windows to many AppWindow instances.
-TODO : Prebuild base sub app windows
-TODO : Headerless example, Simple example, Base exemple, Advanced exemple
 TODO : Set favicon
-
 
 ┌────────────────────────────────────────────┐
 │                  Bug list                  │
 └────────────────────────────────────────────┘
-BUG : If we resize a window by the top or the left corners, the window will be resize by the opposite corner causing a infinite resize
 BUG : AppWindowHost not set properly when redocking
 **/
 
@@ -87,7 +81,6 @@ static std::shared_ptr<UIKit::Image> m_IconClose;
 static std::shared_ptr<UIKit::Image> m_IconMinimize;
 static std::shared_ptr<UIKit::Image> m_IconMaximize;
 static std::shared_ptr<UIKit::Image> m_IconRestore;
-
 static int WinIDCount = -1;
 
 // Per-frame-in-flight
@@ -3246,6 +3239,9 @@ namespace UIKit
 
             for (auto &window : m_Windows)
             {
+                // Refresh favicon
+                window->SetFavIcon(s_Instance->m_FavIconPath);
+
                 c_CurrentRenderedWindow = window;
                 if (window->drag_dropstate.DockIsDragging)
                 {
@@ -3503,7 +3499,7 @@ namespace UIKit
     {
         SDL_WindowFlags window_flags = (SDL_WindowFlags)(SDL_WINDOW_VULKAN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_BORDERLESS);
         m_WindowHandler = SDL_CreateWindow(m_Name.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, m_Width, m_Height, window_flags);
-
+        
         // Setup Vulkan
         uint32_t extensions_count = 0;
         SDL_Vulkan_GetInstanceExtensions(m_WindowHandler, &extensions_count, NULL);

@@ -12,6 +12,7 @@
 #include <memory>
 #include <functional>
 #include <filesystem>
+#include <SDL2/SDL_image.h>
 
 #include "ui/ui.hpp"
 #include "imgui/ImGuiTheme.h"
@@ -227,23 +228,21 @@ namespace UIKit
 			m_Icon = name;
 		}
 
-
-		void SetDockingMode(const bool& use_docking)
+		void SetDockingMode(const bool &use_docking)
 		{
 			m_DockingMode = use_docking;
 		}
 
-
-		void SetParent(const std::shared_ptr<AppWindow>& parent)
+		void SetParent(const std::shared_ptr<AppWindow> &parent)
 		{
 			m_ParentAppWindow = parent;
 			m_HaveParentAppWindow = true;
 		}
 
-		bool CheckWinParent(const std::string& parentname);
-		void AddUniqueWinParent(const std::string& parentnale);
-		void AddWinParent(const std::string& parentnale);
-		void DeleteWinParent(const std::string& parentnale);
+		bool CheckWinParent(const std::string &parentname);
+		void AddUniqueWinParent(const std::string &parentnale);
+		void AddWinParent(const std::string &parentnale);
+		void DeleteWinParent(const std::string &parentnale);
 
 	public:
 		int treated = 0;
@@ -360,6 +359,17 @@ namespace UIKit
 
 				m_ResizePending = false;
 			}
+		}
+
+		void SetFavIcon(const std::string &path)
+		{
+			SDL_Surface *iconSurface = IMG_Load(path.c_str());
+			if (!iconSurface)
+			{
+				return;
+			}
+			SDL_SetWindowIcon(m_WindowHandler, iconSurface);
+			SDL_FreeSurface(iconSurface);
 		}
 
 		void Render();
@@ -559,6 +569,11 @@ namespace UIKit
 			return "id";
 		}
 
+		void SetFavIconPath(const std::string &path)
+		{
+			m_FavIconPath = path;
+		}
+
 		ImDrawData *RenderWindow(Window *window);
 
 		// Resources
@@ -584,6 +599,7 @@ namespace UIKit
 		std::vector<std::shared_ptr<Window>> m_Windows;
 		std::vector<std::shared_ptr<RedockRequest>> m_RedockRequests;
 		std::vector<std::shared_ptr<AppWindow>> m_AppWindows;
+		std::string m_FavIconPath;
 
 	private:
 		void Init();

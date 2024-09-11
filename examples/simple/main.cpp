@@ -31,6 +31,7 @@ UIKit::Application *UIKit::CreateApplication(int argc, char **argv)
 
   UIKit::Application *app = new UIKit::Application(spec);
   app->SetWindowSaveDataFile("/home/diego/savedatda.json");
+  app->SetFavIconPath("/usr/local/include/Vortex/imgs/vortex.png");
 
   app->PushLayer(layer);
   app->SetMenubarCallback([app, layer]()
