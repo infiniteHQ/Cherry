@@ -1,120 +1,8 @@
+#define UIKIT_V1
 #include "../../uikit.hpp"
 
 #include <thread>
 #include <memory>
-
-void render()
-{
-}
-
-void menubar_left()
-{
-}
-
-class FirstWindow
-{
-public:
-  FirstWindow(const std::string &name)
-  {
-    m_AppWindow = std::make_shared<UIKit::AppWindow>("first_window", "FirstWindow");
-    m_AppWindow->SetIcon("/usr/local/include/Vortex/imgs/vortex.png");
-    m_AppWindow->SetRenderCallback([this]()
-                                   {
-        ImGui::Text("AA.BB.CC.DD.EE.FF 1");
-        ImGui::Button("qsd"); });
-
-    std::shared_ptr<UIKit::AppWindow> win = m_AppWindow;
-
-    m_AppWindow->SetLeftMenubarCallback([]()
-                                        { ImGui::Text("ll"); });
-    m_AppWindow->SetRightMenubarCallback([win]()
-                                         { ImGui::Text("123456789123456789"); 
-                                         
-                                         static ImTextureID texture = win->GetImage("/usr/local/include/Vortex/imgs/vortex.png")->GetImGuiTextureID(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-
-    // Ajuster le style des boutons pour éviter le rognage
-    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(6, 6)); // Augmenter le padding
-
-    ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0.4f, 0.4f, 0.4f, 0.7f));
-    if (ImGui::UIKit_ImageButtonWithText(texture, "Add", ImVec2(20, 20))) // Augmenter la taille du bouton si nécessaire
-    {
-        // Action du bouton
-    }
-    if (ImGui::UIKit_ImageButtonWithText(texture, "CasserDuTerrio", ImVec2(20, 20))) // Augmenter la taille du bouton si nécessaire
-    {
-        // Action du bouton
-    }
-    ImGui::PopStyleColor();
-
-    // Styles pour les autres boutons
-    ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0.4f, 0.4f, 0.4f, 0.7f));
-    ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(62, 62, 62, 0));
-    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(62, 62, 62, 0));
-    ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(62, 62, 62, 0));
-    ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(62, 62, 62, 0));
-
-    
-    ImGui::PopStyleColor(5);
-    ImGui::PopStyleVar(); // Pop du style modifié
-                                         
-                                         });
-  }
-
-  std::shared_ptr<UIKit::AppWindow> m_AppWindow;
-};
-
-class sFirstWindow
-{
-public:
-  sFirstWindow(const std::string &name)
-  {
-    m_AppWindow = std::make_shared<UIKit::AppWindow>("first_window", "sFirstWindow");
-    m_AppWindow->SetIcon("/usr/local/include/Vortex/imgs/vortex.png");
-    m_AppWindow->SetRenderCallback([this]()
-                                   {
-        ImGui::Text("AA.BB.CC.DD.EE.FF 1");
-        ImGui::Button("qsd"); });
-
-    std::shared_ptr<UIKit::AppWindow> win = m_AppWindow;
-
-    
-m_AppWindow->SetLeftMenubarCallback([win]()
-{
-    static ImTextureID texture = win->GetImage("/usr/local/include/Vortex/imgs/vortex.png")->GetImGuiTextureID(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-
-    // Ajuster le style des boutons pour éviter le rognage
-    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(6, 6)); // Augmenter le padding
-
-    ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0.4f, 0.4f, 0.4f, 0.7f));
-    if (ImGui::UIKit_ImageButtonWithText(texture, "Add", ImVec2(20, 20))) // Augmenter la taille du bouton si nécessaire
-    {
-        // Action du bouton
-    }
-    ImGui::PopStyleColor();
-
-    // Styles pour les autres boutons
-    ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0.4f, 0.4f, 0.4f, 0.7f));
-    ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(62, 62, 62, 0));
-    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(62, 62, 62, 0));
-    ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(62, 62, 62, 0));
-    ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(62, 62, 62, 0));
-
-    if (ImGui::UIKit_ImageButtonWithText(texture, "Save all", ImVec2(20, 20))) // Vérifie la taille du bouton
-    {
-        // Action du bouton
-    }
-    if (ImGui::UIKit_ImageButtonWithText(texture, "Import", ImVec2(20, 20))) // Ajuster la taille si nécessaire
-    {
-        // Action du bouton
-    }
-    
-    ImGui::PopStyleColor(5);
-    ImGui::PopStyleVar(); // Pop du style modifié
-});
-  }
-
-  std::shared_ptr<UIKit::AppWindow> m_AppWindow;
-};
 
 class Layer : public UIKit::Layer
 {
@@ -248,10 +136,8 @@ UIKit::Application *UIKit::CreateApplication(int argc, char **argv)
     std::cout << "QDS" << std::endl;
                           });*/
 
-  std::shared_ptr<FirstWindow> windodo = std::make_shared<FirstWindow>("FirstWindow");
-  std::shared_ptr<sFirstWindow> windodos = std::make_shared<sFirstWindow>("sFirstWindow");
+  std::shared_ptr<DockingAppWindow> windodo = std::make_shared<UIKit::DockingAppWindow>("Test1");
   app->PutWindow(windodo->m_AppWindow);
-  app->PutWindow(windodos->m_AppWindow);
 
   return app;
 }

@@ -29,9 +29,10 @@ file(
     GLOB_RECURSE # recursive
     UIKIT_SRC # variable to store the source files and headers
     CONFIGURE_DEPENDS # make a dependency
-    "${PROJECT_SOURCE_DIR}/../../platform/*.h" "${PROJECT_SOURCE_DIR}/../../platform/*.cpp"
-    "${PROJECT_SOURCE_DIR}/../../src/*.h" "${PROJECT_SOURCE_DIR}/../../src/*.cpp"
-    "${PROJECT_SOURCE_DIR}/../../components/*.h" "${PROJECT_SOURCE_DIR}/../../components/*.cpp"
+    "${PROJECT_SOURCE_DIR}/../../platform/*.h" "${PROJECT_SOURCE_DIR}/../../platform/*.hpp" "${PROJECT_SOURCE_DIR}/../../platform/*.cpp"
+    "${PROJECT_SOURCE_DIR}/../../src/*.h" "${PROJECT_SOURCE_DIR}/../../src/*.hpp" "${PROJECT_SOURCE_DIR}/../../src/*.cpp"
+    "${PROJECT_SOURCE_DIR}/../../components/*.h" "${PROJECT_SOURCE_DIR}/../../components/*.hpp" "${PROJECT_SOURCE_DIR}/../../components/*.cpp"
+    "${PROJECT_SOURCE_DIR}/../../kit/*.h" "${PROJECT_SOURCE_DIR}/../../kit/*.hpp" "${PROJECT_SOURCE_DIR}/../../kit/*.cpp"
 )
 
 add_library(editor STATIC ${UIKIT_SRC})

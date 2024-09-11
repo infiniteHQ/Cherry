@@ -69,6 +69,8 @@ static bool c_MasterSwapChainRebuild = false;
 static UIKit::WindowDragDropState *c_CurrentDragDropState;
 static std::vector<std::string> c_ImageList;
 
+static std::shared_ptr<UIKit::Window> c_CurrentRenderedWindow;
+
 static VkAllocationCallbacks *g_Allocator = NULL;
 static VkInstance g_Instance = VK_NULL_HANDLE;
 static VkPhysicalDevice g_PhysicalDevice = VK_NULL_HANDLE;
@@ -2529,6 +2531,11 @@ namespace UIKit
         Log::Shutdown();
     }
 
+    std::shared_ptr<Window> Application::GetCurrentRenderedWindow()
+    {
+        return c_CurrentRenderedWindow;
+    }
+
     void Window::UI_DrawTitlebar(float &outTitlebarHeight)
     {
         float titlebarVerticalOffset = 0.0f;
@@ -2793,7 +2800,6 @@ namespace UIKit
                 if (ImGui::IsItemHovered())
                     m_TitleBarHovered = false;
             }
-
             ImGui::ResumeLayout();
         }
 
@@ -3081,7 +3087,7 @@ namespace UIKit
             else
             {
                 // Handle case where "data" is missing (optional)
-                // throw std::runtime_error("No valid data found in m_PreviousSaveData.");
+                // throw std::time_error("No valid data found in m_PreviousSaveData.");
             }
         }
     }
@@ -3138,7 +3144,7 @@ namespace UIKit
         std::ofstream outputFile(this->m_WindowSaveDataPath);
         if (!outputFile)
         {
-            // throw std::runtime_error("Unable to open the file for writing: " + this->m_WindowSaveDataPath);
+            // throw std::time_error("Unable to open the file for writing: " + this->m_WindowSaveDataPath);
         }
 
         outputFile << jsonData.dump(4);
@@ -3228,6 +3234,7 @@ namespace UIKit
 
             for (auto &window : m_Windows)
             {
+                c_CurrentRenderedWindow = window;
                 if (window->drag_dropstate.DockIsDragging)
                 {
                     c_DockIsDragging = true;
@@ -3257,6 +3264,7 @@ namespace UIKit
 
                 for (auto &window : m_Windows)
                 {
+                    c_CurrentRenderedWindow = window;
                     Uint32 windowID = SDL_GetWindowID(window->GetWindowHandle());
 
                     if (focusedWindowID != 0 && windowID != focusedWindowID)
@@ -3325,6 +3333,7 @@ namespace UIKit
             for (auto &window : m_Windows)
             {
                 ImGui::SetCurrentContext(window->m_ImGuiContext);
+                c_CurrentRenderedWindow = window;
 
                 if (c_MasterSwapChainRebuild)
                 {
@@ -3434,8 +3443,9 @@ namespace UIKit
             c_DockIsDragging = false;
 
             // Erase empty main windows
-            auto it = m_Windows.begin();
-            while (it != m_Windows.end())
+            std::vector<std::shared_ptr<Window>> to_remove;
+
+            for (auto it = m_Windows.begin(); it != m_Windows.end(); ++it)
             {
                 int app_wins_inside = 0;
 
@@ -3449,18 +3459,20 @@ namespace UIKit
 
                 if (app_wins_inside == 0)
                 {
-                    it = m_Windows.erase(it); // Crash
+                    to_remove.push_back(*it);
                 }
-                else
-                {
-                    ++it;
-                }
+            }
+
+            for (const auto &win : to_remove)
+            {
+                m_Windows.erase(std::remove(m_Windows.begin(), m_Windows.end(), win), m_Windows.end());
             }
         }
 
         VkResult err;
         for (auto &window : m_Windows)
         {
+            c_CurrentRenderedWindow = window;
             ImGui::SetCurrentContext(window->m_ImGuiContext);
             err = vkDeviceWaitIdle(g_Device);
             check_vk_result(err);
@@ -4310,12 +4322,21 @@ namespace UIKit
 
         if (c_DockIsDragging)
         {
-            ShowDockingPreview(dockspaceID, window, c_CurrentDragDropState);
+            for (auto &appwin : m_AppWindows)
+            {
+                if (c_CurrentDragDropState->LastDraggingAppWindowHost == appwin->m_Name)
+                {
+                    if (!appwin->m_HaveParentAppWindow)
+                    {
+                        ShowDockingPreview(dockspaceID, window, c_CurrentDragDropState);
+                    }
+                }
+            }
         }
 
         for (auto appwindow : m_AppWindows)
         {
-            if (appwindow->m_WinParent == window->GetName())
+            if (appwindow->m_WinParent == window->GetName() && !appwindow->m_HaveParentAppWindow)
             {
                 appwindow->CtxRender(&m_RedockRequests, window->GetName());
             }
@@ -4396,7 +4417,7 @@ namespace UIKit
                 std::ifstream inputFile(path);
                 if (!inputFile)
                 {
-                    // throw std::runtime_error("Unable to open file for reading: " + path);
+                    // throw std::time_error("Unable to open file for reading: " + path);
                 }
 
                 inputFile >> m_PreviousSaveData;
@@ -4409,14 +4430,14 @@ namespace UIKit
             }
             else
             {
-                // throw std::runtime_error("The specified path is not a valid file: " + path);
+                // throw std::time_error("The specified path is not a valid file: " + path);
             }
         }
 
         std::ofstream outputFile(path);
         if (!outputFile)
         {
-            // throw std::runtime_error("Unable to create or open file: " + path);
+            // throw std::time_error("Unable to create or open file: " + path);
         }
 
         nlohmann::json jsonData = {{"save", true}};
@@ -4446,7 +4467,16 @@ namespace UIKit
             m_IsRendering = false;
         }
 
-        ImGuiID dockspaceID = ImGui::GetID("MainDockspace");
+        ImGuiID dockspaceID;
+
+        if (m_HaveParentAppWindow)
+        {
+            dockspaceID = ImGui::GetID("AppWindowDockspace");
+        }
+        else
+        {
+            dockspaceID = ImGui::GetID("MainDockspace");
+        }
 
         /*std::cout << "reqs size : " << reqs->size() << std::endl;
         std::cout << "last error  : " << dd << std::endl;
@@ -4589,6 +4619,20 @@ namespace UIKit
             it = reqs->erase(it);
         }
 
+        if (c_DockIsDragging)
+        {
+            if (c_CurrentDragDropState->LastDraggingAppWindowHost == this->m_Name)
+            {
+                for (auto &win : s_Instance->m_Windows)
+                {
+                    if (winname == win->GetName())
+                    {
+                        ShowDockingPreview(dockspaceID, win.get(), c_CurrentDragDropState);
+                    }
+                }
+            }
+        }
+
         ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoMove;
 
         ImGui::PushStyleVar(ImGuiStyleVar_PopupRounding, 3.0f);
@@ -4692,7 +4736,54 @@ namespace UIKit
                 wind->drag_dropstate.DragOwner = "none";
             }
         }
-        this->m_Render;
+
+        if (m_DockingMode)
+        {
+            ImGuiID dockID = ImGui::GetID("AppWindowDockspace");
+            float oldsize = ImGui::GetFont()->Scale;
+            ImGui::GetFont()->Scale *= 0.84;
+            ImGui::PushFont(ImGui::GetFont());
+
+            ImVec4 grayColor = ImVec4(0.4f, 0.4f, 0.4f, 1.0f);              // Gris (50% blanc)
+            ImVec4 graySeparatorColor = ImVec4(0.4f, 0.4f, 0.4f, 0.5f);     // Gris (50% blanc)
+            ImVec4 darkBackgroundColor = ImVec4(0.15f, 0.15f, 0.15f, 1.0f); // Fond plus foncé
+            ImVec4 lightBorderColor = ImVec4(0.2f, 0.2f, 0.2f, 1.0f);       // Bordure plus claire
+
+            // Pousser le style pour le fond plus foncé
+            ImGui::PushStyleColor(ImGuiCol_PopupBg, darkBackgroundColor);
+
+            // Pousser le style pour la bordure plus claire
+            ImGui::PushStyleColor(ImGuiCol_Border, lightBorderColor);
+
+            ImGui::PushStyleVar(ImGuiStyleVar_PopupRounding, 3.0f);
+            ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(6.0f, 5.0f));
+
+            ImGui::DockSpace(dockID, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_None);
+
+            ImGui::PopStyleVar(2);   // Pour les bords arrondis
+            ImGui::PopStyleColor(2); // Pour le fond et la bordure
+
+            ImGui::GetFont()->Scale = oldsize;
+            ImGui::PopFont();
+
+            for (auto &win : s_Instance->m_AppWindows)
+            {
+                if (win->m_HaveParentAppWindow)
+                {
+                    if (win->m_ParentAppWindow->m_Name == this->m_Name)
+                    {
+                        win->CtxRender(reqs, winname);
+                    }
+                }
+            }
+        }
+        else
+        {
+            if (!m_HaveParentAppWindow)
+            {
+                this->m_Render;
+            }
+        }
 
         ImGui::End();
     }

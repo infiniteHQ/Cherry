@@ -18,6 +18,18 @@
 #include "./components/buttons/buttons.h"
 #include "./components/menubar/menubar.h"
 
+#ifdef UIKIT_V1
+// V1 Buttons
+#include "./kit/v1/components/buttons/custom_buttons.hpp"
+#include "./kit/v1/components/buttons/danger_buttons.hpp"
+#include "./kit/v1/components/buttons/image_buttons.hpp"
+
+// V1 AppWindows templates
+#include "./kit/v1/aio/appwindows/basic/empty_appwindow.hpp"
+#include "./kit/v1/aio/appwindows/docking/docking_appwindow.hpp"
+
+#endif
+
 // AIO kits & components includes
 
 #endif // UIKIT_H

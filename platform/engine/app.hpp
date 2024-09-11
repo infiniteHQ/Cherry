@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../../src/layer.hpp"
+#include "../../src/core/color.hpp"
 #include "image.hpp"
 
 #include <string>
@@ -225,6 +226,19 @@ namespace UIKit
 			m_Icon = name;
 		}
 
+
+		void SetDockingMode(const bool& use_docking)
+		{
+			m_DockingMode = use_docking;
+		}
+
+
+		void SetParent(const std::shared_ptr<AppWindow>& parent)
+		{
+			m_ParentAppWindow = parent;
+			m_HaveParentAppWindow = true;
+		}
+
 	public:
 		int treated = 0;
 
@@ -247,6 +261,11 @@ namespace UIKit
 		bool m_DockIsDraggingStarted;
 
 		bool m_Pressed;
+
+		bool m_DockingMode = false;
+
+		bool m_HaveParentAppWindow = false;
+		std::shared_ptr<AppWindow> m_ParentAppWindow;
 		// Notifications
 		// Number of unread notifs
 
@@ -260,6 +279,7 @@ namespace UIKit
 		std::function<void()> m_CloseEvent;
 
 	private:
+		std::vector<std::shared_ptr<AppWindow>> m_SubAppWindows;
 		std::unordered_map<std::string, std::string> m_Storage;
 		std::unordered_map<std::string, std::string> m_WindowStorage;
 		std::unordered_map<DefaultAppWindowBehaviors, std::string, EnumClassHash> m_DefaultBehaviors;
@@ -461,6 +481,7 @@ namespace UIKit
 		void SetFramebarCallback(const std::function<void()> &framebarCallback) { m_FramebarCallback = framebarCallback; }
 		void SetCloseCallback(const std::function<bool()> &closeCallback) { m_CloseCallback = closeCallback; }
 
+		std::shared_ptr<Window> GetCurrentRenderedWindow();
 		// void SyncImages();
 
 		void NewWinInstance(const std::string &name);
