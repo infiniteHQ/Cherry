@@ -3077,7 +3077,7 @@ namespace UIKit
                         appWindow->SetWindowStorage("id", id);
 
                         // Associate the app window with the parent window
-                        appWindow->m_WinParent = windowName;
+                        appWindow->CheckWinParent(windowName);
                     }
                 }
 
@@ -3119,7 +3119,7 @@ namespace UIKit
 
             for (auto &app_window : s_Instance->m_AppWindows)
             {
-                if (app_window->m_WinParent == window->GetName())
+                if (app_window->CheckWinParent(window->GetName()))
                 {
                     nlohmann::json appWindowJson;
                     appWindowJson["name"] = app_window->m_Name;
@@ -3159,7 +3159,7 @@ namespace UIKit
         {
             found_valid_drop_zone_global = false;
 
-            /*std::cout << "=============== CURRENT DRAG/DROP STATE ================" << std::endl;
+            std::cout << "=============== CURRENT DRAG/DROP STATE ================" << std::endl;
             if (c_CurrentDragDropState)
             {
 
@@ -3194,12 +3194,24 @@ namespace UIKit
                 std::cout << "LatestREQ m_ParentAppWindow : " << latest_req->m_ParentAppWindow << std::endl;
                 std::cout << "LatestREQ m_ParentAppWindowHost : " << latest_req->m_ParentAppWindowHost << std::endl;
                 std::cout << "LatestREQ m_ParentWindow : " << latest_req->m_ParentWindow << std::endl;
+                if (latest_req->m_DockPlace == DockEmplacement::DockDown)
+                    std::cout << "LatestREQ Place : " << "DockDown" << std::endl;
+                if (latest_req->m_DockPlace == DockEmplacement::DockUp)
+                    std::cout << "LatestREQ Place : " << "DockUp" << std::endl;
+                if (latest_req->m_DockPlace == DockEmplacement::DockLeft)
+                    std::cout << "LatestREQ Place : " << "DockLeft" << std::endl;
+                if (latest_req->m_DockPlace == DockEmplacement::DockRight)
+                    std::cout << "LatestREQ Place : " << "DockRight" << std::endl;
+                if (latest_req->m_DockPlace == DockEmplacement::DockFull)
+                    std::cout << "LatestREQ Place : " << "DockFull" << std::endl;
+                if (latest_req->m_DockPlace == DockEmplacement::DockBlank)
+                    std::cout << "LatestREQ Place : " << "DockBlank" << std::endl;
             }
             else
             {
                 std::cout << "no data" << std::endl;
             }
-            std::cout << "================================================" << std::endl;*/
+            std::cout << "================================================" << std::endl;
 
             if (s_Instance->m_Specification.WindowSaves)
             {
@@ -3248,9 +3260,9 @@ namespace UIKit
 
             for (auto &app_win : m_AppWindows)
             {
-                if (app_win->m_WinParent == "unknow")
+                if (app_win->m_WinParents.size() == 0)
                 {
-                    app_win->m_WinParent = m_Windows[0]->GetName();
+                    app_win->AddUniqueWinParent(m_Windows[0]->GetName());
                 }
             }
 
@@ -3307,7 +3319,8 @@ namespace UIKit
                         {
                             if (win->GetName() == req->m_ParentWindow)
                             {
-                                app_win->m_WinParent = win->GetName();
+                                app_win->AddUniqueWinParent(win->GetName());
+
                                 parentFound = true;
 
                                 /*if (app_win->m_ImGuiWindow)
@@ -3319,8 +3332,9 @@ namespace UIKit
 
                         if (!parentFound)
                         {
-                            app_win->m_WinParent = "unknow";
-                            // app_win->m_DockSpaceID = ImGui::GetID("MainDockspace");
+                            app_win->AddUniqueWinParent("unknow");
+                            // app_win->m_WinParent = "unknow";
+                            //  app_win->m_DockSpaceID = ImGui::GetID("MainDockspace");
                         }
                     }
                 }
@@ -3451,7 +3465,7 @@ namespace UIKit
 
                 for (const auto &app_win : m_AppWindows)
                 {
-                    if ((*it)->GetName() == app_win->m_WinParent)
+                    if (app_win->CheckWinParent((*it)->GetName()))
                     {
                         app_wins_inside++;
                     }
@@ -3522,6 +3536,7 @@ namespace UIKit
         // Create the ImGui context
         ImGuiIO &io = ImGui::GetIO();
         (void)io;
+        io.IniFilename = NULL;
         io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
         io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;     // Enable Docking
         io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;   // Enable Multi-Viewport / Platform Windows
@@ -3646,6 +3661,37 @@ namespace UIKit
         s_ResourceFreeQueue.clear();
         m_CommandBuffers.clear();
     }
+
+    bool AppWindow::CheckWinParent(const std::string &parentname)
+    {
+        for (auto &parent : m_WinParents)
+        {
+            if (parent == parentname)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    void AppWindow::AddUniqueWinParent(const std::string &parentname)
+    {
+        m_WinParents.clear();
+        m_WinParents.push_back(parentname);
+    }
+
+    void AppWindow::AddWinParent(const std::string &parentname)
+    {
+        m_WinParents.push_back(parentname);
+    }
+
+    void AppWindow::DeleteWinParent(const std::string &parentname)
+    {
+        m_WinParents.erase(
+            std::remove(m_WinParents.begin(), m_WinParents.end(), parentname),
+            m_WinParents.end());
+    }
+
     void Application::LoadImages()
     {
         {
@@ -3952,7 +3998,7 @@ namespace UIKit
     {
         for (auto &win : s_Instance->m_Windows)
         {
-            if (this->m_WinParent == win->GetName())
+            if (this->CheckWinParent(win->GetName()))
             {
                 return win->get(path);
             }
@@ -3964,7 +4010,7 @@ namespace UIKit
     {
         for (auto &win : s_Instance->m_Windows)
         {
-            if (this->m_WinParent == win->GetName())
+            if (this->CheckWinParent(win->GetName()))
             {
                 ImTextureID logoID = this->GetImage(m_Icon)->GetImGuiTextureID(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
                 return &logoID;
@@ -4261,11 +4307,27 @@ namespace UIKit
         if (newSize.y < minHeight)
             newSize.y = minHeight;
 
+        ImVec2 deltaSize = ImVec2(newSize.x - ImGui::GetWindowSize().x, newSize.y - ImGui::GetWindowSize().y);
+
+        ImVec2 windowPos = ImGui::GetWindowPos();
+
         window->m_Resizing = false;
         if (newSize.x != sdlWidth || newSize.y != sdlHeight)
         {
             window->m_Resizing = true;
+
+            if (ImGui::IsMouseHoveringRect(windowPos, ImVec2(windowPos.x + sdlWidth, windowPos.y)))
+            {
+                windowPos.y -= deltaSize.y;
+            }
+
+            if (ImGui::IsMouseHoveringRect(windowPos, ImVec2(windowPos.x, windowPos.y + sdlHeight)))
+            {
+                windowPos.x -= deltaSize.x;
+            }
+
             SDL_SetWindowSize(sdlWindow, static_cast<int>(newSize.x), static_cast<int>(newSize.y));
+            SDL_SetWindowPosition(sdlWindow, static_cast<int>(windowPos.x), static_cast<int>(windowPos.y));
         }
 
         ImGuiWindow *win = ImGui::GetCurrentWindow();
@@ -4336,9 +4398,25 @@ namespace UIKit
 
         for (auto appwindow : m_AppWindows)
         {
-            if (appwindow->m_WinParent == window->GetName() && !appwindow->m_HaveParentAppWindow)
+            if (appwindow->m_DockingMode)
             {
-                appwindow->CtxRender(&m_RedockRequests, window->GetName());
+                for (auto &subwin : m_AppWindows)
+                {
+                    if (subwin->m_ParentAppWindow)
+                    {
+                        if (subwin->m_ParentAppWindow->m_Name == appwindow->m_Name)
+                        {
+                            appwindow->CtxRender(&m_RedockRequests, window->GetName());
+                        }
+                    }
+                }
+            }
+            else
+            {
+                if (appwindow->CheckWinParent(window->GetName()) && !appwindow->m_HaveParentAppWindow)
+                {
+                    appwindow->CtxRender(&m_RedockRequests, window->GetName());
+                }
             }
         }
 
@@ -4478,9 +4556,9 @@ namespace UIKit
             dockspaceID = ImGui::GetID("MainDockspace");
         }
 
-        /*std::cout << "reqs size : " << reqs->size() << std::endl;
+        std::cout << "reqs size : " << reqs->size() << std::endl;
         std::cout << "last error  : " << dd << std::endl;
-        std::cout << "last boostrdqsd  : " << LastWindowPressed << std::endl;*/
+        std::cout << "last boostrdqsd  : " << LastWindowPressed << std::endl;
 
         if (!ImGui::DockBuilderGetNode(dockspaceID))
         {
@@ -4572,6 +4650,8 @@ namespace UIKit
                 SetWindowStorage("dockplace", "right");
                 break;
             case DockEmplacement::DockFull:
+                newDockID = parentDockID;
+                break;
             default:
                 newDockID = parentDockID;
                 break;
@@ -4600,7 +4680,11 @@ namespace UIKit
                     newDockID = ImGui::DockBuilderSplitNode(parentDockID, ImGuiDir_Right, 0.3f, nullptr, &parentDockID);
                     SetWindowStorage("dockplace", "right");
                     break;
+                case DockEmplacement::DockFull:
+                    newDockID = parentDockID;
+                    break;
                 default:
+                    newDockID = parentDockID;
                     break;
                 }
 
@@ -4617,20 +4701,6 @@ namespace UIKit
             ImGui::SetNextWindowDockID(newDockID, ImGuiCond_Always);
 
             it = reqs->erase(it);
-        }
-
-        if (c_DockIsDragging)
-        {
-            if (c_CurrentDragDropState->LastDraggingAppWindowHost == this->m_Name)
-            {
-                for (auto &win : s_Instance->m_Windows)
-                {
-                    if (winname == win->GetName())
-                    {
-                        ShowDockingPreview(dockspaceID, win.get(), c_CurrentDragDropState);
-                    }
-                }
-            }
         }
 
         ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoMove;
@@ -4712,6 +4782,7 @@ namespace UIKit
             }
         }
 
+        // Drag
         if (ctx->DockTabStaticSelection.Pressed)
         {
             wind->drag_dropstate.DockIsDragging = true;
@@ -4722,6 +4793,7 @@ namespace UIKit
             c_CurrentDragDropState = &wind->drag_dropstate;
         }
 
+        // Drop
         if (wind->drag_dropstate.DragOwner == winname)
         {
             if (!ctx->DockTabStaticSelection.Pressed)
@@ -4730,6 +4802,12 @@ namespace UIKit
                 {
                     wind->drag_dropstate.CreateNewWindow = true;
                 }
+
+                if (m_HaveParentAppWindow)
+                {
+                    wind->drag_dropstate.LastDraggingAppWindowHaveParent = true;
+                }
+
                 PushRedockEvent(c_CurrentDragDropState);
 
                 wind->drag_dropstate.DockIsDragging = false;
@@ -4744,15 +4822,13 @@ namespace UIKit
             ImGui::GetFont()->Scale *= 0.84;
             ImGui::PushFont(ImGui::GetFont());
 
-            ImVec4 grayColor = ImVec4(0.4f, 0.4f, 0.4f, 1.0f);              // Gris (50% blanc)
-            ImVec4 graySeparatorColor = ImVec4(0.4f, 0.4f, 0.4f, 0.5f);     // Gris (50% blanc)
-            ImVec4 darkBackgroundColor = ImVec4(0.15f, 0.15f, 0.15f, 1.0f); // Fond plus foncé
-            ImVec4 lightBorderColor = ImVec4(0.2f, 0.2f, 0.2f, 1.0f);       // Bordure plus claire
+            ImVec4 grayColor = ImVec4(0.4f, 0.4f, 0.4f, 1.0f);
+            ImVec4 graySeparatorColor = ImVec4(0.4f, 0.4f, 0.4f, 0.5f);
+            ImVec4 darkBackgroundColor = ImVec4(0.15f, 0.15f, 0.15f, 1.0f);
+            ImVec4 lightBorderColor = ImVec4(0.2f, 0.2f, 0.2f, 1.0f);
 
-            // Pousser le style pour le fond plus foncé
             ImGui::PushStyleColor(ImGuiCol_PopupBg, darkBackgroundColor);
 
-            // Pousser le style pour la bordure plus claire
             ImGui::PushStyleColor(ImGuiCol_Border, lightBorderColor);
 
             ImGui::PushStyleVar(ImGuiStyleVar_PopupRounding, 3.0f);
@@ -4760,8 +4836,8 @@ namespace UIKit
 
             ImGui::DockSpace(dockID, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_None);
 
-            ImGui::PopStyleVar(2);   // Pour les bords arrondis
-            ImGui::PopStyleColor(2); // Pour le fond et la bordure
+            ImGui::PopStyleVar(2);
+            ImGui::PopStyleColor(2);
 
             ImGui::GetFont()->Scale = oldsize;
             ImGui::PopFont();
@@ -4772,7 +4848,36 @@ namespace UIKit
                 {
                     if (win->m_ParentAppWindow->m_Name == this->m_Name)
                     {
-                        win->CtxRender(reqs, winname);
+                        if (win->CheckWinParent(winname))
+                        {
+                            win->CtxRender(reqs, winname);
+                        }
+                    }
+                }
+            }
+
+            if (c_DockIsDragging)
+            {
+                if (m_DockingMode)
+                {
+                    if (c_CurrentDragDropState->LastDraggingAppWindowHost == this->m_Name)
+                    {
+                        Window *window;
+                        bool test = false;
+                        for (auto &win : s_Instance->m_Windows)
+                        {
+                            if (win->GetName() == winname)
+                            {
+                                test = true;
+                                ShowDockingPreview(dockID, win.get(), c_CurrentDragDropState);
+                            }
+                        }
+
+                        if (!test)
+                        {
+
+                            std::cout << "OKAY" << std::endl;
+                        }
                     }
                 }
             }

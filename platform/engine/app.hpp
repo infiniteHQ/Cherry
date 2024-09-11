@@ -88,6 +88,7 @@ namespace UIKit
 		std::string LastDraggingWindow = "unknown";
 		std::string LastDraggingAppWindowHost = "unknown";
 		std::string LastDraggingAppWindow = "unknown";
+		bool LastDraggingAppWindowHaveParent = false;
 		bool DockIsDragging = false;
 		UIKit::DockEmplacement LastDraggingPlace = UIKit::DockEmplacement::DockBlank;
 		bool CreateNewWindow = false;
@@ -239,11 +240,16 @@ namespace UIKit
 			m_HaveParentAppWindow = true;
 		}
 
+		bool CheckWinParent(const std::string& parentname);
+		void AddUniqueWinParent(const std::string& parentnale);
+		void AddWinParent(const std::string& parentnale);
+		void DeleteWinParent(const std::string& parentnale);
+
 	public:
 		int treated = 0;
 
 		// Main informations
-		std::string m_WinParent = "unknow";
+		std::vector<std::string> m_WinParents;
 		std::string m_DockParent = "unknow";
 		std::string m_DockPlace = "unknow";
 		std::string m_Name = "unknow";
