@@ -26,24 +26,9 @@ namespace UIKit
         Application::Get().PutWindow(windodof->m_AppWindow);
         std::shared_ptr<EmptyAppWindow> windodod = std::make_shared<UIKit::EmptyAppWindow>("sec3");
         Application::Get().PutWindow(windodod->m_AppWindow);
+        std::shared_ptr<EmptyAppWindow> windodods = std::make_shared<UIKit::EmptyAppWindow>("sec4");
+        Application::Get().PutWindow(windodods->m_AppWindow);
+        std::shared_ptr<EmptyAppWindow> windododf = std::make_shared<UIKit::EmptyAppWindow>("sec5");
+        Application::Get().PutWindow(windododf->m_AppWindow);
     }
-    
-    DockingAppWindow::DockingAppWindow()
-    {
-        m_AppWindow = std::make_shared<UIKit::AppWindow>("first_window", "FirstWindow");
-        m_AppWindow->SetIcon("/usr/local/include/Vortex/imgs/vortex.png");
-        m_AppWindow->SetDockingMode(true);
-        m_AppWindow->SetRenderCallback([this]()
-                                       {
-        ImGui::Text("AA.BB.CC.DD.EE.FF 1");
-        ImGui::Button("qsd"); });
-
-        std::shared_ptr<UIKit::AppWindow> win = m_AppWindow;
-
-        m_AppWindow->SetLeftMenubarCallback([]()
-                                            { ImGui::Text("ll"); });
-
-        m_AppWindow->SetRightMenubarCallback([win]() {});
-    }
-
 }

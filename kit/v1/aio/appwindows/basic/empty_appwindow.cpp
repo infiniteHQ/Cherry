@@ -65,7 +65,7 @@ namespace UIKit
     
     EmptyAppWindow::EmptyAppWindow(const std::string &name)
     {
-        m_AppWindow = std::make_shared<UIKit::AppWindow>("first_window", "FirstWindow");
+        m_AppWindow = std::make_shared<UIKit::AppWindow>(name, name);
         m_AppWindow->SetIcon("/usr/local/include/Vortex/imgs/vortex.png");
         m_AppWindow->SetRenderCallback([this]()
                                        {

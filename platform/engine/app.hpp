@@ -233,12 +233,8 @@ namespace UIKit
 			m_DockingMode = use_docking;
 		}
 
-		void SetParent(const std::shared_ptr<AppWindow> &parent)
-		{
-			m_ParentAppWindow = parent;
-			m_HaveParentAppWindow = true;
-		}
-
+		void SetParent(const std::shared_ptr<AppWindow> &parent);
+		
 		bool CheckWinParent(const std::string &parentname);
 		void AddUniqueWinParent(const std::string &parentnale);
 		void AddWinParent(const std::string &parentnale);

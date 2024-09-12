@@ -14,7 +14,7 @@ namespace UIKit
         const std::string &hex_border_hovered = "#CC1111ff",
         const std::string &hex_bg_clicked = "#CC1111ff",
         const std::string &hex_border_clicked = "#CC1111ff",
-        const ImVec2 &size = ImVec2(0, 0))
+        const ImVec2 &size = ImVec2(0, 22))
     {
         bool pressed = false;
         static ImTextureID texture = Application::Get().GetCurrentRenderedWindow()->get("/usr/local/include/Vortex/imgs/vortex.png")->GetImGuiTextureID(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);

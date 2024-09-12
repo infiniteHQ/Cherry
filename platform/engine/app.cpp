@@ -18,8 +18,6 @@ TODO : Save AppWindow states (positions, parents, docking, etc...)
 TODO : Dockspace tabs menu callback and events/flags (flags : unsaved) (events: close)
 TODO : Better start of dragging to prevent dragging+mooving
 
-TODO : Set favicon
-
 ┌────────────────────────────────────────────┐
 │                  Bug list                  │
 └────────────────────────────────────────────┘
@@ -55,6 +53,11 @@ extern bool g_ApplicationRunning;
 #ifdef _DEBUG
 #define IMGUI_VULKAN_DEBUG_REPORT
 #endif
+
+static int finded = 0;
+static std::string dd = "";
+static std::string LastWindowPressed = "";
+static std::string LastReqMode = "";
 
 static bool found_valid_drop_zone_global = false;
 static bool c_DockIsDragging = false;
@@ -3187,6 +3190,7 @@ namespace UIKit
                 std::cout << "LatestREQ m_ParentAppWindow : " << latest_req->m_ParentAppWindow << std::endl;
                 std::cout << "LatestREQ m_ParentAppWindowHost : " << latest_req->m_ParentAppWindowHost << std::endl;
                 std::cout << "LatestREQ m_ParentWindow : " << latest_req->m_ParentWindow << std::endl;
+                std::cout << "LatestREQ LastReqMode : " << LastReqMode << std::endl;
                 if (latest_req->m_DockPlace == DockEmplacement::DockDown)
                     std::cout << "LatestREQ Place : " << "DockDown" << std::endl;
                 if (latest_req->m_DockPlace == DockEmplacement::DockUp)
@@ -3499,7 +3503,7 @@ namespace UIKit
     {
         SDL_WindowFlags window_flags = (SDL_WindowFlags)(SDL_WINDOW_VULKAN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_BORDERLESS);
         m_WindowHandler = SDL_CreateWindow(m_Name.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, m_Width, m_Height, window_flags);
-        
+
         // Setup Vulkan
         uint32_t extensions_count = 0;
         SDL_Vulkan_GetInstanceExtensions(m_WindowHandler, &extensions_count, NULL);
@@ -4253,6 +4257,19 @@ namespace UIKit
         TraverseAndShowDropZones(dock_node);
     }
 
+    void AppWindow::SetParent(const std::shared_ptr<AppWindow> &parent)
+    {
+        m_ParentAppWindow = parent;
+        for (auto &appwin : s_Instance->m_AppWindows)
+        {
+            if (appwin->m_Name == this->m_Name)
+            {
+                parent->m_SubAppWindows.push_back(appwin);
+            }
+        }
+        m_HaveParentAppWindow = true;
+    }
+
     ImDrawData *Application::RenderWindow(Window *window)
     {
         ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDocking;
@@ -4367,6 +4384,7 @@ namespace UIKit
         ImGui::PushStyleVar(ImGuiStyleVar_PopupRounding, 3.0f);
         ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10.0f, 8.0f));
 
+        ImGui::GetCurrentContext()->Style.DockSpaceMenubarPaddingY = 12.0f;
         ImGui::DockSpace(dockspaceID, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_None);
 
         ImGui::PopStyleVar(2);   // Pour les bords arrondis
@@ -4451,10 +4469,6 @@ namespace UIKit
         ImGui_ImplVulkanH_DestroyWindow(g_Instance, g_Device, &m_WinData, g_Allocator);
     }
 
-    static int finded = 0;
-    static std::string dd = "";
-    static std::string LastWindowPressed = "";
-
     unsigned int SimpleHash(const std::string &str)
     {
         unsigned int hash = 0;
@@ -4528,6 +4542,24 @@ namespace UIKit
         this->m_SaveWindowData = true;
     }
 
+    ImGuiID HandleDockPlacement(ImGuiID parentDockID, DockEmplacement dockPlace)
+    {
+        switch (dockPlace)
+        {
+        case DockEmplacement::DockUp:
+            return ImGui::DockBuilderSplitNode(parentDockID, ImGuiDir_Up, 0.5f, nullptr, &parentDockID);
+        case DockEmplacement::DockDown:
+            return ImGui::DockBuilderSplitNode(parentDockID, ImGuiDir_Down, 0.5f, nullptr, &parentDockID);
+        case DockEmplacement::DockLeft:
+            return ImGui::DockBuilderSplitNode(parentDockID, ImGuiDir_Left, 0.3f, nullptr, &parentDockID);
+        case DockEmplacement::DockRight:
+            return ImGui::DockBuilderSplitNode(parentDockID, ImGuiDir_Right, 0.3f, nullptr, &parentDockID);
+        case DockEmplacement::DockFull:
+        default:
+            return parentDockID;
+        }
+    }
+
     void AppWindow::CtxRender(std::vector<std::shared_ptr<RedockRequest>> *reqs, const std::string &winname)
     {
         if (!m_IsRendering)
@@ -4576,6 +4608,21 @@ namespace UIKit
         for (auto it = reqs->begin(); it != reqs->end();)
         {
             const auto &req = *it;
+            ImVector<ImGuiWindow *> &windows = ImGui::GetCurrentContext()->Windows;
+
+            ImGuiID parentDockID = dockspaceID;
+            ImGuiID newDockID = dockspaceID;
+
+            ImGuiWindow *splitwindow;
+            ImGuiWindow *currentwindow;
+
+            for (int i = windows.Size - 1; i >= 0; --i)
+            {
+                if (windows[i]->Name == req->m_ParentAppWindowHost)
+                {
+                    currentwindow = windows[i];
+                }
+            }
 
             if (req->m_ParentAppWindowHost != this->m_Name)
             {
@@ -4583,9 +4630,18 @@ namespace UIKit
                 continue;
             }
 
-            s_Instance->m_IsDataSaved = false;
+            if (req->m_ParentAppWindow != this->m_Name)
+            {
+                for (int i = windows.Size - 1; i >= 0; --i)
+                {
+                    if (windows[i]->Name == req->m_ParentAppWindow)
+                    {
+                        splitwindow = windows[i];
+                    }
+                }
+            }
 
-            ImGuiID parentDockID = dockspaceID;
+            s_Instance->m_IsDataSaved = false;
 
             SetWindowStorage("window", req->m_ParentAppWindow);
 
@@ -4604,6 +4660,7 @@ namespace UIKit
                     {
                         finded++;
                         parent_window = window;
+                        dd = "Parent window found!";
                         break;
                     }
                 }
@@ -4626,72 +4683,55 @@ namespace UIKit
                 }
             }
 
-            ImGuiID newDockID = dockspaceID;
+            if (!ImGui::IsWindowDocked())
+            {
+                ImGui::SetNextWindowDockID(dockspaceID, ImGuiCond_Always);
+                dd = "Window undocked, redocking to main dockspace.";
+            }
+
+            if (currentWindow->DockId != 0)
+            {
+                parentDockID = currentWindow->DockId;
+                newDockID = parentDockID;
+
+                LastReqMode = "currentWindow DockID was 0";
+            }
+            else
+            {
+                LastReqMode = "currentWindow DockID was other";
+            }
+
+            if (newDockID != 0 && splitwindow)
+            {
+                parentDockID = splitwindow->DockId;
+            }
+
             switch (req->m_DockPlace)
             {
             case DockEmplacement::DockUp:
                 newDockID = ImGui::DockBuilderSplitNode(parentDockID, ImGuiDir_Up, 0.5f, nullptr, &parentDockID);
-                SetWindowStorage("dockplace", "up");
                 break;
             case DockEmplacement::DockDown:
                 newDockID = ImGui::DockBuilderSplitNode(parentDockID, ImGuiDir_Down, 0.5f, nullptr, &parentDockID);
-                SetWindowStorage("dockplace", "down");
                 break;
             case DockEmplacement::DockLeft:
                 newDockID = ImGui::DockBuilderSplitNode(parentDockID, ImGuiDir_Left, 0.3f, nullptr, &parentDockID);
-                SetWindowStorage("dockplace", "left");
                 break;
             case DockEmplacement::DockRight:
                 newDockID = ImGui::DockBuilderSplitNode(parentDockID, ImGuiDir_Right, 0.3f, nullptr, &parentDockID);
-                SetWindowStorage("dockplace", "right");
                 break;
             case DockEmplacement::DockFull:
                 newDockID = parentDockID;
                 break;
-            default:
-                newDockID = parentDockID;
-                break;
             }
 
-            if (currentWindow && currentWindow->DockId != 0)
+            if (newDockID != 0)
             {
-                ImGuiID parentDockID = currentWindow->DockId;
-                ImGuiID newDockID = parentDockID;
-
-                switch (req->m_DockPlace)
-                {
-                case DockEmplacement::DockUp:
-                    newDockID = ImGui::DockBuilderSplitNode(parentDockID, ImGuiDir_Up, 0.5f, nullptr, &parentDockID);
-                    SetWindowStorage("dockplace", "up");
-                    break;
-                case DockEmplacement::DockDown:
-                    newDockID = ImGui::DockBuilderSplitNode(parentDockID, ImGuiDir_Down, 0.5f, nullptr, &parentDockID);
-                    SetWindowStorage("dockplace", "down");
-                    break;
-                case DockEmplacement::DockLeft:
-                    newDockID = ImGui::DockBuilderSplitNode(parentDockID, ImGuiDir_Left, 0.3f, nullptr, &parentDockID);
-                    SetWindowStorage("dockplace", "left");
-                    break;
-                case DockEmplacement::DockRight:
-                    newDockID = ImGui::DockBuilderSplitNode(parentDockID, ImGuiDir_Right, 0.3f, nullptr, &parentDockID);
-                    SetWindowStorage("dockplace", "right");
-                    break;
-                case DockEmplacement::DockFull:
-                    newDockID = parentDockID;
-                    break;
-                default:
-                    newDockID = parentDockID;
-                    break;
-                }
-
-                if (newDockID != 0)
-                {
-                    ImGui::SetNextWindowDockID(newDockID, ImGuiCond_Always);
-                }
-                else
-                {
-                    ImGui::SetNextWindowDockID(parentDockID, ImGuiCond_Always);
-                }
+                ImGui::SetNextWindowDockID(newDockID, ImGuiCond_Always);
+            }
+            else
+            {
+                ImGui::SetNextWindowDockID(newDockID, ImGuiCond_Always);
             }
 
             ImGui::SetNextWindowDockID(newDockID, ImGuiCond_Always);
@@ -4828,7 +4868,9 @@ namespace UIKit
             ImGui::PushStyleColor(ImGuiCol_Border, lightBorderColor);
 
             ImGui::PushStyleVar(ImGuiStyleVar_PopupRounding, 3.0f);
+
             ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(6.0f, 5.0f));
+            ImGui::GetCurrentContext()->Style.DockSpaceMenubarPaddingY = 18.0f;
 
             ImGui::DockSpace(dockID, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_None);
 
@@ -4837,6 +4879,33 @@ namespace UIKit
 
             ImGui::GetFont()->Scale = oldsize;
             ImGui::PopFont();
+
+            if (c_DockIsDragging)
+            {
+                if (m_DockingMode)
+                {
+                    for (auto &win : s_Instance->m_AppWindows)
+                    {
+                        if (c_CurrentDragDropState->LastDraggingAppWindowHost == win->m_Name)
+                        {
+                            if (win->m_HaveParentAppWindow)
+                            {
+                                if (win->m_ParentAppWindow->m_Name == this->m_Name)
+                                {
+                                    for (auto &winc : s_Instance->m_Windows)
+                                    {
+                                        if (winc->GetName() == winname)
+                                        {
+                                            std::cout << "SHOW DOCING" << std::endl;
+                                            ShowDockingPreview(dockID, winc.get(), c_CurrentDragDropState);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
 
             for (auto &win : s_Instance->m_AppWindows)
             {
@@ -4847,32 +4916,6 @@ namespace UIKit
                         if (win->CheckWinParent(winname))
                         {
                             win->CtxRender(reqs, winname);
-                        }
-                    }
-                }
-            }
-
-            if (c_DockIsDragging)
-            {
-                if (m_DockingMode)
-                {
-                    if (c_CurrentDragDropState->LastDraggingAppWindowHost == this->m_Name)
-                    {
-                        Window *window;
-                        bool test = false;
-                        for (auto &win : s_Instance->m_Windows)
-                        {
-                            if (win->GetName() == winname)
-                            {
-                                test = true;
-                                ShowDockingPreview(dockID, win.get(), c_CurrentDragDropState);
-                            }
-                        }
-
-                        if (!test)
-                        {
-
-                            std::cout << "OKAY" << std::endl;
                         }
                     }
                 }
