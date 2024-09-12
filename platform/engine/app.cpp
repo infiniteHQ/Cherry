@@ -84,7 +84,7 @@ static std::shared_ptr<UIKit::Image> m_IconClose;
 static std::shared_ptr<UIKit::Image> m_IconMinimize;
 static std::shared_ptr<UIKit::Image> m_IconMaximize;
 static std::shared_ptr<UIKit::Image> m_IconRestore;
-static int WinIDCount = -1;
+static int WinIDCount = 0;
 
 // Per-frame-in-flight
 
@@ -2478,7 +2478,6 @@ namespace UIKit
         }
 
         this->m_Windows.push_back(std::make_shared<Window>("0", app->m_Specification.Width, app->m_Specification.Height));
-        this->m_Windows.push_back(std::make_shared<Window>("1", app->m_Specification.Width, app->m_Specification.Height));
     }
 
     void Application::Shutdown()
@@ -3227,17 +3226,24 @@ namespace UIKit
             {
                 if (c_CurrentDragDropState->CreateNewWindow)
                 {
+                    std::cout << "SS" << std::endl;
                     std::string new_win_title = s_Instance->SpawnWindow();
 
+                        
                     c_CurrentDragDropState->LastDraggingPlace = DockEmplacement::DockFull;
                     c_CurrentDragDropState->LastDraggingAppWindow = "none";
                     c_CurrentDragDropState->LastDraggingWindow = new_win_title;
+                    
 
                     PushRedockEvent(c_CurrentDragDropState);
 
+
+
+                    std::cout << "SS" << std::endl;
                     // s_Instance->SyncImages();
 
                     c_CurrentDragDropState->CreateNewWindow = false;
+                    std::cout << "SS" << std::endl;
                 }
             }
 
@@ -4412,7 +4418,7 @@ namespace UIKit
 
         for (auto appwindow : m_AppWindows)
         {
-            if (appwindow->m_DockingMode)
+            if (appwindow->CheckWinParent(window->GetName()) && appwindow->m_DockingMode)
             {
                 for (auto &subwin : m_AppWindows)
                 {
@@ -4567,14 +4573,17 @@ namespace UIKit
             return;
         }
 
+        std::cout << "fq" << std::endl;
         if (!m_Opened)
         {
             m_CloseEvent;
             m_IsRendering = false;
         }
 
+        std::cout << "ff" << std::endl;
         ImGuiID dockspaceID;
 
+        std::cout << "cc" << std::endl;
         if (m_HaveParentAppWindow)
         {
             dockspaceID = ImGui::GetID("AppWindowDockspace");
@@ -4584,6 +4593,7 @@ namespace UIKit
             dockspaceID = ImGui::GetID("MainDockspace");
         }
 
+        std::cout << "ss" << std::endl;
         std::cout << "reqs size : " << reqs->size() << std::endl;
         std::cout << "last error  : " << dd << std::endl;
         std::cout << "last boostrdqsd  : " << LastWindowPressed << std::endl;
@@ -4596,25 +4606,28 @@ namespace UIKit
             ImGui::DockBuilderFinish(dockspaceID);
             s_Instance->m_IsDataSaved = false;
         }
+        std::cout << "qsd" << std::endl;
 
         ImGuiWindow *currentWindow = ImGui::FindWindowByName(this->m_Name.c_str());
 
+        std::cout << "ff" << std::endl;
         if (currentWindow && currentWindow->DockId == 0)
         {
             ImGui::SetNextWindowDockID(dockspaceID, ImGuiCond_Always);
             s_Instance->m_IsDataSaved = false;
         }
 
+        std::cout << "ss" << std::endl;
         for (auto it = reqs->begin(); it != reqs->end();)
         {
             const auto &req = *it;
             ImVector<ImGuiWindow *> &windows = ImGui::GetCurrentContext()->Windows;
 
+            std::cout << "654" << std::endl;
             ImGuiID parentDockID = dockspaceID;
-            ImGuiID newDockID = dockspaceID;
 
-            ImGuiWindow *splitwindow;
-            ImGuiWindow *currentwindow;
+            ImGuiWindow *splitwindow = nullptr;
+            ImGuiWindow *currentwindow = nullptr;
 
             for (int i = windows.Size - 1; i >= 0; --i)
             {
@@ -4640,6 +4653,7 @@ namespace UIKit
                     }
                 }
             }
+            std::cout << "98" << std::endl;
 
             s_Instance->m_IsDataSaved = false;
 
@@ -4683,28 +4697,33 @@ namespace UIKit
                 }
             }
 
-            if (!ImGui::IsWindowDocked())
+            std::cout << currentwindow << std::endl;
+            std::cout << "zeqr" << std::endl;
+            if (currentwindow)
             {
-                ImGui::SetNextWindowDockID(dockspaceID, ImGuiCond_Always);
-                dd = "Window undocked, redocking to main dockspace.";
+                std::cout << "zeqrff" << std::endl;
+                if (currentwindow->DockId)
+                    parentDockID = currentwindow->DockId;
+                std::cout << "zeqr" << std::endl;
             }
 
-            if (currentWindow->DockId != 0)
+            if (req->m_ParentAppWindow != this->m_Name)
             {
-                parentDockID = currentWindow->DockId;
-                newDockID = parentDockID;
+                std::cout << "d" << std::endl;
+                if (splitwindow != 0)
+                {
+                    std::cout << "d" << std::endl;
+                    if (splitwindow->DockId != 0)
+                    {
+                        std::cout << "d" << std::endl;
+                        parentDockID = splitwindow->DockId;
+                        std::cout << "d" << std::endl;
+                    }
+                }
+            }
 
-                LastReqMode = "currentWindow DockID was 0";
-            }
-            else
-            {
-                LastReqMode = "currentWindow DockID was other";
-            }
-
-            if (newDockID != 0 && splitwindow)
-            {
-                parentDockID = splitwindow->DockId;
-            }
+            std::cout << "qsd" << std::endl;
+            ImGuiID newDockID;
 
             switch (req->m_DockPlace)
             {
@@ -4725,19 +4744,21 @@ namespace UIKit
                 break;
             }
 
-            if (newDockID != 0)
+            std::cout << "ff" << std::endl;
+            if (!ImGui::IsWindowDocked())
             {
-                ImGui::SetNextWindowDockID(newDockID, ImGuiCond_Always);
-            }
-            else
-            {
-                ImGui::SetNextWindowDockID(newDockID, ImGuiCond_Always);
+                ImGui::SetNextWindowDockID(dockspaceID, ImGuiCond_Always);
+                dd = "Window undocked, redocking to main dockspace.";
             }
 
+            std::cout << "SSsqsdd" << std::endl;
             ImGui::SetNextWindowDockID(newDockID, ImGuiCond_Always);
 
             it = reqs->erase(it);
+            std::cout << "SS666sd" << std::endl;
         }
+
+        // Crash when redock a subappwin to another appwin instance in another window
 
         ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoMove;
 
@@ -4834,15 +4855,19 @@ namespace UIKit
         {
             if (!ctx->DockTabStaticSelection.Pressed)
             {
-                if (wind->drag_dropstate.LastDraggingPlace == DockEmplacement::DockBlank)
-                {
-                    wind->drag_dropstate.CreateNewWindow = true;
-                }
+                //if (this->CheckWinParent(winname)) 
+                //{
+                    if (wind->drag_dropstate.LastDraggingPlace == DockEmplacement::DockBlank)
+                    {
+                        wind->drag_dropstate.CreateNewWindow = true;
+                    }
+                //}
 
-                if (m_HaveParentAppWindow)
+                /*if (m_HaveParentAppWindow)
                 {
+                    AddWinParent(winname);
                     wind->drag_dropstate.LastDraggingAppWindowHaveParent = true;
-                }
+                }*/
 
                 PushRedockEvent(c_CurrentDragDropState);
 

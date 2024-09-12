@@ -24,11 +24,9 @@ namespace UIKit
         Application::Get().PutWindow(windodo->m_AppWindow);
         std::shared_ptr<EmptyAppWindow> windodof = std::make_shared<UIKit::EmptyAppWindow>("sec2", win);
         Application::Get().PutWindow(windodof->m_AppWindow);
-        std::shared_ptr<EmptyAppWindow> windodod = std::make_shared<UIKit::EmptyAppWindow>("sec3");
-        Application::Get().PutWindow(windodod->m_AppWindow);
-        std::shared_ptr<EmptyAppWindow> windodods = std::make_shared<UIKit::EmptyAppWindow>("sec4");
-        Application::Get().PutWindow(windodods->m_AppWindow);
-        std::shared_ptr<EmptyAppWindow> windododf = std::make_shared<UIKit::EmptyAppWindow>("sec5");
-        Application::Get().PutWindow(windododf->m_AppWindow);
+        std::shared_ptr<EmptyAppWindow> windodofg = std::make_shared<UIKit::EmptyAppWindow>("sec3");
+        Application::Get().PutWindow(windodofg->m_AppWindow);
+        std::shared_ptr<EmptyAppWindow> windodofh = std::make_shared<UIKit::EmptyAppWindow>("sec4");
+        Application::Get().PutWindow(windodofh->m_AppWindow);
     }
 }

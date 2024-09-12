@@ -137,8 +137,8 @@ UIKit::Application *UIKit::CreateApplication(int argc, char **argv)
     std::cout << "QDS" << std::endl;
                           });*/
 
-  std::shared_ptr<DockingAppWindow> windodo = std::make_shared<UIKit::DockingAppWindow>("Test1");
-  app->PutWindow(windodo->m_AppWindow);
+        std::shared_ptr<DockingAppWindow> windododf = std::make_shared<UIKit::DockingAppWindow>("doc");
+        Application::Get().PutWindow(windododf->m_AppWindow);
 
   return app;
 }
