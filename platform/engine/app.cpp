@@ -3154,7 +3154,7 @@ namespace UIKit
         {
             found_valid_drop_zone_global = false;
 
-            std::cout << "=============== CURRENT DRAG/DROP STATE ================" << std::endl;
+            /*std::cout << "=============== CURRENT DRAG/DROP STATE ================" << std::endl;
             if (c_CurrentDragDropState)
             {
 
@@ -3207,7 +3207,7 @@ namespace UIKit
             {
                 std::cout << "no data" << std::endl;
             }
-            std::cout << "================================================" << std::endl;
+            std::cout << "================================================" << std::endl;*/
 
             if (s_Instance->m_Specification.WindowSaves)
             {
@@ -3226,24 +3226,15 @@ namespace UIKit
             {
                 if (c_CurrentDragDropState->CreateNewWindow)
                 {
-                    std::cout << "SS" << std::endl;
                     std::string new_win_title = s_Instance->SpawnWindow();
-
                         
                     c_CurrentDragDropState->LastDraggingPlace = DockEmplacement::DockFull;
                     c_CurrentDragDropState->LastDraggingAppWindow = "none";
                     c_CurrentDragDropState->LastDraggingWindow = new_win_title;
                     
-
                     PushRedockEvent(c_CurrentDragDropState);
 
-
-
-                    std::cout << "SS" << std::endl;
-                    // s_Instance->SyncImages();
-
                     c_CurrentDragDropState->CreateNewWindow = false;
-                    std::cout << "SS" << std::endl;
                 }
             }
 
@@ -4573,17 +4564,14 @@ namespace UIKit
             return;
         }
 
-        std::cout << "fq" << std::endl;
         if (!m_Opened)
         {
             m_CloseEvent;
             m_IsRendering = false;
         }
 
-        std::cout << "ff" << std::endl;
         ImGuiID dockspaceID;
 
-        std::cout << "cc" << std::endl;
         if (m_HaveParentAppWindow)
         {
             dockspaceID = ImGui::GetID("AppWindowDockspace");
@@ -4593,10 +4581,9 @@ namespace UIKit
             dockspaceID = ImGui::GetID("MainDockspace");
         }
 
-        std::cout << "ss" << std::endl;
-        std::cout << "reqs size : " << reqs->size() << std::endl;
+        /*std::cout << "reqs size : " << reqs->size() << std::endl;
         std::cout << "last error  : " << dd << std::endl;
-        std::cout << "last boostrdqsd  : " << LastWindowPressed << std::endl;
+        std::cout << "last boostrdqsd  : " << LastWindowPressed << std::endl;*/
 
         if (!ImGui::DockBuilderGetNode(dockspaceID))
         {
@@ -4606,24 +4593,20 @@ namespace UIKit
             ImGui::DockBuilderFinish(dockspaceID);
             s_Instance->m_IsDataSaved = false;
         }
-        std::cout << "qsd" << std::endl;
 
         ImGuiWindow *currentWindow = ImGui::FindWindowByName(this->m_Name.c_str());
 
-        std::cout << "ff" << std::endl;
         if (currentWindow && currentWindow->DockId == 0)
         {
             ImGui::SetNextWindowDockID(dockspaceID, ImGuiCond_Always);
             s_Instance->m_IsDataSaved = false;
         }
 
-        std::cout << "ss" << std::endl;
         for (auto it = reqs->begin(); it != reqs->end();)
         {
             const auto &req = *it;
             ImVector<ImGuiWindow *> &windows = ImGui::GetCurrentContext()->Windows;
 
-            std::cout << "654" << std::endl;
             ImGuiID parentDockID = dockspaceID;
 
             ImGuiWindow *splitwindow = nullptr;
@@ -4653,7 +4636,6 @@ namespace UIKit
                     }
                 }
             }
-            std::cout << "98" << std::endl;
 
             s_Instance->m_IsDataSaved = false;
 
@@ -4697,32 +4679,25 @@ namespace UIKit
                 }
             }
 
-            std::cout << currentwindow << std::endl;
-            std::cout << "zeqr" << std::endl;
             if (currentwindow)
             {
-                std::cout << "zeqrff" << std::endl;
                 if (currentwindow->DockId)
+                {
                     parentDockID = currentwindow->DockId;
-                std::cout << "zeqr" << std::endl;
+                }
             }
 
             if (req->m_ParentAppWindow != this->m_Name)
             {
-                std::cout << "d" << std::endl;
                 if (splitwindow != 0)
                 {
-                    std::cout << "d" << std::endl;
                     if (splitwindow->DockId != 0)
                     {
-                        std::cout << "d" << std::endl;
                         parentDockID = splitwindow->DockId;
-                        std::cout << "d" << std::endl;
                     }
                 }
             }
 
-            std::cout << "qsd" << std::endl;
             ImGuiID newDockID;
 
             switch (req->m_DockPlace)
@@ -4744,18 +4719,15 @@ namespace UIKit
                 break;
             }
 
-            std::cout << "ff" << std::endl;
             if (!ImGui::IsWindowDocked())
             {
                 ImGui::SetNextWindowDockID(dockspaceID, ImGuiCond_Always);
                 dd = "Window undocked, redocking to main dockspace.";
             }
 
-            std::cout << "SSsqsdd" << std::endl;
             ImGui::SetNextWindowDockID(newDockID, ImGuiCond_Always);
 
             it = reqs->erase(it);
-            std::cout << "SS666sd" << std::endl;
         }
 
         // Crash when redock a subappwin to another appwin instance in another window
@@ -4921,7 +4893,6 @@ namespace UIKit
                                     {
                                         if (winc->GetName() == winname)
                                         {
-                                            std::cout << "SHOW DOCING" << std::endl;
                                             ShowDockingPreview(dockID, winc.get(), c_CurrentDragDropState);
                                         }
                                     }
@@ -4950,7 +4921,7 @@ namespace UIKit
         {
             if (!m_HaveParentAppWindow)
             {
-                this->m_Render;
+                this->m_Render();
             }
         }
 

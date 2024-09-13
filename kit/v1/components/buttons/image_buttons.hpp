@@ -23,7 +23,7 @@ namespace UIKit
 
         float vertical_padding = (size.y - text_size.y) * 0.5f;
 
-        ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10, vertical_padding)); // 10 pixels sur X, padding dynamique sur Y
+        ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10, vertical_padding)); 
 
         ImGui::PushStyleColor(ImGuiCol_Border, HexToRGBA(hex_border_idle));
         ImGui::PushStyleColor(ImGuiCol_Button, HexToRGBA(hex_bg_idle));
@@ -59,7 +59,7 @@ namespace UIKit
 
         float vertical_padding = (size.y - text_size.y) * 0.5f;
 
-        ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10, vertical_padding)); // 10 pixels sur X, padding dynamique sur Y
+        ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10, vertical_padding)); 
 
         ImGui::PushStyleColor(ImGuiCol_Border, HexToRGBA(hex_border_idle));
         ImGui::PushStyleColor(ImGuiCol_Button, HexToRGBA(hex_bg_idle));
