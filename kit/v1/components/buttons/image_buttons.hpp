@@ -8,12 +8,12 @@ namespace UIKit
     inline bool ImageButtonSimple(
         const std::string &label = "Button",
         const std::string &imgpath = "undefined",
-        const std::string &hex_bg_idle = "#CC1111ff",
-        const std::string &hex_border_idle = "#CC4444ff",
-        const std::string &hex_bg_hovered = "#CC4444ff",
-        const std::string &hex_border_hovered = "#CC1111ff",
-        const std::string &hex_bg_clicked = "#CC1111ff",
-        const std::string &hex_border_clicked = "#CC1111ff",
+        const std::string &hex_bg_idle = "#3e3e3eff",
+        const std::string &hex_border_idle = "#3e3e3eff",
+        const std::string &hex_bg_hovered = "#5e5e5eff",
+        const std::string &hex_border_hovered = "#5e5e5eff",
+        const std::string &hex_bg_clicked = "#2e2e2eff",
+        const std::string &hex_border_clicked = "#2e2e2eff",
         const ImVec2 &size = ImVec2(0, 22))
     {
         bool pressed = false;
@@ -44,13 +44,13 @@ namespace UIKit
     inline bool ImageButtonLowProfile(
         const std::string &label = "Button",
         const std::string &imgpath = "undefined",
-        const std::string &hex_bg_idle = "#CC1111ff",
-        const std::string &hex_border_idle = "#CC4444ff",
-        const std::string &hex_bg_hovered = "#CC4444ff",
-        const std::string &hex_border_hovered = "#CC1111ff",
-        const std::string &hex_bg_clicked = "#CC1111ff",
-        const std::string &hex_border_clicked = "#CC1111ff",
-        const ImVec2 &size = ImVec2(0, 20))
+        const std::string &hex_bg_idle = "#3e3e3eff",
+        const std::string &hex_border_idle = "#3e3e3eff",
+        const std::string &hex_bg_hovered = "#5e5e5eff",
+        const std::string &hex_border_hovered = "#5e5e5eff",
+        const std::string &hex_bg_clicked = "#2e2e2eff",
+        const std::string &hex_border_clicked = "#2e2e2eff",
+        const ImVec2 &size = ImVec2(0, 18))
     {
         bool pressed = false;
         static ImTextureID texture = Application::Get().GetCurrentRenderedWindow()->get("/usr/local/include/Vortex/imgs/vortex.png")->GetImGuiTextureID(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);

@@ -8,6 +8,15 @@
 #include "../../../components/buttons/image_buttons.hpp"
 #include "../../../components/buttons/danger_buttons.hpp"
 #include "../../../components/buttons/text_buttons.hpp"
+#include "../../../components/titles/h1.hpp"
+#include "../../../components/titles/h2.hpp"
+#include "../../../components/titles/h3.hpp"
+#include "../../../components/titles/h4.hpp"
+#include "../../../components/titles/h5.hpp"
+#include "../../../components/titles/h6.hpp"
+#include "../../../components/texts/simple_text.hpp"
+#include "../../../components/combos/simple_combo.hpp"
+#include "../../../components/headers/simple_collapsing.hpp"
 
 namespace UIKit
 {

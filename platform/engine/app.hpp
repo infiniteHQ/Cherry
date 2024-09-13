@@ -470,6 +470,11 @@ namespace UIKit
 		bool CenterWindow = false;
 	};
 
+	class Connector
+	{
+		// Recupérer les données components et les publiers dans le window state
+	};
+
 	class Application
 	{
 	public:

@@ -3149,9 +3149,10 @@ namespace UIKit
     void Application::Run()
     {
         m_Running = true;
-
+std::cout << "Run1" << std::endl;
         while (m_Running)
         {
+std::cout << "Run1b" << std::endl;
             found_valid_drop_zone_global = false;
 
             /*std::cout << "=============== CURRENT DRAG/DROP STATE ================" << std::endl;
@@ -3209,6 +3210,7 @@ namespace UIKit
             }
             std::cout << "================================================" << std::endl;*/
 
+std::cout << "Run2" << std::endl;
             if (s_Instance->m_Specification.WindowSaves)
             {
                 if (!m_IsDataInitialized)
@@ -3222,6 +3224,7 @@ namespace UIKit
                 }
             }
 
+std::cout << "Run3" << std::endl;
             if (c_CurrentDragDropState)
             {
                 if (c_CurrentDragDropState->CreateNewWindow)
@@ -3238,6 +3241,7 @@ namespace UIKit
                 }
             }
 
+std::cout << "Run4" << std::endl;
             for (auto &window : m_Windows)
             {
                 // Refresh favicon
@@ -3250,11 +3254,13 @@ namespace UIKit
                 }
             }
 
+std::cout << "Run5" << std::endl;
             for (auto &layer : m_LayerStack)
             {
                 layer->OnUpdate(m_TimeStep);
             }
 
+std::cout << "Run6" << std::endl;
             for (auto &app_win : m_AppWindows)
             {
                 if (app_win->m_WinParents.size() == 0)
@@ -3263,27 +3269,34 @@ namespace UIKit
                 }
             }
 
+std::cout << "Run7" << std::endl;
             SDL_Event event;
             while (SDL_PollEvent(&event))
             {
+std::cout << "Run7a" << std::endl;
                 SDL_Window *focusedWindow = SDL_GetMouseFocus();
                 Uint32 focusedWindowID = focusedWindow ? SDL_GetWindowID(focusedWindow) : 0;
 
                 bool eventHandled = false;
 
+std::cout << "Run7b" << std::endl;
                 for (auto &window : m_Windows)
                 {
+std::cout << "Run7c" << std::endl;
                     c_CurrentRenderedWindow = window;
                     Uint32 windowID = SDL_GetWindowID(window->GetWindowHandle());
 
+std::cout << "Run7d" << std::endl;
                     if (focusedWindowID != 0 && windowID != focusedWindowID)
                     {
                         continue;
                     }
 
+std::cout << "Run7e" << std::endl;
                     ImGui::SetCurrentContext(window->m_ImGuiContext);
                     ImGui_ImplSDL2_ProcessEvent(&event);
 
+std::cout << "Run7f" << std::endl;
                     if (event.type == SDL_QUIT)
                     {
                         m_Running = false;
@@ -3291,29 +3304,38 @@ namespace UIKit
                         break;
                     }
 
+std::cout << "Run7g" << std::endl;
                     if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE && event.window.windowID == windowID)
                     {
                         m_Running = false;
                         eventHandled = true;
                         break;
                     }
+std::cout << "Run7h" << std::endl;
                 }
 
+std::cout << "Run7i" << std::endl;
                 if (eventHandled)
                 {
                     break;
                 }
+std::cout << "Run7j" << std::endl;
             }
 
+std::cout << "Run8" << std::endl;
             for (auto &req : m_RedockRequests)
             {
+std::cout << "Run8a" << std::endl;
                 for (auto &app_win : m_AppWindows)
                 {
+std::cout << "Run8b" << std::endl;
                     if (req->m_ParentAppWindowHost == app_win->m_Name)
                     {
+std::cout << "Run8c" << std::endl;
                         bool parentFound = false;
                         for (auto &win : m_Windows)
                         {
+std::cout << "Run8d" << std::endl;
                             if (win->GetName() == req->m_ParentWindow)
                             {
                                 app_win->AddUniqueWinParent(win->GetName());
@@ -3327,6 +3349,7 @@ namespace UIKit
                             }
                         }
 
+std::cout << "Run8e" << std::endl;
                         if (!parentFound)
                         {
                             app_win->AddUniqueWinParent("unknow");
@@ -3341,16 +3364,20 @@ namespace UIKit
 
             int i = 0;
 
+std::cout << "Run9" << std::endl;
             for (auto &window : m_Windows)
             {
+std::cout << "Run9a" << std::endl;
                 ImGui::SetCurrentContext(window->m_ImGuiContext);
                 c_CurrentRenderedWindow = window;
 
+std::cout << "Run9b" << std::endl;
                 if (c_MasterSwapChainRebuild)
                 {
                     window->g_SwapChainRebuild = true;
                 }
 
+std::cout << "Run9c" << std::endl;
                 if (window->g_SwapChainRebuild)
                 {
                     int width, height;
@@ -3364,18 +3391,23 @@ namespace UIKit
                     }
                 }
 
+std::cout << "Run9d" << std::endl;
                 ImGui_ImplVulkan_NewFrame();
                 ImGui_ImplSDL2_NewFrame();
 
+std::cout << "Run9e" << std::endl;
                 ImGui::SetCurrentContext(window->m_ImGuiContext);
                 ImGui::NewFrame();
 
+std::cout << "Run9f" << std::endl;
                 app->RenderWindow(window.get());
 
+std::cout << "Run9g" << std::endl;
                 if (c_DockIsDragging && c_CurrentDragDropState)
                 {
                     SDL_GetGlobalMouseState(&c_CurrentDragDropState->mouseX, &c_CurrentDragDropState->mouseY);
 
+std::cout << "Run9h" << std::endl;
                     {
 
                         float oldsize = ImGui::GetFont()->Scale;
@@ -3418,28 +3450,34 @@ namespace UIKit
                     }
                 }
 
+std::cout << "Run9i" << std::endl;
                 ImGui_ImplVulkanH_Window *wd = &window->m_WinData;
                 ImGuiIO &io = ImGui::GetIO();
 
+std::cout << "Run9j" << std::endl;
                 ImGui::Render();
                 ImDrawData *main_draw_data = ImGui::GetDrawData();
                 const bool main_is_minimized = (main_draw_data->DisplaySize.x <= 0.0f || main_draw_data->DisplaySize.y <= 0.0f);
 
+std::cout << "Run9k" << std::endl;
                 if (!main_is_minimized)
                 {
                     FrameRender(wd, window.get(), main_draw_data);
                 }
 
+std::cout << "Run9l" << std::endl;
                 if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
                 {
                     ImGui::UpdatePlatformWindows();
                     ImGui::RenderPlatformWindowsDefault();
                 }
 
+std::cout << "Run9m" << std::endl;
                 if (!main_is_minimized)
                 {
                     FramePresent(wd, window.get());
                 }
+std::cout << "Run9n" << std::endl;
 
                 i++;
             }
@@ -4271,6 +4309,7 @@ namespace UIKit
     {
         ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDocking;
 
+std::cout << "RenderWindow1" << std::endl;
         ImGuiViewport *viewport = ImGui::GetMainViewport();
         ImGuiViewportP *p_viewport = window->m_ImGuiContext->Viewports[window->WinID];
 
@@ -4281,46 +4320,58 @@ namespace UIKit
             viewport->DrawDataP.Clear();
         }
 
+std::cout << "RenderWindow2" << std::endl;
         ImGui::SetNextWindowPos(viewport->Pos);
         ImGui::SetNextWindowSize(viewport->Size);
         ImGui::SetNextWindowViewport(viewport->ID);
+std::cout << "RenderWindo3" << std::endl;
 
         float minWidth = this->m_Specification.MinWidth;
         float minHeight = this->m_Specification.MinHeight;
         ImGui::SetNextWindowSizeConstraints(ImVec2(minWidth, minHeight), ImVec2(FLT_MAX, FLT_MAX));
 
+std::cout << "RenderWindow4" << std::endl;
         ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
         ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
 
+std::cout << "RenderWindow5" << std::endl;
         window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse;
         window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
         if (!m_Specification.CustomTitlebar && m_MenubarCallback)
             window_flags |= ImGuiWindowFlags_MenuBar;
 
+std::cout << "RenderWindow6" << std::endl;
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(1.0f, 1.0f));
         ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 3.0f);
         ImGui::PushStyleColor(ImGuiCol_MenuBarBg, ImVec4{0.0f, 0.0f, 0.0f, 0.0f});
 
+std::cout << "RenderWindow7" << std::endl;
         std::string label = "DockSpaceWindow." + window->GetName();
         ImGui::SetNextWindowDockID(0);
         ImGui::Begin(label.c_str(), nullptr, window_flags);
         window->m_ImGuiWindow = ImGui::GetCurrentWindow();
 
+std::cout << "RenderWindow8" << std::endl;
         ImVec2 newSize = ImGui::GetWindowSize();
 
+std::cout << "RenderWindow9" << std::endl;
         SDL_Window *sdlWindow = window->GetWindowHandle();
         int sdlWidth, sdlHeight;
         SDL_GetWindowSize(sdlWindow, &sdlWidth, &sdlHeight);
 
+std::cout << "RenderWindow10" << std::endl;
         if (newSize.x < minWidth)
             newSize.x = minWidth;
         if (newSize.y < minHeight)
             newSize.y = minHeight;
 
+std::cout << "RenderWindow11" << std::endl;
         ImVec2 deltaSize = ImVec2(newSize.x - ImGui::GetWindowSize().x, newSize.y - ImGui::GetWindowSize().y);
 
+std::cout << "RenderWindow12" << std::endl;
         ImVec2 windowPos = ImGui::GetWindowPos();
 
+std::cout << "RenderWindow13" << std::endl;
         window->m_Resizing = false;
         if (newSize.x != sdlWidth || newSize.y != sdlHeight)
         {
@@ -4340,6 +4391,7 @@ namespace UIKit
             SDL_SetWindowPosition(sdlWindow, static_cast<int>(windowPos.x), static_cast<int>(windowPos.y));
         }
 
+std::cout << "RenderWindow14" << std::endl;
         ImGuiWindow *win = ImGui::GetCurrentWindow();
 
         ImGui::PopStyleColor(); // MenuBarBg
@@ -4352,6 +4404,7 @@ namespace UIKit
             ImGui::SetCursorPosY(titleBarHeight);
         }
 
+std::cout << "RenderWindow15" << std::endl;
         ImGuiIO &io = ImGui::GetIO();
         ImGuiStyle &style = ImGui::GetStyle();
         float minWinSizeX = style.WindowMinSize.x;
@@ -4393,6 +4446,7 @@ namespace UIKit
         ImVec2 mouse_pos = ImGui::GetMousePos();
         ImDrawList *draw_list = ImGui::GetWindowDrawList();
 
+std::cout << "RenderWindow16" << std::endl;
         if (c_DockIsDragging)
         {
             for (auto &appwin : m_AppWindows)
@@ -4401,6 +4455,7 @@ namespace UIKit
                 {
                     if (!appwin->m_HaveParentAppWindow)
                     {
+std::cout << "RenderWindow17" << std::endl;
                         ShowDockingPreview(dockspaceID, window, c_CurrentDragDropState);
                     }
                 }
@@ -4417,6 +4472,7 @@ namespace UIKit
                     {
                         if (subwin->m_ParentAppWindow->m_Name == appwindow->m_Name)
                         {
+std::cout << "RenderWindow18" << std::endl;
                             appwindow->CtxRender(&m_RedockRequests, window->GetName());
                         }
                     }
@@ -4426,6 +4482,7 @@ namespace UIKit
             {
                 if (appwindow->CheckWinParent(window->GetName()) && !appwindow->m_HaveParentAppWindow)
                 {
+std::cout << "RenderWindow19" << std::endl;
                     appwindow->CtxRender(&m_RedockRequests, window->GetName());
                 }
             }
@@ -4559,6 +4616,7 @@ namespace UIKit
 
     void AppWindow::CtxRender(std::vector<std::shared_ptr<RedockRequest>> *reqs, const std::string &winname)
     {
+std::cout << "CtxRender1" << std::endl;
         if (!m_IsRendering)
         {
             return;
@@ -4570,6 +4628,7 @@ namespace UIKit
             m_IsRendering = false;
         }
 
+std::cout << "CtxRender2" << std::endl;
         ImGuiID dockspaceID;
 
         if (m_HaveParentAppWindow)
@@ -4580,6 +4639,7 @@ namespace UIKit
         {
             dockspaceID = ImGui::GetID("MainDockspace");
         }
+std::cout << "CtxRender3" << std::endl;
 
         /*std::cout << "reqs size : " << reqs->size() << std::endl;
         std::cout << "last error  : " << dd << std::endl;
@@ -4594,6 +4654,7 @@ namespace UIKit
             s_Instance->m_IsDataSaved = false;
         }
 
+std::cout << "CtxRender4" << std::endl;
         ImGuiWindow *currentWindow = ImGui::FindWindowByName(this->m_Name.c_str());
 
         if (currentWindow && currentWindow->DockId == 0)
@@ -4602,6 +4663,7 @@ namespace UIKit
             s_Instance->m_IsDataSaved = false;
         }
 
+std::cout << "CtxRender5" << std::endl;
         for (auto it = reqs->begin(); it != reqs->end();)
         {
             const auto &req = *it;
@@ -4732,34 +4794,42 @@ namespace UIKit
 
         // Crash when redock a subappwin to another appwin instance in another window
 
+std::cout << "CtxRender6" << std::endl;
         ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoMove;
 
         ImGui::PushStyleVar(ImGuiStyleVar_PopupRounding, 3.0f);
         ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10, 12));
         if (this->GetImage(m_Icon))
         {
+std::cout << "CtxRender7" << std::endl;
             static ImTextureID texture = this->GetImage(m_Icon)->GetImGuiTextureID(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
             if (m_Closable)
             {
+std::cout << "CtxRender7a" << std::endl;
                 ImGui::UIKit_BeginLogoWindow(m_Name.c_str(), &texture, &m_Opened, window_flags);
             }
             else
             {
+std::cout << "CtxRender7b" << std::endl;
                 ImGui::UIKit_BeginLogoWindow(m_Name.c_str(), &texture, NULL, window_flags);
             }
         }
         else
         {
+std::cout << "CtxRender8" << std::endl;
             if (m_Closable)
             {
+std::cout << "CtxRender8a" << std::endl;
                 ImGui::Begin(m_Name.c_str(), &m_Opened, window_flags);
             }
             else
             {
+std::cout << "CtxRender8b" << std::endl;
                 ImGui::Begin(m_Name.c_str(), NULL, window_flags);
             }
         }
 
+std::cout << "CtxRender9" << std::endl;
         if (ImGui::BeginMenuBar())
         {
             float oldsize = ImGui::GetFont()->Scale;
@@ -4797,10 +4867,13 @@ namespace UIKit
             ImGui::EndMenuBar();
         }
 
+std::cout << "CtxRender10" << std::endl;
         ImGui::PopStyleVar(2);
 
+std::cout << "CtxRender11" << std::endl;
         ImGuiContext *ctx = ImGui::GetCurrentContext();
 
+std::cout << "CtxRender12" << std::endl;
         std::shared_ptr<Window> wind;
 
         for (auto &win : s_Instance->m_Windows)
@@ -4810,6 +4883,7 @@ namespace UIKit
                 wind = win;
             }
         }
+std::cout << "CtxRender13" << std::endl;
 
         // Drag
         if (ctx->DockTabStaticSelection.Pressed)
@@ -4848,8 +4922,7 @@ namespace UIKit
             }
         }
 
-        if (m_DockingMode)
-        {
+std::cout << "CtxRender14" << std::endl;
             ImGuiID dockID = ImGui::GetID("AppWindowDockspace");
             float oldsize = ImGui::GetFont()->Scale;
             ImGui::GetFont()->Scale *= 0.84;
@@ -4864,18 +4937,15 @@ namespace UIKit
 
             ImGui::PushStyleColor(ImGuiCol_Border, lightBorderColor);
 
+        if (m_DockingMode)
+        {
+
             ImGui::PushStyleVar(ImGuiStyleVar_PopupRounding, 3.0f);
 
             ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(6.0f, 5.0f));
             ImGui::GetCurrentContext()->Style.DockSpaceMenubarPaddingY = 18.0f;
 
             ImGui::DockSpace(dockID, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_None);
-
-            ImGui::PopStyleVar(2);
-            ImGui::PopStyleColor(2);
-
-            ImGui::GetFont()->Scale = oldsize;
-            ImGui::PopFont();
 
             if (c_DockIsDragging)
             {
@@ -4916,14 +4986,21 @@ namespace UIKit
                     }
                 }
             }
+            ImGui::PopStyleVar(2);
         }
         else
         {
             if (!m_HaveParentAppWindow)
             {
+std::cout << "CtxRender154" << std::endl;
                 this->m_Render();
             }
         }
+
+            ImGui::PopStyleColor(2);
+
+            ImGui::GetFont()->Scale = oldsize;
+            ImGui::PopFont();
 
         ImGui::End();
     }
