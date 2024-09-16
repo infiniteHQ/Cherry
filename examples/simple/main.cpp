@@ -26,6 +26,8 @@ UIKit::Application *UIKit::CreateApplication(int argc, char **argv)
   spec.MinHeight = 500;
   spec.MinWidth = 500;
   spec.CustomTitlebar = true;
+  spec.DisableWindowManagerTitleBar = true;
+  spec.EnableDocking = true;
   spec.DisableTitle = true;
   spec.WindowSaves = true;
   spec.IconPath = "icon.png";

@@ -34,6 +34,7 @@ namespace UIKit
                                                      } });
         Application::Get().PutWindow(m_AppWindow);
     }
+
     EmptyAppWindow::EmptyAppWindow()
     {
         m_AppWindow = std::make_shared<UIKit::AppWindow>("Sec", "Sec");
@@ -69,6 +70,8 @@ namespace UIKit
     {
         m_AppWindow = std::make_shared<UIKit::AppWindow>(name, name);
         m_AppWindow->SetIcon("/usr/local/include/Vortex/imgs/vortex.png");
+        m_AppWindow->SetDefaultBehavior(DefaultAppWindowBehaviors::DefaultDocking, "right");
+        
         m_AppWindow->SetRenderCallback([this]()
                                        {
         ImGui::Text("AA.BB.CC.DD.EE.FF 1");

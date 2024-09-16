@@ -26,16 +26,16 @@
                     "simple_storage": [
                         {
                             "key": "dockplace",
-                            "value": "full"
+                            "value": "down"
                         },
                         {
                             "key": "window",
-                            "value": "unknown"
+                            "value": "Content1"
                         }
                     ],
                     "window_storage": []
                 },
-                "dockplace": "full",
+                "dockplace": "down",
                 "id": "test_window",
                 "name": "Content2",
                 "type": "instanciable,static",
@@ -50,7 +50,7 @@
                         },
                         {
                             "key": "window",
-                            "value": "none"
+                            "value": "unknown"
                         }
                     ],
                     "window_storage": []
@@ -59,7 +59,7 @@
                 "id": "test_window",
                 "name": "Content3",
                 "type": "instanciable,static",
-                "win": "1"
+                "win": "0"
             }
         ]
     },

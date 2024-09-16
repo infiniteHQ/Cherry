@@ -1,4 +1,3 @@
-
 cmake_minimum_required(VERSION 3.16)
 project(example)
 
@@ -56,4 +55,3 @@ target_link_libraries(editor PUBLIC spdlog)
 
 # Liaison avec la bibliothèque partagée
 target_link_libraries(example PRIVATE example_shared)
-

@@ -1,4 +1,6 @@
 #include "app.hpp"
+#include "app_window.hpp"
+
 #include "../../src/core/log.hpp"
 #include "../../components/windows/windows.h"
 #include "../../components/buttons/buttons.h"
@@ -119,6 +121,7 @@ static void PushRedockEvent(UIKit::WindowDragDropState *state)
             std::shared_ptr<UIKit::RedockRequest> req = app_win->CreateEvent(
                 state->LastDraggingWindow,
                 state->LastDraggingPlace,
+                state->FromSave,
                 state->LastDraggingAppWindow);
             latest_req = req;
             s_Instance->m_RedockRequests.push_back(req);
@@ -2991,6 +2994,13 @@ namespace UIKit
 
     void Application::SpawnWindow(const std::string &name)
     {
+        ImGuiContext *res_ctx = ImGui::GetCurrentContext();
+
+        std::shared_ptr<Window> new_win = std::make_shared<Window>(name, app->m_Specification.Width, app->m_Specification.Height);
+
+        this->m_Windows.push_back(new_win);
+
+        ImGui::SetCurrentContext(res_ctx);
     }
 
     void Application::UnspawnWindow(const std::string &name)
@@ -3011,67 +3021,36 @@ namespace UIKit
             {
                 auto windowsJson = s_Instance->m_PreviousSaveData["data"].value("windows", nlohmann::json::array());
 
-                for (const auto &windowJson : windowsJson)
+                for (const auto &appWindowJson : windowsJson)
                 {
-                    std::string windowName = windowJson.value("name", "");
-                    bool opened = windowJson.value("opened", true);
+                    std::string appWindowName = appWindowJson.value("name", "");
+                    std::string dockPlace = appWindowJson.value("dockplace", "");
+                    std::string type = appWindowJson.value("type", "");
+                    std::string path = appWindowJson.value("path", "");
+                    std::string id = appWindowJson.value("id", "");
 
-                    auto it = std::find_if(m_Windows.begin(), m_Windows.end(), [&windowName](const std::shared_ptr<Window> &w)
-                                           { return w->GetName() == windowName; });
+                    std::shared_ptr<AppWindow> appWindow = std::make_shared<AppWindow>();
 
-                    std::shared_ptr<Window> window;
-                    if (it != m_Windows.end())
-                    {
-                        window = *it;
-                    }
-                    else
-                    {
-                        // window = std::make_shared<Window>(windowName);
-                        // m_Windows.push_back(window);
-                    }
-
-                    auto appWindowsJson = windowJson.value("app_windows", nlohmann::json::array());
-                    for (const auto &appWindowJson : appWindowsJson)
-                    {
-                        std::string appWindowName = appWindowJson.value("name", "");
-                        std::string dockPlace = appWindowJson.value("dockplace", "");
-                        std::string type = appWindowJson.value("type", "");
-                        std::string path = appWindowJson.value("path", "");
-                        std::string id = appWindowJson.value("id", "");
-
-                        auto appIt = std::find_if(s_Instance->m_AppWindows.begin(), s_Instance->m_AppWindows.end(), [&appWindowName](const std::shared_ptr<AppWindow> &aw)
-                                                  { return aw->m_Name == appWindowName; });
-
-                        std::shared_ptr<AppWindow> appWindow;
-                        if (appIt != s_Instance->m_AppWindows.end())
-                        {
-                            appWindow = *appIt;
-                        }
-                        else
-                        {
-                            //
-                        }
-
-                        appWindow->SetSimpleStorage("dockplace", dockPlace, true);
-                        appWindow->SetSimpleStorage("type", type, true);
-                        appWindow->SetSimpleStorage("path", path, true);
-                        appWindow->SetSimpleStorage("id", id, true);
-
-                        appWindow->CheckWinParent(windowName);
-                    }
+                    appWindow->m_Name = appWindowName;
+                    appWindow->SetSimpleStorage("dockplace", dockPlace, true);
+                    appWindow->SetSimpleStorage("type", type, true);
+                    appWindow->SetSimpleStorage("path", path, true);
+                    appWindow->SetSimpleStorage("id", id, true);
+                    m_SavedAppWindows.push_back(appWindow);
                 }
+            }
 
-                m_IsDataInitialized = true;
-            }
-            else
-            {
-                // throw std::time_error("No valid data found in m_PreviousSaveData.");
-            }
+            m_IsDataInitialized = true;
+        }
+        else
+        {
+            // throw std::time_error("No valid data found in m_PreviousSaveData.");
         }
     }
 
     void Application::SaveData()
     {
+        s_Instance->m_IsDataSaved = true;
         nlohmann::json jsonData;
 
         std::ifstream inputFile(this->m_WindowSaveDataPath);
@@ -3088,73 +3067,61 @@ namespace UIKit
 
         nlohmann::json windowsJson = nlohmann::json::array();
 
-        for (auto &window : m_Windows)
+        nlohmann::json appWindowsJson = nlohmann::json::array();
+
+        for (auto &app_window : s_Instance->m_AppWindows)
         {
-            nlohmann::json windowJson;
-            windowJson["name"] = window->GetName();
+            std::string dockspace_state = "default";
 
-            nlohmann::json appWindowsJson = nlohmann::json::array();
-
-            for (auto &app_window : s_Instance->m_AppWindows)
+            if (app_window->GetSimpleStorage("dockplace"))
             {
-                if (app_window->CheckWinParent(window->GetName()))
+                dockspace_state = app_window->GetSimpleStorage("dockplace")->m_Data;
+            }
+
+            nlohmann::json appWindowJson;
+            appWindowJson["name"] = app_window->m_Name;
+            appWindowJson["dockplace"] = dockspace_state;
+            appWindowJson["win"] = app_window->m_WinParent;
+            if (app_window->m_HaveParentAppWindow)
+                appWindowJson["dockparent"] = app_window->m_ParentAppWindow->m_Name;
+            appWindowJson["type"] = "instanciable,static";
+            appWindowJson["id"] = "test_window";
+
+            nlohmann::json appWindowStorageJson;
+
+            nlohmann::json simpleStorage = nlohmann::json::array();
+            nlohmann::json windowStorage = nlohmann::json::array();
+
+            for (auto &window_storage_item : app_window->DumpWindowStorage())
+            {
+                if (window_storage_item.second->m_Persistant)
                 {
-                    std::string dockspace_state = "default";
-
-                    if (app_window->GetSimpleStorage("dockplace"))
-                    {
-                        dockspace_state = app_window->GetSimpleStorage("dockplace")->m_Data;
-                    }
-
-                    nlohmann::json appWindowJson;
-                    appWindowJson["name"] = app_window->m_Name;
-                    appWindowJson["dockplace"] = dockspace_state;
-                    appWindowJson["type"] = "instanciable,static";
-                    appWindowJson["id"] = "test_window";
-
-                    nlohmann::json appWindowStorageJson;
-
-                    nlohmann::json simpleStorage = nlohmann::json::array();
-                    nlohmann::json windowStorage = nlohmann::json::array();
-
-                    for (auto &window_storage_item : app_window->DumpWindowStorage())
-                    {
-                        if (window_storage_item.second->m_Persistant)
-                        {
-                            nlohmann::json item;
-                            item["key"] = window_storage_item.first;
-                            item["value"] = window_storage_item.second->m_JsonData;
-                            windowStorage.push_back(item);
-                        }
-                    }
-
-                    for (auto &simple_storage_item : app_window->DumpSimpleStorage())
-                    {
-                        if (simple_storage_item.second->m_Persistant)
-                        {
-                            nlohmann::json item;
-                            item["key"] = simple_storage_item.first;
-                            item["value"] = simple_storage_item.second->m_Data;
-                            simpleStorage.push_back(item);
-                        }
-                    }
-                    appWindowStorageJson["simple_storage"] = simpleStorage;
-                    appWindowStorageJson["window_storage"] = windowStorage;
-
-                    appWindowJson["data"] = appWindowStorageJson;
-
-                    appWindowsJson.push_back(appWindowJson);
+                    nlohmann::json item;
+                    item["key"] = window_storage_item.first;
+                    item["value"] = window_storage_item.second->m_JsonData;
+                    windowStorage.push_back(item);
                 }
             }
 
-            windowJson["app_windows"] = appWindowsJson;
+            for (auto &simple_storage_item : app_window->DumpSimpleStorage())
+            {
+                if (simple_storage_item.second->m_Persistant)
+                {
+                    nlohmann::json item;
+                    item["key"] = simple_storage_item.first;
+                    item["value"] = simple_storage_item.second->m_Data;
+                    simpleStorage.push_back(item);
+                }
+            }
+            appWindowStorageJson["simple_storage"] = simpleStorage;
+            appWindowStorageJson["window_storage"] = windowStorage;
 
-            windowsJson.push_back(windowJson);
+            appWindowJson["data"] = appWindowStorageJson;
+
+            appWindowsJson.push_back(appWindowJson);
         }
 
-        jsonData["data"]["windows"] = windowsJson;
-
-        s_Instance->m_IsDataSaved = true;
+        jsonData["data"]["windows"] = appWindowsJson;
 
         std::ofstream outputFile(this->m_WindowSaveDataPath);
         if (!outputFile)
@@ -3166,14 +3133,28 @@ namespace UIKit
         outputFile.close();
     }
 
+    std::vector<std::shared_ptr<AppWindow>> Application::GetLastSaveInstanciableAppWindows()
+    {
+        std::vector<std::shared_ptr<AppWindow>> results;
+        for (auto &savedappwins : Application::Get().m_SavedAppWindows)
+        {
+            if (savedappwins->m_AppWindowType == AppWindowTypes::InstanciableWindow)
+            {
+                results.push_back(savedappwins);
+            }
+        }
+        return results;
+    }
+
     void Application::Run()
     {
         m_Running = true;
         while (m_Running)
         {
+            std::cout << "m_Running" << std::endl;
             found_valid_drop_zone_global = false;
 
-            /*std::cout << "=============== CURRENT DRAG/DROP STATE ================" << std::endl;
+            std::cout << "=============== CURRENT DRAG/DROP STATE ================" << std::endl;
             if (c_CurrentDragDropState)
             {
 
@@ -3226,7 +3207,7 @@ namespace UIKit
             {
                 std::cout << "no data" << std::endl;
             }
-            std::cout << "================================================" << std::endl;*/
+            std::cout << "================================================" << std::endl;
 
             if (s_Instance->m_Specification.WindowSaves)
             {
@@ -3238,6 +3219,138 @@ namespace UIKit
                 if (!s_Instance->m_IsDataSaved)
                 {
                     s_Instance->SaveData();
+                }
+            }
+
+            for (auto &savedappwin : s_Instance->m_SavedAppWindows)
+            {
+                for (auto &appwin : s_Instance->m_AppWindows)
+                {
+                    if (appwin->m_Name == savedappwin->m_Name)
+                    {
+                        if (!savedappwin->m_WindowRebuilded)
+                        {
+                            bool dockplace_initialized = false;
+                            bool parent_initialized = false;
+                            bool win_initialized = false;
+                            bool sizex_initialized = false;
+
+                            std::shared_ptr<WindowDragDropState> dragdropstate = std::make_shared<WindowDragDropState>();
+                            dragdropstate->LastDraggingAppWindowHost = savedappwin->m_Name;
+                            dragdropstate->FromSave = true;
+                            LastWindowPressed = dragdropstate->LastDraggingAppWindowHost;
+
+                            // Save backup
+                            if (savedappwin->GetFetchedSaveData("dockplace") != "undefined")
+                            {
+                                dragdropstate->DragOwner = savedappwin->m_Name;
+
+                                if (savedappwin->GetFetchedSaveData("dockplace") == "right")
+                                {
+                                    dragdropstate->LastDraggingPlace = DockEmplacement::DockRight;
+                                }
+                                else if (savedappwin->GetFetchedSaveData("dockplace") == "left")
+                                {
+                                    dragdropstate->LastDraggingPlace = DockEmplacement::DockLeft;
+                                }
+
+                                else if (savedappwin->GetFetchedSaveData("dockplace") == "up")
+                                {
+                                    dragdropstate->LastDraggingPlace = DockEmplacement::DockUp;
+                                }
+                                else if (savedappwin->GetFetchedSaveData("dockplace") == "down")
+                                {
+                                    dragdropstate->LastDraggingPlace = DockEmplacement::DockDown;
+                                }
+
+                                else if (savedappwin->GetFetchedSaveData("dockplace") == "full")
+                                {
+                                    dragdropstate->LastDraggingPlace = DockEmplacement::DockFull;
+                                }
+                                else
+                                {
+                                    dragdropstate->LastDraggingPlace = DockEmplacement::DockFull;
+                                }
+                                dockplace_initialized = true;
+                            }
+
+                            if (savedappwin->GetFetchedSaveData("sizex") != "undefined")
+                            {
+                                bool sizex_initialized = true;
+                            }
+
+                            if (savedappwin->GetFetchedSaveData("parent") != "undefined")
+                            {
+                                dragdropstate->LastDraggingAppWindow = savedappwin->GetFetchedSaveData("dockparent");
+                                dragdropstate->DragOwner = savedappwin->GetFetchedSaveData("dockparent");
+                                bool parent_initialized = true;
+                            }
+
+                            if (savedappwin->GetFetchedSaveData("win") != "undefined")
+                            {
+                                dragdropstate->LastDraggingWindow = savedappwin->GetFetchedSaveData("win");
+
+                                bool is_win_existing = false;
+                                for (auto &win : s_Instance->m_Windows)
+                                {
+                                    if (win->GetName() == savedappwin->GetFetchedSaveData("win"))
+                                    {
+                                        is_win_existing = true;
+                                    }
+                                }
+
+                                if (!is_win_existing)
+                                {
+                                    s_Instance->SpawnWindow(savedappwin->GetFetchedSaveData("win"));
+                                }
+
+                                bool win_initialized = true;
+                            }
+
+                            if (!dockplace_initialized)
+                            {
+                                dragdropstate->DragOwner = appwin->m_Name;
+
+                                if (savedappwin->GetDefaultBehavior(DefaultAppWindowBehaviors::DefaultDocking) == "right")
+                                {
+                                    dragdropstate->LastDraggingPlace = DockEmplacement::DockRight;
+                                }
+                                else if (savedappwin->GetDefaultBehavior(DefaultAppWindowBehaviors::DefaultDocking) == "left")
+                                {
+                                    dragdropstate->LastDraggingPlace = DockEmplacement::DockLeft;
+                                }
+                                else if (savedappwin->GetDefaultBehavior(DefaultAppWindowBehaviors::DefaultDocking) == "up")
+                                {
+                                    dragdropstate->LastDraggingPlace = DockEmplacement::DockUp;
+                                }
+                                else if (savedappwin->GetDefaultBehavior(DefaultAppWindowBehaviors::DefaultDocking) == "down")
+                                {
+                                    dragdropstate->LastDraggingPlace = DockEmplacement::DockDown;
+                                }
+                                else if (savedappwin->GetDefaultBehavior(DefaultAppWindowBehaviors::DefaultDocking) == "full")
+                                {
+                                    dragdropstate->LastDraggingPlace = DockEmplacement::DockFull;
+                                }
+                                else
+                                {
+                                    dragdropstate->LastDraggingPlace = DockEmplacement::DockFull;
+                                }
+                            }
+
+                            if (!win_initialized && s_Instance->m_Windows[0])
+                            {
+                                dragdropstate->LastDraggingWindow = s_Instance->m_Windows[0]->GetName();
+                                dragdropstate->DragOwner = s_Instance->m_Windows[0]->GetName();
+                            }
+
+                            c_CurrentDragDropState = dragdropstate.get();
+                            PushRedockEvent(c_CurrentDragDropState);
+                            dragdropstate->DragOwner = "none";
+                            c_CurrentDragDropState = nullptr;
+
+                            savedappwin->m_WindowRebuilded = true;
+                        }
+                    }
                 }
             }
 
@@ -3276,10 +3389,7 @@ namespace UIKit
 
             for (auto &app_win : m_AppWindows)
             {
-                if (app_win->m_WinParents.size() == 0)
-                {
-                    app_win->AddUniqueWinParent(m_Windows[0]->GetName());
-                }
+                // app_win->AddUniqueWinParent(m_Windows[0]->GetName());
             }
 
             SDL_Event event;
@@ -3513,7 +3623,17 @@ namespace UIKit
     Window::Window(const std::string &name, int width, int height, bool cold_start = true)
         : m_Name(name), m_Width(width), m_Height(height)
     {
-        SDL_WindowFlags window_flags = (SDL_WindowFlags)(SDL_WINDOW_VULKAN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_BORDERLESS);
+        SDL_WindowFlags window_flags;
+
+        if (s_Instance->m_Specification.DisableWindowManagerTitleBar)
+        {
+            window_flags = (SDL_WindowFlags)(SDL_WINDOW_VULKAN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_BORDERLESS);
+        }
+        else
+        {
+            window_flags = (SDL_WindowFlags)(SDL_WINDOW_VULKAN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
+        }
+
         m_WindowHandler = SDL_CreateWindow(m_Name.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, m_Width, m_Height, window_flags);
 
         // Setup Vulkan
@@ -3676,32 +3796,26 @@ namespace UIKit
 
     bool AppWindow::CheckWinParent(const std::string &parentname)
     {
-        for (auto &parent : m_WinParents)
+        if (this->m_WinParent == parentname)
         {
-            if (parent == parentname)
-            {
-                return true;
-            }
+            return true;
         }
+
         return false;
     }
 
     void AppWindow::AddUniqueWinParent(const std::string &parentname)
     {
-        m_WinParents.clear();
-        m_WinParents.push_back(parentname);
+        m_WinParent = parentname;
     }
 
     void AppWindow::AddWinParent(const std::string &parentname)
     {
-        m_WinParents.push_back(parentname);
+        m_WinParent = parentname;
     }
 
     void AppWindow::DeleteWinParent(const std::string &parentname)
     {
-        m_WinParents.erase(
-            std::remove(m_WinParents.begin(), m_WinParents.end(), parentname),
-            m_WinParents.end());
     }
 
     void Application::LoadImages()
@@ -4357,10 +4471,10 @@ namespace UIKit
 
         ImGuiWindow *win = ImGui::GetCurrentWindow();
 
-        ImGui::PopStyleColor(); // MenuBarBg
+        ImGui::PopStyleColor();
         ImGui::PopStyleVar(2);
 
-        if (m_Specification.CustomTitlebar)
+        if (m_Specification.CustomTitlebar && !m_Specification.DisableTitleBar)
         {
             float titleBarHeight;
             window->UI_DrawTitlebar(titleBarHeight);
@@ -4374,82 +4488,90 @@ namespace UIKit
 
         AppPushTabStyle();
 
-        ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-
-        ImGuiID dockspaceID = ImGui::GetID("MainDockspace");
-
-        float oldsize = ImGui::GetFont()->Scale;
-        ImGui::GetFont()->Scale *= 0.84;
-        ImGui::PushFont(ImGui::GetFont());
-
-        ImVec4 grayColor = ImVec4(0.4f, 0.4f, 0.4f, 1.0f);              // Gris (50% blanc)
-        ImVec4 graySeparatorColor = ImVec4(0.4f, 0.4f, 0.4f, 0.5f);     // Gris (50% blanc)
-        ImVec4 darkBackgroundColor = ImVec4(0.15f, 0.15f, 0.15f, 1.0f); // Fond plus foncé
-        ImVec4 lightBorderColor = ImVec4(0.2f, 0.2f, 0.2f, 1.0f);       // Bordure plus claire
-
-        // Pousser le style pour le fond plus foncé
-        ImGui::PushStyleColor(ImGuiCol_PopupBg, darkBackgroundColor);
-
-        // Pousser le style pour la bordure plus claire
-        ImGui::PushStyleColor(ImGuiCol_Border, lightBorderColor);
-
-        ImGui::PushStyleVar(ImGuiStyleVar_PopupRounding, 3.0f);
-        ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10.0f, 8.0f));
-
-        ImGui::GetCurrentContext()->Style.DockSpaceMenubarPaddingY = 12.0f;
-        ImGui::DockSpace(dockspaceID, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_None);
-
-        ImGui::PopStyleVar(2);   // Pour les bords arrondis
-        ImGui::PopStyleColor(2); // Pour le fond et la bordure
-
-        ImGui::GetFont()->Scale = oldsize;
-        ImGui::PopFont();
-
-        ImVec2 mouse_pos = ImGui::GetMousePos();
-        ImDrawList *draw_list = ImGui::GetWindowDrawList();
-
-        if (c_DockIsDragging)
+        if (m_Specification.EnableDocking)
         {
-            for (auto &appwin : m_AppWindows)
-            {
-                if (c_CurrentDragDropState->LastDraggingAppWindowHost == appwin->m_Name)
-                {
-                    if (!appwin->m_HaveParentAppWindow)
-                    {
-                        ShowDockingPreview(dockspaceID, window, c_CurrentDragDropState);
-                    }
-                }
-            }
-        }
+            ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
-        for (auto appwindow : m_AppWindows)
-        {
-            if (appwindow->CheckWinParent(window->GetName()) && appwindow->m_DockingMode)
+            ImGuiID dockspaceID = ImGui::GetID("MainDockspace");
+
+            float oldsize = ImGui::GetFont()->Scale;
+            ImGui::GetFont()->Scale *= 0.84;
+            ImGui::PushFont(ImGui::GetFont());
+
+            ImVec4 grayColor = ImVec4(0.4f, 0.4f, 0.4f, 1.0f);
+            ImVec4 graySeparatorColor = ImVec4(0.4f, 0.4f, 0.4f, 0.5f);
+            ImVec4 darkBackgroundColor = ImVec4(0.15f, 0.15f, 0.15f, 1.0f);
+            ImVec4 lightBorderColor = ImVec4(0.2f, 0.2f, 0.2f, 1.0f);
+
+            ImGui::PushStyleColor(ImGuiCol_PopupBg, darkBackgroundColor);
+
+            ImGui::PushStyleColor(ImGuiCol_Border, lightBorderColor);
+
+            ImGui::PushStyleVar(ImGuiStyleVar_PopupRounding, 3.0f);
+            ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10.0f, 8.0f));
+
+            ImGui::GetCurrentContext()->Style.DockSpaceMenubarPaddingY = 12.0f;
+            ImGui::DockSpace(dockspaceID, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_None);
+
+            ImGui::PopStyleVar(2);
+            ImGui::PopStyleColor(2);
+
+            ImGui::GetFont()->Scale = oldsize;
+            ImGui::PopFont();
+
+            ImVec2 mouse_pos = ImGui::GetMousePos();
+            ImDrawList *draw_list = ImGui::GetWindowDrawList();
+
+            if (c_DockIsDragging)
             {
-                for (auto &subwin : m_AppWindows)
+                for (auto &appwin : m_AppWindows)
                 {
-                    if (subwin->m_ParentAppWindow)
+                    if (c_CurrentDragDropState->LastDraggingAppWindowHost == appwin->m_Name)
                     {
-                        if (subwin->m_ParentAppWindow->m_Name == appwindow->m_Name)
+                        if (!appwin->m_HaveParentAppWindow)
                         {
-                            appwindow->CtxRender(&m_RedockRequests, window->GetName());
+                            ShowDockingPreview(dockspaceID, window, c_CurrentDragDropState);
                         }
                     }
                 }
             }
-            else
+
+            for (auto appwindow : m_AppWindows)
             {
-                if (appwindow->CheckWinParent(window->GetName()) && !appwindow->m_HaveParentAppWindow)
+                if (appwindow->CheckWinParent(window->GetName()) && appwindow->m_DockingMode)
                 {
-                    appwindow->CtxRender(&m_RedockRequests, window->GetName());
+                    for (auto &subwin : m_AppWindows)
+                    {
+                        if (subwin->m_ParentAppWindow)
+                        {
+                            if (subwin->m_ParentAppWindow->m_Name == appwindow->m_Name)
+                            {
+                                appwindow->CtxRender(&m_RedockRequests, window->GetName());
+                            }
+                        }
+                    }
                 }
+                else
+                {
+                    if (appwindow->CheckWinParent(window->GetName()) && !appwindow->m_HaveParentAppWindow)
+                    {
+                        appwindow->CtxRender(&m_RedockRequests, window->GetName());
+                    }
+                }
+            }
+        }
+        else
+        {
+            if (m_MainRenderCallback)
+            {
+                m_MainRenderCallback();
             }
         }
 
         AppPopTabStyle();
 
         style.WindowMinSize.x = minWinSizeX;
-
+        
         if (!m_Specification.CustomTitlebar)
             window->UI_DrawMenubar();
 
@@ -4602,9 +4724,9 @@ namespace UIKit
             dockspaceID = ImGui::GetID("MainDockspace");
         }
 
-        /*std::cout << "reqs size : " << reqs->size() << std::endl;
+        std::cout << "reqs size : " << reqs->size() << std::endl;
         std::cout << "last error  : " << dd << std::endl;
-        std::cout << "last boostrdqsd  : " << LastWindowPressed << std::endl;*/
+        std::cout << "last boostrdqsd  : " << LastWindowPressed << std::endl;
 
         if (!ImGui::DockBuilderGetNode(dockspaceID))
         {
@@ -4612,7 +4734,6 @@ namespace UIKit
             ImGui::DockBuilderAddNode(dockspaceID, ImGuiDockNodeFlags_DockSpace);
             ImGui::DockBuilderSetNodeSize(dockspaceID, ImGui::GetMainViewport()->Size);
             ImGui::DockBuilderFinish(dockspaceID);
-            s_Instance->m_IsDataSaved = false;
         }
 
         ImGuiWindow *currentWindow = ImGui::FindWindowByName(this->m_Name.c_str());
@@ -4620,7 +4741,6 @@ namespace UIKit
         if (currentWindow && currentWindow->DockId == 0)
         {
             ImGui::SetNextWindowDockID(dockspaceID, ImGuiCond_Always);
-            s_Instance->m_IsDataSaved = false;
         }
 
         for (auto it = reqs->begin(); it != reqs->end();)
@@ -4633,7 +4753,8 @@ namespace UIKit
             ImGuiWindow *splitwindow = nullptr;
             ImGuiWindow *currentwindow = nullptr;
 
-            s_Instance->m_IsDataSaved = false;
+            if (!req->m_FromSave)
+                s_Instance->m_IsDataSaved = false;
 
             for (int i = windows.Size - 1; i >= 0; --i)
             {
@@ -4888,7 +5009,6 @@ namespace UIKit
 
         if (m_DockingMode)
         {
-
             ImGui::PushStyleVar(ImGuiStyleVar_PopupRounding, 3.0f);
 
             ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(6.0f, 5.0f));

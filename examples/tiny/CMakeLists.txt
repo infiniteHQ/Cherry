@@ -1,4 +1,3 @@
-
 cmake_minimum_required(VERSION 3.16)
 project(example)
 
@@ -29,31 +28,30 @@ file(
     GLOB_RECURSE # recursive
     UIKIT_SRC # variable to store the source files and headers
     CONFIGURE_DEPENDS # make a dependency
-    "${PROJECT_SOURCE_DIR}/../../platform/*.h" "${PROJECT_SOURCE_DIR}/../../platform/*.cpp"
-    "${PROJECT_SOURCE_DIR}/../../src/*.h" "${PROJECT_SOURCE_DIR}/../../src/*.cpp"
-    "${PROJECT_SOURCE_DIR}/../../components/*.h" "${PROJECT_SOURCE_DIR}/../../components/*.cpp"
+    "${PROJECT_SOURCE_DIR}/../../platform/*.h" "${PROJECT_SOURCE_DIR}/../../platform/*.hpp" "${PROJECT_SOURCE_DIR}/../../platform/*.cpp"
+    "${PROJECT_SOURCE_DIR}/../../src/*.h" "${PROJECT_SOURCE_DIR}/../../src/*.hpp" "${PROJECT_SOURCE_DIR}/../../src/*.cpp"
+    "${PROJECT_SOURCE_DIR}/../../components/*.h" "${PROJECT_SOURCE_DIR}/../../components/*.hpp" "${PROJECT_SOURCE_DIR}/../../components/*.cpp"
+    "${PROJECT_SOURCE_DIR}/../../kit/*.h" "${PROJECT_SOURCE_DIR}/../../kit/*.hpp" "${PROJECT_SOURCE_DIR}/../../kit/*.cpp"
 )
 
 add_library(editor STATIC ${UIKIT_SRC})
 
 # Find SDL2
 find_package(SDL2 REQUIRED)
+find_package(SDL2_image REQUIRED)
 
 # Include SDL2 headers
-include_directories(${SDL2_INCLUDE_DIRS})
-
-# Link SDL2 library
-target_link_libraries(example PUBLIC ${SDL2_LIBRARIES})
 
 find_package(Vulkan REQUIRED)
 target_link_libraries(editor PUBLIC Vulkan::Vulkan)
-target_link_libraries(editor PUBLIC glfw)
 target_link_libraries(editor PUBLIC imgui)
 target_link_libraries(editor PUBLIC glm)
+include_directories(${SDL2_INCLUDE_DIRS})
+target_link_libraries(editor PUBLIC ${SDL2_LIBRARIES})
+target_link_libraries(editor PUBLIC SDL2_image) 
 target_link_libraries(editor PUBLIC stbimage)
 target_link_libraries(editor PUBLIC spdlog)
 
 
 # Liaison avec la bibliothèque partagée
 target_link_libraries(example PRIVATE example_shared)
-

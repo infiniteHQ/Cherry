@@ -93,6 +93,7 @@ namespace UIKit
 		bool DockIsDragging = false;
 		UIKit::DockEmplacement LastDraggingPlace = UIKit::DockEmplacement::DockBlank;
 		bool CreateNewWindow = false;
+		bool FromSave = false;
 		std::string DragOwner = "none";
 		int mouseX;
 		int mouseY;
@@ -105,6 +106,7 @@ namespace UIKit
 		std::string m_ParentAppWindow;
 		DockEmplacement m_DockPlace;
 		bool m_IsHandled;
+		bool m_FromSave;
 	};
 
 	struct SimpleStorageItem
@@ -140,17 +142,17 @@ namespace UIKit
 		{
 			SetIcon(m_Icon);
 		}
-		// AppWindow(const std::string& win_name, LOGO);
 
 		void push_event();
 		void CtxRender(std::vector<std::shared_ptr<RedockRequest>> *reqs, const std::string &winname);
-		std::shared_ptr<RedockRequest> CreateEvent(const std::string &parentWindow, DockEmplacement emplacement, const std::string &appWindow = "none")
+		std::shared_ptr<RedockRequest> CreateEvent(const std::string &parentWindow, DockEmplacement emplacement, const bool& fromSave = false,const std::string &appWindow = "none")
 		{
 			std::shared_ptr<RedockRequest> req = std::make_shared<RedockRequest>();
 			req->m_DockPlace = emplacement;
 			req->m_ParentAppWindow = appWindow;
 			req->m_ParentAppWindowHost = this->m_Name;
 			req->m_ParentWindow = parentWindow;
+			req->m_FromSave = fromSave;
 			return req;
 		}
 
@@ -266,6 +268,31 @@ namespace UIKit
 			m_DockingMode = use_docking;
 		}
 
+
+		void SetFetchedSaveData(const std::string &key, const std::string& value)
+		{
+			m_LastSaveData[key] = value;
+		}
+
+
+		void SetInstanciable()
+		{
+			m_AppWindowType = AppWindowTypes::InstanciableWindow;
+		}
+		
+
+		std::string GetFetchedSaveData(const std::string &key)
+		{
+			if (m_LastSaveData.find(key) != m_LastSaveData.end())
+			{
+				return m_LastSaveData[key];
+			}
+			else
+			{
+				return "undefined";
+			}
+		}
+
 		void SetParent(const std::shared_ptr<AppWindow> &parent);
 
 		bool CheckWinParent(const std::string &parentname);
@@ -277,7 +304,7 @@ namespace UIKit
 		int treated = 0;
 
 		// Main informations
-		std::vector<std::string> m_WinParents;
+		std::string m_WinParent;
 		std::string m_DockParent = "unknow";
 		std::string m_DockPlace = "unknow";
 		std::string m_Name = "unknow";
@@ -298,8 +325,13 @@ namespace UIKit
 
 		bool m_DockingMode = false;
 
+		// 
+		bool m_WindowRebuilded = false;
+
 		bool m_HaveParentAppWindow = false;
 		std::shared_ptr<AppWindow> m_ParentAppWindow;
+
+		AppWindowTypes m_AppWindowType = AppWindowTypes::StaticWindow;
 		// Notifications
 		// Number of unread notifs
 
@@ -320,6 +352,9 @@ namespace UIKit
 
 		// Advanced storage (json & metrics), can be also replicated in saves
 		std::unordered_map<std::string, std::shared_ptr<WindowStorageItem>> m_WindowStorage;
+
+		// Fetched datas from last save
+		std::unordered_map<std::string, std::string> m_LastSaveData;
 
 		// Default behaviors (docking behaviors, default themes, internal docking emplacements.)
 		std::unordered_map<DefaultAppWindowBehaviors, std::string, EnumClassHash> m_DefaultBehaviors;
@@ -500,6 +535,11 @@ namespace UIKit
 		bool WindowSaves = false;
 
 		bool DisableTitle = false;
+		bool DisableTitleBar = false;
+		bool DisableResize = false;
+		bool DisableWindowManagerTitleBar = false;
+		bool EnableDocking = false;
+
 		// Uses custom UIKit titlebar instead
 		// of Windows default
 		bool CustomTitlebar = false;
@@ -536,6 +576,7 @@ namespace UIKit
 		void SetMenubarCallback(const std::function<void()> &menubarCallback) { m_MenubarCallback = menubarCallback; }
 		void SetFramebarCallback(const std::function<void()> &framebarCallback) { m_FramebarCallback = framebarCallback; }
 		void SetCloseCallback(const std::function<bool()> &closeCallback) { m_CloseCallback = closeCallback; }
+		void SetMainRenderCallback(const std::function<void()> &mainRenderCallback) { m_MainRenderCallback = mainRenderCallback; }
 
 		std::shared_ptr<Window> GetCurrentRenderedWindow();
 		// void SyncImages();
@@ -601,6 +642,8 @@ namespace UIKit
 		void SaveData();
 		void SetWindowSaveDataFile(const std::string &path, const bool &relative = false);
 		void SynchronizeWindows();
+		std::vector<std::shared_ptr<AppWindow>> GetLastSaveInstanciableAppWindows();
+
 		std::vector<std::shared_ptr<Layer>> m_LayerStack;
 
 		std::string PutWindow(std::shared_ptr<AppWindow> win)
@@ -621,6 +664,7 @@ namespace UIKit
 		//            to application lifetime
 		std::function<void()> m_MenubarCallback;
 		std::function<void()> m_FramebarCallback;
+		std::function<void()> m_MainRenderCallback;
 		std::function<void()> m_CloseCallback; // need to destroy all windows manually
 
 		bool m_ClosePending = false;
@@ -630,7 +674,7 @@ namespace UIKit
 
 		std::string m_WindowSaveDataPath;
 		bool m_SaveWindowData = false;
-		bool m_IsDataSaved = false;
+		bool m_IsDataSaved = true;
 		bool m_IsDataInitialized = false;
 		nlohmann::json m_PreviousSaveData;
 
@@ -639,6 +683,7 @@ namespace UIKit
 		std::vector<std::shared_ptr<Window>> m_Windows;
 		std::vector<std::shared_ptr<RedockRequest>> m_RedockRequests;
 		std::vector<std::shared_ptr<AppWindow>> m_AppWindows;
+		std::vector<std::shared_ptr<AppWindow>> m_SavedAppWindows;
 		std::string m_FavIconPath;
 
 	private:
