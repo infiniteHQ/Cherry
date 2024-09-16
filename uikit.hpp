@@ -21,6 +21,7 @@
 #ifdef UIKIT_V1
 // Buttons
 #include "./kit/v1/components/buttons/custom_buttons.hpp"
+#include "./kit/v1/components/buttons/validation_buttons.hpp"
 #include "./kit/v1/components/buttons/danger_buttons.hpp"
 #include "./kit/v1/components/buttons/image_buttons.hpp"
 #include "./kit/v1/components/buttons/text_buttons.hpp"
@@ -41,6 +42,7 @@
 #include "./kit/v1/aio/appwindows/basic/empty_appwindow.hpp"
 #include "./kit/v1/aio/appwindows/basic/multi_child.hpp"
 #include "./kit/v1/aio/appwindows/docking/docking_appwindow.hpp"
+#include "./kit/v1/aio/appwindows/content/content_browser.hpp"
 
 #endif
 

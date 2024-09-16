@@ -8,12 +8,12 @@ namespace UIKit
     inline bool ImageButtonSimple(
         const std::string &label = "Button",
         const std::string &imgpath = "undefined",
-        const std::string &hex_bg_idle = "#3e3e3eff",
-        const std::string &hex_border_idle = "#3e3e3eff",
-        const std::string &hex_bg_hovered = "#5e5e5eff",
-        const std::string &hex_border_hovered = "#5e5e5eff",
-        const std::string &hex_bg_clicked = "#2e2e2eff",
-        const std::string &hex_border_clicked = "#2e2e2eff",
+        const std::string &hex_bg_idle = "#242424FF",
+        const std::string &hex_border_idle = "#454545B2",
+        const std::string &hex_bg_hovered = "#242424FF",
+        const std::string &hex_border_hovered = "#454545B2",
+        const std::string &hex_bg_clicked = "#242424FF",
+        const std::string &hex_border_clicked = "#454545B2",
         const ImVec2 &size = ImVec2(0, 22))
     {
         bool pressed = false;
@@ -44,12 +44,12 @@ namespace UIKit
     inline bool ImageButtonLowProfile(
         const std::string &label = "Button",
         const std::string &imgpath = "undefined",
-        const std::string &hex_bg_idle = "#3e3e3eff",
-        const std::string &hex_border_idle = "#3e3e3eff",
-        const std::string &hex_bg_hovered = "#5e5e5eff",
-        const std::string &hex_border_hovered = "#5e5e5eff",
-        const std::string &hex_bg_clicked = "#2e2e2eff",
-        const std::string &hex_border_clicked = "#2e2e2eff",
+        const std::string &hex_bg_idle = "#242424FF",
+        const std::string &hex_border_idle = "#454545B2",
+        const std::string &hex_bg_hovered = "#242424FF",
+        const std::string &hex_border_hovered = "#454545B2",
+        const std::string &hex_bg_clicked = "#242424FF",
+        const std::string &hex_border_clicked = "#454545B2",
         const ImVec2 &size = ImVec2(0, 18))
     {
         bool pressed = false;

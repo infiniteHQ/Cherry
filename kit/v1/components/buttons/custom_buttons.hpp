@@ -8,12 +8,12 @@ namespace UIKit
     inline bool CustomButtonSimple(
         const std::string &label,
         bool enabled = true,
-        const std::string &hex_bg_idle = "#3e3e3eff",
-        const std::string &hex_border_idle = "#3e3e3eff",
-        const std::string &hex_bg_hovered = "#5e5e5eff",
-        const std::string &hex_border_hovered = "#5e5e5eff",
-        const std::string &hex_bg_clicked = "#2e2e2eff",
-        const std::string &hex_border_clicked = "#2e2e2eff",
+        const std::string &hex_bg_idle = "#242424FF",
+        const std::string &hex_border_idle = "#454545B2",
+        const std::string &hex_bg_hovered = "#242424FF",
+        const std::string &hex_border_hovered = "#454545B2",
+        const std::string &hex_bg_clicked = "#242424FF",
+        const std::string &hex_border_clicked = "#454545B2",
         const ImVec2 &size = ImVec2(0, 0))
     {
         bool pressed = false;
@@ -38,17 +38,21 @@ namespace UIKit
 
     inline bool CustomButtonLowProfile(
         const std::string &label,
-        const std::string &hex_bg_idle = "#3e3e3eff",
-        const std::string &hex_border_idle = "#3e3e3eff",
-        const std::string &hex_bg_hovered = "#5e5e5eff",
-        const std::string &hex_border_hovered = "#5e5e5eff",
-        const std::string &hex_bg_clicked = "#2e2e2eff",
-        const std::string &hex_border_clicked = "#2e2e2eff",
-        const ImVec2 &size = ImVec2(0, 0))
+        const std::string &hex_bg_idle = "#242424FF",
+        const std::string &hex_border_idle = "#454545B2",
+        const std::string &hex_bg_hovered = "#242424FF",
+        const std::string &hex_border_hovered = "#454545B2",
+        const std::string &hex_bg_clicked = "#242424FF",
+        const std::string &hex_border_clicked = "#454545B2",
+        const ImVec2 &size = ImVec2(0, 15))
     {
         bool pressed = false;
 
-        ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2, 6));
+        ImVec2 text_size = ImGui::CalcTextSize(label.c_str());
+        float vertical_padding = (size.y - text_size.y) * 0.5f;
+
+        ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10, vertical_padding));
+
 
         ImGui::PushStyleColor(ImGuiCol_Border, HexToRGBA(hex_border_idle));
         ImGui::PushStyleColor(ImGuiCol_Button, HexToRGBA(hex_bg_idle));

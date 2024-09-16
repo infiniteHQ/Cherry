@@ -1,0 +1,101 @@
+{
+    "data": {
+        "windows": [
+            {
+                "app_windows": [
+                    {
+                        "data": {
+                            "simple_storage": [
+                                {
+                                    "key": "id",
+                                    "value": "test_window"
+                                },
+                                {
+                                    "key": "path",
+                                    "value": ""
+                                },
+                                {
+                                    "key": "type",
+                                    "value": "instanciable,static"
+                                },
+                                {
+                                    "key": "dockplace",
+                                    "value": "right"
+                                }
+                            ],
+                            "window_storage": []
+                        },
+                        "dockplace": "right",
+                        "id": "test_window",
+                        "name": "Content1",
+                        "type": "instanciable,static"
+                    },
+                    {
+                        "data": {
+                            "simple_storage": [
+                                {
+                                    "key": "window",
+                                    "value": "Content1"
+                                },
+                                {
+                                    "key": "id",
+                                    "value": "test_window"
+                                },
+                                {
+                                    "key": "path",
+                                    "value": ""
+                                },
+                                {
+                                    "key": "type",
+                                    "value": "instanciable,static"
+                                },
+                                {
+                                    "key": "dockplace",
+                                    "value": "right"
+                                }
+                            ],
+                            "window_storage": []
+                        },
+                        "dockplace": "right",
+                        "id": "test_window",
+                        "name": "Content2",
+                        "type": "instanciable,static"
+                    },
+                    {
+                        "data": {
+                            "simple_storage": [
+                                {
+                                    "key": "window",
+                                    "value": "Content1"
+                                },
+                                {
+                                    "key": "id",
+                                    "value": "test_window"
+                                },
+                                {
+                                    "key": "path",
+                                    "value": ""
+                                },
+                                {
+                                    "key": "type",
+                                    "value": "instanciable,static"
+                                },
+                                {
+                                    "key": "dockplace",
+                                    "value": "down"
+                                }
+                            ],
+                            "window_storage": []
+                        },
+                        "dockplace": "down",
+                        "id": "test_window",
+                        "name": "Content3",
+                        "type": "instanciable,static"
+                    }
+                ],
+                "name": "0"
+            }
+        ]
+    },
+    "save": true
+}

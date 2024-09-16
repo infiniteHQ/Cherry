@@ -107,6 +107,24 @@ namespace UIKit
 		bool m_IsHandled;
 	};
 
+	struct SimpleStorageItem
+	{
+		std::string m_Data;
+		bool m_Persistant;
+
+		SimpleStorageItem(const std::string &data, const bool &is_persistant) : m_Persistant(is_persistant),
+																				m_Data(data) {};
+	};
+
+	struct WindowStorageItem
+	{
+		nlohmann::json m_JsonData;
+		bool m_Persistant;
+
+		WindowStorageItem(const nlohmann::json &data, const bool &is_persistant) : m_Persistant(is_persistant),
+																				   m_JsonData(data) {};
+	};
+
 	class AppWindow
 	{
 	public:
@@ -139,11 +157,6 @@ namespace UIKit
 		std::shared_ptr<UIKit::Image> GetImage(const std::string &path);
 		ImTextureID *GetTexture(const std::string &path);
 
-		void SetSimpleStorage(const std::string &key, const std::string &value)
-		{
-			m_Storage[key] = value;
-		}
-
 		float EstimateMenubarRightWidth()
 		{
 			ImVec2 initialCursorPos = ImGui::GetCursorPos();
@@ -165,11 +178,19 @@ namespace UIKit
 			return width;
 		}
 
-		void SetWindowStorage(const std::string &key, const std::string &value)
+		void SetSimpleStorage(const std::string &key, const std::string &data, const bool &persistant)
 		{
+			std::shared_ptr<SimpleStorageItem> value = std::make_shared<SimpleStorageItem>(data, persistant);
+			m_Storage[key] = value;
+		}
+
+		void SetWindowStorage(const std::string &key, const nlohmann::json &data, const bool &persistant)
+		{
+			std::shared_ptr<WindowStorageItem> value = std::make_shared<WindowStorageItem>(data, persistant);
 			m_WindowStorage[key] = value;
 		}
-		std::string GetSimpleStorage(const std::string &key)
+
+		std::shared_ptr<SimpleStorageItem> GetSimpleStorage(const std::string &key)
 		{
 			if (m_Storage.find(key) != m_Storage.end())
 			{
@@ -177,10 +198,11 @@ namespace UIKit
 			}
 			else
 			{
-				return "undefined";
+				return nullptr;
 			}
 		}
-		std::string GetWindowStorage(const std::string &key)
+
+		std::shared_ptr<WindowStorageItem> GetWindowStorage(const std::string &key)
 		{
 			if (m_WindowStorage.find(key) != m_WindowStorage.end())
 			{
@@ -188,9 +210,20 @@ namespace UIKit
 			}
 			else
 			{
-				return "undefined";
+				return nullptr;
 			}
 		}
+
+		std::unordered_map<std::string, std::shared_ptr<WindowStorageItem>> DumpWindowStorage()
+		{
+			return m_WindowStorage;
+		}
+		std::unordered_map<std::string, std::shared_ptr<SimpleStorageItem>> DumpSimpleStorage()
+		{
+			return m_Storage;
+		}
+
+
 		void SetDefaultBehavior(DefaultAppWindowBehaviors behavior, const std::string &value)
 		{
 			m_DefaultBehaviors[behavior] = value;
@@ -234,7 +267,7 @@ namespace UIKit
 		}
 
 		void SetParent(const std::shared_ptr<AppWindow> &parent);
-		
+
 		bool CheckWinParent(const std::string &parentname);
 		void AddUniqueWinParent(const std::string &parentnale);
 		void AddWinParent(const std::string &parentnale);
@@ -281,8 +314,14 @@ namespace UIKit
 
 	private:
 		std::vector<std::shared_ptr<AppWindow>> m_SubAppWindows;
-		std::unordered_map<std::string, std::string> m_Storage;
-		std::unordered_map<std::string, std::string> m_WindowStorage;
+
+		// Simple storage (only Key/Value), can be replicated in saves
+		std::unordered_map<std::string, std::shared_ptr<SimpleStorageItem>> m_Storage;
+
+		// Advanced storage (json & metrics), can be also replicated in saves
+		std::unordered_map<std::string, std::shared_ptr<WindowStorageItem>> m_WindowStorage;
+
+		// Default behaviors (docking behaviors, default themes, internal docking emplacements.)
 		std::unordered_map<DefaultAppWindowBehaviors, std::string, EnumClassHash> m_DefaultBehaviors;
 	};
 
@@ -560,7 +599,7 @@ namespace UIKit
 		void RenderDockspace();
 		void InitializeWindowStates();
 		void SaveData();
-		void SetWindowSaveDataFile(const std::string &path);
+		void SetWindowSaveDataFile(const std::string &path, const bool &relative = false);
 		void SynchronizeWindows();
 		std::vector<std::shared_ptr<Layer>> m_LayerStack;
 

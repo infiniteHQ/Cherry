@@ -32,6 +32,7 @@ namespace UIKit
                                                      {
                                                          std::cout << "ok" << std::endl;
                                                      } });
+        Application::Get().PutWindow(m_AppWindow);
     }
     EmptyAppWindow::EmptyAppWindow()
     {
@@ -61,6 +62,7 @@ namespace UIKit
                                                      {
                                                          std::cout << "ok" << std::endl;
                                                      } });
+        Application::Get().PutWindow(m_AppWindow);
     }
     
     EmptyAppWindow::EmptyAppWindow(const std::string &name)
@@ -91,6 +93,7 @@ namespace UIKit
                                                      {
                                                          std::cout << "ok" << std::endl;
                                                      } });
+        Application::Get().PutWindow(m_AppWindow);
     }
 
 }

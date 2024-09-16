@@ -6,22 +6,24 @@
 namespace UIKit
 {
     
-    inline bool TextButtonUnderline(
-        const std::string &label,
-        bool enabled = true,
-        const std::string &hex_text_idle = "#999999ff",
-        const std::string &hex_text_hovered = "#BBBBBBff",
-        const std::string &hex_text_clicked = "#FFFFFFff",
-        const std::string &hex_underline_idle = "#494949ff",
-        const std::string &hex_underline_hovered = "#BBBBBBff",
-        const std::string &hex_underline_clicked = "#FFFFFFff",
-        const ImVec2 &size = ImVec2(0, 0))
+inline bool TextButtonUnderline(
+    const std::string &label,
+    bool enabled = true,
+    const std::string &hex_text_idle = "#999999ff",
+    const std::string &hex_text_hovered = "#BBBBBBff",
+    const std::string &hex_text_clicked = "#FFFFFFff",
+    const std::string &hex_underline_idle = "#494949ff",
+    const std::string &hex_underline_hovered = "#BBBBBBff",
+    const std::string &hex_underline_clicked = "#FFFFFFff",
+    const ImVec2 &size = ImVec2(0, 0),
+    float y_margin = 2.0f // Marge verticale supplémentaire
+)
 {
     bool pressed = false;
     int i = 0;
 
-    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
-    ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
+    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, y_margin)); // Ajout de marge verticale
+    ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, y_margin));  // Ajout de marge entre les éléments
 
     ImVec4 text_idle = HexToRGBA(hex_text_idle.c_str());
     ImVec4 text_hovered = HexToRGBA(hex_text_hovered.c_str());
@@ -30,12 +32,11 @@ namespace UIKit
     ImVec4 underline_hovered = HexToRGBA(hex_underline_hovered.c_str());
     ImVec4 underline_clicked = HexToRGBA(hex_underline_clicked.c_str());
 
-    ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0)); 
+    ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
     ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0, 0, 0, 0));
     ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0, 0, 0, 0));
     ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0, 0, 0, 0));
-    ImGui::PushStyleColor(ImGuiCol_Text, text_idle); 
-
+    ImGui::PushStyleColor(ImGuiCol_Text, text_idle);
 
     if (ImGui::Button(label.c_str(), size))
     {

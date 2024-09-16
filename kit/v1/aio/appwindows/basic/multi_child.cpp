@@ -36,7 +36,7 @@ namespace UIKit
 
             // [2.1] Right-click on the TableHeadersRow() line to open the default table context menu.
             ImGui::TableHeadersRow();
-            for (int row = 0; row < 4; row++)
+            for (int row = 0; row < 6; row++)
             {
                 ImGui::TableNextRow();
                 for (int column = 0; column < 4; column++)
@@ -130,7 +130,26 @@ namespace UIKit
                         }
                         else if(column == 2)
                         {
-    DangerButtonLowProfile("Low"); 
+    DangerButtonLowProfile("Delete"); 
+    }
+                        else if(column == 3)
+                        {
+                            ImGui::Button("Copy code");
+                        }
+                    }
+                    else if(row == 5)
+                    {
+                        if(column == 0)
+                        {
+                            ImGui::Text("Validation low profile button");
+                        }
+                        else if(column == 1)
+                        {
+                            ImGui::Text("This is a incredible Simpe Image button");
+                        }
+                        else if(column == 2)
+                        {
+    ValidationButtonLowProfile("Continue"); 
     }
                         else if(column == 3)
                         {
@@ -144,94 +163,86 @@ namespace UIKit
             ImGui::EndTable();
         } });
 
-        this->AddChild("Texts", [this]() {
+        this->AddChild("Texts", [this]()
+                       {
+                           ImGuiTableFlags flags2 = ImGuiTableFlags_Resizable | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Hideable | ImGuiTableFlags_Borders;
+                           if (ImGui::BeginTable("table_context_menu_2", 4, flags2))
+                           {
+                               ImGui::TableSetupColumn("Name");
+                               ImGui::TableSetupColumn("Description");
+                               ImGui::TableSetupColumn("Preview");
+                               ImGui::TableSetupColumn("Code");
 
-
-                        ImGuiTableFlags flags2 = ImGuiTableFlags_Resizable | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Hideable | ImGuiTableFlags_Borders;
-        if (ImGui::BeginTable("table_context_menu_2", 4, flags2))
-        {
-            ImGui::TableSetupColumn("Name");
-            ImGui::TableSetupColumn("Description");
-            ImGui::TableSetupColumn("Preview");
-            ImGui::TableSetupColumn("Code");
-
-            // [2.1] Right-click on the TableHeadersRow() line to open the default table context menu.
-            ImGui::TableHeadersRow();
-            for (int row = 0; row < 4; row++)
-            {
-                ImGui::TableNextRow();
-                for (int column = 0; column < 4; column++)
-                {
-                    ImGui::TableSetColumnIndex(column);
-                    if(row == 0)
-                    {
-                        if(column == 0)
-                        {
-                            ImGui::Text("Left centred text");
-                        }
-                        else if(column == 1)
-                        {
-                            ImGui::Text("This is a incredible Simpe Image button");
-                        }
-                        else if(column == 2)
-                        {
-                            SimpleTextLeft("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur."); 
-                        }
-                        else if(column == 3)
-                        {
-                            ImGui::Button("Copy code");
-                        }
-                    }
-                    else if(row == 1)
-                    {
-                        if(column == 0)
-                        {
-                            ImGui::Text("Centred text");
-                        }
-                        else if(column == 1)
-                        {
-                            ImGui::Text("This is a incredible Simpe Image button");
-                        }
-                        else if(column == 2)
-                        {                            
-                            SimpleTextCentred("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur."); 
-
-    }
-                        else if(column == 3)
-                        {
-                            ImGui::Button("Copy code");
-                        }
-                    }
-                    else if(row == 2)
-                    {
-                        if(column == 0)
-                        {
-                            ImGui::Text("Right centred text");
-                        }
-                        else if(column == 1)
-                        {
-                            ImGui::Text("This is a incredible Simpe Image button");
-                        }
-                        else if(column == 2)
-                        {                            
-                            SimpleTextRight("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur."); 
-
-    }
-                        else if(column == 3)
-                        {
-                            ImGui::Button("Copy code");
-                        }
-                    }
-                
-                    
-                }
-            
-            }
-            ImGui::EndTable();
-        }
-
-
-        });
+                               // [2.1] Right-click on the TableHeadersRow() line to open the default table context menu.
+                               ImGui::TableHeadersRow();
+                               for (int row = 0; row < 4; row++)
+                               {
+                                   ImGui::TableNextRow();
+                                   for (int column = 0; column < 4; column++)
+                                   {
+                                       ImGui::TableSetColumnIndex(column);
+                                       if (row == 0)
+                                       {
+                                           if (column == 0)
+                                           {
+                                               ImGui::Text("Left centred text");
+                                           }
+                                           else if (column == 1)
+                                           {
+                                               ImGui::Text("This is a incredible Simpe Image button");
+                                           }
+                                           else if (column == 2)
+                                           {
+                                               SimpleTextLeft("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.");
+                                           }
+                                           else if (column == 3)
+                                           {
+                                               ImGui::Button("Copy code");
+                                           }
+                                       }
+                                       else if (row == 1)
+                                       {
+                                           if (column == 0)
+                                           {
+                                               ImGui::Text("Centred text");
+                                           }
+                                           else if (column == 1)
+                                           {
+                                               ImGui::Text("This is a incredible Simpe Image button");
+                                           }
+                                           else if (column == 2)
+                                           {
+                                               SimpleTextCentred("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.");
+                                           }
+                                           else if (column == 3)
+                                           {
+                                               ImGui::Button("Copy code");
+                                           }
+                                       }
+                                       else if (row == 2)
+                                       {
+                                           if (column == 0)
+                                           {
+                                               ImGui::Text("Right centred text");
+                                           }
+                                           else if (column == 1)
+                                           {
+                                               ImGui::Text("This is a incredible Simpe Image button");
+                                           }
+                                           else if (column == 2)
+                                           {
+                                               SimpleTextRight("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.");
+                                           }
+                                           else if (column == 3)
+                                           {
+                                               ImGui::Button("Copy code");
+                                           }
+                                       }
+                                   }
+                               }
+                               ImGui::EndTable();
+                           }
+                       });
 
         this->AddChild("Titles", [this]()
                        {
@@ -486,8 +497,7 @@ namespace UIKit
                                    }
                                }
                                ImGui::EndTable();
-                           }
-                       });
+                           } });
         this->AddChild("Keyvals", [this]() {
 
         });
@@ -516,100 +526,92 @@ namespace UIKit
 
         });
 
-        this->AddChild("Headers", [this]() {
+        this->AddChild("Headers", [this]()
+                       {
+                           ImGuiTableFlags flags2 = ImGuiTableFlags_Resizable | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Hideable | ImGuiTableFlags_Borders;
+                           if (ImGui::BeginTable("table_context_menu_2", 4, flags2))
+                           {
+                               ImGui::TableSetupColumn("Name");
+                               ImGui::TableSetupColumn("Description");
+                               ImGui::TableSetupColumn("Preview");
+                               ImGui::TableSetupColumn("Code");
 
-                  ImGuiTableFlags flags2 = ImGuiTableFlags_Resizable | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Hideable | ImGuiTableFlags_Borders;
-        if (ImGui::BeginTable("table_context_menu_2", 4, flags2))
-        {
-            ImGui::TableSetupColumn("Name");
-            ImGui::TableSetupColumn("Description");
-            ImGui::TableSetupColumn("Preview");
-            ImGui::TableSetupColumn("Code");
+                               // [2.1] Right-click on the TableHeadersRow() line to open the default table context menu.
+                               ImGui::TableHeadersRow();
+                               for (int row = 0; row < 4; row++)
+                               {
+                                   ImGui::TableNextRow();
+                                   for (int column = 0; column < 4; column++)
+                                   {
+                                       ImGui::TableSetColumnIndex(column);
+                                       if (row == 0)
+                                       {
+                                           if (column == 0)
+                                           {
+                                               ImGui::Text("Collapsing Header");
+                                           }
+                                           else if (column == 1)
+                                           {
+                                               ImGui::Text("This is a incredible Simpe Image button");
+                                           }
+                                           else if (column == 2)
+                                           {
+                                               SimpleCollapsingHeader("Test", []()
+                                                                      { TitleOne("Content"); });
+                                           }
+                                           else if (column == 3)
+                                           {
+                                               ImGui::Button("Copy code");
+                                           }
+                                       }
+                                   }
+                               }
+                               ImGui::EndTable();
+                           }
+                       });
 
-            // [2.1] Right-click on the TableHeadersRow() line to open the default table context menu.
-            ImGui::TableHeadersRow();
-            for (int row = 0; row < 4; row++)
-            {
-                ImGui::TableNextRow();
-                for (int column = 0; column < 4; column++)
-                {
-                    ImGui::TableSetColumnIndex(column);
-                    if(row == 0)
-                    {
-                        if(column == 0)
-                        {
-                            ImGui::Text("Collapsing Header");
-                        }
-                        else if(column == 1)
-                        {
-                            ImGui::Text("This is a incredible Simpe Image button");
-                        }
-                        else if(column == 2)
-                        {
-SimpleCollapsingHeader("Test", [](){TitleOne("Content");});
-                        }
-                        else if(column == 3)
-                        {
-                            ImGui::Button("Copy code");
-                        }
-                    }
-                 
-                    
-                }
-            
-            }
-            ImGui::EndTable();
-        }
+        this->AddChild("Combos", [this]()
+                       {
+                           ImGuiTableFlags flags2 = ImGuiTableFlags_Resizable | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Hideable | ImGuiTableFlags_Borders;
+                           if (ImGui::BeginTable("table_context_menu_2", 4, flags2))
+                           {
+                               ImGui::TableSetupColumn("Name");
+                               ImGui::TableSetupColumn("Description");
+                               ImGui::TableSetupColumn("Preview");
+                               ImGui::TableSetupColumn("Code");
 
-        });
-
-
-        this->AddChild("Combos", [this]() {
-
-                  ImGuiTableFlags flags2 = ImGuiTableFlags_Resizable | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Hideable | ImGuiTableFlags_Borders;
-        if (ImGui::BeginTable("table_context_menu_2", 4, flags2))
-        {
-            ImGui::TableSetupColumn("Name");
-            ImGui::TableSetupColumn("Description");
-            ImGui::TableSetupColumn("Preview");
-            ImGui::TableSetupColumn("Code");
-
-            // [2.1] Right-click on the TableHeadersRow() line to open the default table context menu.
-            ImGui::TableHeadersRow();
-            for (int row = 0; row < 4; row++)
-            {
-                ImGui::TableNextRow();
-                for (int column = 0; column < 4; column++)
-                {
-                    ImGui::TableSetColumnIndex(column);
-                    if(row == 0)
-                    {
-                        if(column == 0)
-                        {
-                            ImGui::Text("Simple Combo");
-                        }
-                        else if(column == 1)
-                        {
-                            ImGui::Text("This is a incredible Simpe Image button");
-                        }
-                        else if(column == 2)
-                        {
-SimpleCombo("Test", {"My first item","My second item","My third item"}, 1);
-                        }
-                        else if(column == 3)
-                        {
-                            ImGui::Button("Copy code");
-                        }
-                    }
-                 
-                    
-                }
-            
-            }
-            ImGui::EndTable();
-        }
-
-        });
+                               // [2.1] Right-click on the TableHeadersRow() line to open the default table context menu.
+                               ImGui::TableHeadersRow();
+                               for (int row = 0; row < 4; row++)
+                               {
+                                   ImGui::TableNextRow();
+                                   for (int column = 0; column < 4; column++)
+                                   {
+                                       ImGui::TableSetColumnIndex(column);
+                                       if (row == 0)
+                                       {
+                                           if (column == 0)
+                                           {
+                                               ImGui::Text("Simple Combo");
+                                           }
+                                           else if (column == 1)
+                                           {
+                                               ImGui::Text("This is a incredible Simpe Image button");
+                                           }
+                                           else if (column == 2)
+                                           {
+                                               SimpleCombo("Test", {"My first item", "My second item", "My third item"}, 1);
+                                           }
+                                           else if (column == 3)
+                                           {
+                                               ImGui::Button("Copy code");
+                                           }
+                                       }
+                                   }
+                               }
+                               ImGui::EndTable();
+                           }
+                       });
 
         this->AddChild("Color Pickers", [this]() {
 
@@ -654,10 +656,15 @@ SimpleCombo("Test", {"My first item","My second item","My third item"}, 1);
                                        {
                                            static float leftPaneWidth = 300.0f;
                                            const float minPaneWidth = 50.0f;
-                                           const float splitterWidth = 2.0f;
+                                           const float splitterWidth = 1.5f;
                                            static int selected;
 
+
                                            ImGui::BeginChild("left pane", ImVec2(leftPaneWidth, 0), true, ImGuiWindowFlags_NoBackground);
+
+
+            TitleThree("Uikit Components");
+
         for (const auto &child : instance->m_Childs)                                           {
                                                if (child.first == instance->m_SelectedChildName)
                                                {
@@ -678,7 +685,10 @@ SimpleCombo("Test", {"My first item","My second item","My third item"}, 1);
                                            ImGui::EndChild();
 
                                            ImGui::SameLine();
+
+        ImGui::PushStyleColor(ImGuiCol_Button, HexToRGBA("#44444466"));
                                            ImGui::Button("splitter", ImVec2(splitterWidth, -1));
+                                           ImGui::PopStyleVar();
 
                                            if (ImGui::IsItemHovered())
                                            {

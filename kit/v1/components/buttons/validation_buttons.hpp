@@ -5,19 +5,24 @@
 
 namespace UIKit
 {
-    inline bool ValidationButtonSimple(
-        const std::string &label = "Continue",
-        const std::string &hex_bg_idle = "#3e3e3eff",
-        const std::string &hex_border_idle = "#3e3e3eff",
-        const std::string &hex_bg_hovered = "#5e5e5eff",
-        const std::string &hex_border_hovered = "#5e5e5eff",
-        const std::string &hex_bg_clicked = "#2e2e2eff",
-        const std::string &hex_border_clicked = "#2e2e2eff",
-        const ImVec2 &size = ImVec2(0, 0))
+    inline bool ValidationButtonLowProfile(
+        const std::string &label = "Cancel",
+        const std::string &hex_bg_idle = "#0074ffce",
+        const std::string &hex_border_idle = "#51bcffce",
+        const std::string &hex_bg_hovered = "#2d8dffce",
+        const std::string &hex_border_hovered = "#7cccff",
+        const std::string &hex_bg_clicked = "#67acfdce",
+        const std::string &hex_border_clicked = "#caebff",
+        const ImVec2 &size = ImVec2(0, 20))
     {
         bool pressed = false;
 
-        ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(6, 6));
+        ImVec2 text_size = ImGui::CalcTextSize(label.c_str());
+
+        float vertical_padding = (size.y - text_size.y) * 0.5f;
+
+        ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10, vertical_padding));
+ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 4.0f);
 
         ImGui::PushStyleColor(ImGuiCol_Border, HexToRGBA(hex_border_idle));
         ImGui::PushStyleColor(ImGuiCol_Button, HexToRGBA(hex_bg_idle));
@@ -30,7 +35,7 @@ namespace UIKit
         }
 
         ImGui::PopStyleColor(4);
-        ImGui::PopStyleVar();
+        ImGui::PopStyleVar(2);
 
         return pressed;
     }

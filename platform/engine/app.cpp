@@ -2942,18 +2942,17 @@ namespace UIKit
         ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
         static int counter = 0;
-        ImGui::Begin("Hello, world!"); // Create a window called "Hello, world!" and append into it.
+        ImGui::Begin("Hello, world!");
 
-        ImGui::Text("This is some useful text."); // Dis
+        ImGui::Text("This is some useful text.");
 
-        if (ImGui::Button("Button")) // Buttons return true when clicked (most widgets return true when edited/activated)
+        if (ImGui::Button("Button"))
             counter++;
         ImGui::SameLine();
         ImGui::Text("counter = %d", counter);
 
         ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
         ImGui::End();
-        // Ensure the current ImGui context is set for this window
 
         ImGui::Render();
         ImDrawData *main_draw_data = ImGui::GetDrawData();
@@ -2967,14 +2966,12 @@ namespace UIKit
         if (!main_is_minimized)
             FrameRender(wd, this, main_draw_data);
 
-        // Update and Render additional Platform Windows
         if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
         {
             ImGui::UpdatePlatformWindows();
             ImGui::RenderPlatformWindowsDefault();
         }
 
-        // Present Main Platform Window
         if (!main_is_minimized)
             FramePresent(wd, this);
     }
@@ -2984,13 +2981,10 @@ namespace UIKit
         std::string name = std::to_string(WinIDCount);
         ImGuiContext *res_ctx = ImGui::GetCurrentContext();
 
-        // Créer la nouvelle fenêtre
         std::shared_ptr<Window> new_win = std::make_shared<Window>(name, app->m_Specification.Width, app->m_Specification.Height);
 
-        // Ajouter la nouvelle fenêtre à la liste des fenêtres
         this->m_Windows.push_back(new_win);
 
-        // Restaurer le contexte ImGui
         ImGui::SetCurrentContext(res_ctx);
         return name;
     }
@@ -3013,19 +3007,15 @@ namespace UIKit
     {
         if (!m_IsDataInitialized)
         {
-            // Ensure that m_PreviousSaveData has been loaded from the file
             if (s_Instance->m_PreviousSaveData.find("data") != s_Instance->m_PreviousSaveData.end())
             {
-                // Retrieve the saved windows data
                 auto windowsJson = s_Instance->m_PreviousSaveData["data"].value("windows", nlohmann::json::array());
 
-                // Process each window
                 for (const auto &windowJson : windowsJson)
                 {
                     std::string windowName = windowJson.value("name", "");
                     bool opened = windowJson.value("opened", true);
 
-                    // Find or create the window
                     auto it = std::find_if(m_Windows.begin(), m_Windows.end(), [&windowName](const std::shared_ptr<Window> &w)
                                            { return w->GetName() == windowName; });
 
@@ -3036,12 +3026,10 @@ namespace UIKit
                     }
                     else
                     {
-                        // Create a new window if not found
                         // window = std::make_shared<Window>(windowName);
                         // m_Windows.push_back(window);
                     }
 
-                    // Retrieve and set up app windows
                     auto appWindowsJson = windowJson.value("app_windows", nlohmann::json::array());
                     for (const auto &appWindowJson : appWindowsJson)
                     {
@@ -3051,7 +3039,6 @@ namespace UIKit
                         std::string path = appWindowJson.value("path", "");
                         std::string id = appWindowJson.value("id", "");
 
-                        // Find or create the app window
                         auto appIt = std::find_if(s_Instance->m_AppWindows.begin(), s_Instance->m_AppWindows.end(), [&appWindowName](const std::shared_ptr<AppWindow> &aw)
                                                   { return aw->m_Name == appWindowName; });
 
@@ -3065,23 +3052,19 @@ namespace UIKit
                             //
                         }
 
-                        // Set app window properties
-                        appWindow->SetWindowStorage("dockplace", dockPlace);
-                        appWindow->SetWindowStorage("type", type);
-                        appWindow->SetWindowStorage("path", path);
-                        appWindow->SetWindowStorage("id", id);
+                        appWindow->SetSimpleStorage("dockplace", dockPlace, true);
+                        appWindow->SetSimpleStorage("type", type, true);
+                        appWindow->SetSimpleStorage("path", path, true);
+                        appWindow->SetSimpleStorage("id", id, true);
 
-                        // Associate the app window with the parent window
                         appWindow->CheckWinParent(windowName);
                     }
                 }
 
-                // Mark data as initialized
                 m_IsDataInitialized = true;
             }
             else
             {
-                // Handle case where "data" is missing (optional)
                 // throw std::time_error("No valid data found in m_PreviousSaveData.");
             }
         }
@@ -3116,12 +3099,49 @@ namespace UIKit
             {
                 if (app_window->CheckWinParent(window->GetName()))
                 {
+                    std::string dockspace_state = "default";
+
+                    if (app_window->GetSimpleStorage("dockplace"))
+                    {
+                        dockspace_state = app_window->GetSimpleStorage("dockplace")->m_Data;
+                    }
+
                     nlohmann::json appWindowJson;
                     appWindowJson["name"] = app_window->m_Name;
-                    appWindowJson["dockplace"] = app_window->GetWindowStorage("dockplace");
+                    appWindowJson["dockplace"] = dockspace_state;
                     appWindowJson["type"] = "instanciable,static";
-                    appWindowJson["data"] = "All data : instance content browser relativity, etyc..;";
                     appWindowJson["id"] = "test_window";
+
+                    nlohmann::json appWindowStorageJson;
+
+                    nlohmann::json simpleStorage = nlohmann::json::array();
+                    nlohmann::json windowStorage = nlohmann::json::array();
+
+                    for (auto &window_storage_item : app_window->DumpWindowStorage())
+                    {
+                        if (window_storage_item.second->m_Persistant)
+                        {
+                            nlohmann::json item;
+                            item["key"] = window_storage_item.first;
+                            item["value"] = window_storage_item.second->m_JsonData;
+                            windowStorage.push_back(item);
+                        }
+                    }
+
+                    for (auto &simple_storage_item : app_window->DumpSimpleStorage())
+                    {
+                        if (simple_storage_item.second->m_Persistant)
+                        {
+                            nlohmann::json item;
+                            item["key"] = simple_storage_item.first;
+                            item["value"] = simple_storage_item.second->m_Data;
+                            simpleStorage.push_back(item);
+                        }
+                    }
+                    appWindowStorageJson["simple_storage"] = simpleStorage;
+                    appWindowStorageJson["window_storage"] = windowStorage;
+
+                    appWindowJson["data"] = appWindowStorageJson;
 
                     appWindowsJson.push_back(appWindowJson);
                 }
@@ -3149,10 +3169,8 @@ namespace UIKit
     void Application::Run()
     {
         m_Running = true;
-std::cout << "Run1" << std::endl;
         while (m_Running)
         {
-std::cout << "Run1b" << std::endl;
             found_valid_drop_zone_global = false;
 
             /*std::cout << "=============== CURRENT DRAG/DROP STATE ================" << std::endl;
@@ -3210,7 +3228,6 @@ std::cout << "Run1b" << std::endl;
             }
             std::cout << "================================================" << std::endl;*/
 
-std::cout << "Run2" << std::endl;
             if (s_Instance->m_Specification.WindowSaves)
             {
                 if (!m_IsDataInitialized)
@@ -3224,24 +3241,22 @@ std::cout << "Run2" << std::endl;
                 }
             }
 
-std::cout << "Run3" << std::endl;
             if (c_CurrentDragDropState)
             {
                 if (c_CurrentDragDropState->CreateNewWindow)
                 {
                     std::string new_win_title = s_Instance->SpawnWindow();
-                        
+
                     c_CurrentDragDropState->LastDraggingPlace = DockEmplacement::DockFull;
                     c_CurrentDragDropState->LastDraggingAppWindow = "none";
                     c_CurrentDragDropState->LastDraggingWindow = new_win_title;
-                    
+
                     PushRedockEvent(c_CurrentDragDropState);
 
                     c_CurrentDragDropState->CreateNewWindow = false;
                 }
             }
 
-std::cout << "Run4" << std::endl;
             for (auto &window : m_Windows)
             {
                 // Refresh favicon
@@ -3254,13 +3269,11 @@ std::cout << "Run4" << std::endl;
                 }
             }
 
-std::cout << "Run5" << std::endl;
             for (auto &layer : m_LayerStack)
             {
                 layer->OnUpdate(m_TimeStep);
             }
 
-std::cout << "Run6" << std::endl;
             for (auto &app_win : m_AppWindows)
             {
                 if (app_win->m_WinParents.size() == 0)
@@ -3269,34 +3282,27 @@ std::cout << "Run6" << std::endl;
                 }
             }
 
-std::cout << "Run7" << std::endl;
             SDL_Event event;
             while (SDL_PollEvent(&event))
             {
-std::cout << "Run7a" << std::endl;
                 SDL_Window *focusedWindow = SDL_GetMouseFocus();
                 Uint32 focusedWindowID = focusedWindow ? SDL_GetWindowID(focusedWindow) : 0;
 
                 bool eventHandled = false;
 
-std::cout << "Run7b" << std::endl;
                 for (auto &window : m_Windows)
                 {
-std::cout << "Run7c" << std::endl;
                     c_CurrentRenderedWindow = window;
                     Uint32 windowID = SDL_GetWindowID(window->GetWindowHandle());
 
-std::cout << "Run7d" << std::endl;
                     if (focusedWindowID != 0 && windowID != focusedWindowID)
                     {
                         continue;
                     }
 
-std::cout << "Run7e" << std::endl;
                     ImGui::SetCurrentContext(window->m_ImGuiContext);
                     ImGui_ImplSDL2_ProcessEvent(&event);
 
-std::cout << "Run7f" << std::endl;
                     if (event.type == SDL_QUIT)
                     {
                         m_Running = false;
@@ -3304,38 +3310,29 @@ std::cout << "Run7f" << std::endl;
                         break;
                     }
 
-std::cout << "Run7g" << std::endl;
                     if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE && event.window.windowID == windowID)
                     {
                         m_Running = false;
                         eventHandled = true;
                         break;
                     }
-std::cout << "Run7h" << std::endl;
                 }
 
-std::cout << "Run7i" << std::endl;
                 if (eventHandled)
                 {
                     break;
                 }
-std::cout << "Run7j" << std::endl;
             }
 
-std::cout << "Run8" << std::endl;
             for (auto &req : m_RedockRequests)
             {
-std::cout << "Run8a" << std::endl;
                 for (auto &app_win : m_AppWindows)
                 {
-std::cout << "Run8b" << std::endl;
                     if (req->m_ParentAppWindowHost == app_win->m_Name)
                     {
-std::cout << "Run8c" << std::endl;
                         bool parentFound = false;
                         for (auto &win : m_Windows)
                         {
-std::cout << "Run8d" << std::endl;
                             if (win->GetName() == req->m_ParentWindow)
                             {
                                 app_win->AddUniqueWinParent(win->GetName());
@@ -3349,7 +3346,6 @@ std::cout << "Run8d" << std::endl;
                             }
                         }
 
-std::cout << "Run8e" << std::endl;
                         if (!parentFound)
                         {
                             app_win->AddUniqueWinParent("unknow");
@@ -3364,20 +3360,16 @@ std::cout << "Run8e" << std::endl;
 
             int i = 0;
 
-std::cout << "Run9" << std::endl;
             for (auto &window : m_Windows)
             {
-std::cout << "Run9a" << std::endl;
                 ImGui::SetCurrentContext(window->m_ImGuiContext);
                 c_CurrentRenderedWindow = window;
 
-std::cout << "Run9b" << std::endl;
                 if (c_MasterSwapChainRebuild)
                 {
                     window->g_SwapChainRebuild = true;
                 }
 
-std::cout << "Run9c" << std::endl;
                 if (window->g_SwapChainRebuild)
                 {
                     int width, height;
@@ -3391,43 +3383,35 @@ std::cout << "Run9c" << std::endl;
                     }
                 }
 
-std::cout << "Run9d" << std::endl;
                 ImGui_ImplVulkan_NewFrame();
                 ImGui_ImplSDL2_NewFrame();
 
-std::cout << "Run9e" << std::endl;
                 ImGui::SetCurrentContext(window->m_ImGuiContext);
                 ImGui::NewFrame();
 
-std::cout << "Run9f" << std::endl;
                 app->RenderWindow(window.get());
 
-std::cout << "Run9g" << std::endl;
                 if (c_DockIsDragging && c_CurrentDragDropState)
                 {
                     SDL_GetGlobalMouseState(&c_CurrentDragDropState->mouseX, &c_CurrentDragDropState->mouseY);
 
-std::cout << "Run9h" << std::endl;
                     {
-
                         float oldsize = ImGui::GetFont()->Scale;
                         ImGui::GetFont()->Scale *= 0.84;
                         ImGui::PushFont(ImGui::GetFont());
 
-                        ImVec4 grayColor = ImVec4(0.4f, 0.4f, 0.4f, 1.0f);              // Gris (50% blanc)
-                        ImVec4 graySeparatorColor = ImVec4(0.4f, 0.4f, 0.4f, 0.5f);     // Gris (50% blanc)
-                        ImVec4 darkBackgroundColor = ImVec4(0.15f, 0.15f, 0.15f, 1.0f); // Fond plus foncé
-                        ImVec4 lightBorderColor = ImVec4(0.2f, 0.2f, 0.2f, 1.0f);       // Bordure plus claire
+                        ImVec4 grayColor = ImVec4(0.4f, 0.4f, 0.4f, 1.0f);
+                        ImVec4 graySeparatorColor = ImVec4(0.4f, 0.4f, 0.4f, 0.5f);
+                        ImVec4 darkBackgroundColor = ImVec4(0.15f, 0.15f, 0.15f, 1.0f);
+                        ImVec4 lightBorderColor = ImVec4(0.2f, 0.2f, 0.2f, 1.0f);
 
-                        // Pousser le style pour le fond plus foncé
                         ImGui::PushStyleColor(ImGuiCol_PopupBg, darkBackgroundColor);
 
-                        // Pousser le style pour la bordure plus claire
                         ImGui::PushStyleColor(ImGuiCol_Border, lightBorderColor);
 
                         ImGui::PushStyleVar(ImGuiStyleVar_PopupRounding, 3.0f);
 
-                        ImGui::SetNextWindowPos(ImVec2((float)c_CurrentDragDropState->mouseX - 75, (float)c_CurrentDragDropState->mouseY - 25)); // Positionner la fenêtre
+                        ImGui::SetNextWindowPos(ImVec2((float)c_CurrentDragDropState->mouseX - 75, (float)c_CurrentDragDropState->mouseY - 25));
                         ImGui::SetNextWindowSize(ImVec2(170, 55));
                         ImGui::OpenPopup("FloatingRectangle");
                         if (ImGui::BeginPopup("FloatingRectangle"))
@@ -3442,47 +3426,40 @@ std::cout << "Run9h" << std::endl;
                             ImGui::EndPopup();
                         }
 
-                        ImGui::PopStyleVar();    // Pour les bords arrondis
-                        ImGui::PopStyleColor(2); // Pour le fond et la bordure
+                        ImGui::PopStyleVar();
+                        ImGui::PopStyleColor(2);
 
                         ImGui::GetFont()->Scale = oldsize;
                         ImGui::PopFont();
                     }
                 }
 
-std::cout << "Run9i" << std::endl;
                 ImGui_ImplVulkanH_Window *wd = &window->m_WinData;
                 ImGuiIO &io = ImGui::GetIO();
 
-std::cout << "Run9j" << std::endl;
                 ImGui::Render();
                 ImDrawData *main_draw_data = ImGui::GetDrawData();
                 const bool main_is_minimized = (main_draw_data->DisplaySize.x <= 0.0f || main_draw_data->DisplaySize.y <= 0.0f);
 
-std::cout << "Run9k" << std::endl;
                 if (!main_is_minimized)
                 {
                     FrameRender(wd, window.get(), main_draw_data);
                 }
 
-std::cout << "Run9l" << std::endl;
                 if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
                 {
                     ImGui::UpdatePlatformWindows();
                     ImGui::RenderPlatformWindowsDefault();
                 }
 
-std::cout << "Run9m" << std::endl;
                 if (!main_is_minimized)
                 {
                     FramePresent(wd, window.get());
                 }
-std::cout << "Run9n" << std::endl;
 
                 i++;
             }
 
-            // Mise à jour du temps
             float time = GetTime();
             m_FrameTime = time - m_LastFrameTime;
             m_TimeStep = glm::min<float>(m_FrameTime, 0.0333f);
@@ -4309,7 +4286,6 @@ std::cout << "Run9n" << std::endl;
     {
         ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDocking;
 
-std::cout << "RenderWindow1" << std::endl;
         ImGuiViewport *viewport = ImGui::GetMainViewport();
         ImGuiViewportP *p_viewport = window->m_ImGuiContext->Viewports[window->WinID];
 
@@ -4320,58 +4296,46 @@ std::cout << "RenderWindow1" << std::endl;
             viewport->DrawDataP.Clear();
         }
 
-std::cout << "RenderWindow2" << std::endl;
         ImGui::SetNextWindowPos(viewport->Pos);
         ImGui::SetNextWindowSize(viewport->Size);
         ImGui::SetNextWindowViewport(viewport->ID);
-std::cout << "RenderWindo3" << std::endl;
 
         float minWidth = this->m_Specification.MinWidth;
         float minHeight = this->m_Specification.MinHeight;
         ImGui::SetNextWindowSizeConstraints(ImVec2(minWidth, minHeight), ImVec2(FLT_MAX, FLT_MAX));
 
-std::cout << "RenderWindow4" << std::endl;
         ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
         ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
 
-std::cout << "RenderWindow5" << std::endl;
         window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse;
         window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
         if (!m_Specification.CustomTitlebar && m_MenubarCallback)
             window_flags |= ImGuiWindowFlags_MenuBar;
 
-std::cout << "RenderWindow6" << std::endl;
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(1.0f, 1.0f));
         ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 3.0f);
         ImGui::PushStyleColor(ImGuiCol_MenuBarBg, ImVec4{0.0f, 0.0f, 0.0f, 0.0f});
 
-std::cout << "RenderWindow7" << std::endl;
         std::string label = "DockSpaceWindow." + window->GetName();
         ImGui::SetNextWindowDockID(0);
         ImGui::Begin(label.c_str(), nullptr, window_flags);
         window->m_ImGuiWindow = ImGui::GetCurrentWindow();
 
-std::cout << "RenderWindow8" << std::endl;
         ImVec2 newSize = ImGui::GetWindowSize();
 
-std::cout << "RenderWindow9" << std::endl;
         SDL_Window *sdlWindow = window->GetWindowHandle();
         int sdlWidth, sdlHeight;
         SDL_GetWindowSize(sdlWindow, &sdlWidth, &sdlHeight);
 
-std::cout << "RenderWindow10" << std::endl;
         if (newSize.x < minWidth)
             newSize.x = minWidth;
         if (newSize.y < minHeight)
             newSize.y = minHeight;
 
-std::cout << "RenderWindow11" << std::endl;
         ImVec2 deltaSize = ImVec2(newSize.x - ImGui::GetWindowSize().x, newSize.y - ImGui::GetWindowSize().y);
 
-std::cout << "RenderWindow12" << std::endl;
         ImVec2 windowPos = ImGui::GetWindowPos();
 
-std::cout << "RenderWindow13" << std::endl;
         window->m_Resizing = false;
         if (newSize.x != sdlWidth || newSize.y != sdlHeight)
         {
@@ -4391,7 +4355,6 @@ std::cout << "RenderWindow13" << std::endl;
             SDL_SetWindowPosition(sdlWindow, static_cast<int>(windowPos.x), static_cast<int>(windowPos.y));
         }
 
-std::cout << "RenderWindow14" << std::endl;
         ImGuiWindow *win = ImGui::GetCurrentWindow();
 
         ImGui::PopStyleColor(); // MenuBarBg
@@ -4404,7 +4367,6 @@ std::cout << "RenderWindow14" << std::endl;
             ImGui::SetCursorPosY(titleBarHeight);
         }
 
-std::cout << "RenderWindow15" << std::endl;
         ImGuiIO &io = ImGui::GetIO();
         ImGuiStyle &style = ImGui::GetStyle();
         float minWinSizeX = style.WindowMinSize.x;
@@ -4446,7 +4408,6 @@ std::cout << "RenderWindow15" << std::endl;
         ImVec2 mouse_pos = ImGui::GetMousePos();
         ImDrawList *draw_list = ImGui::GetWindowDrawList();
 
-std::cout << "RenderWindow16" << std::endl;
         if (c_DockIsDragging)
         {
             for (auto &appwin : m_AppWindows)
@@ -4455,7 +4416,6 @@ std::cout << "RenderWindow16" << std::endl;
                 {
                     if (!appwin->m_HaveParentAppWindow)
                     {
-std::cout << "RenderWindow17" << std::endl;
                         ShowDockingPreview(dockspaceID, window, c_CurrentDragDropState);
                     }
                 }
@@ -4472,7 +4432,6 @@ std::cout << "RenderWindow17" << std::endl;
                     {
                         if (subwin->m_ParentAppWindow->m_Name == appwindow->m_Name)
                         {
-std::cout << "RenderWindow18" << std::endl;
                             appwindow->CtxRender(&m_RedockRequests, window->GetName());
                         }
                     }
@@ -4482,7 +4441,6 @@ std::cout << "RenderWindow18" << std::endl;
             {
                 if (appwindow->CheckWinParent(window->GetName()) && !appwindow->m_HaveParentAppWindow)
                 {
-std::cout << "RenderWindow19" << std::endl;
                     appwindow->CtxRender(&m_RedockRequests, window->GetName());
                 }
             }
@@ -4543,8 +4501,14 @@ std::cout << "RenderWindow19" << std::endl;
         return IM_COL32(r, g, b, a);
     }
 
-    void Application::SetWindowSaveDataFile(const std::string &path)
+    void Application::SetWindowSaveDataFile(const std::string &input_path, const bool &relative)
     {
+        std::string path = input_path;
+        if (relative)
+        {
+            path = std::filesystem::current_path().string() + "/" + path;
+        }
+
         std::filesystem::path filePath(path);
 
         if (!std::filesystem::exists(filePath.parent_path()))
@@ -4559,7 +4523,7 @@ std::cout << "RenderWindow19" << std::endl;
                 std::ifstream inputFile(path);
                 if (!inputFile)
                 {
-                    // throw std::time_error("Unable to open file for reading: " + path);
+                    std::cout << "Unable to open file for reading: " << path << std::endl;
                 }
 
                 inputFile >> m_PreviousSaveData;
@@ -4572,14 +4536,14 @@ std::cout << "RenderWindow19" << std::endl;
             }
             else
             {
-                // throw std::time_error("The specified path is not a valid file: " + path);
+                std::cout << "The specified path is not a valid file: " << path << std::endl;
             }
         }
 
         std::ofstream outputFile(path);
         if (!outputFile)
         {
-            // throw std::time_error("Unable to create or open file: " + path);
+            std::cout << "Unable to create or open file: " << path << std::endl;
         }
 
         nlohmann::json jsonData = {{"save", true}};
@@ -4616,7 +4580,6 @@ std::cout << "RenderWindow19" << std::endl;
 
     void AppWindow::CtxRender(std::vector<std::shared_ptr<RedockRequest>> *reqs, const std::string &winname)
     {
-std::cout << "CtxRender1" << std::endl;
         if (!m_IsRendering)
         {
             return;
@@ -4628,7 +4591,6 @@ std::cout << "CtxRender1" << std::endl;
             m_IsRendering = false;
         }
 
-std::cout << "CtxRender2" << std::endl;
         ImGuiID dockspaceID;
 
         if (m_HaveParentAppWindow)
@@ -4639,7 +4601,6 @@ std::cout << "CtxRender2" << std::endl;
         {
             dockspaceID = ImGui::GetID("MainDockspace");
         }
-std::cout << "CtxRender3" << std::endl;
 
         /*std::cout << "reqs size : " << reqs->size() << std::endl;
         std::cout << "last error  : " << dd << std::endl;
@@ -4654,7 +4615,6 @@ std::cout << "CtxRender3" << std::endl;
             s_Instance->m_IsDataSaved = false;
         }
 
-std::cout << "CtxRender4" << std::endl;
         ImGuiWindow *currentWindow = ImGui::FindWindowByName(this->m_Name.c_str());
 
         if (currentWindow && currentWindow->DockId == 0)
@@ -4663,7 +4623,6 @@ std::cout << "CtxRender4" << std::endl;
             s_Instance->m_IsDataSaved = false;
         }
 
-std::cout << "CtxRender5" << std::endl;
         for (auto it = reqs->begin(); it != reqs->end();)
         {
             const auto &req = *it;
@@ -4673,6 +4632,8 @@ std::cout << "CtxRender5" << std::endl;
 
             ImGuiWindow *splitwindow = nullptr;
             ImGuiWindow *currentwindow = nullptr;
+
+            s_Instance->m_IsDataSaved = false;
 
             for (int i = windows.Size - 1; i >= 0; --i)
             {
@@ -4699,9 +4660,7 @@ std::cout << "CtxRender5" << std::endl;
                 }
             }
 
-            s_Instance->m_IsDataSaved = false;
-
-            SetWindowStorage("window", req->m_ParentAppWindow);
+            SetSimpleStorage("window", req->m_ParentAppWindow, true);
 
             if (LastWindowPressed != "none")
             {
@@ -4766,18 +4725,23 @@ std::cout << "CtxRender5" << std::endl;
             {
             case DockEmplacement::DockUp:
                 newDockID = ImGui::DockBuilderSplitNode(parentDockID, ImGuiDir_Up, 0.5f, nullptr, &parentDockID);
+                this->SetSimpleStorage("dockplace", "up", true);
                 break;
             case DockEmplacement::DockDown:
                 newDockID = ImGui::DockBuilderSplitNode(parentDockID, ImGuiDir_Down, 0.5f, nullptr, &parentDockID);
+                this->SetSimpleStorage("dockplace", "down", true);
                 break;
             case DockEmplacement::DockLeft:
                 newDockID = ImGui::DockBuilderSplitNode(parentDockID, ImGuiDir_Left, 0.3f, nullptr, &parentDockID);
+                this->SetSimpleStorage("dockplace", "left", true);
                 break;
             case DockEmplacement::DockRight:
                 newDockID = ImGui::DockBuilderSplitNode(parentDockID, ImGuiDir_Right, 0.3f, nullptr, &parentDockID);
+                this->SetSimpleStorage("dockplace", "right", true);
                 break;
             case DockEmplacement::DockFull:
                 newDockID = parentDockID;
+                this->SetSimpleStorage("dockplace", "full", true);
                 break;
             }
 
@@ -4792,44 +4756,34 @@ std::cout << "CtxRender5" << std::endl;
             it = reqs->erase(it);
         }
 
-        // Crash when redock a subappwin to another appwin instance in another window
-
-std::cout << "CtxRender6" << std::endl;
         ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoMove;
 
         ImGui::PushStyleVar(ImGuiStyleVar_PopupRounding, 3.0f);
         ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10, 12));
         if (this->GetImage(m_Icon))
         {
-std::cout << "CtxRender7" << std::endl;
             static ImTextureID texture = this->GetImage(m_Icon)->GetImGuiTextureID(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
             if (m_Closable)
             {
-std::cout << "CtxRender7a" << std::endl;
                 ImGui::UIKit_BeginLogoWindow(m_Name.c_str(), &texture, &m_Opened, window_flags);
             }
             else
             {
-std::cout << "CtxRender7b" << std::endl;
                 ImGui::UIKit_BeginLogoWindow(m_Name.c_str(), &texture, NULL, window_flags);
             }
         }
         else
         {
-std::cout << "CtxRender8" << std::endl;
             if (m_Closable)
             {
-std::cout << "CtxRender8a" << std::endl;
                 ImGui::Begin(m_Name.c_str(), &m_Opened, window_flags);
             }
             else
             {
-std::cout << "CtxRender8b" << std::endl;
                 ImGui::Begin(m_Name.c_str(), NULL, window_flags);
             }
         }
 
-std::cout << "CtxRender9" << std::endl;
         if (ImGui::BeginMenuBar())
         {
             float oldsize = ImGui::GetFont()->Scale;
@@ -4867,13 +4821,10 @@ std::cout << "CtxRender9" << std::endl;
             ImGui::EndMenuBar();
         }
 
-std::cout << "CtxRender10" << std::endl;
         ImGui::PopStyleVar(2);
 
-std::cout << "CtxRender11" << std::endl;
         ImGuiContext *ctx = ImGui::GetCurrentContext();
 
-std::cout << "CtxRender12" << std::endl;
         std::shared_ptr<Window> wind;
 
         for (auto &win : s_Instance->m_Windows)
@@ -4883,7 +4834,6 @@ std::cout << "CtxRender12" << std::endl;
                 wind = win;
             }
         }
-std::cout << "CtxRender13" << std::endl;
 
         // Drag
         if (ctx->DockTabStaticSelection.Pressed)
@@ -4901,12 +4851,12 @@ std::cout << "CtxRender13" << std::endl;
         {
             if (!ctx->DockTabStaticSelection.Pressed)
             {
-                //if (this->CheckWinParent(winname)) 
+                // if (this->CheckWinParent(winname))
                 //{
-                    if (wind->drag_dropstate.LastDraggingPlace == DockEmplacement::DockBlank)
-                    {
-                        wind->drag_dropstate.CreateNewWindow = true;
-                    }
+                if (wind->drag_dropstate.LastDraggingPlace == DockEmplacement::DockBlank)
+                {
+                    wind->drag_dropstate.CreateNewWindow = true;
+                }
                 //}
 
                 /*if (m_HaveParentAppWindow)
@@ -4922,20 +4872,19 @@ std::cout << "CtxRender13" << std::endl;
             }
         }
 
-std::cout << "CtxRender14" << std::endl;
-            ImGuiID dockID = ImGui::GetID("AppWindowDockspace");
-            float oldsize = ImGui::GetFont()->Scale;
-            ImGui::GetFont()->Scale *= 0.84;
-            ImGui::PushFont(ImGui::GetFont());
+        ImGuiID dockID = ImGui::GetID("AppWindowDockspace");
+        float oldsize = ImGui::GetFont()->Scale;
+        ImGui::GetFont()->Scale *= 0.84;
+        ImGui::PushFont(ImGui::GetFont());
 
-            ImVec4 grayColor = ImVec4(0.4f, 0.4f, 0.4f, 1.0f);
-            ImVec4 graySeparatorColor = ImVec4(0.4f, 0.4f, 0.4f, 0.5f);
-            ImVec4 darkBackgroundColor = ImVec4(0.15f, 0.15f, 0.15f, 1.0f);
-            ImVec4 lightBorderColor = ImVec4(0.2f, 0.2f, 0.2f, 1.0f);
+        ImVec4 grayColor = ImVec4(0.4f, 0.4f, 0.4f, 1.0f);
+        ImVec4 graySeparatorColor = ImVec4(0.4f, 0.4f, 0.4f, 0.5f);
+        ImVec4 darkBackgroundColor = ImVec4(0.15f, 0.15f, 0.15f, 1.0f);
+        ImVec4 lightBorderColor = ImVec4(0.2f, 0.2f, 0.2f, 1.0f);
 
-            ImGui::PushStyleColor(ImGuiCol_PopupBg, darkBackgroundColor);
+        ImGui::PushStyleColor(ImGuiCol_PopupBg, darkBackgroundColor);
 
-            ImGui::PushStyleColor(ImGuiCol_Border, lightBorderColor);
+        ImGui::PushStyleColor(ImGuiCol_Border, lightBorderColor);
 
         if (m_DockingMode)
         {
@@ -4992,15 +4941,14 @@ std::cout << "CtxRender14" << std::endl;
         {
             if (!m_HaveParentAppWindow)
             {
-std::cout << "CtxRender154" << std::endl;
                 this->m_Render();
             }
         }
 
-            ImGui::PopStyleColor(2);
+        ImGui::PopStyleColor(2);
 
-            ImGui::GetFont()->Scale = oldsize;
-            ImGui::PopFont();
+        ImGui::GetFont()->Scale = oldsize;
+        ImGui::PopFont();
 
         ImGui::End();
     }

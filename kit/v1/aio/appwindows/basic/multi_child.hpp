@@ -7,6 +7,7 @@
 #include "../../../components/buttons/custom_buttons.hpp"
 #include "../../../components/buttons/image_buttons.hpp"
 #include "../../../components/buttons/danger_buttons.hpp"
+#include "../../../components/buttons/validation_buttons.hpp"
 #include "../../../components/buttons/text_buttons.hpp"
 #include "../../../components/titles/h1.hpp"
 #include "../../../components/titles/h2.hpp"

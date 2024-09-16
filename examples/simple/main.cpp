@@ -27,24 +27,23 @@ UIKit::Application *UIKit::CreateApplication(int argc, char **argv)
   spec.MinWidth = 500;
   spec.CustomTitlebar = true;
   spec.DisableTitle = true;
+  spec.WindowSaves = true;
   spec.IconPath = "icon.png";
 
   UIKit::Application *app = new UIKit::Application(spec);
-  app->SetWindowSaveDataFile("/home/diego/savedatda.json");
+  app->SetWindowSaveDataFile("savedatda.json", true);
   app->SetFavIconPath("/usr/local/include/Vortex/imgs/vortex.png");
 
   app->PushLayer(layer);
   app->SetMenubarCallback([app, layer]()
                           {
-                            ImVec4 grayColor = ImVec4(0.4f, 0.4f, 0.4f, 1.0f);              // Gris (50% blanc)
-                            ImVec4 graySeparatorColor = ImVec4(0.4f, 0.4f, 0.4f, 0.5f);     // Gris (50% blanc)
-                            ImVec4 darkBackgroundColor = ImVec4(0.15f, 0.15f, 0.15f, 1.0f); // Fond plus foncé
-                            ImVec4 lightBorderColor = ImVec4(0.2f, 0.2f, 0.2f, 1.0f);       // Bordure plus claire
+                            ImVec4 grayColor = ImVec4(0.4f, 0.4f, 0.4f, 1.0f);        
+                            ImVec4 graySeparatorColor = ImVec4(0.4f, 0.4f, 0.4f, 0.5f);
+                            ImVec4 darkBackgroundColor = ImVec4(0.15f, 0.15f, 0.15f, 1.0f);
+                            ImVec4 lightBorderColor = ImVec4(0.2f, 0.2f, 0.2f, 1.0f);       
 
-                            // Pousser le style pour le fond plus foncé
                             ImGui::PushStyleColor(ImGuiCol_PopupBg, darkBackgroundColor);
 
-                            // Pousser le style pour la bordure plus claire
                             ImGui::PushStyleColor(ImGuiCol_Border, lightBorderColor);
 
                             ImGui::PushStyleVar(ImGuiStyleVar_PopupRounding, 3.0f);
@@ -127,8 +126,8 @@ UIKit::Application *UIKit::CreateApplication(int argc, char **argv)
                               ImGui::EndMenu();
                             }
 
-                            ImGui::PopStyleVar();    // Pour les bords arrondis
-                            ImGui::PopStyleColor(2); // Pour le fond et la bordure
+                            ImGui::PopStyleVar();  
+                            ImGui::PopStyleColor(2); 
                           });
 
   /*app->SetCloseCallback([app, layer]()
@@ -137,8 +136,18 @@ UIKit::Application *UIKit::CreateApplication(int argc, char **argv)
     std::cout << "QDS" << std::endl;
                           });*/
 
-        std::shared_ptr<MultiChildAppWindow> windododf = std::make_shared<UIKit::MultiChildAppWindow>("doc");
-        windododf->RefreshRender(windododf);
+        //std::shared_ptr<ContentBrowserAppWindow> windododf = std::make_shared<UIKit::ContentBrowserAppWindow>("Content Brobro", "/home/diego/.vx");
+        //windododf->RefreshRender(windododf);
+
+        std::shared_ptr<MultiChildAppWindow> qsd = std::make_shared<UIKit::MultiChildAppWindow>("Content1");
+        qsd->RefreshRender(qsd);
+
+        std::shared_ptr<EmptyAppWindow> qsdd = std::make_shared<UIKit::EmptyAppWindow>("Content2");
+        //qsdd->RefreshRender(qsdd);
+
+        std::shared_ptr<EmptyAppWindow> qsdf = std::make_shared<UIKit::EmptyAppWindow>("Content3");
+        //qsdf->RefreshRender(qsdf);
+
 
 
   return app;
