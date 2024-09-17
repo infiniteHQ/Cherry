@@ -6,16 +6,21 @@
                     "simple_storage": [
                         {
                             "key": "dockplace",
-                            "value": "full"
+                            "value": "down"
                         },
                         {
                             "key": "window",
+                            "value": "unknown"
+                        },
+                        {
+                            "key": "docknodeparent",
                             "value": "unknown"
                         }
                     ],
                     "window_storage": []
                 },
-                "dockplace": "full",
+                "docknodeparent": "unknown",
+                "dockplace": "down",
                 "id": "test_window",
                 "name": "Content1",
                 "type": "instanciable,static",
@@ -30,11 +35,16 @@
                         },
                         {
                             "key": "window",
-                            "value": "unknown"
+                            "value": "none"
+                        },
+                        {
+                            "key": "docknodeparent",
+                            "value": "none"
                         }
                     ],
                     "window_storage": []
                 },
+                "docknodeparent": "none",
                 "dockplace": "full",
                 "id": "test_window",
                 "name": "Content2",
@@ -46,20 +56,25 @@
                     "simple_storage": [
                         {
                             "key": "dockplace",
-                            "value": "full"
+                            "value": "right"
                         },
                         {
                             "key": "window",
-                            "value": "none"
+                            "value": "Content2"
+                        },
+                        {
+                            "key": "docknodeparent",
+                            "value": "Content2"
                         }
                     ],
                     "window_storage": []
                 },
-                "dockplace": "full",
+                "docknodeparent": "Content2",
+                "dockplace": "right",
                 "id": "test_window",
                 "name": "Content3",
                 "type": "instanciable,static",
-                "win": "1"
+                "win": "0"
             }
         ]
     },
