@@ -10,31 +10,6 @@
                         },
                         {
                             "key": "window",
-                            "value": "unknown"
-                        },
-                        {
-                            "key": "docknodeparent",
-                            "value": "unknown"
-                        }
-                    ],
-                    "window_storage": []
-                },
-                "docknodeparent": "unknown",
-                "dockplace": "down",
-                "id": "test_window",
-                "name": "Content1",
-                "type": "instanciable,static",
-                "win": "0"
-            },
-            {
-                "data": {
-                    "simple_storage": [
-                        {
-                            "key": "dockplace",
-                            "value": "full"
-                        },
-                        {
-                            "key": "window",
                             "value": "none"
                         },
                         {
@@ -45,34 +20,9 @@
                     "window_storage": []
                 },
                 "docknodeparent": "none",
-                "dockplace": "full",
+                "dockplace": "down",
                 "id": "test_window",
-                "name": "Content2",
-                "type": "instanciable,static",
-                "win": "0"
-            },
-            {
-                "data": {
-                    "simple_storage": [
-                        {
-                            "key": "dockplace",
-                            "value": "right"
-                        },
-                        {
-                            "key": "window",
-                            "value": "Content2"
-                        },
-                        {
-                            "key": "docknodeparent",
-                            "value": "Content2"
-                        }
-                    ],
-                    "window_storage": []
-                },
-                "docknodeparent": "Content2",
-                "dockplace": "right",
-                "id": "test_window",
-                "name": "Content3",
+                "name": "Content1",
                 "type": "instanciable,static",
                 "win": "0"
             }

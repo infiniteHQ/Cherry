@@ -3234,6 +3234,9 @@ namespace UIKit
                     s_Instance->SaveData();
                 }
 
+                if(s_Instance->m_Specification.EnableDocking)
+                {
+
                 for (auto &appwin : s_Instance->m_AppWindows)
                 {
                     bool dockplace_initialized = false;
@@ -3323,7 +3326,6 @@ namespace UIKit
                                         s_Instance->SpawnWindow(savedappwin->GetFetchedSaveData("win"));
                                     }
 
-
                                     bool win_initialized = true;
                                 }
                             }
@@ -3373,9 +3375,12 @@ namespace UIKit
                         appwin->m_WindowRebuilded = true;
                     }
                 }
+            
+                }
             }
             else
             {
+                
                 for (auto &appwin : s_Instance->m_AppWindows)
                 {
                     if (!appwin->m_WindowRebuilded)
@@ -3583,6 +3588,9 @@ namespace UIKit
                 }
             }
 
+                if(s_Instance->m_Specification.EnableDocking)
+                {
+
             for (auto &req : m_RedockRequests)
             {
                 for (auto &app_win : m_AppWindows)
@@ -3614,7 +3622,7 @@ namespace UIKit
                     }
                 }
             }
-
+                }
             drag_rendered = false;
 
             int i = 0;
@@ -4685,27 +4693,19 @@ namespace UIKit
                 }
             }
 
-            for (auto appwindow : m_AppWindows)
+            for (auto &appwindow : m_AppWindows)
             {
-                if (appwindow->CheckWinParent(window->GetName()) && appwindow->m_DockingMode)
+                for (auto &childappwindow : appwindow->m_SubAppWindows)
                 {
-                    for (auto &subwin : m_AppWindows)
-                    {
-                        if (subwin->m_ParentAppWindow)
-                        {
-                            if (subwin->m_ParentAppWindow->m_Name == appwindow->m_Name)
-                            {
-                                appwindow->CtxRender(&m_RedockRequests, window->GetName());
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    if (appwindow->CheckWinParent(window->GetName()) && !appwindow->m_HaveParentAppWindow)
+                    if (childappwindow->CheckWinParent(window->GetName()))
                     {
                         appwindow->CtxRender(&m_RedockRequests, window->GetName());
                     }
+                }
+
+                if (appwindow->CheckWinParent(window->GetName()))
+                {
+                    appwindow->CtxRender(&m_RedockRequests, window->GetName());
                 }
             }
         }

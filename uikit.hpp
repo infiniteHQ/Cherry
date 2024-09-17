@@ -25,6 +25,7 @@
 #include "./kit/v1/components/buttons/danger_buttons.hpp"
 #include "./kit/v1/components/buttons/image_buttons.hpp"
 #include "./kit/v1/components/buttons/text_buttons.hpp"
+#include "./kit/v1/components/buttons/cancel_buttons.hpp"
 // Headers
 #include "./kit/v1/components/headers/simple_collapsing.hpp"
 // Texts

@@ -129,8 +129,7 @@ UIKit::Application *UIKit::CreateApplication(int argc, char **argv)
                             }
 
                             ImGui::PopStyleVar();  
-                            ImGui::PopStyleColor(2); 
-                          });
+                            ImGui::PopStyleColor(2); });
 
   /*app->SetCloseCallback([app, layer]()
                           {
@@ -138,19 +137,27 @@ UIKit::Application *UIKit::CreateApplication(int argc, char **argv)
     std::cout << "QDS" << std::endl;
                           });*/
 
-        //std::shared_ptr<ContentBrowserAppWindow> windododf = std::make_shared<UIKit::ContentBrowserAppWindow>("Content Brobro", "/home/diego/.vx");
-        //windododf->RefreshRender(windododf);
+  // std::shared_ptr<ContentBrowserAppWindow> windododf = std::make_shared<UIKit::ContentBrowserAppWindow>("Content Brobro", "/home/diego/.vx");
+  // windododf->RefreshRender(windododf);
 
-        std::shared_ptr<MultiChildAppWindow> qsd = std::make_shared<UIKit::MultiChildAppWindow>("Content1");
-        qsd->RefreshRender(qsd);
+  std::shared_ptr<EmptyAppWindow> qsd = std::make_shared<UIKit::EmptyAppWindow>("Content1");
 
-        std::shared_ptr<EmptyAppWindow> qsdd = std::make_shared<UIKit::EmptyAppWindow>("Content2");
-        //qsdd->RefreshRender(qsdd);
+  qsd->m_AppWindow->SetRenderCallback([qsd]()
+                                      {
+                                        if (qsd->cp_ButtonOne->Render("2"))
+                                        {
+                                        }
 
-        std::shared_ptr<EmptyAppWindow> qsdf = std::make_shared<UIKit::EmptyAppWindow>("Content3");
-        //qsdf->RefreshRender(qsdf);
 
+                                        if (qsd->cp_ButtonOne->Render("1"))
+                                        {
+                                        }
 
+                                        std::cout << Application::Get().GetComponentData("button_1", "isButtonPressed") << std::endl;
+                                        std::cout << Application::Get().GetComponentData("button_1", "lastButtonClick") << std::endl;
+                                      });
+
+  // qsdf->RefreshRender(qsdf);
 
   return app;
 }

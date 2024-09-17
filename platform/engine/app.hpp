@@ -343,9 +343,9 @@ namespace UIKit
 		std::function<void()> m_MenubarLeft;
 
 		std::function<void()> m_CloseEvent;
+		std::vector<std::shared_ptr<AppWindow>> m_SubAppWindows;
 
 	private:
-		std::vector<std::shared_ptr<AppWindow>> m_SubAppWindows;
 
 		// Simple storage (only Key/Value), can be replicated in saves
 		std::unordered_map<std::string, std::shared_ptr<SimpleStorageItem>> m_Storage;
@@ -358,6 +358,14 @@ namespace UIKit
 
 		// Default behaviors (docking behaviors, default themes, internal docking emplacements.)
 		std::unordered_map<DefaultAppWindowBehaviors, std::string, EnumClassHash> m_DefaultBehaviors;
+	};
+
+	class Component
+	{
+		public:
+		Component(const std::string& id): m_ID(id) {};
+		virtual std::string GetData(const std::string& data_type) {};
+		std::string m_ID;
 	};
 
 	class Window
@@ -549,11 +557,6 @@ namespace UIKit
 		bool CenterWindow = false;
 	};
 
-	class Connector
-	{
-		// Recupérer les données components et les publiers dans le window state
-	};
-
 	class Application
 	{
 	public:
@@ -577,6 +580,14 @@ namespace UIKit
 		void SetFramebarCallback(const std::function<void()> &framebarCallback) { m_FramebarCallback = framebarCallback; }
 		void SetCloseCallback(const std::function<bool()> &closeCallback) { m_CloseCallback = closeCallback; }
 		void SetMainRenderCallback(const std::function<void()> &mainRenderCallback) { m_MainRenderCallback = mainRenderCallback; }
+
+		template<typename T>
+		std::shared_ptr<T> CreateComponent(const std::string& id)
+		{
+			std::shared_ptr<T> component = std::make_shared<T>(id);
+			this->m_ApplicationComponents.push_back(component);
+			return component;
+		}
 
 		std::shared_ptr<Window> GetCurrentRenderedWindow();
 		// void SyncImages();
@@ -644,6 +655,18 @@ namespace UIKit
 		void SynchronizeWindows();
 		std::vector<std::shared_ptr<AppWindow>> GetLastSaveInstanciableAppWindows();
 
+		std::string GetComponentData(const std::string& id, const std::string& topic)
+		{
+			for(auto &component: m_ApplicationComponents)
+			{
+				if(component->m_ID == id)
+				{
+					return component->GetData(topic);
+				}
+			}
+			return "none";
+		}
+
 		std::vector<std::shared_ptr<Layer>> m_LayerStack;
 
 		std::string PutWindow(std::shared_ptr<AppWindow> win)
@@ -685,6 +708,8 @@ namespace UIKit
 		std::vector<std::shared_ptr<AppWindow>> m_AppWindows;
 		std::vector<std::shared_ptr<AppWindow>> m_SavedAppWindows;
 		std::string m_FavIconPath;
+
+		std::vector<std::shared_ptr<Component>> m_ApplicationComponents;
 
 	private:
 		void Init();
