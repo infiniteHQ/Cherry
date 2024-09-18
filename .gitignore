@@ -6,5 +6,7 @@ examples/minimal/build
 examples/minimal/imgui.ini
 examples/advanced/build
 examples/advanced/imgui.ini
+examples/demo/build
+examples/demo/imgui.ini
 
 .vscode

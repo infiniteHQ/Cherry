@@ -1,7 +1,7 @@
 #include "../../../../../platform/engine/app.hpp"
 
-#ifndef UIKIT_V1_MULTICHILD_APPWINDOW
-#define UIKIT_V1_MULTICHILD_APPWINDOW
+#ifndef UIKIT_V1_DEMO_APPWINDOW
+#define UIKIT_V1_DEMO_APPWINDOW
 
 // UIKIT Components
 #include "../../../components/buttons/custom_buttons.hpp"
@@ -25,16 +25,16 @@
 namespace UIKit
 {
     // This window can be a "subappwindow" of a parent if you use the constructor with parent parameter.
-    class MultiChildAppWindow
+    class DemoAppWindow
     {
     public:
-        MultiChildAppWindow(const std::string &name, const std::shared_ptr<AppWindow> &parent);
-        MultiChildAppWindow(const std::string &name);
+        DemoAppWindow(const std::string &name, const std::shared_ptr<AppWindow> &parent);
+        DemoAppWindow(const std::string &name);
 
         void AddChild(const std::string &child_name, const std::function<void()> &child);
         void RemoveChild(const std::string &child_name);
         std::function<void()> GetChild(const std::string &child_name);
-        void RefreshRender(const std::shared_ptr<MultiChildAppWindow>& instance);
+        void RefreshRender(const std::shared_ptr<DemoAppWindow>& instance);
 
         std::unordered_map<std::string, std::function<void()>> m_Childs;
 
@@ -60,4 +60,4 @@ namespace UIKit
     };
 }
 
-#endif // UIKIT_V1_MULTICHILD_APPWINDOW
+#endif // UIKIT_V1_DEMO_APPWINDOW

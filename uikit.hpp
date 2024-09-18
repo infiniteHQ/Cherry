@@ -40,6 +40,7 @@
 #include "./kit/v1/components/titles/h5.hpp"
 #include "./kit/v1/components/titles/h6.hpp"
 // AppWindows templates
+#include "./kit/v1/aio/appwindows/demo/demo.hpp"
 #include "./kit/v1/aio/appwindows/basic/empty_appwindow.hpp"
 #include "./kit/v1/aio/appwindows/basic/multi_child.hpp"
 #include "./kit/v1/aio/appwindows/docking/docking_appwindow.hpp"

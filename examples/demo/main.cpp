@@ -131,17 +131,8 @@ UIKit::Application *UIKit::CreateApplication(int argc, char **argv)
                             ImGui::PopStyleVar();  
                             ImGui::PopStyleColor(2); });
 
-  /*app->SetCloseCallback([app, layer]()
-                          {
-
-    std::cout << "QDS" << std::endl;
-                          });*/
-
-  // std::shared_ptr<ContentBrowserAppWindow> windododf = std::make_shared<UIKit::ContentBrowserAppWindow>("Content Brobro", "/home/diego/.vx");
-  // windododf->RefreshRender(windododf);
-
-  std::shared_ptr<DemoAppWindow> qsd = std::make_shared<UIKit::DemoAppWindow>("Demo Window");
-qsd->RefreshRender(qsd);
+  std::shared_ptr<DemoAppWindow> DemoWindow = std::make_shared<UIKit::DemoAppWindow>("Demo Window");
+  DemoWindow->RefreshRender(DemoWindow);
 
   // qsdf->RefreshRender(qsdf);
 
