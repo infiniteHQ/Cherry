@@ -10,7 +10,7 @@ namespace UIKit
         m_AppWindow->SetRenderCallback([this]() {
 
         });
-        
+
         std::shared_ptr<UIKit::AppWindow> win = m_AppWindow;
 
         m_AppWindow->SetLeftMenubarCallback([]() {});
@@ -23,15 +23,22 @@ namespace UIKit
         m_AppWindow = std::make_shared<UIKit::AppWindow>(name, name);
         m_AppWindow->SetIcon("/usr/local/include/Vortex/imgs/vortex.png");
 
-        cp_ButtonOne = Application::Get().CreateComponent<CustomButtonSimple>("button_1","Custom Simple");
-        cp_ButtonOneColored = Application::Get().CreateComponent<CustomButtonSimple>("button_1_colored","Custom Simple", "#2424F4FF", "#2424F4FF", "#2525F5FF", "#2525F5FF", "#2626F6FF", "#2525F5FF");
-        cp_ButtonTwo = Application::Get().CreateComponent<CustomButtonLowProfile>("button_2","Custom Low Profile");
-        cp_ButtonTwoColored = Application::Get().CreateComponent<CustomButtonLowProfile>("button_2_colored","Custom Low Profile", "#2424F4FF", "#2424F4FF", "#2525F5FF", "#2525F5FF", "#2626F6FF", "#2525F5FF");
-        cp_ButtonThree = Application::Get().CreateComponent<ImageButtonSimple>("button_3","Custom Low Profile");
-        cp_ButtonThreeColored = Application::Get().CreateComponent<ImageButtonSimple>("button_3_colored","Custom Low Profile", "/usr/local/include/Vortex/imgs/vortex.png","#2424F4FF", "#2424F4FF", "#2525F5FF", "#2525F5FF", "#2626F6FF", "#2525F5FF");
-        cp_ButtonFour = Application::Get().CreateComponent<ImageButtonLowProfile>("button_4","Custom Low Profile");
-        cp_ButtonFourColored = Application::Get().CreateComponent<ImageButtonLowProfile>("button_4","Custom Low Profile", "/usr/local/include/Vortex/imgs/vortex.png","#2424F4FF", "#2424F4FF", "#2525F5FF", "#2525F5FF", "#2626F6FF", "#2525F5FF");
-        cp_ComboOne = Application::Get().CreateComponent<ComboSimple>("combo_1","SuperCombo", std::vector<std::string>{"My first item", "My second item", "My third item"}, 1);
+        cp_ButtonOne = Application::Get().CreateComponent<CustomButtonSimple>("button_1", "Custom Simple");
+        cp_ButtonOneColored = Application::Get().CreateComponent<CustomButtonSimple>("button_1_colored", "Custom Simple", "#2424F4FF", "#2424F4FF", "#2525F5FF", "#2525F5FF", "#2626F6FF", "#2525F5FF");
+        cp_ButtonTwo = Application::Get().CreateComponent<CustomButtonLowProfile>("button_2", "Custom Low Profile");
+        cp_ButtonTwoColored = Application::Get().CreateComponent<CustomButtonLowProfile>("button_2_colored", "Custom Low Profile", "#2424F4FF", "#2424F4FF", "#2525F5FF", "#2525F5FF", "#2626F6FF", "#2525F5FF");
+        cp_ButtonThree = Application::Get().CreateComponent<ImageButtonSimple>("button_3", "Custom Low Profile");
+        cp_ButtonThreeColored = Application::Get().CreateComponent<ImageButtonSimple>("button_3_colored", "Custom Low Profile", "/usr/local/include/Vortex/imgs/vortex.png", "#2424F4FF", "#2424F4FF", "#2525F5FF", "#2525F5FF", "#2626F6FF", "#2525F5FF");
+        cp_ButtonFour = Application::Get().CreateComponent<ImageButtonLowProfile>("button_4", "Custom Low Profile");
+        cp_ButtonFourColored = Application::Get().CreateComponent<ImageButtonLowProfile>("button_4", "Custom Low Profile", "/usr/local/include/Vortex/imgs/vortex.png", "#2424F4FF", "#2424F4FF", "#2525F5FF", "#2525F5FF", "#2626F6FF", "#2525F5FF");
+        cp_ComboOne = Application::Get().CreateComponent<ComboSimple>("combo_1", "SuperCombo", std::vector<std::string>{"My first item", "My second item", "My third item"}, 1);
+
+        v_StringOne = std::make_shared<std::string>("Operationnal");
+        v_IntegerOne = std::make_shared<int>(42);
+
+
+        cp_InputsKeyvalDoubleString = Application::Get().CreateComponent<DoubleKeyValString>("keyvaldouble_1", v_StringOne, "SuperKeyval");
+        cp_InputsKeyvalDoubleInteger = Application::Get().CreateComponent<DoubleKeyValInteger>("keyvaldouble_2", v_IntegerOne, "SuperKeyval");
 
         this->AddChild("Buttons", [this]()
                        {
@@ -289,8 +296,7 @@ namespace UIKit
                                    }
                                }
                                ImGui::EndTable();
-                           }
-                       });
+                           } });
 
         this->AddChild("Titles", [this]()
                        {
@@ -546,9 +552,122 @@ namespace UIKit
                                }
                                ImGui::EndTable();
                            } });
-        this->AddChild("Keyvals", [this]() {
+        this->AddChild("Keyvals", [this]()
+                       {
+                           ImGuiTableFlags flags2 = ImGuiTableFlags_Resizable | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Hideable | ImGuiTableFlags_Borders;
+                           if (ImGui::BeginTable("table_context_menu_3", 4, flags2))
+                           {
+                               ImGui::TableSetupColumn("Name");
+                               ImGui::TableSetupColumn("Description");
+                               ImGui::TableSetupColumn("Preview");
+                               ImGui::TableSetupColumn("Code");
 
-        });
+                               // [2.1] Right-click on the TableHeadersRow() line to open the default table context menu.
+                               ImGui::TableHeadersRow();
+                               for (int row = 0; row < 11; row++)
+                               {
+                                   ImGui::TableNextRow();
+                                   for (int column = 0; column < 4; column++)
+                                   {
+                                       ImGui::TableSetColumnIndex(column);
+                                       if (row == 0)
+                                       {
+                                          if (column == 0)
+                                           {
+                                               ImGui::Text("String double keyval input");
+                                           }
+                                           else if (column == 1)
+                                           {
+                                               ImGui::Text("This is a incredible Simpe Image button");
+                                           }
+                                           else if(column == 2)
+                                          {
+                                             static ImGuiTableFlags flags = ImGuiTableFlags_SizingStretchSame | ImGuiTableColumnFlags_NoHeaderLabel | ImGuiTableFlags_Borders | ImGuiTableFlags_BordersInnerV;
+
+                                           if (ImGui::BeginTable("qsdqsd", 2, flags))
+                                           {
+                                               ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_WidthStretch);
+                                               ImGui::TableSetupColumn("Value", ImGuiTableColumnFlags_WidthStretch);
+                                               ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 3.0f);
+
+                                               // Pushing style color for borders
+                                               ImGui::PushStyleColor(ImGuiCol_TableBorderStrong, IM_COL32(0, 0, 0, 255)); // Color for outer borders
+                                               ImGui::PushStyleColor(ImGuiCol_TableBorderLight, IM_COL32(0, 0, 0, 255));  // Color for inner borders
+
+                                               ImGui::PushStyleColor(ImGuiCol_TableRowBg, IM_COL32(200, 200, 200, 255));
+                                               ImGui::PushStyleColor(ImGuiCol_TableRowBgAlt, IM_COL32(200, 200, 200, 255));
+
+                                               for (int srow = 0; srow < 1; srow++)
+                                               {
+                                                   ImGui::TableNextRow();
+                                                   for (int scolumn = 0; scolumn < 2; scolumn++)
+                                                   {
+                                                       ImGui::TableSetColumnIndex(scolumn);
+                                                       cp_InputsKeyvalDoubleString->Render(scolumn);
+                                                   }
+                                               }
+
+                ImGui::PopStyleColor(4);
+                ImGui::PopStyleVar();
+                ImGui::EndTable();
+                                           }
+                                          }
+                                           else if (column == 3)
+                                           {
+                                               ImGui::Button("Copy code");
+                                           }
+                                       }
+                                       else if(row == 1)
+                                       {
+                                          if (column == 0)
+                                           {
+                                               ImGui::Text("String double keyval input");
+                                           }
+                                           else if (column == 1)
+                                           {
+                                               ImGui::Text("This is a incredible Simpe Image button");
+                                           }
+                                           else if(column == 2)
+                                          {
+                                             static ImGuiTableFlags flags = ImGuiTableFlags_SizingStretchSame | ImGuiTableColumnFlags_NoHeaderLabel | ImGuiTableFlags_Borders | ImGuiTableFlags_BordersInnerV;
+
+                                           if (ImGui::BeginTable("qs2 dqsd", 2, flags))
+                                           {
+                                               ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_WidthStretch);
+                                               ImGui::TableSetupColumn("Value", ImGuiTableColumnFlags_WidthStretch);
+                                               ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 3.0f);
+
+                                               // Pushing style color for borders
+                                               ImGui::PushStyleColor(ImGuiCol_TableBorderStrong, IM_COL32(0, 0, 0, 255)); // Color for outer borders
+                                               ImGui::PushStyleColor(ImGuiCol_TableBorderLight, IM_COL32(0, 0, 0, 255));  // Color for inner borders
+
+                                               ImGui::PushStyleColor(ImGuiCol_TableRowBg, IM_COL32(200, 200, 200, 255));
+                                               ImGui::PushStyleColor(ImGuiCol_TableRowBgAlt, IM_COL32(200, 200, 200, 255));
+
+                                               for (int srow = 0; srow < 1; srow++)
+                                               {
+                                                   ImGui::TableNextRow();
+                                                   for (int scolumn = 0; scolumn < 2; scolumn++)
+                                                   {
+                                                       ImGui::TableSetColumnIndex(scolumn);
+                                                       cp_InputsKeyvalDoubleInteger->Render(scolumn);
+                                                   }
+                                               }
+
+                ImGui::PopStyleColor(4);
+                ImGui::PopStyleVar();
+                ImGui::EndTable();
+                                           }
+                                          }
+                                           else if (column == 3)
+                                           {
+                                               ImGui::Button("Copy code");
+                                           }
+                                       }
+                                   }
+                               }
+                               ImGui::EndTable();
+                           } });
 
         this->AddChild("Tables", [this]() {
 
@@ -596,7 +715,7 @@ namespace UIKit
                                        {
                                            if (column == 0)
                                            {
-                                               ImGui::Text("Collapsing Header");
+                                               ImGui::Text("Custom Collapsing Header Simple");
                                            }
                                            else if (column == 1)
                                            {
@@ -604,7 +723,7 @@ namespace UIKit
                                            }
                                            else if (column == 2)
                                            {
-                                               SimpleCollapsingHeader("Test", []()
+                                               CustomCollapsingHeaderSimple("Header", []()
                                                                       { TitleOne("Content"); });
                                            }
                                            else if (column == 3)
@@ -612,17 +731,60 @@ namespace UIKit
                                                ImGui::Button("Copy code");
                                            }
                                        }
+                                       else if (row == 1)
+                                       {
+                                           if (column == 0)
+                                           {
+                                               ImGui::Text("Custom Collapsing Header Logo");
+                                           }
+                                           else if (column == 1)
+                                           {
+                                               ImGui::Text("This is a incredible Simpe Image button");
+                                           }
+                                           else if (column == 2)
+                                           {
+                                               CustomCollapsingHeaderLogo("Header2", "/usr/local/include/Vortex/imgs/vortex.png", []()
+                                                                      { TitleOne("Content"); });
+                                           }
+                                           else if (column == 3)
+                                           {
+                                               ImGui::Button("Copy code");
+                                           }
+                                       }
+                                       else if (row == 2)
+                                       {
+                                           if (column == 0)
+                                           {
+                                               ImGui::Text("Custom Collapsing Header Logo");
+                                           }
+                                           else if (column == 1)
+                                           {
+                                               ImGui::Text("This is a incredible Simpe Image button");
+                                           }
+                                           else if (column == 2)
+                                           {
+                                               CustomCollapsingHeaderLogoCallback("Header2", "/usr/local/include/Vortex/imgs/vortex.png", 
+                                               [this](){ cp_ButtonFour->Render("f"); ImGui::SameLine(); cp_ButtonFour->Render("f");},
+                                            [](){ TitleOne("ccc"); });
+                                           }
+                                           else if (column == 3)
+                                           {
+                                               ImGui::Button("Copy code");
+                                           }
+                                       }
+
+                                       
                                    }
                                }
                                ImGui::EndTable();
-                           }
-                       });
+                           } });
 
         this->AddChild("Combos", [this]()
                        {
                         std::cout << Application::Get().GetComponentData("combo_1", "selected_index") << std::endl;
                         std::cout << Application::Get().GetComponentData("combo_1", "selected_string") << std::endl;
                         std::cout << Application::Get().GetComponentData("combo_1", "lastChanged") << std::endl;
+                        std::cout << "Yeah : "<< UIKIT_DATA("combo_1", "lastChanged") << std::endl;
                         
                            ImGuiTableFlags flags2 = ImGuiTableFlags_Resizable | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Hideable | ImGuiTableFlags_Borders;
                            if (ImGui::BeginTable("table_context_menu_2", 4, flags2))
@@ -680,8 +842,7 @@ namespace UIKit
                                    }
                                }
                                ImGui::EndTable();
-                           }
-                       });
+                           } });
 
         this->AddChild("Color Pickers", [this]() {
 

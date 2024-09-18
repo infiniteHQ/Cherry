@@ -18,6 +18,8 @@
 #include "../../../components/texts/simple_text.hpp"
 #include "../../../components/combos/simple_combo.hpp"
 #include "../../../components/headers/simple_collapsing.hpp"
+#include "../../../components/headers/custom_collapsing.hpp"
+#include "../../../components/inputs/keyval/keyval_double.hpp"
 
 namespace UIKit
 {
@@ -43,6 +45,11 @@ namespace UIKit
         std::shared_ptr<ImageButtonSimple> cp_ButtonThreeColored;     
         std::shared_ptr<ImageButtonLowProfile> cp_ButtonFour;     
         std::shared_ptr<ImageButtonLowProfile> cp_ButtonFourColored;     
+
+        std::shared_ptr<DoubleKeyValString> cp_InputsKeyvalDoubleString;   
+        std::shared_ptr<DoubleKeyValInteger> cp_InputsKeyvalDoubleInteger;      
+        std::shared_ptr<std::string> v_StringOne;
+        std::shared_ptr<int> v_IntegerOne;
 
         std::shared_ptr<ComboSimple> cp_ComboOne;     
 

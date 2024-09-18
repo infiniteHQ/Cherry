@@ -119,6 +119,11 @@ namespace UIKit
             m_ID = id;
         }
 
+        inline static bool RenderInl()
+        {
+            // Render without component...
+        }
+
         bool Render(const std::string &duplication_name, const ImVec2 &size = ImVec2(0, 0))
         {
             ImVec2 text_size = ImGui::CalcTextSize(m_Label.c_str());

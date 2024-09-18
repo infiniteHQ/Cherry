@@ -725,6 +725,9 @@ namespace UIKit
 		bool m_TitleBarHovered = false;
 	};
 
+
+	#define UIKIT_DATA(id, topic) Application::Get().GetComponentData(id, topic)
+
 	// Implemented by CLIENT
 	static Application *CreateApplication(int argc, char **argv);
 }
