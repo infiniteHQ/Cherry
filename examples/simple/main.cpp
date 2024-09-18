@@ -140,22 +140,8 @@ UIKit::Application *UIKit::CreateApplication(int argc, char **argv)
   // std::shared_ptr<ContentBrowserAppWindow> windododf = std::make_shared<UIKit::ContentBrowserAppWindow>("Content Brobro", "/home/diego/.vx");
   // windododf->RefreshRender(windododf);
 
-  std::shared_ptr<EmptyAppWindow> qsd = std::make_shared<UIKit::EmptyAppWindow>("Content1");
-
-  qsd->m_AppWindow->SetRenderCallback([qsd]()
-                                      {
-                                        if (qsd->cp_ButtonOne->Render("2"))
-                                        {
-                                        }
-
-
-                                        if (qsd->cp_ButtonOne->Render("1"))
-                                        {
-                                        }
-
-                                        std::cout << Application::Get().GetComponentData("button_1", "isButtonPressed") << std::endl;
-                                        std::cout << Application::Get().GetComponentData("button_1", "lastButtonClick") << std::endl;
-                                      });
+  std::shared_ptr<MultiChildAppWindow> qsd = std::make_shared<UIKit::MultiChildAppWindow>("Content1");
+qsd->RefreshRender(qsd);
 
   // qsdf->RefreshRender(qsdf);
 

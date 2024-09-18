@@ -10,7 +10,7 @@ namespace UIKit
         m_AppWindow->SetRenderCallback([this]() {
 
         });
-
+        
         std::shared_ptr<UIKit::AppWindow> win = m_AppWindow;
 
         m_AppWindow->SetLeftMenubarCallback([]() {});
@@ -22,6 +22,16 @@ namespace UIKit
     {
         m_AppWindow = std::make_shared<UIKit::AppWindow>(name, name);
         m_AppWindow->SetIcon("/usr/local/include/Vortex/imgs/vortex.png");
+
+        cp_ButtonOne = Application::Get().CreateComponent<CustomButtonSimple>("button_1","Custom Simple");
+        cp_ButtonOneColored = Application::Get().CreateComponent<CustomButtonSimple>("button_1_colored","Custom Simple", "#2424F4FF", "#2424F4FF", "#2525F5FF", "#2525F5FF", "#2626F6FF", "#2525F5FF");
+        cp_ButtonTwo = Application::Get().CreateComponent<CustomButtonLowProfile>("button_2","Custom Low Profile");
+        cp_ButtonTwoColored = Application::Get().CreateComponent<CustomButtonLowProfile>("button_2_colored","Custom Low Profile", "#2424F4FF", "#2424F4FF", "#2525F5FF", "#2525F5FF", "#2626F6FF", "#2525F5FF");
+        cp_ButtonThree = Application::Get().CreateComponent<ImageButtonSimple>("button_3","Custom Low Profile");
+        cp_ButtonThreeColored = Application::Get().CreateComponent<ImageButtonSimple>("button_3_colored","Custom Low Profile", "/usr/local/include/Vortex/imgs/vortex.png","#2424F4FF", "#2424F4FF", "#2525F5FF", "#2525F5FF", "#2626F6FF", "#2525F5FF");
+        cp_ButtonFour = Application::Get().CreateComponent<ImageButtonLowProfile>("button_4","Custom Low Profile");
+        cp_ButtonFourColored = Application::Get().CreateComponent<ImageButtonLowProfile>("button_4","Custom Low Profile", "/usr/local/include/Vortex/imgs/vortex.png","#2424F4FF", "#2424F4FF", "#2525F5FF", "#2525F5FF", "#2626F6FF", "#2525F5FF");
+        cp_ComboOne = Application::Get().CreateComponent<ComboSimple>("combo_1","SuperCombo", std::vector<std::string>{"My first item", "My second item", "My third item"}, 1);
 
         this->AddChild("Buttons", [this]()
                        {
@@ -36,7 +46,7 @@ namespace UIKit
 
             // [2.1] Right-click on the TableHeadersRow() line to open the default table context menu.
             ImGui::TableHeadersRow();
-            for (int row = 0; row < 6; row++)
+            for (int row = 0; row < 10; row++)
             {
                 ImGui::TableNextRow();
                 for (int column = 0; column < 4; column++)
@@ -46,7 +56,7 @@ namespace UIKit
                     {
                         if(column == 0)
                         {
-                            ImGui::Text("Simple Image button");
+                            ImGui::Text("Custom Simple Button");
                         }
                         else if(column == 1)
                         {
@@ -54,7 +64,7 @@ namespace UIKit
                         }
                         else if(column == 2)
                         {
-                            ImageButtonSimple("Simple", "/usr/local/include/Vortex/imgs/vortex.png"); 
+                            cp_ButtonOne->Render("Normal");
                         }
                         else if(column == 3)
                         {
@@ -65,7 +75,7 @@ namespace UIKit
                     {
                         if(column == 0)
                         {
-                            ImGui::Text("Low profile Image button");
+                            ImGui::Text("Custom Low Profile Button");
                         }
                         else if(column == 1)
                         {
@@ -73,7 +83,7 @@ namespace UIKit
                         }
                         else if(column == 2)
                         {
-    ImageButtonLowProfile("Low", "/usr/local/include/Vortex/imgs/vortex.png"); 
+                            cp_ButtonOneColored->Render("Normal");
     }
                         else if(column == 3)
                         {
@@ -92,7 +102,7 @@ namespace UIKit
                         }
                         else if(column == 2)
                         {
-    CustomButtonSimple("Simple"); 
+                            cp_ButtonTwo->Render("Normal");
     }
                         else if(column == 3)
                         {
@@ -111,7 +121,7 @@ namespace UIKit
                         }
                         else if(column == 2)
                         {
-    CustomButtonLowProfile("Low", "/usr/local/include/Vortex/imgs/vortex.png");
+                            cp_ButtonTwoColored->Render("Normal");
     }
                         else if(column == 3)
                         {
@@ -130,7 +140,7 @@ namespace UIKit
                         }
                         else if(column == 2)
                         {
-    DangerButtonLowProfile("Delete"); 
+                            cp_ButtonThree->Render("Normal");
     }
                         else if(column == 3)
                         {
@@ -149,7 +159,45 @@ namespace UIKit
                         }
                         else if(column == 2)
                         {
-    ValidationButtonLowProfile("Continue"); 
+                            cp_ButtonThreeColored->Render("Normal");
+    }
+                        else if(column == 3)
+                        {
+                            ImGui::Button("Copy code");
+                        }
+                    }
+                    else if(row == 6)
+                    {
+                        if(column == 0)
+                        {
+                            ImGui::Text("Validation low profile button");
+                        }
+                        else if(column == 1)
+                        {
+                            ImGui::Text("This is a incredible Simpe Image button");
+                        }
+                        else if(column == 2)
+                        {
+                            cp_ButtonFour->Render("Normal");
+    }
+                        else if(column == 3)
+                        {
+                            ImGui::Button("Copy code");
+                        }
+                    }
+                    else if(row == 7)
+                    {
+                        if(column == 0)
+                        {
+                            ImGui::Text("Validation low profile button");
+                        }
+                        else if(column == 1)
+                        {
+                            ImGui::Text("This is a incredible Simpe Image button");
+                        }
+                        else if(column == 2)
+                        {
+                            cp_ButtonFourColored->Render("Normal");
     }
                         else if(column == 3)
                         {
@@ -572,6 +620,10 @@ namespace UIKit
 
         this->AddChild("Combos", [this]()
                        {
+                        std::cout << Application::Get().GetComponentData("combo_1", "selected_index") << std::endl;
+                        std::cout << Application::Get().GetComponentData("combo_1", "selected_string") << std::endl;
+                        std::cout << Application::Get().GetComponentData("combo_1", "lastChanged") << std::endl;
+                        
                            ImGuiTableFlags flags2 = ImGuiTableFlags_Resizable | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Hideable | ImGuiTableFlags_Borders;
                            if (ImGui::BeginTable("table_context_menu_2", 4, flags2))
                            {
@@ -600,7 +652,25 @@ namespace UIKit
                                            }
                                            else if (column == 2)
                                            {
-                                               SimpleCombo("Test", {"My first item", "My second item", "My third item"}, 1);
+                                               cp_ComboOne->Render("Normal");
+                                           }
+                                           else if (column == 3)
+                                           {
+                                               ImGui::Button("Copy code");
+                                           }
+                                       }
+                                       else if (row == 1)
+                                       {
+                                           if (column == 0)
+                                           {
+                                               ImGui::Text("Simple Combo");
+                                           }
+                                           else if (column == 1)
+                                           {
+                                               ImGui::Text("This is a incredible Simpe Image button");
+                                           }
+                                           else if (column == 2)
+                                           {
                                            }
                                            else if (column == 3)
                                            {

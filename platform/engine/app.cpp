@@ -15,15 +15,20 @@
 │                 To-do list                 │
 └────────────────────────────────────────────┘
 TODO : Window manager interactions
-TODO : Default AppWindow behaviors (size, docking, etc...)
-TODO : Save AppWindow states (positions, parents, docking, etc...)
 TODO : Dockspace tabs menu callback and events/flags (flags : unsaved) (events: close)
 TODO : Better start of dragging to prevent dragging+mooving
+TODO : Finish component & appwindow templates
+        - Content Browser
+        - Outliner
+        - Text Editor
+        - Buttons
+        - Other components....
 
 ┌────────────────────────────────────────────┐
 │                  Bug list                  │
 └────────────────────────────────────────────┘
-BUG : AppWindowHost not set properly when redocking
+BUG : The window not entierly set with save
+BUG : Bad docking, and bad docking with parent/child
 **/
 
 #include <stdio.h>  // printf, fprintf
@@ -3315,7 +3320,7 @@ namespace UIKit
                                     bool is_win_existing = false;
                                     for (auto &win : s_Instance->m_Windows)
                                     {
-                                        if (win->GetName() == savedappwin->GetFetchedSaveData("win"))
+                                        if (win->GetName() == appwin->GetFetchedSaveData("win"))
                                         {
                                             is_win_existing = true;
                                         }
@@ -3323,7 +3328,7 @@ namespace UIKit
 
                                     if (!is_win_existing)
                                     {
-                                        s_Instance->SpawnWindow(savedappwin->GetFetchedSaveData("win"));
+                                        s_Instance->SpawnWindow(appwin->GetFetchedSaveData("win"));
                                     }
 
                                     bool win_initialized = true;

@@ -19,7 +19,7 @@ namespace UIKit
         EmptyAppWindow(const std::string &name);
         EmptyAppWindow();
 
-        std::shared_ptr<NCustomButtonSimple> cp_ButtonOne;
+        std::shared_ptr<CustomButtonSimple> cp_ButtonOne;
 
         std::shared_ptr<UIKit::AppWindow> m_AppWindow;
     };

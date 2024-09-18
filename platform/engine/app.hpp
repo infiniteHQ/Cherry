@@ -581,10 +581,10 @@ namespace UIKit
 		void SetCloseCallback(const std::function<bool()> &closeCallback) { m_CloseCallback = closeCallback; }
 		void SetMainRenderCallback(const std::function<void()> &mainRenderCallback) { m_MainRenderCallback = mainRenderCallback; }
 
-		template<typename T>
-		std::shared_ptr<T> CreateComponent(const std::string& id)
+		template<typename T, typename... Args>
+		std::shared_ptr<T> CreateComponent(Args... args)
 		{
-			std::shared_ptr<T> component = std::make_shared<T>(id);
+			std::shared_ptr<T> component = std::make_shared<T>(args...);
 			this->m_ApplicationComponents.push_back(component);
 			return component;
 		}

@@ -14,7 +14,7 @@ namespace UIKit
         ImGui::Button("qsd"); });
 
 
-        cp_ButtonOne = Application::Get().CreateComponent<NCustomButtonSimple>("button_1");
+        cp_ButtonOne = Application::Get().CreateComponent<CustomButtonSimple>("button_1");
 
         std::shared_ptr<UIKit::AppWindow> win = m_AppWindow;
 
@@ -23,18 +23,7 @@ namespace UIKit
 
         m_AppWindow->SetRightMenubarCallback([win]()
                                              {
-                                                     if (UIKit::ImageButtonSimple("Test", "/usr/local/include/Vortex/imgs/vortex.png"))
-                                                     {
-                                                         std::cout << "ok" << std::endl;
-                                                     }
-                                                     if (UIKit::DangerButtonLowProfile())
-                                                     {
-                                                         std::cout << "ok" << std::endl;
-                                                     }
-                                                     if (UIKit::CustomButtonSimple("Test"))
-                                                     {
-                                                         std::cout << "ok" << std::endl;
-                                                     } });
+                                                      });
         Application::Get().PutWindow(m_AppWindow);
     }
 
@@ -54,18 +43,7 @@ namespace UIKit
 
         m_AppWindow->SetRightMenubarCallback([win]()
                                              {
-                                                     if (UIKit::ImageButtonSimple("Test", "/usr/local/include/Vortex/imgs/vortex.png"))
-                                                     {
-                                                         std::cout << "ok" << std::endl;
-                                                     }
-                                                     if (UIKit::DangerButtonLowProfile())
-                                                     {
-                                                         std::cout << "ok" << std::endl;
-                                                     }
-                                                     if (UIKit::CustomButtonSimple("Test"))
-                                                     {
-                                                         std::cout << "ok" << std::endl;
-                                                     } });
+                                                     });
         Application::Get().PutWindow(m_AppWindow);
     }
     
@@ -85,22 +63,11 @@ namespace UIKit
         m_AppWindow->SetLeftMenubarCallback([]()
                                             { ImGui::Text("ll"); });
 
-        cp_ButtonOne = Application::Get().CreateComponent<NCustomButtonSimple>("button_1");
+        cp_ButtonOne = Application::Get().CreateComponent<CustomButtonSimple>("button_1");
 
         m_AppWindow->SetRightMenubarCallback([win]()
                                              {
-                                                     if (UIKit::ImageButtonSimple("Test", "/usr/local/include/Vortex/imgs/vortex.png"))
-                                                     {
-                                                         std::cout << "ok" << std::endl;
-                                                     }
-                                                     if (UIKit::DangerButtonLowProfile())
-                                                     {
-                                                         std::cout << "ok" << std::endl;
-                                                     }
-                                                     if (UIKit::CustomButtonSimple("Test"))
-                                                     {
-                                                         std::cout << "ok" << std::endl;
-                                                     } });
+                                                      });
 
 
         Application::Get().PutWindow(m_AppWindow);
