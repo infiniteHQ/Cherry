@@ -28,10 +28,13 @@
 #include "./kit/v1/components/buttons/cancel_buttons.hpp"
 // Headers
 #include "./kit/v1/components/headers/simple_collapsing.hpp"
+
+#include "./kit/v1/components/headers/custom_collapsing.hpp"
 // Texts
 #include "./kit/v1/components/texts/simple_text.hpp"
 // Combos
 #include "./kit/v1/components/combos/simple_combo.hpp"
+#include "./kit/v1/components/combos/custom_combo.hpp"
 // Titles
 #include "./kit/v1/components/titles/h1.hpp"
 #include "./kit/v1/components/titles/h2.hpp"
@@ -45,6 +48,10 @@
 #include "./kit/v1/aio/appwindows/basic/multi_child.hpp"
 #include "./kit/v1/aio/appwindows/docking/docking_appwindow.hpp"
 #include "./kit/v1/aio/appwindows/content/content_browser.hpp"
+// Trees
+#include "./kit/v1/components/lists/custom_lists.hpp"
+// Inputs
+#include "./kit/v1/components/inputs/keyval/keyval_double.hpp"
 
 #endif
 

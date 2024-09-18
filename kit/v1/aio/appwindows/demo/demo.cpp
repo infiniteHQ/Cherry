@@ -32,13 +32,28 @@ namespace UIKit
         cp_ButtonFour = Application::Get().CreateComponent<ImageButtonLowProfile>("button_4", "Custom Low Profile");
         cp_ButtonFourColored = Application::Get().CreateComponent<ImageButtonLowProfile>("button_4", "Custom Low Profile", "/usr/local/include/Vortex/imgs/vortex.png", "#2424F4FF", "#2424F4FF", "#2525F5FF", "#2525F5FF", "#2626F6FF", "#2525F5FF");
         cp_ComboOne = Application::Get().CreateComponent<ComboSimple>("combo_1", "SuperCombo", std::vector<std::string>{"My first item", "My second item", "My third item"}, 1);
-        cp_ComboTwo = Application::Get().CreateComponent<ComboCustom>("combo_2", "SuperCombo2", std::vector<std::function<void()>>{[](){ImGui::Button("QSFf");},[](){ImGui::Button("QSF");}}, 1);
+        cp_ComboTwo = Application::Get().CreateComponent<ComboCustom>("combo_2", "SuperCombo2", std::vector<std::function<void()>>{[]()
+                                                                                                                                   { ImGui::Button("QSFf"); }, []()
+                                                                                                                                   { ImGui::Button("QSF"); }},
+                                                                      1);
 
         v_StringOne = std::make_shared<std::string>("Operationnal");
         v_IntegerOne = std::make_shared<int>(42);
+        v_BooleanOne = std::make_shared<bool>(true);
+        v_FloatOne = std::make_shared<float>(4.2f);
 
-        cp_InputsKeyvalDoubleString = Application::Get().CreateComponent<DoubleKeyValString>("keyvaldouble_1", v_StringOne, "SuperKeyval");
-        cp_InputsKeyvalDoubleInteger = Application::Get().CreateComponent<DoubleKeyValInteger>("keyvaldouble_2", v_IntegerOne, "SuperKeyval");
+        v_Xvalue = std::make_shared<float>(2.27f);
+        v_Yvalue = std::make_shared<float>(8.65f);
+        v_Zvalue = std::make_shared<float>(6.24f);
+
+        cp_InputsKeyvalDoubleString = Application::Get().CreateComponent<DoubleKeyValString>("keyvaldouble_1", v_StringOne, "Simple string value");
+        cp_InputsKeyvalDoubleInteger = Application::Get().CreateComponent<DoubleKeyValInteger>("keyvaldouble_2", v_IntegerOne, "Simple integer value");
+        cp_InputsKeyvalDoubleBoolean = Application::Get().CreateComponent<DoubleKeyValBoolean>("keyvaldouble_3", v_BooleanOne, "Simple boolean value");
+        cp_InputsKeyvalDoubleFloat = Application::Get().CreateComponent<DoubleKeyValFloat>("keyvaldouble_4", v_FloatOne, "Simple float value");
+        cp_InputsKeyvalDoubleDouble = Application::Get().CreateComponent<DoubleKeyValDouble>("keyvaldouble_5", v_DoubleOne, "Simple double value");
+        cp_InputsKeyvalDoubleXYZ = Application::Get().CreateComponent<DoubleKeyValXYZVector>("keyvaldouble_5", v_Xvalue,v_Yvalue,v_Zvalue, "Simple double value");
+        cp_InputsKeyvalDoubleSimpleCombo = Application::Get().CreateComponent<DoubleKeyValSimpleCombo>("keyvaldouble_6", std::vector<std::string>{"My first item", "My second item", "My third item"}, 1, "Simple double value");
+
 
         std::vector<SimpleTree::SimpleTreeNode> node2 = {
             SimpleTree::SimpleTreeNode("Node 2", {[this]()
@@ -673,9 +688,9 @@ namespace UIKit
                                                ImGui::TableSetupColumn("Value", ImGuiTableColumnFlags_WidthStretch);
                                                ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 3.0f);
 
-                                               // Pushing style color for borders
-                                               ImGui::PushStyleColor(ImGuiCol_TableBorderStrong, IM_COL32(0, 0, 0, 255)); // Color for outer borders
-                                               ImGui::PushStyleColor(ImGuiCol_TableBorderLight, IM_COL32(0, 0, 0, 255));  // Color for inner borders
+                                               
+                                               ImGui::PushStyleColor(ImGuiCol_TableBorderStrong, IM_COL32(0, 0, 0, 255)); 
+                                               ImGui::PushStyleColor(ImGuiCol_TableBorderLight, IM_COL32(0, 0, 0, 255));  
 
                                                ImGui::PushStyleColor(ImGuiCol_TableRowBg, IM_COL32(200, 200, 200, 255));
                                                ImGui::PushStyleColor(ImGuiCol_TableRowBgAlt, IM_COL32(200, 200, 200, 255));
@@ -720,9 +735,9 @@ namespace UIKit
                                                ImGui::TableSetupColumn("Value", ImGuiTableColumnFlags_WidthStretch);
                                                ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 3.0f);
 
-                                               // Pushing style color for borders
-                                               ImGui::PushStyleColor(ImGuiCol_TableBorderStrong, IM_COL32(0, 0, 0, 255)); // Color for outer borders
-                                               ImGui::PushStyleColor(ImGuiCol_TableBorderLight, IM_COL32(0, 0, 0, 255));  // Color for inner borders
+                                               
+                                               ImGui::PushStyleColor(ImGuiCol_TableBorderStrong, IM_COL32(0, 0, 0, 255)); 
+                                               ImGui::PushStyleColor(ImGuiCol_TableBorderLight, IM_COL32(0, 0, 0, 255));  
 
                                                ImGui::PushStyleColor(ImGuiCol_TableRowBg, IM_COL32(200, 200, 200, 255));
                                                ImGui::PushStyleColor(ImGuiCol_TableRowBgAlt, IM_COL32(200, 200, 200, 255));
@@ -734,6 +749,239 @@ namespace UIKit
                                                    {
                                                        ImGui::TableSetColumnIndex(scolumn);
                                                        cp_InputsKeyvalDoubleInteger->Render(scolumn);
+                                                   }
+                                               }
+
+                ImGui::PopStyleColor(4);
+                ImGui::PopStyleVar();
+                ImGui::EndTable();
+                                           }
+                                          }
+                                           else if (column == 3)
+                                           {
+                                               ImGui::Button("Copy code");
+                                           }
+                                       } 
+                                       else if(row == 2)
+                                       {
+                                          if (column == 0)
+                                           {
+                                               ImGui::Text("String double keyval input");
+                                           }
+                                           else if (column == 1)
+                                           {
+                                               ImGui::Text("This is a incredible Simpe Image button");
+                                           }
+                                           else if(column == 2)
+                                          {
+                                             static ImGuiTableFlags flags = ImGuiTableFlags_SizingStretchSame | ImGuiTableColumnFlags_NoHeaderLabel | ImGuiTableFlags_Borders | ImGuiTableFlags_BordersInnerV;
+
+                                           if (ImGui::BeginTable("qs2 cdfgdf", 2, flags))
+                                           {
+                                               ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_WidthStretch);
+                                               ImGui::TableSetupColumn("Value", ImGuiTableColumnFlags_WidthStretch);
+                                               ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 3.0f);
+
+                                               
+                                               ImGui::PushStyleColor(ImGuiCol_TableBorderStrong, IM_COL32(0, 0, 0, 255));
+                                               ImGui::PushStyleColor(ImGuiCol_TableBorderLight, IM_COL32(0, 0, 0, 255)); 
+
+                                               ImGui::PushStyleColor(ImGuiCol_TableRowBg, IM_COL32(200, 200, 200, 255));
+                                               ImGui::PushStyleColor(ImGuiCol_TableRowBgAlt, IM_COL32(200, 200, 200, 255));
+
+                                               for (int srow = 0; srow < 1; srow++)
+                                               {
+                                                   ImGui::TableNextRow();
+                                                   for (int scolumn = 0; scolumn < 2; scolumn++)
+                                                   {
+                                                       ImGui::TableSetColumnIndex(scolumn);
+                                                       cp_InputsKeyvalDoubleBoolean->Render(scolumn);
+                                                   }
+                                               }
+
+                ImGui::PopStyleColor(4);
+                ImGui::PopStyleVar();
+                ImGui::EndTable();
+                                           }
+                                          }
+                                           else if (column == 3)
+                                           {
+                                               ImGui::Button("Copy code");
+                                           }
+                                       }
+                                       else if(row == 3)
+                                       {
+                                          if (column == 0)
+                                           {
+                                               ImGui::Text("String double keyval input");
+                                           }
+                                           else if (column == 1)
+                                           {
+                                               ImGui::Text("This is a incredible Simpe Image button");
+                                           }
+                                           else if(column == 2)
+                                          {
+                                             static ImGuiTableFlags flags = ImGuiTableFlags_SizingStretchSame | ImGuiTableColumnFlags_NoHeaderLabel | ImGuiTableFlags_Borders | ImGuiTableFlags_BordersInnerV;
+
+                                           if (ImGui::BeginTable("qs2 cdfgdf", 2, flags))
+                                           {
+                                               ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_WidthStretch);
+                                               ImGui::TableSetupColumn("Value", ImGuiTableColumnFlags_WidthStretch);
+                                               ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 3.0f);
+
+                                               
+                                               ImGui::PushStyleColor(ImGuiCol_TableBorderStrong, IM_COL32(0, 0, 0, 255));
+                                               ImGui::PushStyleColor(ImGuiCol_TableBorderLight, IM_COL32(0, 0, 0, 255)); 
+
+                                               ImGui::PushStyleColor(ImGuiCol_TableRowBg, IM_COL32(200, 200, 200, 255));
+                                               ImGui::PushStyleColor(ImGuiCol_TableRowBgAlt, IM_COL32(200, 200, 200, 255));
+
+                                               for (int srow = 0; srow < 1; srow++)
+                                               {
+                                                   ImGui::TableNextRow();
+                                                   for (int scolumn = 0; scolumn < 2; scolumn++)
+                                                   {
+                                                       ImGui::TableSetColumnIndex(scolumn);
+                                                       cp_InputsKeyvalDoubleFloat->Render(scolumn);
+                                                   }
+                                               }
+
+                ImGui::PopStyleColor(4);
+                ImGui::PopStyleVar();
+                ImGui::EndTable();
+                                           }
+                                          }
+                                           else if (column == 3)
+                                           {
+                                               ImGui::Button("Copy code");
+                                           }
+                                       } else if(row == 4)
+                                       {
+                                          if (column == 0)
+                                           {
+                                               ImGui::Text("String double keyval input");
+                                           }
+                                           else if (column == 1)
+                                           {
+                                               ImGui::Text("This is a incredible Simpe Image button");
+                                           }
+                                           else if(column == 2)
+                                          {
+                                             static ImGuiTableFlags flags = ImGuiTableFlags_SizingStretchSame | ImGuiTableColumnFlags_NoHeaderLabel | ImGuiTableFlags_Borders | ImGuiTableFlags_BordersInnerV;
+
+                                           if (ImGui::BeginTable("qs2 cdfgdf", 2, flags))
+                                           {
+                                               ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_WidthStretch);
+                                               ImGui::TableSetupColumn("Value", ImGuiTableColumnFlags_WidthStretch);
+                                               ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 3.0f);
+
+                                               
+                                               ImGui::PushStyleColor(ImGuiCol_TableBorderStrong, IM_COL32(0, 0, 0, 255));
+                                               ImGui::PushStyleColor(ImGuiCol_TableBorderLight, IM_COL32(0, 0, 0, 255)); 
+
+                                               ImGui::PushStyleColor(ImGuiCol_TableRowBg, IM_COL32(200, 200, 200, 255));
+                                               ImGui::PushStyleColor(ImGuiCol_TableRowBgAlt, IM_COL32(200, 200, 200, 255));
+
+                                               for (int srow = 0; srow < 1; srow++)
+                                               {
+                                                   ImGui::TableNextRow();
+                                                   for (int scolumn = 0; scolumn < 2; scolumn++)
+                                                   {
+                                                       ImGui::TableSetColumnIndex(scolumn);
+                                                       cp_InputsKeyvalDoubleDouble->Render(scolumn);
+                                                   }
+                                               }
+
+                ImGui::PopStyleColor(4);
+                ImGui::PopStyleVar();
+                ImGui::EndTable();
+                                           }
+                                          }
+                                           else if (column == 3)
+                                           {
+                                               ImGui::Button("Copy code");
+                                           }
+                                       }else if(row == 5)
+                                       {
+                                          if (column == 0)
+                                           {
+                                               ImGui::Text("String double keyval input");
+                                           }
+                                           else if (column == 1)
+                                           {
+                                               ImGui::Text("This is a incredible Simpe Image button");
+                                           }
+                                           else if(column == 2)
+                                          {
+                                             static ImGuiTableFlags flags = ImGuiTableFlags_SizingStretchSame | ImGuiTableColumnFlags_NoHeaderLabel | ImGuiTableFlags_Borders | ImGuiTableFlags_BordersInnerV;
+
+                                           if (ImGui::BeginTable("qs2 cdfgdf", 2, flags))
+                                           {
+                                               ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_WidthStretch);
+                                               ImGui::TableSetupColumn("Value", ImGuiTableColumnFlags_WidthStretch);
+                                               ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 3.0f);
+
+                                               
+                                               ImGui::PushStyleColor(ImGuiCol_TableBorderStrong, IM_COL32(0, 0, 0, 255));
+                                               ImGui::PushStyleColor(ImGuiCol_TableBorderLight, IM_COL32(0, 0, 0, 255)); 
+
+                                               ImGui::PushStyleColor(ImGuiCol_TableRowBg, IM_COL32(200, 200, 200, 255));
+                                               ImGui::PushStyleColor(ImGuiCol_TableRowBgAlt, IM_COL32(200, 200, 200, 255));
+
+                                               for (int srow = 0; srow < 1; srow++)
+                                               {
+                                                   ImGui::TableNextRow();
+                                                   for (int scolumn = 0; scolumn < 2; scolumn++)
+                                                   {
+                                                       ImGui::TableSetColumnIndex(scolumn);
+                                                       cp_InputsKeyvalDoubleXYZ->Render(scolumn);
+                                                   }
+                                               }
+
+                ImGui::PopStyleColor(4);
+                ImGui::PopStyleVar();
+                ImGui::EndTable();
+                                           }
+                                          }
+                                           else if (column == 3)
+                                           {
+                                               ImGui::Button("Copy code");
+                                           }
+                                       }
+                                       else if(row == 6)
+                                       {
+                                          if (column == 0)
+                                           {
+                                               ImGui::Text("String double keyval input");
+                                           }
+                                           else if (column == 1)
+                                           {
+                                               ImGui::Text("This is a incredible Simpe Image button");
+                                           }
+                                           else if(column == 2)
+                                          {
+                                             static ImGuiTableFlags flags = ImGuiTableFlags_SizingStretchSame | ImGuiTableColumnFlags_NoHeaderLabel | ImGuiTableFlags_Borders | ImGuiTableFlags_BordersInnerV;
+
+                                           if (ImGui::BeginTable("qs2 cdfgdf", 2, flags))
+                                           {
+                                               ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_WidthStretch);
+                                               ImGui::TableSetupColumn("Value", ImGuiTableColumnFlags_WidthStretch);
+                                               ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 3.0f);
+
+                                               
+                                               ImGui::PushStyleColor(ImGuiCol_TableBorderStrong, IM_COL32(0, 0, 0, 255));
+                                               ImGui::PushStyleColor(ImGuiCol_TableBorderLight, IM_COL32(0, 0, 0, 255)); 
+
+                                               ImGui::PushStyleColor(ImGuiCol_TableRowBg, IM_COL32(200, 200, 200, 255));
+                                               ImGui::PushStyleColor(ImGuiCol_TableRowBgAlt, IM_COL32(200, 200, 200, 255));
+
+                                               for (int srow = 0; srow < 1; srow++)
+                                               {
+                                                   ImGui::TableNextRow();
+                                                   for (int scolumn = 0; scolumn < 2; scolumn++)
+                                                   {
+                                                       ImGui::TableSetColumnIndex(scolumn);
+                                                       cp_InputsKeyvalDoubleSimpleCombo->Render(scolumn);
                                                    }
                                                }
 

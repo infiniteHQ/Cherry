@@ -52,11 +52,25 @@ namespace UIKit
 
         std::shared_ptr<DoubleKeyValString> cp_InputsKeyvalDoubleString;   
         std::shared_ptr<DoubleKeyValInteger> cp_InputsKeyvalDoubleInteger;      
+        std::shared_ptr<DoubleKeyValBoolean> cp_InputsKeyvalDoubleBoolean;      
+        std::shared_ptr<DoubleKeyValFloat> cp_InputsKeyvalDoubleFloat;      
+        std::shared_ptr<DoubleKeyValDouble> cp_InputsKeyvalDoubleDouble;      
+        std::shared_ptr<DoubleKeyValXYZVector> cp_InputsKeyvalDoubleXYZ;      
+        std::shared_ptr<DoubleKeyValSimpleCombo> cp_InputsKeyvalDoubleSimpleCombo;    
+        
         std::shared_ptr<std::string> v_StringOne;
         std::shared_ptr<int> v_IntegerOne;
+        std::shared_ptr<float> v_FloatOne;
+        std::shared_ptr<bool> v_BooleanOne;
+        std::shared_ptr<double> v_DoubleOne;
 
-        std::shared_ptr<ComboSimple> cp_ComboOne;    
-        std::shared_ptr<ComboCustom> cp_ComboTwo;     
+
+        std::shared_ptr<float> v_Xvalue;        
+        std::shared_ptr<float> v_Yvalue;        
+        std::shared_ptr<float> v_Zvalue;
+
+        std::shared_ptr<ComboSimple> cp_ComboOne;      
+        std::shared_ptr<ComboCustom> cp_ComboTwo;   
 
         std::string m_SelectedChildName;
         std::shared_ptr<UIKit::AppWindow> m_AppWindow;
