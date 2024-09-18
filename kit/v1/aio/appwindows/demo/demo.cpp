@@ -39,30 +39,30 @@ namespace UIKit
         cp_InputsKeyvalDoubleString = Application::Get().CreateComponent<DoubleKeyValString>("keyvaldouble_1", v_StringOne, "SuperKeyval");
         cp_InputsKeyvalDoubleInteger = Application::Get().CreateComponent<DoubleKeyValInteger>("keyvaldouble_2", v_IntegerOne, "SuperKeyval");
 
-        std::vector<TreeNode> nodes;
-        TreeNode file1a("File1_a.wav", "Audio file", 123000);
-        TreeNode file1b("File1_b.wav", "Audio file", 456000);
-        TreeNode image001("Image001.png", "Image file", 203128);
-        TreeNode image001Copy("Copy of Image001.png", "Image file", 203256);
+        std::vector<UIKit::SimpleTitleTreeNode> node2 = {
+            UIKit::SimpleTitleTreeNode("Node 2", {[this]()
+                                                  { ImGui::Text("Content 1 --"); },
+                                                  []()
+                                                  { ImGui::Text("Content 2 --"); }})};
 
-        TreeNode music("Music", "Folder", -1);
-        music.Children.push_back(file1a);
-        music.Children.push_back(file1b);
+        std::vector<UIKit::SimpleTitleTreeNode> node3 = {
+            UIKit::SimpleTitleTreeNode("Node 3", {[this]()
+                                                  { ImGui::Text("Content 1 --"); },
+                                                  []()
+                                                  { ImGui::Text("Content 2 --"); }})};
 
-        TreeNode textures("Trop bien", "Folder", -1);
-        textures.Children.push_back(image001);
-        textures.Children.push_back(image001Copy);
+        std::vector<UIKit::SimpleTitleTreeNode> nodes = {
+            UIKit::SimpleTitleTreeNode("Node 1", {[this]()
+                                                  { ImGui::Text("Content 1 --"); },
+                                                  []()
+                                                  { ImGui::Text("Content 2 --"); }})};
 
-        TreeNode desktopIni("desktop.ini", "System file", 1024);
+        node2[0].m_Children.push_back(node3[0]);
+        nodes[0].m_Children.push_back(node2[0]);
 
-        TreeNode root("Root", "Folder", -1);
-        root.Children.push_back(music);
-        root.Children.push_back(textures);
-        root.Children.push_back(desktopIni);
+        UIKit::CustomListTree myTree("tree1", nodes, 2);
 
-        nodes.push_back(root);
-
-        cp_ListTreeOne = Application::Get().CreateComponent<CustomListTree>("keyvaldouble_2", nodes, "SuperKeyval");
+        cp_ListTreeOne = Application::Get().CreateComponent<CustomListTree>("keyvaldouble_2", nodes, 2, "SuperKeyval");
 
         this->AddChild("Buttons", [this]()
                        {

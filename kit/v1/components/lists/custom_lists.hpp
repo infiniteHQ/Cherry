@@ -5,94 +5,99 @@
 
 namespace UIKit
 {
-
-    struct TreeNode
+    struct SimpleTitleTreeNode
     {
-        std::string Name;
-        std::string Type;
-        int Size;
-        std::vector<TreeNode> Children; // Dynamic list of child nodes
+        std::vector<std::function<void()>> m_ColumnCallbacks;
+        std::vector<SimpleTitleTreeNode> m_Children;
+        std::string m_Name;
 
-        TreeNode(const std::string& name, const std::string& type, int size)
-            : Name(name), Type(type), Size(size) {}
+        void AttachChild(std::vector<UIKit::SimpleTitleTreeNode> child)
+        {
+            m_Children.push_back(child[0]);
+        }
+
+        SimpleTitleTreeNode(const std::string &name, std::vector<std::function<void()>> callbacks)
+            : m_ColumnCallbacks(callbacks),
+              m_Name(name) {}
     };
 
-
-class CustomListTree : public Component
-{
-public:
-    CustomListTree(const std::string &id, const std::vector<TreeNode>& nodes, const std::string &label = "Button")
-        : Component(id),
-          m_Label(label),
-          m_Nodes(nodes)
+    class CustomListTree : public Component
     {
-        m_ID = id;
-    }
-
-    void Render()
-    {
-        static ImGuiTableFlags flags = ImGuiTableFlags_BordersV | ImGuiTableFlags_BordersOuterH | ImGuiTableFlags_Resizable | ImGuiTableFlags_RowBg | ImGuiTableFlags_NoBordersInBody;
-
-        const float TEXT_BASE_WIDTH = ImGui::CalcTextSize("A").x;
-        const float TEXT_BASE_HEIGHT = ImGui::GetTextLineHeightWithSpacing();
-
-        if (ImGui::BeginTable("3ways", 3, flags))
+    public:
+        CustomListTree(const std::string &id, const std::vector<SimpleTitleTreeNode> &nodes, int columnCount, const std::string &label = "Button")
+            : Component(id),
+              m_Label(label),
+              m_Nodes(nodes),
+              m_ColumnCount(columnCount)
         {
-            ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_NoHide);
-            ImGui::TableSetupColumn("Size", ImGuiTableColumnFlags_WidthFixed, TEXT_BASE_WIDTH * 12.0f);
-            ImGui::TableSetupColumn("Type", ImGuiTableColumnFlags_WidthFixed, TEXT_BASE_WIDTH * 18.0f);
-            ImGui::TableHeadersRow();
+            m_ID = id;
+        }
 
-            // Start rendering from the root nodes
-            for (const auto& node : m_Nodes)
+        void Render()
+        {
+            static ImGuiTableFlags flags = ImGuiTableFlags_BordersV | ImGuiTableFlags_BordersOuterH | ImGuiTableFlags_Resizable | ImGuiTableFlags_RowBg | ImGuiTableFlags_NoBordersInBody;
+
+            const float TEXT_BASE_WIDTH = ImGui::CalcTextSize("A").x;
+            const float TEXT_BASE_HEIGHT = ImGui::GetTextLineHeightWithSpacing();
+
+            if (ImGui::BeginTable("customTable", m_ColumnCount + 1, flags)) // +1 : Add the title column. (n content columns + 1 title column)
             {
-                RenderNode(node);
+                ImGui::TableSetupColumn("Title ", ImGuiTableColumnFlags_WidthStretch);
+
+                for (int i = 0; i < m_ColumnCount; ++i)
+                {
+                    ImGui::TableSetupColumn(("Column " + std::to_string(i + 1)).c_str(), ImGuiTableColumnFlags_WidthStretch);
+                }
+                ImGui::TableHeadersRow();
+
+                for (const auto &node : m_Nodes)
+                {
+                    RenderNode(node, true);
+                }
+
+                ImGui::EndTable();
+            }
+        }
+
+    private:
+        std::string m_Label;
+        std::vector<SimpleTitleTreeNode> m_Nodes;
+        int m_ColumnCount;
+
+        void RenderNode(const SimpleTitleTreeNode &node, bool isFirstColumn, int depth = 0)
+        {
+            ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_SpanFullWidth | ImGuiTreeNodeFlags_OpenOnArrow;
+            bool isFolder = !node.m_Children.empty();
+
+            ImGui::TableNextRow();
+            ImGui::TableNextColumn();
+
+            depth = depth + 10.0f;
+
+            ImGui::Indent(depth);
+
+            bool isOpen = ImGui::TreeNodeEx(node.m_Name.c_str(), nodeFlags);
+            ImGui::Unindent(depth);
+
+            for (int i = 0; i < m_ColumnCount; ++i)
+            {
+                ImGui::TableNextColumn();
+                if (i < node.m_ColumnCallbacks.size())
+                {
+                    node.m_ColumnCallbacks[i]();
+                }
             }
 
-            ImGui::EndTable();
-        }
-    }
-
-private:
-    std::string m_Label;
-    std::vector<TreeNode> m_Nodes;
-
-    // Recursive function to render the tree nodes
-    void RenderNode(const TreeNode& node)
-    {
-        ImGui::TableNextRow();
-        ImGui::TableNextColumn();
-        const bool is_folder = !node.Children.empty();
-        
-        if (is_folder)
-        {
-            bool open = ImGui::TreeNodeEx(node.Name.c_str(), ImGuiTreeNodeFlags_SpanFullWidth);
-            ImGui::TableNextColumn();
-            ImGui::TextDisabled("--"); // Size placeholder for folders
-            ImGui::TableNextColumn();
-            ImGui::TextUnformatted(node.Type.c_str());
-
-            if (open)
+            if (isOpen && isFolder)
             {
-                // Recursively render child nodes
-                for (const auto& child : node.Children)
+                for (const auto &child : node.m_Children)
                 {
-                    RenderNode(child);
+                    RenderNode(child, false, depth + 1);
                 }
                 ImGui::TreePop();
             }
         }
-        else
-        {
-            ImGui::TreeNodeEx(node.Name.c_str(), ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_Bullet | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanFullWidth);
-            ImGui::TableNextColumn();
-            ImGui::Text("%d", node.Size); // Display size for files
-            ImGui::TableNextColumn();
-            ImGui::TextUnformatted(node.Type.c_str());
-        }
-    }
-};
-
+    };
 
 }
 
