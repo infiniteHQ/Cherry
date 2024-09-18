@@ -17,6 +17,7 @@
 #include "../../../components/titles/h6.hpp"
 #include "../../../components/texts/simple_text.hpp"
 #include "../../../components/combos/simple_combo.hpp"
+#include "../../../components/combos/custom_combo.hpp"
 #include "../../../components/headers/simple_collapsing.hpp"
 #include "../../../components/headers/custom_collapsing.hpp"
 #include "../../../components/inputs/keyval/keyval_double.hpp"
@@ -46,14 +47,16 @@ namespace UIKit
         std::shared_ptr<ImageButtonSimple> cp_ButtonThreeColored;     
         std::shared_ptr<ImageButtonLowProfile> cp_ButtonFour;     
         std::shared_ptr<ImageButtonLowProfile> cp_ButtonFourColored;     
-        std::shared_ptr<CustomListTree> cp_ListTreeOne;     
+        std::shared_ptr<SimpleTree> cp_ListTreeOne;     
+        std::shared_ptr<CustomTree> cp_ListTreeTwo;     
 
         std::shared_ptr<DoubleKeyValString> cp_InputsKeyvalDoubleString;   
         std::shared_ptr<DoubleKeyValInteger> cp_InputsKeyvalDoubleInteger;      
         std::shared_ptr<std::string> v_StringOne;
         std::shared_ptr<int> v_IntegerOne;
 
-        std::shared_ptr<ComboSimple> cp_ComboOne;     
+        std::shared_ptr<ComboSimple> cp_ComboOne;    
+        std::shared_ptr<ComboCustom> cp_ComboTwo;     
 
         std::string m_SelectedChildName;
         std::shared_ptr<UIKit::AppWindow> m_AppWindow;

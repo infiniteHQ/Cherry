@@ -16,14 +16,14 @@ inline bool TextButtonUnderline(
     const std::string &hex_underline_hovered = "#BBBBBBff",
     const std::string &hex_underline_clicked = "#FFFFFFff",
     const ImVec2 &size = ImVec2(0, 0),
-    float y_margin = 2.0f // Marge verticale supplémentaire
+    float y_margin = 2.0f
 )
 {
     bool pressed = false;
     int i = 0;
 
-    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, y_margin)); // Ajout de marge verticale
-    ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, y_margin));  // Ajout de marge entre les éléments
+    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, y_margin));
+    ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, y_margin));
 
     ImVec4 text_idle = HexToRGBA(hex_text_idle.c_str());
     ImVec4 text_hovered = HexToRGBA(hex_text_hovered.c_str());

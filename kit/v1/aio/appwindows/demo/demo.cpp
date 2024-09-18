@@ -32,6 +32,7 @@ namespace UIKit
         cp_ButtonFour = Application::Get().CreateComponent<ImageButtonLowProfile>("button_4", "Custom Low Profile");
         cp_ButtonFourColored = Application::Get().CreateComponent<ImageButtonLowProfile>("button_4", "Custom Low Profile", "/usr/local/include/Vortex/imgs/vortex.png", "#2424F4FF", "#2424F4FF", "#2525F5FF", "#2525F5FF", "#2626F6FF", "#2525F5FF");
         cp_ComboOne = Application::Get().CreateComponent<ComboSimple>("combo_1", "SuperCombo", std::vector<std::string>{"My first item", "My second item", "My third item"}, 1);
+        cp_ComboTwo = Application::Get().CreateComponent<ComboCustom>("combo_2", "SuperCombo2", std::vector<std::function<void()>>{[](){ImGui::Button("QSFf");},[](){ImGui::Button("QSF");}}, 1);
 
         v_StringOne = std::make_shared<std::string>("Operationnal");
         v_IntegerOne = std::make_shared<int>(42);
@@ -39,20 +40,20 @@ namespace UIKit
         cp_InputsKeyvalDoubleString = Application::Get().CreateComponent<DoubleKeyValString>("keyvaldouble_1", v_StringOne, "SuperKeyval");
         cp_InputsKeyvalDoubleInteger = Application::Get().CreateComponent<DoubleKeyValInteger>("keyvaldouble_2", v_IntegerOne, "SuperKeyval");
 
-        std::vector<UIKit::SimpleTitleTreeNode> node2 = {
-            UIKit::SimpleTitleTreeNode("Node 2", {[this]()
+        std::vector<SimpleTree::SimpleTreeNode> node2 = {
+            SimpleTree::SimpleTreeNode("Node 2", {[this]()
                                                   { ImGui::Text("Content 1 --"); },
                                                   []()
                                                   { ImGui::Text("Content 2 --"); }})};
 
-        std::vector<UIKit::SimpleTitleTreeNode> node3 = {
-            UIKit::SimpleTitleTreeNode("Node 3", {[this]()
+        std::vector<SimpleTree::SimpleTreeNode> node3 = {
+            SimpleTree::SimpleTreeNode("Node 3", {[this]()
                                                   { ImGui::Text("Content 1 --"); },
                                                   []()
                                                   { ImGui::Text("Content 2 --"); }})};
 
-        std::vector<UIKit::SimpleTitleTreeNode> nodes = {
-            UIKit::SimpleTitleTreeNode("Node 1", {[this]()
+        std::vector<SimpleTree::SimpleTreeNode> nodes = {
+            SimpleTree::SimpleTreeNode("Node 1", {[this]()
                                                   { ImGui::Text("Content 1 --"); },
                                                   []()
                                                   { ImGui::Text("Content 2 --"); }})};
@@ -60,9 +61,65 @@ namespace UIKit
         node2[0].m_Children.push_back(node3[0]);
         nodes[0].m_Children.push_back(node2[0]);
 
-        UIKit::CustomListTree myTree("tree1", nodes, 2);
+        cp_ListTreeOne = Application::Get().CreateComponent<SimpleTree>("keyvaldouble_2", nodes, 2, "SuperKeyval");
 
-        cp_ListTreeOne = Application::Get().CreateComponent<CustomListTree>("keyvaldouble_2", nodes, 2, "SuperKeyval");
+        std::vector<CustomTree::CustomTreeNode> nodesd = {
+            CustomTree::CustomTreeNode({
+                []()
+                { ImGui::Text("Root"); }, // Column 1 content
+                []()
+                { ImGui::Text("--"); }, // Column 2 content
+                []()
+                { ImGui::Text("Folder"); } // Column 3 content
+            }),
+            CustomTree::CustomTreeNode({
+                []()
+                { ImGui::Text("File1_a.wav"); }, // Column 1 content
+                []()
+                { ImGui::Text("123000"); }, // Column 2 content
+                []()
+                { ImGui::Text("Audio file"); } // Column 3 content
+            })};
+        std::vector<CustomTree::CustomTreeNode> nodesd2 = {
+            CustomTree::CustomTreeNode({
+                []()
+                { ImGui::Text("Root22"); }, // Column 1 content
+                []()
+                { ImGui::Text("--"); }, // Column 2 content
+                []()
+                { ImGui::Text("Folder"); } // Column 3 content
+            }),
+            CustomTree::CustomTreeNode({
+                []()
+                { ImGui::Text("File1_a.wav"); }, // Column 1 content
+                []()
+                { ImGui::Text("123000"); }, // Column 2 content
+                []()
+                { ImGui::Text("Audio file"); } // Column 3 content
+            })};
+
+        std::vector<CustomTree::CustomTreeNode> nodesd3 = {
+            CustomTree::CustomTreeNode({
+                []()
+                { ImGui::Text("Root33"); }, // Column 1 content
+                []()
+                { ImGui::Text("--"); }, // Column 2 content
+                []()
+                { ImGui::Text("Folder"); } // Column 3 content
+            }),
+            CustomTree::CustomTreeNode({
+                []()
+                { ImGui::Text("File1_a.wav"); }, // Column 1 content
+                []()
+                { ImGui::Text("123000"); }, // Column 2 content
+                []()
+                { ImGui::Text("Audio file"); } // Column 3 content
+            })};
+
+        nodesd2[0].ChildNodes.push_back(nodesd3[0]);
+        nodesd[0].ChildNodes.push_back(nodesd2[0]);
+
+        cp_ListTreeTwo = Application::Get().CreateComponent<CustomTree>("keyvaldouble_2", nodesd, 3);
 
         this->AddChild("Buttons", [this]()
                        {
@@ -707,7 +764,7 @@ namespace UIKit
 
         });
 
-        this->AddChild("Lists", [this]()
+        this->AddChild("Trees", [this]()
                        {
                            ImGuiTableFlags flags2 = ImGuiTableFlags_Resizable | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Hideable | ImGuiTableFlags_Borders;
                            if (ImGui::BeginTable("table_context_menu_2", 4, flags2))
@@ -744,11 +801,31 @@ namespace UIKit
                                                ImGui::Button("Copy code");
                                           }
                                        }
+                                       else if (row == 1)
+                                       {
+                                         if (column == 0)
+                                           {
+                                               ImGui::Text("String double keyval input");
+                                           }
+                                           else if (column == 1)
+                                           {
+                                               ImGui::Text("This is a incredible Simpe Image button");
+                                           }
+                                           else if(column == 2)
+                                          {
+                                        cp_ListTreeTwo->Render();
+                                          }
+                                           else if(column == 3)
+                                          {
+                                               ImGui::Button("Copy code");
+                                          }
+                                       }
                                    }
                                }
                                ImGui::EndTable();
                            } });
 
+        this->AddChild("Lists", [this]() {});
         this->AddChild("Radios", [this]() {
 
         });
@@ -897,6 +974,7 @@ namespace UIKit
                                            }
                                            else if (column == 2)
                                            {
+                                               cp_ComboTwo->Render("Normal");
                                            }
                                            else if (column == 3)
                                            {

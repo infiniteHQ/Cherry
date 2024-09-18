@@ -38,23 +38,6 @@ namespace UIKit
 
         std::unordered_map<std::string, std::function<void()>> m_Childs;
 
-        std::shared_ptr<CustomButtonSimple> cp_ButtonOne;             
-        std::shared_ptr<CustomButtonSimple> cp_ButtonOneColored;        
-        std::shared_ptr<CustomButtonLowProfile> cp_ButtonTwo;     
-        std::shared_ptr<CustomButtonLowProfile> cp_ButtonTwoColored;
-        std::shared_ptr<ImageButtonSimple> cp_ButtonThree;     
-        std::shared_ptr<ImageButtonSimple> cp_ButtonThreeColored;     
-        std::shared_ptr<ImageButtonLowProfile> cp_ButtonFour;     
-        std::shared_ptr<ImageButtonLowProfile> cp_ButtonFourColored;     
-        std::shared_ptr<CustomListTree> cp_ListTreeOne;     
-
-        std::shared_ptr<DoubleKeyValString> cp_InputsKeyvalDoubleString;   
-        std::shared_ptr<DoubleKeyValInteger> cp_InputsKeyvalDoubleInteger;      
-        std::shared_ptr<std::string> v_StringOne;
-        std::shared_ptr<int> v_IntegerOne;
-
-        std::shared_ptr<ComboSimple> cp_ComboOne;     
-
         std::string m_SelectedChildName;
         std::shared_ptr<UIKit::AppWindow> m_AppWindow;
     };
