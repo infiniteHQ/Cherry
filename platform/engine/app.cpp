@@ -2611,13 +2611,13 @@ namespace UIKit
             ImGui::ResumeLayout();
         }
 
-        if (!app->m_Specification.DisableTitle)
+        if (!m_Specifications.DisableTitle)
         {
             // Centered Window title
             ImVec2 currentCursorPos = ImGui::GetCursorPos();
-            ImVec2 textSize = ImGui::CalcTextSize(app->m_Specification.Name.c_str());
+            ImVec2 textSize = ImGui::CalcTextSize(m_Specifications.Name.c_str());
             ImGui::SetCursorPos(ImVec2(ImGui::GetWindowWidth() * 0.5f - textSize.x * 0.5f, 2.0f + windowPadding.y + 6.0f));
-            ImGui::Text("%s", app->m_Specification.Name.c_str()); // Draw title
+            ImGui::Text("%s", m_Specifications.Name.c_str()); // Draw title
             ImGui::SetCursorPos(currentCursorPos);
         }
 
@@ -2636,13 +2636,13 @@ namespace UIKit
             app->m_FramebarCallback();
         }
 
-        if (app->m_Specification.CustomTitlebar)
+        if (m_Specifications.CustomTitlebar)
         {
             {
                 ImGui::Spring(-1.0f, 70.0f);
                 UI::ShiftCursorY(8.0f);
 
-                if (!app->m_Specification.WindowOnlyClosable)
+                if (!m_Specifications.WindowOnlyClosable)
                 {
                     const int iconWidth = this->get(g_WindowMinimizeIcon, "Minimize")->GetWidth();
                     const int iconHeight = this->get(g_WindowMinimizeIcon, "Minimize")->GetHeight();
@@ -2665,7 +2665,7 @@ namespace UIKit
                 ImGui::Spring(-1.0f, 17.0f);
                 UI::ShiftCursorY(8.0f);
 
-                if (!app->m_Specification.WindowOnlyClosable)
+                if (!m_Specifications.WindowOnlyClosable)
                 {
                     const int iconWidth = this->get(g_WindowMaximizeIcon, "Maximize")->GetWidth();
                     const int iconHeight = this->get(g_WindowMaximizeIcon, "Maximize")->GetHeight();
@@ -2809,9 +2809,9 @@ namespace UIKit
         {
             // Centered Window title
             ImVec2 currentCursorPos = ImGui::GetCursorPos();
-            ImVec2 textSize = ImGui::CalcTextSize(m_Specification.Name.c_str());
+            ImVec2 textSize = ImGui::CalcTextSize(window->m_Specifications.Name.c_str());
             ImGui::SetCursorPos(ImVec2(ImGui::GetWindowWidth() * 0.5f - textSize.x * 0.5f, 2.0f + windowPadding.y + 6.0f));
-            ImGui::Text("%s", m_Specification.Name.c_str()); // Draw title
+            ImGui::Text("%s", window->m_Specifications.Name.c_str()); // Draw title
             ImGui::SetCursorPos(currentCursorPos);
         }
 
@@ -2822,7 +2822,7 @@ namespace UIKit
         const float buttonWidth = 11.0f;
         const float buttonHeight = 11.0f;
 
-        if (m_Specification.CustomTitlebar)
+        if (window->m_Specifications.CustomTitlebar)
         {
 
             // Close Button
@@ -2849,7 +2849,7 @@ namespace UIKit
         if (!app->m_MenubarCallback)
             return;
 
-        if (app->m_Specification.CustomTitlebar)
+        if (m_Specifications.CustomTitlebar)
         {
             const ImRect menuBarRect = {ImGui::GetCursorPos(), {ImGui::GetContentRegionAvail().x + ImGui::GetCursorScreenPos().x, ImGui::GetFrameHeightWithSpacing()}};
 
@@ -3239,153 +3239,152 @@ namespace UIKit
                     s_Instance->SaveData();
                 }
 
-                if(s_Instance->m_Specification.EnableDocking)
+                if (s_Instance->m_Specification.EnableDocking)
                 {
 
-                for (auto &appwin : s_Instance->m_AppWindows)
-                {
-                    bool dockplace_initialized = false;
-                    bool parent_initialized = false;
-                    bool win_initialized = false;
-                    bool sizex_initialized = false;
-
-                    if (!appwin->m_WindowRebuilded)
+                    for (auto &appwin : s_Instance->m_AppWindows)
                     {
-                        std::shared_ptr<WindowDragDropState> dragdropstate = std::make_shared<WindowDragDropState>();
-                        dragdropstate->LastDraggingAppWindowHost = appwin->m_Name;
-                        dragdropstate->FromSave = true;
-                        LastWindowPressed = dragdropstate->LastDraggingAppWindowHost;
+                        bool dockplace_initialized = false;
+                        bool parent_initialized = false;
+                        bool win_initialized = false;
+                        bool sizex_initialized = false;
 
-                        for (auto &savedappwin : s_Instance->m_SavedAppWindows)
+                        if (!appwin->m_WindowRebuilded)
                         {
-                            if (appwin->m_Name == savedappwin->m_Name)
+                            std::shared_ptr<WindowDragDropState> dragdropstate = std::make_shared<WindowDragDropState>();
+                            dragdropstate->LastDraggingAppWindowHost = appwin->m_Name;
+                            dragdropstate->FromSave = true;
+                            LastWindowPressed = dragdropstate->LastDraggingAppWindowHost;
+
+                            for (auto &savedappwin : s_Instance->m_SavedAppWindows)
                             {
-                                // SetFetchedSaveData + appwin et pas savedappwin
-
-                                if (savedappwin->GetFetchedSaveData("docknodeparent") != "undefined")
+                                if (appwin->m_Name == savedappwin->m_Name)
                                 {
-                                    dragdropstate->LastDraggingAppWindow = savedappwin->GetFetchedSaveData("docknodeparent");
-                                }
+                                    // SetFetchedSaveData + appwin et pas savedappwin
 
-                                if (savedappwin->GetFetchedSaveData("dockplace") != "undefined")
-                                {
-                                    dragdropstate->DragOwner = savedappwin->m_Name;
-
-                                    if (savedappwin->GetFetchedSaveData("dockplace") == "right")
+                                    if (savedappwin->GetFetchedSaveData("docknodeparent") != "undefined")
                                     {
-                                        dragdropstate->LastDraggingPlace = DockEmplacement::DockRight;
-                                    }
-                                    else if (savedappwin->GetFetchedSaveData("dockplace") == "left")
-                                    {
-                                        dragdropstate->LastDraggingPlace = DockEmplacement::DockLeft;
+                                        dragdropstate->LastDraggingAppWindow = savedappwin->GetFetchedSaveData("docknodeparent");
                                     }
 
-                                    else if (savedappwin->GetFetchedSaveData("dockplace") == "up")
+                                    if (savedappwin->GetFetchedSaveData("dockplace") != "undefined")
                                     {
-                                        dragdropstate->LastDraggingPlace = DockEmplacement::DockUp;
-                                    }
-                                    else if (savedappwin->GetFetchedSaveData("dockplace") == "down")
-                                    {
-                                        dragdropstate->LastDraggingPlace = DockEmplacement::DockDown;
-                                    }
+                                        dragdropstate->DragOwner = savedappwin->m_Name;
 
-                                    else if (savedappwin->GetFetchedSaveData("dockplace") == "full")
-                                    {
-                                        dragdropstate->LastDraggingPlace = DockEmplacement::DockFull;
-                                    }
-                                    else
-                                    {
-                                        dragdropstate->LastDraggingPlace = DockEmplacement::DockFull;
-                                    }
-                                    dockplace_initialized = true;
-                                }
-
-                                if (savedappwin->GetFetchedSaveData("sizex") != "undefined")
-                                {
-                                    bool sizex_initialized = true;
-                                }
-
-                                if (savedappwin->GetFetchedSaveData("parent") != "undefined")
-                                {
-                                    dragdropstate->LastDraggingAppWindow = savedappwin->GetFetchedSaveData("dockparent");
-                                    dragdropstate->DragOwner = savedappwin->GetFetchedSaveData("dockparent");
-                                    bool parent_initialized = true;
-                                }
-
-                                if (savedappwin->GetFetchedSaveData("win") != "undefined")
-                                {
-                                    dragdropstate->LastDraggingWindow = savedappwin->GetFetchedSaveData("win");
-                                    appwin->m_WinParent = savedappwin->GetFetchedSaveData("win");
-
-                                    bool is_win_existing = false;
-                                    for (auto &win : s_Instance->m_Windows)
-                                    {
-                                        if (win->GetName() == appwin->GetFetchedSaveData("win"))
+                                        if (savedappwin->GetFetchedSaveData("dockplace") == "right")
                                         {
-                                            is_win_existing = true;
+                                            dragdropstate->LastDraggingPlace = DockEmplacement::DockRight;
                                         }
+                                        else if (savedappwin->GetFetchedSaveData("dockplace") == "left")
+                                        {
+                                            dragdropstate->LastDraggingPlace = DockEmplacement::DockLeft;
+                                        }
+
+                                        else if (savedappwin->GetFetchedSaveData("dockplace") == "up")
+                                        {
+                                            dragdropstate->LastDraggingPlace = DockEmplacement::DockUp;
+                                        }
+                                        else if (savedappwin->GetFetchedSaveData("dockplace") == "down")
+                                        {
+                                            dragdropstate->LastDraggingPlace = DockEmplacement::DockDown;
+                                        }
+
+                                        else if (savedappwin->GetFetchedSaveData("dockplace") == "full")
+                                        {
+                                            dragdropstate->LastDraggingPlace = DockEmplacement::DockFull;
+                                        }
+                                        else
+                                        {
+                                            dragdropstate->LastDraggingPlace = DockEmplacement::DockFull;
+                                        }
+                                        dockplace_initialized = true;
                                     }
 
-                                    if (!is_win_existing)
+                                    if (savedappwin->GetFetchedSaveData("sizex") != "undefined")
                                     {
-                                        s_Instance->SpawnWindow(appwin->GetFetchedSaveData("win"));
+                                        bool sizex_initialized = true;
                                     }
 
-                                    bool win_initialized = true;
+                                    if (savedappwin->GetFetchedSaveData("parent") != "undefined")
+                                    {
+                                        dragdropstate->LastDraggingAppWindow = savedappwin->GetFetchedSaveData("dockparent");
+                                        dragdropstate->DragOwner = savedappwin->GetFetchedSaveData("dockparent");
+                                        bool parent_initialized = true;
+                                    }
+
+                                    if (savedappwin->GetFetchedSaveData("win") != "undefined")
+                                    {
+                                        dragdropstate->LastDraggingWindow = savedappwin->GetFetchedSaveData("win");
+                                        appwin->m_WinParent = savedappwin->GetFetchedSaveData("win");
+
+                                        bool is_win_existing = false;
+                                        for (auto &win : s_Instance->m_Windows)
+                                        {
+                                            if (win->GetName() == appwin->GetFetchedSaveData("win"))
+                                            {
+                                                is_win_existing = true;
+                                            }
+                                        }
+
+                                        if (!is_win_existing)
+                                        {
+                                            s_Instance->SpawnWindow(appwin->GetFetchedSaveData("win"));
+                                        }
+
+                                        bool win_initialized = true;
+                                    }
                                 }
                             }
+
+                            if (!dockplace_initialized)
+                            {
+                                dragdropstate->DragOwner = appwin->m_Name;
+
+                                if (appwin->GetDefaultBehavior(DefaultAppWindowBehaviors::DefaultDocking) == "right")
+                                {
+                                    dragdropstate->LastDraggingPlace = DockEmplacement::DockRight;
+                                }
+                                else if (appwin->GetDefaultBehavior(DefaultAppWindowBehaviors::DefaultDocking) == "left")
+                                {
+                                    dragdropstate->LastDraggingPlace = DockEmplacement::DockLeft;
+                                }
+                                else if (appwin->GetDefaultBehavior(DefaultAppWindowBehaviors::DefaultDocking) == "up")
+                                {
+                                    dragdropstate->LastDraggingPlace = DockEmplacement::DockUp;
+                                }
+                                else if (appwin->GetDefaultBehavior(DefaultAppWindowBehaviors::DefaultDocking) == "down")
+                                {
+                                    dragdropstate->LastDraggingPlace = DockEmplacement::DockDown;
+                                }
+                                else if (appwin->GetDefaultBehavior(DefaultAppWindowBehaviors::DefaultDocking) == "full")
+                                {
+                                    dragdropstate->LastDraggingPlace = DockEmplacement::DockFull;
+                                }
+                                else
+                                {
+                                    dragdropstate->LastDraggingPlace = DockEmplacement::DockFull;
+                                }
+                            }
+
+                            if (!win_initialized && s_Instance->m_Windows[0])
+                            {
+                                dragdropstate->LastDraggingWindow = s_Instance->m_Windows[0]->GetName();
+                                dragdropstate->DragOwner = s_Instance->m_Windows[0]->GetName();
+                            }
+
+                            c_CurrentDragDropState = dragdropstate.get();
+                            PushRedockEvent(c_CurrentDragDropState);
+                            dragdropstate->DragOwner = "none";
+                            c_CurrentDragDropState = nullptr;
+
+                            appwin->m_WindowRebuilded = true;
                         }
-
-                        if (!dockplace_initialized)
-                        {
-                            dragdropstate->DragOwner = appwin->m_Name;
-
-                            if (appwin->GetDefaultBehavior(DefaultAppWindowBehaviors::DefaultDocking) == "right")
-                            {
-                                dragdropstate->LastDraggingPlace = DockEmplacement::DockRight;
-                            }
-                            else if (appwin->GetDefaultBehavior(DefaultAppWindowBehaviors::DefaultDocking) == "left")
-                            {
-                                dragdropstate->LastDraggingPlace = DockEmplacement::DockLeft;
-                            }
-                            else if (appwin->GetDefaultBehavior(DefaultAppWindowBehaviors::DefaultDocking) == "up")
-                            {
-                                dragdropstate->LastDraggingPlace = DockEmplacement::DockUp;
-                            }
-                            else if (appwin->GetDefaultBehavior(DefaultAppWindowBehaviors::DefaultDocking) == "down")
-                            {
-                                dragdropstate->LastDraggingPlace = DockEmplacement::DockDown;
-                            }
-                            else if (appwin->GetDefaultBehavior(DefaultAppWindowBehaviors::DefaultDocking) == "full")
-                            {
-                                dragdropstate->LastDraggingPlace = DockEmplacement::DockFull;
-                            }
-                            else
-                            {
-                                dragdropstate->LastDraggingPlace = DockEmplacement::DockFull;
-                            }
-                        }
-
-                        if (!win_initialized && s_Instance->m_Windows[0])
-                        {
-                            dragdropstate->LastDraggingWindow = s_Instance->m_Windows[0]->GetName();
-                            dragdropstate->DragOwner = s_Instance->m_Windows[0]->GetName();
-                        }
-
-                        c_CurrentDragDropState = dragdropstate.get();
-                        PushRedockEvent(c_CurrentDragDropState);
-                        dragdropstate->DragOwner = "none";
-                        c_CurrentDragDropState = nullptr;
-
-                        appwin->m_WindowRebuilded = true;
                     }
-                }
-            
                 }
             }
             else
             {
-                
+
                 for (auto &appwin : s_Instance->m_AppWindows)
                 {
                     if (!appwin->m_WindowRebuilded)
@@ -3593,41 +3592,41 @@ namespace UIKit
                 }
             }
 
-                if(s_Instance->m_Specification.EnableDocking)
-                {
-
-            for (auto &req : m_RedockRequests)
+            if (s_Instance->m_Specification.EnableDocking)
             {
-                for (auto &app_win : m_AppWindows)
+
+                for (auto &req : m_RedockRequests)
                 {
-                    if (req->m_ParentAppWindowHost == app_win->m_Name)
+                    for (auto &app_win : m_AppWindows)
                     {
-                        bool parentFound = false;
-                        for (auto &win : m_Windows)
+                        if (req->m_ParentAppWindowHost == app_win->m_Name)
                         {
-                            if (win->GetName() == req->m_ParentWindow)
+                            bool parentFound = false;
+                            for (auto &win : m_Windows)
                             {
-                                app_win->AddUniqueWinParent(win->GetName());
-
-                                parentFound = true;
-
-                                /*if (app_win->m_ImGuiWindow)
+                                if (win->GetName() == req->m_ParentWindow)
                                 {
-                                    app_win->m_DockSpaceID = ImGui::GetID("MainDockspace");
-                                }*/
-                            }
-                        }
+                                    app_win->AddUniqueWinParent(win->GetName());
 
-                        if (!parentFound)
-                        {
-                            app_win->AddUniqueWinParent("unknow");
-                            // app_win->m_WinParent = "unknow";
-                            //  app_win->m_DockSpaceID = ImGui::GetID("MainDockspace");
+                                    parentFound = true;
+
+                                    /*if (app_win->m_ImGuiWindow)
+                                    {
+                                        app_win->m_DockSpaceID = ImGui::GetID("MainDockspace");
+                                    }*/
+                                }
+                            }
+
+                            if (!parentFound)
+                            {
+                                app_win->AddUniqueWinParent("unknow");
+                                // app_win->m_WinParent = "unknow";
+                                //  app_win->m_DockSpaceID = ImGui::GetID("MainDockspace");
+                            }
                         }
                     }
                 }
             }
-                }
             drag_rendered = false;
 
             int i = 0;
@@ -3782,12 +3781,14 @@ namespace UIKit
         CleanupVulkan();
     }
 
-    Window::Window(const std::string &name, int width, int height, bool cold_start = true)
-        : m_Name(name), m_Width(width), m_Height(height)
+    Window::Window(const std::string &name, int width, int height, ApplicationSpecification specs = s_Instance->m_Specification, bool cold_start = true)
+        : m_Name(name), m_Width(specs.Width), m_Height(specs.Height)
     {
         SDL_WindowFlags window_flags;
 
-        if (s_Instance->m_Specification.DisableWindowManagerTitleBar)
+        m_Specifications = specs;
+
+        if (m_Specifications.DisableWindowManagerTitleBar)
         {
             window_flags = (SDL_WindowFlags)(SDL_WINDOW_VULKAN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_BORDERLESS);
         }
@@ -4576,8 +4577,8 @@ namespace UIKit
         ImGui::SetNextWindowSize(viewport->Size);
         ImGui::SetNextWindowViewport(viewport->ID);
 
-        float minWidth = this->m_Specification.MinWidth;
-        float minHeight = this->m_Specification.MinHeight;
+        float minWidth = window->m_Specifications.MinWidth;
+        float minHeight = window->m_Specifications.MinHeight;
         ImGui::SetNextWindowSizeConstraints(ImVec2(minWidth, minHeight), ImVec2(FLT_MAX, FLT_MAX));
 
         ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
@@ -4585,7 +4586,7 @@ namespace UIKit
 
         window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse;
         window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
-        if (!m_Specification.CustomTitlebar && m_MenubarCallback)
+        if (!window->m_Specifications.CustomTitlebar && m_MenubarCallback)
             window_flags |= ImGuiWindowFlags_MenuBar;
 
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(1.0f, 1.0f));
@@ -4636,7 +4637,7 @@ namespace UIKit
         ImGui::PopStyleColor();
         ImGui::PopStyleVar(2);
 
-        if (m_Specification.CustomTitlebar && !m_Specification.DisableTitleBar)
+        if (window->m_Specifications.CustomTitlebar && !window->m_Specifications.DisableTitleBar)
         {
             float titleBarHeight;
             window->UI_DrawTitlebar(titleBarHeight);
@@ -4650,7 +4651,7 @@ namespace UIKit
 
         AppPushTabStyle();
 
-        if (m_Specification.EnableDocking)
+        if (window->m_Specifications.EnableDocking)
         {
             ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
@@ -4726,7 +4727,7 @@ namespace UIKit
 
         style.WindowMinSize.x = minWinSizeX;
 
-        if (!m_Specification.CustomTitlebar)
+        if (!window->m_Specifications.CustomTitlebar)
             window->UI_DrawMenubar();
 
         for (auto &layer : m_LayerStack)
@@ -4861,6 +4862,18 @@ namespace UIKit
             return;
         }
 
+        if(m_Closable)
+        {
+            if(!m_CloseSignal)
+            {
+                if(this->m_CloseCallback)
+                {
+                    this->m_CloseCallback();
+                }
+                m_CloseSignal = true;
+            }
+        }
+        
         if (!m_Opened)
         {
             m_CloseEvent;
@@ -4876,6 +4889,20 @@ namespace UIKit
         else
         {
             dockspaceID = ImGui::GetID("MainDockspace");
+        }
+
+        std::shared_ptr<Window> window_instance;
+        for(auto &win : s_Instance->m_Windows)
+        {
+            if(win->GetName() == winname)
+            {
+                window_instance = win;
+            }
+        }
+
+        if(!window_instance)
+        {
+            return;
         }
 
         std::cout << "reqs size : " << reqs->size() << std::endl;
@@ -4907,7 +4934,7 @@ namespace UIKit
             ImGuiWindow *splitwindow = nullptr;
             ImGuiWindow *currentwindow = nullptr;
 
-            if (s_Instance->m_Specification.WindowSaves)
+            if (window_instance->m_Specifications.WindowSaves)
             {
                 if (!req->m_FromSave)
                 {
@@ -5041,31 +5068,39 @@ namespace UIKit
 
         ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoMove;
 
+
         ImGui::PushStyleVar(ImGuiStyleVar_PopupRounding, 3.0f);
         ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10, 12));
+
+        if(m_SaveMode && !m_Saved)
+        {
+            window_flags += ImGuiWindowFlags_UnsavedDocument;
+        }
+
         if (this->GetImage(m_Icon))
         {
             static ImTextureID texture = this->GetImage(m_Icon)->GetImGuiTextureID(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
             if (m_Closable)
             {
-                ImGui::UIKit_BeginLogoWindow(m_Name.c_str(), &texture, &m_Opened, window_flags);
+                ImGui::UIKit_BeginLogoWindow(m_Name.c_str(), &texture, &m_CloseSignal, window_flags);
             }
             else
             {
-                ImGui::UIKit_BeginLogoWindow(m_Name.c_str(), &texture, NULL, window_flags);
+                ImGui::UIKit_BeginLogoWindow(m_Name.c_str(), &texture, nullptr, window_flags);
             }
         }
         else
         {
             if (m_Closable)
             {
-                ImGui::Begin(m_Name.c_str(), &m_Opened, window_flags);
+                ImGui::Begin(m_Name.c_str(), &m_CloseSignal, window_flags);
             }
             else
             {
-                ImGui::Begin(m_Name.c_str(), NULL, window_flags);
+                ImGui::Begin(m_Name.c_str(), nullptr, window_flags);
             }
         }
+
 
         if (ImGui::BeginMenuBar())
         {
@@ -5107,6 +5142,19 @@ namespace UIKit
         ImGui::PopStyleVar(2);
 
         ImGuiContext *ctx = ImGui::GetCurrentContext();
+
+        if (this->m_TabMenuCallback)
+        {
+            ImGui::GetCurrentWindow()->ContextMenuCallback = this->m_TabMenuCallback;
+        }
+
+        if (this->m_CloseCallback)
+        {
+            ImGui::GetCurrentWindow()->CloseCallback = this->m_CloseCallback;
+        }
+
+        ImGui::GetCurrentWindow()->Closable = this->m_Closable;
+        ImGui::GetCurrentWindow()->Saved = this->m_Saved;
 
         std::shared_ptr<Window> wind;
 

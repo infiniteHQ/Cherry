@@ -1,4 +1,57 @@
 {
-    "data": {},
+    "data": {
+        "windows": [
+            {
+                "data": {
+                    "simple_storage": [
+                        {
+                            "key": "dockplace",
+                            "value": "full"
+                        },
+                        {
+                            "key": "window",
+                            "value": "unknown"
+                        },
+                        {
+                            "key": "docknodeparent",
+                            "value": "unknown"
+                        }
+                    ],
+                    "window_storage": []
+                },
+                "docknodeparent": "unknown",
+                "dockplace": "full",
+                "id": "test_window",
+                "name": "Demo Window",
+                "type": "instanciable,static",
+                "win": "0"
+            },
+            {
+                "data": {
+                    "simple_storage": [
+                        {
+                            "key": "dockplace",
+                            "value": "right"
+                        },
+                        {
+                            "key": "window",
+                            "value": "Demo Window"
+                        },
+                        {
+                            "key": "docknodeparent",
+                            "value": "Demo Window"
+                        }
+                    ],
+                    "window_storage": []
+                },
+                "docknodeparent": "Demo Window",
+                "dockplace": "right",
+                "id": "test_window",
+                "name": "DD Window *",
+                "type": "instanciable,static",
+                "win": "0"
+            }
+        ]
+    },
     "save": true
 }

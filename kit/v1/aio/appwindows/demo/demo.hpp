@@ -6,8 +6,7 @@
 // UIKIT Components
 #include "../../../components/buttons/custom_buttons.hpp"
 #include "../../../components/buttons/image_buttons.hpp"
-#include "../../../components/buttons/danger_buttons.hpp"
-#include "../../../components/buttons/validation_buttons.hpp"
+#include "../../../components/buttons/image_text_buttons.hpp"
 #include "../../../components/buttons/text_buttons.hpp"
 #include "../../../components/titles/h1.hpp"
 #include "../../../components/titles/h2.hpp"
@@ -46,10 +45,10 @@ namespace UIKit
         std::shared_ptr<CustomButtonSimple> cp_ButtonOneColored;        
         std::shared_ptr<CustomButtonLowProfile> cp_ButtonTwo;     
         std::shared_ptr<CustomButtonLowProfile> cp_ButtonTwoColored;
-        std::shared_ptr<ImageButtonSimple> cp_ButtonThree;     
-        std::shared_ptr<ImageButtonSimple> cp_ButtonThreeColored;     
-        std::shared_ptr<ImageButtonLowProfile> cp_ButtonFour;     
-        std::shared_ptr<ImageButtonLowProfile> cp_ButtonFourColored;     
+        std::shared_ptr<ImageTextButtonSimple> cp_ButtonThree;     
+        std::shared_ptr<ImageTextButtonSimple> cp_ButtonThreeColored;     
+        std::shared_ptr<ImageTextButtonLowProfile> cp_ButtonFour;     
+        std::shared_ptr<ImageTextButtonLowProfile> cp_ButtonFourColored;     
         std::shared_ptr<SimpleTree> cp_ListTreeOne;     
         std::shared_ptr<CustomTree> cp_ListTreeTwo;     
 

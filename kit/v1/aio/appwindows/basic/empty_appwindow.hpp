@@ -5,8 +5,6 @@
 
 #include "../../../components/buttons/custom_buttons.hpp"
 #include "../../../components/buttons/image_buttons.hpp"
-#include "../../../components/buttons/danger_buttons.hpp"
-#include "../../../components/buttons/cancel_buttons.hpp"
 
 namespace UIKit
 {
@@ -18,6 +16,9 @@ namespace UIKit
         EmptyAppWindow(const std::string &name, const std::shared_ptr<AppWindow> &parent);
         EmptyAppWindow(const std::string &name);
         EmptyAppWindow();
+
+
+    void RefreshRender(const std::shared_ptr<EmptyAppWindow> &instance);
 
         std::shared_ptr<CustomButtonSimple> cp_ButtonOne;
 

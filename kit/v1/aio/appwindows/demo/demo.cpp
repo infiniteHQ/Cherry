@@ -1,6 +1,5 @@
 #include "./demo.hpp"
 
-
 /*
 
 Simple button
@@ -52,14 +51,43 @@ namespace UIKit
         m_AppWindow = std::make_shared<UIKit::AppWindow>(name, name);
         m_AppWindow->SetIcon("/usr/local/include/Vortex/imgs/vortex.png");
 
+        m_AppWindow->m_TabMenuCallback = [](){
+                ImVec4 grayColor = ImVec4(0.4f, 0.4f, 0.4f, 1.0f);
+                ImVec4 graySeparatorColor = ImVec4(0.4f, 0.4f, 0.4f, 0.5f);
+                ImVec4 darkBackgroundColor = ImVec4(0.15f, 0.15f, 0.15f, 1.0f);
+                ImVec4 lightBorderColor = ImVec4(0.2f, 0.2f, 0.2f, 1.0f);
+              if (ImGui::BeginMenu("Edit"))
+                {
+                    ImGui::PushStyleColor(ImGuiCol_Text, grayColor);
+                    ImGui::Text("Main stuff");
+                    ImGui::PopStyleColor();
+
+                    ImGui::PushStyleColor(ImGuiCol_Separator, graySeparatorColor);
+                    ImGui::Separator();
+                    ImGui::PopStyleColor();
+
+                    if (ImGui::MenuItem("Logs Utility", "Overview of all logs"))
+                    {
+                        // Action quand l'élément "Logs Utility" est sélectionné
+                    }
+
+                    if (ImGui::MenuItem("Logs2 Utility", "Overview of all logs"))
+                    {
+                        // Action quand l'élément "Logs Utility" est sélectionné
+                    }
+
+                    ImGui::EndMenu();
+                }
+        };
+
         cp_ButtonOne = Application::Get().CreateComponent<CustomButtonSimple>("button_1", "Custom Simple");
         cp_ButtonOneColored = Application::Get().CreateComponent<CustomButtonSimple>("button_1_colored", "Custom Simple", "#2424F4FF", "#2424F4FF", "#2525F5FF", "#2525F5FF", "#2626F6FF", "#2525F5FF");
         cp_ButtonTwo = Application::Get().CreateComponent<CustomButtonLowProfile>("button_2", "Custom Low Profile");
         cp_ButtonTwoColored = Application::Get().CreateComponent<CustomButtonLowProfile>("button_2_colored", "Custom Low Profile", "#2424F4FF", "#2424F4FF", "#2525F5FF", "#2525F5FF", "#2626F6FF", "#2525F5FF");
-        cp_ButtonThree = Application::Get().CreateComponent<ImageButtonSimple>("button_3", "Custom Low Profile");
-        cp_ButtonThreeColored = Application::Get().CreateComponent<ImageButtonSimple>("button_3_colored", "Custom Low Profile", "/usr/local/include/Vortex/imgs/vortex.png", "#2424F4FF", "#2424F4FF", "#2525F5FF", "#2525F5FF", "#2626F6FF", "#2525F5FF");
-        cp_ButtonFour = Application::Get().CreateComponent<ImageButtonLowProfile>("button_4", "Custom Low Profile");
-        cp_ButtonFourColored = Application::Get().CreateComponent<ImageButtonLowProfile>("button_4", "Custom Low Profile", "/usr/local/include/Vortex/imgs/vortex.png", "#2424F4FF", "#2424F4FF", "#2525F5FF", "#2525F5FF", "#2626F6FF", "#2525F5FF");
+        cp_ButtonThree = Application::Get().CreateComponent<ImageTextButtonSimple>("button_3", "Custom Low Profile");
+        cp_ButtonThreeColored = Application::Get().CreateComponent<ImageTextButtonSimple>("button_3_colored", "Custom Low Profile", "/usr/local/include/Vortex/imgs/vortex.png", "#2424F4FF", "#2424F4FF", "#2525F5FF", "#2525F5FF", "#2626F6FF", "#2525F5FF");
+        cp_ButtonFour = Application::Get().CreateComponent<ImageTextButtonLowProfile>("button_4", "Custom Low Profile");
+        cp_ButtonFourColored = Application::Get().CreateComponent<ImageTextButtonLowProfile>("button_4", "Custom Low Profile", "/usr/local/include/Vortex/imgs/vortex.png", "#2424F4FF", "#2424F4FF", "#2525F5FF", "#2525F5FF", "#2626F6FF", "#2525F5FF");
         cp_ComboOne = Application::Get().CreateComponent<ComboSimple>("combo_1", "SuperCombo", std::vector<std::string>{"My first item", "My second item", "My third item"}, 1);
 
         cp_ComboTwo = Application::Get().CreateComponent<ComboCustom>("combo_2", "SuperCombo2", std::vector<std::function<void()>>{[]()
@@ -99,8 +127,11 @@ namespace UIKit
 
         cp_SimpleTable = Application::Get().CreateComponent<SimpleTable>("simpletable_1", "Simple double value", std::vector<std::string>{"One", "Two", "Three"});
         cp_SimpleTableTwo = Application::Get().CreateComponent<SimpleTable>("simpletable_2", "KeyvA", std::vector<std::string>{"Key", "Value"});
+        cp_SimpleTableTwo->SetHeaderCellPaddingY(12.0f);
+        cp_SimpleTableTwo->SetHeaderCellPaddingX(10.0f);
+        cp_SimpleTableTwo->SetRowsCellPaddingY(100.0f);
 
-        cp_TextEditor = std::make_shared<TextEditor>("/home/diego/Documents/indf.html");   
+        cp_TextEditor = std::make_shared<TextEditor>("/home/diego/Documents/indf.html");
 
         std::vector<SimpleTree::SimpleTreeNode> node2 = {
             SimpleTree::SimpleTreeNode("Node 2", {[this]()
@@ -185,9 +216,6 @@ namespace UIKit
 
         this->AddChild("Buttons", [this]()
                        {
-
-                        ImGui::ShowDemoWindow();
-
                         ImGuiTableFlags flags2 = ImGuiTableFlags_Resizable | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Hideable | ImGuiTableFlags_Borders;
         if (ImGui::BeginTable("table_context_menu_2", 4, flags2))
         {
@@ -196,7 +224,6 @@ namespace UIKit
             ImGui::TableSetupColumn("Preview");
             ImGui::TableSetupColumn("Code");
 
-            // [2.1] Right-click on the TableHeadersRow() line to open the default table context menu.
             ImGui::TableHeadersRow();
             for (int row = 0; row < 10; row++)
             {
@@ -1407,9 +1434,9 @@ namespace UIKit
                                ImGui::EndTable();
                            } });
 
-        this->AddChild("Text editor", [this]() {
-            
-                                       ImGuiTableFlags flags2 = ImGuiTableFlags_Resizable | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Hideable | ImGuiTableFlags_Borders;
+        this->AddChild("Text editor", [this]()
+                       {
+                           ImGuiTableFlags flags2 = ImGuiTableFlags_Resizable | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Hideable | ImGuiTableFlags_Borders;
                            if (ImGui::BeginTable("table_context_menu_2", 4, flags2))
                            {
                                ImGui::TableSetupColumn("Name");
@@ -1437,7 +1464,7 @@ namespace UIKit
                                            }
                                            else if (column == 2)
                                            {
-                                            cp_TextEditor->Render("Title");
+                                               cp_TextEditor->Render("Title");
                                            }
                                            else if (column == 3)
                                            {
@@ -1448,8 +1475,7 @@ namespace UIKit
                                }
                                ImGui::EndTable();
                            }
-
-        });
+                       });
 
         this->AddChild("Nodes", [this]() {
 

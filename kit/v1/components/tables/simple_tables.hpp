@@ -26,28 +26,42 @@ namespace UIKit
               m_HexTextColor(hex_text_color)
         {
             UpdateLastChangedTime();
+
+            ImGuiStyle style = ImGui::GetStyle();
+            m_HeaderCellPaddingX = style.CellPadding.x;
+            m_HeaderCellPaddingY = style.CellPadding.y;
+            m_RowsCellPaddingX = style.CellPadding.x;
+            m_RowsCellPaddingY = style.CellPadding.y;
         }
 
         void Render(std::vector<SimpleTableRow> rows, const std::string &duplication_name = "base")
         {
-            ImGuiTableFlags flags = ImGuiTableFlags_Resizable | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Hideable | ImGuiTableFlags_Borders;
+            ImGuiTableFlags flags = ImGuiTableFlags_Resizable | ImGuiTableFlags_SizingStretchSame | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Hideable | ImGuiTableFlags_Borders;
 
             if (ImGui::BeginTable(m_Label.c_str(), m_Columns.size(), flags))
             {
-                for (auto &column : m_Columns)
+                ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, ImVec2(m_HeaderCellPaddingX, m_HeaderCellPaddingY));
+
+                for (int i = 0; i < m_Columns.size(); ++i)
                 {
-                    ImGui::TableSetupColumn(column.c_str());
+                    if (i == m_Columns.size() - 1)
+                    {
+                        ImGui::TableSetupColumn(m_Columns[i].c_str(), ImGuiTableColumnFlags_NoResize);
+                    }
+                    else
+                    {
+                        ImGui::TableSetupColumn(m_Columns[i].c_str());
+                    }
                 }
-
                 ImGui::TableHeadersRow();
+                ImGui::PopStyleVar();
 
+                ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, ImVec2(m_RowsCellPaddingX, m_RowsCellPaddingY));
                 for (int row = 0; row < rows.size(); row++)
                 {
-
                     ImGui::TableNextRow();
                     for (int column = 0; column < m_Columns.size(); column++)
                     {
-
                         ImGui::TableSetColumnIndex(column);
                         if (column < rows[row].m_ColumnCallbacks.size())
                         {
@@ -55,8 +69,29 @@ namespace UIKit
                         }
                     }
                 }
+                ImGui::PopStyleVar();
                 ImGui::EndTable();
             }
+        }
+
+        void SetHeaderCellPaddingY(const float &padding_y)
+        {
+            m_HeaderCellPaddingY = padding_y;
+        }
+
+        void SetHeaderCellPaddingX(const float &padding_x)
+        {
+            m_HeaderCellPaddingX = padding_x;
+        }
+
+        void SetRowsCellPaddingY(const float &padding_y)
+        {
+            m_RowsCellPaddingY = padding_y;
+        }
+
+        void SetRowsCellPaddingX(const float &padding_x)
+        {
+            m_RowsCellPaddingX = padding_x;
         }
 
         std::string GetData(const std::string &data_type) override
@@ -71,6 +106,12 @@ namespace UIKit
         int m_DefaultIndex;
         int m_SelectedIndex;
         std::string m_LastChanged;
+
+        // Design properties
+        float m_HeaderCellPaddingX;
+        float m_HeaderCellPaddingY;
+        float m_RowsCellPaddingX;
+        float m_RowsCellPaddingY;
 
         void UpdateLastChangedTime()
         {

@@ -53,6 +53,37 @@ namespace UIKit
 		double ypos;
 	};
 
+	struct ApplicationSpecification
+	{
+		std::string Name = "UIKit App";
+		uint32_t Width = 1850;
+		uint32_t Height = 1000;
+		uint32_t MinWidth = 100;
+		uint32_t MinHeight = 100;
+
+		std::filesystem::path IconPath;
+
+		bool WindowResizeable = true;
+
+		bool WindowOnlyClosable = false;
+
+		bool WindowSaves = false;
+
+		bool DisableTitle = false;
+		bool DisableTitleBar = false;
+		bool DisableResize = false;
+		bool DisableWindowManagerTitleBar = false;
+		bool EnableDocking = false;
+
+		// Uses custom UIKit titlebar instead
+		// of Windows default
+		bool CustomTitlebar = false;
+
+		// Window will be created in the center
+		// of primary monitor
+		bool CenterWindow = false;
+	};
+
 	enum class DockEmplacement
 	{
 		DockBlank,
@@ -145,7 +176,7 @@ namespace UIKit
 
 		void push_event();
 		void CtxRender(std::vector<std::shared_ptr<RedockRequest>> *reqs, const std::string &winname);
-		std::shared_ptr<RedockRequest> CreateEvent(const std::string &parentWindow, DockEmplacement emplacement, const bool& fromSave = false,const std::string &appWindow = "none")
+		std::shared_ptr<RedockRequest> CreateEvent(const std::string &parentWindow, DockEmplacement emplacement, const bool &fromSave = false, const std::string &appWindow = "none")
 		{
 			std::shared_ptr<RedockRequest> req = std::make_shared<RedockRequest>();
 			req->m_DockPlace = emplacement;
@@ -225,7 +256,6 @@ namespace UIKit
 			return m_Storage;
 		}
 
-
 		void SetDefaultBehavior(DefaultAppWindowBehaviors behavior, const std::string &value)
 		{
 			m_DefaultBehaviors[behavior] = value;
@@ -241,6 +271,10 @@ namespace UIKit
 			{
 				return "undefined";
 			}
+		}
+
+		void SpawnInNewWindow()
+		{
 		}
 
 		void SetRenderCallback(const std::function<void()> &render)
@@ -268,18 +302,15 @@ namespace UIKit
 			m_DockingMode = use_docking;
 		}
 
-
-		void SetFetchedSaveData(const std::string &key, const std::string& value)
+		void SetFetchedSaveData(const std::string &key, const std::string &value)
 		{
 			m_LastSaveData[key] = value;
 		}
-
 
 		void SetInstanciable()
 		{
 			m_AppWindowType = AppWindowTypes::InstanciableWindow;
 		}
-		
 
 		std::string GetFetchedSaveData(const std::string &key)
 		{
@@ -300,6 +331,31 @@ namespace UIKit
 		void AddWinParent(const std::string &parentnale);
 		void DeleteWinParent(const std::string &parentnale);
 
+		void SetClosable(const bool &is_closable)
+		{
+			this->m_Closable = is_closable;
+		}
+
+		void SetCloseCallback(std::function<void()> close_callback)
+		{
+			this->m_CloseCallback = close_callback;
+		}
+
+		void SetSaveMode(const bool &use_save_mode)
+		{
+			this->m_SaveMode = use_save_mode;
+		}
+
+		void SetSaved(const bool &new_state)
+		{
+			this->m_Saved = new_state;
+		}
+
+		void SetOpened(const bool &new_state)
+		{
+			this->m_Opened = new_state;
+		}
+
 	public:
 		int treated = 0;
 
@@ -315,6 +371,12 @@ namespace UIKit
 		std::string m_Icon = "none";
 
 		bool m_Closable = true;
+		bool m_CloseSignal = true;
+
+		bool m_SaveMode = false;
+		bool m_Saved = false;
+		bool m_UnsaveMarkerApplied = false;
+
 		bool m_Opened = true;
 		bool m_IsRendering = true;
 
@@ -325,7 +387,10 @@ namespace UIKit
 
 		bool m_DockingMode = false;
 
-		// 
+		std::function<void()> m_CloseCallback;
+		std::function<void()> m_TabMenuCallback;
+
+		//
 		bool m_WindowRebuilded = false;
 
 		bool m_HaveParentAppWindow = false;
@@ -346,7 +411,6 @@ namespace UIKit
 		std::vector<std::shared_ptr<AppWindow>> m_SubAppWindows;
 
 	private:
-
 		// Simple storage (only Key/Value), can be replicated in saves
 		std::unordered_map<std::string, std::shared_ptr<SimpleStorageItem>> m_Storage;
 
@@ -362,16 +426,16 @@ namespace UIKit
 
 	class Component
 	{
-		public:
-		Component(const std::string& id): m_ID(id) {};
-		virtual std::string GetData(const std::string& data_type) {};
+	public:
+		Component(const std::string &id) : m_ID(id) {};
+		virtual std::string GetData(const std::string &data_type) {};
 		std::string m_ID;
 	};
 
 	class Window
 	{
 	public:
-		Window(const std::string &name, int width, int height, bool cold_start);
+		Window(const std::string &name, int width, int height, ApplicationSpecification specs, bool cold_start);
 
 		~Window();
 
@@ -474,6 +538,8 @@ namespace UIKit
 
 		bool m_Resizing = false;
 
+		ApplicationSpecification m_Specifications;
+
 		std::mutex m_EventQueueMutex;
 		std::queue<std::function<void()>> m_EventQueue;
 		bool g_SwapChainRebuild = false;
@@ -526,37 +592,6 @@ namespace UIKit
 		std::string window_name;
 	};
 
-	struct ApplicationSpecification
-	{
-		std::string Name = "UIKit App";
-		uint32_t Width = 1850;
-		uint32_t Height = 1000;
-		uint32_t MinWidth = 100;
-		uint32_t MinHeight = 100;
-
-		std::filesystem::path IconPath;
-
-		bool WindowResizeable = true;
-
-		bool WindowOnlyClosable = false;
-
-		bool WindowSaves = false;
-
-		bool DisableTitle = false;
-		bool DisableTitleBar = false;
-		bool DisableResize = false;
-		bool DisableWindowManagerTitleBar = false;
-		bool EnableDocking = false;
-
-		// Uses custom UIKit titlebar instead
-		// of Windows default
-		bool CustomTitlebar = false;
-
-		// Window will be created in the center
-		// of primary monitor
-		bool CenterWindow = false;
-	};
-
 	class Application
 	{
 	public:
@@ -581,7 +616,7 @@ namespace UIKit
 		void SetCloseCallback(const std::function<bool()> &closeCallback) { m_CloseCallback = closeCallback; }
 		void SetMainRenderCallback(const std::function<void()> &mainRenderCallback) { m_MainRenderCallback = mainRenderCallback; }
 
-		template<typename T, typename... Args>
+		template <typename T, typename... Args>
 		std::shared_ptr<T> CreateComponent(Args... args)
 		{
 			std::shared_ptr<T> component = std::make_shared<T>(args...);
@@ -606,8 +641,11 @@ namespace UIKit
 			layer->OnAttach();
 		}
 
+		// TODO : Can specify another "sub" specifications than the main window.
 		std::string SpawnWindow();
+		std::string SpawnWindow(ApplicationSpecification);
 		void SpawnWindow(const std::string &name);
+		void SpawnWindow(const std::string &name, ApplicationSpecification);
 		void UnspawnWindow(const std::string &name);
 
 		void Close();
@@ -655,11 +693,11 @@ namespace UIKit
 		void SynchronizeWindows();
 		std::vector<std::shared_ptr<AppWindow>> GetLastSaveInstanciableAppWindows();
 
-		std::string GetComponentData(const std::string& id, const std::string& topic)
+		std::string GetComponentData(const std::string &id, const std::string &topic)
 		{
-			for(auto &component: m_ApplicationComponents)
+			for (auto &component : m_ApplicationComponents)
 			{
-				if(component->m_ID == id)
+				if (component->m_ID == id)
 				{
 					return component->GetData(topic);
 				}
@@ -725,8 +763,7 @@ namespace UIKit
 		bool m_TitleBarHovered = false;
 	};
 
-
-	#define UIKIT_DATA(id, topic) Application::Get().GetComponentData(id, topic)
+#define UIKIT_DATA(id, topic) Application::Get().GetComponentData(id, topic)
 
 	// Implemented by CLIENT
 	static Application *CreateApplication(int argc, char **argv);
