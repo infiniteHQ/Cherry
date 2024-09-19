@@ -21,6 +21,8 @@
 #include "../../../components/headers/simple_collapsing.hpp"
 #include "../../../components/headers/custom_collapsing.hpp"
 #include "../../../components/inputs/keyval/keyval_double.hpp"
+#include "../../../components/inputs/simple/simple_inputs.hpp"
+#include "../../../components/tables/simple_tables.hpp"
 #include "../../../components/lists/custom_lists.hpp"
 
 namespace UIKit
@@ -57,6 +59,11 @@ namespace UIKit
         std::shared_ptr<DoubleKeyValDouble> cp_InputsKeyvalDoubleDouble;      
         std::shared_ptr<DoubleKeyValXYZVector> cp_InputsKeyvalDoubleXYZ;      
         std::shared_ptr<DoubleKeyValSimpleCombo> cp_InputsKeyvalDoubleSimpleCombo;    
+
+        std::shared_ptr<SimpleStringInput> cp_InputsSimpleString;    
+
+        std::shared_ptr<SimpleTable> cp_SimpleTable;    
+        std::shared_ptr<SimpleTable> cp_SimpleTableTwo;    
         
         std::shared_ptr<std::string> v_StringOne;
         std::shared_ptr<int> v_IntegerOne;

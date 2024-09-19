@@ -32,9 +32,21 @@ namespace UIKit
         cp_ButtonFour = Application::Get().CreateComponent<ImageButtonLowProfile>("button_4", "Custom Low Profile");
         cp_ButtonFourColored = Application::Get().CreateComponent<ImageButtonLowProfile>("button_4", "Custom Low Profile", "/usr/local/include/Vortex/imgs/vortex.png", "#2424F4FF", "#2424F4FF", "#2525F5FF", "#2525F5FF", "#2626F6FF", "#2525F5FF");
         cp_ComboOne = Application::Get().CreateComponent<ComboSimple>("combo_1", "SuperCombo", std::vector<std::string>{"My first item", "My second item", "My third item"}, 1);
+
         cp_ComboTwo = Application::Get().CreateComponent<ComboCustom>("combo_2", "SuperCombo2", std::vector<std::function<void()>>{[]()
-                                                                                                                                   { ImGui::Button("QSFf"); }, []()
-                                                                                                                                   { ImGui::Button("QSF"); }},
+                                                                                                                                   {
+                                                                                                                                       static ImTextureID texture = Application::Get().GetCurrentRenderedWindow()->get("/usr/local/include/Vortex/imgs/vortex.png")->GetImGuiTextureID(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+                                                                                                                                       ImGui::Image(texture, ImVec2(15, 15));
+                                                                                                                                       ImGui::SameLine();
+                                                                                                                                       ImGui::Text("Icon Selected");
+                                                                                                                                   },
+                                                                                                                                   []()
+                                                                                                                                   {
+                                                                                                                                       static ImTextureID texture = Application::Get().GetCurrentRenderedWindow()->get("/usr/local/include/Vortex/imgs/vortex.png")->GetImGuiTextureID(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+                                                                                                                                       ImGui::Image(texture, ImVec2(15, 15));
+                                                                                                                                       ImGui::SameLine();
+                                                                                                                                       ImGui::Text("Second Selected");
+                                                                                                                                   }},
                                                                       1);
 
         v_StringOne = std::make_shared<std::string>("Operationnal");
@@ -46,14 +58,18 @@ namespace UIKit
         v_Yvalue = std::make_shared<float>(8.65f);
         v_Zvalue = std::make_shared<float>(6.24f);
 
+        cp_InputsSimpleString = Application::Get().CreateComponent<SimpleStringInput>("keyvaldouble_1", v_StringOne, "Simple string value");
+
         cp_InputsKeyvalDoubleString = Application::Get().CreateComponent<DoubleKeyValString>("keyvaldouble_1", v_StringOne, "Simple string value");
         cp_InputsKeyvalDoubleInteger = Application::Get().CreateComponent<DoubleKeyValInteger>("keyvaldouble_2", v_IntegerOne, "Simple integer value");
         cp_InputsKeyvalDoubleBoolean = Application::Get().CreateComponent<DoubleKeyValBoolean>("keyvaldouble_3", v_BooleanOne, "Simple boolean value");
         cp_InputsKeyvalDoubleFloat = Application::Get().CreateComponent<DoubleKeyValFloat>("keyvaldouble_4", v_FloatOne, "Simple float value");
         cp_InputsKeyvalDoubleDouble = Application::Get().CreateComponent<DoubleKeyValDouble>("keyvaldouble_5", v_DoubleOne, "Simple double value");
-        cp_InputsKeyvalDoubleXYZ = Application::Get().CreateComponent<DoubleKeyValXYZVector>("keyvaldouble_5", v_Xvalue,v_Yvalue,v_Zvalue, "Simple double value");
+        cp_InputsKeyvalDoubleXYZ = Application::Get().CreateComponent<DoubleKeyValXYZVector>("keyvaldouble_5", v_Xvalue, v_Yvalue, v_Zvalue, "Simple double value");
         cp_InputsKeyvalDoubleSimpleCombo = Application::Get().CreateComponent<DoubleKeyValSimpleCombo>("keyvaldouble_6", std::vector<std::string>{"My first item", "My second item", "My third item"}, 1, "Simple double value");
 
+        cp_SimpleTable = Application::Get().CreateComponent<SimpleTable>("simpletable_1", "Simple double value", std::vector<std::string>{"One", "Two", "Three"});
+        cp_SimpleTableTwo = Application::Get().CreateComponent<SimpleTable>("simpletable_2", "KeyvA", std::vector<std::string>{"Key", "Value"});
 
         std::vector<SimpleTree::SimpleTreeNode> node2 = {
             SimpleTree::SimpleTreeNode("Node 2", {[this]()
@@ -1000,9 +1016,135 @@ namespace UIKit
                                ImGui::EndTable();
                            } });
 
-        this->AddChild("Tables", [this]() {
+        this->AddChild("Inputs", [this]()
+                       {
+                           ImGuiTableFlags flags2 = ImGuiTableFlags_Resizable | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Hideable | ImGuiTableFlags_Borders;
+                           if (ImGui::BeginTable("table_context_menu_2", 4, flags2))
+                           {
+                               ImGui::TableSetupColumn("Name");
+                               ImGui::TableSetupColumn("Description");
+                               ImGui::TableSetupColumn("Preview");
+                               ImGui::TableSetupColumn("Code");
 
-        });
+                               // [2.1] Right-click on the TableHeadersRow() line to open the default table context menu.
+                               ImGui::TableHeadersRow();
+                               for (int row = 0; row < 4; row++)
+                               {
+                                   ImGui::TableNextRow();
+                                   for (int column = 0; column < 4; column++)
+                                   {
+                                       ImGui::TableSetColumnIndex(column);
+                                       if (row == 0)
+                                       {
+                                           if (column == 0)
+                                           {
+                                               ImGui::Text("Left centred text");
+                                           }
+                                           else if (column == 1)
+                                           {
+                                               ImGui::Text("This is a incredible Simpe Image button");
+                                           }
+                                           else if (column == 2)
+                                           {
+                                               cp_InputsSimpleString->Render("Normal");
+                                           }
+                                           else if (column == 3)
+                                           {
+                                               ImGui::Button("Copy code");
+                                           }
+                                       }
+                                   }
+                               }
+                               ImGui::EndTable();
+                           } });
+
+        this->AddChild("Tables", [this]()
+                       {
+                           ImGuiTableFlags flags2 = ImGuiTableFlags_Resizable | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Hideable | ImGuiTableFlags_Borders;
+                           if (ImGui::BeginTable("table_context_menu_2", 4, flags2))
+                           {
+                               ImGui::TableSetupColumn("Name");
+                               ImGui::TableSetupColumn("Description");
+                               ImGui::TableSetupColumn("Preview");
+                               ImGui::TableSetupColumn("Code");
+
+                               // [2.1] Right-click on the TableHeadersRow() line to open the default table context menu.
+                               ImGui::TableHeadersRow();
+                               for (int row = 0; row < 4; row++)
+                               {
+                                   ImGui::TableNextRow();
+                                   for (int column = 0; column < 4; column++)
+                                   {
+                                       ImGui::TableSetColumnIndex(column);
+                                       if (row == 0)
+                                       {
+                                           if (column == 0)
+                                           {
+                                               ImGui::Text("Left centred text");
+                                           }
+                                           else if (column == 1)
+                                           {
+                                               ImGui::Text("This is a incredible Simpe Image button");
+                                           }
+                                           else if (column == 2)
+                                           {
+                                               cp_SimpleTable->Render(std::vector<SimpleTable::SimpleTableRow>{
+                                                   SimpleTable::SimpleTableRow({[]()
+                                                                                { ImGui::Text("OneRow"); },
+                                                                                []()
+                                                                                { ImGui::Text("OneRow"); }
+                                                                                })});
+                                           }
+                                           else if (column == 3)
+                                           {
+                                               ImGui::Button("Copy code");
+                                           }
+                                       }
+                                       else if (row == 1)
+                                       {
+                                           if (column == 0)
+                                           {
+                                               ImGui::Text("Keyval table");
+                                           }
+                                           else if (column == 1)
+                                           {
+                                               ImGui::Text("This is a incredible Simpe Image button");
+                                           }
+                                           else if (column == 2)
+                                           {
+
+
+                                                std::vector<SimpleTable::SimpleTableRow> keyvals;
+
+                                                keyvals.push_back(SimpleTable::SimpleTableRow({[this]()
+                                                                                { cp_InputsKeyvalDoubleString->Render(0); },
+                                                                                [this]()
+                                                                                { cp_InputsKeyvalDoubleString->Render(1); }
+                                                                                }));
+
+                                                keyvals.push_back(SimpleTable::SimpleTableRow({[this]()
+                                                                                { cp_InputsKeyvalDoubleString->Render(0); },
+                                                                                [this]()
+                                                                                { cp_InputsKeyvalDoubleString->Render(1); }
+                                                                                }));
+
+                                                keyvals.push_back(SimpleTable::SimpleTableRow({[this]()
+                                                                                { cp_InputsKeyvalDoubleInteger->Render(0); },
+                                                                                [this]()
+                                                                                { cp_InputsKeyvalDoubleInteger->Render(1); }
+                                                                                }));
+
+                                               cp_SimpleTableTwo->Render(keyvals);
+                                           }
+                                           else if (column == 3)
+                                           {
+                                               ImGui::Button("Copy code");
+                                           }
+                                       }
+                                   }
+                               }
+                               ImGui::EndTable();
+                           } });
 
         this->AddChild("Grids", [this]() {
 
@@ -1307,7 +1449,7 @@ namespace UIKit
 
                                            ImGui::SameLine();
 
-        ImGui::PushStyleColor(ImGuiCol_Button, HexToRGBA("#44444466"));
+                                           ImGui::PushStyleColor(ImGuiCol_Button, HexToRGBA("#44444466"));
                                            ImGui::Button("splitter", ImVec2(splitterWidth, -1));
                                            ImGui::PopStyleVar();
 

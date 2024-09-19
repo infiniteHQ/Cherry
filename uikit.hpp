@@ -52,6 +52,9 @@
 #include "./kit/v1/components/lists/custom_lists.hpp"
 // Inputs
 #include "./kit/v1/components/inputs/keyval/keyval_double.hpp"
+#include "./kit/v1/components/inputs/simple/simple_inputs.hpp"
+//Tables
+#include "./kit/v1/components/tables/simple_tables.hpp"
 
 #endif
 

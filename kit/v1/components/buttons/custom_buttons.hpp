@@ -58,6 +58,8 @@ namespace UIKit
             return m_IsPressed;
         }
 
+        void SetBackgroundColor(){}
+
         std::string GetData(const std::string &data_type) override
         {
             if (data_type == "isButtonPressed")
