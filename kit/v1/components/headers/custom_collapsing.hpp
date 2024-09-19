@@ -26,26 +26,6 @@ namespace UIKit
 
         return openned;
     }
-    static float EstimateContentWidth(std::function<void()> customContent)
-    {
-        ImVec2 initialCursorPos = ImGui::GetCursorPos();
-        ImGui::PushClipRect(ImVec2(0, 0), ImVec2(0, 0), false);
-        ImGuiID id = ImGui::GetID("TempID");
-
-        ImGui::PushID(id);
-        ImGui::SetCursorPosX(0.0f);
-        if (customContent)
-        {
-            customContent();
-        }
-        float width = ImGui::GetCursorPosX();
-        ImGui::PopID();
-
-        ImGui::PopClipRect();
-        ImGui::SetCursorPos(initialCursorPos);
-
-        return width;
-    }
 
     static bool MyCollapsingHeaderCustom(const char *label, ImTextureID my_texture, float width, std::function<void()> customContent)
     {
@@ -53,32 +33,37 @@ namespace UIKit
         bool *p_open = ImGui::GetStateStorage()->GetBoolRef(ImGui::GetID(label), false);
 
         ImGuiStyle &style = ImGui::GetStyle();
-
         float texture_size = ImGui::GetFontSize();
         float padding = style.ItemInnerSpacing.x;
 
-        float contentWidth = EstimateContentWidth(customContent);
-
-        std::cout << contentWidth << std::endl;
-
         ImGui::BeginGroup();
 
-        if (ImGui::ImageSizeButtonWithText(my_texture, width, label, ImVec2(-FLT_MIN, 0.0f), ImVec2(0, 0), ImVec2(1, 1), -1, ImVec4(0, 0, 0, 0), ImVec4(1, 1, 1, 1)))
-            *p_open ^= 1;
+        std::cout << "Estimed sdff : " << std::endl;
 
-        ImGui::SameLine();
+        bool pressed = ImGui::ImageSizeButtonWithText(my_texture, width, label, ImVec2(-FLT_MIN, 0.0f), ImVec2(0, 0), ImVec2(1, 1), -1, ImVec4(0, 0, 0, 0), ImVec4(1, 1, 1, 1));
 
-        ImGui::SetCursorPosX(ImGui::GetCursorPosX() + width + padding - contentWidth);
+        ImVec2 button_size = ImGui::GetItemRectSize();
+        ImVec2 button_pos = ImGui::GetItemRectMin();
+        ImVec2 content_pos;
+        content_pos.x = button_pos.x + button_size.x - texture_size - 100;
+        content_pos.y = button_pos.y;
+
+        ImGui::SetCursorScreenPos(content_pos);
+        ImVec2 child_size = ImVec2(100, button_size.y);
+        ImGui::BeginChild("##customContent", child_size, false, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
 
         if (customContent)
         {
             customContent();
         }
 
+        ImGui::EndChild();
+
         ImGui::EndGroup();
 
         ImGui::PopStyleVar();
-        return *p_open;
+
+        return pressed ? (*p_open ^= 1) : *p_open;
     }
 
     static bool MyCollapsingHeader(const char *label, ImTextureID my_texture, float width)
@@ -88,16 +73,13 @@ namespace UIKit
 
         ImGuiStyle &style = ImGui::GetStyle();
 
-        // Calculate the size of the texture and padding
-        float texture_size = ImGui::GetFontSize(); // Adjust the size of the texture as needed
+        float texture_size = ImGui::GetFontSize(); 
         float padding = style.ItemInnerSpacing.x;
 
-        // Create a horizontal layout
         ImGui::BeginGroup();
         if (ImGui::ImageSizeButtonWithText(my_texture, width, label, ImVec2(-FLT_MIN, 0.0f), ImVec2(0, 0), ImVec2(1, 1), -1, ImVec4(0, 0, 0, 0), ImVec4(1, 1, 1, 1)))
             *p_open ^= 1;
 
-        // Adjust arrow position considering the texture
         ImVec2 arrow_pos = ImVec2(ImGui::GetItemRectMax().x - style.FramePadding.x - ImGui::GetFontSize(), ImGui::GetItemRectMin().y + style.FramePadding.y);
         ImGui::RenderArrow(ImGui::GetWindowDrawList(), arrow_pos, ImGui::GetColorU32(ImGuiCol_Text), *p_open ? ImGuiDir_Down : ImGuiDir_Right);
         ImGui::EndGroup();

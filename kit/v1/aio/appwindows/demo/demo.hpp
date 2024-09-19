@@ -22,6 +22,7 @@
 #include "../../../components/headers/custom_collapsing.hpp"
 #include "../../../components/inputs/keyval/keyval_double.hpp"
 #include "../../../components/inputs/simple/simple_inputs.hpp"
+#include "../../../components/editors/text/text_editor.hpp"
 #include "../../../components/tables/simple_tables.hpp"
 #include "../../../components/lists/custom_lists.hpp"
 
@@ -64,6 +65,10 @@ namespace UIKit
 
         std::shared_ptr<SimpleTable> cp_SimpleTable;    
         std::shared_ptr<SimpleTable> cp_SimpleTableTwo;    
+ 
+        std::shared_ptr<TextEditor> cp_TextEditor;   
+
+        
         
         std::shared_ptr<std::string> v_StringOne;
         std::shared_ptr<int> v_IntegerOne;

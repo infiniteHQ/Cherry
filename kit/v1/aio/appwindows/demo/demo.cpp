@@ -1,5 +1,34 @@
 #include "./demo.hpp"
 
+
+/*
+
+Simple button
+Custom Button
+Low Profile Button
+Double button
+Menu Button
+Mutiple button (vector callbacks)
+
+Simple Table
+
+Simple Tree
+
+Simple Header
+Low Profile Header
+Logo Header
+Callback Header
+Logo Callback Header
+
+Simple Input
+Logo Input
+Cuustom Input
+
+Simple Menu
+Rich Menu
+
+*/
+
 namespace UIKit
 {
     DemoAppWindow::DemoAppWindow(const std::string &name, const std::shared_ptr<AppWindow> &parent)
@@ -70,6 +99,8 @@ namespace UIKit
 
         cp_SimpleTable = Application::Get().CreateComponent<SimpleTable>("simpletable_1", "Simple double value", std::vector<std::string>{"One", "Two", "Three"});
         cp_SimpleTableTwo = Application::Get().CreateComponent<SimpleTable>("simpletable_2", "KeyvA", std::vector<std::string>{"Key", "Value"});
+
+        cp_TextEditor = std::make_shared<TextEditor>("/home/diego/Documents/indf.html");   
 
         std::vector<SimpleTree::SimpleTreeNode> node2 = {
             SimpleTree::SimpleTreeNode("Node 2", {[this]()
@@ -1123,9 +1154,9 @@ namespace UIKit
                                                                                 }));
 
                                                 keyvals.push_back(SimpleTable::SimpleTableRow({[this]()
-                                                                                { cp_InputsKeyvalDoubleString->Render(0); },
+                                                                                { cp_InputsKeyvalDoubleString->Render(1); },
                                                                                 [this]()
-                                                                                { cp_InputsKeyvalDoubleString->Render(1); }
+                                                                                { cp_InputsKeyvalDoubleString->Render(0); }
                                                                                 }));
 
                                                 keyvals.push_back(SimpleTable::SimpleTableRow({[this]()
@@ -1295,7 +1326,7 @@ namespace UIKit
                                            else if (column == 2)
                                            {
                                                CustomCollapsingHeaderLogoCallback("Header2", "/usr/local/include/Vortex/imgs/vortex.png", 
-                                               [this](){ cp_ButtonFour->Render("f"); ImGui::SameLine(); cp_ButtonFour->Render("f");},
+                                               [this](){ cp_ButtonFour->Render("f");},
                                             [](){ TitleOne("ccc"); });
                                            }
                                            else if (column == 3)
@@ -1376,6 +1407,57 @@ namespace UIKit
                                ImGui::EndTable();
                            } });
 
+        this->AddChild("Text editor", [this]() {
+            
+                                       ImGuiTableFlags flags2 = ImGuiTableFlags_Resizable | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Hideable | ImGuiTableFlags_Borders;
+                           if (ImGui::BeginTable("table_context_menu_2", 4, flags2))
+                           {
+                               ImGui::TableSetupColumn("Name");
+                               ImGui::TableSetupColumn("Description");
+                               ImGui::TableSetupColumn("Preview");
+                               ImGui::TableSetupColumn("Code");
+
+                               // [2.1] Right-click on the TableHeadersRow() line to open the default table context menu.
+                               ImGui::TableHeadersRow();
+                               for (int row = 0; row < 4; row++)
+                               {
+                                   ImGui::TableNextRow();
+                                   for (int column = 0; column < 4; column++)
+                                   {
+                                       ImGui::TableSetColumnIndex(column);
+                                       if (row == 0)
+                                       {
+                                           if (column == 0)
+                                           {
+                                               ImGui::Text("Custom Collapsing Header Simple");
+                                           }
+                                           else if (column == 1)
+                                           {
+                                               ImGui::Text("This is a incredible Simpe Image button");
+                                           }
+                                           else if (column == 2)
+                                           {
+                                            cp_TextEditor->Render("Title");
+                                           }
+                                           else if (column == 3)
+                                           {
+                                               ImGui::Button("Copy code");
+                                           }
+                                       }
+                                   }
+                               }
+                               ImGui::EndTable();
+                           }
+
+        });
+
+        this->AddChild("Nodes", [this]() {
+
+        });
+
+        this->AddChild("Nodes editor", [this]() {
+
+        });
         this->AddChild("Color Pickers", [this]() {
 
         });
@@ -1478,7 +1560,6 @@ namespace UIKit
                                                 }
                                            }
                                         
-
                                            ImGui::EndGroup(); });
     }
 
