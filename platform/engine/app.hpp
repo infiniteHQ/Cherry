@@ -134,7 +134,7 @@ namespace UIKit
 	{
 		ApplicationSpecification m_Specification;	
 		std::string m_AppWindowName;
-		bool m_IsFinished;
+		bool m_IsFinished = true;
 	};
 
 	struct RedockRequest

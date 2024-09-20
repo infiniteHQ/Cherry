@@ -2998,6 +2998,18 @@ namespace UIKit
         return name;
     }
 
+    void Application::SpawnWindow(const std::string& winname, ApplicationSpecification spec)
+    {
+        std::string name = winname;
+        ImGuiContext *res_ctx = ImGui::GetCurrentContext();
+
+        std::shared_ptr<Window> new_win = std::make_shared<Window>(name, app->m_Specification.Width, app->m_Specification.Height, spec);
+
+        this->m_Windows.push_back(new_win);
+
+        ImGui::SetCurrentContext(res_ctx);
+    }
+
     void AppWindow::AttachOnNewWindow(ApplicationSpecification spec)
     {
         m_AttachRequest.m_Specification = spec;
@@ -3188,7 +3200,7 @@ namespace UIKit
         }
         return results;
     }
-    
+
     void Application::Run()
     {
         m_Running = true;
@@ -3408,6 +3420,7 @@ namespace UIKit
                         }
                     }
                 }
+           
             }
             else
             {
@@ -3425,72 +3438,6 @@ namespace UIKit
                         dragdropstate->FromSave = true;
                         LastWindowPressed = dragdropstate->LastDraggingAppWindowHost;
                         dragdropstate->LastDraggingPlace = DockEmplacement::DockFull;
-
-                        if (appwin->GetFetchedSaveData("dockplace") != "undefined")
-                        {
-                            dragdropstate->DragOwner = appwin->m_Name;
-
-                            if (appwin->GetFetchedSaveData("dockplace") == "right")
-                            {
-                                dragdropstate->LastDraggingPlace = DockEmplacement::DockRight;
-                            }
-                            else if (appwin->GetFetchedSaveData("dockplace") == "left")
-                            {
-                                dragdropstate->LastDraggingPlace = DockEmplacement::DockLeft;
-                            }
-
-                            else if (appwin->GetFetchedSaveData("dockplace") == "up")
-                            {
-                                dragdropstate->LastDraggingPlace = DockEmplacement::DockUp;
-                            }
-                            else if (appwin->GetFetchedSaveData("dockplace") == "down")
-                            {
-                                dragdropstate->LastDraggingPlace = DockEmplacement::DockDown;
-                            }
-
-                            else if (appwin->GetFetchedSaveData("dockplace") == "full")
-                            {
-                                dragdropstate->LastDraggingPlace = DockEmplacement::DockFull;
-                            }
-                            else
-                            {
-                                dragdropstate->LastDraggingPlace = DockEmplacement::DockFull;
-                            }
-                            dockplace_initialized = true;
-                        }
-
-                        if (appwin->GetFetchedSaveData("sizex") != "undefined")
-                        {
-                            bool sizex_initialized = true;
-                        }
-
-                        if (appwin->GetFetchedSaveData("parent") != "undefined")
-                        {
-                            dragdropstate->LastDraggingAppWindow = appwin->GetFetchedSaveData("dockparent");
-                            dragdropstate->DragOwner = appwin->GetFetchedSaveData("dockparent");
-                            bool parent_initialized = true;
-                        }
-
-                        if (appwin->GetFetchedSaveData("win") != "undefined")
-                        {
-                            dragdropstate->LastDraggingWindow = appwin->GetFetchedSaveData("win");
-
-                            bool is_win_existing = false;
-                            for (auto &win : s_Instance->m_Windows)
-                            {
-                                if (win->GetName() == dragdropstate->LastDraggingWindow)
-                                {
-                                    is_win_existing = true;
-                                }
-                            }
-
-                            if (!is_win_existing)
-                            {
-                                s_Instance->SpawnWindow(dragdropstate->LastDraggingWindow);
-                            }
-
-                            bool win_initialized = true;
-                        }
 
                         if (!dockplace_initialized)
                         {
@@ -3653,15 +3600,14 @@ namespace UIKit
 
             for (auto &appwin : s_Instance->m_AppWindows)
             {
-                if(!AppWindowRedocked)
+                if (!AppWindowRedocked)
                 {
-                if (!appwin->m_AttachRequest.m_IsFinished)
-                {
+                    if (!appwin->m_AttachRequest.m_IsFinished)
+                    {
                         std::string win = Application::Get().SpawnWindow(appwin->m_AttachRequest.m_Specification);
                         appwin->AddUniqueWinParent(win);
                         appwin->m_AttachRequest.m_IsFinished = true;
-                }
-
+                    }
                 }
             }
             drag_rendered = false;
@@ -4976,23 +4922,22 @@ namespace UIKit
             ImVector<ImGuiWindow *> &windows = ImGui::GetCurrentContext()->Windows;
 
             ImGuiID parentDockID = dockspaceID;
-
-            ImGuiWindow *splitwindow = nullptr;
             ImGuiWindow *currentwindow = nullptr;
-
-            if (window_instance->m_Specifications.WindowSaves)
-            {
-                if (!req->m_FromSave)
-                {
-                    s_Instance->m_IsDataSaved = false;
-                }
-            }
+            ImGuiWindow *splitwindow = nullptr;
 
             for (int i = windows.Size - 1; i >= 0; --i)
             {
                 if (windows[i]->Name == req->m_ParentAppWindowHost)
                 {
                     currentwindow = windows[i];
+                }
+            }
+
+            if (window_instance->m_Specifications.WindowSaves)
+            {
+                if (!req->m_FromSave)
+                {
+                    s_Instance->m_IsDataSaved = false;
                 }
             }
 
@@ -5004,7 +4949,6 @@ namespace UIKit
 
             if (req->m_ParentAppWindow != this->m_Name)
             {
-
                 this->SetSimpleStorage("docknodeparent", req->m_ParentAppWindow, true);
 
                 for (int i = windows.Size - 1; i >= 0; --i)
@@ -5014,6 +4958,10 @@ namespace UIKit
                         splitwindow = windows[i];
                     }
                 }
+            }
+
+            if(req->m_ParentAppWindowHost == req->m_ParentAppWindow)
+            {
             }
 
             SetSimpleStorage("window", req->m_ParentAppWindow, true);

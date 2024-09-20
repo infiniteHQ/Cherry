@@ -51,8 +51,8 @@ namespace UIKit
         m_AppWindow->SetDefaultBehavior(DefaultAppWindowBehaviors::DefaultDocking, "right");
 
         m_AppWindow->SetSaveMode(true);
-        m_AppWindow->SetDisableContextMenu(true);
-        m_AppWindow->SetDisableDragging(true);
+        //m_AppWindow->SetDisableContextMenu(true);
+        //m_AppWindow->SetDisableDragging(true);
 
         cp_ButtonOne = Application::Get().CreateComponent<CustomButtonSimple>("button_1");
         m_AppWindow->SetRenderCallback([this]()

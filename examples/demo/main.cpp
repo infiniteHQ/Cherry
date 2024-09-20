@@ -29,11 +29,11 @@ UIKit::Application *UIKit::CreateApplication(int argc, char **argv)
   spec.DisableWindowManagerTitleBar = true;
   spec.EnableDocking = true;
   spec.DisableTitle = true;
-  spec.WindowSaves = true;
+  spec.WindowSaves = false;
   spec.IconPath = "icon.png";
 
   UIKit::Application *app = new UIKit::Application(spec);
-  app->SetWindowSaveDataFile("savedatda.json", true);
+  //app->SetWindowSaveDataFile("savedatda.json", true);
   app->SetFavIconPath("/usr/local/include/Vortex/imgs/vortex.png");
 
   app->PushLayer(layer);
