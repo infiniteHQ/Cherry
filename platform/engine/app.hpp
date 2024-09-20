@@ -130,6 +130,13 @@ namespace UIKit
 		int mouseY;
 	};
 
+	struct ReattachRequest
+	{
+		ApplicationSpecification m_Specification;	
+		std::string m_AppWindowName;
+		bool m_IsFinished;
+	};
+
 	struct RedockRequest
 	{
 		std::string m_ParentWindow;
@@ -186,6 +193,13 @@ namespace UIKit
 			req->m_FromSave = fromSave;
 			return req;
 		}
+
+		void AttachOnNewWindow(ApplicationSpecification spec);
+		void AttachOnWindow(const std::string winname);
+
+		ReattachRequest m_AttachRequest;
+		
+
 
 		std::shared_ptr<UIKit::Image> GetImage(const std::string &path);
 		ImTextureID *GetTexture(const std::string &path);
@@ -356,11 +370,21 @@ namespace UIKit
 			this->m_Opened = new_state;
 		}
 
+		void SetDisableDragging(const bool &new_state)
+		{
+			this->m_DisableDragging = new_state;
+		}
+
+		void SetDisableContextMenu(const bool &new_state)
+		{
+			this->m_DisableContextMenu = new_state;
+		}
+
+		std::string m_WinParent;
 	public:
 		int treated = 0;
 
 		// Main informations
-		std::string m_WinParent;
 		std::string m_DockParent = "unknow";
 		std::string m_DockPlace = "unknow";
 		std::string m_Name = "unknow";
@@ -380,6 +404,9 @@ namespace UIKit
 		bool m_Opened = true;
 		bool m_IsRendering = true;
 
+		bool m_DisableDragging = false;
+		bool m_DisableContextMenu = false;
+
 		bool m_IsDragging;
 		bool m_DockIsDraggingStarted;
 
@@ -392,6 +419,7 @@ namespace UIKit
 
 		//
 		bool m_WindowRebuilded = false;
+		bool m_WindowJustRebuilded = false;
 
 		bool m_HaveParentAppWindow = false;
 		std::shared_ptr<AppWindow> m_ParentAppWindow;
@@ -643,9 +671,9 @@ namespace UIKit
 
 		// TODO : Can specify another "sub" specifications than the main window.
 		std::string SpawnWindow();
-		std::string SpawnWindow(ApplicationSpecification);
+		std::string SpawnWindow(ApplicationSpecification spec);
 		void SpawnWindow(const std::string &name);
-		void SpawnWindow(const std::string &name, ApplicationSpecification);
+		void SpawnWindow(const std::string &name, ApplicationSpecification spec);
 		void UnspawnWindow(const std::string &name);
 
 		void Close();

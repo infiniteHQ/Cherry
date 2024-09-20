@@ -38,6 +38,7 @@ BUG : Bad docking, and bad docking with parent/child
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_vulkan.h>
 
+static std::string pp;
 #include <iostream>
 
 // Emedded font
@@ -2984,6 +2985,30 @@ namespace UIKit
             FramePresent(wd, this);
     }
 
+    std::string Application::SpawnWindow(ApplicationSpecification spec)
+    {
+        std::string name = std::to_string(WinIDCount);
+        ImGuiContext *res_ctx = ImGui::GetCurrentContext();
+
+        std::shared_ptr<Window> new_win = std::make_shared<Window>(name, app->m_Specification.Width, app->m_Specification.Height, spec);
+
+        this->m_Windows.push_back(new_win);
+
+        ImGui::SetCurrentContext(res_ctx);
+        return name;
+    }
+
+    void AppWindow::AttachOnNewWindow(ApplicationSpecification spec)
+    {
+        m_AttachRequest.m_Specification = spec;
+        m_AttachRequest.m_AppWindowName = m_Name;
+        m_AttachRequest.m_IsFinished = false;
+    }
+
+    void AppWindow::AttachOnWindow(const std::string winname)
+    {
+    }
+
     std::string Application::SpawnWindow()
     {
         std::string name = std::to_string(WinIDCount);
@@ -3163,7 +3188,7 @@ namespace UIKit
         }
         return results;
     }
-
+    
     void Application::Run()
     {
         m_Running = true;
@@ -3370,6 +3395,7 @@ namespace UIKit
                             {
                                 dragdropstate->LastDraggingWindow = s_Instance->m_Windows[0]->GetName();
                                 dragdropstate->DragOwner = s_Instance->m_Windows[0]->GetName();
+                                pp = "Attached SET to 0";
                             }
 
                             c_CurrentDragDropState = dragdropstate.get();
@@ -3378,13 +3404,13 @@ namespace UIKit
                             c_CurrentDragDropState = nullptr;
 
                             appwin->m_WindowRebuilded = true;
+                            appwin->m_WindowJustRebuilded = true;
                         }
                     }
                 }
             }
             else
             {
-
                 for (auto &appwin : s_Instance->m_AppWindows)
                 {
                     if (!appwin->m_WindowRebuilded)
@@ -3500,6 +3526,7 @@ namespace UIKit
                         {
                             dragdropstate->LastDraggingWindow = s_Instance->m_Windows[0]->GetName();
                             dragdropstate->DragOwner = s_Instance->m_Windows[0]->GetName();
+                            pp = "Attached SET to 0";
                         }
 
                         c_CurrentDragDropState = dragdropstate.get();
@@ -3508,6 +3535,7 @@ namespace UIKit
                         c_CurrentDragDropState = nullptr;
 
                         appwin->m_WindowRebuilded = true;
+                        appwin->m_WindowJustRebuilded = true;
                     }
                 }
             }
@@ -3592,9 +3620,9 @@ namespace UIKit
                 }
             }
 
+            bool AppWindowRedocked = false;
             if (s_Instance->m_Specification.EnableDocking)
             {
-
                 for (auto &req : m_RedockRequests)
                 {
                     for (auto &app_win : m_AppWindows)
@@ -3609,22 +3637,31 @@ namespace UIKit
                                     app_win->AddUniqueWinParent(win->GetName());
 
                                     parentFound = true;
-
-                                    /*if (app_win->m_ImGuiWindow)
-                                    {
-                                        app_win->m_DockSpaceID = ImGui::GetID("MainDockspace");
-                                    }*/
                                 }
                             }
 
                             if (!parentFound)
                             {
                                 app_win->AddUniqueWinParent("unknow");
-                                // app_win->m_WinParent = "unknow";
-                                //  app_win->m_DockSpaceID = ImGui::GetID("MainDockspace");
                             }
+
+                            AppWindowRedocked = true;
                         }
                     }
+                }
+            }
+
+            for (auto &appwin : s_Instance->m_AppWindows)
+            {
+                if(!AppWindowRedocked)
+                {
+                if (!appwin->m_AttachRequest.m_IsFinished)
+                {
+                        std::string win = Application::Get().SpawnWindow(appwin->m_AttachRequest.m_Specification);
+                        appwin->AddUniqueWinParent(win);
+                        appwin->m_AttachRequest.m_IsFinished = true;
+                }
+
                 }
             }
             drag_rendered = false;
@@ -3764,6 +3801,13 @@ namespace UIKit
             {
                 m_Windows.erase(std::remove(m_Windows.begin(), m_Windows.end(), win), m_Windows.end());
             }
+
+            for (auto &appwin : s_Instance->m_AppWindows)
+            {
+                appwin->m_WindowJustRebuilded = false;
+            }
+
+            AppWindowRedocked = false;
         }
 
         VkResult err;
@@ -4701,6 +4745,8 @@ namespace UIKit
 
             for (auto &appwindow : m_AppWindows)
             {
+
+                std::cout << "WIN : " << appwindow->m_Name << " -> " << appwindow->m_WinParent << std::endl;
                 for (auto &childappwindow : appwindow->m_SubAppWindows)
                 {
                     if (childappwindow->CheckWinParent(window->GetName()))
@@ -4862,18 +4908,18 @@ namespace UIKit
             return;
         }
 
-        if(m_Closable)
+        if (m_Closable)
         {
-            if(!m_CloseSignal)
+            if (!m_CloseSignal)
             {
-                if(this->m_CloseCallback)
+                if (this->m_CloseCallback)
                 {
                     this->m_CloseCallback();
                 }
                 m_CloseSignal = true;
             }
         }
-        
+
         if (!m_Opened)
         {
             m_CloseEvent;
@@ -4892,15 +4938,15 @@ namespace UIKit
         }
 
         std::shared_ptr<Window> window_instance;
-        for(auto &win : s_Instance->m_Windows)
+        for (auto &win : s_Instance->m_Windows)
         {
-            if(win->GetName() == winname)
+            if (win->GetName() == winname)
             {
                 window_instance = win;
             }
         }
 
-        if(!window_instance)
+        if (!window_instance)
         {
             return;
         }
@@ -5068,11 +5114,10 @@ namespace UIKit
 
         ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoMove;
 
-
         ImGui::PushStyleVar(ImGuiStyleVar_PopupRounding, 3.0f);
         ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10, 12));
 
-        if(m_SaveMode && !m_Saved)
+        if (m_SaveMode && !m_Saved)
         {
             window_flags += ImGuiWindowFlags_UnsavedDocument;
         }
@@ -5100,7 +5145,6 @@ namespace UIKit
                 ImGui::Begin(m_Name.c_str(), nullptr, window_flags);
             }
         }
-
 
         if (ImGui::BeginMenuBar())
         {
@@ -5155,6 +5199,8 @@ namespace UIKit
 
         ImGui::GetCurrentWindow()->Closable = this->m_Closable;
         ImGui::GetCurrentWindow()->Saved = this->m_Saved;
+        ImGui::GetCurrentWindow()->DragDisabled = this->m_DisableDragging;
+        ImGui::GetCurrentWindow()->ContextMenuDisabled = this->m_DisableContextMenu;
 
         std::shared_ptr<Window> wind;
 

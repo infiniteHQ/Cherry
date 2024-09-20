@@ -6,11 +6,11 @@
                     "simple_storage": [
                         {
                             "key": "dockplace",
-                            "value": "full"
+                            "value": "right"
                         },
                         {
                             "key": "window",
-                            "value": "unknown"
+                            "value": "Demo Window"
                         },
                         {
                             "key": "docknodeparent",
@@ -20,7 +20,7 @@
                     "window_storage": []
                 },
                 "docknodeparent": "unknown",
-                "dockplace": "full",
+                "dockplace": "right",
                 "id": "test_window",
                 "name": "Demo Window",
                 "type": "instanciable,static",
@@ -31,7 +31,7 @@
                     "simple_storage": [
                         {
                             "key": "dockplace",
-                            "value": "right"
+                            "value": "full"
                         },
                         {
                             "key": "window",
@@ -45,9 +45,9 @@
                     "window_storage": []
                 },
                 "docknodeparent": "Demo Window",
-                "dockplace": "right",
+                "dockplace": "full",
                 "id": "test_window",
-                "name": "DD Window *",
+                "name": "DD Window",
                 "type": "instanciable,static",
                 "win": "0"
             }

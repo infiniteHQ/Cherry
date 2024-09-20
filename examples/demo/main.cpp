@@ -138,6 +138,7 @@ UIKit::Application *UIKit::CreateApplication(int argc, char **argv)
 DemoWindow2->RefreshRender(DemoWindow2);
 DemoWindow2->m_AppWindow->SetCloseCallback([DemoWindow2](){
   DemoWindow2->m_AppWindow->SetOpened(false);
+  
 });
 
 
