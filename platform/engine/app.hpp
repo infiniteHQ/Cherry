@@ -199,6 +199,7 @@ namespace UIKit
 
 		ReattachRequest m_AttachRequest;
 		
+            ImGuiID m_DockID;
 
 
 		std::shared_ptr<UIKit::Image> GetImage(const std::string &path);

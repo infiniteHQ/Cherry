@@ -131,15 +131,18 @@ UIKit::Application *UIKit::CreateApplication(int argc, char **argv)
                             ImGui::PopStyleVar();  
                             ImGui::PopStyleColor(2); });
 
-  std::shared_ptr<DemoAppWindow> DemoWindow = std::make_shared<UIKit::DemoAppWindow>("Demo Window");
-  DemoWindow->RefreshRender(DemoWindow);
+  //std::shared_ptr<DemoAppWindow> DemoWindow = std::make_shared<UIKit::DemoAppWindow>("Demo Window");
+  //DemoWindow->RefreshRender(DemoWindow);
 
-  std::shared_ptr<EmptyAppWindow> DemoWindow2 = std::make_shared<UIKit::EmptyAppWindow>("DD Window");
+  std::shared_ptr<DockingAppWindow> DemoWinddow = std::make_shared<UIKit::DockingAppWindow>("Demo Multi");
+  //DemoWinddow->RefreshRender(DemoWinddow);
+
+  /*std::shared_ptr<EmptyAppWindow> DemoWindow2 = std::make_shared<UIKit::EmptyAppWindow>("DD Window");
 DemoWindow2->RefreshRender(DemoWindow2);
 DemoWindow2->m_AppWindow->SetCloseCallback([DemoWindow2](){
   DemoWindow2->m_AppWindow->SetOpened(false);
   
-});
+});*/
 
 
   // qsdf->RefreshRender(qsdf);

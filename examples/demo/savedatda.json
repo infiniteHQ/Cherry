@@ -1,0 +1,236 @@
+{
+    "data": {
+        "windows": [
+            {
+                "data": {
+                    "simple_storage": [
+                        {
+                            "key": "dockplace",
+                            "value": "full"
+                        },
+                        {
+                            "key": "window",
+                            "value": "unknown"
+                        },
+                        {
+                            "key": "docknodeparent",
+                            "value": "unknown"
+                        }
+                    ],
+                    "window_storage": []
+                },
+                "docknodeparent": "unknown",
+                "dockparent": "Demo Multi",
+                "dockplace": "full",
+                "id": "test_window",
+                "name": "sec1",
+                "type": "instanciable,static",
+                "win": "0"
+            },
+            {
+                "data": {
+                    "simple_storage": [
+                        {
+                            "key": "dockplace",
+                            "value": "full"
+                        },
+                        {
+                            "key": "window",
+                            "value": "unknown"
+                        },
+                        {
+                            "key": "docknodeparent",
+                            "value": "unknown"
+                        }
+                    ],
+                    "window_storage": []
+                },
+                "docknodeparent": "unknown",
+                "dockparent": "Demo Multi",
+                "dockplace": "full",
+                "id": "test_window",
+                "name": "sec1",
+                "type": "instanciable,static",
+                "win": "0"
+            },
+            {
+                "data": {
+                    "simple_storage": [
+                        {
+                            "key": "dockplace",
+                            "value": "full"
+                        },
+                        {
+                            "key": "window",
+                            "value": "unknown"
+                        },
+                        {
+                            "key": "docknodeparent",
+                            "value": "unknown"
+                        }
+                    ],
+                    "window_storage": []
+                },
+                "docknodeparent": "unknown",
+                "dockparent": "Demo Multi",
+                "dockplace": "full",
+                "id": "test_window",
+                "name": "sec2",
+                "type": "instanciable,static",
+                "win": "0"
+            },
+            {
+                "data": {
+                    "simple_storage": [
+                        {
+                            "key": "dockplace",
+                            "value": "full"
+                        },
+                        {
+                            "key": "window",
+                            "value": "unknown"
+                        },
+                        {
+                            "key": "docknodeparent",
+                            "value": "unknown"
+                        }
+                    ],
+                    "window_storage": []
+                },
+                "docknodeparent": "unknown",
+                "dockparent": "Demo Multi",
+                "dockplace": "full",
+                "id": "test_window",
+                "name": "sec2",
+                "type": "instanciable,static",
+                "win": "0"
+            },
+            {
+                "data": {
+                    "simple_storage": [
+                        {
+                            "key": "dockplace",
+                            "value": "down"
+                        },
+                        {
+                            "key": "window",
+                            "value": "Demo Multi"
+                        },
+                        {
+                            "key": "docknodeparent",
+                            "value": "Demo Multi"
+                        }
+                    ],
+                    "window_storage": []
+                },
+                "docknodeparent": "Demo Multi",
+                "dockplace": "down",
+                "id": "test_window",
+                "name": "sec3",
+                "type": "instanciable,static",
+                "win": "0"
+            },
+            {
+                "data": {
+                    "simple_storage": [
+                        {
+                            "key": "dockplace",
+                            "value": "down"
+                        },
+                        {
+                            "key": "window",
+                            "value": "Demo Multi"
+                        },
+                        {
+                            "key": "docknodeparent",
+                            "value": "Demo Multi"
+                        }
+                    ],
+                    "window_storage": []
+                },
+                "docknodeparent": "Demo Multi",
+                "dockplace": "down",
+                "id": "test_window",
+                "name": "sec3",
+                "type": "instanciable,static",
+                "win": "0"
+            },
+            {
+                "data": {
+                    "simple_storage": [
+                        {
+                            "key": "dockplace",
+                            "value": "down"
+                        },
+                        {
+                            "key": "window",
+                            "value": "sec3"
+                        },
+                        {
+                            "key": "docknodeparent",
+                            "value": "sec3"
+                        }
+                    ],
+                    "window_storage": []
+                },
+                "docknodeparent": "sec3",
+                "dockplace": "down",
+                "id": "test_window",
+                "name": "sec4",
+                "type": "instanciable,static",
+                "win": "0"
+            },
+            {
+                "data": {
+                    "simple_storage": [
+                        {
+                            "key": "dockplace",
+                            "value": "down"
+                        },
+                        {
+                            "key": "window",
+                            "value": "sec3"
+                        },
+                        {
+                            "key": "docknodeparent",
+                            "value": "sec3"
+                        }
+                    ],
+                    "window_storage": []
+                },
+                "docknodeparent": "sec3",
+                "dockplace": "down",
+                "id": "test_window",
+                "name": "sec4",
+                "type": "instanciable,static",
+                "win": "0"
+            },
+            {
+                "data": {
+                    "simple_storage": [
+                        {
+                            "key": "dockplace",
+                            "value": "full"
+                        },
+                        {
+                            "key": "window",
+                            "value": "unknown"
+                        },
+                        {
+                            "key": "docknodeparent",
+                            "value": "unknown"
+                        }
+                    ],
+                    "window_storage": []
+                },
+                "docknodeparent": "unknown",
+                "dockplace": "full",
+                "id": "test_window",
+                "name": "Demo Multi",
+                "type": "instanciable,static",
+                "win": "0"
+            }
+        ]
+    },
+    "save": true
+}

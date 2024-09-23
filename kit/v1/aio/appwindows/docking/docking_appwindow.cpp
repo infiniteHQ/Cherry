@@ -28,5 +28,7 @@ namespace UIKit
         Application::Get().PutWindow(windodofg->m_AppWindow);
         std::shared_ptr<EmptyAppWindow> windodofh = std::make_shared<UIKit::EmptyAppWindow>("sec4");
         Application::Get().PutWindow(windodofh->m_AppWindow);
+        
+        Application::Get().PutWindow(m_AppWindow);
     }
 }

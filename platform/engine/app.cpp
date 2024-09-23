@@ -2998,7 +2998,7 @@ namespace UIKit
         return name;
     }
 
-    void Application::SpawnWindow(const std::string& winname, ApplicationSpecification spec)
+    void Application::SpawnWindow(const std::string &winname, ApplicationSpecification spec)
     {
         std::string name = winname;
         ImGuiContext *res_ctx = ImGui::GetCurrentContext();
@@ -3420,7 +3420,6 @@ namespace UIKit
                         }
                     }
                 }
-           
             }
             else
             {
@@ -3435,7 +3434,6 @@ namespace UIKit
 
                         std::shared_ptr<WindowDragDropState> dragdropstate = std::make_shared<WindowDragDropState>();
                         dragdropstate->LastDraggingAppWindowHost = appwin->m_Name;
-                        dragdropstate->FromSave = true;
                         LastWindowPressed = dragdropstate->LastDraggingAppWindowHost;
                         dragdropstate->LastDraggingPlace = DockEmplacement::DockFull;
 
@@ -4691,8 +4689,6 @@ namespace UIKit
 
             for (auto &appwindow : m_AppWindows)
             {
-
-                std::cout << "WIN : " << appwindow->m_Name << " -> " << appwindow->m_WinParent << std::endl;
                 for (auto &childappwindow : appwindow->m_SubAppWindows)
                 {
                     if (childappwindow->CheckWinParent(window->GetName()))
@@ -4701,7 +4697,7 @@ namespace UIKit
                     }
                 }
 
-                if (appwindow->CheckWinParent(window->GetName()))
+                if (appwindow->CheckWinParent(window->GetName()) && !appwindow->m_HaveParentAppWindow)
                 {
                     appwindow->CtxRender(&m_RedockRequests, window->GetName());
                 }
@@ -4960,8 +4956,18 @@ namespace UIKit
                 }
             }
 
-            if(req->m_ParentAppWindowHost == req->m_ParentAppWindow)
+            if (req->m_ParentAppWindow == req->m_ParentAppWindowHost)
             {
+                // Find the window that matches req->m_ParentAppWindow
+                for (int i = windows.Size - 1; i >= 0; --i)
+                {
+                    if (windows[i]->Name == req->m_ParentAppWindow)
+                    {
+                        parentDockID = windows[i]->DockId;
+                        dd = "Parent Dock ID set to the Dock ID of m_ParentAppWindow.";
+                        break;
+                    }
+                }
             }
 
             SetSimpleStorage("window", req->m_ParentAppWindow, true);
@@ -5047,12 +5053,6 @@ namespace UIKit
                 newDockID = parentDockID;
                 this->SetSimpleStorage("dockplace", "full", true);
                 break;
-            }
-
-            if (!ImGui::IsWindowDocked())
-            {
-                ImGui::SetNextWindowDockID(dockspaceID, ImGuiCond_Always);
-                dd = "Window undocked, redocking to main dockspace.";
             }
 
             ImGui::SetNextWindowDockID(newDockID, ImGuiCond_Always);
@@ -5263,10 +5263,7 @@ namespace UIKit
         }
         else
         {
-            if (!m_HaveParentAppWindow)
-            {
-                this->m_Render();
-            }
+            this->m_Render();
         }
 
         ImGui::PopStyleColor(2);
