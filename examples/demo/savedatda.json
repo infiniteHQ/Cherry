@@ -3,25 +3,12 @@
         "windows": [
             {
                 "data": {
-                    "simple_storage": [
-                        {
-                            "key": "dockplace",
-                            "value": "full"
-                        },
-                        {
-                            "key": "window",
-                            "value": "unknown"
-                        },
-                        {
-                            "key": "docknodeparent",
-                            "value": "unknown"
-                        }
-                    ],
+                    "simple_storage": [],
                     "window_storage": []
                 },
-                "docknodeparent": "unknown",
+                "docknodeparent": "default",
                 "dockparent": "Demo Multi",
-                "dockplace": "full",
+                "dockplace": "default",
                 "id": "test_window",
                 "name": "sec1",
                 "type": "instanciable,static",
@@ -29,25 +16,12 @@
             },
             {
                 "data": {
-                    "simple_storage": [
-                        {
-                            "key": "dockplace",
-                            "value": "full"
-                        },
-                        {
-                            "key": "window",
-                            "value": "unknown"
-                        },
-                        {
-                            "key": "docknodeparent",
-                            "value": "unknown"
-                        }
-                    ],
+                    "simple_storage": [],
                     "window_storage": []
                 },
-                "docknodeparent": "unknown",
+                "docknodeparent": "default",
                 "dockparent": "Demo Multi",
-                "dockplace": "full",
+                "dockplace": "default",
                 "id": "test_window",
                 "name": "sec1",
                 "type": "instanciable,static",
@@ -55,25 +29,12 @@
             },
             {
                 "data": {
-                    "simple_storage": [
-                        {
-                            "key": "dockplace",
-                            "value": "full"
-                        },
-                        {
-                            "key": "window",
-                            "value": "unknown"
-                        },
-                        {
-                            "key": "docknodeparent",
-                            "value": "unknown"
-                        }
-                    ],
+                    "simple_storage": [],
                     "window_storage": []
                 },
-                "docknodeparent": "unknown",
+                "docknodeparent": "default",
                 "dockparent": "Demo Multi",
-                "dockplace": "full",
+                "dockplace": "default",
                 "id": "test_window",
                 "name": "sec2",
                 "type": "instanciable,static",
@@ -81,25 +42,12 @@
             },
             {
                 "data": {
-                    "simple_storage": [
-                        {
-                            "key": "dockplace",
-                            "value": "full"
-                        },
-                        {
-                            "key": "window",
-                            "value": "unknown"
-                        },
-                        {
-                            "key": "docknodeparent",
-                            "value": "unknown"
-                        }
-                    ],
+                    "simple_storage": [],
                     "window_storage": []
                 },
-                "docknodeparent": "unknown",
+                "docknodeparent": "default",
                 "dockparent": "Demo Multi",
-                "dockplace": "full",
+                "dockplace": "default",
                 "id": "test_window",
                 "name": "sec2",
                 "type": "instanciable,static",
@@ -107,24 +55,11 @@
             },
             {
                 "data": {
-                    "simple_storage": [
-                        {
-                            "key": "dockplace",
-                            "value": "right"
-                        },
-                        {
-                            "key": "window",
-                            "value": "unknown"
-                        },
-                        {
-                            "key": "docknodeparent",
-                            "value": "unknown"
-                        }
-                    ],
+                    "simple_storage": [],
                     "window_storage": []
                 },
-                "docknodeparent": "unknown",
-                "dockplace": "right",
+                "docknodeparent": "default",
+                "dockplace": "default",
                 "id": "test_window",
                 "name": "sec3",
                 "type": "instanciable,static",
@@ -132,24 +67,11 @@
             },
             {
                 "data": {
-                    "simple_storage": [
-                        {
-                            "key": "dockplace",
-                            "value": "right"
-                        },
-                        {
-                            "key": "window",
-                            "value": "unknown"
-                        },
-                        {
-                            "key": "docknodeparent",
-                            "value": "unknown"
-                        }
-                    ],
+                    "simple_storage": [],
                     "window_storage": []
                 },
-                "docknodeparent": "unknown",
-                "dockplace": "right",
+                "docknodeparent": "default",
+                "dockplace": "default",
                 "id": "test_window",
                 "name": "sec3",
                 "type": "instanciable,static",
@@ -157,74 +79,35 @@
             },
             {
                 "data": {
-                    "simple_storage": [
-                        {
-                            "key": "dockplace",
-                            "value": "full"
-                        },
-                        {
-                            "key": "window",
-                            "value": "none"
-                        },
-                        {
-                            "key": "docknodeparent",
-                            "value": "none"
-                        }
-                    ],
+                    "simple_storage": [],
                     "window_storage": []
                 },
-                "docknodeparent": "none",
-                "dockplace": "full",
+                "docknodeparent": "default",
+                "dockplace": "default",
                 "id": "test_window",
                 "name": "sec4",
                 "type": "instanciable,static",
-                "win": "1"
+                "win": "0"
             },
             {
                 "data": {
-                    "simple_storage": [
-                        {
-                            "key": "dockplace",
-                            "value": "full"
-                        },
-                        {
-                            "key": "window",
-                            "value": "none"
-                        },
-                        {
-                            "key": "docknodeparent",
-                            "value": "none"
-                        }
-                    ],
+                    "simple_storage": [],
                     "window_storage": []
                 },
-                "docknodeparent": "none",
-                "dockplace": "full",
+                "docknodeparent": "default",
+                "dockplace": "default",
                 "id": "test_window",
                 "name": "sec4",
                 "type": "instanciable,static",
-                "win": "1"
+                "win": "0"
             },
             {
                 "data": {
-                    "simple_storage": [
-                        {
-                            "key": "dockplace",
-                            "value": "full"
-                        },
-                        {
-                            "key": "window",
-                            "value": "unknown"
-                        },
-                        {
-                            "key": "docknodeparent",
-                            "value": "unknown"
-                        }
-                    ],
+                    "simple_storage": [],
                     "window_storage": []
                 },
-                "docknodeparent": "unknown",
-                "dockplace": "full",
+                "docknodeparent": "default",
+                "dockplace": "default",
                 "id": "test_window",
                 "name": "Demo Multi",
                 "type": "instanciable,static",

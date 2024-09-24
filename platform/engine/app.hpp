@@ -392,6 +392,7 @@ namespace UIKit
 		std::string m_ID = "unknow";
 		// ImGuiWindow *m_ImGuiWindow;
 		ImGuiID m_DockSpaceID;
+		ImGuiID m_ParentDockSpaceID;
 
 		std::string m_Icon = "none";
 

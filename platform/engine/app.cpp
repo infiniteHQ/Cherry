@@ -14,9 +14,6 @@
 ┌────────────────────────────────────────────┐
 │                 To-do list                 │
 └────────────────────────────────────────────┘
-TODO : Window manager interactions
-TODO : Dockspace tabs menu callback and events/flags (flags : unsaved) (events: close)
-TODO : Better start of dragging to prevent dragging+mooving
 TODO : Finish component & appwindow templates
         - Content Browser
         - Outliner
@@ -4890,14 +4887,7 @@ namespace UIKit
             }
         }
 
-        if (m_HaveParentAppWindow)
-        {
-            m_DockSpaceID = ImGui::GetID("AppWindowDockspace");
-        }
-        else
-        {
-            m_DockSpaceID = ImGui::GetID("MainDockspace");
-        }
+        m_DockSpaceID = ImGui::GetID(m_HaveParentAppWindow ? "AppWindowDockspace" : "MainDockspace");
 
         if (!window_instance)
         {
@@ -4917,7 +4907,6 @@ namespace UIKit
         }
 
         ImGuiWindow *currentWindow = ImGui::FindWindowByName(this->m_Name.c_str());
-
         if (currentWindow && currentWindow->DockId == 0)
         {
             ImGui::SetNextWindowDockID(m_DockSpaceID, ImGuiCond_Always);
@@ -4926,152 +4915,45 @@ namespace UIKit
         for (auto it = reqs->begin(); it != reqs->end();)
         {
             const auto &req = *it;
-            ImVector<ImGuiWindow *> &windows = ImGui::GetCurrentContext()->Windows;
-
             ImGuiID parentDockID = m_DockSpaceID;
-            ImGuiWindow *currentwindow = nullptr;
-            ImGuiWindow *splitwindow = nullptr;
+            ImGuiWindow *parentWindow = ImGui::FindWindowByName(req->m_ParentAppWindow.c_str());
 
-            for (int i = windows.Size - 1; i >= 0; --i)
-            {
-                if (windows[i]->Name == req->m_ParentAppWindowHost)
-                {
-                    currentwindow = windows[i];
-                }
-            }
-
-            if (window_instance->m_Specifications.WindowSaves)
-            {
-                if (!req->m_FromSave)
-                {
-                    s_Instance->m_IsDataSaved = false;
-                }
-            }
-
-            if (req->m_ParentAppWindowHost != this->m_Name)
+            if (!parentWindow || req->m_ParentAppWindowHost != this->m_Name)
             {
                 ++it;
                 continue;
             }
 
-            if (req->m_ParentAppWindowHost == req->m_ParentAppWindow)
+            if (!req->m_FromSave)
             {
-                ++it;
-                continue;
+                s_Instance->m_IsDataSaved = false;
             }
 
-            if (req->m_ParentAppWindow != this->m_Name)
+            if (parentWindow)
             {
-                this->SetSimpleStorage("docknodeparent", req->m_ParentAppWindow, true);
-
-                for (int i = windows.Size - 1; i >= 0; --i)
-                {
-                    if (windows[i]->Name == req->m_ParentAppWindow)
-                    {
-                        splitwindow = windows[i];
-                    }
-                }
-            }
-
-            if (req->m_ParentAppWindow == req->m_ParentAppWindowHost)
-            {
-                // Find the window that matches req->m_ParentAppWindow
-                for (int i = windows.Size - 1; i >= 0; --i)
-                {
-                    if (windows[i]->Name == req->m_ParentAppWindow)
-                    {
-                        parentDockID = windows[i]->DockId;
-                        dd = "Parent Dock ID set to the Dock ID of m_ParentAppWindow.";
-                        break;
-                    }
-                }
-            }
-
-            SetSimpleStorage("window", req->m_ParentAppWindow, true);
-
-            if (LastWindowPressed != "none")
-            {
-                ImGuiWindow *parent_window = nullptr;
-                ImVector<ImGuiWindow *> &windows = ImGui::GetCurrentContext()->Windows;
-
-                dd = "Starting search for " + LastWindowPressed;
-
-                for (int i = windows.Size - 1; i >= 0; --i)
-                {
-                    ImGuiWindow *window = windows[i];
-
-                    if (LastWindowPressed == window->Name)
-                    {
-                        finded++;
-                        parent_window = window;
-                        dd = "Parent window found!";
-                        break;
-                    }
-                }
-
-                if (parent_window)
-                {
-                    parentDockID = parent_window->DockId;
-                    if (parentDockID == 0)
-                    {
-                        dd = "Parent window " + req->m_ParentAppWindow + " does not have a valid DockId.";
-                        ++it;
-                        continue;
-                    }
-                }
-                else
-                {
-                    dd = "Parent window not found: " + req->m_ParentAppWindow;
-                    ++it;
-                    continue;
-                }
-            }
-
-            if (currentwindow)
-            {
-                if (currentwindow->DockId)
-                {
-                    parentDockID = currentwindow->DockId;
-                }
-            }
-
-            if (req->m_ParentAppWindow != this->m_Name)
-            {
-                if (splitwindow != 0)
-                {
-                    if (splitwindow->DockId != 0)
-                    {
-                        parentDockID = splitwindow->DockId;
-                    }
-                }
+                parentDockID = parentWindow->DockId;
             }
 
             switch (req->m_DockPlace)
             {
             case DockEmplacement::DockUp:
                 m_DockSpaceID = ImGui::DockBuilderSplitNode(parentDockID, ImGuiDir_Up, 0.5f, nullptr, &parentDockID);
-                this->SetSimpleStorage("dockplace", "up", true);
                 break;
             case DockEmplacement::DockDown:
                 m_DockSpaceID = ImGui::DockBuilderSplitNode(parentDockID, ImGuiDir_Down, 0.5f, nullptr, &parentDockID);
-                this->SetSimpleStorage("dockplace", "down", true);
                 break;
             case DockEmplacement::DockLeft:
                 m_DockSpaceID = ImGui::DockBuilderSplitNode(parentDockID, ImGuiDir_Left, 0.3f, nullptr, &parentDockID);
-                this->SetSimpleStorage("dockplace", "left", true);
                 break;
             case DockEmplacement::DockRight:
                 m_DockSpaceID = ImGui::DockBuilderSplitNode(parentDockID, ImGuiDir_Right, 0.3f, nullptr, &parentDockID);
-                this->SetSimpleStorage("dockplace", "right", true);
                 break;
             case DockEmplacement::DockFull:
                 m_DockSpaceID = parentDockID;
-                this->SetSimpleStorage("dockplace", "full", true);
                 break;
             }
 
             ImGui::SetNextWindowDockID(m_DockSpaceID, ImGuiCond_Always);
-
             it = reqs->erase(it);
         }
 
