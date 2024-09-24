@@ -30,7 +30,6 @@ namespace UIKit {
 	{
 		while (g_ApplicationRunning)
 		{
-			
 			UIKit::Application* app = UIKit::CreateApplication(argc, argv);
 			app->Run();
 			delete app;

@@ -29,11 +29,11 @@ UIKit::Application *UIKit::CreateApplication(int argc, char **argv)
   spec.DisableWindowManagerTitleBar = true;
   spec.EnableDocking = true;
   spec.DisableTitle = true;
-  spec.WindowSaves = false;
+  spec.WindowSaves = true;
   spec.IconPath = "icon.png";
 
   UIKit::Application *app = new UIKit::Application(spec);
-  //app->SetWindowSaveDataFile("savedatda.json", true);
+  app->SetWindowSaveDataFile("savedatda.json", true);
   app->SetFavIconPath("/usr/local/include/Vortex/imgs/vortex.png");
 
   app->PushLayer(layer);
@@ -157,10 +157,12 @@ int main(int argc, char *argv[])
                      { UIKit::Main(argc, argv); });
   mainthread.swap(Thread);
 
-  while (true)
+  while (g_ApplicationRunning)
   {
-    /*Your program loop...*/
+    /* Your program loop... */
   }
+  
+  mainthread.join();
 
   return 0;
 }

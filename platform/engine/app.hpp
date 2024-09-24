@@ -560,6 +560,8 @@ namespace UIKit
 		int m_PosX = 0;
 		int m_PosY = 0;
 
+		bool m_IsClosing = false;
+
 		bool isMoving = false;
 		ImVec2 clickOffset = {0.0f, 0.0f};
 		// If true, listen mouse pos and click and return a dropp emplacement response.

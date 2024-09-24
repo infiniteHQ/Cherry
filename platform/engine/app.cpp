@@ -2496,42 +2496,40 @@ namespace UIKit
 
         m_LayerStack.clear();
 
-        // Cleanup
-        for (auto win : app->m_Windows)
+        VkResult err;
+        for (auto &window : m_Windows)
         {
-            VkResult err = vkDeviceWaitIdle(g_Device);
+            window->m_IsClosing = true;
+            c_CurrentRenderedWindow = window;
+            ImGui::SetCurrentContext(window->m_ImGuiContext);
+
+            err = vkDeviceWaitIdle(g_Device);
             check_vk_result(err);
 
             // Free resources in queue
-            for (auto &queue : win->s_ResourceFreeQueue)
+            for (auto &queue : window->s_ResourceFreeQueue)
             {
                 for (auto &func : queue)
                     func();
             }
-            win->s_ResourceFreeQueue.clear();
-        }
-        m_IconRestore.reset();
-        m_AppHeaderIcon.reset();
-        m_IconClose.reset();
-        m_IconMinimize.reset();
-        m_IconMaximize.reset();
+            window->s_ResourceFreeQueue.clear();
 
-        ImGui_ImplVulkan_Shutdown();
-        ImGui_ImplSDL2_Shutdown();
-        ImGui::DestroyContext();
+            ImGui_ImplVulkan_Shutdown();
+            ImGui_ImplSDL2_Shutdown();
+            ImGui::DestroyContext();
 
-        // Cleanup
-        for (auto win : app->m_Windows)
-        {
-            CleanupSpecificVulkanWindow(win.get());
-            CleanupVulkan(win.get());
+            // CleanupVulkanWindow(&window->m_WinData);
+            CleanupSpecificVulkanWindow(window.get());
+            CleanupVulkan(window.get());
+
+            SDL_DestroyWindow(window->GetWindowHandle());
+
+            window = nullptr;
         }
 
-        // glfwDestroyWindow(m_WindowHandle);
-        // glfwTerminate();
+        SDL_Quit();
 
         g_ApplicationRunning = false;
-
         Log::Shutdown();
     }
 
@@ -3206,7 +3204,6 @@ namespace UIKit
         m_Running = true;
         while (m_Running)
         {
-            std::cout << "m_Running" << std::endl;
             found_valid_drop_zone_global = false;
 
             std::cout << "=============== CURRENT DRAG/DROP STATE ================" << std::endl;
@@ -3408,6 +3405,20 @@ namespace UIKit
                                 dragdropstate->LastDraggingWindow = s_Instance->m_Windows[0]->GetName();
                                 dragdropstate->DragOwner = s_Instance->m_Windows[0]->GetName();
                                 pp = "Attached SET to 0";
+                            }
+
+                            bool win_finded = false;
+                            for (auto &win : s_Instance->m_Windows)
+                            {
+                                if (dragdropstate->LastDraggingWindow == win->GetName())
+                                {
+                                    win_finded = true;
+                                }
+                            }
+
+                            if (!win_finded)
+                            {
+                                appwin->AttachOnNewWindow(s_Instance->m_Specification);
                             }
 
                             c_CurrentDragDropState = dragdropstate.get();
@@ -3753,20 +3764,6 @@ namespace UIKit
 
             AppWindowRedocked = false;
         }
-
-        VkResult err;
-        for (auto &window : m_Windows)
-        {
-            c_CurrentRenderedWindow = window;
-            ImGui::SetCurrentContext(window->m_ImGuiContext);
-            err = vkDeviceWaitIdle(g_Device);
-            check_vk_result(err);
-            ImGui_ImplVulkan_Shutdown();
-            ImGui_ImplSDL2_Shutdown();
-            ImGui::DestroyContext();
-            CleanupVulkanWindow(&window->m_WinData);
-        }
-        CleanupVulkan();
     }
 
     Window::Window(const std::string &name, int width, int height, ApplicationSpecification specs = s_Instance->m_Specification, bool cold_start = true)
@@ -3803,6 +3800,11 @@ namespace UIKit
             return;
         }
 
+        // Setup Dear ImGui context
+        IMGUI_CHECKVERSION();
+        m_ImGuiContext = ImGui::CreateContext();
+        ImGui::SetCurrentContext(m_ImGuiContext);
+
         // Create Framebuffers
         int w, h;
         SDL_GetWindowSize(m_WindowHandler, &w, &h);
@@ -3810,11 +3812,6 @@ namespace UIKit
         SetupVulkanWindow(wd, m_Surface, w, h, this);
         this->s_AllocatedCommandBuffers.resize(wd->ImageCount);
         s_ResourceFreeQueue.resize(wd->ImageCount);
-
-        // Setup Dear ImGui context
-        IMGUI_CHECKVERSION();
-        m_ImGuiContext = ImGui::CreateContext();
-        ImGui::SetCurrentContext(m_ImGuiContext);
 
         // Create the ImGui context
         ImGuiIO &io = ImGui::GetIO();
@@ -3850,6 +3847,7 @@ namespace UIKit
         ImFont *hackFont = io.Fonts->AddFontFromMemoryTTF((void *)g_HackRegular, sizeof(g_HackRegular), 20.0f, &fontConfig);
 
         ImFontConfig fontConfigExtra;
+        fontConfigExtra.FontDataOwnedByAtlas = false;
         fontConfigExtra.GlyphExtraSpacing.x = 1.3f;
         ImFont *inconsolatas = io.Fonts->AddFontFromMemoryTTF((void *)g_Inconsolatas, sizeof(g_Inconsolatas), 20.0f, &fontConfigExtra);
 
@@ -3913,36 +3911,28 @@ namespace UIKit
 
     Window::~Window()
     {
-
-        /*
-        if (m_ImGuiContext)
+        if (!m_IsClosing)
         {
-            ImGui_ImplVulkan_Shutdown();
-            ImGui_ImplSDL2_Shutdown();
-            ImGui::DestroyContext(m_ImGuiContext);
-            m_ImGuiContext = nullptr;
-        }
-        */
+            if (m_Surface != VK_NULL_HANDLE)
+            {
+                vkDestroySurfaceKHR(g_Instance, m_Surface, nullptr);
+                m_Surface = VK_NULL_HANDLE;
+            }
 
-        if (m_Surface != VK_NULL_HANDLE)
-        {
-            vkDestroySurfaceKHR(g_Instance, m_Surface, nullptr);
-            m_Surface = VK_NULL_HANDLE;
-        }
+            if (g_Device != VK_NULL_HANDLE)
+            {
+                vkDeviceWaitIdle(g_Device);
+            }
 
-        if (g_Device != VK_NULL_HANDLE)
-        {
-            vkDeviceWaitIdle(g_Device);
-        }
+            if (m_WindowHandler)
+            {
+                SDL_DestroyWindow(m_WindowHandler);
+                m_WindowHandler = nullptr;
+            }
 
-        if (m_WindowHandler)
-        {
-            SDL_DestroyWindow(m_WindowHandler);
-            m_WindowHandler = nullptr;
+            s_ResourceFreeQueue.clear();
+            m_CommandBuffers.clear();
         }
-
-        s_ResourceFreeQueue.clear();
-        m_CommandBuffers.clear();
     }
 
     bool AppWindow::CheckWinParent(const std::string &parentname)
@@ -4410,15 +4400,27 @@ namespace UIKit
         }
     }
 
-    void ShowDockingPreview(ImGuiID dockspaceID, Window *win, WindowDragDropState *dragState)
+    void ShowDockingPreview(ImGuiID dockspaceID, Window *win, WindowDragDropState *dragState, const std::shared_ptr<AppWindow> appwin = nullptr)
     {
         ImGuiContext *ctx = ImGui::GetCurrentContext();
         if (ctx == nullptr)
             return;
 
         ImGuiDockNode *dock_node = ImGui::DockBuilderGetNode(dockspaceID);
+
         if (dock_node == nullptr || !dock_node->IsVisible)
+        {
             return;
+        }
+
+        // TODO If future "AllowAllRedocks", disable the following safety feature.
+        if (appwin)
+        {
+            if (dragState->LastDraggingAppWindowHost == appwin->m_Name)
+            {
+                // return;
+            }
+        }
 
         auto ShowDropZones = [&](ImGuiDockNode *node)
         {
@@ -4433,8 +4435,8 @@ namespace UIKit
             ImRect dock_rect = node->Rect();
             ImVec2 c = ImFloor(ImVec2((dock_rect.Min.x + dock_rect.Max.x) * 0.5f, (dock_rect.Min.y + dock_rect.Max.y) * 0.5f));
 
-            float hs_w = 40.0f;
-            float hs_h = 25.0f;
+            float hs_w = 30.0f;
+            float hs_h = 20.0f;
             ImVec2 off(hs_w + hs_h, hs_w + hs_h);
 
             preview_data.DropRectsDraw[ImGuiDir_None] = ImRect(c.x - hs_w, c.y - hs_w, c.x + hs_w, c.y + hs_w);
@@ -4681,25 +4683,36 @@ namespace UIKit
                     {
                         if (!appwin->m_HaveParentAppWindow)
                         {
-                            ShowDockingPreview(dockspaceID, window, c_CurrentDragDropState);
+                            ShowDockingPreview(dockspaceID, window, c_CurrentDragDropState, appwin);
                         }
                     }
                 }
             }
 
+            bool context_loaded = false;
             for (auto &appwindow : m_AppWindows)
             {
-                for (auto &childappwindow : appwindow->m_SubAppWindows)
+                for (auto &subwin : m_AppWindows)
                 {
-                    if (childappwindow->CheckWinParent(window->GetName()))
+                    if (context_loaded)
                     {
-                        appwindow->CtxRender(&m_RedockRequests, window->GetName());
+                        continue;
+                    }
+
+                    if (subwin->m_HaveParentAppWindow)
+                    {
+                        if (subwin->m_ParentAppWindow->m_Name == appwindow->m_Name)
+                        {
+                            appwindow->CtxRender(&m_RedockRequests, window->GetName());
+                            context_loaded = true;
+                        }
                     }
                 }
 
                 if (appwindow->CheckWinParent(window->GetName()) && !appwindow->m_HaveParentAppWindow)
                 {
                     appwindow->CtxRender(&m_RedockRequests, window->GetName());
+                    context_loaded = true;
                 }
             }
         }
@@ -4868,17 +4881,6 @@ namespace UIKit
             m_IsRendering = false;
         }
 
-        ImGuiID dockspaceID;
-
-        if (m_HaveParentAppWindow)
-        {
-            dockspaceID = ImGui::GetID("AppWindowDockspace");
-        }
-        else
-        {
-            dockspaceID = ImGui::GetID("MainDockspace");
-        }
-
         std::shared_ptr<Window> window_instance;
         for (auto &win : s_Instance->m_Windows)
         {
@@ -4886,6 +4888,15 @@ namespace UIKit
             {
                 window_instance = win;
             }
+        }
+
+        if (m_HaveParentAppWindow)
+        {
+            m_DockSpaceID = ImGui::GetID("AppWindowDockspace");
+        }
+        else
+        {
+            m_DockSpaceID = ImGui::GetID("MainDockspace");
         }
 
         if (!window_instance)
@@ -4897,19 +4908,19 @@ namespace UIKit
         std::cout << "last error  : " << dd << std::endl;
         std::cout << "last boostrdqsd  : " << LastWindowPressed << std::endl;
 
-        if (!ImGui::DockBuilderGetNode(dockspaceID))
+        if (!ImGui::DockBuilderGetNode(m_DockSpaceID))
         {
-            ImGui::DockBuilderRemoveNode(dockspaceID);
-            ImGui::DockBuilderAddNode(dockspaceID, ImGuiDockNodeFlags_DockSpace);
-            ImGui::DockBuilderSetNodeSize(dockspaceID, ImGui::GetMainViewport()->Size);
-            ImGui::DockBuilderFinish(dockspaceID);
+            ImGui::DockBuilderRemoveNode(m_DockSpaceID);
+            ImGui::DockBuilderAddNode(m_DockSpaceID, ImGuiDockNodeFlags_DockSpace);
+            ImGui::DockBuilderSetNodeSize(m_DockSpaceID, ImGui::GetMainViewport()->Size);
+            ImGui::DockBuilderFinish(m_DockSpaceID);
         }
 
         ImGuiWindow *currentWindow = ImGui::FindWindowByName(this->m_Name.c_str());
 
         if (currentWindow && currentWindow->DockId == 0)
         {
-            ImGui::SetNextWindowDockID(dockspaceID, ImGuiCond_Always);
+            ImGui::SetNextWindowDockID(m_DockSpaceID, ImGuiCond_Always);
         }
 
         for (auto it = reqs->begin(); it != reqs->end();)
@@ -4917,7 +4928,7 @@ namespace UIKit
             const auto &req = *it;
             ImVector<ImGuiWindow *> &windows = ImGui::GetCurrentContext()->Windows;
 
-            ImGuiID parentDockID = dockspaceID;
+            ImGuiID parentDockID = m_DockSpaceID;
             ImGuiWindow *currentwindow = nullptr;
             ImGuiWindow *splitwindow = nullptr;
 
@@ -4938,6 +4949,12 @@ namespace UIKit
             }
 
             if (req->m_ParentAppWindowHost != this->m_Name)
+            {
+                ++it;
+                continue;
+            }
+
+            if (req->m_ParentAppWindowHost == req->m_ParentAppWindow)
             {
                 ++it;
                 continue;
@@ -5029,33 +5046,31 @@ namespace UIKit
                 }
             }
 
-            ImGuiID newDockID;
-
             switch (req->m_DockPlace)
             {
             case DockEmplacement::DockUp:
-                newDockID = ImGui::DockBuilderSplitNode(parentDockID, ImGuiDir_Up, 0.5f, nullptr, &parentDockID);
+                m_DockSpaceID = ImGui::DockBuilderSplitNode(parentDockID, ImGuiDir_Up, 0.5f, nullptr, &parentDockID);
                 this->SetSimpleStorage("dockplace", "up", true);
                 break;
             case DockEmplacement::DockDown:
-                newDockID = ImGui::DockBuilderSplitNode(parentDockID, ImGuiDir_Down, 0.5f, nullptr, &parentDockID);
+                m_DockSpaceID = ImGui::DockBuilderSplitNode(parentDockID, ImGuiDir_Down, 0.5f, nullptr, &parentDockID);
                 this->SetSimpleStorage("dockplace", "down", true);
                 break;
             case DockEmplacement::DockLeft:
-                newDockID = ImGui::DockBuilderSplitNode(parentDockID, ImGuiDir_Left, 0.3f, nullptr, &parentDockID);
+                m_DockSpaceID = ImGui::DockBuilderSplitNode(parentDockID, ImGuiDir_Left, 0.3f, nullptr, &parentDockID);
                 this->SetSimpleStorage("dockplace", "left", true);
                 break;
             case DockEmplacement::DockRight:
-                newDockID = ImGui::DockBuilderSplitNode(parentDockID, ImGuiDir_Right, 0.3f, nullptr, &parentDockID);
+                m_DockSpaceID = ImGui::DockBuilderSplitNode(parentDockID, ImGuiDir_Right, 0.3f, nullptr, &parentDockID);
                 this->SetSimpleStorage("dockplace", "right", true);
                 break;
             case DockEmplacement::DockFull:
-                newDockID = parentDockID;
+                m_DockSpaceID = parentDockID;
                 this->SetSimpleStorage("dockplace", "full", true);
                 break;
             }
 
-            ImGui::SetNextWindowDockID(newDockID, ImGuiCond_Always);
+            ImGui::SetNextWindowDockID(m_DockSpaceID, ImGuiCond_Always);
 
             it = reqs->erase(it);
         }

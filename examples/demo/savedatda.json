@@ -110,21 +110,21 @@
                     "simple_storage": [
                         {
                             "key": "dockplace",
-                            "value": "down"
+                            "value": "right"
                         },
                         {
                             "key": "window",
-                            "value": "Demo Multi"
+                            "value": "unknown"
                         },
                         {
                             "key": "docknodeparent",
-                            "value": "Demo Multi"
+                            "value": "unknown"
                         }
                     ],
                     "window_storage": []
                 },
-                "docknodeparent": "Demo Multi",
-                "dockplace": "down",
+                "docknodeparent": "unknown",
+                "dockplace": "right",
                 "id": "test_window",
                 "name": "sec3",
                 "type": "instanciable,static",
@@ -135,21 +135,21 @@
                     "simple_storage": [
                         {
                             "key": "dockplace",
-                            "value": "down"
+                            "value": "right"
                         },
                         {
                             "key": "window",
-                            "value": "Demo Multi"
+                            "value": "unknown"
                         },
                         {
                             "key": "docknodeparent",
-                            "value": "Demo Multi"
+                            "value": "unknown"
                         }
                     ],
                     "window_storage": []
                 },
-                "docknodeparent": "Demo Multi",
-                "dockplace": "down",
+                "docknodeparent": "unknown",
+                "dockplace": "right",
                 "id": "test_window",
                 "name": "sec3",
                 "type": "instanciable,static",
@@ -160,50 +160,50 @@
                     "simple_storage": [
                         {
                             "key": "dockplace",
-                            "value": "down"
+                            "value": "full"
                         },
                         {
                             "key": "window",
-                            "value": "sec3"
+                            "value": "none"
                         },
                         {
                             "key": "docknodeparent",
-                            "value": "sec3"
+                            "value": "none"
                         }
                     ],
                     "window_storage": []
                 },
-                "docknodeparent": "sec3",
-                "dockplace": "down",
+                "docknodeparent": "none",
+                "dockplace": "full",
                 "id": "test_window",
                 "name": "sec4",
                 "type": "instanciable,static",
-                "win": "0"
+                "win": "1"
             },
             {
                 "data": {
                     "simple_storage": [
                         {
                             "key": "dockplace",
-                            "value": "down"
+                            "value": "full"
                         },
                         {
                             "key": "window",
-                            "value": "sec3"
+                            "value": "none"
                         },
                         {
                             "key": "docknodeparent",
-                            "value": "sec3"
+                            "value": "none"
                         }
                     ],
                     "window_storage": []
                 },
-                "docknodeparent": "sec3",
-                "dockplace": "down",
+                "docknodeparent": "none",
+                "dockplace": "full",
                 "id": "test_window",
                 "name": "sec4",
                 "type": "instanciable,static",
-                "win": "0"
+                "win": "1"
             },
             {
                 "data": {
