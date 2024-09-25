@@ -124,6 +124,7 @@ namespace UIKit
         inline static bool RenderInl()
         {
             // Render without component...
+            return false;
         }
 
         bool Render(const std::string &duplication_name, const ImVec2 &size = ImVec2(0, 0))

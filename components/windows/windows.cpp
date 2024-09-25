@@ -1247,6 +1247,7 @@ static void SetCurrentWindow(ImGuiWindow* window)
         g.FontSize = g.DrawListSharedData.FontSize = window->CalcFontSize();
 }
 
+#include <iostream>
 
 // Push a new Dear ImGui window to add widgets to.
 // - A default window called "Debug" is automatically stacked at the beginning of every frame so you can use widgets without explicitly calling a Begin/End pair.
@@ -2010,6 +2011,10 @@ bool ImGui::UIKit_BeginLogoWindow(const char* name, ImTextureID* logo, bool* p_o
     }
 
     // Pull/inherit current state
+
+
+    // Core dump here :
+    //std::cout << parent_window->DC.NavFocusScopeIdCurrent << std::endl;
     window->DC.NavFocusScopeIdCurrent = (flags & ImGuiWindowFlags_ChildWindow) ? parent_window->DC.NavFocusScopeIdCurrent : window->GetID("#FOCUSSCOPE"); // Inherit from parent only // -V595
 
     if (!(flags & ImGuiWindowFlags_DockNodeHost))
