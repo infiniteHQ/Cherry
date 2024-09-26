@@ -132,12 +132,15 @@ UIKit::Application *UIKit::CreateApplication(int argc, char **argv)
                             ImGui::PopStyleColor(2); });
 
   std::shared_ptr<DockingAppWindow> DemoWinddow = std::make_shared<UIKit::DockingAppWindow>("Demo Multi");
-  
+
   std::shared_ptr<ContentOutlinerSimple> demo = std::make_shared<UIKit::ContentOutlinerSimple>("Demo");
   demo->RefreshRender(demo);
+  
+  std::shared_ptr<DemoAppWindow> dsemo = std::make_shared<UIKit::DemoAppWindow>("Demo2");
+  dsemo->RefreshRender(dsemo);
 
- // std::shared_ptr<ContentBrowserAppWindow> cb = std::make_shared<UIKit::ContentBrowserAppWindow>("Contentqsd Browser", "/home/diego");
-//cb->RefreshRender(cb);
+  // std::shared_ptr<ContentBrowserAppWindow> cb = std::make_shared<UIKit::ContentBrowserAppWindow>("Contentqsd Browser", "/home/diego");
+  // cb->RefreshRender(cb);
 
   return app;
 }
@@ -153,7 +156,7 @@ int main(int argc, char *argv[])
   {
     /* Your program loop... */
   }
-  
+
   mainthread.join();
 
   return 0;

@@ -21,9 +21,10 @@
 #include "../../../components/headers/custom_collapsing.hpp"
 #include "../../../components/inputs/keyval/keyval_double.hpp"
 #include "../../../components/inputs/simple/simple_inputs.hpp"
-#include "../../../components/editors/text/text_editor.hpp"
 #include "../../../components/tables/simple_tables.hpp"
 #include "../../../components/lists/custom_lists.hpp"
+
+#include "../../../../../lib/imgui/misc/text_editors/text_editor.hpp"
 
 namespace UIKit
 {
