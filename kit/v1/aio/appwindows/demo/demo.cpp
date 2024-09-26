@@ -1531,7 +1531,7 @@ namespace UIKit
                                            static int selected;
 
 
-                                           ImGui::BeginChild("left pane", ImVec2(leftPaneWidth, 0), true, ImGuiWindowFlags_NoBackground);
+                                           ImGui::BeginChild("left_pane", ImVec2(leftPaneWidth, 0), true, ImGuiWindowFlags_NoBackground);
 
 
             TitleThree("Uikit Components");

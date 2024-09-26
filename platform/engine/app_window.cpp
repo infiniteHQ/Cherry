@@ -2,8 +2,6 @@
 #include "app.hpp"
 
 #include "../../src/core/log.hpp"
-#include "../../components/windows/windows.h"
-#include "../../components/buttons/buttons.h"
 
 namespace UIKit
 {
@@ -51,16 +49,16 @@ namespace UIKit
             }
         }
 
+        std::cout << "reqs size : " << reqs->size() << std::endl;
+        // std::cout << "last error  : " << dd << std::endl;
+        // std::cout << "last boostrdqsd  : " << LastWindowPressed << std::endl;
+
         m_DockSpaceID = ImGui::GetID(m_HaveParentAppWindow ? "AppWindowDockspace" : "MainDockspace");
 
         if (!window_instance)
         {
             return;
         }
-
-        //std::cout << "reqs size : " << reqs->size() << std::endl;
-        //std::cout << "last error  : " << dd << std::endl;
-        //std::cout << "last boostrdqsd  : " << LastWindowPressed << std::endl;
 
         if (!ImGui::DockBuilderGetNode(m_DockSpaceID))
         {
@@ -71,6 +69,7 @@ namespace UIKit
         }
 
         ImGuiWindow *currentWindow = ImGui::FindWindowByName(this->m_Name.c_str());
+
         if (currentWindow && currentWindow->DockId == 0)
         {
             ImGui::SetNextWindowDockID(m_DockSpaceID, ImGuiCond_Always);
@@ -127,43 +126,33 @@ namespace UIKit
             }
 
             ImGui::SetNextWindowDockID(m_DockSpaceID, ImGuiCond_Always);
+
             it = reqs->erase(it);
         }
 
-        ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoMove;
+        ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoMove;
 
         ImGui::PushStyleVar(ImGuiStyleVar_PopupRounding, 3.0f);
         ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10, 12));
 
         if (m_SaveMode && !m_Saved)
         {
-            window_flags += ImGuiWindowFlags_UnsavedDocument;
+            window_flags |= ImGuiWindowFlags_UnsavedDocument;
         }
-        if (this->GetImage(m_Icon))
-        {
-            static ImTextureID texture = this->GetImage(m_Icon)->GetImGuiTextureID(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-            if (m_Closable)
-            {
-                ImGui::UIKit_BeginLogoWindow(m_Name.c_str(), &texture, &m_CloseSignal, window_flags);
-            }
-            else
-            {
-                ImGui::UIKit_BeginLogoWindow(m_Name.c_str(), &texture, nullptr, window_flags);
-            }
-        }
-        else
-        {
 
-            if (m_Closable)
-            {
-                ImGui::Begin(m_Name.c_str(), &m_CloseSignal, window_flags);
-            }
-            else
-            {
-                ImGui::Begin(m_Name.c_str(), nullptr, window_flags);
-            }
+        if(m_EnableMenuBar)
+        {
+            window_flags |= ImGuiWindowFlags_MenuBar;
         }
-        ImGui::ShowMetricsWindow();
+
+        if(m_EnableBottomBar)
+        {
+            window_flags |= ImGuiWindowFlags_BottomBar;
+        }
+
+
+        /*
+        // ImGui::ShowMetricsWindow();
         ImGuiWindow *win = ImGui::GetCurrentWindow();
         if (win)
         {
@@ -216,6 +205,31 @@ namespace UIKit
             std::cout << "==========================================" << std::endl;
             std::cout << "[WINDOW]: invalid" << std::endl;
             std::cout << "==========================================" << std::endl;
+        }
+        */
+
+        if (this->GetImage(m_Icon))
+        {
+            static ImTextureID texture = this->GetImage(m_Icon)->GetImGuiTextureID(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+            if (m_Closable)
+            {
+                ImGui::Begin(m_Name.c_str(), &texture, &m_CloseSignal, window_flags);
+            }
+            else
+            {
+                ImGui::Begin(m_Name.c_str(), &texture, nullptr, window_flags);
+            }
+        }
+        else
+        {
+            if (m_Closable)
+            {
+                ImGui::Begin(m_Name.c_str(), &m_CloseSignal, window_flags);
+            }
+            else
+            {
+                ImGui::Begin(m_Name.c_str(), nullptr, window_flags);
+            }
         }
 
         if (ImGui::BeginMenuBar())
@@ -390,14 +404,55 @@ namespace UIKit
             this->m_Render();
         }
 
+
+
+        if (ImGui::BeginBottomBar())
+        {
+            float oldsize = ImGui::GetFont()->Scale;
+            ImGui::GetFont()->Scale *= 0.85;
+            ImGui::PushFont(ImGui::GetFont());
+
+            float menuBarHeight = ImGui::GetCurrentWindow()->BottomBarHeight();
+            float buttonHeight = 24;
+            float offsetY = (menuBarHeight - buttonHeight) * 0.5f;
+
+            ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10, 2));
+
+            float initialCursorPosY = ImGui::GetCursorPosY();
+            ImGui::SetCursorPosY(initialCursorPosY + offsetY);
+
+            if (m_BottombarLeft)
+            {
+                m_BottombarLeft();
+            }
+
+            float x_size = EstimateMenubarRightWidth();
+            float right_pos = ImGui::GetWindowWidth() - x_size - ImGui::GetStyle().ItemSpacing.x * 2;
+
+            ImGui::SetCursorPosX(right_pos);
+
+            if (m_BottombarRight)
+            {
+                m_BottombarRight();
+            }
+
+            ImGui::PopStyleVar();
+            ImGui::GetFont()->Scale = oldsize;
+            ImGui::PopFont();
+
+            ImGui::EndBottomBar();
+        }
+
+        
         ImGui::PopStyleColor(2);
 
         ImGui::GetFont()->Scale = oldsize;
         ImGui::PopFont();
+        
+        
 
         ImGui::End();
     }
-
 
     bool AppWindow::CheckWinParent(const std::string &parentname)
     {
@@ -442,7 +497,7 @@ namespace UIKit
         {
             if (this->CheckWinParent(win->GetName()))
             {
-                ImTextureID logoID = this->GetImage(m_Icon)->GetImGuiTextureID(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+                static ImTextureID logoID = this->GetImage(m_Icon)->GetImGuiTextureID(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
                 return &logoID;
             }
         }
@@ -461,5 +516,4 @@ namespace UIKit
         }
         m_HaveParentAppWindow = true;
     }
-
 }

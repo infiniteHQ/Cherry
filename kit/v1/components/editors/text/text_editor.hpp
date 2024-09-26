@@ -200,7 +200,7 @@ public:
 	~TextEditor();
 
 
-    std::string render();
+    void render();
     void close();
     
     bool opened;

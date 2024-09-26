@@ -39,6 +39,7 @@ static void AppPopTabStyle()
 namespace UIKit
 {
 	class Window;
+	class Component;
 
 	struct ParentWindow
 	{
@@ -122,6 +123,8 @@ namespace UIKit
 		static void SetupVulkan(const char **extensions, uint32_t extensions_count);
 
 		Window *GetWindowByHandle(SDL_Window *window_handle);
+
+    	bool IsMaximized(const std::shared_ptr<Window>& win) const;
 
 		// Main Docking function
 		static void PushRedockEvent(UIKit::WindowDragDropState *state);

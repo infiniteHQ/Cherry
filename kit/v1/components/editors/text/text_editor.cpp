@@ -1158,7 +1158,7 @@ void TextEditor::Render(const char *aTitle, const ImVec2 &aSize, bool aBorder)
 	mWithinRender = false;
 }
 
-std::string TextEditor::render()
+void TextEditor::render()
 {
 	this->Render(this->name.c_str(), ImVec2(0, 0), true);
 }

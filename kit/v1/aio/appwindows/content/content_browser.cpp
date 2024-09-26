@@ -282,8 +282,8 @@ bool MyCollapsingHeader(const char *label, ImTextureID my_texture, float width)
 
     // Create a horizontal layout
     ImGui::BeginGroup();
-    if (ImGui::UIKit_ImageSizeButtonWithText(my_texture, width, label, ImVec2(-FLT_MIN, 0.0f), ImVec2(0,0), ImVec2(1,1) ,-1, ImVec4(0,0,0,0), ImVec4(1,1,1,1)))
-        *p_open ^= 1;
+    //if (ImGui::UIKit_ImageSizeButtonWithText(my_texture, width, label, ImVec2(-FLT_MIN, 0.0f), ImVec2(0,0), ImVec2(1,1) ,-1, ImVec4(0,0,0,0), ImVec4(1,1,1,1)))
+    // TODO     *p_open ^= 1;
 
     // Adjust arrow position considering the texture
     ImVec2 arrow_pos = ImVec2(ImGui::GetItemRectMax().x - style.FramePadding.x - ImGui::GetFontSize(), ImGui::GetItemRectMin().y + style.FramePadding.y);
@@ -421,7 +421,7 @@ namespace UIKit
         m_AppWindow = std::make_shared<UIKit::AppWindow>(name, name);
         m_AppWindow->SetIcon("/usr/local/include/Vortex/imgs/vortex.png");
         std::shared_ptr<UIKit::AppWindow> win = m_AppWindow;
-
+        
         m_AppWindow->SetLeftMenubarCallback([]() {});
 
         m_AppWindow->SetRightMenubarCallback([win]() {});
@@ -954,16 +954,19 @@ void ContentBrowserAppWindow::DrawHierarchy(std::filesystem::path path, bool isD
                                                          ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0.4f, 0.4f, 0.4f, 0.7f));
                                                          if (!pool_add_mode)
                                                          {
+                                                            /*TODO
+                                                            
                                                              if (ImGui::UIKit_ImageSizeButtonWithText(Application::Get().GetCurrentRenderedWindow()->get("/usr/local/include/Vortex/imgs/vortex.png")->GetImGuiTextureID(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL), size1 - 40.0f, "Add pool", ImVec2(0,0),ImVec2(0,0), ImVec2(1,1) ,-1, ImVec4(0,0,0,0), ImVec4(1,1,1,1)))
                                                              {
                                                                  pool_add_mode = true;
-                                                             }
+                                                             }*/
                                                          }
                                                          else
                                                          {
                                                              ImGui::Text("Please enter a path");
                                                              ImGui::SetNextItemWidth(-FLT_MIN); // Set the item width to take the full width
                                                              ImGui::InputText("###AddPool", pool_add_path, sizeof(pool_add_path));
+                                                            /*TODO
                                                              if (ImGui::UIKit_ImageButtonWithText(Application::Get().GetCurrentRenderedWindow()->get("/usr/local/include/Vortex/imgs/vortex.png")->GetImGuiTextureID(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL), "Add",ImVec2(0,0),ImVec2(0,0), ImVec2(1,1) ,-1, ImVec4(0,0,0,0), ImVec4(1,1,1,1)))
                                                              {
                                                                  // TODO VortexMaker::PublishPool(pool_add_path);
@@ -974,6 +977,7 @@ void ContentBrowserAppWindow::DrawHierarchy(std::filesystem::path path, bool isD
                                                              {
                                                                  pool_add_mode = false;
                                                              }
+                                                             */
                                                          }
                                                          ImGui::PopStyleVar();
                                                          ImGui::PopStyleColor();

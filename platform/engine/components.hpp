@@ -2,10 +2,6 @@
 
 #include "../../src/layer.hpp"
 #include "../../src/core/color.hpp"
-#include "image.hpp"
-#include "window.hpp"
-#include "app_window.hpp"
-#include "base.hpp"
 
 namespace UIKit
 {

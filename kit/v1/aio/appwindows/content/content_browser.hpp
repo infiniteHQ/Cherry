@@ -17,7 +17,6 @@
 #include "../../../components/texts/simple_text.hpp"
 #include "../../../components/combos/simple_combo.hpp"
 #include "../../../components/headers/simple_collapsing.hpp"
-#include "../../../../../components/buttons/buttons.h"
 
 #include <stack>
 #include <algorithm>

@@ -112,6 +112,18 @@
                 "name": "Demo Multi",
                 "type": "instanciable,static",
                 "win": "0"
+            },
+            {
+                "data": {
+                    "simple_storage": [],
+                    "window_storage": []
+                },
+                "docknodeparent": "default",
+                "dockplace": "default",
+                "id": "test_window",
+                "name": "Demo",
+                "type": "instanciable,static",
+                "win": "0"
             }
         ]
     },

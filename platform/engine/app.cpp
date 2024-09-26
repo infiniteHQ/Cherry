@@ -3,8 +3,6 @@
 #include "window.hpp"
 
 #include "../../src/core/log.hpp"
-#include "../../components/windows/windows.h"
-#include "../../components/buttons/buttons.h"
 
 /**
  * @file ApplicationGUI.cpp
@@ -3399,9 +3397,10 @@ namespace UIKit
         return nullptr;
     }
 
-    bool Application::IsMaximized() const
+    bool Application::IsMaximized(const std::shared_ptr<Window>& win) const
     {
-        //	return (bool)glfwGetWindowAttrib(m_WindowHandle, GLFW_MAXIMIZED);
+        Uint32 flags = SDL_GetWindowFlags(win->GetWindowHandle());
+        return (flags & SDL_WINDOW_MAXIMIZED) != 0;
     }
 
     float Application::GetTime()
@@ -3626,6 +3625,7 @@ namespace UIKit
                 return win->GetWindowHandle();
             }
         }
+        return nullptr;
     }
 
     ImDrawData *Application::RenderWindow(Window *window)

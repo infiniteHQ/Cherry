@@ -168,11 +168,25 @@ namespace UIKit
         void SetLeftMenubarCallback(const std::function<void()> &right_menubar)
         {
             m_MenubarLeft = right_menubar;
+            m_EnableMenuBar = true;
         }
 
         void SetRightMenubarCallback(const std::function<void()> &left_menubar)
         {
             m_MenubarRight = left_menubar;
+            m_EnableMenuBar = true;
+        }
+
+        void SetLeftBottombarCallback(const std::function<void()> &left_menubar)
+        {
+            m_BottombarLeft = left_menubar;
+            m_EnableBottomBar = true;
+        }
+
+        void SetRightBottombarCallback(const std::function<void()> &right_menubar)
+        {
+            m_BottombarRight = right_menubar;
+            m_EnableBottomBar = true;
         }
 
         void SetIcon(const std::string &name)
@@ -278,6 +292,9 @@ namespace UIKit
         bool m_DisableDragging = false;
         bool m_DisableContextMenu = false;
 
+        bool m_EnableMenuBar = false;
+        bool m_EnableBottomBar = false;
+
         bool m_IsDragging;
         bool m_DockIsDraggingStarted;
 
@@ -305,6 +322,8 @@ namespace UIKit
         std::function<void()> m_Render;
         std::function<void()> m_MenubarRight;
         std::function<void()> m_MenubarLeft;
+        std::function<void()> m_BottombarRight;
+        std::function<void()> m_BottombarLeft;
 
         std::function<void()> m_CloseEvent;
         std::vector<std::shared_ptr<AppWindow>> m_SubAppWindows;

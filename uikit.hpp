@@ -13,21 +13,14 @@
 #include "./platform/engine/app.hpp"
 #include "./assets/icons.h"
 
-// Components & Design System includes
-#include "./components/windows/windows.h"
-#include "./components/buttons/buttons.h"
-#include "./components/menubar/menubar.h"
-
 #ifdef UIKIT_V1
 // Buttons
 #include "./kit/v1/components/buttons/custom_buttons.hpp"
 #include "./kit/v1/components/buttons/image_text_buttons.hpp"
 #include "./kit/v1/components/buttons/image_buttons.hpp"
 #include "./kit/v1/components/buttons/text_buttons.hpp"
-
 // Headers
 #include "./kit/v1/components/headers/simple_collapsing.hpp"
-
 #include "./kit/v1/components/headers/custom_collapsing.hpp"
 // Texts
 #include "./kit/v1/components/texts/simple_text.hpp"
@@ -47,6 +40,7 @@
 #include "./kit/v1/aio/appwindows/basic/multi_child.hpp"
 #include "./kit/v1/aio/appwindows/docking/docking_appwindow.hpp"
 #include "./kit/v1/aio/appwindows/content/content_browser.hpp"
+#include "./kit/v1/aio/appwindows/content/content_outliner_simple/content_outliner_simple.hpp"
 // Trees
 #include "./kit/v1/components/lists/custom_lists.hpp"
 // Inputs
