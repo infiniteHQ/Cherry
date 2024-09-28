@@ -49,10 +49,6 @@ namespace UIKit
             }
         }
 
-        std::cout << "reqs size : " << reqs->size() << std::endl;
-        // std::cout << "last error  : " << dd << std::endl;
-        // std::cout << "last boostrdqsd  : " << LastWindowPressed << std::endl;
-
         m_DockSpaceID = ImGui::GetID(m_HaveParentAppWindow ? "AppWindowDockspace" : "MainDockspace");
 
         if (!window_instance)
@@ -149,64 +145,6 @@ namespace UIKit
         {
             window_flags |= ImGuiWindowFlags_BottomBar;
         }
-
-
-        /*
-        // ImGui::ShowMetricsWindow();
-        ImGuiWindow *win = ImGui::GetCurrentWindow();
-        if (win)
-        {
-            std::cout << "==========================================" << std::endl;
-            std::cout << "[WINDOW] Name: " << win->Name << std::endl;
-            std::cout << "[WINDOW] Dock Node : " << win->DockNode << std::endl;
-            std::cout << "[WINDOW] Dock Tree Name : " << win->RootWindowDockTree->Name << std::endl;
-            std::string str = win->RootWindowDockTree->Name;
-            std::string str_finded = str.substr(str.find(".") + 1, str.size());
-            std::cout << "[WINDOW] Deducted tree name : " << str_finded << std::endl;
-
-            std::shared_ptr<Window> finded_win = nullptr;
-
-            for (auto win : Application::Get().m_Windows)
-            {
-                if (str_finded == win->GetName())
-                {
-                    finded_win = win;
-                }
-            }
-
-            if (finded_win)
-            {
-                std::cout << "The window is attached to a parent window ! (" << finded_win->GetName() << ")" << std::endl;
-            }
-            else
-            {
-                std::cout << "The window is alone :(" << std::endl;
-                // Assign the subwindow in a new window !
-            }
-
-            std::cout << "[WINDOW] Dock ID : " << win->DockId << std::endl;
-            std::cout << "[WINDOW] Dock Host ID : " << win->DockNodeAsHost << std::endl;
-            std::cout << "[WINDOW] Identified Parent window : " << win->DockNodeAsHost << std::endl;
-
-            // Check if the window is being moved (header bar clicked and dragging)
-            if (ImGui::IsWindowHovered(ImGuiHoveredFlags_RootAndChildWindows) && ImGui::IsMouseDragging(ImGuiMouseButton_Left))
-            {
-                std::cout << "[WINDOW] The window is being moved!" << std::endl;
-            }
-            else
-            {
-                std::cout << "[WINDOW] The window is not being moved." << std::endl;
-            }
-
-            std::cout << "==========================================" << std::endl;
-        }
-        else
-        {
-            std::cout << "==========================================" << std::endl;
-            std::cout << "[WINDOW]: invalid" << std::endl;
-            std::cout << "==========================================" << std::endl;
-        }
-        */
 
         if (this->GetImage(m_Icon))
         {
@@ -404,8 +342,6 @@ namespace UIKit
             this->m_Render();
         }
 
-
-
         if (ImGui::BeginBottomBar())
         {
             float oldsize = ImGui::GetFont()->Scale;
@@ -442,14 +378,11 @@ namespace UIKit
 
             ImGui::EndBottomBar();
         }
-
         
         ImGui::PopStyleColor(2);
 
         ImGui::GetFont()->Scale = oldsize;
         ImGui::PopFont();
-        
-        
 
         ImGui::End();
     }

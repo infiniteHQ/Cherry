@@ -131,16 +131,8 @@ UIKit::Application *UIKit::CreateApplication(int argc, char **argv)
                             ImGui::PopStyleVar();  
                             ImGui::PopStyleColor(2); });
 
-  std::shared_ptr<DockingAppWindow> DemoWinddow = std::make_shared<UIKit::DockingAppWindow>("Demo Multi");
-
-  std::shared_ptr<ContentOutlinerSimple> demo = std::make_shared<UIKit::ContentOutlinerSimple>("Demo");
-  demo->RefreshRender(demo);
-  
-  std::shared_ptr<DemoAppWindow> dsemo = std::make_shared<UIKit::DemoAppWindow>("Demo2");
-  dsemo->RefreshRender(dsemo);
-
-  // std::shared_ptr<ContentBrowserAppWindow> cb = std::make_shared<UIKit::ContentBrowserAppWindow>("Contentqsd Browser", "/home/diego");
-  // cb->RefreshRender(cb);
+  std::shared_ptr<NodeEditorSimple> demsdos = std::make_shared<UIKit::NodeEditorSimple>("Qzez");
+  demsdos->RefreshRender(demsdos);
 
   return app;
 }

@@ -1,6 +1,10 @@
 #ifndef UIKIT_H
 #define UIKIT_H
 
+#ifndef IMGUI_DEFINE_MATH_OPERATORS
+#define IMGUI_DEFINE_MATH_OPERATORS
+#endif // IMGUI_DEFINE_MATH_OPERATORS
+
 // Backend includes
 #include "./platform/engine/ui/spinner.hpp"
 #include "./platform/engine/ui/notification.hpp"
@@ -39,7 +43,9 @@
 #include "./kit/v1/aio/appwindows/basic/empty_appwindow.hpp"
 #include "./kit/v1/aio/appwindows/basic/multi_child.hpp"
 #include "./kit/v1/aio/appwindows/docking/docking_appwindow.hpp"
-#include "./kit/v1/aio/appwindows/content/content_browser.hpp"
+#include "./kit/v1/aio/appwindows/editors/text_editor_simple/text_editor_simple.hpp"
+#include "./kit/v1/aio/appwindows/editors/node_editor_simple/node_editor_simple.hpp"
+#include "./kit/v1/aio/appwindows/content/content_browser/content_browser.hpp"
 #include "./kit/v1/aio/appwindows/content/content_outliner_simple/content_outliner_simple.hpp"
 // Trees
 #include "./kit/v1/components/lists/custom_lists.hpp"

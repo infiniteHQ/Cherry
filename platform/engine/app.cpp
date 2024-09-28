@@ -1462,7 +1462,6 @@ namespace UIKit
                 {
                     FramePresent(wd, window.get());
                 }
-
                 i++;
             }
 

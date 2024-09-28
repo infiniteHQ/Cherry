@@ -1,22 +1,22 @@
-#include "../../../../../platform/engine/app.hpp"
+#include "../../../../../../platform/engine/app.hpp"
 
 
 #ifndef UIKIT_V1_AIO_CONTENT_CONTENTBROWSER
 #define UIKIT_V1_AIO_CONTENT_CONTENTBROWSER
 
 // UIKIT Components
-#include "../../../components/buttons/custom_buttons.hpp"
-#include "../../../components/buttons/image_buttons.hpp"
-#include "../../../components/buttons/text_buttons.hpp"
-#include "../../../components/titles/h1.hpp"
-#include "../../../components/titles/h2.hpp"
-#include "../../../components/titles/h3.hpp"
-#include "../../../components/titles/h4.hpp"
-#include "../../../components/titles/h5.hpp"
-#include "../../../components/titles/h6.hpp"
-#include "../../../components/texts/simple_text.hpp"
-#include "../../../components/combos/simple_combo.hpp"
-#include "../../../components/headers/simple_collapsing.hpp"
+#include "../../../../components/buttons/custom_buttons.hpp"
+#include "../../../../components/buttons/image_buttons.hpp"
+#include "../../../../components/buttons/text_buttons.hpp"
+#include "../../../../components/titles/h1.hpp"
+#include "../../../../components/titles/h2.hpp"
+#include "../../../../components/titles/h3.hpp"
+#include "../../../../components/titles/h4.hpp"
+#include "../../../../components/titles/h5.hpp"
+#include "../../../../components/titles/h6.hpp"
+#include "../../../../components/texts/simple_text.hpp"
+#include "../../../../components/combos/simple_combo.hpp"
+#include "../../../../components/headers/simple_collapsing.hpp"
 
 #include <stack>
 #include <algorithm>
@@ -134,6 +134,25 @@ public:
         void MyFolderButton(const char *id, ImVec2 size, ImU32 color, const std::string &path);
         void DrawHierarchy(std::filesystem::path path, bool isDir, const std::string &label);
 
+        void SetDefaultFolderColor(const std::string& hex);
+
+        std::string GetContentBrowserFolderColor(const std::string& path)
+        {
+            for(auto &colored_folder : m_FolderColors)
+            {
+                if(colored_folder.first == path)
+                {
+                    return colored_folder.second;
+                }
+            }
+
+            return "#B1FF31FF";
+        }
+
+        void AddReconizedItem(const std::shared_ptr<ContenBrowserItem>& item){};
+        bool IsPathFavorite(const std::string& path){};
+        void SetColoredFolder(const std::string& path, const std::string& hex_color){};
+
     private:
         bool opened;
 
@@ -158,6 +177,16 @@ public:
         std::stack<std::filesystem::path> m_ForwardHistory;
 
         std::vector<std::string> m_Selected;
+        std::vector<std::string> m_CopySelection;
+        std::vector<std::string> m_CutSelection;
+
+        std::string m_DefaultFolderColor;
+
+        // Path/Color
+        std::vector<std::pair<std::string,std::string>> m_FolderColors;
+        std::vector<std::string> m_FavoriteFolders;
+        std::vector<std::string> m_Pools;
+        std::vector<std::shared_ptr<ContenBrowserItem>> m_ItemToReconize;
 
         std::vector<std::filesystem::path> m_Favorites;
 
@@ -166,6 +195,10 @@ public:
         std::shared_ptr<UIKit::Image> m_DirectoryIcon;
 
         std::shared_ptr<UIKit::AppWindow> m_AppWindow;
+
+        std::function<void(const std::string&)> m_DeletePathCallback;
+        std::function<void(const std::vector<std::string>&)> m_CopyPathsCallback;
+        std::function<void(const std::vector<std::string>&)> m_PastePathsCallback;
     };
 }
 

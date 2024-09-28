@@ -1,26 +1,27 @@
 #pragma once
 #include "../../../../../../platform/engine/app.hpp"
 
-#ifndef UIKIT_V1_CONTENT_CONTENT_OUTLINER_SIMPLE
-#define UIKIT_V1_CONTENT_CONTENT_OUTLINER_SIMPLE
+#ifndef UIKIT_V1_EDITOR_TEXT_EDITOR_SIMPLE
+#define UIKIT_V1_EDITOR_TEXT_EDITOR_SIMPLE
 
 #include "../../../../components/buttons/custom_buttons.hpp"
 #include "../../../../components/buttons/image_buttons.hpp"
 #include "../../../../components/lists/custom_lists.hpp"
 #include "../../../../components/inputs/simple/simple_inputs.hpp"
+#include "../../../../../../lib/imgui/misc/text_editors/text_editor.hpp"
 
 namespace UIKit
 {
 
     // This window can be a "subappwindow" of a parent if you use the constructor with parent parameter.
-    class ContentOutlinerSimple
+    class TextEditorSimple
     {
     public:
-        ContentOutlinerSimple(const std::string &name, const std::shared_ptr<AppWindow> &parent);
-        ContentOutlinerSimple(const std::string &name);
-        ContentOutlinerSimple();
+        TextEditorSimple(const std::string &name, const std::shared_ptr<AppWindow> &parent);
+        TextEditorSimple(const std::string &name);
+        TextEditorSimple();
 
-        void RefreshRender(const std::shared_ptr<ContentOutlinerSimple> &instance);
+        void RefreshRender(const std::shared_ptr<TextEditorSimple> &instance);
 
     private:
         // Ui Components
@@ -33,7 +34,10 @@ namespace UIKit
 
         // Renderer
         std::shared_ptr<UIKit::AppWindow> m_AppWindow;
+
+
+        std::shared_ptr<TextEditor> cp_TextEditor;   
     };
 }
 
-#endif // UIKIT_V1_CONTENT_CONTENT_OUTLINER_SIMPLE
+#endif // UIKIT_V1_EDITOR_TEXT_EDITOR_SIMPLEf

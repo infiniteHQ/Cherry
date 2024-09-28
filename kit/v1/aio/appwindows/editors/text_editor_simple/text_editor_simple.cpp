@@ -1,9 +1,8 @@
-#include "./content_outliner_simple.hpp"
+#include "./text_editor_simple.hpp"
 
 namespace UIKit
 {
-
-    ContentOutlinerSimple::ContentOutlinerSimple(const std::string &name, const std::shared_ptr<AppWindow> &parent)
+    TextEditorSimple::TextEditorSimple(const std::string &name, const std::shared_ptr<AppWindow> &parent)
     {
         m_AppWindow = std::make_shared<UIKit::AppWindow>(name, name);
         m_AppWindow->SetIcon("/usr/local/include/Vortex/imgs/vortex.png");
@@ -27,7 +26,7 @@ namespace UIKit
         Application::Get().PutWindow(m_AppWindow);
     }
 
-    ContentOutlinerSimple::ContentOutlinerSimple()
+    TextEditorSimple::TextEditorSimple()
     {
         m_AppWindow = std::make_shared<UIKit::AppWindow>("Sec", "Sec");
         m_AppWindow->SetIcon("/usr/local/include/Vortex/imgs/vortex.png");
@@ -46,7 +45,7 @@ namespace UIKit
         Application::Get().PutWindow(m_AppWindow);
     }
 
-    ContentOutlinerSimple::ContentOutlinerSimple(const std::string &name)
+    TextEditorSimple::TextEditorSimple(const std::string &name)
     {
         m_AppWindow = std::make_shared<UIKit::AppWindow>(name, name);
         m_AppWindow->SetIcon("/usr/local/include/Vortex/imgs/vortex.png");
@@ -54,7 +53,9 @@ namespace UIKit
 
         m_AppWindow->SetSaveMode(true);
         // m_AppWindow->SetDisableContextMenu(true);
-        // m_AppWindow->SetDisableDragging(true);
+        // m_AppWindow->SetDisableDragging(true);        
+        cp_TextEditor = std::make_shared<TextEditor>("/home/diego/Documents/indf.html");
+
 
         v_StringOne = std::make_shared<std::string>("");
 
@@ -114,12 +115,12 @@ namespace UIKit
         Application::Get().PutWindow(m_AppWindow);
     }
 
-    void ContentOutlinerSimple::RefreshRender(const std::shared_ptr<ContentOutlinerSimple> &instance)
+    void TextEditorSimple::RefreshRender(const std::shared_ptr<TextEditorSimple> &instance)
     {
 
         m_AppWindow->SetRenderCallback([instance]()
                                        {
-                                           instance->cp_Tree->Render();
+                                               instance->cp_TextEditor->Render("Title");
                                        });
     }
 

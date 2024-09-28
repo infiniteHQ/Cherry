@@ -1,6 +1,5 @@
 #include "./content_browser.hpp"
 
-
 // To move in class members
 static float padding = 30.0f;
 static float thumbnailSize = 94.0f;
@@ -44,8 +43,6 @@ static const std::string Icon_Left_Arrow_Disabled = "/usr/local/include/Vortex/1
 static const std::string Icon_Right_Arrow_Enabled = "/usr/local/include/Vortex/1.1/imgs/icon_arrow_r_enabled.png";
 static const std::string Icon_Right_Arrow_Disabled = "/usr/local/include/Vortex/1.1/imgs/icon_arrow_r_disabled.png";
 
-
-
 static bool isOnlySpacesOrEmpty(const char *str)
 {
     if (str == nullptr || std::strlen(str) == 0)
@@ -70,45 +67,39 @@ static std::string toLowerCase(const std::string &str)
     return result;
 }
 
-
-// Fonction pour dessiner du texte avec des correspondances mises en surbrillance
 static void DrawHighlightedText(ImDrawList *drawList, ImVec2 textPos, const char *text, const char *search, ImU32 highlightColor, ImU32 textColor, ImU32 highlightTextColor)
 {
-	if (!text || !search || !*search)
-	{
-		drawList->AddText(textPos, textColor, text);
-		return;
-	}
+    if (!text || !search || !*search)
+    {
+        drawList->AddText(textPos, textColor, text);
+        return;
+    }
 
-	const char *start = text;
-	const char *found = strstr(start, search);
-	while (found)
-	{
-		// Dessiner le texte avant la correspondance
-		if (found > start)
-		{
-			std::string preText(start, found);
-			drawList->AddText(textPos, textColor, preText.c_str());
-			textPos.x += ImGui::CalcTextSize(preText.c_str()).x;
-		}
+    const char *start = text;
+    const char *found = strstr(start, search);
+    while (found)
+    {
+        if (found > start)
+        {
+            std::string preText(start, found);
+            drawList->AddText(textPos, textColor, preText.c_str());
+            textPos.x += ImGui::CalcTextSize(preText.c_str()).x;
+        }
 
-		// Dessiner la correspondance mise en surbrillance avec un texte noir
-		ImVec2 highlightPos = textPos;
-		ImVec2 highlightSize = ImGui::CalcTextSize(search);
-		drawList->AddRectFilled(highlightPos, ImVec2(highlightPos.x + highlightSize.x, highlightPos.y + highlightSize.y), highlightColor);
-		drawList->AddText(textPos, highlightTextColor, search);
-		textPos.x += highlightSize.x;
+        ImVec2 highlightPos = textPos;
+        ImVec2 highlightSize = ImGui::CalcTextSize(search);
+        drawList->AddRectFilled(highlightPos, ImVec2(highlightPos.x + highlightSize.x, highlightPos.y + highlightSize.y), highlightColor);
+        drawList->AddText(textPos, highlightTextColor, search);
+        textPos.x += highlightSize.x;
 
-		// Passer à la partie suivante du texte
-		start = found + strlen(search);
-		found = strstr(start, search);
-	}
+        start = found + strlen(search);
+        found = strstr(start, search);
+    }
 
-	// Dessiner le texte restant après la dernière correspondance
-	if (*start)
-	{
-		drawList->AddText(textPos, textColor, start);
-	}
+    if (*start)
+    {
+        drawList->AddText(textPos, textColor, start);
+    }
 }
 
 static int levenshteinDistance(const std::string &s1, const std::string &s2)
@@ -209,7 +200,7 @@ bool Splitter(bool split_vertically, float thickness, float *sizebefore, float *
 
     window->DC.CursorPos = backup_pos;
 
-    ImU32 color = IM_COL32(45, 45, 45, 255); // Gris clair
+    ImU32 color = IM_COL32(45, 45, 45, 255);
     ImVec2 pos = split_vertically ? ImVec2(backup_pos.x, backup_pos.y) : ImVec2(backup_pos.x, backup_pos.y);
     ImVec2 end_pos = split_vertically ? ImVec2(pos.x + thickness, pos.y + window->Size.y) : ImVec2(pos.x + window->Size.x, pos.y + thickness);
     draw_list->AddRectFilled(pos, end_pos, color);
@@ -220,9 +211,9 @@ bool Splitter(bool split_vertically, float thickness, float *sizebefore, float *
 bool ColorPicker3U32(const char *label, ImU32 *color, ImGuiColorEditFlags flags = 0)
 {
     float col[3];
-    col[0] = (float)((*color >> 0) & 0xFF) / 255.0f;  // Extract red component
-    col[1] = (float)((*color >> 8) & 0xFF) / 255.0f;  // Extract green component
-    col[2] = (float)((*color >> 16) & 0xFF) / 255.0f; // Extract blue component
+    col[0] = (float)((*color >> 0) & 0xFF) / 255.0f;
+    col[1] = (float)((*color >> 8) & 0xFF) / 255.0f;
+    col[2] = (float)((*color >> 16) & 0xFF) / 255.0f;
 
     bool result = ImGui::ColorPicker3(label, col, flags);
 
@@ -231,7 +222,7 @@ bool ColorPicker3U32(const char *label, ImU32 *color, ImGuiColorEditFlags flags 
         *color = ((ImU32)(col[0] * 255.0f)) |
                  ((ImU32)(col[1] * 255.0f) << 8) |
                  ((ImU32)(col[2] * 255.0f) << 16) |
-                 ((ImU32)(255) << 24); // Ensure alpha is set to 255
+                 ((ImU32)(255) << 24);
     }
 
     ImVec4 buttonColor = ImVec4(0.3f, 0.3f, 0.3f, 1.0f);
@@ -243,21 +234,18 @@ bool ColorPicker3U32(const char *label, ImU32 *color, ImGuiColorEditFlags flags 
     ImGui::PushStyleColor(ImGuiCol_ButtonHovered, buttonHoveredColor);
     ImGui::PushStyleColor(ImGuiCol_ButtonActive, buttonActiveColor);
 
-    // Bouton "Cancel"
     if (ImGui::Button("Cancel", ImVec2(75.0f, 0.0f)))
     {
-        // Action à prendre lors du clic sur "Cancel"
     }
 
     ImGui::PopStyleColor(3);
 
     ImGui::SameLine();
 
-    ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.2f, 0.4f, 0.8f, 1.0f));        // Couleur bleue pour le bouton "Done"
-    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.3f, 0.5f, 0.9f, 1.0f)); // Couleur survolée
-    ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.1f, 0.3f, 0.7f, 1.0f));  // Couleur cliquée
+    ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.2f, 0.4f, 0.8f, 1.0f));
+    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.3f, 0.5f, 0.9f, 1.0f));
+    ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.1f, 0.3f, 0.7f, 1.0f));
 
-    // Bouton "Done"
     if (ImGui::Button("Done", ImVec2(75.0f, 0.0f)))
     {
         *color = ImColor(col[0], col[1], col[2]);
@@ -269,43 +257,17 @@ bool ColorPicker3U32(const char *label, ImU32 *color, ImGuiColorEditFlags flags 
     return result;
 }
 
-bool MyCollapsingHeader(const char *label, ImTextureID my_texture, float width)
-{
-    ImGui::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, ImVec2(0.0f, 0.5f));
-    bool *p_open = ImGui::GetStateStorage()->GetBoolRef(ImGui::GetID(label), false);
-
-    ImGuiStyle &style = ImGui::GetStyle();
-
-    // Calculate the size of the texture and padding
-    float texture_size = ImGui::GetFontSize(); // Adjust the size of the texture as needed
-    float padding = style.ItemInnerSpacing.x;
-
-    // Create a horizontal layout
-    ImGui::BeginGroup();
-    //if (ImGui::UIKit_ImageSizeButtonWithText(my_texture, width, label, ImVec2(-FLT_MIN, 0.0f), ImVec2(0,0), ImVec2(1,1) ,-1, ImVec4(0,0,0,0), ImVec4(1,1,1,1)))
-    // TODO     *p_open ^= 1;
-
-    // Adjust arrow position considering the texture
-    ImVec2 arrow_pos = ImVec2(ImGui::GetItemRectMax().x - style.FramePadding.x - ImGui::GetFontSize(), ImGui::GetItemRectMin().y + style.FramePadding.y);
-    ImGui::RenderArrow(ImGui::GetWindowDrawList(), arrow_pos, ImGui::GetColorU32(ImGuiCol_Text), *p_open ? ImGuiDir_Down : ImGuiDir_Right);
-    ImGui::EndGroup();
-
-    ImGui::PopStyleVar();
-    return *p_open;
-}
-
 bool CollapsingHeaderWithIcon(const char *label, ImTextureID icon)
 {
     ImGui::PushID(label);
 
     bool open = ImGui::CollapsingHeader("##hidden", ImGuiTreeNodeFlags_AllowItemOverlap);
 
-    // Positionnez l'image avant le texte
     ImVec2 textPos = ImGui::GetCursorPos();
     ImGui::SameLine();
     ImGui::SetCursorPosX(textPos.x + ImGui::GetStyle().FramePadding.x);
 
-    ImGui::Image(icon, ImVec2(16, 16)); // Ajustez la taille selon vos besoins
+    ImGui::Image(icon, ImVec2(16, 16));
     ImGui::SameLine();
 
     ImGui::SetCursorPosY(textPos.y);
@@ -364,8 +326,6 @@ static ImU32 DarkenColor(ImU32 color, float amount)
 
 namespace UIKit
 {
-
-    // Helper function to get file extension
     std::string get_extension(const std::string &path)
     {
         size_t dot_pos = path.find_last_of('.');
@@ -374,7 +334,6 @@ namespace UIKit
         return path.substr(dot_pos + 1);
     }
 
-    // Function to detect file type based on extension
     FileTypes detect_file(const std::string &path)
     {
         static const std::unordered_map<std::string, FileTypes> extension_map = {
@@ -421,8 +380,96 @@ namespace UIKit
         m_AppWindow = std::make_shared<UIKit::AppWindow>(name, name);
         m_AppWindow->SetIcon("/usr/local/include/Vortex/imgs/vortex.png");
         std::shared_ptr<UIKit::AppWindow> win = m_AppWindow;
-        
-        m_AppWindow->SetLeftMenubarCallback([]() {});
+
+        m_AppWindow->SetLeftMenubarCallback([this]()
+                                            {
+            ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0.4f, 0.4f, 0.4f, 0.7f));
+		if (ImGui::Button("Add"))
+		{
+		}
+		ImGui::PopStyleColor();
+
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(62, 62, 62, 0));
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(62, 62, 62, 0));
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(62, 62, 62, 0));
+		ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(62, 62, 62, 0));
+		if (ImGui::Button("Save all"))
+		{
+		}
+		if (ImGui::Button("Import"))
+		{
+		}
+		ImGui::PopStyleColor(4);
+
+		ImGui::Separator();
+
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
+
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2, 12));
+
+		if (m_BackHistory.empty())
+		{
+			if (ImGui::Button("/<"))
+			{
+				//
+			}
+		}
+		else
+		{
+			if (ImGui::Button("<"))
+			{
+				GoBack();
+			}
+
+			if (ImGui::IsMouseClicked(3))
+			{
+				GoBack();
+			}
+		}
+
+		if (m_ForwardHistory.empty())
+		{
+			if (ImGui::Button(">/"))
+			{
+				//
+			}
+		}
+		else
+		{
+			if (ImGui::Button(">"))
+			{
+				GoForward();
+			}
+
+			if (ImGui::IsMouseClicked(4))
+			{
+				GoForward();
+			}
+		}
+		ImGui::PopStyleVar();
+
+		ImGui::PopStyleColor();
+
+		ImGui::Separator();
+
+		if (m_Selected.size() > 0)
+		{
+
+			std::string label = std::to_string(m_Selected.size()) + " copies";
+			ImGui::TextColored(ImVec4(0.5f, 0.5f, 0.5f, 1.0f), label.c_str());
+		}
+
+		if (m_CutSelection.size() > 0)
+		{
+			std::string label = std::to_string(m_CutSelection.size()) + " cuts";
+			ImGui::Text(label.c_str());
+		}
+
+		if (m_Selected.size() > 0)
+		{
+			std::string label = std::to_string(m_Selected.size()) + " selected.";
+			ImGui::Text(label.c_str());
+		} });
 
         m_AppWindow->SetRightMenubarCallback([win]() {});
 
@@ -430,7 +477,6 @@ namespace UIKit
         m_CurrentDirectory = m_BaseDirectory;
         Application::Get().PutWindow(m_AppWindow);
     }
-
 
     void ContentBrowserAppWindow::GoBack()
     {
@@ -458,7 +504,7 @@ namespace UIKit
             if (!m_CurrentDirectory.empty())
             {
                 m_BackHistory.push(m_CurrentDirectory);
-                // Clear forward history when a new directory is selected
+
                 while (!m_ForwardHistory.empty())
                 {
                     m_ForwardHistory.pop();
@@ -472,15 +518,14 @@ namespace UIKit
     {
         bool pressed = false;
 
-        // Configuration des tailles et positions
-        float logoSize = 60.0f;             // Taille du logo
-        float extraHeight = 80.0f;          // Hauteur supplémentaire pour le bouton global
-        float padding = 10.0f;              // Espace autour des éléments
-        float separatorHeight = 2.0f;       // Hauteur du séparateur
-        float textOffsetY = 5.0f;           // Offset vertical pour le texte
-        float versionBoxWidth = 10.0f;      // Largeur de la boîte de version
-        float versionBoxHeight = 20.0f;     // Hauteur de la boîte de version
-        float thumbnailIconOffsetY = 30.0f; // Hauteur de la boîte de version
+        float logoSize = 60.0f;
+        float extraHeight = 80.0f;
+        float padding = 10.0f;
+        float separatorHeight = 2.0f;
+        float textOffsetY = 5.0f;
+        float versionBoxWidth = 10.0f;
+        float versionBoxHeight = 20.0f;
+        float thumbnailIconOffsetY = 30.0f;
 
         if (selected)
         {
@@ -490,19 +535,14 @@ namespace UIKit
 
         ImVec2 squareSize(logoSize, logoSize);
 
-        // Déterminer le texte à afficher
         const char *originalText = name.c_str();
         std::string truncatedText = name;
 
-        // Tronquer le texte si nécessaire
         if (ImGui::CalcTextSize(originalText).x > maxTextWidth)
         {
-            // Tronquer à 20 caractères pour la première ligne
             truncatedText = name.substr(0, 20);
-            // Ajouter une nouvelle ligne si nécessaire
             if (ImGui::CalcTextSize(truncatedText.c_str()).x > maxTextWidth)
             {
-                // Tronquer à 10 caractères pour la deuxième ligne
                 truncatedText = name.substr(0, 10) + "\n" + name.substr(10, 10);
             }
         }
@@ -511,7 +551,6 @@ namespace UIKit
             truncatedText = name + "\n";
         }
 
-        // Utiliser une taille fixe pour le composant
         ImVec2 fixedSize(maxTextWidth + padding * 2, logoSize + extraHeight + padding * 2);
 
         ImVec2 cursorPos = ImGui::GetCursorScreenPos();
@@ -527,19 +566,15 @@ namespace UIKit
             ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
         }
 
-        // Changer la couleur du texte en gris
-        ImVec4 grayColor = ImVec4(0.4f, 0.4f, 0.4f, 1.0f);              // Gris (50% blanc)
-        ImVec4 graySeparatorColor = ImVec4(0.4f, 0.4f, 0.4f, 0.5f);     // Gris (50% blanc)
-        ImVec4 darkBackgroundColor = ImVec4(0.15f, 0.15f, 0.15f, 1.0f); // Fond plus foncé
-        ImVec4 lightBorderColor = ImVec4(0.2f, 0.2f, 0.2f, 1.0f);       // Bordure plus claire
+        ImVec4 grayColor = ImVec4(0.4f, 0.4f, 0.4f, 1.0f);
+        ImVec4 graySeparatorColor = ImVec4(0.4f, 0.4f, 0.4f, 0.5f);
+        ImVec4 darkBackgroundColor = ImVec4(0.15f, 0.15f, 0.15f, 1.0f);
+        ImVec4 lightBorderColor = ImVec4(0.2f, 0.2f, 0.2f, 1.0f);
 
-        // Pousser le style pour le fond plus foncé
         ImGui::PushStyleColor(ImGuiCol_PopupBg, darkBackgroundColor);
 
-        // Pousser le style pour la bordure plus claire
         ImGui::PushStyleColor(ImGuiCol_Border, lightBorderColor);
 
-        // Pousser le style pour les bords arrondis moins prononcés
         ImGui::PushStyleVar(ImGuiStyleVar_PopupRounding, 3.0f);
 
         static bool open_deletion_modal = false;
@@ -554,11 +589,7 @@ namespace UIKit
             static ImGuiTableFlags window_flags = ImGuiWindowFlags_NoResize;
             if (ImGui::BeginPopupModal("Delete file(s)", NULL, window_flags))
             {
-                // Set the size of the modal to 200x75 pixels the first time it is created
-
-                // 3 text inputs
                 static char path_input_all[512];
-                // inputs widget
 
                 if (delete_single_file)
                 {
@@ -584,7 +615,10 @@ namespace UIKit
                 {
                     if (delete_single_file)
                     {
-                        // TODO VortexMaker::DeletePath(delete_single_file_path);
+                        if (m_DeletePathCallback)
+                        {
+                            m_DeletePathCallback(delete_single_file_path);
+                        }
                         delete_single_file_path = "";
                         delete_single_file = false;
                     }
@@ -592,7 +626,7 @@ namespace UIKit
                     {
                         for (auto item : m_Selected)
                         {
-                            // TODO VortexMaker::DeletePath(item);
+                            m_DeletePathCallback(item);
                         }
                     }
 
@@ -613,11 +647,9 @@ namespace UIKit
 
         if (ImGui::BeginPopupContextItem("ContextPopup"))
         {
-            // Appliquer le nouveau scale
             ImGui::GetFont()->Scale *= 0.9;
             ImGui::PushFont(ImGui::GetFont());
 
-            // Ajouter un espace au-dessus
             ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5.0f);
 
             ImGui::PushStyleColor(ImGuiCol_Text, grayColor);
@@ -635,22 +667,38 @@ namespace UIKit
 
             if (ImGui::MenuItem(cpy_label.c_str(), "Ctrl + C"))
             {
-                // TODO VortexMaker::Copy(m_Selected, false);
+                if (m_CopyPathsCallback)
+                {
+                    m_CopyPathsCallback(m_Selected);
+                    for (auto &path : m_Selected)
+                    {
+                        m_CopySelection.push_back(path);
+                    }
+                }
+
                 m_Selected.clear();
 
                 ImGui::CloseCurrentPopup();
             }
 
-            /* TODO if (this->ctx->IO.copy_selection.size() > 0)
+            if (m_CopySelection.size() > 0)
             {
-                std::string label = "Copy in addition (" + std::to_string(this->ctx->IO.copy_selection.size()) + " copies)";
+                std::string label = "Copy in addition (" + std::to_string(m_CopySelection.size()) + " copies)";
                 if (ImGui::MenuItem(label.c_str(), "Ctrl + Alt + C"))
                 {
-                    // TODO VortexMaker::Copy(m_Selected, true);
+                    if (m_CopyPathsCallback)
+                    {
+                        m_CopyPathsCallback(m_Selected);
+
+                        for (auto &path : m_Selected)
+                        {
+                            m_CopySelection.push_back(path);
+                        }
+                    }
                     m_Selected.clear();
                     ImGui::CloseCurrentPopup();
                 }
-            }*/
+            }
 
             if (ImGui::MenuItem("Delete", "Suppr"))
             {
@@ -675,11 +723,9 @@ namespace UIKit
             ImGui::Separator();
             ImGui::PopStyleColor();
 
-            // Appliquer le nouveau scale
             ImGui::GetFont()->Scale *= 0.9;
             ImGui::PushFont(ImGui::GetFont());
 
-            // Ajouter un espace au-dessus
             ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10.0f);
 
             ImGui::PushStyleColor(ImGuiCol_Text, grayColor);
@@ -690,13 +736,11 @@ namespace UIKit
             ImGui::Separator();
             ImGui::PopStyleColor();
 
-            // Ajouter d'autres options de menu ici...
-
             ImGui::EndPopup();
         }
-        // Pop les styles appliqués
-        ImGui::PopStyleVar();    // Pour les bords arrondis
-        ImGui::PopStyleColor(2); // Pour le fond et la bordure
+
+        ImGui::PopStyleVar();
+        ImGui::PopStyleColor(2);
 
         ImDrawList *drawList = ImGui::GetWindowDrawList();
 
@@ -704,25 +748,27 @@ namespace UIKit
         drawList->AddRectFilled(cursorPos, ImVec2(cursorPos.x + fixedSize.x, cursorPos.y + thumbnailIconOffsetY + squareSize.y), IM_COL32(26, 26, 26, 255), borderRadius, ImDrawFlags_RoundCornersTop);
         drawList->AddRect(cursorPos, ImVec2(cursorPos.x + fixedSize.x, cursorPos.y + fixedSize.y), borderColor, borderRadius, 0, 1.0f);
 
-        // Ajouter votre code pour dessiner le logo ici
-        ImVec2 logoPos = ImVec2(cursorPos.x + (fixedSize.x - squareSize.x) / 2, cursorPos.y + padding); // Centrer le logo
+        ImVec2 logoPos = ImVec2(cursorPos.x + (fixedSize.x - squareSize.x) / 2, cursorPos.y + padding);
 
         ImVec2 sizePos = ImVec2(cursorPos.x + padding, cursorPos.y + squareSize.y + thumbnailIconOffsetY - 20 + textOffsetY);
         ImGui::SetCursorScreenPos(sizePos);
 
+        static ImTextureID logotexture = Application::GetCurrentRenderedWindow()->get_texture(logo);
+        drawList->AddImage(logotexture, logoPos, ImVec2(logoPos.x + squareSize.x, logoPos.y + squareSize.y));
+
         ImGui::GetFont()->Scale *= 0.7;
         ImGui::PushFont(ImGui::GetFont());
-        ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.5f, 0.5f, 0.5f, 1.0f)); // Couleur grise pour le texte
+        ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.5f, 0.5f, 0.5f, 1.0f));
         ImGui::PushItemWidth(maxTextWidth);
-        ImGui::TextWrapped(size.c_str()); // Utilisation de TextWrapped pour que le texte s'ajuste automatiquement
+        ImGui::TextWrapped(size.c_str());
         ImGui::PopItemWidth();
         ImGui::PopStyleColor();
 
         ImGui::GetFont()->Scale = 1.0f;
         ImGui::PopFont();
 
-        ImVec2 lineStart = ImVec2(cursorPos.x, cursorPos.y + squareSize.y + thumbnailIconOffsetY + separatorHeight);             // Déplacer la ligne vers le bas
-        ImVec2 lineEnd = ImVec2(cursorPos.x + fixedSize.x, cursorPos.y + squareSize.y + thumbnailIconOffsetY + separatorHeight); // Déplacer la ligne vers le bas
+        ImVec2 lineStart = ImVec2(cursorPos.x, cursorPos.y + squareSize.y + thumbnailIconOffsetY + separatorHeight);
+        ImVec2 lineEnd = ImVec2(cursorPos.x + fixedSize.x, cursorPos.y + squareSize.y + thumbnailIconOffsetY + separatorHeight);
         drawList->AddLine(lineStart, lineEnd, lineColor, separatorHeight);
 
         ImGui::GetFont()->Scale *= 0.9;
@@ -766,9 +812,9 @@ namespace UIKit
 
         ImGui::GetFont()->Scale *= 0.7;
         ImGui::PushFont(ImGui::GetFont());
-        ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.5f, 0.5f, 0.5f, 1.0f)); // Couleur grise pour le texte
+        ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.5f, 0.5f, 0.5f, 1.0f));
         ImGui::PushItemWidth(maxTextWidth);
-        ImGui::TextWrapped(description.c_str()); // Utilisation de TextWrapped pour que le texte s'ajuste automatiquement
+        ImGui::TextWrapped(description.c_str());
         ImGui::PopItemWidth();
         ImGui::PopStyleColor();
 
@@ -782,7 +828,6 @@ namespace UIKit
         if (cursorPos.x + fixedSize.x < windowVisibleX2)
             ImGui::SameLine();
 
-        // Ajouter un espacement vertical après chaque bouton pour éviter le chevauchement
         ImGui::SetCursorScreenPos(ImVec2(cursorPos.x, cursorPos.y + fixedSize.y + padding));
 
         return pressed;
@@ -792,7 +837,6 @@ namespace UIKit
     {
         ImDrawList *drawList = ImGui::GetWindowDrawList();
 
-        // Calcul des positions des différentes parties du dossier
         float folderFlapHeight = size.y * 0.2f;
         float flapSlopeWidth = size.x * 0.15f;
         float borderRadius = size.y * 0.1f;
@@ -804,10 +848,8 @@ namespace UIKit
         ImVec2 bodyTopLeft = ImVec2(pos.x, pos.y + folderFlapHeight);
         ImVec2 bodyBottomRight = ImVec2(pos.x + size.x, pos.y + size.y);
 
-        // Dessiner le corps du dossier avec coins arrondis et dégradé
         drawList->AddRectFilled(bodyTopLeft, bodyBottomRight, color);
 
-        // Dessiner un rectangle blanc au centre
         ImVec2 centerRectTopLeft = ImVec2(pos.x + size.x * 0.2f, pos.y + 0.2f + size.y * 0.2f + 6.8f);
         ImVec2 centerRectBottomRight = ImVec2(pos.x + size.x * 0.8f, pos.y + size.y * 0.8f - 2.8f);
         drawList->AddRectFilled(centerRectTopLeft, centerRectBottomRight, IM_COL32_WHITE, 0.0f, 0);
@@ -816,7 +858,6 @@ namespace UIKit
         ImVec2 secondRectBottomRight = ImVec2(pos.x + size.x, pos.y + size.y);
         drawList->AddRectFilled(secondRectTopLeft, secondRectBottomRight, color, 0.0f, 0);
 
-        // Dessiner la languette du dossier avec pente et coins arrondis
         drawList->AddRectFilled(flapTopLeft, flapBottomRight, color, borderRadius, ImDrawFlags_RoundCornersTopLeft);
         drawList->AddTriangleFilled(flapBottomRight, flapSlopeEnd, ImVec2(flapBottomRight.x - 3, flapTopLeft.y), color);
     }
@@ -831,15 +872,12 @@ namespace UIKit
             ChangeDirectory(path);
         }
 
-        // Calculer l'offset pour centrer l'icône du dossier horizontalement
-        float thumbmailWidth = thumbnailSize; // Assurez-vous que size.x est la largeur du thumbnail
+        float thumbmailWidth = thumbnailSize;
         float folderWidth = size.x;
         float offsetX = (thumbmailWidth - folderWidth) / 2.0f;
 
-        // Ajuster la position de dessin de l'icône du dossier
         ImVec2 iconPos = ImVec2(pos.x + offsetX + 7.5f, pos.y);
 
-        // Dessiner l'icône du dossier
         DrawFolderIcon(iconPos, size, color);
 
         if (ImGui::IsItemHovered())
@@ -848,55 +886,46 @@ namespace UIKit
         }
     }
 
-void ContentBrowserAppWindow::DrawHierarchy(std::filesystem::path path, bool isDir, const std::string &label = "")
-{
-	ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 12.0f);
-	std::string tree_label = "???";
-	if (label.empty())
-	{
-		tree_label = path.filename().string() + "###treenode";
-	}
-	else
-	{
-		tree_label = label + "###treenode";
-	}
+    void ContentBrowserAppWindow::DrawHierarchy(std::filesystem::path path, bool isDir, const std::string &label = "")
+    {
+        ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 12.0f);
+        std::string tree_label = "???";
+        if (label.empty())
+        {
+            tree_label = path.filename().string() + "###treenode";
+        }
+        else
+        {
+            tree_label = label + "###treenode";
+        }
 
-	ImGuiTreeNodeFlags treeNodeFlags = ImGuiTreeNodeFlags_AllowItemOverlap | ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
-	ImVec2 cursorPos = ImGui::GetCursorPos();
-	ImGui::SetItemAllowOverlap();
+        ImGuiTreeNodeFlags treeNodeFlags = ImGuiTreeNodeFlags_AllowItemOverlap | ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
+        ImVec2 cursorPos = ImGui::GetCursorPos();
+        ImGui::SetItemAllowOverlap();
 
-	ImVec2 pos = ImGui::GetCursorScreenPos();
-	ImU32 col;
+        ImVec2 pos = ImGui::GetCursorScreenPos();
+        ImU32 col;
 
-	/* TODO if (VortexMaker::GetContentBrowserFolderColor(path.string(), &col))
-	{
-		DrawFolderIcon(pos, ImVec2(12, 12), col);
-	}
-	else
-	{
-	}*/
-		DrawFolderIcon(pos, ImVec2(12, 12), folder_color);
+        DrawFolderIcon(pos, ImVec2(12, 12), HexToImU32(GetContentBrowserFolderColor(path)));
 
-	if (ImGui::TreeNode(tree_label.c_str()))
-	{
-		for (auto &dirEntry : std::filesystem::directory_iterator(path))
-		{
-			const std::filesystem::path &otherPath = dirEntry.path();
+        if (ImGui::TreeNode(tree_label.c_str()))
+        {
+            for (auto &dirEntry : std::filesystem::directory_iterator(path))
+            {
+                const std::filesystem::path &otherPath = dirEntry.path();
 
-			DrawHierarchy(otherPath, dirEntry.is_directory());
-		}
+                DrawHierarchy(otherPath, dirEntry.is_directory());
+            }
 
-		ImGui::TreePop();
-	}
-	ImVec2 finalCursorPos = ImGui::GetCursorPos();
-	ImVec2 size = ImGui::GetItemRectSize();
-}
+            ImGui::TreePop();
+        }
+        ImVec2 finalCursorPos = ImGui::GetCursorPos();
+        ImVec2 size = ImGui::GetItemRectSize();
+    }
     void ContentBrowserAppWindow::RefreshRender(const std::shared_ptr<ContentBrowserAppWindow> &instance)
     {
-
-                                                std::cout << "Render99" << std::endl;
         m_AppWindow->SetRenderCallback([instance]()
-                                             {
+                                       {
                                                 std::cout << "Render978" << std::endl;
                                                  static ImTextureID projectIcon = Application::Get().GetCurrentRenderedWindow()->get("/usr/local/include/Vortex/imgs/vortex.png")->GetImGuiTextureID(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 
@@ -931,32 +960,28 @@ void ContentBrowserAppWindow::DrawHierarchy(std::filesystem::path path, bool isD
                                                      ImGui::GetFont()->Scale *= 0.85;
                                                      ImGui::PushFont(ImGui::GetFont());
 
-                                                     if (MyCollapsingHeader("Favorites", Application::Get().GetCurrentRenderedWindow()->get("/usr/local/include/Vortex/imgs/vortex.png")->GetImGuiTextureID(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL), size1 - 50.0f))
+                                                     if (CollapsingHeaderWithIcon("Favorites", Application::Get().GetCurrentRenderedWindow()->get("/usr/local/include/Vortex/imgs/vortex.png")->GetImGuiTextureID(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL)))
                                                      {
-                                                        /* TODO for (auto custom_dir : this->ctx->IO.contentbrowser_customfolders)
+                                                        for (auto custom_dir : instance->m_FavoriteFolders)
                                                          {
-                                                             if (custom_dir->m_IsFav)
-                                                             {
-                                                                 instance->DrawHierarchy(custom_dir->path, true);
-                                                             }
-                                                         }*/
+                                                            instance->DrawHierarchy(custom_dir, true);
+                                                         }
                                                      }
-                                                     if (MyCollapsingHeader("Main", Application::Get().GetCurrentRenderedWindow()->get("/usr/local/include/Vortex/imgs/vortex.png")->GetImGuiTextureID(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL), size1 - 50.0f))
+                                                     if (CollapsingHeaderWithIcon("Main", Application::Get().GetCurrentRenderedWindow()->get("/usr/local/include/Vortex/imgs/vortex.png")->GetImGuiTextureID(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL)))
                                                      {
                                                          //VXINFO("ér", m_BaseDirectory);
                                                          instance->DrawHierarchy(instance->m_BaseDirectory, true, "Main");
                                                      }
 
-                                                     if (MyCollapsingHeader("Pools & Collections", Application::Get().GetCurrentRenderedWindow()->get("/usr/local/include/Vortex/imgs/vortex.png")->GetImGuiTextureID(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL), size1 - 50.0f))
+                                                     if (CollapsingHeaderWithIcon("Pools & Collections", Application::Get().GetCurrentRenderedWindow()->get("/usr/local/include/Vortex/imgs/vortex.png")->GetImGuiTextureID(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL)))
                                                      {
                                                          ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(12.0f, 2.0f));
 
                                                          ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0.4f, 0.4f, 0.4f, 0.7f));
                                                          if (!pool_add_mode)
                                                          {
-                                                            /*TODO
-                                                            
-                                                             if (ImGui::UIKit_ImageSizeButtonWithText(Application::Get().GetCurrentRenderedWindow()->get("/usr/local/include/Vortex/imgs/vortex.png")->GetImGuiTextureID(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL), size1 - 40.0f, "Add pool", ImVec2(0,0),ImVec2(0,0), ImVec2(1,1) ,-1, ImVec4(0,0,0,0), ImVec4(1,1,1,1)))
+                                                    
+                                                            /*FIX if (ImGui::ImageButtonWithText(Application::Get().GetCurrentRenderedWindow()->get("/usr/local/include/Vortex/imgs/vortex.png")->GetImGuiTextureID(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL), size1 - 40.0f, "Add pool", ImVec2(0,0),ImVec2(0,0), ImVec2(1,1) ,-1, ImVec4(0,0,0,0), ImVec4(1,1,1,1)))
                                                              {
                                                                  pool_add_mode = true;
                                                              }*/
@@ -964,20 +989,20 @@ void ContentBrowserAppWindow::DrawHierarchy(std::filesystem::path path, bool isD
                                                          else
                                                          {
                                                              ImGui::Text("Please enter a path");
-                                                             ImGui::SetNextItemWidth(-FLT_MIN); // Set the item width to take the full width
+                                                             ImGui::SetNextItemWidth(-FLT_MIN);
                                                              ImGui::InputText("###AddPool", pool_add_path, sizeof(pool_add_path));
-                                                            /*TODO
+                                                            /*FIX
                                                              if (ImGui::UIKit_ImageButtonWithText(Application::Get().GetCurrentRenderedWindow()->get("/usr/local/include/Vortex/imgs/vortex.png")->GetImGuiTextureID(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL), "Add",ImVec2(0,0),ImVec2(0,0), ImVec2(1,1) ,-1, ImVec4(0,0,0,0), ImVec4(1,1,1,1)))
                                                              {
-                                                                 // TODO VortexMaker::PublishPool(pool_add_path);
+                                                                 // FIX VortexMaker::PublishPool(pool_add_path);
                                                                  pool_add_mode = false;
                                                              }
                                                              ImGui::SameLine();
                                                              if (ImGui::UIKit_ImageButtonWithText(Application::Get().GetCurrentRenderedWindow()->get("/usr/local/include/Vortex/imgs/vortex.png")->GetImGuiTextureID(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL), "Cancel",ImVec2(0,0),ImVec2(0,0), ImVec2(1,1) ,-1, ImVec4(0,0,0,0), ImVec4(1,1,1,1)))
                                                              {
                                                                  pool_add_mode = false;
-                                                             }
-                                                             */
+                                                             }*/
+                                                             
                                                          }
                                                          ImGui::PopStyleVar();
                                                          ImGui::PopStyleColor();
@@ -985,14 +1010,14 @@ void ContentBrowserAppWindow::DrawHierarchy(std::filesystem::path path, bool isD
                                                      ImGui::GetFont()->Scale = oldsize;
                                                      ImGui::PopFont();
 
-                                                     /* TODO for (auto custom_dir : this->ctx->IO.contentbrowser_pools)
+                                                     for (auto custom_dir : instance->m_Pools)
                                                      {
                                                          std::size_t lastSlashPos = custom_dir.find_last_of("/\\");
 
                                                          std::string name = custom_dir.substr(lastSlashPos + 1);
 
                                                          instance->DrawHierarchy(custom_dir, true, name);
-                                                     }*/
+                                                     }
 
                                                      ImGui::EndChild();
                                                      ImGui::PopStyleVar(4);
@@ -1001,7 +1026,6 @@ void ContentBrowserAppWindow::DrawHierarchy(std::filesystem::path path, bool isD
 
                                                      if (Splitter(true, 2.0f, &size1, &size2, &size3, min_size, min_size))
                                                      {
-                                                         // Optionnel : Faites quelque chose en cas de redimensionnement
                                                      }
 
                                                      ImGui::SameLine(0.0f, 0.0f);
@@ -1014,7 +1038,7 @@ void ContentBrowserAppWindow::DrawHierarchy(std::filesystem::path path, bool isD
                                                      ImGui::GetFont()->Scale *= 0.85;
                                                      ImGui::PushFont(ImGui::GetFont());
 
-                                                     if (MyCollapsingHeader("Pools & Collections", projectIcon, size1 - 50.0f))
+                                                     if (CollapsingHeaderWithIcon("Pools & Collections", projectIcon))
                                                      {
                                                      }
                                                      ImGui::GetFont()->Scale = oldsize;
@@ -1025,19 +1049,16 @@ void ContentBrowserAppWindow::DrawHierarchy(std::filesystem::path path, bool isD
 
                                                      if (Splitter(true, 2.0f, &size2, &size3, &size4, min_size, min_size))
                                                      {
-                                                         // Optionnel : Faites quelque chose en cas de redimensionnement
                                                      }
 
                                                      ImGui::SameLine(0.0f, 0.0f);
                                                  }
 
-                                                 // Sauvegarder les styles actuels
                                                  ImGuiStyle &style = ImGui::GetStyle();
                                                  ImVec4 originalChildBgColor = style.Colors[ImGuiCol_ChildBg];
                                                  ImVec4 originalBorderColor = style.Colors[ImGuiCol_Border];
                                                  ImVec4 originalBorderShadowColor = style.Colors[ImGuiCol_BorderShadow];
 
-                                                 // Modifier la couleur de fond et les bordures pour les rendre transparentes
                                                  style.Colors[ImGuiCol_ChildBg] = ImVec4(0, 0, 0, 0);
                                                  style.Colors[ImGuiCol_Border] = ImVec4(0, 0, 0, 0);
                                                  style.Colors[ImGuiCol_BorderShadow] = ImVec4(0, 0, 0, 0);
@@ -1061,9 +1082,7 @@ void ContentBrowserAppWindow::DrawHierarchy(std::filesystem::path path, bool isD
                                                  for (auto &directoryEntry : std::filesystem::directory_iterator(instance->m_CurrentDirectory))
                                                  {
                                                      bool isItem = false;
-                                                     // handle TODO :
-                                                     /*
-                                                     for (auto item : this->ctx->IO.contentbrowser_items)
+                                                     for (auto item : instance->m_ItemToReconize)
                                                      {
                                                          std::string path = directoryEntry.path().string();
                                                          if (item->f_Detect(path))
@@ -1073,7 +1092,6 @@ void ContentBrowserAppWindow::DrawHierarchy(std::filesystem::path path, bool isD
                                                          }
                                                      }
 
-                                             */
                                                      if (isItem)
                                                      {
                                                          continue;
@@ -1096,19 +1114,15 @@ void ContentBrowserAppWindow::DrawHierarchy(std::filesystem::path path, bool isD
                                                  {
                                                      ImGui::Columns(columnCount, 0, false);
 
-                                                     // Changer la couleur du texte en gris
-                                                     ImVec4 grayColor = ImVec4(0.4f, 0.4f, 0.4f, 1.0f);              // Gris (50% blanc)
-                                                     ImVec4 graySeparatorColor = ImVec4(0.4f, 0.4f, 0.4f, 0.5f);     // Gris (50% blanc)
-                                                     ImVec4 darkBackgroundColor = ImVec4(0.15f, 0.15f, 0.15f, 1.0f); // Fond plus foncé
-                                                     ImVec4 lightBorderColor = ImVec4(0.2f, 0.2f, 0.2f, 1.0f);       // Bordure plus claire
+                                                     ImVec4 grayColor = ImVec4(0.4f, 0.4f, 0.4f, 1.0f);  
+                                                     ImVec4 graySeparatorColor = ImVec4(0.4f, 0.4f, 0.4f, 0.5f); 
+                                                     ImVec4 darkBackgroundColor = ImVec4(0.15f, 0.15f, 0.15f, 1.0f);
+                                                     ImVec4 lightBorderColor = ImVec4(0.2f, 0.2f, 0.2f, 1.0f);  
 
-                                                     // Pousser le style pour le fond plus foncé
                                                      ImGui::PushStyleColor(ImGuiCol_PopupBg, darkBackgroundColor);
 
-                                                     // Pousser le style pour la bordure plus claire
                                                      ImGui::PushStyleColor(ImGuiCol_Border, lightBorderColor);
 
-                                                     // Pousser le style pour les bords arrondis moins prononcés
                                                      ImGui::PushStyleVar(ImGuiStyleVar_PopupRounding, 3.0f);
 
                                                      if (ImGui::IsWindowHovered() && ImGui::IsMouseReleased(ImGuiMouseButton_Right))
@@ -1123,31 +1137,30 @@ void ContentBrowserAppWindow::DrawHierarchy(std::filesystem::path path, bool isD
                                                      }
 
                                                      if (ImGui::BeginPopup("EmptySpacePopup"))
-                                                     { // Appliquer le nouveau scale
+                                                     {
                                                          ImGui::GetFont()->Scale *= 0.9;
                                                          ImGui::PushFont(ImGui::GetFont());
 
-                                                         // Ajouter un espace au-dessus
                                                          ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5.0f);
 
                                                          ImGui::PushStyleColor(ImGuiCol_Text, grayColor);
                                                          ImGui::Text("Main");
                                                          ImGui::PopStyleColor();
-                                                         // std::string label = "Paste (" + std::to_string(this->ctx->IO.copy_selection.size() + this->ctx->IO.cut_selection.size()) + " items)";
 
-                                                         if (ImGui::Selectable("TODO"))
+                                                         if (ImGui::Selectable("Paste"))
                                                          {
-                                                             // TODO
-                                                             // VortexMaker::PasteAllSelections(m_CurrentDirectory);
+                                                             if(instance->m_PastePathsCallback)
+                                                             {
+                                                                instance->m_PastePathsCallback({instance->m_CurrentDirectory});
+                                                             }
                                                          }
                                                          ImGui::GetFont()->Scale = 1.0f;
                                                          ImGui::PushFont(ImGui::GetFont());
                                                          ImGui::EndPopup();
                                                      }
 
-                                                     // Pop les styles appliqués
-                                                     ImGui::PopStyleVar();    // Pour les bords arrondis
-                                                     ImGui::PopStyleColor(2); // Pour le fond et la bordure
+                                                     ImGui::PopStyleVar();
+                                                     ImGui::PopStyleColor(2);
                                                      for (auto &directoryEntry : directories)
                                                      {
                                                          const auto &path = directoryEntry.path();
@@ -1157,14 +1170,11 @@ void ContentBrowserAppWindow::DrawHierarchy(std::filesystem::path path, bool isD
                                                          {
                                                              ImGui::PushID(filenameString.c_str());
 
-                                                             // Réduire légèrement la taille du dossier
                                                              float reducedThumbnailSize = thumbnailSize * 0.9f;
 
-                                                             // Calculer les positions pour centrer l'image du dossier et le texte
                                                              float availableWidth = ImGui::GetContentRegionAvail().x;
                                                              float imageOffsetX = (availableWidth - reducedThumbnailSize) * 0.5f;
-
-                                                             // Enlever le fond gris, les contours et la bordure
+                                                             
                                                              ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
                                                              ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0, 0, 0, 0));
                                                              ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0, 0, 0, 0));
@@ -1181,55 +1191,35 @@ void ContentBrowserAppWindow::DrawHierarchy(std::filesystem::path path, bool isD
                                                                  ChangeDirectory(path);
                                                              }*/
 
-                                                             // Définir la taille et la couleur de l'icône du dossier
-                                                             ImVec2 folderSize(reducedThumbnailSize, reducedThumbnailSize); // Taille de l'icône
-                                                             // ImU32 folderColor = ;				   // Jaune
-
-                                                             // Chemin du dossier à ouvrir
+                                                             ImVec2 folderSize(reducedThumbnailSize, reducedThumbnailSize);
                                                              std::string folderPath = "path/to/folder";
 
-                                                             // Dessiner le bouton dossier
                                                              if (current_editing_folder.first == path.string())
                                                              {
                                                                  instance->MyFolderButton("folder_icon", folderSize, current_editing_folder.second, path);
                                                              }
                                                              else
                                                              {
-                                                                 ImU32 col;
-
-                                                                 /* TOTO HAndle if (VortexMaker::GetContentBrowserFolderColor(path.string(), &col))
-                                                                 {
-                                                                     instance->MyFolderButton("folder_icon", folderSize, col, path);
-                                                                 }
-                                                                 else
-                                                                 {
-                                                                     instance->MyFolderButton("folder_icon", folderSize, folder_color, path);
-                                                                 }*/
+                                                                instance->MyFolderButton("folder_icon", folderSize, HexToImU32(instance->GetContentBrowserFolderColor(path)),path);
                                                              }
 
                                                              float oldsize = ImGui::GetFont()->Scale;
 
-                                                             // Changer la couleur du texte en gris
-                                                             ImVec4 grayColor = ImVec4(0.4f, 0.4f, 0.4f, 1.0f);              // Gris (50% blanc)
-                                                             ImVec4 graySeparatorColor = ImVec4(0.4f, 0.4f, 0.4f, 0.5f);     // Gris (50% blanc)
-                                                             ImVec4 darkBackgroundColor = ImVec4(0.15f, 0.15f, 0.15f, 1.0f); // Fond plus foncé
-                                                             ImVec4 lightBorderColor = ImVec4(0.2f, 0.2f, 0.2f, 1.0f);       // Bordure plus claire
+                                                             ImVec4 grayColor = ImVec4(0.4f, 0.4f, 0.4f, 1.0f);            
+                                                             ImVec4 graySeparatorColor = ImVec4(0.4f, 0.4f, 0.4f, 0.5f);   
+                                                             ImVec4 darkBackgroundColor = ImVec4(0.15f, 0.15f, 0.15f, 1.0f); 
+                                                             ImVec4 lightBorderColor = ImVec4(0.2f, 0.2f, 0.2f, 1.0f);      
 
-                                                             // Pousser le style pour le fond plus foncé
                                                              ImGui::PushStyleColor(ImGuiCol_PopupBg, darkBackgroundColor);
 
-                                                             // Pousser le style pour la bordure plus claire
                                                              ImGui::PushStyleColor(ImGuiCol_Border, lightBorderColor);
 
-                                                             // Pousser le style pour les bords arrondis moins prononcés
                                                              ImGui::PushStyleVar(ImGuiStyleVar_PopupRounding, 3.0f);
                                                              if (ImGui::BeginPopupContextItem("ContextPopup"))
                                                              {
-                                                                 // Appliquer le nouveau scale
                                                                  ImGui::GetFont()->Scale *= 0.9;
                                                                  ImGui::PushFont(ImGui::GetFont());
 
-                                                                 // Ajouter un espace au-dessus
                                                                  ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5.0f);
 
                                                                  ImGui::PushStyleColor(ImGuiCol_Text, grayColor);
@@ -1240,7 +1230,6 @@ void ContentBrowserAppWindow::DrawHierarchy(std::filesystem::path path, bool isD
                                                                  ImGui::Separator();
                                                                  ImGui::PopStyleColor();
 
-                                                                 // Restaurer l'ancien scale de la police
                                                                  ImGui::GetFont()->Scale = oldsize;
                                                                  ImGui::PopFont();
                                                                  ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2.0f);
@@ -1261,11 +1250,9 @@ void ContentBrowserAppWindow::DrawHierarchy(std::filesystem::path path, bool isD
                                                                      ImGui::CloseCurrentPopup();
                                                                  }
 
-                                                                 // Appliquer le nouveau scale
                                                                  ImGui::GetFont()->Scale *= 0.9;
                                                                  ImGui::PushFont(ImGui::GetFont());
 
-                                                                 // Ajouter un espace au-dessus
                                                                  ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10.0f);
 
                                                                  ImGui::PushStyleColor(ImGuiCol_Text, grayColor);
@@ -1276,7 +1263,6 @@ void ContentBrowserAppWindow::DrawHierarchy(std::filesystem::path path, bool isD
                                                                  ImGui::Separator();
                                                                  ImGui::PopStyleColor();
 
-                                                                 // Restaurer l'ancien scale de la police
                                                                  ImGui::GetFont()->Scale = oldsize;
                                                                  ImGui::PopFont();
                                                                  ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2.0f);
@@ -1284,8 +1270,7 @@ void ContentBrowserAppWindow::DrawHierarchy(std::filesystem::path path, bool isD
                                                                  static bool EditingColor = false;
                                                                  static bool ColorChanged = false;
 
-                                                                 // TODO HANDLE
-                                                                 // current_editing_folder_is_favorite = VortexMaker::ContentBrowserFolderIsFav(directoryEntry.path().string());
+                                                                 current_editing_folder_is_favorite = instance->IsPathFavorite(directoryEntry.path().string());
 
                                                                  if (ImGui::BeginMenu("Change color"))
                                                                  {
@@ -1293,21 +1278,10 @@ void ContentBrowserAppWindow::DrawHierarchy(std::filesystem::path path, bool isD
                                                                      {
                                                                          current_editing_folder = {directoryEntry.path().string(), folder_color};
 
-                                                                         ImU32 col;
-                                                                         /* TODO HANDLE
 
-
-                                                                         if (VortexMaker::GetContentBrowserFolderColor(path.string(), &col))
-                                                                         {
-                                                                             current_editing_folder = {directoryEntry.path().string(), col};
-                                                                         }
-                                                                         else
-                                                                         {
-                                                                             current_editing_folder = {directoryEntry.path().string(), folder_color};
-                                                                         }*/
-
-                                                                         // TODO HANDLE
-                                                                         // current_editing_folder_is_favorite = VortexMaker::ContentBrowserFolderIsFav(directoryEntry.path().string());
+                                                                            current_editing_folder = {directoryEntry.path().string(), HexToImU32(instance->GetContentBrowserFolderColor(path.string()))};
+                                                                    
+                                                                          current_editing_folder_is_favorite = instance->IsPathFavorite(directoryEntry.path().string());
                                                                      }
 
                                                                      EditingColor = true;
@@ -1319,13 +1293,13 @@ void ContentBrowserAppWindow::DrawHierarchy(std::filesystem::path path, bool isD
                                                                      static bool hdr = false;
 
                                                                      ColorPicker3U32("MyColor", &current_editing_folder.second);
-                                                                     // TODO handle
-                                                                     //	if (VortexMaker::ImU32ToHex(current_editing_folder.second) != VortexMaker::ImU32ToHex(folder_color))
-                                                                     //	{
-                                                                     //		ColorChanged = true;
-                                                                     //	/}
 
-                                                                     ImGui::EndMenu(); // Fin du sous-menu "Change folder color"
+                                                                     	if (current_editing_folder.second != folder_color)
+                                                                     	{
+                                                                     		ColorChanged = true;
+                                                                     }
+
+                                                                     ImGui::EndMenu();
                                                                  }
                                                                  else
                                                                  {
@@ -1337,20 +1311,17 @@ void ContentBrowserAppWindow::DrawHierarchy(std::filesystem::path path, bool isD
                                                                      current_editing_folder = {directoryEntry.path().string(), current_editing_folder.second};
 
                                                                      current_editing_folder_is_favorite = !current_editing_folder_is_favorite;
-                                                                     // TODO VortexMaker::PublishContentBrowserCustomFolder(current_editing_folder.first, VortexMaker::ImU32ToHex(current_editing_folder.second), current_editing_folder_is_favorite);
+                                                                     instance->SetColoredFolder(current_editing_folder.first, ImU32ToHex(current_editing_folder.second));
                                                                  }
-                                                                 // Ajouter d'autres options de menu ici...
 
                                                                  ImGui::EndPopup();
                                                              }
-                                                             // Pop les styles appliqués
-                                                             ImGui::PopStyleVar();    // Pour les bords arrondis
-                                                             ImGui::PopStyleColor(2); // Pour le fond et la bordure
-
-                                                             ImGui::PopStyleVar(2); // Pop FrameBorderSize and FramePadding
+                                                             
+                                                             ImGui::PopStyleVar();
+                                                             ImGui::PopStyleColor(2);
+                                                             ImGui::PopStyleVar(2);
                                                              ImGui::PopStyleColor(3);
 
-                                                             // Centrer le texte
                                                              float textWidth = ImGui::CalcTextSize(filenameString.c_str()).x;
                                                              float textOffsetX = (availableWidth - textWidth) * 0.5f;
 
@@ -1556,37 +1527,30 @@ void ContentBrowserAppWindow::DrawHierarchy(std::filesystem::path path, bool isD
                                                                  break;
                                                              }
 
-                                                                 ImGui::PopStyleVar(2); // Pop FrameBorderSize and FramePadding
+                                                                 ImGui::PopStyleVar(2);
                                                                  ImGui::PopStyleColor(3);
                                                              }
                                                              float oldsize = ImGui::GetFont()->Scale;
 
                                                              if (ImGui::BeginPopupContextItem("ItemContextPopup"))
                                                              {
-
-                                                                 // Appliquer le nouveau scale
                                                                  ImGui::GetFont()->Scale *= 0.9;
                                                                  ImGui::PushFont(ImGui::GetFont());
 
-                                                                 // Ajouter un espace au-dessus
                                                                  ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5.0f);
 
-                                                                 // Changer la couleur du texte en gris
-                                                                 ImVec4 grayColor = ImVec4(0.4f, 0.4f, 0.4f, 1.0f);          // Gris (50% blanc)
-                                                                 ImVec4 graySeparatorColor = ImVec4(0.4f, 0.4f, 0.4f, 0.5f); // Gris (50% blanc)
+                                                                 ImVec4 grayColor = ImVec4(0.4f, 0.4f, 0.4f, 1.0f);  
+                                                                 ImVec4 graySeparatorColor = ImVec4(0.4f, 0.4f, 0.4f, 0.5f); 
                                                                  ImGui::PushStyleColor(ImGuiCol_Text, grayColor);
 
                                                                  ImGui::Text("Main");
 
-                                                                 // Restaurer la couleur du texte précédente
                                                                  ImGui::PopStyleColor();
 
-                                                                 // Changer la couleur du separator en gris
                                                                  ImGui::PushStyleColor(ImGuiCol_Separator, graySeparatorColor);
                                                                  ImGui::Separator();
-                                                                 ImGui::PopStyleColor(); // Restaurer la couleur du separator précédente
-
-                                                                 // Restaurer l'ancien scale de la police
+                                                                 ImGui::PopStyleColor();
+                                                                 
                                                                  ImGui::GetFont()->Scale = oldsize;
                                                                  ImGui::PopFont();
                                                                  ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2.0f);
@@ -1598,20 +1562,25 @@ void ContentBrowserAppWindow::DrawHierarchy(std::filesystem::path path, bool isD
                                                                  }
                                                                  if (ImGui::MenuItem("Copy folder", "Ctrl + C"))
                                                                  {
-                                                                     // TODO Handle copy
-                                                                     // VortexMaker::Copy(m_Selected, false);
+                                                                    if(instance->m_CopyPathsCallback)
+                                                                    {
+                                                                        instance->m_CopyPathsCallback(instance->m_Selected);
+                                                                    }
+
                                                                      instance->m_Selected.clear();
                                                                      ImGui::CloseCurrentPopup();
                                                                  }
 
-                                                                 // HANDLE SLECTION TODO
-                                                                 /*if (this->ctx->IO.copy_selection.size() > 0)
+                                                                 if (instance->m_Selected.size() > 0)
                                                                  {
-                                                                     std::string label = "Copy in addition (" + this->ctx->IO.copy_selection.size() + ' copies)';
+                                                                     std::string label = "Copy in addition (" + instance->m_Selected.size() + ' copies)';
                                                                      if (ImGui::MenuItem(label.c_str(), "Ctrl + C"))
                                                                      {
-                                                                         // Handle copy TODO
-                                                                         //VortexMaker::Copy(m_Selected, true);
+                                                                    if(instance->m_CopyPathsCallback)
+                                                                    {
+                                                                        instance->m_CopyPathsCallback(instance->m_Selected);
+                                                                    }
+
                                                                          instance->m_Selected.clear();
                                                                          ImGui::CloseCurrentPopup();
                                                                      }
@@ -1620,29 +1589,23 @@ void ContentBrowserAppWindow::DrawHierarchy(std::filesystem::path path, bool isD
                                                                  {
                                                                      instance->ChangeDirectory(path);
                                                                      ImGui::CloseCurrentPopup();
-                                                                 }*/
+                                                                 }
 
-                                                                 // Appliquer le nouveau scale
                                                                  ImGui::GetFont()->Scale *= 0.9;
                                                                  ImGui::PushFont(ImGui::GetFont());
 
-                                                                 // Ajouter un espace au-dessus
                                                                  ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10.0f);
 
-                                                                 // Changer la couleur du texte en gris
                                                                  ImGui::PushStyleColor(ImGuiCol_Text, grayColor);
 
                                                                  ImGui::Text("Main");
 
-                                                                 // Restaurer la couleur du texte précédente
                                                                  ImGui::PopStyleColor();
 
-                                                                 // Changer la couleur du separator en gris
                                                                  ImGui::PushStyleColor(ImGuiCol_Separator, graySeparatorColor);
                                                                  ImGui::Separator();
-                                                                 ImGui::PopStyleColor(); // Restaurer la couleur du separator précédente
+                                                                 ImGui::PopStyleColor();
 
-                                                                 // Restaurer l'ancien scale de la police
                                                                  ImGui::GetFont()->Scale = oldsize;
                                                                  ImGui::PopFont();
                                                                  ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2.0f);
@@ -1653,7 +1616,6 @@ void ContentBrowserAppWindow::DrawHierarchy(std::filesystem::path path, bool isD
                                                                  if (ImGui::MenuItem("Mark as favorite"))
                                                                  {
                                                                  }
-                                                                 // Ajouter d'autres options de menu ici...
 
                                                                  ImGui::EndPopup();
                                                              }
@@ -1707,10 +1669,9 @@ void ContentBrowserAppWindow::DrawHierarchy(std::filesystem::path path, bool isD
                                                                  ImGui::TableNextRow();
                                                                  ImGui::TableNextColumn();
 
-                                                                 // Utiliser ImGui::Selectable avec la variable selected pour capturer la sélection
                                                                  if (selected)
                                                                  {
-                                                                     ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0.0f, 0.0f, 1.0f, 0.5f)); // Bleu avec transparence
+                                                                     ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0.0f, 0.0f, 1.0f, 0.5f)); 
                                                                      ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(0.0f, 0.0f, 1.0f, 0.5f));
                                                                      ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(0.0f, 0.0f, 1.0f, 0.5f));
                                                                  }
@@ -1731,20 +1692,14 @@ void ContentBrowserAppWindow::DrawHierarchy(std::filesystem::path path, bool isD
                                                                      ImGui::PopStyleColor(3);
                                                                  }
 
-                                                                 // Ajoutez le menu contextuel ici
                                                                  std::string label = "RowContextMenu###" + filenameString;
-                                                                 // Changer la couleur du texte en gris
-                                                                 ImVec4 grayColor = ImVec4(0.4f, 0.4f, 0.4f, 1.0f);              // Gris (50% blanc)
-                                                                 ImVec4 graySeparatorColor = ImVec4(0.4f, 0.4f, 0.4f, 0.5f);     // Gris (50% blanc)
-                                                                 ImVec4 darkBackgroundColor = ImVec4(0.15f, 0.15f, 0.15f, 1.0f); // Fond plus foncé
-                                                                 ImVec4 lightBorderColor = ImVec4(0.2f, 0.2f, 0.2f, 1.0f);       // Bordure plus claire
-
-                                                                 // Pousser le style pour le fond plus foncé
+                                                                 ImVec4 grayColor = ImVec4(0.4f, 0.4f, 0.4f, 1.0f);  
+                                                                 ImVec4 graySeparatorColor = ImVec4(0.4f, 0.4f, 0.4f, 0.5f);  
+                                                                 ImVec4 darkBackgroundColor = ImVec4(0.15f, 0.15f, 0.15f, 1.0f);
+                                                                 ImVec4 lightBorderColor = ImVec4(0.2f, 0.2f, 0.2f, 1.0f); 
                                                                  ImGui::PushStyleColor(ImGuiCol_PopupBg, darkBackgroundColor);
 
-                                                                 // Pousser le style pour la bordure plus claire
                                                                  ImGui::PushStyleColor(ImGuiCol_Border, lightBorderColor);
-                                                                 // Ajoutez le chemin à m_Selected lorsque la ligne est sélectionnée
                                                                  /*	if (ImGui::IsMouseDoubleClicked(0))
                                                                      {
                                                                          ChangeDirectory(path);
@@ -1764,7 +1719,6 @@ void ContentBrowserAppWindow::DrawHierarchy(std::filesystem::path path, bool isD
                                                                      }
                                                                  }
 
-                                                                 // Pousser le style pour les bords arrondis moins prononcés
                                                                  ImGui::PushStyleVar(ImGuiStyleVar_PopupRounding, 3.0f);
                                                                  if (ImGui::BeginPopupContextItem(label.c_str()))
                                                                  {
@@ -1821,8 +1775,7 @@ void ContentBrowserAppWindow::DrawHierarchy(std::filesystem::path path, bool isD
                                                                      static bool EditingColor = false;
                                                                      static bool ColorChanged = false;
 
-                                                                     // TODO Handle
-                                                                     // current_editing_folder_is_favorite = VortexMaker::ContentBrowserFolderIsFav(directoryEntry.path().string());
+                                                                     current_editing_folder_is_favorite = instance->IsPathFavorite(directoryEntry.path().string());
 
                                                                      if (ImGui::BeginMenu("Change color"))
                                                                      {
@@ -1831,19 +1784,10 @@ void ContentBrowserAppWindow::DrawHierarchy(std::filesystem::path path, bool isD
                                                                              current_editing_folder = {directoryEntry.path().string(), folder_color};
 
                                                                              ImU32 col;
-                                                                             // TODO Handle
+                                                                             
+                                                                             current_editing_folder = {directoryEntry.path().string(), HexToImU32(instance->GetContentBrowserFolderColor(directoryEntry.path().string()))};
 
-                                                                             /*if (VortexMaker::GetContentBrowserFolderColor(path.string(), &col))
-                                                                             {
-                                                                                 current_editing_folder = {directoryEntry.path().string(), col};
-                                                                             }
-                                                                             else
-                                                                             {*/
-                                                                             current_editing_folder = {directoryEntry.path().string(), folder_color};
-                                                                             //}
-
-                                                                             // TODO Handle
-                                                                             // current_editing_folder_is_favorite = VortexMaker::ContentBrowserFolderIsFav(directoryEntry.path().string());
+                                                                             current_editing_folder_is_favorite = instance->IsPathFavorite(directoryEntry.path().string());
                                                                          }
 
                                                                          EditingColor = true;
@@ -1856,13 +1800,12 @@ void ContentBrowserAppWindow::DrawHierarchy(std::filesystem::path path, bool isD
 
                                                                          ColorPicker3U32("MyColor", &current_editing_folder.second);
 
-                                                                         // TODO : Handle changement
-                                                                         // if (VortexMaker::ImU32ToHex(current_editing_folder.second) != VortexMaker::ImU32ToHex(folder_color))
-                                                                         //{
-                                                                         //	ColorChanged = true;
-                                                                         //}
+                                                                         if (current_editing_folder.second != folder_color)
+                                                                         {
+                                                                         	ColorChanged = true;
+                                                                         }
 
-                                                                         ImGui::EndMenu(); // Fin du sous-menu "Change folder color"
+                                                                         ImGui::EndMenu();
                                                                      }
                                                                      else
                                                                      {
@@ -1876,14 +1819,12 @@ void ContentBrowserAppWindow::DrawHierarchy(std::filesystem::path path, bool isD
                                                                          current_editing_folder_is_favorite = !current_editing_folder_is_favorite;
                                                                          // VortexMaker::PublishContentBrowserCustomFolder(current_editing_folder.first, VortexMaker::ImU32ToHex(current_editing_folder.second), current_editing_folder_is_favorite);
                                                                      }
-                                                                     // Ajouter d'autres options de menu ici...
 
                                                                      ImGui::EndPopup();
                                                                  }
 
-                                                                 // Pop les styles appliqués
-                                                                 ImGui::PopStyleVar();    // Pour les bords arrondis
-                                                                 ImGui::PopStyleColor(2); // Pour le fond et la bordure
+                                                                 ImGui::PopStyleVar();  
+                                                                 ImGui::PopStyleColor(2); 
 
                                                                  for (int column = 0; column < 4; column++)
                                                                  {
@@ -1893,14 +1834,8 @@ void ContentBrowserAppWindow::DrawHierarchy(std::filesystem::path path, bool isD
                                                                      {
                                                                          ImVec2 pos = ImGui::GetCursorScreenPos();
                                                                          ImU32 col;
-
-                                                                         // TODO, find the folder color only if it has one : if (VortexMaker::GetContentBrowserFolderColor(path.string(), &col))
-                                                                         //{
-                                                                         // instance->DrawFolderIcon(pos, ImVec2(12, 12), col);
-                                                                         //}
-
-                                                                         // else
-                                                                         instance->DrawFolderIcon(pos, ImVec2(12, 12), folder_color);
+                                                                         
+                                                                         instance->DrawFolderIcon(pos, ImVec2(12, 12), HexToImU32(instance->GetContentBrowserFolderColor(path.string())));
                                                                      }
                                                                      else if (column == 1)
                                                                      {
@@ -1955,7 +1890,7 @@ void ContentBrowserAppWindow::DrawHierarchy(std::filesystem::path path, bool isD
 
                                                                          if (column == 0)
                                                                          {
-                                                                             // TODO ImGui::Image(getTexture(File_PICTURE_Logo), ImVec2(15, 15));
+                                                                             ImGui::Image(Application::GetCurrentRenderedWindow()->get_texture(File_PICTURE_Logo), ImVec2(15, 15));
                                                                          }
                                                                          else if (column == 1)
                                                                          {
@@ -2010,37 +1945,30 @@ void ContentBrowserAppWindow::DrawHierarchy(std::filesystem::path path, bool isD
                                                                      break;
                                                                  }
 
-                                                                     ImGui::PopStyleVar(2); // Pop FrameBorderSize and FramePadding
+                                                                     ImGui::PopStyleVar(2);
                                                                      ImGui::PopStyleColor(3);
                                                                  }
                                                                  float oldsize = ImGui::GetFont()->Scale;
 
                                                                  if (ImGui::BeginPopupContextItem("ItemContextPopup"))
                                                                  {
-
-                                                                     // Appliquer le nouveau scale
                                                                      ImGui::GetFont()->Scale *= 0.9;
                                                                      ImGui::PushFont(ImGui::GetFont());
 
-                                                                     // Ajouter un espace au-dessus
                                                                      ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5.0f);
 
-                                                                     // Changer la couleur du texte en gris
-                                                                     ImVec4 grayColor = ImVec4(0.4f, 0.4f, 0.4f, 1.0f);          // Gris (50% blanc)
-                                                                     ImVec4 graySeparatorColor = ImVec4(0.4f, 0.4f, 0.4f, 0.5f); // Gris (50% blanc)
+                                                                     ImVec4 grayColor = ImVec4(0.4f, 0.4f, 0.4f, 1.0f);
+                                                                     ImVec4 graySeparatorColor = ImVec4(0.4f, 0.4f, 0.4f, 0.5f);
                                                                      ImGui::PushStyleColor(ImGuiCol_Text, grayColor);
 
                                                                      ImGui::Text("Main");
 
-                                                                     // Restaurer la couleur du texte précédente
                                                                      ImGui::PopStyleColor();
 
-                                                                     // Changer la couleur du separator en gris
                                                                      ImGui::PushStyleColor(ImGuiCol_Separator, graySeparatorColor);
                                                                      ImGui::Separator();
-                                                                     ImGui::PopStyleColor(); // Restaurer la couleur du separator précédente
+                                                                     ImGui::PopStyleColor();
 
-                                                                     // Restaurer l'ancien scale de la police
                                                                      ImGui::GetFont()->Scale = oldsize;
                                                                      ImGui::PopFont();
                                                                      ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2.0f);
@@ -2052,22 +1980,19 @@ void ContentBrowserAppWindow::DrawHierarchy(std::filesystem::path path, bool isD
                                                                      }
                                                                      if (ImGui::MenuItem("Copy folder", "Ctrl + C"))
                                                                      {
-                                                                         // VortexMaker::Copy(m_Selected, false);
                                                                          instance->m_Selected.clear();
                                                                          ImGui::CloseCurrentPopup();
                                                                      }
 
-                                                                     // TODO Move selection to instance
-                                                                     /*if (this->ctx->IO.copy_selection.size() > 0)
+                                                                     if (instance->m_Selected.size() > 0)
                                                                      {
-                                                                         std::string label = "Copy in addition (" + this->ctx->IO.copy_selection.size() + ' copies)';
+                                                                         std::string label = "Copy in addition (" + instance->m_Selected.size() + ' copies)';
                                                                          if (ImGui::MenuItem(label.c_str(), "Ctrl + C"))
                                                                          {
-                                                                             //VortexMaker::Copy(m_Selected, true);
                                                                              instance->m_Selected.clear();
                                                                              ImGui::CloseCurrentPopup();
                                                                          }
-                                                                     }*/
+                                                                     }
 
                                                                      if (ImGui::MenuItem("Cut folder", "Ctrl + X"))
                                                                      {
@@ -2075,27 +2000,21 @@ void ContentBrowserAppWindow::DrawHierarchy(std::filesystem::path path, bool isD
                                                                          ImGui::CloseCurrentPopup();
                                                                      }
 
-                                                                     // Appliquer le nouveau scale
                                                                      ImGui::GetFont()->Scale *= 0.9;
                                                                      ImGui::PushFont(ImGui::GetFont());
 
-                                                                     // Ajouter un espace au-dessus
                                                                      ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10.0f);
 
-                                                                     // Changer la couleur du texte en gris
                                                                      ImGui::PushStyleColor(ImGuiCol_Text, grayColor);
 
                                                                      ImGui::Text("Main");
 
-                                                                     // Restaurer la couleur du texte précédente
                                                                      ImGui::PopStyleColor();
 
-                                                                     // Changer la couleur du separator en gris
                                                                      ImGui::PushStyleColor(ImGuiCol_Separator, graySeparatorColor);
                                                                      ImGui::Separator();
-                                                                     ImGui::PopStyleColor(); // Restaurer la couleur du separator précédente
+                                                                     ImGui::PopStyleColor();
 
-                                                                     // Restaurer l'ancien scale de la police
                                                                      ImGui::GetFont()->Scale = oldsize;
                                                                      ImGui::PopFont();
                                                                      ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2.0f);
@@ -2106,7 +2025,6 @@ void ContentBrowserAppWindow::DrawHierarchy(std::filesystem::path path, bool isD
                                                                      if (ImGui::MenuItem("Mark as favorite"))
                                                                      {
                                                                      }
-                                                                     // Ajouter d'autres options de menu ici...
 
                                                                      ImGui::EndPopup();
                                                                  }
@@ -2133,7 +2051,6 @@ void ContentBrowserAppWindow::DrawHierarchy(std::filesystem::path path, bool isD
 
                                                      if (Splitter(true, 2.0f, &size3, &size4, 0, min_size, min_size))
                                                      {
-                                                         // Optionnel : Faites quelque chose en cas de redimensionnement
                                                      }
 
                                                      ImGui::SameLine(0.0f, 0.0f);
@@ -2143,7 +2060,7 @@ void ContentBrowserAppWindow::DrawHierarchy(std::filesystem::path path, bool isD
                                                      ImGui::GetFont()->Scale *= 0.85;
                                                      ImGui::PushFont(ImGui::GetFont());
 
-                                                     if (MyCollapsingHeader("Pools & Collections", projectIcon, size1 - 50.0f))
+                                                     if (CollapsingHeaderWithIcon("Pools & Collections", projectIcon))
                                                      {
                                                      }
                                                      ImGui::GetFont()->Scale = oldsize;
@@ -2151,11 +2068,9 @@ void ContentBrowserAppWindow::DrawHierarchy(std::filesystem::path path, bool isD
                                                      ImGui::EndChild();
                                                  }
 
-                                                 // Restaurer les couleurs originales
                                                  style.Colors[ImGuiCol_ChildBg] = originalChildBgColor;
                                                  style.Colors[ImGuiCol_Border] = originalBorderColor;
-                                                 style.Colors[ImGuiCol_BorderShadow] = originalBorderShadowColor;
-                                             });
+                                                 style.Colors[ImGuiCol_BorderShadow] = originalBorderShadowColor; });
     }
 
 }

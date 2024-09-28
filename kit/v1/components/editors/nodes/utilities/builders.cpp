@@ -7,28 +7,26 @@
 // CREDITS
 //   Written by Michal Cichon
 //------------------------------------------------------------------------------
-# define IMGUI_DEFINE_MATH_OPERATORS
-# include "builders.h"
+#define IMGUI_DEFINE_MATH_OPERATORS
+#include "builders.h"
 #include "../../../../../../lib/imgui/imgui_internal.h"
 
-
 //------------------------------------------------------------------------------
-namespace ed   = ax::NodeEditor;
+namespace ed = ax::NodeEditor;
 namespace util = ax::NodeEditor::Utilities;
 
-util::BlueprintNodeBuilder::BlueprintNodeBuilder(ImTextureID texture, int textureWidth, int textureHeight):
-    HeaderTextureId(texture),
-    HeaderTextureWidth(textureWidth),
-    HeaderTextureHeight(textureHeight),
-    CurrentNodeId(0),
-    CurrentStage(Stage::Invalid),
-    HasHeader(false)
+util::BlueprintNodeBuilder::BlueprintNodeBuilder(ImTextureID texture, int textureWidth, int textureHeight) : HeaderTextureId(texture),
+                                                                                                             HeaderTextureWidth(textureWidth),
+                                                                                                             HeaderTextureHeight(textureHeight),
+                                                                                                             CurrentNodeId(0),
+                                                                                                             CurrentStage(Stage::Invalid),
+                                                                                                             HasHeader(false)
 {
 }
 
 void util::BlueprintNodeBuilder::Begin(ed::NodeId id)
 {
-    HasHeader  = false;
+    HasHeader = false;
     HeaderMin = HeaderMax = ImVec2();
 
     ed::PushStyleVar(StyleVar_NodePadding, ImVec4(8, 4, 8, 8));
@@ -63,13 +61,13 @@ void util::BlueprintNodeBuilder::End()
                 (HeaderMax.y - HeaderMin.y) / (float)(4.0f * HeaderTextureHeight));
 
             drawList->AddImageRounded(HeaderTextureId,
-                HeaderMin - ImVec2(8 - halfBorderWidth, 4 - halfBorderWidth),
-                HeaderMax + ImVec2(8 - halfBorderWidth, 0),
-                ImVec2(0.0f, 0.0f), uv,
+                                      HeaderMin - ImVec2(8 - halfBorderWidth, 4 - halfBorderWidth),
+                                      HeaderMax + ImVec2(8 - halfBorderWidth, 0),
+                                      ImVec2(0.0f, 0.0f), uv,
 #if IMGUI_VERSION_NUM > 18101
-                headerColor, GetStyle().NodeRounding, ImDrawFlags_RoundCornersTop);
+                                      headerColor, GetStyle().NodeRounding, ImDrawFlags_RoundCornersTop);
 #else
-                headerColor, GetStyle().NodeRounding, 1 | 2);
+                                      headerColor, GetStyle().NodeRounding, 1 | 2);
 #endif
 
             if (ContentMin.y > HeaderMax.y)
@@ -91,7 +89,7 @@ void util::BlueprintNodeBuilder::End()
     SetStage(Stage::Invalid);
 }
 
-void util::BlueprintNodeBuilder::Header(const ImVec4& color)
+void util::BlueprintNodeBuilder::Header(const ImVec4 &color)
 {
     HeaderColor = ImColor(color);
     SetStage(Stage::Header);
@@ -169,127 +167,131 @@ bool util::BlueprintNodeBuilder::SetStage(Stage stage)
     ImVec2 cursor;
     switch (oldStage)
     {
-        case Stage::Begin:
-            break;
+    case Stage::Begin:
+        break;
 
-        case Stage::Header:
-            ImGui::EndHorizontal();
+    case Stage::Header:
+        ImGui::EndHorizontal();
+
+        if (ImGui::IsItemActive())
+        {
             HeaderMin = ImGui::GetItemRectMin();
             HeaderMax = ImGui::GetItemRectMax();
+        }
 
-            // spacing between header and content
-            ImGui::Spring(0, ImGui::GetStyle().ItemSpacing.y * 2.0f);
+        // spacing between header and content
+        ImGui::Spring(0, ImGui::GetStyle().ItemSpacing.y * 2.0f);
 
-            break;
+        break;
 
-        case Stage::Content:
-            break;
+    case Stage::Content:
+        break;
 
-        case Stage::Input:
-            ed::PopStyleVar(2);
+    case Stage::Input:
+        ed::PopStyleVar(2);
 
-            ImGui::Spring(1, 0);
-            ImGui::EndVertical();
+        ImGui::Spring(1, 0);
+        ImGui::EndVertical();
 
-            // #debug
-            // ImGui::GetWindowDrawList()->AddRect(
-            //     ImGui::GetItemRectMin(), ImGui::GetItemRectMax(), IM_COL32(255, 0, 0, 255));
+        // #debug
+        // ImGui::GetWindowDrawList()->AddRect(
+        //     ImGui::GetItemRectMin(), ImGui::GetItemRectMax(), IM_COL32(255, 0, 0, 255));
 
-            break;
+        break;
 
-        case Stage::Middle:
-            ImGui::EndVertical();
+    case Stage::Middle:
+        ImGui::EndVertical();
 
-            // #debug
-            // ImGui::GetWindowDrawList()->AddRect(
-            //     ImGui::GetItemRectMin(), ImGui::GetItemRectMax(), IM_COL32(255, 0, 0, 255));
+        // #debug
+        // ImGui::GetWindowDrawList()->AddRect(
+        //     ImGui::GetItemRectMin(), ImGui::GetItemRectMax(), IM_COL32(255, 0, 0, 255));
 
-            break;
+        break;
 
-        case Stage::Output:
-            ed::PopStyleVar(2);
+    case Stage::Output:
+        ed::PopStyleVar(2);
 
-            ImGui::Spring(1, 0);
-            ImGui::EndVertical();
+        ImGui::Spring(1, 0);
+        ImGui::EndVertical();
 
-            // #debug
-            // ImGui::GetWindowDrawList()->AddRect(
-            //     ImGui::GetItemRectMin(), ImGui::GetItemRectMax(), IM_COL32(255, 0, 0, 255));
+        // #debug
+        // ImGui::GetWindowDrawList()->AddRect(
+        //     ImGui::GetItemRectMin(), ImGui::GetItemRectMax(), IM_COL32(255, 0, 0, 255));
 
-            break;
+        break;
 
-        case Stage::End:
-            break;
+    case Stage::End:
+        break;
 
-        case Stage::Invalid:
-            break;
+    case Stage::Invalid:
+        break;
     }
 
     switch (stage)
     {
-        case Stage::Begin:
-            ImGui::BeginVertical("node");
-            break;
+    case Stage::Begin:
+        ImGui::BeginVertical("node");
+        break;
 
-        case Stage::Header:
-            HasHeader = true;
+    case Stage::Header:
+        HasHeader = true;
 
-            ImGui::BeginHorizontal("header");
-            break;
+        ImGui::BeginHorizontal("header");
+        break;
 
-        case Stage::Content:
-            if (oldStage == Stage::Begin)
-                ImGui::Spring(0);
+    case Stage::Content:
+        if (oldStage == Stage::Begin)
+            ImGui::Spring(0);
 
-            ImGui::BeginHorizontal("content");
-            ImGui::Spring(0, 0);
-            break;
+        ImGui::BeginHorizontal("content");
+        ImGui::Spring(0, 0);
+        break;
 
-        case Stage::Input:
-            ImGui::BeginVertical("inputs", ImVec2(0, 0), 0.0f);
+    case Stage::Input:
+        ImGui::BeginVertical("inputs", ImVec2(0, 0), 0.0f);
 
-            ed::PushStyleVar(ed::StyleVar_PivotAlignment, ImVec2(0, 0.5f));
-            ed::PushStyleVar(ed::StyleVar_PivotSize, ImVec2(0, 0));
+        ed::PushStyleVar(ed::StyleVar_PivotAlignment, ImVec2(0, 0.5f));
+        ed::PushStyleVar(ed::StyleVar_PivotSize, ImVec2(0, 0));
 
-            if (!HasHeader)
-                ImGui::Spring(1, 0);
-            break;
+        if (!HasHeader)
+            ImGui::Spring(1, 0);
+        break;
 
-        case Stage::Middle:
+    case Stage::Middle:
+        ImGui::Spring(1);
+        ImGui::BeginVertical("middle", ImVec2(0, 0), 1.0f);
+        break;
+
+    case Stage::Output:
+        if (oldStage == Stage::Middle || oldStage == Stage::Input)
             ImGui::Spring(1);
-            ImGui::BeginVertical("middle", ImVec2(0, 0), 1.0f);
-            break;
+        else
+            ImGui::Spring(1, 0);
+        ImGui::BeginVertical("outputs", ImVec2(0, 0), 1.0f);
 
-        case Stage::Output:
-            if (oldStage == Stage::Middle || oldStage == Stage::Input)
-                ImGui::Spring(1);
-            else
-                ImGui::Spring(1, 0);
-            ImGui::BeginVertical("outputs", ImVec2(0, 0), 1.0f);
+        ed::PushStyleVar(ed::StyleVar_PivotAlignment, ImVec2(1.0f, 0.5f));
+        ed::PushStyleVar(ed::StyleVar_PivotSize, ImVec2(0, 0));
 
-            ed::PushStyleVar(ed::StyleVar_PivotAlignment, ImVec2(1.0f, 0.5f));
-            ed::PushStyleVar(ed::StyleVar_PivotSize, ImVec2(0, 0));
+        if (!HasHeader)
+            ImGui::Spring(1, 0);
+        break;
 
-            if (!HasHeader)
-                ImGui::Spring(1, 0);
-            break;
+    case Stage::End:
+        if (oldStage == Stage::Input)
+            ImGui::Spring(1, 0);
+        if (oldStage != Stage::Begin)
+            ImGui::EndHorizontal();
+        ContentMin = ImGui::GetItemRectMin();
+        ContentMax = ImGui::GetItemRectMax();
 
-        case Stage::End:
-            if (oldStage == Stage::Input)
-                ImGui::Spring(1, 0);
-            if (oldStage != Stage::Begin)
-                ImGui::EndHorizontal();
-            ContentMin = ImGui::GetItemRectMin();
-            ContentMax = ImGui::GetItemRectMax();
+        // ImGui::Spring(0);
+        ImGui::EndVertical();
+        NodeMin = ImGui::GetItemRectMin();
+        NodeMax = ImGui::GetItemRectMax();
+        break;
 
-            //ImGui::Spring(0);
-            ImGui::EndVertical();
-            NodeMin = ImGui::GetItemRectMin();
-            NodeMax = ImGui::GetItemRectMax();
-            break;
-
-        case Stage::Invalid:
-            break;
+    case Stage::Invalid:
+        break;
     }
 
     return true;
