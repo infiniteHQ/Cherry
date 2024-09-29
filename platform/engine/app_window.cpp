@@ -15,6 +15,8 @@ namespace UIKit
     void AppWindow::AttachOnWindow(const std::string winname)
     {
     }
+
+
     void AppWindow::CtxRender(std::vector<std::shared_ptr<RedockRequest>> *reqs, const std::string &winname)
     {
         if (!m_IsRendering)
@@ -136,12 +138,12 @@ namespace UIKit
             window_flags |= ImGuiWindowFlags_UnsavedDocument;
         }
 
-        if(m_EnableMenuBar)
+        if (m_EnableMenuBar)
         {
             window_flags |= ImGuiWindowFlags_MenuBar;
         }
 
-        if(m_EnableBottomBar)
+        if (m_EnableBottomBar)
         {
             window_flags |= ImGuiWindowFlags_BottomBar;
         }
@@ -378,7 +380,7 @@ namespace UIKit
 
             ImGui::EndBottomBar();
         }
-        
+
         ImGui::PopStyleColor(2);
 
         ImGui::GetFont()->Scale = oldsize;

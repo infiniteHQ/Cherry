@@ -95,6 +95,17 @@ namespace UIKit
         void RequestResize(int width, int height);
         void RequestMove(int x, int y);
 
+        ImFont *m_FontToRestore = nullptr; // To store the font to restore
+        std::vector<char> fontBuffer;      // Keep the font buffer in memory
+
+        void LoadTTFFont(const std::string &ttf_font_path);
+
+        void RestoreTTFFont();
+
+        std::unordered_map<std::string, ImFont*> m_FontMap;
+        bool m_NeedToRebuildFontMap = false;
+        bool m_FontLoaded = false;
+
         bool hasImage(const std::string &image)
         {
             for (const auto &existingImage : this->m_ImageList)

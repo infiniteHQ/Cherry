@@ -428,6 +428,11 @@ namespace UIKit
         return LastWindowPressed;
     }
 
+    std::vector<std::pair<std::string, std::pair<std::string, float>>> &Application::GetCustomFonts()
+    {
+        return m_CustomFonts;
+    }
+
     bool &Application::GetValidDropZoneFounded()
     {
         return c_ValidDropZoneFounded;
@@ -472,7 +477,6 @@ namespace UIKit
     {
         c_CurrentDragDropState->LastDraggingPlace = place;
     }
-
     std::unordered_map<std::string, ImFont *> &Application::GetFontList()
     {
         return s_Fonts;
@@ -1393,10 +1397,11 @@ namespace UIKit
                 ImGui_ImplSDL2_NewFrame();
 
                 ImGui::SetCurrentContext(window->m_ImGuiContext);
+
                 ImGui::NewFrame();
 
+                ImGui::PushFont(Application::GetFontList()["Default"]);
                 app->RenderWindow(window.get());
-
                 if (c_DockIsDragging && c_CurrentDragDropState)
                 {
                     SDL_GetGlobalMouseState(&c_CurrentDragDropState->mouseX, &c_CurrentDragDropState->mouseY);
@@ -1439,6 +1444,8 @@ namespace UIKit
                         ImGui::PopFont();
                     }
                 }
+
+                ImGui::PopFont();
 
                 ImGui_ImplVulkanH_Window *wd = &window->m_WinData;
                 ImGuiIO &io = ImGui::GetIO();
@@ -1493,7 +1500,6 @@ namespace UIKit
                     to_remove.push_back(*it);
                 }
             }
-
             for (const auto &win : to_remove)
             {
                 m_Windows.erase(std::remove(m_Windows.begin(), m_Windows.end(), win), m_Windows.end());
@@ -1559,7 +1565,7 @@ namespace UIKit
         return nullptr;
     }
 
-    bool Application::IsMaximized(const std::shared_ptr<Window>& win) const
+    bool Application::IsMaximized(const std::shared_ptr<Window> &win) const
     {
         Uint32 flags = SDL_GetWindowFlags(win->GetWindowHandle());
         return (flags & SDL_WINDOW_MAXIMIZED) != 0;

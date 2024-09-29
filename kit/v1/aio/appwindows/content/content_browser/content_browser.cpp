@@ -19,6 +19,7 @@ static ImU32 folder_color = IM_COL32(150, 128, 50, 255);
 static std::pair<std::string, ImU32> current_editing_folder;
 static bool current_editing_folder_is_favorite;
 
+// TODO: Handle relatively
 static const std::string File_LICENSE_Logo = "/usr/local/include/Vortex/1.1/imgs/icon_license_file.png";
 static const std::string File_ASM_Logo = "/usr/local/include/Vortex/1.1/imgs/file_asm_logo.png";
 static const std::string File_GIT_Logo = "/usr/local/include/Vortex/1.1/imgs/icon_git_file.png";
@@ -926,7 +927,6 @@ namespace UIKit
     {
         m_AppWindow->SetRenderCallback([instance]()
                                        {
-                                                std::cout << "Render978" << std::endl;
                                                  static ImTextureID projectIcon = Application::Get().GetCurrentRenderedWindow()->get("/usr/local/include/Vortex/imgs/vortex.png")->GetImGuiTextureID(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 
                                                  static float size1 = 200.0f;

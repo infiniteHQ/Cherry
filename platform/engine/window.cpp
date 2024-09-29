@@ -5,7 +5,6 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_vulkan.h>
 
-
 // Emedded font
 #include "imgui/Roboto-Regular.embed"
 #include "imgui/Roboto-Bold.embed"
@@ -303,12 +302,18 @@ namespace UIKit
         fontConfigExtra.FontDataOwnedByAtlas = false;
         fontConfigExtra.GlyphExtraSpacing.x = 1.3f;
         ImFont *inconsolatas = io.Fonts->AddFontFromMemoryTTF((void *)g_Inconsolatas, sizeof(g_Inconsolatas), 20.0f, &fontConfigExtra);
-        
+
         Application::GetFontList()["Default"] = hackFont;
         Application::GetFontList()["Inconsolatas"] = inconsolatas;
         Application::GetFontList()["Bold"] = io.Fonts->AddFontFromMemoryTTF((void *)g_RobotoBold, sizeof(g_RobotoBold), 20.0f, &fontConfig);
         Application::GetFontList()["Italic"] = io.Fonts->AddFontFromMemoryTTF((void *)g_RobotoItalic, sizeof(g_RobotoItalic), 20.0f, &fontConfig);
         Application::GetFontList()["HackRegular"] = io.Fonts->AddFontFromMemoryTTF((void *)g_HackRegular, sizeof(g_HackRegular), 20.0f, &fontConfig);
+
+        for (auto &font : Application::Get().GetCustomFonts())
+        {
+            Application::GetFontList()[font.first] = io.Fonts->AddFontFromFileTTF(font.second.first.c_str(), font.second.second, &fontConfig);
+        }
+
         io.FontDefault = hackFont;
 
         // Setup Platform/Renderer backends
@@ -711,7 +716,7 @@ namespace UIKit
         outTitlebarHeight = titlebarHeight;
     }
 
-void Window::UI_DrawMenubar()
+    void Window::UI_DrawMenubar()
     {
         if (!Application::Get().m_MenubarCallback)
             return;
@@ -746,7 +751,6 @@ void Window::UI_DrawMenubar()
             }
         }
     }
-
 
     void Window::RequestResize(int width, int height)
     {
@@ -948,5 +952,25 @@ void Window::UI_DrawMenubar()
         check_vk_result(err);
 
         return command_buffer;
+    }
+
+    void Window::LoadTTFFont(const std::string &ttf_font_path)
+    {
+        ImFont* font = Application::GetFontList()[ttf_font_path];
+
+        if(font)
+        {
+            ImGui::PushFont(font);
+            m_FontLoaded = true;
+        }
+    }
+
+    void Window::RestoreTTFFont()
+    {
+        if (m_FontLoaded)
+        {
+            m_FontLoaded = false;
+            ImGui::PopFont();
+        }
     }
 }

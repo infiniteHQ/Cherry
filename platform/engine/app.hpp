@@ -79,6 +79,7 @@ namespace UIKit
 		static VkCommandBuffer GetCommandBuffer(const std::string &win_name, bool begin);
 		static ImFont *GetFont(const std::string &name);
 		static std::unordered_map<std::string, ImFont *> &GetFontList();
+		std::vector<std::pair<std::string, std::pair<std::string, float>>> &GetCustomFonts();
 
 		// Set static components
 		static void SetCurrentDragDropState(UIKit::WindowDragDropState *state);
@@ -194,6 +195,11 @@ namespace UIKit
 			return "id";
 		}
 
+		void AddTTFFont(const std::string& name, const std::string& ttf_file_path, const float& size = 20.0f)
+		{
+			m_CustomFonts.push_back({name, {ttf_file_path, size}});
+		};
+
 		void SetFavIconPath(const std::string &path)
 		{
 			m_FavIconPath = path;
@@ -224,6 +230,7 @@ namespace UIKit
 		std::vector<std::shared_ptr<RedockRequest>> m_RedockRequests;
 		std::vector<std::shared_ptr<AppWindow>> m_AppWindows;
 		std::vector<std::shared_ptr<AppWindow>> m_SavedAppWindows;
+		std::vector<std::pair<std::string, std::pair<std::string, float>>> m_CustomFonts;
 		std::string m_FavIconPath;
 
 		std::vector<std::shared_ptr<Component>> m_ApplicationComponents;

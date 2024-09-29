@@ -35,6 +35,7 @@ UIKit::Application *UIKit::CreateApplication(int argc, char **argv)
   UIKit::Application *app = new UIKit::Application(spec);
   app->SetWindowSaveDataFile("savedatda.json", true);
   app->SetFavIconPath("/usr/local/include/Vortex/imgs/vortex.png");
+  app->AddTTFFont("Consola","/home/diego/Téléchargements/Consolas-Font/CONSOLA.TTF", 17.0f);
 
   app->PushLayer(layer);
   app->SetMenubarCallback([app, layer]()
@@ -131,8 +132,21 @@ UIKit::Application *UIKit::CreateApplication(int argc, char **argv)
                             ImGui::PopStyleVar();  
                             ImGui::PopStyleColor(2); });
 
-  std::shared_ptr<NodeEditorSimple> demsdos = std::make_shared<UIKit::NodeEditorSimple>("Qzez");
-  demsdos->RefreshRender(demsdos);
+  std::shared_ptr<NodeEditorSimple> appNodeEditor = std::make_shared<UIKit::NodeEditorSimple>("Nodal editor");
+  appNodeEditor->RefreshRender(appNodeEditor);
+
+  std::shared_ptr<ContentBrowserAppWindow> appContentBrowser = std::make_shared<UIKit::ContentBrowserAppWindow>("Content Browser", "/home/diego");
+  appContentBrowser->RefreshRender(appContentBrowser);
+
+  std::shared_ptr<TextEditorSimple> appTextEditor = std::make_shared<UIKit::TextEditorSimple>("Text editor" /*, "/home/diego/Bureau/main.cpp"*/);
+  appTextEditor->RefreshRender(appTextEditor);
+
+  std::shared_ptr<ContentOutlinerSimple> appContentOutliner = std::make_shared<UIKit::ContentOutlinerSimple>("Content Outliner");
+  appContentOutliner->RefreshRender(appContentOutliner);
+
+  // List
+
+  // Multi childs
 
   return app;
 }

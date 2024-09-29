@@ -146,7 +146,7 @@ public:
                 }
             }
 
-            return "#B1FF31FF";
+            return "#997D44FF";
         }
 
         void AddReconizedItem(const std::shared_ptr<ContenBrowserItem>& item){};

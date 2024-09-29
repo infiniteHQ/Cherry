@@ -1,13 +1,4 @@
 #include "./node_editor_simple.hpp"
-/*int Main(int argc, char** argv)
-{
-    Example exampe("Blueprints", argc, argv);
-
-    if (exampe.Create())
-        return exampe.Run();
-
-    return 0;
-}*/
 
 namespace UIKit
 {
@@ -251,8 +242,14 @@ namespace UIKit
 
         static float leftPaneWidth  = 400.0f;
         static float rightPaneWidth = 800.0f;
+        static bool navigated = false;
 
+        if(!navigated)
+        {
         ed::NavigateToContent();
+            navigated = true;
+        }
+
 
         ed::Begin("Node qsd");
         {
@@ -1117,5 +1114,4 @@ namespace UIKit
             drawList->PopClipRect();
         } });
     }
-
 }

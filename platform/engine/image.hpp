@@ -10,7 +10,6 @@
 
 namespace UIKit
 {
-
 	enum class ImageFormat
 	{
 		None = 0,

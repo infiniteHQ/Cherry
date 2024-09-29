@@ -53,9 +53,8 @@ namespace UIKit
 
         m_AppWindow->SetSaveMode(true);
         // m_AppWindow->SetDisableContextMenu(true);
-        // m_AppWindow->SetDisableDragging(true);        
-        cp_TextEditor = std::make_shared<TextEditor>("/home/diego/Documents/indf.html");
-
+        // m_AppWindow->SetDisableDragging(true);
+        cp_TextEditor = std::make_shared<TextEditor>("/home/diego/Bureau/main.cpp");
 
         v_StringOne = std::make_shared<std::string>("");
 
@@ -103,8 +102,8 @@ namespace UIKit
 
         m_AppWindow->SetRightMenubarCallback([win]()
                                              {
-                                                ImGui::Button("Add");
-                                                ImGui::Button("Settings");
+                                                 ImGui::Button("Add");
+                                                 ImGui::Button("Settings");
                                                  // Add Folder
                                                  // Settings
                                              });
@@ -120,7 +119,20 @@ namespace UIKit
 
         m_AppWindow->SetRenderCallback([instance]()
                                        {
-                                               instance->cp_TextEditor->Render("Title");
+                                           static ImFont* font = Application::GetFontList()["Consola"];
+
+                                            ImFont* old = ImGui::GetFont();
+                                           if(font)
+                                           {
+                                            ImGui::PushFont(font);
+                                           }
+
+                                           instance->cp_TextEditor->Render("Title");
+
+                                           if(font)
+                                           {
+                                            ImGui::PopFont();
+                                           }
                                        });
     }
 
