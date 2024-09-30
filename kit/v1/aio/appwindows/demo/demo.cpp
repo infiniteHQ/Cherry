@@ -51,35 +51,35 @@ namespace UIKit
         m_AppWindow = std::make_shared<UIKit::AppWindow>(name, name);
         m_AppWindow->SetIcon("/usr/local/include/Vortex/imgs/vortex.png");
 
-        m_AppWindow->m_TabMenuCallback = [](){
-                ImVec4 grayColor = ImVec4(0.4f, 0.4f, 0.4f, 1.0f);
-                ImVec4 graySeparatorColor = ImVec4(0.4f, 0.4f, 0.4f, 0.5f);
-                ImVec4 darkBackgroundColor = ImVec4(0.15f, 0.15f, 0.15f, 1.0f);
-                ImVec4 lightBorderColor = ImVec4(0.2f, 0.2f, 0.2f, 1.0f);
-              if (ImGui::BeginMenu("Edit"))
+        m_AppWindow->m_TabMenuCallback = []()
+        {
+            ImVec4 grayColor = ImVec4(0.4f, 0.4f, 0.4f, 1.0f);
+            ImVec4 graySeparatorColor = ImVec4(0.4f, 0.4f, 0.4f, 0.5f);
+            ImVec4 darkBackgroundColor = ImVec4(0.15f, 0.15f, 0.15f, 1.0f);
+            ImVec4 lightBorderColor = ImVec4(0.2f, 0.2f, 0.2f, 1.0f);
+            if (ImGui::BeginMenu("Edit"))
+            {
+                ImGui::PushStyleColor(ImGuiCol_Text, grayColor);
+                ImGui::Text("Main stuff");
+                ImGui::PopStyleColor();
+
+                ImGui::PushStyleColor(ImGuiCol_Separator, graySeparatorColor);
+                ImGui::Separator();
+                ImGui::PopStyleColor();
+
+                if (ImGui::MenuItem("Logs Utility", "Overview of all logs"))
                 {
-                    ImGui::PushStyleColor(ImGuiCol_Text, grayColor);
-                    ImGui::Text("Main stuff");
-                    ImGui::PopStyleColor();
-
-                    ImGui::PushStyleColor(ImGuiCol_Separator, graySeparatorColor);
-                    ImGui::Separator();
-                    ImGui::PopStyleColor();
-
-                    if (ImGui::MenuItem("Logs Utility", "Overview of all logs"))
-                    {
-                        // Action quand l'élément "Logs Utility" est sélectionné
-                    }
-
-                    if (ImGui::MenuItem("Logs2 Utility", "Overview of all logs"))
-                    {
-                        // Action quand l'élément "Logs Utility" est sélectionné
-                    }
-
-                    ImGui::EndMenu();
                 }
+
+                if (ImGui::MenuItem("Logs2 Utility", "Overview of all logs"))
+                {
+                }
+
+                ImGui::EndMenu();
+            }
         };
 
+        cp_ButtonDropdownOne = Application::Get().CreateComponent<CustomDrowpdownButtonSimple>("dbutton_1", "Custom Simple");
         cp_ButtonOne = Application::Get().CreateComponent<CustomButtonSimple>("button_1", "Custom Simple");
         cp_ButtonOneColored = Application::Get().CreateComponent<CustomButtonSimple>("button_1_colored", "Custom Simple", "#2424F4FF", "#2424F4FF", "#2525F5FF", "#2525F5FF", "#2626F6FF", "#2525F5FF");
         cp_ButtonTwo = Application::Get().CreateComponent<CustomButtonLowProfile>("button_2", "Custom Low Profile");
@@ -377,6 +377,25 @@ namespace UIKit
                         else if(column == 2)
                         {
                             cp_ButtonFourColored->Render("Normal");
+    }
+                        else if(column == 3)
+                        {
+                            ImGui::Button("Copy code");
+                        }
+                    }
+                    else if(row == 8)
+                    {
+                        if(column == 0)
+                        {
+                            ImGui::Text("Validation low profile button");
+                        }
+                        else if(column == 1)
+                        {
+                            ImGui::Text("This is a incredible Simpe Image button");
+                        }
+                        else if(column == 2)
+                        {
+                            cp_ButtonDropdownOne->Render("Dropdown");
     }
                         else if(column == 3)
                         {
@@ -1285,6 +1304,7 @@ namespace UIKit
         this->AddChild("Headers", [this]()
                        {
                            ImGuiTableFlags flags2 = ImGuiTableFlags_Resizable | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Hideable | ImGuiTableFlags_Borders;
+                           
                            if (ImGui::BeginTable("table_context_menu_2", 4, flags2))
                            {
                                ImGui::TableSetupColumn("Name");
@@ -1474,8 +1494,7 @@ namespace UIKit
                                    }
                                }
                                ImGui::EndTable();
-                           }
-                       });
+                           } });
 
         this->AddChild("Nodes", [this]() {
 
@@ -1536,7 +1555,9 @@ namespace UIKit
 
             TitleThree("Uikit Components");
 
-        for (const auto &child : instance->m_Childs)                                           {
+        for (const auto &child : instance->m_Childs)                                           
+        {
+            std::cout << "C" << child.first << std::endl;
                                                if (child.first == instance->m_SelectedChildName)
                                                {
                                                    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f)); 

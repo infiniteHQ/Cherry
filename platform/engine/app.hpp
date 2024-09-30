@@ -18,9 +18,18 @@
 #include <filesystem>
 #include <SDL2/SDL_image.h>
 
+#ifdef _WIN32
+#include <windows.h>
+#else
+#include <unistd.h>
+#include <limits.h>
+#endif
+
 #include "ui/ui.hpp"
 #include "imgui/ImGuiTheme.h"
 #include "vulkan/vulkan.h"
+
+#define BINPATH(rpath) UIKit::Application::CookPath(rpath);
 
 void check_vk_result(VkResult err);
 
@@ -52,6 +61,49 @@ namespace UIKit
 	public:
 		Application(const ApplicationSpecification &applicationSpecification = ApplicationSpecification());
 		~Application();
+
+		static std::string CookPath(const std::string input_path)
+		{
+			std::string output_path;
+			std::string root_path;
+
+#ifdef _WIN32
+			char result[MAX_PATH];
+			if (GetModuleFileNameA(NULL, result, MAX_PATH) != 0)
+			{
+				root_path = result;
+			}
+			else
+			{
+				std::cerr << "Failed while get the root path" << std::endl;
+			}
+#else
+			char result[PATH_MAX];
+			ssize_t count = readlink("/proc/self/exe", result, PATH_MAX);
+			if (count != -1)
+			{
+				result[count] = '\0';
+				root_path = result;
+			}
+			else
+			{
+				std::cerr << "Failed while get the root path" << std::endl;
+			}
+#endif
+
+			root_path = std::filesystem::path(root_path).parent_path();
+
+			if (!input_path.empty() && input_path.front() == '/')
+			{
+				output_path = input_path;
+			}
+			else
+			{
+				output_path = root_path + "/" + input_path;
+			}
+
+			return output_path;
+		}
 
 		// Set static components
 		static Application &Get();
@@ -90,7 +142,7 @@ namespace UIKit
 		static void SetCurrentDragDropStateAppWindowHost(const std::string &new_name);
 		static void SetCurrentDragDropStateWindow(const std::string &new_name);
 		static void SetCurrentDragDropStateDraggingPlace(const DockEmplacement &place);
-		static void SetMasterSwapChainRebuild(const bool& new_state);
+		static void SetMasterSwapChainRebuild(const bool &new_state);
 		static void IncrementWindowNumber();
 
 		// Utils
@@ -120,18 +172,18 @@ namespace UIKit
 		static void CleanupVulkanWindow(UIKit::Window *win);
 		static void CleanupSpecificVulkanWindow(UIKit::Window *win);
 		static void CleanupVulkan();
-    	static void CleanupVulkan(UIKit::Window *win);
+		static void CleanupVulkan(UIKit::Window *win);
 		static void SetupVulkan(const char **extensions, uint32_t extensions_count);
 
 		Window *GetWindowByHandle(SDL_Window *window_handle);
+		std::string GetRootPath() { return m_RootPath; }
 
-    	bool IsMaximized(const std::shared_ptr<Window>& win) const;
+		bool IsMaximized(const std::shared_ptr<Window> &win) const;
 
 		// Main Docking function
 		static void PushRedockEvent(UIKit::WindowDragDropState *state);
 
-
-    	static std::vector<uint8_t> LoadPngHexa(const std::string &path);
+		static std::vector<uint8_t> LoadPngHexa(const std::string &path);
 
 		void Run();
 		void LoadImages();
@@ -195,14 +247,14 @@ namespace UIKit
 			return "id";
 		}
 
-		void AddTTFFont(const std::string& name, const std::string& ttf_file_path, const float& size = 20.0f)
+		void AddTTFFont(const std::string &name, const std::string &ttf_file_path, const float &size = 20.0f)
 		{
 			m_CustomFonts.push_back({name, {ttf_file_path, size}});
 		};
 
-		void SetFavIconPath(const std::string &path)
+		void SetFavIconPath(const std::string &icon_path)
 		{
-			m_FavIconPath = path;
+			m_FavIconPath = icon_path;
 		}
 
 		// Resources
@@ -212,6 +264,8 @@ namespace UIKit
 		std::function<void()> m_FramebarCallback;
 		std::function<void()> m_MainRenderCallback;
 		std::function<void()> m_CloseCallback;
+
+		std::string m_RootPath;
 
 		bool m_ClosePending = false;
 

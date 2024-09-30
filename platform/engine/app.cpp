@@ -118,13 +118,41 @@ static void glfw_error_callback(int error, const char *description)
 namespace UIKit
 {
 
-#include "embed/UIKit-Icon.embed"
-#include "embed/WindowImages.embed"
+#include "embed/not_found_img.embed"
+#include "embed/window.embed"
 
     Application::Application(const ApplicationSpecification &specification)
         : m_Specification(specification)
     {
         s_Instance = this;
+
+        std::string executablePath;
+
+#ifdef _WIN32
+        char result[MAX_PATH];
+        if (GetModuleFileNameA(NULL, result, MAX_PATH) != 0)
+        {
+            executablePath = result;
+        }
+        else
+        {
+            std::cerr << "Failed while get the root path" << std::endl;
+        }
+#else
+        char result[PATH_MAX];
+        ssize_t count = readlink("/proc/self/exe", result, PATH_MAX);
+        if (count != -1)
+        {
+            result[count] = '\0';
+            executablePath = result;
+        }
+        else
+        {
+            std::cerr << "Failed while get the root path" << std::endl;
+        }
+#endif
+
+        m_RootPath = std::filesystem::path(executablePath).parent_path();
 
         Init();
     }
@@ -1011,6 +1039,7 @@ namespace UIKit
         m_Running = true;
         while (m_Running)
         {
+            std::cout << m_RootPath << std::endl;
             c_ValidDropZoneFounded = false;
             if (s_Instance->m_Specification.WindowSaves)
             {
@@ -1261,7 +1290,6 @@ namespace UIKit
 
             for (auto &window : m_Windows)
             {
-                // Refresh favicon
                 window->SetFavIcon(s_Instance->m_FavIconPath);
 
                 c_CurrentRenderedWindow = window;
@@ -1516,12 +1544,6 @@ namespace UIKit
 
     void Application::LoadImages()
     {
-        {
-            uint32_t w, h;
-            void *data = Image::Decode(g_UIKitIcon, sizeof(g_UIKitIcon), w, h);
-            m_AppHeaderIcon = std::make_shared<UIKit::Image>(w, h, ImageFormat::RGBA, data);
-            free(data);
-        }
         {
             uint32_t w, h;
             void *data = Image::Decode(g_WindowMinimizeIcon, sizeof(g_WindowMinimizeIcon), w, h);

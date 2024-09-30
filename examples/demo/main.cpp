@@ -30,12 +30,12 @@ UIKit::Application *UIKit::CreateApplication(int argc, char **argv)
   spec.EnableDocking = true;
   spec.DisableTitle = true;
   spec.WindowSaves = true;
-  spec.IconPath = "icon.png";
+  spec.IconPath = BINPATH("ressources/imgs/icon.png");
 
   UIKit::Application *app = new UIKit::Application(spec);
   app->SetWindowSaveDataFile("savedatda.json", true);
-  app->SetFavIconPath("/usr/local/include/Vortex/imgs/vortex.png");
-  app->AddTTFFont("Consola","/home/diego/Téléchargements/Consolas-Font/CONSOLA.TTF", 17.0f);
+  app->SetFavIconPath(Application::CookPath("ressources/imgs/favicon.png"));
+  app->AddTTFFont("Consola", Application::CookPath("ressources/fonts/consola.ttf"), 17.0f);
 
   app->PushLayer(layer);
   app->SetMenubarCallback([app, layer]()
@@ -132,17 +132,20 @@ UIKit::Application *UIKit::CreateApplication(int argc, char **argv)
                             ImGui::PopStyleVar();  
                             ImGui::PopStyleColor(2); });
 
-  std::shared_ptr<NodeEditorSimple> appNodeEditor = std::make_shared<UIKit::NodeEditorSimple>("Nodal editor");
+  /*std::shared_ptr<NodeEditorSimple> appNodeEditor = std::make_shared<UIKit::NodeEditorSimple>("Nodal editor");
   appNodeEditor->RefreshRender(appNodeEditor);
 
   std::shared_ptr<ContentBrowserAppWindow> appContentBrowser = std::make_shared<UIKit::ContentBrowserAppWindow>("Content Browser", "/home/diego");
   appContentBrowser->RefreshRender(appContentBrowser);
 
-  std::shared_ptr<TextEditorSimple> appTextEditor = std::make_shared<UIKit::TextEditorSimple>("Text editor" /*, "/home/diego/Bureau/main.cpp"*/);
+  std::shared_ptr<TextEditorSimple> appTextEditor = std::make_shared<UIKit::TextEditorSimple>("Text editor");
   appTextEditor->RefreshRender(appTextEditor);
 
   std::shared_ptr<ContentOutlinerSimple> appContentOutliner = std::make_shared<UIKit::ContentOutlinerSimple>("Content Outliner");
-  appContentOutliner->RefreshRender(appContentOutliner);
+  appContentOutliner->RefreshRender(appContentOutliner);*/
+
+  std::shared_ptr<DemoAppWindow> appDemo = std::make_shared<UIKit::DemoAppWindow>("Demo");
+  appDemo->RefreshRender(appDemo);
 
   // List
 

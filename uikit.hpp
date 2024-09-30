@@ -19,6 +19,7 @@
 
 #ifdef UIKIT_V1
 // Buttons
+#include "./kit/v1/components/buttons/dropdown_buttons.hpp"
 #include "./kit/v1/components/buttons/custom_buttons.hpp"
 #include "./kit/v1/components/buttons/image_text_buttons.hpp"
 #include "./kit/v1/components/buttons/image_buttons.hpp"

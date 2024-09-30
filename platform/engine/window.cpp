@@ -1,7 +1,7 @@
 #include "window.hpp"
 
-#include "embed/UIKit-Icon.embed"
-#include "embed/WindowImages.embed"
+#include "embed/not_found_img.embed"
+#include "embed/window.embed"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_vulkan.h>
 
@@ -578,7 +578,7 @@ namespace UIKit
             const ImVec2 logoOffset(16.0f + windowPadding.x, 5.0f + windowPadding.y + titlebarVerticalOffset);
             const ImVec2 logoRectStart = {ImGui::GetItemRectMin().x + logoOffset.x, ImGui::GetItemRectMin().y + logoOffset.y};
             const ImVec2 logoRectMax = {logoRectStart.x + logoWidth, logoRectStart.y + logoHeight};
-            fgDrawList->AddImage(this->get("/usr/local/include/Vortex/imgs/vortex.png")->GetDescriptorSet(), logoRectStart, logoRectMax);
+            fgDrawList->AddImage(this->get(this->m_Specifications.IconPath)->GetDescriptorSet(), logoRectStart, logoRectMax);
         }
 
         ImGui::SetItemAllowOverlap();
@@ -824,7 +824,17 @@ namespace UIKit
         uint32_t w = 0, h = 0;
 
         std::vector<uint8_t> hexTable = Application::LoadPngHexa(path);
-        const uint8_t *hexData = hexTable.data();
+
+        const uint8_t *hexData;
+        
+        if(hexTable.empty())
+        {
+            hexData = g_NotFoundIcon;        
+        }
+        else
+        {
+            hexData = hexTable.data();
+        }
 
         if (std::find(c_ImageList.begin(), c_ImageList.end(), path) != c_ImageList.end())
         {
@@ -841,6 +851,17 @@ namespace UIKit
 
             return _icon;
         }
+        else
+        {
+            void *data = UIKit::Image::Decode(hexData, sizeof(g_NotFoundIcon), w, h);
+            std::shared_ptr<UIKit::Image> _icon = std::make_shared<UIKit::Image>(w, h, UIKit::ImageFormat::RGBA, this->GetName(), data);
+
+            m_ImageList.push_back(std::make_pair(path, _icon));
+            IM_FREE(data);
+
+            return _icon;
+        }
+
         return nullptr;
     }
 
@@ -865,7 +886,7 @@ namespace UIKit
     std::shared_ptr<UIKit::Image> Window::add(const uint8_t data[], const std::string &name)
     {
         const uint8_t *hexData = data;
-        const size_t dataSize = sizeof(g_UIKitIcon);
+        const size_t dataSize = sizeof(g_NotFoundIcon);
 
         if (std::find(c_ImageList.begin(), c_ImageList.end(), name) != c_ImageList.end())
         {
