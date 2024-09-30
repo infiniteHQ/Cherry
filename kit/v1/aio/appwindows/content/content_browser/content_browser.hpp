@@ -152,7 +152,7 @@ public:
         }
 
         void AddReconizedItem(const std::shared_ptr<ContenBrowserItem>& item){};
-        bool IsPathFavorite(const std::string& path){};
+        bool IsPathFavorite(const std::string& path){return false;};
         void SetColoredFolder(const std::string& path, const std::string& hex_color){};
 
     private:

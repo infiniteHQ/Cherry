@@ -82,10 +82,20 @@ namespace UIKit
         cp_GroupedButtonOne = Application::Get().CreateComponent<CustomGroupedButtons>("dbutton_12", "Custom Simple");
 
         cp_ButtonDropdownOne = Application::Get().CreateComponent<CustomDrowpdownButtonSimple>("dbutton_1", "Custom Simple");
+        cp_ButtonDropdownOne->SetDropDownImage(Application::CookPath("ressources/imgs/icons/misc/icon_down.png"));
+        
         cp_ButtonOne = Application::Get().CreateComponent<CustomButtonSimple>("button_1", "Custom Simple");
         cp_ButtonOneColored = Application::Get().CreateComponent<CustomButtonSimple>("button_1_colored", "Custom Simple", "#2424F4FF", "#2424F4FF", "#2525F5FF", "#2525F5FF", "#2626F6FF", "#2525F5FF");
-        cp_ButtonTwo = Application::Get().CreateComponent<CustomButtonLowProfile>("button_2", "Custom Low Profile");
-        cp_ButtonTwoColored = Application::Get().CreateComponent<CustomButtonLowProfile>("button_2_colored", "Custom Low Profile", "#2424F4FF", "#2424F4FF", "#2525F5FF", "#2525F5FF", "#2626F6FF", "#2525F5FF");
+        
+        cp_ButtonDropdownTwo = Application::Get().CreateComponent<CustomDrowpdownImageButtonSimple>("dbutton_1", "Advanced dropdown");
+        cp_ButtonDropdownTwo->SetDropDownImage(Application::CookPath("ressources/imgs/icons/misc/icon_collection.png"));
+        cp_ButtonDropdownTwo->SetIconPath(Application::CookPath("ressources/imgs/icons/misc/icon_down.png"));
+
+        cp_ButtonDropdownThree = Application::Get().CreateComponent<CustomDrowpdownImageOnlyButtonSimple>("dbutton_2", "Advanced dropdown");
+        cp_ButtonDropdownThree->SetDropDownImage(Application::CookPath("ressources/imgs/icons/misc/icon_collection.png"));
+        cp_ButtonDropdownThree->SetIconPath(Application::CookPath("ressources/imgs/icons/misc/icon_down.png"));
+
+        
         cp_ButtonThree = Application::Get().CreateComponent<ImageTextButtonSimple>("button_3", "Custom Low Profile");
         cp_ButtonThreeColored = Application::Get().CreateComponent<ImageTextButtonSimple>("button_3_colored", "Custom Low Profile", "/usr/local/include/Vortex/imgs/vortex.png", "#2424F4FF", "#2424F4FF", "#2525F5FF", "#2525F5FF", "#2626F6FF", "#2525F5FF");
         cp_ComboOne = Application::Get().CreateComponent<ComboSimple>("combo_1", "SuperCombo", std::vector<std::string>{"My first item", "My second item", "My third item"}, 1);
@@ -269,44 +279,6 @@ namespace UIKit
                             ImGui::Button("Copy code");
                         }
                     }
-                    else if(row == 2)
-                    {
-                        if(column == 0)
-                        {
-                            ImGui::Text("Custom simple button");
-                        }
-                        else if(column == 1)
-                        {
-                            ImGui::Text("This is a incredible Simpe Image button");
-                        }
-                        else if(column == 2)
-                        {
-                            cp_ButtonTwo->Render("Normal");
-    }
-                        else if(column == 3)
-                        {
-                            ImGui::Button("Copy code");
-                        }
-                    }
-                    else if(row == 3)
-                    {
-                        if(column == 0)
-                        {
-                            ImGui::Text("Custom low profile button");
-                        }
-                        else if(column == 1)
-                        {
-                            ImGui::Text("This is a incredible Simpe Image button");
-                        }
-                        else if(column == 2)
-                        {
-                            cp_ButtonTwoColored->Render("Normal");
-    }
-                        else if(column == 3)
-                        {
-                            ImGui::Button("Copy code");
-                        }
-                    }
                     else if(row == 4)
                     {
                         if(column == 0)
@@ -339,6 +311,44 @@ namespace UIKit
                         else if(column == 2)
                         {
                             cp_ButtonThreeColored->Render("Normal");
+    }
+                        else if(column == 3)
+                        {
+                            ImGui::Button("Copy code");
+                        }
+                    }
+                    else if(row == 6)
+                    {
+                        if(column == 0)
+                        {
+                            ImGui::Text("Validation low profile button");
+                        }
+                        else if(column == 1)
+                        {
+                            ImGui::Text("This is a incredible Simpe Image button");
+                        }
+                        else if(column == 2)
+                        {
+                            cp_ButtonDropdownThree->Render("Super Dropdown");
+    }
+                        else if(column == 3)
+                        {
+                            ImGui::Button("Copy code");
+                        }
+                    }
+                    else if(row == 7)
+                    {
+                        if(column == 0)
+                        {
+                            ImGui::Text("Validation low profile button");
+                        }
+                        else if(column == 1)
+                        {
+                            ImGui::Text("This is a incredible Simpe Image button");
+                        }
+                        else if(column == 2)
+                        {
+                            cp_ButtonDropdownTwo->Render("Super Dropdown");
     }
                         else if(column == 3)
                         {

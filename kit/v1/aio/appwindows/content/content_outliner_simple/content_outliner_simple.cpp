@@ -2,7 +2,6 @@
 
 namespace UIKit
 {
-
     ContentOutlinerSimple::ContentOutlinerSimple(const std::string &name, const std::shared_ptr<AppWindow> &parent)
     {
         m_AppWindow = std::make_shared<UIKit::AppWindow>(name, name);

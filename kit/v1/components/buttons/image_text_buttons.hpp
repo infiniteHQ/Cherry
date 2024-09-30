@@ -161,8 +161,8 @@ namespace UIKit
 
         bool m_IsPressed;
 
-        float m_Scale = 0.0f;
-
+        float m_Scale = 0.0f; 
+        
         int m_SizeX = 0.0f;
         int m_SizeY = 0.0f;
 

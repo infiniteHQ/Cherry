@@ -150,7 +150,7 @@ namespace UIKit
 
         if (this->GetImage(m_Icon))
         {
-            static ImTextureID texture = this->GetImage(m_Icon)->GetImGuiTextureID(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+            static ImTextureID texture = Application::Get().GetCurrentRenderedWindow()->get_texture(m_Icon);
             if (m_Closable)
             {
                 ImGui::Begin(m_Name.c_str(), &texture, &m_CloseSignal, window_flags);

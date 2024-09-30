@@ -45,11 +45,12 @@ namespace UIKit
         std::unordered_map<std::string, std::function<void()>> m_Childs;
 
         std::shared_ptr<CustomGroupedButtons> cp_GroupedButtonOne;        
-        std::shared_ptr<CustomDrowpdownButtonSimple> cp_ButtonDropdownOne;        
+        std::shared_ptr<CustomDrowpdownButtonSimple> cp_ButtonDropdownOne;       
+        std::shared_ptr<CustomDrowpdownImageButtonSimple> cp_ButtonDropdownTwo;         
+        std::shared_ptr<CustomDrowpdownImageOnlyButtonSimple> cp_ButtonDropdownThree;         
+        
         std::shared_ptr<CustomButtonSimple> cp_ButtonOne;             
         std::shared_ptr<CustomButtonSimple> cp_ButtonOneColored;        
-        std::shared_ptr<CustomButtonLowProfile> cp_ButtonTwo;     
-        std::shared_ptr<CustomButtonLowProfile> cp_ButtonTwoColored;
         std::shared_ptr<ImageTextButtonSimple> cp_ButtonThree;     
         std::shared_ptr<ImageTextButtonSimple> cp_ButtonThreeColored;     
         std::shared_ptr<SimpleTree> cp_ListTreeOne;     

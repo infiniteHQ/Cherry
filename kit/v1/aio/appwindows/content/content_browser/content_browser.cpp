@@ -19,31 +19,6 @@ static ImU32 folder_color = IM_COL32(150, 128, 50, 255);
 static std::pair<std::string, ImU32> current_editing_folder;
 static bool current_editing_folder_is_favorite;
 
-// TODO: Handle relatively
-static const std::string File_LICENSE_Logo = "/usr/local/include/Vortex/1.1/imgs/icon_license_file.png";
-static const std::string File_ASM_Logo = "/usr/local/include/Vortex/1.1/imgs/file_asm_logo.png";
-static const std::string File_GIT_Logo = "/usr/local/include/Vortex/1.1/imgs/icon_git_file.png";
-static const std::string File_C_Logo = "/usr/local/include/Vortex/1.1/imgs/icon_c_file.png";
-static const std::string File_C_H_Logo = "/usr/local/include/Vortex/1.1/imgs/icon_c_h_file.png";
-static const std::string File_CPP_H_Logo = "/usr/local/include/Vortex/1.1/imgs/icon_cpp_h_file.png";
-static const std::string File_CPP_Logo = "/usr/local/include/Vortex/1.1/imgs/icon_cpp_file.png";
-static const std::string File_UNKNOW_Logo = "/usr/local/include/Vortex/1.1/imgs/icon_unknow_file.png";
-static const std::string File_PICTURE_Logo = "/usr/local/include/Vortex/1.1/imgs/icon_picture_file.png";
-static const std::string Folder_Logo = "/usr/local/include/Vortex/1.1/imgs/icon_folder.png";
-static const std::string Star_Logo = "/usr/local/include/Vortex/1.1/imgs/icon_star.png";
-static const std::string Collection_Logo = "/usr/local/include/Vortex/1.1/imgs/icon_collection.png";
-static const std::string Home_Logo = "/usr/local/include/Vortex/1.1/imgs/icon_home.png";
-static const std::string Add_Logo = "/usr/local/include/Vortex/1.1/imgs/icon_add.png";
-static const std::string Import_Logo = "/usr/local/include/Vortex/1.1/imgs/icon_import.png";
-static const std::string Save_Logo = "/usr/local/include/Vortex/1.1/imgs/icon_save.png";
-static const std::string Settings_Logo = "/usr/local/include/Vortex/1.1/imgs/icon_settings.png";
-static const std::string Return_Logo = "/usr/local/include/Vortex/1.1/imgs/icon_settings.png";
-
-static const std::string Icon_Left_Arrow_Enabled = "/usr/local/include/Vortex/1.1/imgs/icon_arrow_l_enabled.png";
-static const std::string Icon_Left_Arrow_Disabled = "/usr/local/include/Vortex/1.1/imgs/icon_arrow_l_disabled.png";
-static const std::string Icon_Right_Arrow_Enabled = "/usr/local/include/Vortex/1.1/imgs/icon_arrow_r_enabled.png";
-static const std::string Icon_Right_Arrow_Disabled = "/usr/local/include/Vortex/1.1/imgs/icon_arrow_r_disabled.png";
-
 static bool isOnlySpacesOrEmpty(const char *str)
 {
     if (str == nullptr || std::strlen(str) == 0)
@@ -402,6 +377,14 @@ namespace UIKit
         cp_DirectoryUndo = Application::Get().CreateComponent<ImageButtonSimple>("directory_undo", UIKit::Application::CookPath("ressources/imgs/icons/misc/icon_arrow_l_disabled.png"));
         cp_DirectoryRedo = Application::Get().CreateComponent<ImageButtonSimple>("directory_redo", UIKit::Application::CookPath("ressources/imgs/icons/misc/icon_arrow_r_disabled.png"));
 
+        cp_DirectoryRedo->SetBackgroundColorIdle("#00000000");
+        cp_DirectoryRedo->SetBorderColorIdle("#00000000");
+        cp_DirectoryRedo->SetScale(0.85f);
+
+        cp_DirectoryUndo->SetBackgroundColorIdle("#00000000");
+        cp_DirectoryUndo->SetBorderColorIdle("#00000000");
+        cp_DirectoryUndo->SetScale(0.85f);
+
         m_AppWindow->SetLeftMenubarCallback([this]()
                                             {
             ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0.4f, 0.4f, 0.4f, 0.7f));
@@ -437,6 +420,7 @@ namespace UIKit
 
 		if (m_BackHistory.empty())
 		{
+            cp_DirectoryUndo->SetImagePath(Application::Get().CookPath("ressources/imgs/icons/misc/icon_arrow_l_disabled.png"));
 			if (cp_DirectoryUndo->Render("normal"))
 			{
 				//
@@ -444,6 +428,7 @@ namespace UIKit
 		}
 		else
 		{
+            cp_DirectoryUndo->SetImagePath(Application::Get().CookPath("ressources/imgs/icons/misc/icon_arrow_l_enabled.png"));
 			if (cp_DirectoryUndo->Render("normal"))
 			{
 				GoBack();
@@ -457,6 +442,7 @@ namespace UIKit
 
 		if (m_ForwardHistory.empty())
 		{
+            cp_DirectoryUndo->SetImagePath(Application::Get().CookPath("ressources/imgs/icons/misc/icon_arrow_r_disabled.png"));
 			if (cp_DirectoryRedo->Render("normal"))
 			{
 				//
@@ -464,6 +450,7 @@ namespace UIKit
 		}
 		else
 		{
+            cp_DirectoryUndo->SetImagePath(Application::Get().CookPath("ressources/imgs/icons/misc/icon_arrow_r_enabled.png"));
 			if (cp_DirectoryRedo->Render("normal"))
 			{
 				GoForward();
@@ -1006,84 +993,32 @@ ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(12.0f, 2.0f));
                                                          if (!pool_add_mode)
                                                          {
                                                     
-                                                            /*FIX if (ImGui::ImageButtonWithText(Application::Get().GetCurrentRenderedWindow()->get("/usr/local/include/Vortex/imgs/vortex.png")->GetImGuiTextureID(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL), size1 - 40.0f, "Add pool", ImVec2(0,0),ImVec2(0,0), ImVec2(1,1) ,-1, ImVec4(0,0,0,0), ImVec4(1,1,1,1)))
+                                                            if (ImGui::ImageButtonWithText(Application::Get().GetCurrentRenderedWindow()->get_texture("/usr/local/include/Vortex/imgs/vortex.png"), "Add pool", ImVec2(0,0),ImVec2(0,0), ImVec2(1,1) ,-1, ImVec4(0,0,0,0), ImVec4(1,1,1,1)))
                                                              {
                                                                  pool_add_mode = true;
-                                                             }*/
+                                                             }
                                                          }
                                                          else
                                                          {
                                                              ImGui::Text("Please enter a path");
                                                              ImGui::SetNextItemWidth(-FLT_MIN);
                                                              ImGui::InputText("###AddPool", pool_add_path, sizeof(pool_add_path));
-                                                            /*FIX
-                                                             if (ImGui::UIKit_ImageButtonWithText(Application::Get().GetCurrentRenderedWindow()->get("/usr/local/include/Vortex/imgs/vortex.png")->GetImGuiTextureID(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL), "Add",ImVec2(0,0),ImVec2(0,0), ImVec2(1,1) ,-1, ImVec4(0,0,0,0), ImVec4(1,1,1,1)))
+                                                             if (ImGui::ImageButtonWithText(Application::Get().GetCurrentRenderedWindow()->get_texture("/usr/local/include/Vortex/imgs/vortex.png"), "Add",ImVec2(0,0),ImVec2(0,0), ImVec2(1,1) ,-1, ImVec4(0,0,0,0), ImVec4(1,1,1,1)))
                                                              {
                                                                  // FIX VortexMaker::PublishPool(pool_add_path);
                                                                  pool_add_mode = false;
                                                              }
                                                              ImGui::SameLine();
-                                                             if (ImGui::UIKit_ImageButtonWithText(Application::Get().GetCurrentRenderedWindow()->get("/usr/local/include/Vortex/imgs/vortex.png")->GetImGuiTextureID(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL), "Cancel",ImVec2(0,0),ImVec2(0,0), ImVec2(1,1) ,-1, ImVec4(0,0,0,0), ImVec4(1,1,1,1)))
+                                                             if (ImGui::ImageButtonWithText(Application::Get().GetCurrentRenderedWindow()->get_texture("/usr/local/include/Vortex/imgs/vortex.png"), "Cancel",ImVec2(0,0),ImVec2(0,0), ImVec2(1,1) ,-1, ImVec4(0,0,0,0), ImVec4(1,1,1,1)))
                                                              {
                                                                  pool_add_mode = false;
-                                                             }*/
+                                                             }
                                                              
                                                          }
                                                          ImGui::PopStyleVar();
                                                          ImGui::PopStyleColor();
                                                                         
                                                                       }, size1 - 35.0f);
-
-
-
-                                                     /*ImGui::GetFont()->Scale *= 0.85;
-                                                     ImGui::PushFont(ImGui::GetFont());
-                                                     if (CollapsingHeaderWithIcon("Favorites", Application::Get().GetCurrentRenderedWindow()->get("/usr/local/include/Vortex/imgs/vortex.png")->GetImGuiTextureID(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL)))
-                                                     {
-                                                     }
-
-                                                     if (CollapsingHeaderWithIcon("Main", Application::Get().GetCurrentRenderedWindow()->get("/usr/local/include/Vortex/imgs/vortex.png")->GetImGuiTextureID(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL)))
-                                                     {
-                                                         //VXINFO("ér", m_BaseDirectory);
-                                                         instance->DrawHierarchy(instance->m_BaseDirectory, true, "Main");
-                                                     }
-
-                                                     if (CollapsingHeaderWithIcon("Pools & Collections", Application::Get().GetCurrentRenderedWindow()->get("/usr/local/include/Vortex/imgs/vortex.png")->GetImGuiTextureID(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL)))
-                                                     {
-                                                         ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(12.0f, 2.0f));
-
-                                                         ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0.4f, 0.4f, 0.4f, 0.7f));
-                                                         if (!pool_add_mode)
-                                                         {
-                                                    
-                                                            /*FIX if (ImGui::ImageButtonWithText(Application::Get().GetCurrentRenderedWindow()->get("/usr/local/include/Vortex/imgs/vortex.png")->GetImGuiTextureID(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL), size1 - 40.0f, "Add pool", ImVec2(0,0),ImVec2(0,0), ImVec2(1,1) ,-1, ImVec4(0,0,0,0), ImVec4(1,1,1,1)))
-                                                             {
-                                                                 pool_add_mode = true;
-                                                             }*
-                                                         }
-                                                         else
-                                                         {
-                                                             ImGui::Text("Please enter a path");
-                                                             ImGui::SetNextItemWidth(-FLT_MIN);
-                                                             ImGui::InputText("###AddPool", pool_add_path, sizeof(pool_add_path));
-                                                            /*FIX
-                                                             if (ImGui::UIKit_ImageButtonWithText(Application::Get().GetCurrentRenderedWindow()->get("/usr/local/include/Vortex/imgs/vortex.png")->GetImGuiTextureID(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL), "Add",ImVec2(0,0),ImVec2(0,0), ImVec2(1,1) ,-1, ImVec4(0,0,0,0), ImVec4(1,1,1,1)))
-                                                             {
-                                                                 // FIX VortexMaker::PublishPool(pool_add_path);
-                                                                 pool_add_mode = false;
-                                                             }
-                                                             ImGui::SameLine();
-                                                             if (ImGui::UIKit_ImageButtonWithText(Application::Get().GetCurrentRenderedWindow()->get("/usr/local/include/Vortex/imgs/vortex.png")->GetImGuiTextureID(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL), "Cancel",ImVec2(0,0),ImVec2(0,0), ImVec2(1,1) ,-1, ImVec4(0,0,0,0), ImVec4(1,1,1,1)))
-                                                             {
-                                                                 pool_add_mode = false;
-                                                             }*
-                                                             
-                                                         }
-                                                         ImGui::PopStyleVar();
-                                                         ImGui::PopStyleColor();
-                                                     }
-                                                     ImGui::GetFont()->Scale = oldsize;
-                                                     ImGui::PopFont();*/
 
                                                      for (auto custom_dir : instance->m_Pools)
                                                      {
@@ -1345,7 +1280,7 @@ ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(12.0f, 2.0f));
 
                                                                  current_editing_folder_is_favorite = instance->IsPathFavorite(directoryEntry.path().string());
 
-                                                                 if (ImGui::BeginMenu("Change color"))
+                                                                  if (ImGui::BeginMenu("Change color"))
                                                                  {
                                                                      if (!EditingColor)
                                                                      {
@@ -1379,7 +1314,7 @@ ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(12.0f, 2.0f));
                                                                      EditingColor = false;
                                                                  }
 
-                                                                 if (ImGui::MenuItem("Mark as favorite", "", current_editing_folder_is_favorite))
+                                                                if (ImGui::MenuItem("Mark as favorite", "", current_editing_folder_is_favorite))
                                                                  {
                                                                      current_editing_folder = {directoryEntry.path().string(), current_editing_folder.second};
 
@@ -1425,7 +1360,7 @@ ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(12.0f, 2.0f));
                                                              std::string folderSizeString = formatFileSize(folderSize);
                                                              ImGui::PushID(filenameString.c_str());
 
-                                                             if (instance->MyButton(filenameString, path, itemEntry.first->m_Description, folderSizeString, selected, File_PICTURE_Logo, IM_COL32(56, 56, 56, 150), IM_COL32(50, 50, 50, 255), IM_COL32(itemEntry.first->m_LineColor.x, itemEntry.first->m_LineColor.y, itemEntry.first->m_LineColor.z, itemEntry.first->m_LineColor.w)))
+                                                             if (instance->MyButton(filenameString, path, itemEntry.first->m_Description, folderSizeString, selected, Application::CookPath("ressources/imgs/icons/files/icon_picture_file.png"), IM_COL32(56, 56, 56, 150), IM_COL32(50, 50, 50, 255), IM_COL32(itemEntry.first->m_LineColor.x, itemEntry.first->m_LineColor.y, itemEntry.first->m_LineColor.z, itemEntry.first->m_LineColor.w)))
                                                              {
                                                                  if (ImGui::IsMouseDoubleClicked(0))
                                                                  {
@@ -1473,7 +1408,7 @@ ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(12.0f, 2.0f));
                                                              {
                                                              case FileTypes::File_PICTURE:
                                                              {
-                                                                 if (instance->MyButton(filenameString, path, "Picture file", fileSizeString, selected, File_PICTURE_Logo, IM_COL32(56, 56, 56, 150), IM_COL32(50, 50, 50, 255), IM_COL32(255, 100, 150, 255)))
+                                                                 if (instance->MyButton(filenameString, path, "Picture file", fileSizeString, selected, Application::CookPath("ressources/imgs/icons/files/icon_picture_file.png"), IM_COL32(56, 56, 56, 150), IM_COL32(50, 50, 50, 255), IM_COL32(255, 100, 150, 255)))
                                                                  {
                                                                      if (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) || ImGui::IsKeyDown(ImGuiKey_RightCtrl))
                                                                      {
@@ -1489,7 +1424,7 @@ ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(12.0f, 2.0f));
                                                              }
                                                              case FileTypes::File_GIT:
                                                              {
-                                                                 if (instance->MyButton(filenameString, path, "Git File", fileSizeString, selected, File_GIT_Logo, IM_COL32(56, 56, 56, 150), IM_COL32(50, 50, 50, 255), IM_COL32(100, 100, 255, 255)))
+                                                                 if (instance->MyButton(filenameString, path, "Git File", fileSizeString, selected, Application::CookPath("ressources/imgs/icons/files/icon_git_file.png"), IM_COL32(56, 56, 56, 150), IM_COL32(50, 50, 50, 255), IM_COL32(100, 100, 255, 255)))
                                                                  {
                                                                      if (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) || ImGui::IsKeyDown(ImGuiKey_RightCtrl))
                                                                      {
@@ -1505,7 +1440,7 @@ ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(12.0f, 2.0f));
                                                              }
                                                              case FileTypes::File_H:
                                                              {
-                                                                 if (instance->MyButton(filenameString, path, "C Header File", fileSizeString, selected, File_C_H_Logo, IM_COL32(56, 56, 56, 150), IM_COL32(50, 50, 50, 255), IM_COL32(220, 100, 220, 255)))
+                                                                 if (instance->MyButton(filenameString, path, "C Header File", fileSizeString, selected, Application::CookPath("ressources/imgs/icons/files/icon_c_h_file.png"), IM_COL32(56, 56, 56, 150), IM_COL32(50, 50, 50, 255), IM_COL32(220, 100, 220, 255)))
                                                                  {
                                                                      if (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) || ImGui::IsKeyDown(ImGuiKey_RightCtrl))
                                                                      {
@@ -1521,7 +1456,7 @@ ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(12.0f, 2.0f));
                                                              }
                                                              case FileTypes::File_C:
                                                              {
-                                                                 if (instance->MyButton(filenameString, path, "C Source File", fileSizeString, selected, File_C_Logo, IM_COL32(56, 56, 56, 150), IM_COL32(50, 50, 50, 255), IM_COL32(100, 100, 255, 255)))
+                                                                 if (instance->MyButton(filenameString, path, "C Source File", fileSizeString, selected, Application::CookPath("ressources/imgs/icons/files/icon_c_file.png"), IM_COL32(56, 56, 56, 150), IM_COL32(50, 50, 50, 255), IM_COL32(100, 100, 255, 255)))
                                                                  {
                                                                      if (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) || ImGui::IsKeyDown(ImGuiKey_RightCtrl))
                                                                      {
@@ -1537,7 +1472,7 @@ ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(12.0f, 2.0f));
                                                              }
                                                              case FileTypes::File_HPP:
                                                              {
-                                                                 if (instance->MyButton(filenameString, path, "C++ Header File", fileSizeString, selected, File_CPP_H_Logo, IM_COL32(56, 56, 56, 150), IM_COL32(50, 50, 50, 255), IM_COL32(100, 100, 255, 255)))
+                                                                 if (instance->MyButton(filenameString, path, "C++ Header File", fileSizeString, selected, Application::CookPath("ressources/imgs/icons/files/icon_cpp_h_file.png"), IM_COL32(56, 56, 56, 150), IM_COL32(50, 50, 50, 255), IM_COL32(100, 100, 255, 255)))
                                                                  {
                                                                      if (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) || ImGui::IsKeyDown(ImGuiKey_RightCtrl))
                                                                      {
@@ -1553,7 +1488,7 @@ ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(12.0f, 2.0f));
                                                              }
                                                              case FileTypes::File_CPP:
                                                              {
-                                                                 if (instance->MyButton(filenameString, path, "C++ Source File", fileSizeString, selected, File_CPP_Logo, IM_COL32(56, 56, 56, 150), IM_COL32(50, 50, 50, 255), IM_COL32(100, 100, 255, 255)))
+                                                                 if (instance->MyButton(filenameString, path, "C++ Source File", fileSizeString, selected, Application::CookPath("ressources/imgs/icons/files/icon_cpp_file.png"), IM_COL32(56, 56, 56, 150), IM_COL32(50, 50, 50, 255), IM_COL32(100, 100, 255, 255)))
                                                                  {
                                                                      if (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) || ImGui::IsKeyDown(ImGuiKey_RightCtrl))
                                                                      {
@@ -1569,7 +1504,7 @@ ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(12.0f, 2.0f));
                                                              }
                                                              case FileTypes::File_INI:
                                                              {
-                                                                 if (instance->MyButton(filenameString, path, "Init File", fileSizeString, selected, File_CPP_Logo, IM_COL32(56, 56, 56, 150), IM_COL32(50, 50, 50, 255), IM_COL32(150, 150, 150, 255)))
+                                                                 if (instance->MyButton(filenameString, path, "Init File", fileSizeString, selected, Application::CookPath("ressources/imgs/icons/files/icon_ini_file.png"), IM_COL32(56, 56, 56, 150), IM_COL32(50, 50, 50, 255), IM_COL32(150, 150, 150, 255)))
                                                                  {
                                                                      if (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) || ImGui::IsKeyDown(ImGuiKey_RightCtrl))
                                                                      {
@@ -1585,7 +1520,7 @@ ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(12.0f, 2.0f));
                                                              }
                                                              default:
                                                              {
-                                                                 if (instance->MyButton(filenameString, path, "File", fileSizeString, selected, File_UNKNOW_Logo, IM_COL32(56, 56, 56, 150), IM_COL32(50, 50, 50, 255), IM_COL32(150, 150, 150, 255)))
+                                                                 if (instance->MyButton(filenameString, path, "File", fileSizeString, selected, Application::CookPath("ressources/imgs/icons/files/icon_unknow_file.png"), IM_COL32(56, 56, 56, 150), IM_COL32(50, 50, 50, 255), IM_COL32(150, 150, 150, 255)))
                                                                  {
                                                                      if (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) || ImGui::IsKeyDown(ImGuiKey_RightCtrl))
                                                                      {
@@ -1963,7 +1898,7 @@ ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(12.0f, 2.0f));
 
                                                                          if (column == 0)
                                                                          {
-                                                                             ImGui::Image(Application::GetCurrentRenderedWindow()->get_texture(File_PICTURE_Logo), ImVec2(15, 15));
+                                                                             ImGui::Image(Application::GetCurrentRenderedWindow()->get_texture(Application::CookPath("ressources/imgs/icons/files/icon_picture_file.png")), ImVec2(15, 15));
                                                                          }
                                                                          else if (column == 1)
                                                                          {

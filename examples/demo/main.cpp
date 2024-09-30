@@ -135,19 +135,24 @@ UIKit::Application *UIKit::CreateApplication(int argc, char **argv)
   /*std::shared_ptr<NodeEditorSimple> appNodeEditor = std::make_shared<UIKit::NodeEditorSimple>("Nodal editor");
   appNodeEditor->RefreshRender(appNodeEditor);
 
+  std::shared_ptr<NodeEditorSimple> appNodeEditor = std::make_shared<UIKit::NodeEditorSimple>("Nodal editor");
+  appNodeEditor->RefreshRender(appNodeEditor);
 
   std::shared_ptr<ContentOutlinerSimple> appContentOutliner = std::make_shared<UIKit::ContentOutlinerSimple>("Content Outliner");
-  appContentOutliner->RefreshRender(appContentOutliner);*/
+  appContentOutliner->RefreshRender(appContentOutliner);
 
-  /*std::shared_ptr<DemoAppWindow> appDemo = std::make_shared<UIKit::DemoAppWindow>("Demo");
-  appDemo->RefreshRender(appDemo);*/
-  
   std::shared_ptr<TextEditorSimple> appTextEditor = std::make_shared<UIKit::TextEditorSimple>("Text editor");
   appTextEditor->RefreshRender(appTextEditor);
 
   std::shared_ptr<ContentBrowserAppWindow> appContentBrowser = std::make_shared<UIKit::ContentBrowserAppWindow>("Content Browser", "/home/diego");
   appContentBrowser->RefreshRender(appContentBrowser);
 
+  /*std::shared_ptr<DemoAppWindow> appDemo = std::make_shared<UIKit::DemoAppWindow>("Demo");
+  appDemo->RefreshRender(appDemo);*/
+  
+  std::shared_ptr<DemoAppWindow> appContentBrowser = std::make_shared<UIKit::DemoAppWindow>("Content Browser");
+  appContentBrowser->RefreshRender(appContentBrowser);
+  
   // List
 
   // Multi childs
