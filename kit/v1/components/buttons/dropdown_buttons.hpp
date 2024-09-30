@@ -35,7 +35,7 @@ namespace UIKit
 
         bool Render(const std::string &duplication_name, const ImVec2 &size = ImVec2(0, 0))
         {
-            static ImTextureID texture = Application::Get().GetCurrentRenderedWindow()->get(m_DropdownLogo)->GetImGuiTextureID(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+         ImTextureID texture = Application::Get().GetCurrentRenderedWindow()->get_texture(m_DropdownLogo);
 
             ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(6, 6));
 

@@ -7,6 +7,7 @@
 // UIKIT Components
 #include "../../../../components/buttons/custom_buttons.hpp"
 #include "../../../../components/buttons/image_buttons.hpp"
+#include "../../../../components/buttons/image_text_buttons.hpp"
 #include "../../../../components/buttons/text_buttons.hpp"
 #include "../../../../components/titles/h1.hpp"
 #include "../../../../components/titles/h2.hpp"
@@ -17,6 +18,7 @@
 #include "../../../../components/texts/simple_text.hpp"
 #include "../../../../components/combos/simple_combo.hpp"
 #include "../../../../components/headers/simple_collapsing.hpp"
+#include "../../../../components/headers/custom_collapsing.hpp"
 
 #include <stack>
 #include <algorithm>
@@ -199,6 +201,15 @@ public:
         std::function<void(const std::string&)> m_DeletePathCallback;
         std::function<void(const std::vector<std::string>&)> m_CopyPathsCallback;
         std::function<void(const std::vector<std::string>&)> m_PastePathsCallback;
+
+        std::shared_ptr<ImageTextButtonSimple> cp_SaveButton;     
+        std::shared_ptr<ImageTextButtonSimple> cp_ImportButton;     
+        std::shared_ptr<ImageTextButtonSimple> cp_AddButton;  
+
+        std::shared_ptr<ImageButtonSimple> cp_DirectoryUndo;    
+        std::shared_ptr<ImageButtonSimple> cp_DirectoryRedo;      
+
+        
     };
 }
 

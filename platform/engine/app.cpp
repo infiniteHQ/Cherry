@@ -1039,7 +1039,6 @@ namespace UIKit
         m_Running = true;
         while (m_Running)
         {
-            std::cout << m_RootPath << std::endl;
             c_ValidDropZoneFounded = false;
             if (s_Instance->m_Specification.WindowSaves)
             {

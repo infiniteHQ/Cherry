@@ -382,24 +382,51 @@ namespace UIKit
         m_AppWindow->SetIcon("/usr/local/include/Vortex/imgs/vortex.png");
         std::shared_ptr<UIKit::AppWindow> win = m_AppWindow;
 
+        cp_SaveButton = Application::Get().CreateComponent<ImageTextButtonSimple>("save_button", "Save all", UIKit::Application::CookPath("ressources/imgs/icons/misc/icon_save.png"));
+        cp_SaveButton->SetScale(0.85f);
+        cp_SaveButton->SetLogoSize(15, 15);
+        cp_SaveButton->SetBackgroundColorIdle("#00000000");
+        cp_SaveButton->SetBorderColorIdle("#00000000");
+
+        cp_ImportButton = Application::Get().CreateComponent<ImageTextButtonSimple>("import_button", "Import", UIKit::Application::CookPath("ressources/imgs/icons/misc/icon_import.png"));
+        cp_ImportButton->SetScale(0.85f);
+        cp_ImportButton->SetLogoSize(15, 15);
+        cp_ImportButton->SetBackgroundColorIdle("#00000000");
+        cp_ImportButton->SetBorderColorIdle("#00000000");
+
+        cp_AddButton = Application::Get().CreateComponent<ImageTextButtonSimple>("add_button", "Add", UIKit::Application::CookPath("ressources/imgs/icons/misc/icon_add.png"));
+        cp_AddButton->SetScale(0.85f);
+        cp_AddButton->SetInternalMarginX(10.0f);
+        cp_AddButton->SetLogoSize(15, 15);
+
+        cp_DirectoryUndo = Application::Get().CreateComponent<ImageButtonSimple>("directory_undo", UIKit::Application::CookPath("ressources/imgs/icons/misc/icon_arrow_l_disabled.png"));
+        cp_DirectoryRedo = Application::Get().CreateComponent<ImageButtonSimple>("directory_redo", UIKit::Application::CookPath("ressources/imgs/icons/misc/icon_arrow_r_disabled.png"));
+
         m_AppWindow->SetLeftMenubarCallback([this]()
                                             {
             ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0.4f, 0.4f, 0.4f, 0.7f));
-		if (ImGui::Button("Add"))
-		{
-		}
+            
+        if(cp_AddButton->Render())
+        {
+
+        }
 		ImGui::PopStyleColor();
 
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(62, 62, 62, 0));
 		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(62, 62, 62, 0));
 		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(62, 62, 62, 0));
 		ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(62, 62, 62, 0));
-		if (ImGui::Button("Save all"))
-		{
-		}
-		if (ImGui::Button("Import"))
-		{
-		}
+        
+        if(cp_SaveButton->Render())
+        {
+
+        }
+
+        if(cp_ImportButton->Render())
+        {
+
+        }
+        
 		ImGui::PopStyleColor(4);
 
 		ImGui::Separator();
@@ -410,14 +437,14 @@ namespace UIKit
 
 		if (m_BackHistory.empty())
 		{
-			if (ImGui::Button("/<"))
+			if (cp_DirectoryUndo->Render("normal"))
 			{
 				//
 			}
 		}
 		else
 		{
-			if (ImGui::Button("<"))
+			if (cp_DirectoryUndo->Render("normal"))
 			{
 				GoBack();
 			}
@@ -430,14 +457,14 @@ namespace UIKit
 
 		if (m_ForwardHistory.empty())
 		{
-			if (ImGui::Button(">/"))
+			if (cp_DirectoryRedo->Render("normal"))
 			{
 				//
 			}
 		}
 		else
 		{
-			if (ImGui::Button(">"))
+			if (cp_DirectoryRedo->Render("normal"))
 			{
 				GoForward();
 			}
@@ -927,7 +954,6 @@ namespace UIKit
     {
         m_AppWindow->SetRenderCallback([instance]()
                                        {
-                                                 static ImTextureID projectIcon = Application::Get().GetCurrentRenderedWindow()->get("/usr/local/include/Vortex/imgs/vortex.png")->GetImGuiTextureID(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 
                                                  static float size1 = 200.0f;
                                                  static float size2 = 200.0f;
@@ -945,11 +971,6 @@ namespace UIKit
 
                                                  float min_size = 50.0f;
 
-                                                 ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
-                                                 ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, 0.0f);
-                                                 ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, 0.0f);
-                                                 ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 0.0f);
-
                                                  float oldsize = ImGui::GetFont()->Scale;
 
                                                  if (instance->m_ShowFolderPannel)
@@ -957,25 +978,29 @@ namespace UIKit
 
                                                      ImGui::BeginChild("Child1", ImVec2(size1, 0), true);
 
-                                                     ImGui::GetFont()->Scale *= 0.85;
-                                                     ImGui::PushFont(ImGui::GetFont());
 
-                                                     if (CollapsingHeaderWithIcon("Favorites", Application::Get().GetCurrentRenderedWindow()->get("/usr/local/include/Vortex/imgs/vortex.png")->GetImGuiTextureID(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL)))
-                                                     {
+
+                                                    CustomCollapsingHeaderLogo("Favorite", UIKit::Application::CookPath("ressources/imgs/icons/misc/icon_star.png"), [instance]()
+                                                                      { 
+
                                                         for (auto custom_dir : instance->m_FavoriteFolders)
                                                          {
                                                             instance->DrawHierarchy(custom_dir, true);
                                                          }
-                                                     }
-                                                     if (CollapsingHeaderWithIcon("Main", Application::Get().GetCurrentRenderedWindow()->get("/usr/local/include/Vortex/imgs/vortex.png")->GetImGuiTextureID(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL)))
-                                                     {
-                                                         //VXINFO("ér", m_BaseDirectory);
-                                                         instance->DrawHierarchy(instance->m_BaseDirectory, true, "Main");
-                                                     }
+                                                                        
+                                                                      }, size1 - 35.0f);
 
-                                                     if (CollapsingHeaderWithIcon("Pools & Collections", Application::Get().GetCurrentRenderedWindow()->get("/usr/local/include/Vortex/imgs/vortex.png")->GetImGuiTextureID(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL)))
-                                                     {
-                                                         ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(12.0f, 2.0f));
+                                                    CustomCollapsingHeaderLogo("Main", UIKit::Application::CookPath("ressources/imgs/icons/misc/icon_home.png"), [instance]()
+                                                                      { 
+
+                                                         instance->DrawHierarchy(instance->m_BaseDirectory, true, "Main");
+                                                                        
+                                                                      }, size1 - 35.0f);
+
+
+                                                    CustomCollapsingHeaderLogo("Pools & Collections", UIKit::Application::CookPath("ressources/imgs/icons/misc/icon_collection.png"), [instance]()
+                                                                      { 
+ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(12.0f, 2.0f));
 
                                                          ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0.4f, 0.4f, 0.4f, 0.7f));
                                                          if (!pool_add_mode)
@@ -1006,9 +1031,59 @@ namespace UIKit
                                                          }
                                                          ImGui::PopStyleVar();
                                                          ImGui::PopStyleColor();
+                                                                        
+                                                                      }, size1 - 35.0f);
+
+
+
+                                                     /*ImGui::GetFont()->Scale *= 0.85;
+                                                     ImGui::PushFont(ImGui::GetFont());
+                                                     if (CollapsingHeaderWithIcon("Favorites", Application::Get().GetCurrentRenderedWindow()->get("/usr/local/include/Vortex/imgs/vortex.png")->GetImGuiTextureID(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL)))
+                                                     {
+                                                     }
+
+                                                     if (CollapsingHeaderWithIcon("Main", Application::Get().GetCurrentRenderedWindow()->get("/usr/local/include/Vortex/imgs/vortex.png")->GetImGuiTextureID(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL)))
+                                                     {
+                                                         //VXINFO("ér", m_BaseDirectory);
+                                                         instance->DrawHierarchy(instance->m_BaseDirectory, true, "Main");
+                                                     }
+
+                                                     if (CollapsingHeaderWithIcon("Pools & Collections", Application::Get().GetCurrentRenderedWindow()->get("/usr/local/include/Vortex/imgs/vortex.png")->GetImGuiTextureID(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL)))
+                                                     {
+                                                         ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(12.0f, 2.0f));
+
+                                                         ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0.4f, 0.4f, 0.4f, 0.7f));
+                                                         if (!pool_add_mode)
+                                                         {
+                                                    
+                                                            /*FIX if (ImGui::ImageButtonWithText(Application::Get().GetCurrentRenderedWindow()->get("/usr/local/include/Vortex/imgs/vortex.png")->GetImGuiTextureID(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL), size1 - 40.0f, "Add pool", ImVec2(0,0),ImVec2(0,0), ImVec2(1,1) ,-1, ImVec4(0,0,0,0), ImVec4(1,1,1,1)))
+                                                             {
+                                                                 pool_add_mode = true;
+                                                             }*
+                                                         }
+                                                         else
+                                                         {
+                                                             ImGui::Text("Please enter a path");
+                                                             ImGui::SetNextItemWidth(-FLT_MIN);
+                                                             ImGui::InputText("###AddPool", pool_add_path, sizeof(pool_add_path));
+                                                            /*FIX
+                                                             if (ImGui::UIKit_ImageButtonWithText(Application::Get().GetCurrentRenderedWindow()->get("/usr/local/include/Vortex/imgs/vortex.png")->GetImGuiTextureID(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL), "Add",ImVec2(0,0),ImVec2(0,0), ImVec2(1,1) ,-1, ImVec4(0,0,0,0), ImVec4(1,1,1,1)))
+                                                             {
+                                                                 // FIX VortexMaker::PublishPool(pool_add_path);
+                                                                 pool_add_mode = false;
+                                                             }
+                                                             ImGui::SameLine();
+                                                             if (ImGui::UIKit_ImageButtonWithText(Application::Get().GetCurrentRenderedWindow()->get("/usr/local/include/Vortex/imgs/vortex.png")->GetImGuiTextureID(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL), "Cancel",ImVec2(0,0),ImVec2(0,0), ImVec2(1,1) ,-1, ImVec4(0,0,0,0), ImVec4(1,1,1,1)))
+                                                             {
+                                                                 pool_add_mode = false;
+                                                             }*
+                                                             
+                                                         }
+                                                         ImGui::PopStyleVar();
+                                                         ImGui::PopStyleColor();
                                                      }
                                                      ImGui::GetFont()->Scale = oldsize;
-                                                     ImGui::PopFont();
+                                                     ImGui::PopFont();*/
 
                                                      for (auto custom_dir : instance->m_Pools)
                                                      {
@@ -1020,8 +1095,6 @@ namespace UIKit
                                                      }
 
                                                      ImGui::EndChild();
-                                                     ImGui::PopStyleVar(4);
-
                                                      ImGui::SameLine(0.0f, 0.0f);
 
                                                      if (Splitter(true, 2.0f, &size1, &size2, &size3, min_size, min_size))
@@ -1038,9 +1111,9 @@ namespace UIKit
                                                      ImGui::GetFont()->Scale *= 0.85;
                                                      ImGui::PushFont(ImGui::GetFont());
 
-                                                     if (CollapsingHeaderWithIcon("Pools & Collections", projectIcon))
+                                                     /*if (CollapsingHeaderWithIcon("Pools & Collections", projectIcon))
                                                      {
-                                                     }
+                                                     }*/
                                                      ImGui::GetFont()->Scale = oldsize;
                                                      ImGui::PopFont();
                                                      ImGui::EndChild();
@@ -2060,9 +2133,9 @@ namespace UIKit
                                                      ImGui::GetFont()->Scale *= 0.85;
                                                      ImGui::PushFont(ImGui::GetFont());
 
-                                                     if (CollapsingHeaderWithIcon("Pools & Collections", projectIcon))
+                                                     /*if (CollapsingHeaderWithIcon("Pools & Collections", projectIcon))
                                                      {
-                                                     }
+                                                     }*/
                                                      ImGui::GetFont()->Scale = oldsize;
                                                      ImGui::PopFont();
                                                      ImGui::EndChild();

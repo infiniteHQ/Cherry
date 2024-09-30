@@ -37,9 +37,6 @@ namespace UIKit
         float padding = style.ItemInnerSpacing.x;
 
         ImGui::BeginGroup();
-
-        std::cout << "Estimed sdff : " << std::endl;
-
         bool pressed = ImGui::ImageSizeButtonWithText(my_texture, width, label, ImVec2(-FLT_MIN, 0.0f), ImVec2(0, 0), ImVec2(1, 1), -1, ImVec4(0, 0, 0, 0), ImVec4(1, 1, 1, 1));
 
         ImVec2 button_size = ImGui::GetItemRectSize();
@@ -91,19 +88,20 @@ namespace UIKit
     inline bool CustomCollapsingHeaderLogo(
         const std::string &label,
         const std::string &logo_path,
-        const std::function<void()> &content)
+        const std::function<void()> &content,
+        const float& sizex = 200.0f)
     {
         bool openned = false;
 
-        static ImTextureID texture = Application::Get().GetCurrentRenderedWindow()->get(logo_path)->GetImGuiTextureID(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+         ImTextureID texture = Application::Get().GetCurrentRenderedWindow()->get_texture(logo_path);
 
-        ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(6, 6));
+        ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(6, 4));
         float oldsize = ImGui::GetFont()->Scale;
 
         ImGui::GetFont()->Scale *= 0.85;
         ImGui::PushFont(ImGui::GetFont());
 
-        if (MyCollapsingHeader(label.c_str(), texture, 500.0f))
+        if (MyCollapsingHeader(label.c_str(), texture, sizex))
         {
             openned = true;
             if (content)
@@ -127,7 +125,7 @@ namespace UIKit
     {
         bool openned = false;
 
-        static ImTextureID texture = Application::Get().GetCurrentRenderedWindow()->get(logo_path)->GetImGuiTextureID(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+        ImTextureID texture = Application::Get().GetCurrentRenderedWindow()->get_texture(logo_path);
 
         ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(6, 6));
         float oldsize = ImGui::GetFont()->Scale;

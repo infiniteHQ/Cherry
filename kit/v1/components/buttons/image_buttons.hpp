@@ -11,8 +11,7 @@ namespace UIKit
     public:
         ImageButtonSimple(
             const std::string &id,
-            const std::string &label = "Button",
-            const std::string &imgpath = "/usr/local/include/Vortex/imgs/vortex.png",
+            const std::string &imgpath = ".png",
             const std::string &hex_bg_idle = "#242424FF",
             const std::string &hex_border_idle = "#454545B2",
             const std::string &hex_bg_hovered = "#343434FF",
@@ -20,7 +19,6 @@ namespace UIKit
             const std::string &hex_bg_clicked = "#444444FF",
             const std::string &hex_border_clicked = "#454545B2")
             : Component(id),
-              m_Label(label),
               m_ImagePath(imgpath),
               m_LastClickTime("never"),
               m_HexBgIdle(hex_bg_idle),
@@ -36,7 +34,7 @@ namespace UIKit
 
         bool Render(const std::string &duplication_name, const ImVec2 &size = ImVec2(0, 0))
         {
-            static ImTextureID texture = Application::Get().GetCurrentRenderedWindow()->get(m_ImagePath)->GetImGuiTextureID(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+         ImTextureID texture = Application::Get().GetCurrentRenderedWindow()->get_texture(m_ImagePath);
 
             ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(6, 6));
 
@@ -45,7 +43,7 @@ namespace UIKit
             ImGui::PushStyleColor(ImGuiCol_ButtonHovered, HexToRGBA(m_HexBgHovered));
             ImGui::PushStyleColor(ImGuiCol_ButtonActive, HexToRGBA(m_HexBgClicked));
 
-            std::string Label = m_Label + "####" + duplication_name;
+            std::string Label =  "####" + duplication_name;
 
             if (ImGui::ImageButtonWithText(texture, Label.c_str(), size))
             {
@@ -77,7 +75,6 @@ namespace UIKit
         }
 
     private:
-        std::string m_Label;
         std::string m_ImagePath;
         std::string m_LastClickTime;
         std::string m_HexBgIdle;
@@ -130,7 +127,7 @@ namespace UIKit
 
         bool Render(const std::string &duplication_name, const ImVec2 &size = ImVec2(0, 0))
         {
-            static ImTextureID texture = Application::Get().GetCurrentRenderedWindow()->get(m_ImagePath)->GetImGuiTextureID(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+            ImTextureID texture = Application::Get().GetCurrentRenderedWindow()->get_texture(m_ImagePath);
 
             ImVec2 text_size = ImGui::CalcTextSize(m_Label.c_str());
 

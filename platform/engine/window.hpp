@@ -181,6 +181,8 @@ namespace UIKit
         uint32_t s_CurrentFrameIndex = 0;
         std::vector<VkCommandBuffer> m_CommandBuffers;
         ImGuiWindow *m_ImGuiWindow;
+        std::unordered_map<std::string, ImTextureID> m_TextureCache;
+
 
         // List of all images (absolute path / image ref)
         std::vector<std::pair<std::string, std::shared_ptr<UIKit::Image>>> m_ImageList;

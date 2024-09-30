@@ -814,133 +814,137 @@ namespace UIKit
             Application::FramePresent(wd, this);
     }
 
-    std::shared_ptr<UIKit::Image> Window::add(const std::string &path)
+   std::shared_ptr<UIKit::Image> Window::add(const std::string &path)
+{
+    if (path.empty() || path == "none")
     {
-        if (path.empty() || path == "none")
-        {
-            return nullptr;
-        }
-
-        uint32_t w = 0, h = 0;
-
-        std::vector<uint8_t> hexTable = Application::LoadPngHexa(path);
-
-        const uint8_t *hexData;
-        
-        if(hexTable.empty())
-        {
-            hexData = g_NotFoundIcon;        
-        }
-        else
-        {
-            hexData = hexTable.data();
-        }
-
-        if (std::find(c_ImageList.begin(), c_ImageList.end(), path) != c_ImageList.end())
-        {
-            c_ImageList.push_back(path);
-        }
-
-        if (!hexTable.empty())
-        {
-            void *data = UIKit::Image::Decode(hexData, hexTable.size(), w, h);
-            std::shared_ptr<UIKit::Image> _icon = std::make_shared<UIKit::Image>(w, h, UIKit::ImageFormat::RGBA, this->GetName(), data);
-
-            m_ImageList.push_back(std::make_pair(path, _icon));
-            IM_FREE(data);
-
-            return _icon;
-        }
-        else
-        {
-            void *data = UIKit::Image::Decode(hexData, sizeof(g_NotFoundIcon), w, h);
-            std::shared_ptr<UIKit::Image> _icon = std::make_shared<UIKit::Image>(w, h, UIKit::ImageFormat::RGBA, this->GetName(), data);
-
-            m_ImageList.push_back(std::make_pair(path, _icon));
-            IM_FREE(data);
-
-            return _icon;
-        }
-
         return nullptr;
     }
 
-    std::shared_ptr<UIKit::Image> Window::get(const std::string &path)
+    if (std::find(c_ImageList.begin(), c_ImageList.end(), path) == c_ImageList.end())
     {
-        if (path.empty() || path == "none")
-        {
-            return nullptr;
-        }
-
-        for (auto &image : m_ImageList)
-        {
-            if (image.first == path)
-            {
-                return image.second;
-            }
-        }
-
-        return this->add(path);
+        c_ImageList.push_back(path);
     }
 
-    std::shared_ptr<UIKit::Image> Window::add(const uint8_t data[], const std::string &name)
+    uint32_t w = 0, h = 0;
+
+    std::vector<uint8_t> hexTable = Application::LoadPngHexa(path);
+    const uint8_t *hexData = hexTable.empty() ? g_NotFoundIcon : hexTable.data();
+
+    for (auto &image : m_ImageList)
     {
-        const uint8_t *hexData = data;
-        const size_t dataSize = sizeof(g_NotFoundIcon);
-
-        if (std::find(c_ImageList.begin(), c_ImageList.end(), name) != c_ImageList.end())
+        if (image.first == path)
         {
-            c_ImageList.push_back(name);
+            return image.second;
         }
-
-        uint32_t w, h;
-        ImGuiWindow *win = ImGui::GetCurrentWindow();
-        void *icondata = UIKit::Image::Decode(data, dataSize, w, h);
-
-        if (!icondata)
-        {
-            return nullptr;
-        }
-
-        std::shared_ptr<UIKit::Image> _icon = std::make_shared<UIKit::Image>(w, h, UIKit::ImageFormat::RGBA, this->GetName(), icondata);
-        m_ImageList.push_back(std::make_pair(name, _icon));
-
-        IM_FREE(icondata);
-
-        return _icon;
     }
 
-    std::shared_ptr<UIKit::Image> Window::get(const uint8_t data[], const std::string &name)
+    size_t dataSize = hexTable.empty() ? sizeof(g_NotFoundIcon) : hexTable.size();
+    void *data = UIKit::Image::Decode(hexData, dataSize, w, h);
+
+    if (!data)
     {
-
-        for (auto &image : m_ImageList)
-        {
-            if (image.first == name)
-            {
-                return image.second;
-            }
-        }
-
-        return this->add(data, name);
+        return nullptr;
     }
 
-    ImTextureID Window::get_texture(const std::string &path)
+    std::shared_ptr<UIKit::Image> _icon = std::make_shared<UIKit::Image>(w, h, UIKit::ImageFormat::RGBA, this->GetName(), data);
+    m_ImageList.push_back(std::make_pair(path, _icon));
+
+    IM_FREE(data);
+
+    return _icon;
+}
+
+
+
+std::shared_ptr<UIKit::Image> Window::get(const std::string &path)
+{
+    if (path.empty() || path == "none")
     {
-        if (path.empty() || path == "none")
-        {
-            return nullptr;
-        }
-
-        for (auto &image : m_ImageList)
-        {
-            if (image.first == path)
-            {
-                return image.second->GetImGuiTextureID();
-            }
-        }
-
-        return this->add(path)->GetImGuiTextureID();
+        return nullptr;
     }
+
+    for (auto &image : m_ImageList)
+    {
+        if (image.first == path)
+        {
+            return image.second;
+        }
+    }
+
+    return this->add(path);
+}
+
+std::shared_ptr<UIKit::Image> Window::add(const uint8_t data[], const std::string &name)
+{
+    if (std::find(c_ImageList.begin(), c_ImageList.end(), name) == c_ImageList.end())
+    {
+        c_ImageList.push_back(name);
+    }
+
+    for (auto &image : m_ImageList)
+    {
+        if (image.first == name)
+        {
+            return image.second;
+        }
+    }
+
+    uint32_t w, h;
+    const size_t dataSize = sizeof(g_NotFoundIcon);
+
+    void *icondata = UIKit::Image::Decode(data, dataSize, w, h);
+
+    if (!icondata)
+    {
+        return nullptr;
+    }
+
+    std::shared_ptr<UIKit::Image> _icon = std::make_shared<UIKit::Image>(w, h, UIKit::ImageFormat::RGBA, this->GetName(), icondata);
+    m_ImageList.push_back(std::make_pair(name, _icon));
+
+    IM_FREE(icondata);
+
+    return _icon;
+}
+
+std::shared_ptr<UIKit::Image> Window::get(const uint8_t data[], const std::string &name)
+{
+    for (auto &image : m_ImageList)
+    {
+        if (image.first == name)
+        {
+            return image.second;
+        }
+    }
+
+    return this->add(data, name);
+}
+
+
+ImTextureID Window::get_texture(const std::string &path)
+{
+    if (path.empty() || path == "none")
+    {
+        return nullptr;
+    }
+
+    auto it = m_TextureCache.find(path);
+    if (it != m_TextureCache.end())
+    {
+        return it->second;
+    }
+
+    std::shared_ptr<UIKit::Image> image = this->get(path);
+    if (image)
+    {
+        ImTextureID texture = image->GetImGuiTextureID();
+        m_TextureCache[path] = texture;
+        return texture;
+    }
+
+    return nullptr;
+}
 
     void Window::free()
     {

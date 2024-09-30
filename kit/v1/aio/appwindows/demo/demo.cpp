@@ -79,6 +79,8 @@ namespace UIKit
             }
         };
 
+        cp_GroupedButtonOne = Application::Get().CreateComponent<CustomGroupedButtons>("dbutton_12", "Custom Simple");
+
         cp_ButtonDropdownOne = Application::Get().CreateComponent<CustomDrowpdownButtonSimple>("dbutton_1", "Custom Simple");
         cp_ButtonOne = Application::Get().CreateComponent<CustomButtonSimple>("button_1", "Custom Simple");
         cp_ButtonOneColored = Application::Get().CreateComponent<CustomButtonSimple>("button_1_colored", "Custom Simple", "#2424F4FF", "#2424F4FF", "#2525F5FF", "#2525F5FF", "#2626F6FF", "#2525F5FF");
@@ -86,21 +88,19 @@ namespace UIKit
         cp_ButtonTwoColored = Application::Get().CreateComponent<CustomButtonLowProfile>("button_2_colored", "Custom Low Profile", "#2424F4FF", "#2424F4FF", "#2525F5FF", "#2525F5FF", "#2626F6FF", "#2525F5FF");
         cp_ButtonThree = Application::Get().CreateComponent<ImageTextButtonSimple>("button_3", "Custom Low Profile");
         cp_ButtonThreeColored = Application::Get().CreateComponent<ImageTextButtonSimple>("button_3_colored", "Custom Low Profile", "/usr/local/include/Vortex/imgs/vortex.png", "#2424F4FF", "#2424F4FF", "#2525F5FF", "#2525F5FF", "#2626F6FF", "#2525F5FF");
-        cp_ButtonFour = Application::Get().CreateComponent<ImageTextButtonLowProfile>("button_4", "Custom Low Profile");
-        cp_ButtonFourColored = Application::Get().CreateComponent<ImageTextButtonLowProfile>("button_4", "Custom Low Profile", "/usr/local/include/Vortex/imgs/vortex.png", "#2424F4FF", "#2424F4FF", "#2525F5FF", "#2525F5FF", "#2626F6FF", "#2525F5FF");
         cp_ComboOne = Application::Get().CreateComponent<ComboSimple>("combo_1", "SuperCombo", std::vector<std::string>{"My first item", "My second item", "My third item"}, 1);
 
         cp_ComboTwo = Application::Get().CreateComponent<ComboCustom>("combo_2", "SuperCombo2", std::vector<std::function<void()>>{[]()
                                                                                                                                    {
-                                                                                                                                       static ImTextureID texture = Application::Get().GetCurrentRenderedWindow()->get("/usr/local/include/Vortex/imgs/vortex.png")->GetImGuiTextureID(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-                                                                                                                                       ImGui::Image(texture, ImVec2(15, 15));
+
+         ImTextureID texture = Application::Get().GetCurrentRenderedWindow()->get_texture("/usr/local/include/Vortex/imgs/vortex.png");                                                                                                                                       ImGui::Image(texture, ImVec2(15, 15));
                                                                                                                                        ImGui::SameLine();
                                                                                                                                        ImGui::Text("Icon Selected");
                                                                                                                                    },
                                                                                                                                    []()
                                                                                                                                    {
-                                                                                                                                       static ImTextureID texture = Application::Get().GetCurrentRenderedWindow()->get("/usr/local/include/Vortex/imgs/vortex.png")->GetImGuiTextureID(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-                                                                                                                                       ImGui::Image(texture, ImVec2(15, 15));
+
+         ImTextureID texture = Application::Get().GetCurrentRenderedWindow()->get_texture("/usr/local/include/Vortex/imgs/vortex.png");                                                                                                                                       ImGui::Image(texture, ImVec2(15, 15));
                                                                                                                                        ImGui::SameLine();
                                                                                                                                        ImGui::Text("Second Selected");
                                                                                                                                    }},
@@ -345,44 +345,6 @@ namespace UIKit
                             ImGui::Button("Copy code");
                         }
                     }
-                    else if(row == 6)
-                    {
-                        if(column == 0)
-                        {
-                            ImGui::Text("Validation low profile button");
-                        }
-                        else if(column == 1)
-                        {
-                            ImGui::Text("This is a incredible Simpe Image button");
-                        }
-                        else if(column == 2)
-                        {
-                            cp_ButtonFour->Render("Normal");
-    }
-                        else if(column == 3)
-                        {
-                            ImGui::Button("Copy code");
-                        }
-                    }
-                    else if(row == 7)
-                    {
-                        if(column == 0)
-                        {
-                            ImGui::Text("Validation low profile button");
-                        }
-                        else if(column == 1)
-                        {
-                            ImGui::Text("This is a incredible Simpe Image button");
-                        }
-                        else if(column == 2)
-                        {
-                            cp_ButtonFourColored->Render("Normal");
-    }
-                        else if(column == 3)
-                        {
-                            ImGui::Button("Copy code");
-                        }
-                    }
                     else if(row == 8)
                     {
                         if(column == 0)
@@ -396,6 +358,25 @@ namespace UIKit
                         else if(column == 2)
                         {
                             cp_ButtonDropdownOne->Render("Dropdown");
+    }
+                        else if(column == 3)
+                        {
+                            ImGui::Button("Copy code");
+                        }
+                    }
+                    else if(row == 9)
+                    {
+                        if(column == 0)
+                        {
+                            ImGui::Text("Validation low profile button");
+                        }
+                        else if(column == 1)
+                        {
+                            ImGui::Text("This is a incredible Simpe Image button");
+                        }
+                        else if(column == 2)
+                        {
+                            cp_GroupedButtonOne->Render("Dropdown");
     }
                         else if(column == 3)
                         {
@@ -1373,7 +1354,7 @@ namespace UIKit
                                            else if (column == 2)
                                            {
                                                CustomCollapsingHeaderLogoCallback("Header2", "/usr/local/include/Vortex/imgs/vortex.png", 
-                                               [this](){ cp_ButtonFour->Render("f");},
+                                               [this](){},
                                             [](){ TitleOne("ccc"); });
                                            }
                                            else if (column == 3)
@@ -1390,11 +1371,7 @@ namespace UIKit
 
         this->AddChild("Combos", [this]()
                        {
-                        std::cout << Application::Get().GetComponentData("combo_1", "selected_index") << std::endl;
-                        std::cout << Application::Get().GetComponentData("combo_1", "selected_string") << std::endl;
-                        std::cout << Application::Get().GetComponentData("combo_1", "lastChanged") << std::endl;
-                        std::cout << "Yeah : "<< UIKIT_DATA("combo_1", "lastChanged") << std::endl;
-                        
+                    
                            ImGuiTableFlags flags2 = ImGuiTableFlags_Resizable | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Hideable | ImGuiTableFlags_Borders;
                            if (ImGui::BeginTable("table_context_menu_2", 4, flags2))
                            {
@@ -1557,7 +1534,6 @@ namespace UIKit
 
         for (const auto &child : instance->m_Childs)                                           
         {
-            std::cout << "C" << child.first << std::endl;
                                                if (child.first == instance->m_SelectedChildName)
                                                {
                                                    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f)); 

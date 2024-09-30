@@ -9,30 +9,6 @@
                 "docknodeparent": "default",
                 "dockplace": "default",
                 "id": "test_window",
-                "name": "Nodal editor",
-                "type": "instanciable,static",
-                "win": "0"
-            },
-            {
-                "data": {
-                    "simple_storage": [],
-                    "window_storage": []
-                },
-                "docknodeparent": "default",
-                "dockplace": "default",
-                "id": "test_window",
-                "name": "Content Browser",
-                "type": "instanciable,static",
-                "win": "0"
-            },
-            {
-                "data": {
-                    "simple_storage": [],
-                    "window_storage": []
-                },
-                "docknodeparent": "default",
-                "dockplace": "default",
-                "id": "test_window",
                 "name": "Text editor",
                 "type": "instanciable,static",
                 "win": "0"
@@ -45,7 +21,7 @@
                 "docknodeparent": "default",
                 "dockplace": "default",
                 "id": "test_window",
-                "name": "Content Outliner",
+                "name": "Content Browser",
                 "type": "instanciable,static",
                 "win": "0"
             }

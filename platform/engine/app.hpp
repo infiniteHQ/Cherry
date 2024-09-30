@@ -29,7 +29,6 @@
 #include "imgui/ImGuiTheme.h"
 #include "vulkan/vulkan.h"
 
-#define BINPATH(rpath) UIKit::Application::CookPath(rpath);
 
 void check_vk_result(VkResult err);
 
@@ -300,6 +299,9 @@ namespace UIKit
 
 		bool m_TitleBarHovered = false;
 	};
+
+
+#define BINPATH(rpath) UIKit::Application::CookPath(rpath);
 
 #define UIKIT_DATA(id, topic) Application::Get().GetComponentData(id, topic)
 

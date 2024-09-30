@@ -11,7 +11,7 @@ namespace UIKit
         ImageTextButtonSimple(
             const std::string &id,
             const std::string &label = "Button",
-            const std::string &imgpath = "/usr/local/include/Vortex/imgs/vortex.png",
+            const std::string &imgpath = ".png",
             const std::string &hex_bg_idle = "#242424FF",
             const std::string &hex_border_idle = "#454545B2",
             const std::string &hex_bg_hovered = "#343434FF",
@@ -33,11 +33,18 @@ namespace UIKit
             m_ID = id;
         }
 
-        bool Render(const std::string &duplication_name, const ImVec2 &size = ImVec2(0, 0))
+        bool Render(const std::string &duplication_name = "first", const ImVec2 &size = ImVec2(0, 0))
         {
-            static ImTextureID texture = Application::Get().GetCurrentRenderedWindow()->get(m_ImagePath)->GetImGuiTextureID(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+            if (m_Scale != 0.0f)
+            {
+                m_OldScale = ImGui::GetFont()->Scale;
+                ImGui::GetFont()->Scale *= m_Scale;
+                ImGui::PushFont(ImGui::GetFont());
+            }
 
-            ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(6, 6));
+         ImTextureID texture = Application::Get().GetCurrentRenderedWindow()->get_texture(m_ImagePath);
+            
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(m_InternalMarginX, m_InternalMarginY));
 
             ImGui::PushStyleColor(ImGuiCol_Border, HexToRGBA(m_HexBorderIdle));
             ImGui::PushStyleColor(ImGuiCol_Button, HexToRGBA(m_HexBgIdle));
@@ -46,7 +53,15 @@ namespace UIKit
 
             std::string Label = m_Label + "####" + duplication_name;
 
-            if (ImGui::ImageButtonWithText(texture, Label.c_str(), size))
+            ImVec2 final_size = size;
+
+            if(m_SizeX != 0 && m_SizeY != 0)
+            {
+                final_size.x = m_SizeX; 
+                final_size.y = m_SizeY;
+            }
+
+            if (ImGui::ImageButtonWithText(texture, Label.c_str(), final_size))
             {
                 m_IsPressed = true;
                 UpdateLastClickTime();
@@ -59,7 +74,65 @@ namespace UIKit
             ImGui::PopStyleColor(4);
             ImGui::PopStyleVar();
 
+            if (m_Scale != 0.0f)
+            {
+                ImGui::GetFont()->Scale = m_OldScale;
+                ImGui::PopFont();
+            }
+
             return m_IsPressed;
+        }
+
+        void SetScale(const float &new_scale)
+        {
+            m_Scale = new_scale;
+        }
+
+        void SetLogoSize(const int& size_x, const int& size_y)
+        {
+            m_SizeX = size_x;
+            m_SizeY = size_y;
+        }
+
+        void SetLabel(const std::string &new_label)
+        {
+            m_Label = new_label;
+        }
+
+        void SetImagePath(const std::string &new_path)
+        {
+            m_ImagePath = new_path;
+        }
+
+        void SetBorderColorIdle(const std::string &hex_color)
+        {
+            m_HexBorderIdle = hex_color;
+        }
+
+
+        void SetBackgroundColorIdle(const std::string &hex_color)
+        {
+            m_HexBgIdle = hex_color;
+        }
+
+        void SetBackgroundColorHovered(const std::string &hex_color)
+        {
+            m_HexBgHovered = hex_color;
+        }
+
+        void SetBackgroundColorClicked(const std::string &hex_color)
+        {
+            m_HexBgClicked = hex_color;
+        }
+
+        void SetInternalMarginX(const float& new_margin)
+        {
+            m_InternalMarginX = new_margin;
+        }
+
+        void SetInternalMarginY(const float& new_margin)
+        {
+            m_InternalMarginY = new_margin;
         }
 
         std::string GetData(const std::string &data_type) override
@@ -85,106 +158,21 @@ namespace UIKit
         std::string m_HexBorderHovered;
         std::string m_HexBgClicked;
         std::string m_HexBorderClicked;
+
         bool m_IsPressed;
 
-        void UpdateLastClickTime()
-        {
-            auto now = std::chrono::system_clock::now();
-            std::time_t now_c = std::chrono::system_clock::to_time_t(now);
-            m_LastClickTime = std::ctime(&now_c);
-            m_LastClickTime.erase(m_LastClickTime.length() - 1);
-        }
-    };
+        float m_Scale = 0.0f;
 
-    class ImageTextButtonLowProfile : public Component
-    {
-    public:
-        ImageTextButtonLowProfile(
-            const std::string &id,
-            const std::string &label = "Button",
-            const std::string &imgpath = "/usr/local/include/Vortex/imgs/vortex.png",
-            const std::string &hex_bg_idle = "#242424FF",
-            const std::string &hex_border_idle = "#454545B2",
-            const std::string &hex_bg_hovered = "#343434FF",
-            const std::string &hex_border_hovered = "#454545B2",
-            const std::string &hex_bg_clicked = "#444444FF",
-            const std::string &hex_border_clicked = "#454545B2",
-            const ImVec2 &size = ImVec2(0, 18))
-            : Component(id),
-              m_Label(label),
-              m_ImagePath(imgpath),
-              m_LastClickTime("never"),
-              m_HexBgIdle(hex_bg_idle),
-              m_HexBorderIdle(hex_border_idle),
-              m_HexBgHovered(hex_bg_hovered),
-              m_HexBorderHovered(hex_border_hovered),
-              m_HexBgClicked(hex_bg_clicked),
-              m_HexBorderClicked(hex_border_clicked),
-              m_IsPressed(false),
-              m_Size(size)
-        {
-            m_ID = id;
-        }
+        int m_SizeX = 0.0f;
+        int m_SizeY = 0.0f;
 
-        bool Render(const std::string &duplication_name, const ImVec2 &size = ImVec2(0, 0))
-        {
-            static ImTextureID texture = Application::Get().GetCurrentRenderedWindow()->get(m_ImagePath)->GetImGuiTextureID(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+        int m_InternalMarginX = 10;
+        int m_InternalMarginY = 6;
 
-            ImVec2 text_size = ImGui::CalcTextSize(m_Label.c_str());
+        float m_OldScale;
 
-            float vertical_padding = (m_Size.y - text_size.y) * 0.5f;
-            ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10, vertical_padding));
-
-            ImGui::PushStyleColor(ImGuiCol_Border, HexToRGBA(m_HexBorderIdle));
-            ImGui::PushStyleColor(ImGuiCol_Button, HexToRGBA(m_HexBgIdle));
-            ImGui::PushStyleColor(ImGuiCol_ButtonHovered, HexToRGBA(m_HexBgHovered));
-            ImGui::PushStyleColor(ImGuiCol_ButtonActive, HexToRGBA(m_HexBgClicked));
-
-            std::string Label = m_Label + "####" + duplication_name;
-
-            if (ImGui::ImageButtonWithText(texture, Label.c_str(), size))
-            {
-                m_IsPressed = true;
-                UpdateLastClickTime();
-            }
-            else
-            {
-                m_IsPressed = false;
-            }
-
-            ImGui::PopStyleColor(4);
-            ImGui::PopStyleVar();
-
-            return m_IsPressed;
-        }
-
-        std::string GetData(const std::string &data_type) override
-        {
-            if (data_type == "isButtonPressed")
-            {
-                return m_IsPressed ? "true" : "false";
-            }
-            else if (data_type == "lastButtonClick")
-            {
-                return m_LastClickTime;
-            }
-            return "Unknown data type";
-        }
-
-    private:
-        std::string m_Label;
-        std::string m_ImagePath;
-        std::string m_LastClickTime;
-        std::string m_HexBgIdle;
-        std::string m_HexBorderIdle;
-        std::string m_HexBgHovered;
-        std::string m_HexBorderHovered;
-        std::string m_HexBgClicked;
-        std::string m_HexBorderClicked;
-        ImVec2 m_Size;
-        bool m_IsPressed;
-
-        void UpdateLastClickTime()
+            void
+            UpdateLastClickTime()
         {
             auto now = std::chrono::system_clock::now();
             std::time_t now_c = std::chrono::system_clock::to_time_t(now);
@@ -223,7 +211,7 @@ namespace UIKit
 
         bool Render(const std::string &duplication_name, const ImVec2 &size = ImVec2(0, 0))
         {
-            static ImTextureID texture = Application::Get().GetCurrentRenderedWindow()->get(m_ImagePath)->GetImGuiTextureID(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+         ImTextureID texture = Application::Get().GetCurrentRenderedWindow()->get_texture(m_ImagePath);
 
             ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(6, 6));
 
@@ -273,103 +261,6 @@ namespace UIKit
         std::string m_HexBorderHovered;
         std::string m_HexBgClicked;
         std::string m_HexBorderClicked;
-        bool m_IsPressed;
-
-        void UpdateLastClickTime()
-        {
-            auto now = std::chrono::system_clock::now();
-            std::time_t now_c = std::chrono::system_clock::to_time_t(now);
-            m_LastClickTime = std::ctime(&now_c);
-            m_LastClickTime.erase(m_LastClickTime.length() - 1);
-        }
-    };
-
-    class ReverseImageTextButtonLowProfile : public Component
-    {
-    public:
-        ReverseImageTextButtonLowProfile(
-            const std::string &id,
-            const std::string &label = "Button",
-            const std::string &imgpath = "/usr/local/include/Vortex/imgs/vortex.png",
-            const std::string &hex_bg_idle = "#242424FF",
-            const std::string &hex_border_idle = "#454545B2",
-            const std::string &hex_bg_hovered = "#343434FF",
-            const std::string &hex_border_hovered = "#454545B2",
-            const std::string &hex_bg_clicked = "#444444FF",
-            const std::string &hex_border_clicked = "#454545B2",
-            const ImVec2 &size = ImVec2(0, 18))
-            : Component(id),
-              m_Label(label),
-              m_ImagePath(imgpath),
-              m_LastClickTime("never"),
-              m_HexBgIdle(hex_bg_idle),
-              m_HexBorderIdle(hex_border_idle),
-              m_HexBgHovered(hex_bg_hovered),
-              m_HexBorderHovered(hex_border_hovered),
-              m_HexBgClicked(hex_bg_clicked),
-              m_HexBorderClicked(hex_border_clicked),
-              m_IsPressed(false),
-              m_Size(size)
-        {
-            m_ID = id;
-        }
-
-        bool Render(const std::string &duplication_name, const ImVec2 &size = ImVec2(0, 0))
-        {
-            static ImTextureID texture = Application::Get().GetCurrentRenderedWindow()->get(m_ImagePath)->GetImGuiTextureID(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-
-            ImVec2 text_size = ImGui::CalcTextSize(m_Label.c_str());
-
-            float vertical_padding = (m_Size.y - text_size.y) * 0.5f;
-            ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10, vertical_padding));
-
-            ImGui::PushStyleColor(ImGuiCol_Border, HexToRGBA(m_HexBorderIdle));
-            ImGui::PushStyleColor(ImGuiCol_Button, HexToRGBA(m_HexBgIdle));
-            ImGui::PushStyleColor(ImGuiCol_ButtonHovered, HexToRGBA(m_HexBgHovered));
-            ImGui::PushStyleColor(ImGuiCol_ButtonActive, HexToRGBA(m_HexBgClicked));
-
-            std::string Label = m_Label + "####" + duplication_name;
-
-            if (ImGui::RightImageButtonWithText(texture, Label.c_str(), size))
-            {
-                m_IsPressed = true;
-                UpdateLastClickTime();
-            }
-            else
-            {
-                m_IsPressed = false;
-            }
-
-            ImGui::PopStyleColor(4);
-            ImGui::PopStyleVar();
-
-            return m_IsPressed;
-        }
-
-        std::string GetData(const std::string &data_type) override
-        {
-            if (data_type == "isButtonPressed")
-            {
-                return m_IsPressed ? "true" : "false";
-            }
-            else if (data_type == "lastButtonClick")
-            {
-                return m_LastClickTime;
-            }
-            return "Unknown data type";
-        }
-
-    private:
-        std::string m_Label;
-        std::string m_ImagePath;
-        std::string m_LastClickTime;
-        std::string m_HexBgIdle;
-        std::string m_HexBorderIdle;
-        std::string m_HexBgHovered;
-        std::string m_HexBorderHovered;
-        std::string m_HexBgClicked;
-        std::string m_HexBorderClicked;
-        ImVec2 m_Size;
         bool m_IsPressed;
 
         void UpdateLastClickTime()

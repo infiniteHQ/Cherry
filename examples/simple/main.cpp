@@ -133,8 +133,6 @@ UIKit::Application *UIKit::CreateApplication(int argc, char **argv)
 
   /*app->SetCloseCallback([app, layer]()
                           {
-
-    std::cout << "QDS" << std::endl;
                           });*/
 
   // std::shared_ptr<ContentBrowserAppWindow> windododf = std::make_shared<UIKit::ContentBrowserAppWindow>("Content Brobro", "/home/diego/.vx");
