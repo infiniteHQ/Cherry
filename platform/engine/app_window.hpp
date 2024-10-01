@@ -264,6 +264,16 @@ namespace UIKit
             this->m_DisableContextMenu = new_state;
         }
 
+        void SetInternalPaddingX(const float& new_padding)
+        {
+            m_InternalPaddingX = new_padding;
+        }
+
+        void SetInternalPaddingY(const float& new_padding)
+        {
+            m_InternalPaddingY = new_padding;
+        }
+
         std::string m_WinParent;
 
     public:
@@ -302,6 +312,9 @@ namespace UIKit
         bool m_Pressed;
 
         bool m_DockingMode = false;
+
+        float m_InternalPaddingY = 0;
+        float m_InternalPaddingX = 0;
 
         std::function<void()> m_CloseCallback;
         std::function<void()> m_TabMenuCallback;

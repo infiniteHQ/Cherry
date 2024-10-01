@@ -83,10 +83,10 @@ namespace UIKit
 
         cp_ButtonDropdownOne = Application::Get().CreateComponent<CustomDrowpdownButtonSimple>("dbutton_1", "Custom Simple");
         cp_ButtonDropdownOne->SetDropDownImage(Application::CookPath("ressources/imgs/icons/misc/icon_down.png"));
-        
+
         cp_ButtonOne = Application::Get().CreateComponent<CustomButtonSimple>("button_1", "Custom Simple");
         cp_ButtonOneColored = Application::Get().CreateComponent<CustomButtonSimple>("button_1_colored", "Custom Simple", "#2424F4FF", "#2424F4FF", "#2525F5FF", "#2525F5FF", "#2626F6FF", "#2525F5FF");
-        
+
         cp_ButtonDropdownTwo = Application::Get().CreateComponent<CustomDrowpdownImageButtonSimple>("dbutton_1", "Advanced dropdown");
         cp_ButtonDropdownTwo->SetDropDownImage(Application::CookPath("ressources/imgs/icons/misc/icon_collection.png"));
         cp_ButtonDropdownTwo->SetIconPath(Application::CookPath("ressources/imgs/icons/misc/icon_down.png"));
@@ -95,22 +95,21 @@ namespace UIKit
         cp_ButtonDropdownThree->SetDropDownImage(Application::CookPath("ressources/imgs/icons/misc/icon_collection.png"));
         cp_ButtonDropdownThree->SetIconPath(Application::CookPath("ressources/imgs/icons/misc/icon_down.png"));
 
-        
         cp_ButtonThree = Application::Get().CreateComponent<ImageTextButtonSimple>("button_3", "Custom Low Profile");
         cp_ButtonThreeColored = Application::Get().CreateComponent<ImageTextButtonSimple>("button_3_colored", "Custom Low Profile", "/usr/local/include/Vortex/imgs/vortex.png", "#2424F4FF", "#2424F4FF", "#2525F5FF", "#2525F5FF", "#2626F6FF", "#2525F5FF");
         cp_ComboOne = Application::Get().CreateComponent<ComboSimple>("combo_1", "SuperCombo", std::vector<std::string>{"My first item", "My second item", "My third item"}, 1);
 
         cp_ComboTwo = Application::Get().CreateComponent<ComboCustom>("combo_2", "SuperCombo2", std::vector<std::function<void()>>{[]()
                                                                                                                                    {
-
-         ImTextureID texture = Application::Get().GetCurrentRenderedWindow()->get_texture("/usr/local/include/Vortex/imgs/vortex.png");                                                                                                                                       ImGui::Image(texture, ImVec2(15, 15));
+                                                                                                                                       ImTextureID texture = Application::Get().GetCurrentRenderedWindow()->get_texture("/usr/local/include/Vortex/imgs/vortex.png");
+                                                                                                                                       ImGui::Image(texture, ImVec2(15, 15));
                                                                                                                                        ImGui::SameLine();
                                                                                                                                        ImGui::Text("Icon Selected");
                                                                                                                                    },
                                                                                                                                    []()
                                                                                                                                    {
-
-         ImTextureID texture = Application::Get().GetCurrentRenderedWindow()->get_texture("/usr/local/include/Vortex/imgs/vortex.png");                                                                                                                                       ImGui::Image(texture, ImVec2(15, 15));
+                                                                                                                                       ImTextureID texture = Application::Get().GetCurrentRenderedWindow()->get_texture("/usr/local/include/Vortex/imgs/vortex.png");
+                                                                                                                                       ImGui::Image(texture, ImVec2(15, 15));
                                                                                                                                        ImGui::SameLine();
                                                                                                                                        ImGui::Text("Second Selected");
                                                                                                                                    }},
@@ -311,7 +310,7 @@ namespace UIKit
                         else if(column == 2)
                         {
                             cp_ButtonThreeColored->Render("Normal");
-    }
+                        }
                         else if(column == 3)
                         {
                             ImGui::Button("Copy code");
@@ -330,7 +329,7 @@ namespace UIKit
                         else if(column == 2)
                         {
                             cp_ButtonDropdownThree->Render("Super Dropdown");
-    }
+                        }
                         else if(column == 3)
                         {
                             ImGui::Button("Copy code");
@@ -349,7 +348,7 @@ namespace UIKit
                         else if(column == 2)
                         {
                             cp_ButtonDropdownTwo->Render("Super Dropdown");
-    }
+                        }
                         else if(column == 3)
                         {
                             ImGui::Button("Copy code");
@@ -368,7 +367,7 @@ namespace UIKit
                         else if(column == 2)
                         {
                             cp_ButtonDropdownOne->Render("Dropdown");
-    }
+                        }
                         else if(column == 3)
                         {
                             ImGui::Button("Copy code");
@@ -387,7 +386,7 @@ namespace UIKit
                         else if(column == 2)
                         {
                             cp_GroupedButtonOne->Render("Dropdown");
-    }
+                        }
                         else if(column == 3)
                         {
                             ImGui::Button("Copy code");

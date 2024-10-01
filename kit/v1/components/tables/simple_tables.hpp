@@ -34,45 +34,50 @@ namespace UIKit
             m_RowsCellPaddingY = style.CellPadding.y;
         }
 
-        void Render(std::vector<SimpleTableRow> rows, const std::string &duplication_name = "base")
+void Render(std::vector<SimpleTableRow> rows, const std::string &duplication_name = "base")
+{
+    ImGuiTableFlags flags = ImGuiTableFlags_Resizable | ImGuiTableFlags_SizingStretchSame | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Hideable | ImGuiTableFlags_Borders;
+
+    if (ImGui::BeginTable(m_Label.c_str(), m_Columns.size(), flags))
+    {
+        ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, ImVec2(m_HeaderCellPaddingX, m_HeaderCellPaddingY));
+
+        for (int i = 0; i < m_Columns.size(); ++i)
         {
-            ImGuiTableFlags flags = ImGuiTableFlags_Resizable | ImGuiTableFlags_SizingStretchSame | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Hideable | ImGuiTableFlags_Borders;
-
-            if (ImGui::BeginTable(m_Label.c_str(), m_Columns.size(), flags))
+            if (i == m_Columns.size() - 1)
             {
-                ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, ImVec2(m_HeaderCellPaddingX, m_HeaderCellPaddingY));
-
-                for (int i = 0; i < m_Columns.size(); ++i)
-                {
-                    if (i == m_Columns.size() - 1)
-                    {
-                        ImGui::TableSetupColumn(m_Columns[i].c_str(), ImGuiTableColumnFlags_NoResize);
-                    }
-                    else
-                    {
-                        ImGui::TableSetupColumn(m_Columns[i].c_str());
-                    }
-                }
-                ImGui::TableHeadersRow();
-                ImGui::PopStyleVar();
-
-                ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, ImVec2(m_RowsCellPaddingX, m_RowsCellPaddingY));
-                for (int row = 0; row < rows.size(); row++)
-                {
-                    ImGui::TableNextRow();
-                    for (int column = 0; column < m_Columns.size(); column++)
-                    {
-                        ImGui::TableSetColumnIndex(column);
-                        if (column < rows[row].m_ColumnCallbacks.size())
-                        {
-                            rows[row].m_ColumnCallbacks[column]();
-                        }
-                    }
-                }
-                ImGui::PopStyleVar();
-                ImGui::EndTable();
+                ImGui::TableSetupColumn(m_Columns[i].c_str(), ImGuiTableColumnFlags_NoResize);
+            }
+            else
+            {
+                ImGui::TableSetupColumn(m_Columns[i].c_str());
             }
         }
+
+        if (m_HeaderVisibility)
+        {
+            ImGui::TableHeadersRow();
+        }
+
+        ImGui::PopStyleVar();
+
+        ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, ImVec2(m_RowsCellPaddingX, m_RowsCellPaddingY));
+        for (int row = 0; row < rows.size(); row++)
+        {
+            ImGui::TableNextRow();
+            for (int column = 0; column < m_Columns.size(); column++)
+            {
+                ImGui::TableSetColumnIndex(column);
+                if (column < rows[row].m_ColumnCallbacks.size())
+                {
+                    rows[row].m_ColumnCallbacks[column]();
+                }
+            }
+        }
+        ImGui::PopStyleVar();
+        ImGui::EndTable();
+    }
+}
 
         void SetHeaderCellPaddingY(const float &padding_y)
         {
@@ -94,6 +99,11 @@ namespace UIKit
             m_RowsCellPaddingX = padding_x;
         }
 
+        void SetHeaderVisibility(const bool &visibility)
+        {
+            m_HeaderVisibility = visibility;
+        }
+
         std::string GetData(const std::string &data_type) override
         {
             return "none";
@@ -112,6 +122,8 @@ namespace UIKit
         float m_HeaderCellPaddingY;
         float m_RowsCellPaddingX;
         float m_RowsCellPaddingY;
+
+        bool m_HeaderVisibility;
 
         void UpdateLastChangedTime()
         {

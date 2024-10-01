@@ -46,6 +46,7 @@
 #include "./kit/v1/aio/appwindows/docking/docking_appwindow.hpp"
 #include "./kit/v1/aio/appwindows/editors/text_editor_simple/text_editor_simple.hpp"
 #include "./kit/v1/aio/appwindows/editors/node_editor_simple/node_editor_simple.hpp"
+#include "./kit/v1/aio/appwindows/editors/props_editor_simple/props_editor_simple.hpp"
 #include "./kit/v1/aio/appwindows/content/content_browser/content_browser.hpp"
 #include "./kit/v1/aio/appwindows/content/content_outliner_simple/content_outliner_simple.hpp"
 // Trees

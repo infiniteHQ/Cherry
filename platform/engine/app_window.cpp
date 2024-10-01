@@ -153,11 +153,11 @@ namespace UIKit
             static ImTextureID texture = Application::Get().GetCurrentRenderedWindow()->get_texture(m_Icon);
             if (m_Closable)
             {
-                ImGui::Begin(m_Name.c_str(), &texture, &m_CloseSignal, window_flags);
+                ImGui::Begin(m_Name.c_str(), &texture, &m_CloseSignal, window_flags, ImVec2(m_InternalPaddingX, m_InternalPaddingY));
             }
             else
             {
-                ImGui::Begin(m_Name.c_str(), &texture, nullptr, window_flags);
+                ImGui::Begin(m_Name.c_str(), &texture, nullptr, window_flags, ImVec2(m_InternalPaddingX, m_InternalPaddingY));
             }
         }
         else
