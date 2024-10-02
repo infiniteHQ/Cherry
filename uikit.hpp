@@ -42,8 +42,9 @@
 // AppWindows templates
 #include "./kit/v1/aio/appwindows/demo/demo.hpp"
 #include "./kit/v1/aio/appwindows/basic/empty/empty_appwindow.hpp"
-#include "./kit/v1/aio/appwindows/basic/mutli_child_list/multi_child.hpp"
+#include "./kit/v1/aio/appwindows/basic/mutli_child_list/multi_child_list.hpp"
 #include "./kit/v1/aio/appwindows/basic/mutli_child_areas/mutli_child_areas.hpp"
+#include "./kit/v1/aio/appwindows/basic/mutli_child_tabs/multi_child_tabs.hpp"
 #include "./kit/v1/aio/appwindows/docking/docking_appwindow.hpp"
 #include "./kit/v1/aio/appwindows/editors/text_editor_simple/text_editor_simple.hpp"
 #include "./kit/v1/aio/appwindows/editors/node_editor_simple/node_editor_simple.hpp"

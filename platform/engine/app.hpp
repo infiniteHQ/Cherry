@@ -16,7 +16,6 @@
 #include <memory>
 #include <functional>
 #include <filesystem>
-#include <SDL2/SDL_image.h>
 
 #ifdef _WIN32
 #include <windows.h>
@@ -246,7 +245,7 @@ namespace UIKit
 			return "id";
 		}
 
-		void AddTTFFont(const std::string &name, const std::string &ttf_file_path, const float &size = 20.0f)
+		void AddFont(const std::string &name, const std::string &ttf_file_path, const float &size = 20.0f)
 		{
 			m_CustomFonts.push_back({name, {ttf_file_path, size}});
 		};

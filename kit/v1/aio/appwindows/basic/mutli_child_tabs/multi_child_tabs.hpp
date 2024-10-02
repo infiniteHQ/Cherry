@@ -21,25 +21,6 @@
 
 namespace UIKit
 {
-    struct Child
-    {
-        std::function<void()> m_Child;
-        std::string m_Name;
-        float m_DefaultSize;
-        float m_MinSize;
-        float m_MaxSize;
-        bool m_Resizable = true;
-
-        Child(const std::string& name, const std::function<void()>& child, const float& default_size = 0.0f, const float& min_size = 0.0f, const float& max_size = 0.0f) :
-        m_Name(name),
-        m_Child(child),
-        m_DefaultSize(default_size),
-        m_MinSize(min_size),
-        m_MaxSize(max_size)
-        {}
-        
-    };
-
     // This window can be a "subappwindow" of a parent if you use the constructor with parent parameter.
     class MultiChildTabs
     {
@@ -47,14 +28,12 @@ namespace UIKit
         MultiChildTabs(const std::string &name, const std::shared_ptr<AppWindow> &parent);
         MultiChildTabs(const std::string &name);
 
-        void AddChild(const Child& child);
+        void AddChild(const std::string &child_name, const std::function<void()> &child);
         void RemoveChild(const std::string &child_name);
         std::function<void()> GetChild(const std::string &child_name);
         void RefreshRender(const std::shared_ptr<MultiChildTabs>& instance);
 
-        std::vector<Child> m_Childs;
-
-        bool m_IsHorizontal = true;
+        std::unordered_map<std::string, std::function<void()>> m_Childs;
 
         std::string m_SelectedChildName;
         std::shared_ptr<UIKit::AppWindow> m_AppWindow;

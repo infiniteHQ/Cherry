@@ -3,6 +3,8 @@
 #include "window.hpp"
 
 #include "../../src/core/log.hpp"
+#include "../../lib/sdl2/include/SDL.h"
+#include "../../lib/sdl2/include/SDL_vulkan.h"
 
 /**
  * @file ApplicationGUI.cpp
@@ -13,8 +15,6 @@
 #include <thread>   // thread
 #include <stdlib.h> // abort
 #include <vulkan/vulkan.h>
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_vulkan.h>
 #include <iostream>
 
 // Emedded font

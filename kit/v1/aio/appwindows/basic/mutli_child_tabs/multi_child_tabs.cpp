@@ -23,96 +23,65 @@ namespace UIKit
         m_AppWindow = std::make_shared<UIKit::AppWindow>(name, name);
         m_AppWindow->SetIcon("/usr/local/include/Vortex/imgs/vortex.png");
 
-
-        m_SelectedChildName = "TEst1";
-
         std::shared_ptr<UIKit::AppWindow> win = m_AppWindow;
+        m_AppWindow->SetInternalPaddingX(8.0f);
+        m_AppWindow->SetInternalPaddingY(12.0f);
         m_AppWindow->SetLeftMenubarCallback([]() {});
         m_AppWindow->SetRightMenubarCallback([win]() {});
 
         Application::Get().PutWindow(m_AppWindow);
     }
 
-    void MultiChildTabs::AddChild(const Child &child)
+    void MultiChildTabs::AddChild(const std::string &child_name, const std::function<void()> &child)
     {
-        m_Childs.push_back(child);
+        m_Childs[child_name] = child;
     }
 
     void MultiChildTabs::RemoveChild(const std::string &child_name)
     {
+        auto it = m_Childs.find(child_name);
+        if (it != m_Childs.end())
+        {
+            m_Childs.erase(it);
+        }
     }
 
     std::function<void()> MultiChildTabs::GetChild(const std::string &child_name)
     {
-
+        auto it = m_Childs.find(child_name);
+        if (it != m_Childs.end())
+        {
+            return it->second;
+        }
+        return nullptr;
     }
 
-void MultiChildTabs::RefreshRender(const std::shared_ptr<MultiChildTabs> &instance)
-{
-    m_AppWindow->SetRenderCallback([instance]()
+    void MultiChildTabs::RefreshRender(const std::shared_ptr<MultiChildTabs> &instance)
     {
-        auto& children = instance->m_Childs;
+        m_AppWindow->SetRenderCallback([instance]()
+                                       {
+                                           static float leftPaneWidth = 300.0f;
+                                           const float minPaneWidth = 50.0f;
+                                           const float splitterWidth = 1.5f;
+                                           static int selected;
 
-        // Obtenir les dimensions de la fenêtre actuelle
-        ImVec2 window_size = ImGui::GetContentRegionAvail();
-        
-        // Calculer l'espace total disponible pour les enfants
-        float total_size = instance->m_IsHorizontal ? window_size.x : window_size.y;
+                                           TitleThree("Uikit Components");
 
-        // Calculer la taille des enfants avec l'espace disponible
-        float remaining_size = total_size;
-        float resizable_child_count = 0;
-        
-        for (const auto& child : children)
-        {
-            // Les enfants non redimensionnables doivent occuper leur taille par défaut
-            if (!child.m_Resizable)
-            {
-                remaining_size -= child.m_DefaultSize;
-            }
-            else
-            {
-                resizable_child_count += 1;
-            }
-        }
-
-        // Taille moyenne pour chaque enfant redimensionnable
-        float resizable_child_size = (resizable_child_count > 0) ? remaining_size / resizable_child_count : 0;
-
-        // Commencer la disposition
-        for (const auto& child : children)
-        {
-            // Si l'enfant est redimensionnable, ajuster sa taille
-            float child_size = child.m_Resizable ? resizable_child_size : child.m_DefaultSize;
-
-            // Appliquer les tailles minimales et maximales
-            child_size = std::max(child.m_MinSize, std::min(child_size, child.m_MaxSize));
-
-            if (instance->m_IsHorizontal)
-            {
-                ImGui::BeginChild(child.m_Name.c_str(), ImVec2(child_size, window_size.y), true);
-            }
-            else
-            {
-                ImGui::BeginChild(child.m_Name.c_str(), ImVec2(window_size.x, child_size), true);
-            }
-
-            // Exécuter le contenu de l'enfant
-            if (child.m_Child)
-            {
-                child.m_Child();
-            }
-
-            ImGui::EndChild();
-            
-            // Si l'enfant n'est pas redimensionnable, ignorer l'espacement
-            if (!child.m_Resizable)
-            {
-                ImGui::SameLine();
-            }
-        }
-    });
-}
-
-
+                                           ImGuiTabBarFlags tab_bar_flags = ImGuiTabBarFlags_None;
+                                           if (ImGui::BeginTabBar("TabBar", tab_bar_flags))
+                                           {
+                                               for (const auto &child : instance->m_Childs)
+                                               {
+                                                   if (ImGui::BeginTabItem(child.first.c_str()))
+                                                   {
+                                                    if(child.second)
+                                                        {
+                                                            child.second();
+                                                        }
+                                                       ImGui::EndTabItem();
+                                                   }
+                                               }
+                                               ImGui::EndTabBar();
+                                           } });
+    }
 }

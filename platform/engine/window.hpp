@@ -2,6 +2,7 @@
 
 #include "../../src/layer.hpp"
 #include "../../src/core/color.hpp"
+
 #include "image.hpp"
 #include "app.hpp"
 #include "base.hpp"
@@ -131,16 +132,30 @@ namespace UIKit
             }
         }
 
-        void SetFavIcon(const std::string &path)
-        {
-            SDL_Surface *iconSurface = IMG_Load(path.c_str());
-            if (!iconSurface)
-            {
-                return;
-            }
-            SDL_SetWindowIcon(m_WindowHandler, iconSurface);
-            SDL_FreeSurface(iconSurface);
-        }
+
+void SetFavIcon(const std::string &path)
+{
+    int width, height, channels;
+    unsigned char *imageData = stbi_load(path.c_str(), &width, &height, &channels, 4); // 4 channels for RGBA
+    if (!imageData)
+    {
+        return;
+    }
+
+    SDL_Surface *iconSurface = SDL_CreateRGBSurfaceWithFormatFrom(
+        imageData, width, height, 32, width * 4, SDL_PIXELFORMAT_RGBA32);
+    
+    if (!iconSurface)
+    {
+        stbi_image_free(imageData);
+        return;
+    }
+
+    SDL_SetWindowIcon(m_WindowHandler, iconSurface);
+
+    SDL_FreeSurface(iconSurface);
+    stbi_image_free(imageData);
+}
 
         void Render();
 

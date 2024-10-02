@@ -35,7 +35,7 @@ UIKit::Application *UIKit::CreateApplication(int argc, char **argv)
   UIKit::Application *app = new UIKit::Application(spec);
   app->SetWindowSaveDataFile("savedatda.json", true);
   app->SetFavIconPath(Application::CookPath("ressources/imgs/favicon.png"));
-  app->AddTTFFont("Consola", Application::CookPath("ressources/fonts/consola.ttf"), 17.0f);
+  app->AddFont("Consola", Application::CookPath("ressources/fonts/consola.ttf"), 17.0f);
 
   app->AddLocale("fr", Application::CookPath("ressources/locales/fr.json"));
   app->AddLocale("en", Application::CookPath("ressources/locales/en.json"));
@@ -147,7 +147,7 @@ UIKit::Application *UIKit::CreateApplication(int argc, char **argv)
 
 
 
- std::shared_ptr<ContentOutlinerSimple> appContentOutliner = std::make_shared<UIKit::ContentOutlinerSimple>("?loc:loc.window_names.outliner");
+ /*std::shared_ptr<ContentOutlinerSimple> appContentOutliner = std::make_shared<UIKit::ContentOutlinerSimple>("?loc:loc.window_names.outliner");
   appContentOutliner->RefreshRender(appContentOutliner);
 
   std::shared_ptr<TextEditorSimple> appTextEditor = std::make_shared<UIKit::TextEditorSimple>("?loc:loc.window_names.text_editor");
@@ -163,9 +163,17 @@ UIKit::Application *UIKit::CreateApplication(int argc, char **argv)
   appAreas->AddChild(Child("One", [](){ImGui::Text("One");}));
   appAreas->AddChild(Child("Two", [](){ImGui::Text("Two");}));
   appAreas->AddChild(Child("Three", [](){ImGui::Text("Three");}));
+  appAreas->AddChild(Child("Four", [](){ImGui::Text("Four");}));
   appAreas->RefreshRender(appAreas);
 
-  /*std::shared_ptr<NodeEditorSimple> appNodeEditor = std::make_shared<UIKit::NodeEditorSimple>("?loc:loc.window_names.node_editor");
+   
+  std::shared_ptr<MultiChildTabs> appTabs = std::make_shared<UIKit::MultiChildTabs>("indow_names.qsd");
+  appTabs->AddChild("One", [](){ImGui::Text("One");});
+  appTabs->AddChild("Two", [](){ImGui::Text("Two");});
+  appTabs->AddChild("Three", [](){ImGui::Text("Three");});
+  appTabs->RefreshRender(appTabs);
+
+  std::shared_ptr<NodeEditorSimple> appNodeEditor = std::make_shared<UIKit::NodeEditorSimple>("?loc:loc.window_names.node_editor");
   appNodeEditor->RefreshRender(appNodeEditor);*/
   
   /*std::shared_ptr<DemoAppWindow> appDemo = std::make_shared<UIKit::DemoAppWindow>("?loc:loc.window_names.node_editor");
@@ -186,7 +194,10 @@ UIKit::Application *UIKit::CreateApplication(int argc, char **argv)
   // List
 
   // Multi childs
-
+std::shared_ptr<DemoAppWindow> appDemo = std::make_shared<UIKit::DemoAppWindow>("?loc:loc.window_names.node_editor");
+  appDemo->RefreshRender(appDemo);
+  
+  
   return app;
 }
 

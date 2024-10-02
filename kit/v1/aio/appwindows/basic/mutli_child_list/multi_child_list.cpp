@@ -1,8 +1,8 @@
-#include "./multi_child.hpp"
+#include "./multi_child_list.hpp"
 
 namespace UIKit
 {
-    MultiChildAppWindow::MultiChildAppWindow(const std::string &name, const std::shared_ptr<AppWindow> &parent)
+    MultiChildList::MultiChildList(const std::string &name, const std::shared_ptr<AppWindow> &parent)
     {
         m_AppWindow = std::make_shared<UIKit::AppWindow>(name, name);
         m_AppWindow->SetIcon("/usr/local/include/Vortex/imgs/vortex.png");
@@ -18,7 +18,7 @@ namespace UIKit
         m_AppWindow->SetRightMenubarCallback([win]() {});
     }
 
-    MultiChildAppWindow::MultiChildAppWindow(const std::string &name)
+    MultiChildList::MultiChildList(const std::string &name)
     {
         m_AppWindow = std::make_shared<UIKit::AppWindow>(name, name);
         m_AppWindow->SetIcon("/usr/local/include/Vortex/imgs/vortex.png");
@@ -36,12 +36,12 @@ namespace UIKit
         Application::Get().PutWindow(m_AppWindow);
     }
 
-    void MultiChildAppWindow::AddChild(const std::string &child_name, const std::function<void()> &child)
+    void MultiChildList::AddChild(const std::string &child_name, const std::function<void()> &child)
     {
         m_Childs[child_name] = child;
     }
 
-    void MultiChildAppWindow::RemoveChild(const std::string &child_name)
+    void MultiChildList::RemoveChild(const std::string &child_name)
     {
         auto it = m_Childs.find(child_name);
         if (it != m_Childs.end())
@@ -50,7 +50,7 @@ namespace UIKit
         }
     }
 
-    std::function<void()> MultiChildAppWindow::GetChild(const std::string &child_name)
+    std::function<void()> MultiChildList::GetChild(const std::string &child_name)
     {
         auto it = m_Childs.find(child_name);
         if (it != m_Childs.end())
@@ -60,7 +60,7 @@ namespace UIKit
         return nullptr;
     }
 
-    void MultiChildAppWindow::RefreshRender(const std::shared_ptr<MultiChildAppWindow> &instance)
+    void MultiChildList::RefreshRender(const std::shared_ptr<MultiChildList> &instance)
     {
         m_AppWindow->SetRenderCallback([instance]()
                                        {

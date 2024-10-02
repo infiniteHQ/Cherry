@@ -18,15 +18,6 @@ endif()
 # ========= deps ================
 # Find Vulkan
 find_package(Vulkan REQUIRED)
-# Find SDL2
-find_package(SDL2 REQUIRED)
-
-# Include SDL2 headers
-include_directories(${SDL2_INCLUDE_DIRS})
-
-# Link SDL2 library
-# Note: SDL2 is linked later with `uikit`
-# target_link_libraries(uikit PUBLIC ${SDL2_LIBRARIES})
 
 # glm
 add_subdirectory(lib/glm)
@@ -39,6 +30,9 @@ add_subdirectory(lib/spdlog)
 
 # stb-image
 add_subdirectory(lib/stb-image)
+
+add_subdirectory(lib/sdl2)
+
 # ===============================
 
 # ========== uikit =============
@@ -62,9 +56,8 @@ target_link_libraries(uikit PUBLIC imgui)
 target_link_libraries(uikit PUBLIC glm)
 target_link_libraries(uikit PUBLIC stbimage)
 target_link_libraries(uikit PUBLIC spdlog)
+target_link_libraries(uikit PUBLIC SDL2)
 
-# Link SDL2 library
-target_link_libraries(uikit PUBLIC ${SDL2_LIBRARIES})
 # =================================
 
 # ========== include dir ==========

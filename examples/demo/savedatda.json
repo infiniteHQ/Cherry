@@ -60,6 +60,30 @@
                 "name": "indow_names.content_browser",
                 "type": "instanciable,static",
                 "win": "0"
+            },
+            {
+                "data": {
+                    "simple_storage": [],
+                    "window_storage": []
+                },
+                "docknodeparent": "default",
+                "dockplace": "default",
+                "id": "test_window",
+                "name": "indow_names.qsd",
+                "type": "instanciable,static",
+                "win": "0"
+            },
+            {
+                "data": {
+                    "simple_storage": [],
+                    "window_storage": []
+                },
+                "docknodeparent": "default",
+                "dockplace": "default",
+                "id": "test_window",
+                "name": "Editeur de nodes####loc.window_names.node_editor",
+                "type": "instanciable,static",
+                "win": "0"
             }
         ]
     },

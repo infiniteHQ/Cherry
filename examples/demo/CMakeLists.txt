@@ -32,16 +32,12 @@ file(
 
 add_library(editor STATIC ${UIKIT_SRC})
 
-find_package(SDL2 REQUIRED)
-find_package(SDL2_image REQUIRED)
 
 find_package(Vulkan REQUIRED)
 target_link_libraries(editor PUBLIC Vulkan::Vulkan)
 target_link_libraries(editor PUBLIC imgui)
 target_link_libraries(editor PUBLIC glm)
-include_directories(${SDL2_INCLUDE_DIRS})
-target_link_libraries(editor PUBLIC ${SDL2_LIBRARIES})
-target_link_libraries(editor PUBLIC SDL2_image)
+target_link_libraries(editor PUBLIC SDL2)
 target_link_libraries(editor PUBLIC stbimage)
 target_link_libraries(editor PUBLIC spdlog)
 

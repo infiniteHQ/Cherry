@@ -15,7 +15,6 @@
 #include <functional>
 #include <fstream>
 #include <filesystem>
-#include <SDL2/SDL_image.h>
 
 #include "ui/ui.hpp"
 #include "imgui/ImGuiTheme.h"
