@@ -31,14 +31,15 @@ struct Child {
     float m_MaxSize;
     float m_Size = 200.0f;
     bool m_Resizable = true;
+    bool m_ResizeDisabled = false;
     bool m_Initialized = false;
     bool m_InitializedSec = false;
     bool m_InitializedTh = false;
 
-    Child(const std::string& name, const std::function<void()>& child, const float& default_size = 0.0f,
-          const float& min_size = 0.0f, const float& max_size = 0.0f)
+    Child(const std::string& name, const std::function<void()>& child, const float& default_size = 0.0f, const bool& resize_disabled = false, const float& min_size = 0.0f, const float& max_size = 0.0f)
         : m_Name(name),
           m_Child(child),
+          m_ResizeDisabled(resize_disabled),
           m_DefaultSize(default_size),
           m_MinSize(min_size),
           m_MaxSize(max_size) {}

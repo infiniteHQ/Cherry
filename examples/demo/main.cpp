@@ -194,8 +194,13 @@ UIKit::Application *UIKit::CreateApplication(int argc, char **argv)
   // List
 
   // Multi childs
-std::shared_ptr<DemoAppWindow> appDemo = std::make_shared<UIKit::DemoAppWindow>("?loc:loc.window_names.node_editor");
-  appDemo->RefreshRender(appDemo);
+  std::shared_ptr<MultiChildAreas> appAreas = std::make_shared<UIKit::MultiChildAreas>("indow_names.content_browser");
+  appAreas->m_IsHorizontal = true;
+  appAreas->AddChild(Child("One", [](){ImGui::Text("One");}, 0.0f, true));
+  appAreas->AddChild(Child("Two", [](){ImGui::Text("Two");}, 20.0f));
+  appAreas->AddChild(Child("Three", [](){ImGui::Text("Three");}));
+  appAreas->AddChild(Child("Four", [](){ImGui::Text("Four");}));
+  appAreas->RefreshRender(appAreas);
   
   
   return app;
