@@ -53,12 +53,12 @@ namespace UIKit
 
         void push_event();
         void CtxRender(std::vector<std::shared_ptr<RedockRequest>> *reqs, const std::string &winname);
-        std::shared_ptr<RedockRequest> CreateEvent(const std::string &parentWindow, DockEmplacement emplacement, const bool &fromSave = false, const std::string &appWindow = "none")
+        std::shared_ptr<RedockRequest> CreateRedockEvent(const std::string &parentWindow, DockEmplacement emplacement, const bool &fromSave = false, const std::string &appWindow = "none")
         {
             std::shared_ptr<RedockRequest> req = std::make_shared<RedockRequest>();
             req->m_DockPlace = emplacement;
             req->m_ParentAppWindow = appWindow;
-            req->m_ParentAppWindowHost = this->m_Name;
+            req->m_ParentAppWindowHost = this->m_IdName;
             req->m_ParentWindow = parentWindow;
             req->m_FromSave = fromSave;
             return req;
@@ -283,6 +283,7 @@ namespace UIKit
         std::string m_DockParent = "unknow";
         std::string m_DockPlace = "unknow";
         std::string m_Name = "unknow";
+        std::string m_IdName = "unknow";
         std::string m_ID = "unknow";
         // ImGuiWindow *m_ImGuiWindow;
         ImGuiID m_DockSpaceID;

@@ -357,19 +357,19 @@ namespace UIKit
         m_AppWindow->SetIcon("/usr/local/include/Vortex/imgs/vortex.png");
         std::shared_ptr<UIKit::AppWindow> win = m_AppWindow;
 
-        cp_SaveButton = Application::Get().CreateComponent<ImageTextButtonSimple>("save_button", "Save all", UIKit::Application::CookPath("ressources/imgs/icons/misc/icon_save.png"));
+        cp_SaveButton = Application::Get().CreateComponent<ImageTextButtonSimple>("save_button", Application::Get().GetLocale("loc.content_browser.save_all") + "####content_browser.save_all", UIKit::Application::CookPath("ressources/imgs/icons/misc/icon_save.png"));
         cp_SaveButton->SetScale(0.85f);
         cp_SaveButton->SetLogoSize(15, 15);
         cp_SaveButton->SetBackgroundColorIdle("#00000000");
         cp_SaveButton->SetBorderColorIdle("#00000000");
 
-        cp_ImportButton = Application::Get().CreateComponent<ImageTextButtonSimple>("import_button", "Import", UIKit::Application::CookPath("ressources/imgs/icons/misc/icon_import.png"));
+        cp_ImportButton = Application::Get().CreateComponent<ImageTextButtonSimple>("import_button", Application::Get().GetLocale("loc.content_browser.import") + "####content_browser.import", UIKit::Application::CookPath("ressources/imgs/icons/misc/icon_import.png"));
         cp_ImportButton->SetScale(0.85f);
         cp_ImportButton->SetLogoSize(15, 15);
         cp_ImportButton->SetBackgroundColorIdle("#00000000");
         cp_ImportButton->SetBorderColorIdle("#00000000");
 
-        cp_AddButton = Application::Get().CreateComponent<ImageTextButtonSimple>("add_button", "Add", UIKit::Application::CookPath("ressources/imgs/icons/misc/icon_add.png"));
+        cp_AddButton = Application::Get().CreateComponent<ImageTextButtonSimple>("add_button", Application::Get().GetLocale("loc.content_browser.add") + "####content_browser.add", UIKit::Application::CookPath("ressources/imgs/icons/misc/icon_add.png"));
         cp_AddButton->SetScale(0.85f);
         cp_AddButton->SetInternalMarginX(10.0f);
         cp_AddButton->SetLogoSize(15, 15);

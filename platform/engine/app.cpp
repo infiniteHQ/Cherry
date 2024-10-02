@@ -514,9 +514,9 @@ namespace UIKit
     {
         for (auto app_win : s_Instance->m_AppWindows)
         {
-            if (app_win->m_Name == state->LastDraggingAppWindowHost)
+            if (app_win->m_IdName == state->LastDraggingAppWindowHost)
             {
-                std::shared_ptr<UIKit::RedockRequest> req = app_win->CreateEvent(
+                std::shared_ptr<UIKit::RedockRequest> req = app_win->CreateRedockEvent(
                     state->LastDraggingWindow,
                     state->LastDraggingPlace,
                     state->FromSave,
@@ -909,7 +909,7 @@ namespace UIKit
 
                     std::shared_ptr<AppWindow> appWindow = std::make_shared<AppWindow>();
 
-                    appWindow->m_Name = appWindowName;
+                    appWindow->m_IdName = appWindowName;
                     appWindow->SetFetchedSaveData("dockplace", dockPlace);
                     appWindow->SetFetchedSaveData("type", type);
                     appWindow->SetFetchedSaveData("path", path);
@@ -966,12 +966,12 @@ namespace UIKit
             }
 
             nlohmann::json appWindowJson;
-            appWindowJson["name"] = app_window->m_Name;
+            appWindowJson["name"] = app_window->m_IdName;
             appWindowJson["dockplace"] = dockspace_state;
             appWindowJson["docknodeparent"] = docknodeparent;
             appWindowJson["win"] = app_window->m_WinParent;
             if (app_window->m_HaveParentAppWindow)
-                appWindowJson["dockparent"] = app_window->m_ParentAppWindow->m_Name;
+                appWindowJson["dockparent"] = app_window->m_ParentAppWindow->m_IdName;
             appWindowJson["type"] = "instanciable,static";
             appWindowJson["id"] = "test_window";
 
@@ -1065,13 +1065,13 @@ namespace UIKit
                         if (!appwin->m_WindowRebuilded)
                         {
                             std::shared_ptr<WindowDragDropState> dragdropstate = std::make_shared<WindowDragDropState>();
-                            dragdropstate->LastDraggingAppWindowHost = appwin->m_Name;
+                            dragdropstate->LastDraggingAppWindowHost = appwin->m_IdName;
                             dragdropstate->FromSave = true;
                             LastWindowPressed = dragdropstate->LastDraggingAppWindowHost;
 
                             for (auto &savedappwin : s_Instance->m_SavedAppWindows)
                             {
-                                if (appwin->m_Name == savedappwin->m_Name)
+                                if (appwin->m_IdName == savedappwin->m_IdName)
                                 {
                                     if (savedappwin->GetFetchedSaveData("docknodeparent") != "undefined")
                                     {
@@ -1080,7 +1080,7 @@ namespace UIKit
 
                                     if (savedappwin->GetFetchedSaveData("dockplace") != "undefined")
                                     {
-                                        dragdropstate->DragOwner = savedappwin->m_Name;
+                                        dragdropstate->DragOwner = savedappwin->m_IdName;
 
                                         if (savedappwin->GetFetchedSaveData("dockplace") == "right")
                                         {
@@ -1149,7 +1149,7 @@ namespace UIKit
 
                             if (!dockplace_initialized)
                             {
-                                dragdropstate->DragOwner = appwin->m_Name;
+                                dragdropstate->DragOwner = appwin->m_IdName;
 
                                 if (appwin->GetDefaultBehavior(DefaultAppWindowBehaviors::DefaultDocking) == "right")
                                 {
@@ -1220,13 +1220,13 @@ namespace UIKit
                         bool sizex_initialized = false;
 
                         std::shared_ptr<WindowDragDropState> dragdropstate = std::make_shared<WindowDragDropState>();
-                        dragdropstate->LastDraggingAppWindowHost = appwin->m_Name;
+                        dragdropstate->LastDraggingAppWindowHost = appwin->m_IdName;
                         LastWindowPressed = dragdropstate->LastDraggingAppWindowHost;
                         dragdropstate->LastDraggingPlace = DockEmplacement::DockFull;
 
                         if (!dockplace_initialized)
                         {
-                            dragdropstate->DragOwner = appwin->m_Name;
+                            dragdropstate->DragOwner = appwin->m_IdName;
 
                             if (appwin->GetDefaultBehavior(DefaultAppWindowBehaviors::DefaultDocking) == "right")
                             {
@@ -1357,7 +1357,7 @@ namespace UIKit
                 {
                     for (auto &app_win : m_AppWindows)
                     {
-                        if (req->m_ParentAppWindowHost == app_win->m_Name)
+                        if (req->m_ParentAppWindowHost == app_win->m_IdName)
                         {
                             bool parentFound = false;
                             for (auto &win : m_Windows)
@@ -1947,7 +1947,7 @@ namespace UIKit
             {
                 for (auto &appwin : m_AppWindows)
                 {
-                    if (c_CurrentDragDropState->LastDraggingAppWindowHost == appwin->m_Name)
+                    if (c_CurrentDragDropState->LastDraggingAppWindowHost == appwin->m_IdName)
                     {
                         if (!appwin->m_HaveParentAppWindow)
                         {
@@ -1969,7 +1969,7 @@ namespace UIKit
 
                     if (subwin->m_HaveParentAppWindow)
                     {
-                        if (subwin->m_ParentAppWindow->m_Name == appwindow->m_Name)
+                        if (subwin->m_ParentAppWindow->m_IdName == appwindow->m_IdName)
                         {
                             appwindow->CtxRender(&m_RedockRequests, window->GetName());
                             context_loaded = true;

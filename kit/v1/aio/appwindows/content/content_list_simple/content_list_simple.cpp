@@ -1,8 +1,8 @@
-#include "./content_outliner_simple.hpp"
+#include "./content_list_simple.hpp"
 
 namespace UIKit
 {
-    ContentOutlinerSimple::ContentOutlinerSimple(const std::string &name, const std::shared_ptr<AppWindow> &parent)
+    ContentListSimple::ContentListSimple(const std::string &name, const std::shared_ptr<AppWindow> &parent)
     {
         m_AppWindow = std::make_shared<UIKit::AppWindow>(name, name);
         m_AppWindow->SetIcon("/usr/local/include/Vortex/imgs/vortex.png");
@@ -26,7 +26,7 @@ namespace UIKit
         Application::Get().PutWindow(m_AppWindow);
     }
 
-    ContentOutlinerSimple::ContentOutlinerSimple()
+    ContentListSimple::ContentListSimple()
     {
         m_AppWindow = std::make_shared<UIKit::AppWindow>("Sec", "Sec");
         m_AppWindow->SetIcon("/usr/local/include/Vortex/imgs/vortex.png");
@@ -45,7 +45,7 @@ namespace UIKit
         Application::Get().PutWindow(m_AppWindow);
     }
 
-    ContentOutlinerSimple::ContentOutlinerSimple(const std::string &name)
+    ContentListSimple::ContentListSimple(const std::string &name)
     {
         m_AppWindow = std::make_shared<UIKit::AppWindow>(name, name);
         m_AppWindow->SetIcon("/usr/local/include/Vortex/imgs/vortex.png");
@@ -115,7 +115,7 @@ namespace UIKit
         Application::Get().PutWindow(m_AppWindow);
     }
 
-    void ContentOutlinerSimple::RefreshRender(const std::shared_ptr<ContentOutlinerSimple> &instance)
+    void ContentListSimple::RefreshRender(const std::shared_ptr<ContentListSimple> &instance)
     {
 
         m_AppWindow->SetRenderCallback([instance]()

@@ -37,6 +37,10 @@ UIKit::Application *UIKit::CreateApplication(int argc, char **argv)
   app->SetFavIconPath(Application::CookPath("ressources/imgs/favicon.png"));
   app->AddTTFFont("Consola", Application::CookPath("ressources/fonts/consola.ttf"), 17.0f);
 
+  app->AddLocale("fr", Application::CookPath("ressources/locales/fr.json"));
+  app->AddLocale("en", Application::CookPath("ressources/locales/en.json"));
+  app->SetLocale("fr");
+
   app->PushLayer(layer);
   app->SetMenubarCallback([app, layer]()
                           {
@@ -76,6 +80,15 @@ UIKit::Application *UIKit::CreateApplication(int argc, char **argv)
                               {
                               }
 
+                              if(ImGui::Button("Set en"))
+                              {
+  app->SetLocale("en");
+                              }
+
+                              if(ImGui::Button("Set fr"))
+                              {
+  app->SetLocale("fr");
+                              }
                               ImGui::GetFont()->Scale *= 0.8;
                               ImGui::PushFont(ImGui::GetFont());
 
@@ -132,37 +145,44 @@ UIKit::Application *UIKit::CreateApplication(int argc, char **argv)
                             ImGui::PopStyleVar();  
                             ImGui::PopStyleColor(2); });
 
-  /*std::shared_ptr<NodeEditorSimple> appNodeEditor = std::make_shared<UIKit::NodeEditorSimple>("Nodal editor");
-  appNodeEditor->RefreshRender(appNodeEditor);
 
-  std::shared_ptr<NodeEditorSimple> appNodeEditor = std::make_shared<UIKit::NodeEditorSimple>("Nodal editor");
-  appNodeEditor->RefreshRender(appNodeEditor);
 
-  std::shared_ptr<ContentOutlinerSimple> appContentOutliner = std::make_shared<UIKit::ContentOutlinerSimple>("Content Outliner");
+ std::shared_ptr<ContentOutlinerSimple> appContentOutliner = std::make_shared<UIKit::ContentOutlinerSimple>("?loc:loc.window_names.outliner");
   appContentOutliner->RefreshRender(appContentOutliner);
 
-  std::shared_ptr<TextEditorSimple> appTextEditor = std::make_shared<UIKit::TextEditorSimple>("Text editor");
+  std::shared_ptr<TextEditorSimple> appTextEditor = std::make_shared<UIKit::TextEditorSimple>("?loc:loc.window_names.text_editor");
   appTextEditor->RefreshRender(appTextEditor);
 
-  std::shared_ptr<ContentBrowserAppWindow> appContentBrowser = std::make_shared<UIKit::ContentBrowserAppWindow>("Content Browser", "/home/diego");
+  std::shared_ptr<PropsEditorSimple> appPropsEditor = std::make_shared<UIKit::PropsEditorSimple>("?loc:loc.window_names.props_editor");
+  appPropsEditor->RefreshRender(appPropsEditor);
+  
+  std::shared_ptr<ContentBrowserAppWindow> appContentBrowser = std::make_shared<UIKit::ContentBrowserAppWindow>("?loc:loc.window_names.content_browser", "/home/diego");
   appContentBrowser->RefreshRender(appContentBrowser);
+   
+  std::shared_ptr<MultiChildAreas> appAreas = std::make_shared<UIKit::MultiChildAreas>("indow_names.content_browser");
+  appAreas->AddChild(Child("One", [](){ImGui::Text("One");}));
+  appAreas->AddChild(Child("Two", [](){ImGui::Text("Two");}));
+  appAreas->AddChild(Child("Three", [](){ImGui::Text("Three");}));
+  appAreas->RefreshRender(appAreas);
+
+  /*std::shared_ptr<NodeEditorSimple> appNodeEditor = std::make_shared<UIKit::NodeEditorSimple>("?loc:loc.window_names.node_editor");
+  appNodeEditor->RefreshRender(appNodeEditor);*/
+  
+  /*std::shared_ptr<DemoAppWindow> appDemo = std::make_shared<UIKit::DemoAppWindow>("?loc:loc.window_names.node_editor");
+  appDemo->RefreshRender(appDemo);
+  
+  
+
 
   /*std::shared_ptr<DemoAppWindow> appDemo = std::make_shared<UIKit::DemoAppWindow>("Demo");
   appDemo->RefreshRender(appDemo);*/
-  
+  /*std::shared_ptr<MultiChildAreas> appContentBrowser = std::make_shared<UIKit::MultiChildAreas>("?loc:loc.window_names.content_browser");
+  appContentBrowser->AddChild(Child("One", [](){ImGui::Text("One");}));
+  appContentBrowser->AddChild(Child("Two", [](){ImGui::Text("Two");}));
+  appContentBrowser->AddChild(Child("Three", [](){ImGui::Text("Three");}));
 
-  std::shared_ptr<ContentOutlinerSimple> appContentOutliner = std::make_shared<UIKit::ContentOutlinerSimple>("Content Outliner");
-  appContentOutliner->RefreshRender(appContentOutliner);
+  appContentBrowser->RefreshRender(appContentBrowser);*/
 
-  std::shared_ptr<TextEditorSimple> appTextEditor = std::make_shared<UIKit::TextEditorSimple>("Text editor");
-  appTextEditor->RefreshRender(appTextEditor);
-
-  std::shared_ptr<PropsEditorSimple> appPropsEditor = std::make_shared<UIKit::PropsEditorSimple>("Props editor");
-  appPropsEditor->RefreshRender(appPropsEditor);
-
-  std::shared_ptr<ContentBrowserAppWindow> appContentBrowser = std::make_shared<UIKit::ContentBrowserAppWindow>("Content Browser", "/home/diego");
-  appContentBrowser->RefreshRender(appContentBrowser);
-  
   // List
 
   // Multi childs

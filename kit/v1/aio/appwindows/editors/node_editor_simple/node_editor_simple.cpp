@@ -12,8 +12,8 @@ namespace UIKit
         m_AppWindow->SetSaveMode(true);
         m_AppWindow->SetRenderCallback([this, name]()
                                        {
-        ImGui::Text(name.c_str());
-        ImGui::Button("qsd"); });
+                                        
+                                        });
 
         cp_ButtonOne = Application::Get().CreateComponent<CustomButtonSimple>("button_1");
 

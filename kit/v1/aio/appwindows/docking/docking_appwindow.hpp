@@ -10,7 +10,7 @@
 #ifndef UIKIT_V1_DOCKING_APPWINDOW
 #define UIKIT_V1_DOCKING_APPWINDOW
 
-#include "../../../aio/appwindows/basic/empty_appwindow.hpp"
+#include "../../../aio/appwindows/basic/empty/empty_appwindow.hpp"
 
 namespace UIKit
 {

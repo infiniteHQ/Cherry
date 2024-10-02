@@ -1,8 +1,8 @@
-#include "./props_editor_simple.hpp"
+#include "./props_editor_sections.hpp"
 
 namespace UIKit
 {
-    PropsEditorSimple::PropsEditorSimple(const std::string &name, const std::shared_ptr<AppWindow> &parent)
+    PropsEditorSections::PropsEditorSections(const std::string &name, const std::shared_ptr<AppWindow> &parent)
     {
         m_AppWindow = std::make_shared<UIKit::AppWindow>(name, name);
         m_AppWindow->SetIcon("/usr/local/include/Vortex/imgs/vortex.png");
@@ -25,7 +25,7 @@ namespace UIKit
         Application::Get().PutWindow(m_AppWindow);
     }
 
-    PropsEditorSimple::PropsEditorSimple()
+    PropsEditorSections::PropsEditorSections()
     {
         m_AppWindow = std::make_shared<UIKit::AppWindow>("Sec", "Sec");
         m_AppWindow->SetIcon("/usr/local/include/Vortex/imgs/vortex.png");
@@ -44,7 +44,7 @@ namespace UIKit
         Application::Get().PutWindow(m_AppWindow);
     }
 
-    PropsEditorSimple::PropsEditorSimple(const std::string &name)
+    PropsEditorSections::PropsEditorSections(const std::string &name)
     {
         m_AppWindow = std::make_shared<UIKit::AppWindow>(name, name);
         m_AppWindow->SetIcon("/usr/local/include/Vortex/imgs/vortex.png");
@@ -92,7 +92,7 @@ namespace UIKit
         Application::Get().PutWindow(m_AppWindow);
     }
 
-    void PropsEditorSimple::RefreshRender(const std::shared_ptr<PropsEditorSimple> &instance)
+    void PropsEditorSections::RefreshRender(const std::shared_ptr<PropsEditorSections> &instance)
     {
 
         m_AppWindow->SetRenderCallback([instance]()

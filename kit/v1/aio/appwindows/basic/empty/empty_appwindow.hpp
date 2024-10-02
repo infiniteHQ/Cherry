@@ -1,10 +1,10 @@
-#include "../../../../../platform/engine/app.hpp"
+#include "../../../../../../platform/engine/app.hpp"
 
 #ifndef UIKIT_V1_EMPTY_APPWINDOW
 #define UIKIT_V1_EMPTY_APPWINDOW
 
-#include "../../../components/buttons/custom_buttons.hpp"
-#include "../../../components/buttons/image_buttons.hpp"
+#include "../../../../components/buttons/custom_buttons.hpp"
+#include "../../../../components/buttons/image_buttons.hpp"
 
 namespace UIKit
 {

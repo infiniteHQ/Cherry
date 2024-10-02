@@ -41,8 +41,9 @@
 #include "./kit/v1/components/titles/h6.hpp"
 // AppWindows templates
 #include "./kit/v1/aio/appwindows/demo/demo.hpp"
-#include "./kit/v1/aio/appwindows/basic/empty_appwindow.hpp"
-#include "./kit/v1/aio/appwindows/basic/multi_child.hpp"
+#include "./kit/v1/aio/appwindows/basic/empty/empty_appwindow.hpp"
+#include "./kit/v1/aio/appwindows/basic/mutli_child_list/multi_child.hpp"
+#include "./kit/v1/aio/appwindows/basic/mutli_child_areas/mutli_child_areas.hpp"
 #include "./kit/v1/aio/appwindows/docking/docking_appwindow.hpp"
 #include "./kit/v1/aio/appwindows/editors/text_editor_simple/text_editor_simple.hpp"
 #include "./kit/v1/aio/appwindows/editors/node_editor_simple/node_editor_simple.hpp"
@@ -54,7 +55,7 @@
 // Inputs
 #include "./kit/v1/components/inputs/keyval/keyval_double.hpp"
 #include "./kit/v1/components/inputs/simple/simple_inputs.hpp"
-//Tables
+#include "./kit/v1/components/inputs/simple/image_inputs.hpp"
 #include "./kit/v1/components/tables/simple_tables.hpp"
 
 #endif

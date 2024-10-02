@@ -288,6 +288,49 @@ namespace UIKit
 
 		std::vector<std::shared_ptr<Component>> m_ApplicationComponents;
 
+		std::unordered_map<std::string, nlohmann::json> m_Locales;
+		std::string m_SelectedLocale;
+		
+void AddLocale(const std::string& locale_name, const std::string& data_path) {
+    std::ifstream file(data_path);
+    if (file.is_open()) {
+        nlohmann::json json_data;
+        file >> json_data;
+        file.close();
+
+        if (m_Locales.find(locale_name) != m_Locales.end()) {
+            auto& existing_locale = m_Locales[locale_name]["locales"];
+            for (const auto& new_item : json_data["locales"]) {
+                existing_locale.push_back(new_item);
+            }
+        } else {
+            m_Locales[locale_name] = json_data;
+        }
+    }
+}
+
+    void SetLocale(const std::string& locale_name) {
+        if (m_Locales.find(locale_name) != m_Locales.end()) {
+            m_SelectedLocale = locale_name;
+        }
+    }
+
+    std::string GetLocale(const std::string& locale_type) {
+        if (m_SelectedLocale.empty() || m_Locales.find(m_SelectedLocale) == m_Locales.end()) {
+            return "locale_undefined";
+        }
+
+        const nlohmann::json& current_locale = m_Locales[m_SelectedLocale];
+
+        for (const auto& item : current_locale["locales"]) {
+            if (item.contains(locale_type)) {
+                return item[locale_type].get<std::string>();
+            }
+        }
+
+        return "locale_undefined";
+    }
+
 	private:
 		void Init();
 		void Shutdown();

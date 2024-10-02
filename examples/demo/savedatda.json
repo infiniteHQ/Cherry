@@ -9,7 +9,7 @@
                 "docknodeparent": "default",
                 "dockplace": "default",
                 "id": "test_window",
-                "name": "Text editor",
+                "name": "Liste####loc.window_names.outliner",
                 "type": "instanciable,static",
                 "win": "0"
             },
@@ -21,7 +21,43 @@
                 "docknodeparent": "default",
                 "dockplace": "default",
                 "id": "test_window",
-                "name": "Content Browser",
+                "name": "Editeur de texte####loc.window_names.text_editor",
+                "type": "instanciable,static",
+                "win": "0"
+            },
+            {
+                "data": {
+                    "simple_storage": [],
+                    "window_storage": []
+                },
+                "docknodeparent": "default",
+                "dockplace": "default",
+                "id": "test_window",
+                "name": "Editeur de propriétés####loc.window_names.props_editor",
+                "type": "instanciable,static",
+                "win": "0"
+            },
+            {
+                "data": {
+                    "simple_storage": [],
+                    "window_storage": []
+                },
+                "docknodeparent": "default",
+                "dockplace": "default",
+                "id": "test_window",
+                "name": "Gestionnaire de fichiers####loc.window_names.content_browser",
+                "type": "instanciable,static",
+                "win": "0"
+            },
+            {
+                "data": {
+                    "simple_storage": [],
+                    "window_storage": []
+                },
+                "docknodeparent": "default",
+                "dockplace": "default",
+                "id": "test_window",
+                "name": "indow_names.content_browser",
                 "type": "instanciable,static",
                 "win": "0"
             }

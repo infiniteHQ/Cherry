@@ -8,14 +8,13 @@ namespace UIKit
     void AppWindow::AttachOnNewWindow(ApplicationSpecification spec)
     {
         m_AttachRequest.m_Specification = spec;
-        m_AttachRequest.m_AppWindowName = m_Name;
+        m_AttachRequest.m_AppWindowName = m_IdName;
         m_AttachRequest.m_IsFinished = false;
     }
 
     void AppWindow::AttachOnWindow(const std::string winname)
     {
     }
-
 
     void AppWindow::CtxRender(std::vector<std::shared_ptr<RedockRequest>> *reqs, const std::string &winname)
     {
@@ -66,7 +65,7 @@ namespace UIKit
             ImGui::DockBuilderFinish(m_DockSpaceID);
         }
 
-        ImGuiWindow *currentWindow = ImGui::FindWindowByName(this->m_Name.c_str());
+        ImGuiWindow *currentWindow = ImGui::FindWindowByName(this->m_IdName.c_str());
 
         if (currentWindow && currentWindow->DockId == 0)
         {
@@ -79,7 +78,7 @@ namespace UIKit
             ImGuiID parentDockID = m_DockSpaceID;
             ImGuiWindow *parentWindow = ImGui::FindWindowByName(req->m_ParentAppWindow.c_str());
 
-            if (req->m_ParentAppWindowHost != this->m_Name)
+            if (req->m_ParentAppWindowHost != this->m_IdName)
             {
                 ++it;
                 continue;
@@ -148,27 +147,42 @@ namespace UIKit
             window_flags |= ImGuiWindowFlags_BottomBar;
         }
 
+        std::string window_name;
+
+        if (m_Name.rfind("?loc:", 0) == 0)
+        {
+            std::string localeName = m_Name.substr(5);
+            window_name = Application::Get().GetLocale(localeName) + "####" + localeName;
+        }
+        else
+        {
+            window_name = m_Name;
+            
+        }
+
+            m_IdName = window_name;
+
         if (this->GetImage(m_Icon))
         {
             static ImTextureID texture = Application::Get().GetCurrentRenderedWindow()->get_texture(m_Icon);
             if (m_Closable)
             {
-                ImGui::Begin(m_Name.c_str(), &texture, &m_CloseSignal, window_flags, ImVec2(m_InternalPaddingX, m_InternalPaddingY));
+                ImGui::Begin(m_IdName.c_str(), &texture, &m_CloseSignal, window_flags, ImVec2(m_InternalPaddingX, m_InternalPaddingY));
             }
             else
             {
-                ImGui::Begin(m_Name.c_str(), &texture, nullptr, window_flags, ImVec2(m_InternalPaddingX, m_InternalPaddingY));
+                ImGui::Begin(m_IdName.c_str(), &texture, nullptr, window_flags, ImVec2(m_InternalPaddingX, m_InternalPaddingY));
             }
         }
         else
         {
             if (m_Closable)
             {
-                ImGui::Begin(m_Name.c_str(), &m_CloseSignal, window_flags);
+                ImGui::Begin(m_IdName.c_str(), &m_CloseSignal, window_flags);
             }
             else
             {
-                ImGui::Begin(m_Name.c_str(), nullptr, window_flags);
+                ImGui::Begin(m_IdName.c_str(), nullptr, window_flags);
             }
         }
 
@@ -304,11 +318,11 @@ namespace UIKit
                 {
                     for (auto &win : Application::Get().m_AppWindows)
                     {
-                        if (Application::GetCurrentDragDropState().LastDraggingAppWindowHost == win->m_Name)
+                        if (Application::GetCurrentDragDropState().LastDraggingAppWindowHost == win->m_IdName)
                         {
                             if (win->m_HaveParentAppWindow)
                             {
-                                if (win->m_ParentAppWindow->m_Name == this->m_Name)
+                                if (win->m_ParentAppWindow->m_IdName == this->m_IdName)
                                 {
                                     for (auto &winc : Application::Get().m_Windows)
                                     {
@@ -328,7 +342,7 @@ namespace UIKit
             {
                 if (win->m_HaveParentAppWindow)
                 {
-                    if (win->m_ParentAppWindow->m_Name == this->m_Name)
+                    if (win->m_ParentAppWindow->m_IdName == this->m_IdName)
                     {
                         if (win->CheckWinParent(winname))
                         {
@@ -444,7 +458,7 @@ namespace UIKit
         m_ParentAppWindow = parent;
         for (auto &appwin : Application::Get().m_AppWindows)
         {
-            if (appwin->m_Name == this->m_Name)
+            if (appwin->m_IdName == this->m_IdName)
             {
                 parent->m_SubAppWindows.push_back(appwin);
             }

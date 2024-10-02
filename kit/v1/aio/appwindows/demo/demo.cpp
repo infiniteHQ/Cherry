@@ -79,6 +79,9 @@ namespace UIKit
             }
         };
 
+        m_AppWindow->SetInternalPaddingX(10.0f);
+        m_AppWindow->SetInternalPaddingY(10.0f);
+
         cp_GroupedButtonOne = Application::Get().CreateComponent<CustomGroupedButtons>("dbutton_12", "Custom Simple");
 
         cp_ButtonDropdownOne = Application::Get().CreateComponent<CustomDrowpdownButtonSimple>("dbutton_1", "Custom Simple");
@@ -125,6 +128,8 @@ namespace UIKit
         v_Zvalue = std::make_shared<float>(6.24f);
 
         cp_InputsSimpleString = Application::Get().CreateComponent<SimpleStringInput>("keyvaldouble_1", v_StringOne, "Simple string value");
+        cp_InputsImageString = Application::Get().CreateComponent<ImageStringInput>("keyvaldouble_2", v_StringOne, "Simple string value");
+        cp_InputsImageString->SetImagePath(Application::CookPath("ressources/imgs/icons/misc/icon_magnifying_glass.png"));
 
         cp_InputsKeyvalDoubleString = Application::Get().CreateComponent<DoubleKeyValString>("keyvaldouble_1", v_StringOne, "Simple string value");
         cp_InputsKeyvalDoubleInteger = Application::Get().CreateComponent<DoubleKeyValInteger>("keyvaldouble_2", v_IntegerOne, "Simple integer value");
@@ -1114,6 +1119,25 @@ namespace UIKit
                                            else if (column == 2)
                                            {
                                                cp_InputsSimpleString->Render("Normal");
+                                           }
+                                           else if (column == 3)
+                                           {
+                                               ImGui::Button("Copy code");
+                                           }
+                                       }
+                                       else if (row == 1)
+                                       {
+                                           if (column == 0)
+                                           {
+                                               ImGui::Text("Left centred text");
+                                           }
+                                           else if (column == 1)
+                                           {
+                                               ImGui::Text("This is a incredible Simpe Image button");
+                                           }
+                                           else if (column == 2)
+                                           {
+                                               cp_InputsImageString->Render("Normal");
                                            }
                                            else if (column == 3)
                                            {

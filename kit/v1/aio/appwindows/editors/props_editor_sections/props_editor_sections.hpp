@@ -1,8 +1,8 @@
 #pragma once
 #include "../../../../../../platform/engine/app.hpp"
 
-#ifndef UIKIT_V1_CONTENT_PROPS_EDITOR_SIMPLE
-#define UIKIT_V1_CONTENT_PROPS_EDITOR_SIMPLE
+#ifndef UIKIT_V1_CONTENT_PROPS_EDITOR_SECTIONS
+#define UIKIT_V1_CONTENT_PROPS_EDITOR_SECTIONS
 
 #include "../../../../components/buttons/custom_buttons.hpp"
 #include "../../../../components/buttons/image_buttons.hpp"
@@ -16,14 +16,14 @@ namespace UIKit
 {
 
     // This window can be a "subappwindow" of a parent if you use the constructor with parent parameter.
-    class PropsEditorSimple
+    class PropsEditorSections
     {
     public:
-        PropsEditorSimple(const std::string &name, const std::shared_ptr<AppWindow> &parent);
-        PropsEditorSimple(const std::string &name);
-        PropsEditorSimple();
+        PropsEditorSections(const std::string &name, const std::shared_ptr<AppWindow> &parent);
+        PropsEditorSections(const std::string &name);
+        PropsEditorSections();
 
-        void RefreshRender(const std::shared_ptr<PropsEditorSimple> &instance);
+        void RefreshRender(const std::shared_ptr<PropsEditorSections> &instance);
 
     private:
         // Ui Components
@@ -46,4 +46,4 @@ namespace UIKit
     };
 }
 
-#endif // UIKIT_V1_CONTENT_PROPS_EDITOR_SIMPLE
+#endif // UIKIT_V1_CONTENT_PROPS_EDITOR_SECTIONS
