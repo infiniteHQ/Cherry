@@ -16,3 +16,6 @@
 [submodule "lib/json"]
 	path = lib/json
 	url = https://github.com/nlohmann/json
+[submodule "lib/sdl2"]
+	path = lib/sdl2
+	url = https://github.com/infiniteHQ/sdl2
