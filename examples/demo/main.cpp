@@ -195,13 +195,13 @@ UIKit::Application *UIKit::CreateApplication(int argc, char **argv)
 
   /*std::shared_ptr<PropsEditorSimple> appPropsEditor = std::make_shared<UIKit::PropsEditorSimple>("?loc:loc.window_names.props_editor");
   appPropsEditor->RefreshRender(appPropsEditor);*/
-std::shared_ptr<ContentOutlinerSimple> appContentOutliner = std::make_shared<UIKit::ContentOutlinerSimple>("?loc:loc.window_names.outliner");
+std::shared_ptr<DataLogsViewer> appContentOutliner = std::make_shared<UIKit::DataLogsViewer>("qsd", Application::CookPath("ressources/locales/new.json"));
   appContentOutliner->RefreshRender(appContentOutliner);
 
-  std::shared_ptr<DockingAppWindow> appTextEdditor = std::make_shared<UIKit::DockingAppWindow>("fqdow_names.texqsd");
+  //std::shared_ptr<DockingAppWindow> appTextEdditor = std::make_shared<UIKit::DockingAppWindow>("fqdow_names.texqsd");
   
   // Multi childs
-  std::shared_ptr<MultiChildAreas> appAreas = std::make_shared<UIKit::MultiChildAreas>("indow_names.content_browser");
+  /*std::shared_ptr<MultiChildAreas> appAreas = std::make_shared<UIKit::MultiChildAreas>("indow_names.content_browser");
   appAreas->m_IsHorizontal = false;
   appAreas->AddChild(Child("One", [](){ImGui::Text("One");}));
   appAreas->AddChild(Child("Two", [](){ImGui::Text("Two");}, 20.0f));
@@ -222,7 +222,7 @@ std::shared_ptr<ContentOutlinerSimple> appContentOutliner = std::make_shared<UIK
   appTabs->AddChild("Two", [](){ImGui::Text("Two");});
   appTabs->AddChild("Three", [](){ImGui::Text("Three");});
   appTabs->AddChild("Four", [](){ImGui::Text("Four");});
-  appTabs->RefreshRender(appTabs);
+  appTabs->RefreshRender(appTabs);*/
   /*std::shared_ptr<MultiChildAreas> appAreasd = std::make_shared<UIKit::MultiChildAreas>("QSd");
   appAreasd->m_IsHorizontal = true;
   appAreasd->AddChild(Child("O2ne", [](){ImGui::Text("One");}));

@@ -46,6 +46,7 @@
 #include "./kit/v1/aio/appwindows/basic/mutli_child_areas/mutli_child_areas.hpp"
 #include "./kit/v1/aio/appwindows/basic/mutli_child_tabs/multi_child_tabs.hpp"
 #include "./kit/v1/aio/appwindows/docking/docking_appwindow.hpp"
+#include "./kit/v1/aio/appwindows/data/data_logs_viewer/data_logs_viewer.hpp"
 #include "./kit/v1/aio/appwindows/editors/text_editor_simple/text_editor_simple.hpp"
 #include "./kit/v1/aio/appwindows/editors/node_editor_simple/node_editor_simple.hpp"
 #include "./kit/v1/aio/appwindows/editors/props_editor_simple/props_editor_simple.hpp"
