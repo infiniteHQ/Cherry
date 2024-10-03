@@ -5,6 +5,32 @@
 
 namespace UIKit
 {
+
+    AppWindow::AppWindow() : m_ID("undefined"), m_Name("undefined")
+    {
+    }
+
+    AppWindow::AppWindow(const std::string &id, const std::string &name) : m_ID(id), m_Name(name)
+    {
+    }
+
+    AppWindow::AppWindow(const std::string &id, const std::string &name, const std::string &icon) : m_ID(id), m_Name(name), m_Icon(icon)
+    {
+        SetIcon(m_Icon);
+    }
+
+    std::shared_ptr<RedockRequest> AppWindow::CreateRedockEvent(const std::string &parentWindow, DockEmplacement emplacement, const bool &fromSave, const std::string &appWindow, const bool &new_win)
+    {
+        std::shared_ptr<RedockRequest> req = std::make_shared<RedockRequest>();
+        req->m_DockPlace = emplacement;
+        req->m_ParentAppWindow = appWindow;
+        req->m_ParentAppWindowHost = this->m_IdName;
+        req->m_ParentWindow = parentWindow;
+        req->m_FromSave = fromSave;
+        req->m_FromNewWindow = new_win;
+        return req;
+    }
+
     void AppWindow::AttachOnNewWindow(ApplicationSpecification spec)
     {
         m_AttachRequest.m_Specification = spec;
@@ -18,6 +44,7 @@ namespace UIKit
 
     void AppWindow::CtxRender(std::vector<std::shared_ptr<RedockRequest>> *reqs, const std::string &winname)
     {
+
         if (!m_IsRendering)
         {
             return;
@@ -71,10 +98,17 @@ namespace UIKit
         {
             ImGui::SetNextWindowDockID(m_DockSpaceID, ImGuiCond_Always);
         }
-
+        bool delete_all = false;
         for (auto it = reqs->begin(); it != reqs->end();)
         {
             const auto &req = *it;
+
+            if (req->m_IsObsolete)
+            {
+                ++it;
+                continue;
+            }
+
             ImGuiID parentDockID = m_DockSpaceID;
             ImGuiWindow *parentWindow = ImGui::FindWindowByName(req->m_ParentAppWindow.c_str());
 
@@ -124,9 +158,24 @@ namespace UIKit
 
             ImGui::SetNextWindowDockID(m_DockSpaceID, ImGuiCond_Always);
 
+            if (req->m_FromNewWindow)
+            {
+                delete_all = true;
+            }
+
             it = reqs->erase(it);
         }
 
+        if (delete_all)
+        {
+            for (auto &request : *reqs)
+            {
+                if (request->m_ParentAppWindowHost == this->m_IdName)
+                {
+                    request->m_IsObsolete = true;
+                }
+            }
+        }
         ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoMove;
 
         ImGui::PushStyleVar(ImGuiStyleVar_PopupRounding, 3.0f);
@@ -157,10 +206,9 @@ namespace UIKit
         else
         {
             window_name = m_Name;
-            
         }
 
-            m_IdName = window_name;
+        m_IdName = window_name;
 
         if (this->GetImage(m_Icon))
         {
@@ -255,37 +303,42 @@ namespace UIKit
         // Drag
         if (ctx->DockTabStaticSelection.Pressed)
         {
-            wind->drag_dropstate.DockIsDragging = true;
-            wind->drag_dropstate.LastDraggingAppWindowHost = ctx->DockTabStaticSelection.TabName;
-            Application::GetLastWindowPressed() = wind->drag_dropstate.LastDraggingAppWindowHost;
-            // wind->drag_dropstate.LastDraggingAppWindow = ctx->DockTabStaticSelection.TabName;
-            wind->drag_dropstate.DragOwner = winname;
-            Application::SetCurrentDragDropState(&wind->drag_dropstate);
+            wind->drag_dropstate->DockIsDragging = true;
+            wind->drag_dropstate->LastDraggingAppWindowHost = ctx->DockTabStaticSelection.TabName;
+            Application::SetLastWindowPressed(wind->drag_dropstate->LastDraggingAppWindowHost);
+            // wind->drag_dropstate->LastDraggingAppWindow = ctx->DockTabStaticSelection.TabName;
+            wind->drag_dropstate->DragOwner = this->m_IdName;
+            Application::SetCurrentDragDropState(wind->drag_dropstate);
         }
-
+        
         // Drop
-        if (wind->drag_dropstate.DragOwner == winname)
+        if (Application::GetCurrentDragDropState())
         {
-            if (!ctx->DockTabStaticSelection.Pressed)
+            if (Application::GetCurrentDragDropState()->DragOwner == this->m_IdName)
             {
-                // if (this->CheckWinParent(winname))
-                //{
-                if (wind->drag_dropstate.LastDraggingPlace == DockEmplacement::DockBlank)
+                if (!ctx->DockTabStaticSelection.Pressed)
                 {
-                    wind->drag_dropstate.CreateNewWindow = true;
+                    // if (this->CheckWinParent(winname))
+                    //{
+                    if (Application::GetCurrentDragDropState()->LastDraggingPlace == DockEmplacement::DockBlank)
+                    {
+                        Application::GetCurrentDragDropState()->CreateNewWindow = true;
+                    }
+                    else
+                    {
+                        Application::PushRedockEvent(Application::GetCurrentDragDropState());
+                    }
+                    //}
+
+                    /*if (m_HaveParentAppWindow)
+                    {
+                        AddWinParent(winname);
+                        wind->drag_dropstate->LastDraggingAppWindowHaveParent = true;
+                    }*/
+
+                    wind->drag_dropstate->DockIsDragging = false;
+                    wind->drag_dropstate->DragOwner = "none";
                 }
-                //}
-
-                /*if (m_HaveParentAppWindow)
-                {
-                    AddWinParent(winname);
-                    wind->drag_dropstate.LastDraggingAppWindowHaveParent = true;
-                }*/
-
-                Application::PushRedockEvent(&Application::GetCurrentDragDropState());
-
-                wind->drag_dropstate.DockIsDragging = false;
-                wind->drag_dropstate.DragOwner = "none";
             }
         }
 
@@ -318,7 +371,7 @@ namespace UIKit
                 {
                     for (auto &win : Application::Get().m_AppWindows)
                     {
-                        if (Application::GetCurrentDragDropState().LastDraggingAppWindowHost == win->m_IdName)
+                        if (Application::GetCurrentDragDropState()->LastDraggingAppWindowHost == win->m_IdName)
                         {
                             if (win->m_HaveParentAppWindow)
                             {
@@ -328,7 +381,7 @@ namespace UIKit
                                     {
                                         if (winc->GetName() == winname)
                                         {
-                                            Window::ShowDockingPreview(dockID, winc.get(), &Application::GetCurrentDragDropState());
+                                            Window::ShowDockingPreview(dockID, winc.get(), Application::GetCurrentDragDropState());
                                         }
                                     }
                                 }
@@ -413,19 +466,202 @@ namespace UIKit
         return false;
     }
 
-    void AppWindow::AddUniqueWinParent(const std::string &parentname)
+    void AppWindow::SetParentWindow(const std::string &parentname)
     {
-        m_WinParent = parentname;
+        this->m_WinParent = parentname;
     }
 
-    void AppWindow::AddWinParent(const std::string &parentname)
+    void AppWindow::SetClosable(const bool &is_closable)
     {
-        m_WinParent = parentname;
+        this->m_Closable = is_closable;
     }
 
-    void AppWindow::DeleteWinParent(const std::string &parentname)
+    void AppWindow::SetCloseCallback(std::function<void()> close_callback)
     {
-        //
+        this->m_CloseCallback = close_callback;
+    }
+
+    void AppWindow::SetSaveMode(const bool &use_save_mode)
+    {
+        this->m_SaveMode = use_save_mode;
+    }
+
+    void AppWindow::SetSaved(const bool &new_state)
+    {
+        this->m_Saved = new_state;
+    }
+
+    void AppWindow::SetOpened(const bool &new_state)
+    {
+        this->m_Opened = new_state;
+    }
+
+    void AppWindow::SetDisableDragging(const bool &new_state)
+    {
+        this->m_DisableDragging = new_state;
+    }
+
+    void AppWindow::SetDisableContextMenu(const bool &new_state)
+    {
+        this->m_DisableContextMenu = new_state;
+    }
+
+    void AppWindow::SetInternalPaddingX(const float &new_padding)
+    {
+        this->m_InternalPaddingX = new_padding;
+    }
+
+    void AppWindow::SetInternalPaddingY(const float &new_padding)
+    {
+        this->m_InternalPaddingY = new_padding;
+    }
+
+    float AppWindow::EstimateMenubarRightWidth()
+    {
+        ImVec2 initialCursorPos = ImGui::GetCursorPos();
+        ImGui::PushClipRect(ImVec2(0, 0), ImVec2(0, 0), false);
+        ImGuiID id = ImGui::GetID("TempID");
+
+        ImGui::PushID(id);
+        ImGui::SetCursorPosX(0.0f);
+        if (m_MenubarRight)
+        {
+            m_MenubarRight();
+        }
+        float width = ImGui::GetCursorPosX();
+        ImGui::PopID();
+
+        ImGui::PopClipRect();
+        ImGui::SetCursorPos(initialCursorPos);
+
+        return width;
+    }
+
+    void AppWindow::SetSimpleStorage(const std::string &key, const std::string &data, const bool &persistant)
+    {
+        std::shared_ptr<SimpleStorageItem> value = std::make_shared<SimpleStorageItem>(data, persistant);
+        m_Storage[key] = value;
+    }
+
+    void AppWindow::SetWindowStorage(const std::string &key, const nlohmann::json &data, const bool &persistant)
+    {
+        std::shared_ptr<WindowStorageItem> value = std::make_shared<WindowStorageItem>(data, persistant);
+        m_WindowStorage[key] = value;
+    }
+
+    std::shared_ptr<SimpleStorageItem> AppWindow::GetSimpleStorage(const std::string &key)
+    {
+        if (m_Storage.find(key) != m_Storage.end())
+        {
+            return m_Storage[key];
+        }
+        else
+        {
+            return nullptr;
+        }
+    }
+
+    std::shared_ptr<WindowStorageItem> AppWindow::GetWindowStorage(const std::string &key)
+    {
+        if (m_WindowStorage.find(key) != m_WindowStorage.end())
+        {
+            return m_WindowStorage[key];
+        }
+        else
+        {
+            return nullptr;
+        }
+    }
+
+    std::unordered_map<std::string, std::shared_ptr<WindowStorageItem>> AppWindow::DumpWindowStorage()
+    {
+        return m_WindowStorage;
+    }
+    std::unordered_map<std::string, std::shared_ptr<SimpleStorageItem>> AppWindow::DumpSimpleStorage()
+    {
+        return m_Storage;
+    }
+
+    void AppWindow::SetDefaultBehavior(DefaultAppWindowBehaviors behavior, const std::string &value)
+    {
+        m_DefaultBehaviors[behavior] = value;
+    }
+
+    std::string AppWindow::GetDefaultBehavior(DefaultAppWindowBehaviors behavior)
+    {
+        if (m_DefaultBehaviors.find(behavior) != m_DefaultBehaviors.end())
+        {
+            return m_DefaultBehaviors[behavior];
+        }
+        else
+        {
+            return "undefined";
+        }
+    }
+
+    void AppWindow::SpawnInNewWindow()
+    {
+    }
+
+    void AppWindow::SetRenderCallback(const std::function<void()> &render)
+    {
+        m_Render = render;
+    }
+
+    void AppWindow::SetLeftMenubarCallback(const std::function<void()> &right_menubar)
+    {
+        m_MenubarLeft = right_menubar;
+        m_EnableMenuBar = true;
+    }
+
+    void AppWindow::SetRightMenubarCallback(const std::function<void()> &left_menubar)
+    {
+        m_MenubarRight = left_menubar;
+        m_EnableMenuBar = true;
+    }
+
+    void AppWindow::SetLeftBottombarCallback(const std::function<void()> &left_menubar)
+    {
+        m_BottombarLeft = left_menubar;
+        m_EnableBottomBar = true;
+    }
+
+    void AppWindow::SetRightBottombarCallback(const std::function<void()> &right_menubar)
+    {
+        m_BottombarRight = right_menubar;
+        m_EnableBottomBar = true;
+    }
+
+    void AppWindow::SetIcon(const std::string &name)
+    {
+        m_Icon = name;
+    }
+
+    void AppWindow::SetDockingMode(const bool &use_docking)
+    {
+        m_DockingMode = use_docking;
+    }
+
+    void AppWindow::SetFetchedSaveData(const std::string &key, const std::string &value)
+    {
+        m_LastSaveData[key] = value;
+    }
+
+    void AppWindow::SetInstanciable()
+    {
+        m_AppWindowType = AppWindowTypes::InstanciableWindow;
+    }
+
+    std::string AppWindow::GetFetchedSaveData(const std::string &key)
+    {
+        if (m_LastSaveData.find(key) != m_LastSaveData.end())
+        {
+            return m_LastSaveData[key];
+        }
+        else
+        {
+            return "undefined";
+        }
     }
 
     std::shared_ptr<UIKit::Image> AppWindow::GetImage(const std::string &path)

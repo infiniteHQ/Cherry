@@ -45,7 +45,7 @@ static bool c_ValidDropZoneFounded = false;
 static bool c_DockIsDragging = false;
 static bool c_MasterSwapChainRebuild = false;
 
-static UIKit::WindowDragDropState *c_CurrentDragDropState;
+static std::shared_ptr<UIKit::WindowDragDropState> c_CurrentDragDropState;
 static std::shared_ptr<UIKit::Window> c_CurrentRenderedWindow;
 
 static VkAllocationCallbacks *g_Allocator = NULL;
@@ -74,6 +74,9 @@ static bool drag_rendered = false;
 static int finded = 0;
 static std::string dd = "";
 static std::string LastReqMode = "";
+
+static std::string ff;
+static int RedockCount = 0;
 // dfound_validd_drop_zone_global
 
 static std::shared_ptr<UIKit::RedockRequest> latest_req;
@@ -441,9 +444,9 @@ namespace UIKit
         return c_CurrentRenderedWindow;
     }
 
-    UIKit::WindowDragDropState &Application::GetCurrentDragDropState()
+    std::shared_ptr<UIKit::WindowDragDropState> &Application::GetCurrentDragDropState()
     {
-        return *c_CurrentDragDropState;
+        return c_CurrentDragDropState;
     }
 
     bool &Application::GetDockIsDragging()
@@ -471,7 +474,7 @@ namespace UIKit
         c_ValidDropZoneFounded = founded;
     }
 
-    void Application::SetCurrentDragDropState(UIKit::WindowDragDropState *state)
+    void Application::SetCurrentDragDropState(const std::shared_ptr<UIKit::WindowDragDropState>& state)
     {
         c_CurrentDragDropState = state;
     }
@@ -501,6 +504,11 @@ namespace UIKit
         c_CurrentDragDropState->LastDraggingWindow = new_name;
     }
 
+    void Application::SetLastWindowPressed(const std::string& name)
+    {
+        LastWindowPressed =name;
+    }
+
     void Application::SetCurrentDragDropStateDraggingPlace(const DockEmplacement &place)
     {
         c_CurrentDragDropState->LastDraggingPlace = place;
@@ -510,7 +518,7 @@ namespace UIKit
         return s_Fonts;
     }
 
-    void Application::PushRedockEvent(UIKit::WindowDragDropState *state)
+    void Application::PushRedockEvent(const std::shared_ptr<UIKit::WindowDragDropState>& state)
     {
         for (auto app_win : s_Instance->m_AppWindows)
         {
@@ -520,9 +528,11 @@ namespace UIKit
                     state->LastDraggingWindow,
                     state->LastDraggingPlace,
                     state->FromSave,
-                    state->LastDraggingAppWindow);
+                    state->LastDraggingAppWindow,
+                    c_CurrentDragDropState->CreateNewWindow);
                 latest_req = req;
                 s_Instance->m_RedockRequests.push_back(req);
+                RedockCount++;
             }
         }
     }
@@ -542,6 +552,8 @@ namespace UIKit
             return;
         }
 
+        // Bootstrapp with a first window
+        // TODO: Default win name.
         this->m_Windows.push_back(std::make_shared<Window>("0", app->m_Specification.Width, app->m_Specification.Height, app->m_Specification));
     }
 
@@ -1039,6 +1051,62 @@ namespace UIKit
         m_Running = true;
         while (m_Running)
         {
+            std::cout << "Redock count : " << RedockCount << std::endl;
+            std::cout << "=============== CURRENT DRAG/DROP STATE ================" << std::endl;
+            if (c_CurrentDragDropState)
+            {
+
+                std::cout << "Initiator Window (LastDraggingWindow): " << c_CurrentDragDropState->LastDraggingWindow << std::endl;
+                if (c_CurrentDragDropState->LastDraggingPlace == DockEmplacement::DockDown)
+                    std::cout << "Last Place : " << "DockDown" << std::endl;
+                if (c_CurrentDragDropState->LastDraggingPlace == DockEmplacement::DockUp)
+                    std::cout << "Last Place : " << "DockUp" << std::endl;
+                if (c_CurrentDragDropState->LastDraggingPlace == DockEmplacement::DockLeft)
+                    std::cout << "Last Place : " << "DockLeft" << std::endl;
+                if (c_CurrentDragDropState->LastDraggingPlace == DockEmplacement::DockRight)
+                    std::cout << "Last Place : " << "DockRight" << std::endl;
+                if (c_CurrentDragDropState->LastDraggingPlace == DockEmplacement::DockFull)
+                    std::cout << "Last Place : " << "DockFull" << std::endl;
+                if (c_CurrentDragDropState->LastDraggingPlace == DockEmplacement::DockBlank)
+                    std::cout << "Last Place : " << "DockBlank" << std::endl;
+
+                std::cout << "Initiator App Window : " << c_CurrentDragDropState->LastDraggingAppWindowHost << std::endl;
+                std::cout << "ImGui Detect if Pressed : " << ImGui::GetCurrentContext()->DockTabStaticSelection.Pressed << std::endl;
+                std::cout << "Target window to split: " << c_CurrentDragDropState->LastDraggingAppWindow << std::endl;
+                std::cout << "Is currently dragging : " << c_CurrentDragDropState->DockIsDragging << std::endl;
+            }
+            else
+            {
+                std::cout << "no data" << std::endl;
+            }
+            std::cout << "================================================" << std::endl;
+
+            std::cout << "=============== LATEST DOCK REQUEST =============" << std::endl;
+            if (latest_req)
+            {
+                std::cout << "LatestREQ m_ParentAppWindow : " << latest_req->m_ParentAppWindow << std::endl;
+                std::cout << "LatestREQ m_ParentAppWindowHost : " << latest_req->m_ParentAppWindowHost << std::endl;
+                std::cout << "LatestREQ m_ParentWindow : " << latest_req->m_ParentWindow << std::endl;
+                std::cout << "LatestREQ LastReqMode : " << LastReqMode << std::endl;
+                if (latest_req->m_DockPlace == DockEmplacement::DockDown)
+                    std::cout << "LatestREQ Place : " << "DockDown" << std::endl;
+                if (latest_req->m_DockPlace == DockEmplacement::DockUp)
+                    std::cout << "LatestREQ Place : " << "DockUp" << std::endl;
+                if (latest_req->m_DockPlace == DockEmplacement::DockLeft)
+                    std::cout << "LatestREQ Place : " << "DockLeft" << std::endl;
+                if (latest_req->m_DockPlace == DockEmplacement::DockRight)
+                    std::cout << "LatestREQ Place : " << "DockRight" << std::endl;
+                if (latest_req->m_DockPlace == DockEmplacement::DockFull)
+                    std::cout << "LatestREQ Place : " << "DockFull" << std::endl;
+                if (latest_req->m_DockPlace == DockEmplacement::DockBlank)
+                    std::cout << "LatestREQ Place : " << "DockBlank" << std::endl;
+            }
+            else
+            {
+                std::cout << "no data" << std::endl;
+            }
+            std::cout << "================================================" << std::endl;
+
             c_ValidDropZoneFounded = false;
             if (s_Instance->m_Specification.WindowSaves)
             {
@@ -1197,7 +1265,7 @@ namespace UIKit
                                 appwin->AttachOnNewWindow(s_Instance->m_Specification);
                             }
 
-                            c_CurrentDragDropState = dragdropstate.get();
+                            c_CurrentDragDropState = dragdropstate;
                             Application::PushRedockEvent(c_CurrentDragDropState);
                             dragdropstate->DragOwner = "none";
                             c_CurrentDragDropState = nullptr;
@@ -1260,7 +1328,7 @@ namespace UIKit
                             dragdropstate->DragOwner = s_Instance->m_Windows[0]->GetName();
                         }
 
-                        c_CurrentDragDropState = dragdropstate.get();
+                        c_CurrentDragDropState = dragdropstate;
                         Application::PushRedockEvent(c_CurrentDragDropState);
                         dragdropstate->DragOwner = "none";
                         c_CurrentDragDropState = nullptr;
@@ -1292,7 +1360,7 @@ namespace UIKit
                 window->SetFavIcon(s_Instance->m_FavIconPath);
 
                 c_CurrentRenderedWindow = window;
-                if (window->drag_dropstate.DockIsDragging)
+                if (window->drag_dropstate->DockIsDragging)
                 {
                     c_DockIsDragging = true;
                 }
@@ -1350,11 +1418,18 @@ namespace UIKit
                 }
             }
 
+            std::cout << " Last FF : " << ff << std::endl;
+
             bool AppWindowRedocked = false;
             if (s_Instance->m_Specification.EnableDocking)
             {
                 for (auto &req : m_RedockRequests)
                 {
+                    if (req->m_IsObsolete)
+                    {
+                        continue;
+                    }
+
                     for (auto &app_win : m_AppWindows)
                     {
                         if (req->m_ParentAppWindowHost == app_win->m_IdName)
@@ -1364,7 +1439,8 @@ namespace UIKit
                             {
                                 if (win->GetName() == req->m_ParentWindow)
                                 {
-                                    app_win->AddUniqueWinParent(win->GetName());
+                                    app_win->SetParentWindow(win->GetName());
+                                    ff = "Apply to " + app_win->m_Name + " parent : " + win->GetName();
 
                                     parentFound = true;
                                 }
@@ -1372,7 +1448,7 @@ namespace UIKit
 
                             if (!parentFound)
                             {
-                                app_win->AddUniqueWinParent("unknow");
+                                app_win->SetParentWindow("unknow");
                             }
 
                             AppWindowRedocked = true;
@@ -1388,7 +1464,7 @@ namespace UIKit
                     if (!appwin->m_AttachRequest.m_IsFinished)
                     {
                         std::string win = Application::Get().SpawnWindow(appwin->m_AttachRequest.m_Specification);
-                        appwin->AddUniqueWinParent(win);
+                        appwin->SetParentWindow(win);
                         appwin->m_AttachRequest.m_IsFinished = true;
                     }
                 }
@@ -1426,6 +1502,11 @@ namespace UIKit
                 ImGui::SetCurrentContext(window->m_ImGuiContext);
 
                 ImGui::NewFrame();
+
+                for (auto appwin : m_AppWindows)
+                {
+                    std::cout << "For AppWin : " << appwin->m_Name << " With win : " << appwin->m_WinParent << std::endl;
+                }
 
                 ImGui::PushFont(Application::GetFontList()["Default"]);
                 app->RenderWindow(window.get());
@@ -2113,4 +2194,132 @@ namespace UIKit
         this->m_SaveWindowData = true;
     }
 
+    std::string Application::CookPath(const std::string input_path)
+    {
+        std::string output_path;
+        std::string root_path;
+
+#ifdef _WIN32
+        char result[MAX_PATH];
+        if (GetModuleFileNameA(NULL, result, MAX_PATH) != 0)
+        {
+            root_path = result;
+        }
+        else
+        {
+            std::cerr << "Failed while get the root path" << std::endl;
+        }
+#else
+        char result[PATH_MAX];
+        ssize_t count = readlink("/proc/self/exe", result, PATH_MAX);
+        if (count != -1)
+        {
+            result[count] = '\0';
+            root_path = result;
+        }
+        else
+        {
+            std::cerr << "Failed while get the root path" << std::endl;
+        }
+#endif
+
+        root_path = std::filesystem::path(root_path).parent_path();
+
+        if (!input_path.empty() && input_path.front() == '/')
+        {
+            output_path = input_path;
+        }
+        else
+        {
+            output_path = root_path + "/" + input_path;
+        }
+
+        return output_path;
+    }
+
+    void Application::PushLayer(const std::shared_ptr<Layer> &layer)
+    {
+        m_LayerStack.emplace_back(layer);
+        layer->OnAttach();
+    }
+
+    std::string Application::GetComponentData(const std::string &id, const std::string &topic)
+    {
+        for (auto &component : m_ApplicationComponents)
+        {
+            if (component->m_ID == id)
+            {
+                return component->GetData(topic);
+            }
+        }
+        return "none";
+    }
+
+    std::string Application::PutWindow(std::shared_ptr<AppWindow> win)
+    {
+        m_AppWindows.push_back(win);
+        return "id";
+    }
+
+    void Application::AddFont(const std::string &name, const std::string &ttf_file_path, const float &size)
+    {
+        m_CustomFonts.push_back({name, {ttf_file_path, size}});
+    };
+
+    void Application::SetFavIconPath(const std::string &icon_path)
+    {
+        m_FavIconPath = icon_path;
+    }
+
+    void Application::AddLocale(const std::string &locale_name, const std::string &data_path)
+    {
+        std::ifstream file(data_path);
+        if (file.is_open())
+        {
+            nlohmann::json json_data;
+            file >> json_data;
+            file.close();
+
+            if (m_Locales.find(locale_name) != m_Locales.end())
+            {
+                auto &existing_locale = m_Locales[locale_name]["locales"];
+                for (const auto &new_item : json_data["locales"])
+                {
+                    existing_locale.push_back(new_item);
+                }
+            }
+            else
+            {
+                m_Locales[locale_name] = json_data;
+            }
+        }
+    }
+
+    void Application::SetLocale(const std::string &locale_name)
+    {
+        if (m_Locales.find(locale_name) != m_Locales.end())
+        {
+            m_SelectedLocale = locale_name;
+        }
+    }
+
+    std::string Application::GetLocale(const std::string &locale_type)
+    {
+        if (m_SelectedLocale.empty() || m_Locales.find(m_SelectedLocale) == m_Locales.end())
+        {
+            return "locale_undefined";
+        }
+
+        const nlohmann::json &current_locale = m_Locales[m_SelectedLocale];
+
+        for (const auto &item : current_locale["locales"])
+        {
+            if (item.contains(locale_type))
+            {
+                return item[locale_type].get<std::string>();
+            }
+        }
+
+        return "locale_undefined";
+    }
 }

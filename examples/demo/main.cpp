@@ -193,14 +193,43 @@ UIKit::Application *UIKit::CreateApplication(int argc, char **argv)
 
   // List
 
+  /*std::shared_ptr<PropsEditorSimple> appPropsEditor = std::make_shared<UIKit::PropsEditorSimple>("?loc:loc.window_names.props_editor");
+  appPropsEditor->RefreshRender(appPropsEditor);*/
+std::shared_ptr<ContentOutlinerSimple> appContentOutliner = std::make_shared<UIKit::ContentOutlinerSimple>("?loc:loc.window_names.outliner");
+  appContentOutliner->RefreshRender(appContentOutliner);
+
+  std::shared_ptr<DockingAppWindow> appTextEdditor = std::make_shared<UIKit::DockingAppWindow>("fqdow_names.texqsd");
+  
   // Multi childs
   std::shared_ptr<MultiChildAreas> appAreas = std::make_shared<UIKit::MultiChildAreas>("indow_names.content_browser");
-  appAreas->m_IsHorizontal = true;
-  appAreas->AddChild(Child("One", [](){ImGui::Text("One");}, 0.0f, true));
+  appAreas->m_IsHorizontal = false;
+  appAreas->AddChild(Child("One", [](){ImGui::Text("One");}));
   appAreas->AddChild(Child("Two", [](){ImGui::Text("Two");}, 20.0f));
   appAreas->AddChild(Child("Three", [](){ImGui::Text("Three");}));
   appAreas->AddChild(Child("Four", [](){ImGui::Text("Four");}));
   appAreas->RefreshRender(appAreas);
+
+  std::shared_ptr<MultiChildList> appLists = std::make_shared<UIKit::MultiChildList>("indow_names.list");
+  appLists->AddChild("One", [](){ImGui::Text("One");});
+  appLists->AddChild("Two", [](){ImGui::Text("Two");});
+  appLists->AddChild("Three", [](){ImGui::Text("Three");});
+  appLists->AddChild("Four", [](){ImGui::Text("Four");});
+  appLists->RefreshRender(appLists);
+  
+
+  std::shared_ptr<MultiChildTabs> appTabs = std::make_shared<UIKit::MultiChildTabs>("indow_names.tabs");
+  appTabs->AddChild("One", [](){ImGui::Text("One");});
+  appTabs->AddChild("Two", [](){ImGui::Text("Two");});
+  appTabs->AddChild("Three", [](){ImGui::Text("Three");});
+  appTabs->AddChild("Four", [](){ImGui::Text("Four");});
+  appTabs->RefreshRender(appTabs);
+  /*std::shared_ptr<MultiChildAreas> appAreasd = std::make_shared<UIKit::MultiChildAreas>("QSd");
+  appAreasd->m_IsHorizontal = true;
+  appAreasd->AddChild(Child("O2ne", [](){ImGui::Text("One");}));
+  appAreasd->AddChild(Child("T2wo", [](){ImGui::Text("Two");}));
+  appAreasd->AddChild(Child("T.hree", [](){ImGui::Text("Three");}));
+  appAreasd->AddChild(Child("Fo.ur", [](){ImGui::Text("Four");}));
+  appAreasd->RefreshRender(appAreasd);*/
   
   
   return app;

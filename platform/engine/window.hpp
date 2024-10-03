@@ -60,7 +60,7 @@ namespace UIKit
 
         VkCommandBuffer GetCommandBuffer(bool begin);
         SDL_Window *GetWindowHandle() const { return m_WindowHandler; }
-        static void ShowDockingPreview(ImGuiID dockspaceID, Window *win, WindowDragDropState *dragState, const std::shared_ptr<AppWindow> appwin = nullptr);
+        static void ShowDockingPreview(ImGuiID dockspaceID, Window *win, const std::shared_ptr<UIKit::WindowDragDropState>& dragState, const std::shared_ptr<AppWindow> appwin = nullptr);
 
         // void OnWindowResize(GLFWwindow *windowHandle, int width, int height);
         // void OnWindowMove(int xpos, int ypos);
@@ -212,7 +212,7 @@ void SetFavIcon(const std::string &path)
         VkSurfaceKHR m_Surface;
         std::shared_ptr<WindowClickEvent> m_PendingClick = nullptr;
         std::shared_ptr<WindowMoveEvent> m_PendingMove = nullptr;
-        WindowDragDropState drag_dropstate;
+        std::shared_ptr<WindowDragDropState> drag_dropstate;
         int WinID;
 
         std::vector<std::vector<VkCommandBuffer>> s_AllocatedCommandBuffers;

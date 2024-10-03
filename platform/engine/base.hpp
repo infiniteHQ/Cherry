@@ -97,6 +97,8 @@ namespace UIKit
         DockEmplacement m_DockPlace;
         bool m_IsHandled;
         bool m_FromSave;
+        bool m_FromNewWindow;
+        bool m_IsObsolete = false;
     };
 
     struct SimpleStorageItem

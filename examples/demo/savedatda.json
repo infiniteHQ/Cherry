@@ -21,67 +21,7 @@
                 "docknodeparent": "default",
                 "dockplace": "default",
                 "id": "test_window",
-                "name": "Editeur de texte####loc.window_names.text_editor",
-                "type": "instanciable,static",
-                "win": "0"
-            },
-            {
-                "data": {
-                    "simple_storage": [],
-                    "window_storage": []
-                },
-                "docknodeparent": "default",
-                "dockplace": "default",
-                "id": "test_window",
-                "name": "Editeur de propriétés####loc.window_names.props_editor",
-                "type": "instanciable,static",
-                "win": "0"
-            },
-            {
-                "data": {
-                    "simple_storage": [],
-                    "window_storage": []
-                },
-                "docknodeparent": "default",
-                "dockplace": "default",
-                "id": "test_window",
-                "name": "Gestionnaire de fichiers####loc.window_names.content_browser",
-                "type": "instanciable,static",
-                "win": "0"
-            },
-            {
-                "data": {
-                    "simple_storage": [],
-                    "window_storage": []
-                },
-                "docknodeparent": "default",
-                "dockplace": "default",
-                "id": "test_window",
-                "name": "indow_names.content_browser",
-                "type": "instanciable,static",
-                "win": "0"
-            },
-            {
-                "data": {
-                    "simple_storage": [],
-                    "window_storage": []
-                },
-                "docknodeparent": "default",
-                "dockplace": "default",
-                "id": "test_window",
-                "name": "indow_names.qsd",
-                "type": "instanciable,static",
-                "win": "0"
-            },
-            {
-                "data": {
-                    "simple_storage": [],
-                    "window_storage": []
-                },
-                "docknodeparent": "default",
-                "dockplace": "default",
-                "id": "test_window",
-                "name": "Editeur de nodes####loc.window_names.node_editor",
+                "name": "locale_undefined####loc.window_names.dq",
                 "type": "instanciable,static",
                 "win": "0"
             }

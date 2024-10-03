@@ -365,6 +365,8 @@ namespace UIKit
 
         Application::IncrementWindowNumber();
         Application::SetMasterSwapChainRebuild(true);
+
+        drag_dropstate = std::make_shared<WindowDragDropState>();
     }
 
     Window::~Window()
@@ -393,7 +395,7 @@ namespace UIKit
         }
     }
 
-    void Window::ShowDockingPreview(ImGuiID dockspaceID, Window *win, WindowDragDropState *dragState, const std::shared_ptr<AppWindow> appwin)
+    void Window::ShowDockingPreview(ImGuiID dockspaceID, Window *win, const std::shared_ptr<UIKit::WindowDragDropState>& dragState, const std::shared_ptr<AppWindow> appwin)
     {
         ImGuiContext *ctx = ImGui::GetCurrentContext();
         if (ctx == nullptr)
@@ -446,7 +448,7 @@ namespace UIKit
             {
                 ImRect drop_rect = preview_data.DropRectsDraw[dir];
 
-                if (drop_rect.Contains(ImVec2(Application::GetCurrentDragDropState().mouseX, Application::GetCurrentDragDropState().mouseY)) && preview_data.IsDropAllowed)
+                if (drop_rect.Contains(ImVec2(Application::GetCurrentDragDropState()->mouseX, Application::GetCurrentDragDropState()->mouseY)) && preview_data.IsDropAllowed)
                 {
                     Application::SetValidDropZoneFounded(true);
 

@@ -23,6 +23,8 @@ namespace UIKit
         m_AppWindow = std::make_shared<UIKit::AppWindow>(name, name);
         m_AppWindow->SetIcon("/usr/local/include/Vortex/imgs/vortex.png");
 
+        m_SelectedChildName = "TEst1";
+
         std::shared_ptr<UIKit::AppWindow> win = m_AppWindow;
         m_AppWindow->SetLeftMenubarCallback([]() {});
         m_AppWindow->SetRightMenubarCallback([win]() {});
@@ -47,134 +49,264 @@ namespace UIKit
     {
         m_AppWindow->SetRenderCallback([instance]()
                                        {
-                                       const float splitterSize = 2.5f;
-                                       const float margin = 10.0f;
-
-                                       auto &children = instance->m_Childs;
-                                       const bool isHorizontal = instance->m_IsHorizontal;
-
-                                       ImGuiWindow *window = ImGui::GetCurrentWindow();
-                                       ImVec2 windowSize = window->ContentRegionRect.GetSize();
-
-                                       float totalAvailableSize = isHorizontal ? windowSize.y : windowSize.x;
-                                       totalAvailableSize -= (children.size() - 1) * splitterSize;
-
-                                       float usedSize = 0.0f;
-                                       int childrenWithoutDefaultSize = 0;
-
-                                       for (auto &child : children)
-                                       {
-                                           if (child.m_DefaultSize > 0.0f)
+                                           if (instance->m_IsHorizontal)
                                            {
-                                               if (child.m_Size == 0.0f)
+                                               const float splitterSize = 2.5f;
+                                               const float margin = 10.0f;
+
+                                               auto &children = instance->m_Childs;
+                                               const bool isHorizontal = instance->m_IsHorizontal;
+
+                                               ImGuiWindow *window = ImGui::GetCurrentWindow();
+                                               ImVec2 windowSize = window->ContentRegionRect.GetSize();
+
+                                               float totalAvailableSize = isHorizontal ? windowSize.y : windowSize.x;
+                                               totalAvailableSize -= (children.size() - 1) * splitterSize;
+
+                                               float usedSize = 0.0f;
+                                               int childrenWithoutDefaultSize = 0;
+
+                                               for (auto &child : children)
                                                {
-                                                   child.m_Size = child.m_DefaultSize;
+                                                   if (child.m_DefaultSize > 0.0f)
+                                                   {
+                                                       if (child.m_Size == 0.0f)
+                                                       {
+                                                           child.m_Size = child.m_DefaultSize;
+                                                       }
+                                                       usedSize += child.m_Size;
+                                                       child.m_Initialized = true;
+                                                   }
+                                                   else
+                                                   {
+                                                       childrenWithoutDefaultSize++;
+                                                   }
                                                }
-                                               usedSize += child.m_Size;
-                                               child.m_Initialized = true;
+
+                                               float remainingSize = totalAvailableSize - usedSize;
+
+                                               if (remainingSize < 0)
+                                               {
+                                                   float reductionFactor = totalAvailableSize / usedSize;
+                                                   for (auto &child : children)
+                                                   {
+                                                       if (child.m_DefaultSize > 0.0f && !child.m_InitializedSec)
+                                                       {
+                                                           child.m_Size *= reductionFactor;
+                                                           child.m_InitializedSec = true;
+                                                       }
+                                                   }
+                                                   remainingSize = 0;
+                                               }
+
+                                               float sizePerChild = (childrenWithoutDefaultSize > 0) ? (remainingSize / childrenWithoutDefaultSize) : 0.0f;
+                                               for (auto &child : children)
+                                               {
+                                                   if (child.m_DefaultSize == 0.0f && !child.m_InitializedTh)
+                                                   {
+                                                       child.m_Size = sizePerChild;
+                                                       child.m_InitializedTh = true;
+                                                   }
+                                               }
+
+                                               for (size_t i = 0; i < children.size(); ++i)
+                                               {
+                                                   auto &child = children[i];
+
+                                                   ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.0f, 0.0f, 0.0f, 1.0f));
+                                                   ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
+
+                                                   std::string childname = child.m_Name + "##child" + instance->m_AppWindow->m_Name;
+                                                   ImGui::BeginChild(childname.c_str(),
+                                                                     isHorizontal ? ImVec2(windowSize.x, child.m_Size) : ImVec2(child.m_Size, windowSize.y),
+                                                                     true);
+
+                                                   child.m_Child();
+
+                                                   ImGui::EndChild();
+                                                   ImGui::PopStyleColor(2);
+
+                                                   if (i + 1 < children.size())
+                                                   {
+                                                       auto &next_child = children[i + 1];
+
+                                                       if (child.m_ResizeDisabled)
+                                                       {
+                                                           continue;
+                                                       }
+
+                                                       if (!isHorizontal)
+                                                       {
+                                                           ImGui::SameLine();
+                                                       }
+                                                       else
+                                                       {
+                                                           ImGui::Dummy(ImVec2(0.0f, splitterSize));
+                                                       }
+
+                                                       std::string lab = "##splitter" + child.m_Name + instance->m_AppWindow->m_Name;
+
+                                                       ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.5f, 0.5f, 0.5f, 1.0f));
+                                                       ImGui::Button(lab.c_str(), isHorizontal ? ImVec2(-1, splitterSize) : ImVec2(splitterSize, -1));
+                                                       ImGui::PopStyleColor();
+
+                                                       if (ImGui::IsItemHovered())
+                                                       {
+                                                           ImGui::SetMouseCursor(isHorizontal ? ImGuiMouseCursor_ResizeNS : ImGuiMouseCursor_ResizeEW);
+                                                       }
+
+                                                       if (ImGui::IsItemActive())
+                                                       {
+                                                           float delta = isHorizontal ? ImGui::GetIO().MouseDelta.y : ImGui::GetIO().MouseDelta.x;
+
+                                                           child.m_Size += delta;
+                                                           next_child.m_Size -= delta;
+
+                                                           if (child.m_Size < child.m_MinSize + margin)
+                                                           {
+                                                               float diff = (child.m_MinSize + margin) - child.m_Size;
+                                                               child.m_Size = child.m_MinSize + margin;
+                                                               next_child.m_Size -= diff;
+                                                           }
+
+                                                           if (next_child.m_Size < next_child.m_MinSize + margin)
+                                                           {
+                                                               float diff = (next_child.m_MinSize + margin) - next_child.m_Size;
+                                                               next_child.m_Size = next_child.m_MinSize + margin;
+                                                               child.m_Size -= diff;
+                                                           }
+                                                       }
+
+                                                       if (isHorizontal)
+                                                       {
+                                                           ImGui::Dummy(ImVec2(0.0f, splitterSize));
+                                                       }
+                                                   }
+                                               }
                                            }
                                            else
                                            {
-                                               childrenWithoutDefaultSize++;
-                                           }
-                                       }
+                                               const float splitterWidth = 2.5f;
+                                               const float margin = 10.0f;
 
-                                       float remainingSize = totalAvailableSize - usedSize;
+                                               auto &children = instance->m_Childs;
+                                               const bool isHorizontal = instance->m_IsHorizontal;
 
-                                       if (remainingSize < 0)
-                                       {
-                                           float reductionFactor = totalAvailableSize / usedSize;
-                                           for (auto &child : children)
-                                           {
-                                               if (child.m_DefaultSize > 0.0f && !child.m_InitializedSec)
+                                               ImGuiWindow *window = ImGui::GetCurrentWindow();
+                                               ImVec2 windowSize = window->ContentRegionRect.GetSize();
+
+                                               float totalAvailableSize = windowSize.x - (children.size() - 1) * splitterWidth;
+
+                                               float usedSize = 0.0f;
+                                               int childrenWithoutDefaultSize = 0;
+
+                                               for (auto &child : children)
                                                {
-                                                   child.m_Size *= reductionFactor;
-                                                   child.m_InitializedSec = true;
-                                               }
-                                           }
-                                           remainingSize = 0;
-                                       }
-
-                                       float sizePerChild = (childrenWithoutDefaultSize > 0) ? (remainingSize / childrenWithoutDefaultSize) : 0.0f;
-                                       for (auto &child : children)
-                                       {
-                                           if (child.m_DefaultSize == 0.0f && !child.m_InitializedTh)
-                                           {
-                                               child.m_Size = sizePerChild;
-                                               child.m_InitializedTh = true;
-                                           }
-                                       }
-
-                                       for (size_t i = 0; i < children.size(); ++i)
-                                       {
-                                           auto &child = children[i];
-
-                                           ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.0f, 0.0f, 0.0f, 1.0f));
-                                           ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
-
-                                           ImGui::BeginChild(child.m_Name.c_str(), 
-                                               isHorizontal ? ImVec2(windowSize.x, child.m_Size) : ImVec2(child.m_Size, windowSize.y), 
-                                               true);
-
-                                           child.m_Child();
-
-                                           ImGui::EndChild();
-                                           ImGui::PopStyleColor(2);
-
-                                           if (i + 1 < children.size())
-                                           {
-                                               auto &next_child = children[i + 1];
-                                               
-                                               if (child.m_ResizeDisabled)
-                                               {
-                                                   continue;
-                                               }
-
-                                               if (!isHorizontal) {
-                                                   ImGui::SameLine();
-                                               } else {
-                                                   ImGui::Dummy(ImVec2(0.0f, splitterSize));
-                                               }
-
-                                               std::string lab = "##splitter" + child.m_Name;
-
-                                               ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.5f, 0.5f, 0.5f, 1.0f));
-                                               ImGui::Button(lab.c_str(), isHorizontal ? ImVec2(-1, splitterSize) : ImVec2(splitterSize, -1));
-                                               ImGui::PopStyleColor();
-
-                                               if (ImGui::IsItemHovered())
-                                               {
-                                                   ImGui::SetMouseCursor(isHorizontal ? ImGuiMouseCursor_ResizeNS : ImGuiMouseCursor_ResizeEW);
-                                               }
-
-                                               if (ImGui::IsItemActive())
-                                               {
-                                                   float delta = isHorizontal ? ImGui::GetIO().MouseDelta.y : ImGui::GetIO().MouseDelta.x;
-
-                                                   child.m_Size += delta;
-                                                   next_child.m_Size -= delta;
-
-                                                   if (child.m_Size < child.m_MinSize + margin)
+                                                   if (child.m_DefaultSize > 0.0f)
                                                    {
-                                                       float diff = (child.m_MinSize + margin) - child.m_Size;
-                                                       child.m_Size = child.m_MinSize + margin;
-                                                       next_child.m_Size -= diff;
+                                                       if (child.m_Size == 0.0f)
+                                                       {
+                                                           child.m_Size = child.m_DefaultSize;
+                                                       }
+                                                       usedSize += child.m_Size;
+                                                       child.m_Initialized = true;
                                                    }
-
-                                                   if (next_child.m_Size < next_child.m_MinSize + margin)
+                                                   else
                                                    {
-                                                       float diff = (next_child.m_MinSize + margin) - next_child.m_Size;
-                                                       next_child.m_Size = next_child.m_MinSize + margin;
-                                                       child.m_Size -= diff;
+                                                       childrenWithoutDefaultSize++;
                                                    }
                                                }
 
-                                               if (isHorizontal)
+                                               float remainingSize = totalAvailableSize - usedSize;
+
+                                               if (remainingSize < 0)
                                                {
-                                                   ImGui::Dummy(ImVec2(0.0f, splitterSize));
+                                                   float reductionFactor = totalAvailableSize / usedSize;
+                                                   for (auto &child : children)
+                                                   {
+                                                       if (child.m_InitializedSec)
+                                                           continue;
+
+                                                       if (child.m_DefaultSize > 0.0f)
+                                                       {
+                                                           child.m_Size *= reductionFactor;
+                                                           child.m_InitializedSec = true;
+                                                       }
+                                                   }
+                                                   remainingSize = 0;
+                                               }
+
+                                               float sizePerChild = (childrenWithoutDefaultSize > 0) ? (remainingSize / childrenWithoutDefaultSize) : 0.0f;
+                                               for (auto &child : children)
+                                               {
+                                                   if (child.m_InitializedTh)
+                                                       continue;
+
+                                                   if (child.m_DefaultSize == 0.0f)
+                                                   {
+                                                       child.m_Size = sizePerChild;
+                                                       child.m_InitializedTh = true;
+                                                   }
+                                               }
+
+                                               for (size_t i = 0; i < children.size(); ++i)
+                                               {
+                                                   auto &child = children[i];
+
+                                                   ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.0f, 0.0f, 0.0f, 1.0f));
+                                                   ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
+
+                                                   std::string childname = child.m_Name + "##child" + instance->m_AppWindow->m_Name;
+                                                   ImGui::BeginChild(childname.c_str(), ImVec2(child.m_Size, windowSize.y), true);
+
+                                                   child.m_Child();
+
+                                                   ImGui::EndChild();
+                                                   ImGui::PopStyleColor(2);
+                                                   
+                                                   if (i + 1 < children.size())
+                                                   {
+                                                       auto &next_child = children[i + 1];
+                                                       ImGui::SameLine();
+
+                                                       std::string lab = "##splitter" + child.m_Name + instance->m_AppWindow->m_Name;
+
+                                                       ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.5f, 0.5f, 0.5f, 1.0f));
+                                                       ImGui::Button(lab.c_str(), ImVec2(splitterWidth, -1));
+                                                       ImGui::PopStyleColor();
+
+                                                       if (ImGui::IsItemHovered())
+                                                       {
+                                                           ImGui::SetMouseCursor(ImGuiMouseCursor_ResizeEW);
+                                                       }
+
+                                                       if (ImGui::IsItemActive())
+                                                       {
+                                                           float delta = ImGui::GetIO().MouseDelta.x;
+
+                                                           child.m_Size += delta;
+                                                           next_child.m_Size -= delta;
+
+                                                           if (child.m_Size < child.m_MinSize + margin)
+                                                           {
+                                                               float diff = (child.m_MinSize + margin) - child.m_Size;
+                                                               child.m_Size = child.m_MinSize + margin;
+                                                               next_child.m_Size -= diff; 
+                                                           }
+
+                                                           if (next_child.m_Size < next_child.m_MinSize + margin)
+                                                           {
+                                                               float diff = (next_child.m_MinSize + margin) - next_child.m_Size;
+                                                               next_child.m_Size = next_child.m_MinSize + margin;
+                                                               child.m_Size -= diff; 
+                                                           }
+                                                       }
+
+                                                       ImGui::SameLine();
+                                                   }
                                                }
                                            }
-                                       } });
+                                       });
     }
 
 }
