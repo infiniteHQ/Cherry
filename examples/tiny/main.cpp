@@ -8,12 +8,6 @@ class Layer : public UIKit::Layer
 {
 public:
   Layer() {};
-
-  virtual void OnUIRender() override
-  {
-    // The render channel (OBSOLETE)
-    ImGui::ShowDemoWindow();
-  }
 };
 
 UIKit::Application *UIKit::CreateApplication(int argc, char **argv)
@@ -21,118 +15,77 @@ UIKit::Application *UIKit::CreateApplication(int argc, char **argv)
   UIKit::ApplicationSpecification spec;
   std::shared_ptr<Layer> layer = std::make_shared<Layer>();
 
-  std::string name = "UIKit example";
+  std::string name = "Tiny window";
   spec.Name = name;
-  spec.Height = 300;
-  spec.Width = 500;
-  spec.CustomTitlebar = true;
-  spec.DisableWindowManagerTitleBar = false;
-  spec.DisableTitleBar = false;
-  spec.EnableDocking = false;
+  spec.MinHeight = 500;
+  spec.MinWidth = 500;
+  spec.Height = 400;
+  spec.Width = 700;
+  spec.CustomTitlebar = false;
+  spec.DisableWindowManagerTitleBar = true;
+  spec.RenderMode = WindowRenderingMethod::SimpleWindow;
+
+  spec.UniqueAppWindowName = "main_window";
   spec.DisableTitle = true;
-  spec.WindowSaves = false;
-  spec.IconPath = "icon.png";
+  spec.WindowSaves = true;
+  spec.IconPath = Application::CookPath("ressources/imgs/icon.png");
 
   UIKit::Application *app = new UIKit::Application(spec);
-  app->SetFavIconPath("/usr/local/include/Vortex/imgs/vortex.png");
+  app->SetWindowSaveDataFile("savedatda.json", true);
+  app->SetFavIconPath(Application::CookPath("ressources/imgs/favicon.png"));
+  app->AddFont("Consola", Application::CookPath("ressources/fonts/consola.ttf"), 17.0f);
+
+  app->AddLocale("fr", Application::CookPath("ressources/locales/fr.json"));
+  app->AddLocale("en", Application::CookPath("ressources/locales/en.json"));
+  app->AddLocale("es", Application::CookPath("ressources/locales/es.json")); // With not suffisent locales to show the "default" behavior
+  app->SetDefaultLocale("en");                                               // The "default" behavior
+  app->SetLocale("fr");
+
   app->PushLayer(layer);
-  app->SetMenubarCallback([app, layer]()
-                          {
-                            ImVec4 grayColor = ImVec4(0.4f, 0.4f, 0.4f, 1.0f);        
-                            ImVec4 graySeparatorColor = ImVec4(0.4f, 0.4f, 0.4f, 0.5f);
-                            ImVec4 darkBackgroundColor = ImVec4(0.15f, 0.15f, 0.15f, 1.0f);
-                            ImVec4 lightBorderColor = ImVec4(0.2f, 0.2f, 0.2f, 1.0f);       
+  std::shared_ptr<MultiChildAreas> Areas = std::make_shared<UIKit::MultiChildAreas>("main_window");
+  Areas->m_IsHorizontal = true;
+  Areas->AddChild(Child("One", []()
+                        {
+                          ImVec2 imageSize = Application::GetCurrentRenderedWindow()->get_texture_size(
+                              Application::Get().CookPath("ressources/imgs/back.jpg"));
 
-                            ImGui::PushStyleColor(ImGuiCol_PopupBg, darkBackgroundColor);
+                          ImVec2 availableSize = ImGui::GetContentRegionAvail();
 
-                            ImGui::PushStyleColor(ImGuiCol_Border, lightBorderColor);
+                          float scaleX = availableSize.x / imageSize.x;
+                          float scaleY = availableSize.y / imageSize.y;
 
-                            ImGui::PushStyleVar(ImGuiStyleVar_PopupRounding, 3.0f);
+                          float scale = (scaleX > scaleY) ? scaleX : scaleY;
 
-                            static bool t;
+                          ImVec2 displaySize = ImVec2(imageSize.x * scale, imageSize.y * scale);
 
-                            if (ImGui::BeginMenu("Edit"))
-                            {
-                              ImGui::GetFont()->Scale *= 0.8;
-                              ImGui::PushFont(ImGui::GetFont());
+                          ImVec2 offset = ImVec2(
+                              (availableSize.x - displaySize.x) * 0.5f,
+                              (availableSize.y - displaySize.y) * 0.5f);
 
-                              ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5.0f);
+                          if (offset.x < 0)
+                            offset.x = 0;
+                          if (offset.y < 0)
+                            offset.y = 0;
 
-                              ImGui::PushStyleColor(ImGuiCol_Text, grayColor);
-                              ImGui::Text("Main stuff");
-                              ImGui::PopStyleColor();
+                          ImGui::SetCursorPosX(ImGui::GetCursorPosX() + offset.x);
+                          ImGui::SetCursorPosY(ImGui::GetCursorPosY() + offset.y);
 
-                              ImGui::PushStyleColor(ImGuiCol_Separator, graySeparatorColor);
-                              ImGui::Separator();
-                              ImGui::PopStyleColor();
+                          ImGui::Image(
+                              Application::GetCurrentRenderedWindow()->get_texture(Application::Get().CookPath("ressources/imgs/back.jpg")),
+                              ImVec2(availableSize.x, availableSize.y),
+                              ImVec2(-offset.x / displaySize.x, -offset.y / displaySize.y),
+                              ImVec2((availableSize.x - offset.x) / displaySize.x, (availableSize.y - offset.y) / displaySize.y));
+                        }, 0.0f, true));
+  Areas->AddChild(Child("Two", []()
+                        { 
+                          ImGui::Separator();
+                          UIKit::TitleTwo("Welcome to UIKit !!!");
+                          UIKit::TitleSixColored("by Infinite"); 
+                          ImGui::TextWrapped("UIKit is a powerfull low-level framework to help developpers to create simple or advanced application, with no advanced knowledges required. UIKit provide components, tools, a render engine & all backends you need to make the next revolutionnary app !"); 
+                          }, 20.0f));
 
-                              ImGui::GetFont()->Scale = 0.84;
-                              ImGui::PopFont();
-                              ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2.0f);
-
-                              if (ImGui::MenuItem("Project Settings", "Main configurations of this project", &t))
-                              {
-                              }
-
-                              ImGui::GetFont()->Scale *= 0.8;
-                              ImGui::PushFont(ImGui::GetFont());
-
-                              ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5.0f);
-
-                              ImGui::PushStyleColor(ImGuiCol_Text, grayColor);
-                              ImGui::Text("Main stuff");
-                              ImGui::PopStyleColor();
-
-                              ImGui::PushStyleColor(ImGuiCol_Separator, graySeparatorColor);
-                              ImGui::Separator();
-                              ImGui::PopStyleColor();
-
-                              ImGui::GetFont()->Scale = 0.84;
-                              ImGui::PopFont();
-                              ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2.0f);
-
-                              if (ImGui::MenuItem("Logs Utility", "Overview of all logs", &t))
-                              {
-                              }
-
-                              ImGui::GetFont()->Scale *= 0.8;
-                              ImGui::PushFont(ImGui::GetFont());
-
-                              ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5.0f);
-
-                              ImGui::PushStyleColor(ImGuiCol_Text, grayColor);
-                              ImGui::Text("Main stuff");
-                              ImGui::PopStyleColor();
-
-                              ImGui::PushStyleColor(ImGuiCol_Separator, graySeparatorColor);
-                              ImGui::Separator();
-                              ImGui::PopStyleColor();
-
-                              ImGui::GetFont()->Scale = 0.84;
-                              ImGui::PopFont();
-                              ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2.0f);
-
-                              if (ImGui::MenuItem("Manage plugins", "Add, remove, edit plugins of this project"))
-                              {
-                              }
-
-                              if (ImGui::MenuItem("Manage modules", "Manage modules loaded/registered", &t))
-                              {
-                              }
-
-                              if (ImGui::MenuItem("Templates modules", "Create, add template in your project", &t))
-                              {
-                              }
-
-                              ImGui::EndMenu();
-                            }
-
-                            ImGui::PopStyleVar();  
-                            ImGui::PopStyleColor(2); 
-                          });
-  app->SetMainRenderCallback([]()
-                             { TextButtonUnderline("Test"); });       
-
+  Areas->RefreshRender(Areas);
+  Application::Get().PutWindow(Areas->GetAppWindow());
 
   return app;
 }
@@ -144,10 +97,12 @@ int main(int argc, char *argv[])
                      { UIKit::Main(argc, argv); });
   mainthread.swap(Thread);
 
-  while (true)
+  while (g_ApplicationRunning)
   {
-    /*Your program loop...*/
+    /* Your program loop... */
   }
+
+  mainthread.join();
 
   return 0;
 }

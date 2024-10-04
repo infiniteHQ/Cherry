@@ -106,6 +106,12 @@ namespace UIKit
         std::unordered_map<std::string, ImFont*> m_FontMap;
         bool m_NeedToRebuildFontMap = false;
         bool m_FontLoaded = false;
+        
+        std::shared_ptr<AppWindow> m_UniqueAppWindow;
+        void PutUniqueAppwindow(const std::shared_ptr<AppWindow>& appwindow)
+        {
+            m_UniqueAppWindow = appwindow;
+        }
 
         bool hasImage(const std::string &image)
         {
@@ -207,6 +213,7 @@ void SetFavIcon(const std::string &path)
         std::shared_ptr<UIKit::Image> get(const std::string &path);
         std::shared_ptr<UIKit::Image> get(const uint8_t data[], const std::string &name);
         ImTextureID get_texture(const std::string &path);
+        ImVec2 get_texture_size(const std::string &path);
         void free();
 
         VkSurfaceKHR m_Surface;

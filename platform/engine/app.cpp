@@ -1055,62 +1055,6 @@ namespace UIKit
         this->BoostrappWindow();
         while (m_Running)
         {
-            /* std::cout << "Redock count : " << RedockCount << std::endl;
-             std::cout << "=============== CURRENT DRAG/DROP STATE ================" << std::endl;
-             if (c_CurrentDragDropState)
-             {
-
-                 std::cout << "Initiator Window (LastDraggingWindow): " << c_CurrentDragDropState->LastDraggingWindow << std::endl;
-                 if (c_CurrentDragDropState->LastDraggingPlace == DockEmplacement::DockDown)
-                     std::cout << "Last Place : " << "DockDown" << std::endl;
-                 if (c_CurrentDragDropState->LastDraggingPlace == DockEmplacement::DockUp)
-                     std::cout << "Last Place : " << "DockUp" << std::endl;
-                 if (c_CurrentDragDropState->LastDraggingPlace == DockEmplacement::DockLeft)
-                     std::cout << "Last Place : " << "DockLeft" << std::endl;
-                 if (c_CurrentDragDropState->LastDraggingPlace == DockEmplacement::DockRight)
-                     std::cout << "Last Place : " << "DockRight" << std::endl;
-                 if (c_CurrentDragDropState->LastDraggingPlace == DockEmplacement::DockFull)
-                     std::cout << "Last Place : " << "DockFull" << std::endl;
-                 if (c_CurrentDragDropState->LastDraggingPlace == DockEmplacement::DockBlank)
-                     std::cout << "Last Place : " << "DockBlank" << std::endl;
-
-                 std::cout << "Initiator App Window : " << c_CurrentDragDropState->LastDraggingAppWindowHost << std::endl;
-                 std::cout << "ImGui Detect if Pressed : " << ImGui::GetCurrentContext()->DockTabStaticSelection.Pressed << std::endl;
-                 std::cout << "Target window to split: " << c_CurrentDragDropState->LastDraggingAppWindow << std::endl;
-                 std::cout << "Is currently dragging : " << c_CurrentDragDropState->DockIsDragging << std::endl;
-             }
-             else
-             {
-                 std::cout << "no data" << std::endl;
-             }
-             std::cout << "================================================" << std::endl;
-
-             std::cout << "=============== LATEST DOCK REQUEST =============" << std::endl;
-             if (latest_req)
-             {
-                 std::cout << "LatestREQ m_ParentAppWindow : " << latest_req->m_ParentAppWindow << std::endl;
-                 std::cout << "LatestREQ m_ParentAppWindowHost : " << latest_req->m_ParentAppWindowHost << std::endl;
-                 std::cout << "LatestREQ m_ParentWindow : " << latest_req->m_ParentWindow << std::endl;
-                 std::cout << "LatestREQ LastReqMode : " << LastReqMode << std::endl;
-                 if (latest_req->m_DockPlace == DockEmplacement::DockDown)
-                     std::cout << "LatestREQ Place : " << "DockDown" << std::endl;
-                 if (latest_req->m_DockPlace == DockEmplacement::DockUp)
-                     std::cout << "LatestREQ Place : " << "DockUp" << std::endl;
-                 if (latest_req->m_DockPlace == DockEmplacement::DockLeft)
-                     std::cout << "LatestREQ Place : " << "DockLeft" << std::endl;
-                 if (latest_req->m_DockPlace == DockEmplacement::DockRight)
-                     std::cout << "LatestREQ Place : " << "DockRight" << std::endl;
-                 if (latest_req->m_DockPlace == DockEmplacement::DockFull)
-                     std::cout << "LatestREQ Place : " << "DockFull" << std::endl;
-                 if (latest_req->m_DockPlace == DockEmplacement::DockBlank)
-                     std::cout << "LatestREQ Place : " << "DockBlank" << std::endl;
-             }
-             else
-             {
-                 std::cout << "no data" << std::endl;
-             }
-             std::cout << "================================================" << std::endl;*/
-
             c_ValidDropZoneFounded = false;
             if (s_Instance->m_Specification.WindowSaves)
             {
@@ -1124,9 +1068,8 @@ namespace UIKit
                     s_Instance->SaveData();
                 }
 
-                if (s_Instance->m_Specification.EnableDocking)
+                if (s_Instance->m_Specification.RenderMode == WindowRenderingMethod::DockingWindows|| s_Instance->m_Specification.RenderMode == WindowRenderingMethod::TabWidows)
                 {
-
                     for (auto &appwin : s_Instance->m_AppWindows)
                     {
                         bool dockplace_initialized = false;
@@ -1140,7 +1083,6 @@ namespace UIKit
                             dragdropstate->LastDraggingAppWindowHost = appwin->m_IdName;
                             dragdropstate->FromSave = true;
                             LastWindowPressed = dragdropstate->LastDraggingAppWindowHost;
-
                             for (auto &savedappwin : s_Instance->m_SavedAppWindows)
                             {
                                 if (appwin->m_IdName == savedappwin->m_IdName)
@@ -1219,6 +1161,8 @@ namespace UIKit
                                 }
                             }
 
+
+
                             if (!dockplace_initialized)
                             {
                                 dragdropstate->DragOwner = appwin->m_IdName;
@@ -1263,7 +1207,6 @@ namespace UIKit
                                     win_finded = true;
                                 }
                             }
-
                             if (!win_finded)
                             {
                                 appwin->AttachOnNewWindow(s_Instance->m_Specification);
@@ -1282,63 +1225,66 @@ namespace UIKit
             }
             else
             {
-                for (auto &appwin : s_Instance->m_AppWindows)
+                if (s_Instance->m_Specification.RenderMode == WindowRenderingMethod::DockingWindows || s_Instance->m_Specification.RenderMode == WindowRenderingMethod::TabWidows)
                 {
-                    if (!appwin->m_WindowRebuilded)
+                    for (auto &appwin : s_Instance->m_AppWindows)
                     {
-                        bool dockplace_initialized = false;
-                        bool parent_initialized = false;
-                        bool win_initialized = false;
-                        bool sizex_initialized = false;
-
-                        std::shared_ptr<WindowDragDropState> dragdropstate = std::make_shared<WindowDragDropState>();
-                        dragdropstate->LastDraggingAppWindowHost = appwin->m_IdName;
-                        LastWindowPressed = dragdropstate->LastDraggingAppWindowHost;
-                        dragdropstate->LastDraggingPlace = DockEmplacement::DockFull;
-
-                        if (!dockplace_initialized)
+                        if (!appwin->m_WindowRebuilded)
                         {
-                            dragdropstate->DragOwner = appwin->m_IdName;
+                            bool dockplace_initialized = false;
+                            bool parent_initialized = false;
+                            bool win_initialized = false;
+                            bool sizex_initialized = false;
 
-                            if (appwin->GetDefaultBehavior(DefaultAppWindowBehaviors::DefaultDocking) == "right")
+                            std::shared_ptr<WindowDragDropState> dragdropstate = std::make_shared<WindowDragDropState>();
+                            dragdropstate->LastDraggingAppWindowHost = appwin->m_IdName;
+                            LastWindowPressed = dragdropstate->LastDraggingAppWindowHost;
+                            dragdropstate->LastDraggingPlace = DockEmplacement::DockFull;
+
+                            if (!dockplace_initialized)
                             {
-                                dragdropstate->LastDraggingPlace = DockEmplacement::DockRight;
+                                dragdropstate->DragOwner = appwin->m_IdName;
+
+                                if (appwin->GetDefaultBehavior(DefaultAppWindowBehaviors::DefaultDocking) == "right")
+                                {
+                                    dragdropstate->LastDraggingPlace = DockEmplacement::DockRight;
+                                }
+                                else if (appwin->GetDefaultBehavior(DefaultAppWindowBehaviors::DefaultDocking) == "left")
+                                {
+                                    dragdropstate->LastDraggingPlace = DockEmplacement::DockLeft;
+                                }
+                                else if (appwin->GetDefaultBehavior(DefaultAppWindowBehaviors::DefaultDocking) == "up")
+                                {
+                                    dragdropstate->LastDraggingPlace = DockEmplacement::DockUp;
+                                }
+                                else if (appwin->GetDefaultBehavior(DefaultAppWindowBehaviors::DefaultDocking) == "down")
+                                {
+                                    dragdropstate->LastDraggingPlace = DockEmplacement::DockDown;
+                                }
+                                else if (appwin->GetDefaultBehavior(DefaultAppWindowBehaviors::DefaultDocking) == "full")
+                                {
+                                    dragdropstate->LastDraggingPlace = DockEmplacement::DockFull;
+                                }
+                                else
+                                {
+                                    dragdropstate->LastDraggingPlace = DockEmplacement::DockFull;
+                                }
                             }
-                            else if (appwin->GetDefaultBehavior(DefaultAppWindowBehaviors::DefaultDocking) == "left")
+
+                            if (!win_initialized && s_Instance->m_Windows[0])
                             {
-                                dragdropstate->LastDraggingPlace = DockEmplacement::DockLeft;
+                                dragdropstate->LastDraggingWindow = s_Instance->m_Windows[0]->GetName();
+                                dragdropstate->DragOwner = s_Instance->m_Windows[0]->GetName();
                             }
-                            else if (appwin->GetDefaultBehavior(DefaultAppWindowBehaviors::DefaultDocking) == "up")
-                            {
-                                dragdropstate->LastDraggingPlace = DockEmplacement::DockUp;
-                            }
-                            else if (appwin->GetDefaultBehavior(DefaultAppWindowBehaviors::DefaultDocking) == "down")
-                            {
-                                dragdropstate->LastDraggingPlace = DockEmplacement::DockDown;
-                            }
-                            else if (appwin->GetDefaultBehavior(DefaultAppWindowBehaviors::DefaultDocking) == "full")
-                            {
-                                dragdropstate->LastDraggingPlace = DockEmplacement::DockFull;
-                            }
-                            else
-                            {
-                                dragdropstate->LastDraggingPlace = DockEmplacement::DockFull;
-                            }
+
+                            c_CurrentDragDropState = dragdropstate;
+                            Application::PushRedockEvent(c_CurrentDragDropState);
+                            dragdropstate->DragOwner = "none";
+                            c_CurrentDragDropState = nullptr;
+
+                            appwin->m_WindowRebuilded = true;
+                            appwin->m_WindowJustRebuilded = true;
                         }
-
-                        if (!win_initialized && s_Instance->m_Windows[0])
-                        {
-                            dragdropstate->LastDraggingWindow = s_Instance->m_Windows[0]->GetName();
-                            dragdropstate->DragOwner = s_Instance->m_Windows[0]->GetName();
-                        }
-
-                        c_CurrentDragDropState = dragdropstate;
-                        Application::PushRedockEvent(c_CurrentDragDropState);
-                        dragdropstate->DragOwner = "none";
-                        c_CurrentDragDropState = nullptr;
-
-                        appwin->m_WindowRebuilded = true;
-                        appwin->m_WindowJustRebuilded = true;
                     }
                 }
             }
@@ -1422,10 +1368,8 @@ namespace UIKit
                 }
             }
 
-            std::cout << " Last FF : " << ff << std::endl;
-
             bool AppWindowRedocked = false;
-            if (s_Instance->m_Specification.EnableDocking)
+            if (s_Instance->m_Specification.RenderMode == WindowRenderingMethod::DockingWindows || Application::GetCurrentRenderedWindow()->m_Specifications.RenderMode == WindowRenderingMethod::TabWidows)
             {
                 for (auto &req : m_RedockRequests)
                 {
@@ -1461,21 +1405,23 @@ namespace UIKit
                 }
             }
 
-            for (auto &appwin : s_Instance->m_AppWindows)
+            if (s_Instance->m_Specification.RenderMode == WindowRenderingMethod::DockingWindows || Application::GetCurrentRenderedWindow()->m_Specifications.RenderMode == WindowRenderingMethod::TabWidows)
             {
-                if (!AppWindowRedocked)
+                for (auto &appwin : s_Instance->m_AppWindows)
                 {
-                    if (!appwin->m_AttachRequest.m_IsFinished)
+                    if (!AppWindowRedocked)
                     {
-                        std::string win = Application::Get().SpawnWindow(appwin->m_AttachRequest.m_Specification);
-                        appwin->SetParentWindow(win);
-                        appwin->m_AttachRequest.m_IsFinished = true;
+                        if (!appwin->m_AttachRequest.m_IsFinished)
+                        {
+                            std::string win = Application::Get().SpawnWindow(appwin->m_AttachRequest.m_Specification);
+                            appwin->SetParentWindow(win);
+                            appwin->m_AttachRequest.m_IsFinished = true;
+                        }
                     }
                 }
             }
-            drag_rendered = false;
 
-            int i = 0;
+            drag_rendered = false;
 
             for (auto &window : m_Windows)
             {
@@ -1510,7 +1456,7 @@ namespace UIKit
                 ImGui::PushFont(Application::GetFontList()["Default"]);
 
                 app->RenderWindow(window.get());
-                
+
                 if (c_DockIsDragging && c_CurrentDragDropState)
                 {
                     SDL_GetGlobalMouseState(&c_CurrentDragDropState->mouseX, &c_CurrentDragDropState->mouseY);
@@ -1578,7 +1524,6 @@ namespace UIKit
                 {
                     FramePresent(wd, window.get());
                 }
-                i++;
             }
 
             float time = GetTime();
@@ -1590,28 +1535,32 @@ namespace UIKit
             c_DockIsDragging = false;
 
             // Erase empty main windows
-            std::vector<std::shared_ptr<Window>> to_remove;
 
-            for (auto it = m_Windows.begin(); it != m_Windows.end(); ++it)
+            if (s_Instance->m_Specification.RenderMode == WindowRenderingMethod::DockingWindows)
             {
-                int app_wins_inside = 0;
+                std::vector<std::shared_ptr<Window>> to_remove;
 
-                for (const auto &app_win : m_AppWindows)
+                for (auto it = m_Windows.begin(); it != m_Windows.end(); ++it)
                 {
-                    if (app_win->CheckWinParent((*it)->GetName()))
+                    int app_wins_inside = 0;
+
+                    for (const auto &app_win : m_AppWindows)
                     {
-                        app_wins_inside++;
+                        if (app_win->CheckWinParent((*it)->GetName()))
+                        {
+                            app_wins_inside++;
+                        }
+                    }
+
+                    if (app_wins_inside == 0)
+                    {
+                        to_remove.push_back(*it);
                     }
                 }
-
-                if (app_wins_inside == 0)
+                for (const auto &win : to_remove)
                 {
-                    to_remove.push_back(*it);
+                    m_Windows.erase(std::remove(m_Windows.begin(), m_Windows.end(), win), m_Windows.end());
                 }
-            }
-            for (const auto &win : to_remove)
-            {
-                m_Windows.erase(std::remove(m_Windows.begin(), m_Windows.end(), win), m_Windows.end());
             }
 
             for (auto &appwin : s_Instance->m_AppWindows)
@@ -1991,12 +1940,15 @@ namespace UIKit
 
         AppPushTabStyle();
 
-        if (window->m_Specifications.EnableDocking)
+        switch (window->m_Specifications.RenderMode)
+        {
+        case WindowRenderingMethod::DockingWindows:
         {
             ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
             ImGuiID dockspaceID = ImGui::GetID("MainDockspace");
 
+            // TODO Set a global scale
             float oldsize = ImGui::GetFont()->Scale;
             ImGui::GetFont()->Scale *= 0.84;
             ImGui::PushFont(ImGui::GetFont());
@@ -2021,9 +1973,6 @@ namespace UIKit
 
             ImGui::GetFont()->Scale = oldsize;
             ImGui::PopFont();
-
-            ImVec2 mouse_pos = ImGui::GetMousePos();
-            ImDrawList *draw_list = ImGui::GetWindowDrawList();
 
             if (c_DockIsDragging)
             {
@@ -2065,13 +2014,101 @@ namespace UIKit
                     context_loaded = true;
                 }
             }
+
+            break;
         }
-        else
+        case (WindowRenderingMethod::TabWidows):
         {
+             ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+            ImGuiID dockspaceID = ImGui::GetID("MainDockspace");
+
+            // TODO Set a global scale
+            float oldsize = ImGui::GetFont()->Scale;
+            ImGui::GetFont()->Scale *= 0.84;
+            ImGui::PushFont(ImGui::GetFont());
+
+            ImVec4 grayColor = ImVec4(0.4f, 0.4f, 0.4f, 1.0f);
+            ImVec4 graySeparatorColor = ImVec4(0.4f, 0.4f, 0.4f, 0.5f);
+            ImVec4 darkBackgroundColor = ImVec4(0.15f, 0.15f, 0.15f, 1.0f);
+            ImVec4 lightBorderColor = ImVec4(0.2f, 0.2f, 0.2f, 1.0f);
+
+            ImGui::PushStyleColor(ImGuiCol_PopupBg, darkBackgroundColor);
+
+            ImGui::PushStyleColor(ImGuiCol_Border, lightBorderColor);
+
+            ImGui::PushStyleVar(ImGuiStyleVar_PopupRounding, 3.0f);
+            ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10.0f, 8.0f));
+
+            ImGui::GetCurrentContext()->Style.DockSpaceMenubarPaddingY = 12.0f;
+            ImGui::DockSpace(dockspaceID, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_None);
+
+            ImGui::PopStyleVar(2);
+            ImGui::PopStyleColor(2);
+
+            ImGui::GetFont()->Scale = oldsize;
+            ImGui::PopFont();
+
+            bool context_loaded = false;
+            for (auto &appwindow : m_AppWindows)
+            {
+                for (auto &subwin : m_AppWindows)
+                {
+                    if (context_loaded)
+                    {
+                        continue;
+                    }
+
+                    if (subwin->m_HaveParentAppWindow)
+                    {
+                        if (subwin->m_ParentAppWindow->m_IdName == appwindow->m_IdName)
+                        {
+                            appwindow->CtxRender(&m_RedockRequests, window->GetName());
+                            context_loaded = true;
+                        }
+                    }
+                }
+
+                if (appwindow->CheckWinParent(window->GetName()) && !appwindow->m_HaveParentAppWindow)
+                {
+                    appwindow->CtxRender(&m_RedockRequests, window->GetName());
+                    context_loaded = true;
+                }
+            }
+
+            break;
+
+        }
+        case (WindowRenderingMethod::SimpleWindow):
+        {
+            bool finded = false;
+            for(auto &appwin: Application::Get().m_AppWindows)
+            {
+                if(appwin->m_Name == Application::GetCurrentRenderedWindow()->m_Specifications.UniqueAppWindowName)
+                {
+                    appwin->CtxRender(nullptr, window->GetName());
+                    finded = true;
+                }
+            }
+
+            if(!finded)
+            {
+                ImGui::TextColored(ImVec4(1.0f,0.2f,0.2f,1.0f), "UIKit Error : You need to specify the \"UniqueAppWindowName\" in spec !");
+            }
+        }
+        case (WindowRenderingMethod::SimpleRender):
+        {
+            // TODO global scale
+            float oldsize = ImGui::GetFont()->Scale;
+            ImGui::GetFont()->Scale *= 0.84;
+            ImGui::PushFont(ImGui::GetFont());
             if (m_MainRenderCallback)
             {
                 m_MainRenderCallback();
             }
+            ImGui::GetFont()->Scale = oldsize;
+            ImGui::PopFont();
+            break;
+        }
         }
 
         AppPopTabStyle();
@@ -2258,7 +2295,8 @@ namespace UIKit
 
     std::string Application::PutWindow(std::shared_ptr<AppWindow> win)
     {
-        m_AppWindows.push_back(win);
+            m_AppWindows.push_back(win);
+
         return "id";
     }
 
@@ -2304,6 +2342,14 @@ namespace UIKit
         }
     }
 
+    void Application::SetDefaultLocale(const std::string &locale_name)
+    {
+        if (m_Locales.find(locale_name) != m_Locales.end())
+        {
+            m_DefaultLocale = locale_name;
+        }
+    }
+
     std::string Application::GetLocale(const std::string &locale_type)
     {
         if (m_SelectedLocale.empty() || m_Locales.find(m_SelectedLocale) == m_Locales.end())
@@ -2314,6 +2360,22 @@ namespace UIKit
         const nlohmann::json &current_locale = m_Locales[m_SelectedLocale];
 
         for (const auto &item : current_locale["locales"])
+        {
+            if (item.contains(locale_type))
+            {
+                return item[locale_type].get<std::string>();
+            }
+        }
+
+        // Get the default traductor if wanted locales not finded.
+        if (m_DefaultLocale.empty() || m_Locales.find(m_DefaultLocale) == m_Locales.end())
+        {
+            return "locale_undefined";
+        }
+
+        const nlohmann::json &current_def_locale = m_Locales[m_DefaultLocale];
+
+        for (const auto &item : current_def_locale["locales"])
         {
             if (item.contains(locale_type))
             {

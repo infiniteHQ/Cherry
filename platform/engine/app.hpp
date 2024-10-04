@@ -169,6 +169,7 @@ namespace UIKit
 		// Locales & Traductions
 		void AddLocale(const std::string &locale_name, const std::string &data_path);
 		void SetLocale(const std::string &locale_name);
+    	void SetDefaultLocale(const std::string &locale_name);
 		std::string GetLocale(const std::string &locale_type);
 
 		// Generic utils 
@@ -223,6 +224,7 @@ namespace UIKit
 
 		std::unordered_map<std::string, nlohmann::json> m_Locales;
 		std::string m_SelectedLocale;
+		std::string m_DefaultLocale;
 
 	private:
 		void Init();

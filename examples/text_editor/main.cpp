@@ -21,7 +21,8 @@ UIKit::Application *UIKit::CreateApplication(int argc, char **argv)
   spec.MinWidth = 500;
   spec.CustomTitlebar = false;
   spec.DisableWindowManagerTitleBar = false;
-  spec.EnableDocking = false;
+  spec.RenderMode = WindowRenderingMethod::SimpleWindow;
+  spec.UniqueAppWindowName = "Test";
   spec.WindowSaves = false;
   spec.IconPath = BINPATH("ressources/imgs/icon.png");
 
@@ -81,6 +82,11 @@ UIKit::Application *UIKit::CreateApplication(int argc, char **argv)
                               {
   app->SetLocale("fr");
                               }
+
+                              if(ImGui::Button("Set es"))
+                              {
+  app->SetLocale("es");
+                              }
                               ImGui::GetFont()->Scale *= 0.8;
                               ImGui::PushFont(ImGui::GetFont());
 
@@ -137,11 +143,12 @@ UIKit::Application *UIKit::CreateApplication(int argc, char **argv)
                             ImGui::PopStyleVar();  
                             ImGui::PopStyleColor(2); });
 
-  static std::shared_ptr<TextEditor> cp_TextEditor = std::make_shared<TextEditor>(Application::CookPath("ressources/testfile.txt"));
+  //static std::shared_ptr<TextEditor> cp_TextEditor = std::make_shared<TextEditor>(Application::CookPath("ressources/testfile.txt"));
+  std::shared_ptr<TextEditorSimple> cp_TextEditor = std::make_shared<TextEditorSimple>("Test");
+cp_TextEditor->RefreshRender(cp_TextEditor);
 
   app->SetMainRenderCallback([]()
                              {
-                              ImGui::Button("sqdf");
                                /*static ImFont *font = Application::GetFontList()["Consola"];
 
                                ImFont *old = ImGui::GetFont();

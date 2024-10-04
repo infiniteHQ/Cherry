@@ -22,6 +22,7 @@ namespace UIKit
         TextEditorSimple();
 
         void RefreshRender(const std::shared_ptr<TextEditorSimple> &instance);
+        std::shared_ptr<UIKit::AppWindow> m_AppWindow;
 
     private:
         // Ui Components
@@ -33,7 +34,6 @@ namespace UIKit
         std::shared_ptr<std::string> v_StringOne; 
 
         // Renderer
-        std::shared_ptr<UIKit::AppWindow> m_AppWindow;
 
 
         std::shared_ptr<TextEditor> cp_TextEditor;   

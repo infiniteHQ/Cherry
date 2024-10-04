@@ -13,6 +13,15 @@ namespace UIKit
 		Unique
 	};
 
+	enum class WindowRenderingMethod
+	{
+		DockingWindows, // Unlimited windows with docking
+		TabWidows, // Unlimited windows without docking.
+		SimpleWindow, // Need to Put one single window
+		SimpleRender // Need to use the MainRenderChannel
+	};
+
+
 	enum class WindowMenubar
 	{
         CustomTitleBar
@@ -91,7 +100,8 @@ namespace UIKit
         bool DisableTitleBar = false;
         bool DisableResize = false;
         bool DisableWindowManagerTitleBar = false;
-        bool EnableDocking = false;
+        WindowRenderingMethod RenderMode;
+        std::string UniqueAppWindowName;
 
         // Uses custom UIKit titlebar instead
         // of Windows default

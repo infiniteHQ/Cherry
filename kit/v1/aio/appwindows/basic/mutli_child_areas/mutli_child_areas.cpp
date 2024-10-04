@@ -23,13 +23,10 @@ namespace UIKit
         m_AppWindow = std::make_shared<UIKit::AppWindow>(name, name);
         m_AppWindow->SetIcon("/usr/local/include/Vortex/imgs/vortex.png");
 
-        m_SelectedChildName = "TEst1";
 
         std::shared_ptr<UIKit::AppWindow> win = m_AppWindow;
         m_AppWindow->SetLeftMenubarCallback([]() {});
         m_AppWindow->SetRightMenubarCallback([win]() {});
-
-        Application::Get().PutWindow(m_AppWindow);
     }
 
     void MultiChildAreas::AddChild(const Child &child)
@@ -114,7 +111,7 @@ namespace UIKit
                                                {
                                                    auto &child = children[i];
 
-                                                   ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.0f, 0.0f, 0.0f, 1.0f));
+                                                   ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
                                                    ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
 
                                                    std::string childname = child.m_Name + "##childh" + instance->m_AppWindow->m_Name;
@@ -245,7 +242,7 @@ namespace UIKit
                                                {
                                                    auto &child = children[i];
 
-                                                   ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.0f, 0.0f, 0.0f, 1.0f));
+                                                   ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
                                                    ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
 
                                                    std::string childname = child.m_Name + "##childnh" + instance->m_AppWindow->m_Name;

@@ -1,51 +1,7 @@
 #include "./demo.hpp"
 
-/*
-
-Simple button
-Custom Button
-Low Profile Button
-Double button
-Menu Button
-Mutiple button (vector callbacks)
-
-Simple Table
-
-Simple Tree
-
-Simple Header
-Low Profile Header
-Logo Header
-Callback Header
-Logo Callback Header
-
-Simple Input
-Logo Input
-Cuustom Input
-
-Simple Menu
-Rich Menu
-
-*/
-
 namespace UIKit
 {
-    DemoAppWindow::DemoAppWindow(const std::string &name, const std::shared_ptr<AppWindow> &parent)
-    {
-        m_AppWindow = std::make_shared<UIKit::AppWindow>(name, name);
-        m_AppWindow->SetIcon("/usr/local/include/Vortex/imgs/vortex.png");
-        m_AppWindow->SetParent(parent);
-        m_AppWindow->SetRenderCallback([this]() {
-
-        });
-
-        std::shared_ptr<UIKit::AppWindow> win = m_AppWindow;
-
-        m_AppWindow->SetLeftMenubarCallback([]() {});
-
-        m_AppWindow->SetRightMenubarCallback([win]() {});
-    }
-
     DemoAppWindow::DemoAppWindow(const std::string &name)
     {
         m_AppWindow = std::make_shared<UIKit::AppWindow>(name, name);
@@ -1517,13 +1473,9 @@ namespace UIKit
 
         });
 
-        m_SelectedChildName = "TEst1";
-
         std::shared_ptr<UIKit::AppWindow> win = m_AppWindow;
         m_AppWindow->SetLeftMenubarCallback([]() {});
         m_AppWindow->SetRightMenubarCallback([win]() {});
-
-        Application::Get().PutWindow(m_AppWindow);
     }
 
     void DemoAppWindow::AddChild(const std::string &child_name, const std::function<void()> &child)

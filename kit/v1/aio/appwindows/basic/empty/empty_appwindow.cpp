@@ -71,7 +71,7 @@ namespace UIKit
 
         Application::Get().PutWindow(m_AppWindow);
 
-        ApplicationSpecification spec;
+       /* ApplicationSpecification spec;
         spec.Name = name;
         spec.MinHeight = 50;
         spec.MinWidth = 50;
@@ -84,7 +84,7 @@ namespace UIKit
         spec.WindowSaves = true;
         spec.IconPath = "icon.png";
 
-       // m_AppWindow->AttachOnNewWindow(spec);
+       // m_AppWindow->AttachOnNewWindow(spec);*/
     }
 
     void EmptyAppWindow::RefreshRender(const std::shared_ptr<EmptyAppWindow> &instance)

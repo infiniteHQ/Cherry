@@ -13,7 +13,6 @@
 #include "../../../../components/inputs/keyval/keyval_double.hpp"
 #include "../../../../../../lib/imgui/misc/text_editors/text_editor.hpp"
 
-
 namespace UIKit
 {
 
@@ -27,45 +26,44 @@ namespace UIKit
 
         void RefreshRender(const std::shared_ptr<DataLogsViewer> &instance);
 
-void LoadFileContent(const std::string &filePath)
-{
-    std::ifstream file(filePath);
+        void LoadFileContent(const std::string &filePath)
+        {
+            std::ifstream file(filePath);
 
-    if (file.is_open())
-    {
-        std::stringstream buffer;
-        buffer << file.rdbuf();
-        v_Data = buffer.str();
-    }
-    else
-    {
-        v_Data = "Error: Cannot open the file!";
-    }
-}
+            if (file.is_open())
+            {
+                std::stringstream buffer;
+                buffer << file.rdbuf();
+                v_Data = buffer.str();
+            }
+            else
+            {
+                v_Data = "Error: Cannot open the file!";
+            }
+        }
 
-
+        std::shared_ptr<UIKit::AppWindow> &GetAppWindow()
+        {
+            return m_AppWindow;
+        }
 
     private:
         // Ui Components
-        std::shared_ptr<SimpleTable> cp_SimpleTable;    
+        std::shared_ptr<SimpleTable> cp_SimpleTable;
 
+        std::shared_ptr<DoubleKeyValString> cp_NameInput;
+        std::shared_ptr<DoubleKeyValString> cp_DescriptionInput;
 
-        std::shared_ptr<DoubleKeyValString> cp_NameInput;   
-        std::shared_ptr<DoubleKeyValString> cp_DescriptionInput;   
-
-        std::shared_ptr<ImageStringInput> cp_SearchInput;    
-        std::shared_ptr<TextEditor> cp_TextEditor;    
-        std::shared_ptr<std::string> v_SearchValue; 
-
+        std::shared_ptr<ImageStringInput> cp_SearchInput;
+        std::shared_ptr<TextEditor> cp_TextEditor;
+        std::shared_ptr<std::string> v_SearchValue;
 
         // Properties Values
-        std::shared_ptr<std::string> v_Name; 
-        std::shared_ptr<std::string> v_Description; 
+        std::shared_ptr<std::string> v_Name;
+        std::shared_ptr<std::string> v_Description;
 
-std::string v_Data;
-std::string m_FilePath;
-
-
+        std::string v_Data;
+        std::string m_FilePath;
 
         // Renderer
         std::shared_ptr<UIKit::AppWindow> m_AppWindow;

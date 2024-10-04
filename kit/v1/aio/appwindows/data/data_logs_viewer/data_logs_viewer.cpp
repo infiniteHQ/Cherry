@@ -72,7 +72,6 @@ namespace UIKit
                                                  // Settings
                                              });
 
-        Application::Get().PutWindow(m_AppWindow);
     }
 
     void DataLogsViewer::RefreshRender(const std::shared_ptr<DataLogsViewer> &instance)
@@ -80,8 +79,6 @@ namespace UIKit
         m_AppWindow->SetRenderCallback([instance]()
                                        {
                                            ImFont *font = Application::GetFontList()["Consola"];
-
-                                           std::cout << "font" << font << std::endl;
 
                                            if (font)
                                            {
