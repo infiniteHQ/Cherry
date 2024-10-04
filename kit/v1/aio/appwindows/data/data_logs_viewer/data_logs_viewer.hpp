@@ -11,6 +11,8 @@
 #include "../../../../components/inputs/simple/simple_inputs.hpp"
 #include "../../../../components/inputs/simple/image_inputs.hpp"
 #include "../../../../components/inputs/keyval/keyval_double.hpp"
+#include "../../../../../../lib/imgui/misc/text_editors/text_editor.hpp"
+
 
 namespace UIKit
 {
@@ -52,6 +54,7 @@ void LoadFileContent(const std::string &filePath)
         std::shared_ptr<DoubleKeyValString> cp_DescriptionInput;   
 
         std::shared_ptr<ImageStringInput> cp_SearchInput;    
+        std::shared_ptr<TextEditor> cp_TextEditor;    
         std::shared_ptr<std::string> v_SearchValue; 
 
 

@@ -474,7 +474,7 @@ namespace UIKit
         c_ValidDropZoneFounded = founded;
     }
 
-    void Application::SetCurrentDragDropState(const std::shared_ptr<UIKit::WindowDragDropState>& state)
+    void Application::SetCurrentDragDropState(const std::shared_ptr<UIKit::WindowDragDropState> &state)
     {
         c_CurrentDragDropState = state;
     }
@@ -504,9 +504,9 @@ namespace UIKit
         c_CurrentDragDropState->LastDraggingWindow = new_name;
     }
 
-    void Application::SetLastWindowPressed(const std::string& name)
+    void Application::SetLastWindowPressed(const std::string &name)
     {
-        LastWindowPressed =name;
+        LastWindowPressed = name;
     }
 
     void Application::SetCurrentDragDropStateDraggingPlace(const DockEmplacement &place)
@@ -518,7 +518,7 @@ namespace UIKit
         return s_Fonts;
     }
 
-    void Application::PushRedockEvent(const std::shared_ptr<UIKit::WindowDragDropState>& state)
+    void Application::PushRedockEvent(const std::shared_ptr<UIKit::WindowDragDropState> &state)
     {
         for (auto app_win : s_Instance->m_AppWindows)
         {
@@ -551,7 +551,10 @@ namespace UIKit
             printf("Error: %s\n", SDL_GetError());
             return;
         }
+    }
 
+    void Application::BoostrappWindow()
+    {
         // Bootstrapp with a first window
         // TODO: Default win name.
         this->m_Windows.push_back(std::make_shared<Window>("0", app->m_Specification.Width, app->m_Specification.Height, app->m_Specification));
@@ -1049,63 +1052,64 @@ namespace UIKit
     void Application::Run()
     {
         m_Running = true;
+        this->BoostrappWindow();
         while (m_Running)
         {
-            std::cout << "Redock count : " << RedockCount << std::endl;
-            std::cout << "=============== CURRENT DRAG/DROP STATE ================" << std::endl;
-            if (c_CurrentDragDropState)
-            {
+            /* std::cout << "Redock count : " << RedockCount << std::endl;
+             std::cout << "=============== CURRENT DRAG/DROP STATE ================" << std::endl;
+             if (c_CurrentDragDropState)
+             {
 
-                std::cout << "Initiator Window (LastDraggingWindow): " << c_CurrentDragDropState->LastDraggingWindow << std::endl;
-                if (c_CurrentDragDropState->LastDraggingPlace == DockEmplacement::DockDown)
-                    std::cout << "Last Place : " << "DockDown" << std::endl;
-                if (c_CurrentDragDropState->LastDraggingPlace == DockEmplacement::DockUp)
-                    std::cout << "Last Place : " << "DockUp" << std::endl;
-                if (c_CurrentDragDropState->LastDraggingPlace == DockEmplacement::DockLeft)
-                    std::cout << "Last Place : " << "DockLeft" << std::endl;
-                if (c_CurrentDragDropState->LastDraggingPlace == DockEmplacement::DockRight)
-                    std::cout << "Last Place : " << "DockRight" << std::endl;
-                if (c_CurrentDragDropState->LastDraggingPlace == DockEmplacement::DockFull)
-                    std::cout << "Last Place : " << "DockFull" << std::endl;
-                if (c_CurrentDragDropState->LastDraggingPlace == DockEmplacement::DockBlank)
-                    std::cout << "Last Place : " << "DockBlank" << std::endl;
+                 std::cout << "Initiator Window (LastDraggingWindow): " << c_CurrentDragDropState->LastDraggingWindow << std::endl;
+                 if (c_CurrentDragDropState->LastDraggingPlace == DockEmplacement::DockDown)
+                     std::cout << "Last Place : " << "DockDown" << std::endl;
+                 if (c_CurrentDragDropState->LastDraggingPlace == DockEmplacement::DockUp)
+                     std::cout << "Last Place : " << "DockUp" << std::endl;
+                 if (c_CurrentDragDropState->LastDraggingPlace == DockEmplacement::DockLeft)
+                     std::cout << "Last Place : " << "DockLeft" << std::endl;
+                 if (c_CurrentDragDropState->LastDraggingPlace == DockEmplacement::DockRight)
+                     std::cout << "Last Place : " << "DockRight" << std::endl;
+                 if (c_CurrentDragDropState->LastDraggingPlace == DockEmplacement::DockFull)
+                     std::cout << "Last Place : " << "DockFull" << std::endl;
+                 if (c_CurrentDragDropState->LastDraggingPlace == DockEmplacement::DockBlank)
+                     std::cout << "Last Place : " << "DockBlank" << std::endl;
 
-                std::cout << "Initiator App Window : " << c_CurrentDragDropState->LastDraggingAppWindowHost << std::endl;
-                std::cout << "ImGui Detect if Pressed : " << ImGui::GetCurrentContext()->DockTabStaticSelection.Pressed << std::endl;
-                std::cout << "Target window to split: " << c_CurrentDragDropState->LastDraggingAppWindow << std::endl;
-                std::cout << "Is currently dragging : " << c_CurrentDragDropState->DockIsDragging << std::endl;
-            }
-            else
-            {
-                std::cout << "no data" << std::endl;
-            }
-            std::cout << "================================================" << std::endl;
+                 std::cout << "Initiator App Window : " << c_CurrentDragDropState->LastDraggingAppWindowHost << std::endl;
+                 std::cout << "ImGui Detect if Pressed : " << ImGui::GetCurrentContext()->DockTabStaticSelection.Pressed << std::endl;
+                 std::cout << "Target window to split: " << c_CurrentDragDropState->LastDraggingAppWindow << std::endl;
+                 std::cout << "Is currently dragging : " << c_CurrentDragDropState->DockIsDragging << std::endl;
+             }
+             else
+             {
+                 std::cout << "no data" << std::endl;
+             }
+             std::cout << "================================================" << std::endl;
 
-            std::cout << "=============== LATEST DOCK REQUEST =============" << std::endl;
-            if (latest_req)
-            {
-                std::cout << "LatestREQ m_ParentAppWindow : " << latest_req->m_ParentAppWindow << std::endl;
-                std::cout << "LatestREQ m_ParentAppWindowHost : " << latest_req->m_ParentAppWindowHost << std::endl;
-                std::cout << "LatestREQ m_ParentWindow : " << latest_req->m_ParentWindow << std::endl;
-                std::cout << "LatestREQ LastReqMode : " << LastReqMode << std::endl;
-                if (latest_req->m_DockPlace == DockEmplacement::DockDown)
-                    std::cout << "LatestREQ Place : " << "DockDown" << std::endl;
-                if (latest_req->m_DockPlace == DockEmplacement::DockUp)
-                    std::cout << "LatestREQ Place : " << "DockUp" << std::endl;
-                if (latest_req->m_DockPlace == DockEmplacement::DockLeft)
-                    std::cout << "LatestREQ Place : " << "DockLeft" << std::endl;
-                if (latest_req->m_DockPlace == DockEmplacement::DockRight)
-                    std::cout << "LatestREQ Place : " << "DockRight" << std::endl;
-                if (latest_req->m_DockPlace == DockEmplacement::DockFull)
-                    std::cout << "LatestREQ Place : " << "DockFull" << std::endl;
-                if (latest_req->m_DockPlace == DockEmplacement::DockBlank)
-                    std::cout << "LatestREQ Place : " << "DockBlank" << std::endl;
-            }
-            else
-            {
-                std::cout << "no data" << std::endl;
-            }
-            std::cout << "================================================" << std::endl;
+             std::cout << "=============== LATEST DOCK REQUEST =============" << std::endl;
+             if (latest_req)
+             {
+                 std::cout << "LatestREQ m_ParentAppWindow : " << latest_req->m_ParentAppWindow << std::endl;
+                 std::cout << "LatestREQ m_ParentAppWindowHost : " << latest_req->m_ParentAppWindowHost << std::endl;
+                 std::cout << "LatestREQ m_ParentWindow : " << latest_req->m_ParentWindow << std::endl;
+                 std::cout << "LatestREQ LastReqMode : " << LastReqMode << std::endl;
+                 if (latest_req->m_DockPlace == DockEmplacement::DockDown)
+                     std::cout << "LatestREQ Place : " << "DockDown" << std::endl;
+                 if (latest_req->m_DockPlace == DockEmplacement::DockUp)
+                     std::cout << "LatestREQ Place : " << "DockUp" << std::endl;
+                 if (latest_req->m_DockPlace == DockEmplacement::DockLeft)
+                     std::cout << "LatestREQ Place : " << "DockLeft" << std::endl;
+                 if (latest_req->m_DockPlace == DockEmplacement::DockRight)
+                     std::cout << "LatestREQ Place : " << "DockRight" << std::endl;
+                 if (latest_req->m_DockPlace == DockEmplacement::DockFull)
+                     std::cout << "LatestREQ Place : " << "DockFull" << std::endl;
+                 if (latest_req->m_DockPlace == DockEmplacement::DockBlank)
+                     std::cout << "LatestREQ Place : " << "DockBlank" << std::endl;
+             }
+             else
+             {
+                 std::cout << "no data" << std::endl;
+             }
+             std::cout << "================================================" << std::endl;*/
 
             c_ValidDropZoneFounded = false;
             if (s_Instance->m_Specification.WindowSaves)
@@ -1503,13 +1507,10 @@ namespace UIKit
 
                 ImGui::NewFrame();
 
-                for (auto appwin : m_AppWindows)
-                {
-                    std::cout << "For AppWin : " << appwin->m_Name << " With win : " << appwin->m_WinParent << std::endl;
-                }
-
                 ImGui::PushFont(Application::GetFontList()["Default"]);
+
                 app->RenderWindow(window.get());
+                
                 if (c_DockIsDragging && c_CurrentDragDropState)
                 {
                     SDL_GetGlobalMouseState(&c_CurrentDragDropState->mouseX, &c_CurrentDragDropState->mouseY);

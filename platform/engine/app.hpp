@@ -138,6 +138,7 @@ namespace UIKit
 
 		bool IsMaximized(const std::shared_ptr<Window> &win) const;
 
+		void BoostrappWindow();
 		void Run();
 		void LoadImages();
 

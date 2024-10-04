@@ -8,5 +8,7 @@ examples/advanced/build
 examples/advanced/imgui.ini
 examples/demo/build
 examples/demo/imgui.ini
+examples/text_editor/build
+examples/text_editor/imgui.ini
 
 .vscode

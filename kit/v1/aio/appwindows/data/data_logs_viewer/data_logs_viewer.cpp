@@ -52,14 +52,20 @@ namespace UIKit
         std::shared_ptr<UIKit::AppWindow> win = m_AppWindow;
 
         m_FilePath = path;
+        LoadFileContent(m_FilePath);
 
         m_AppWindow->SetInternalPaddingX(1.0f);
         m_AppWindow->SetInternalPaddingY(0.0f);
 
         m_AppWindow->SetLeftMenubarCallback([this]() {});
 
+        cp_TextEditor = std::make_shared<TextEditor>(m_FilePath);
+        cp_TextEditor->SetShowWhitespaces(false);
+
         m_AppWindow->SetRightMenubarCallback([win]()
                                              {
+                                                 ImGui::SetRenderCallback(ImGuiRenderCallback("ButtonEx::Test", []()
+                                                                                              { ImGui::Text("This is working !"); }));
                                                  ImGui::Button("Add");
                                                  ImGui::Button("Settings");
                                                  // Add Folder
@@ -73,9 +79,20 @@ namespace UIKit
     {
         m_AppWindow->SetRenderCallback([instance]()
                                        {
-                                           static ImGuiInputTextFlags flags = ImGuiInputTextFlags_AllowTabInput | ImGuiInputTextFlags_ReadOnly;
-                                           instance->LoadFileContent(instance->m_FilePath);
-                                           ImGui::InputTextMultiline("##source", const_cast<char *>(instance->v_Data.c_str()), instance->v_Data.size(), ImVec2(-FLT_MIN, -1), flags);
+                                           ImFont *font = Application::GetFontList()["Consola"];
+
+                                           std::cout << "font" << font << std::endl;
+
+                                           if (font)
+                                           {
+                                               ImGui::PushFont(font);
+                                           }
+                                           instance->cp_TextEditor->Render("Title");
+
+                                           if (font)
+                                           {
+                                               ImGui::PopFont();
+                                           }
                                        });
     }
 

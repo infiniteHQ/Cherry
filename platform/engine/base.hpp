@@ -6,20 +6,42 @@
 
 namespace UIKit
 {
-	enum class Window_Type
+	enum class WindowType
 	{
-		ENTIRE_WINDOW,
-		SIMPLE_WINDOW,
+		Docking,
+		Tabs,
+		Unique
 	};
+
+	enum class WindowMenubar
+	{
+        CustomTitleBar
+	};
+    
     
 	enum class DockEmplacement
 	{
+        // Unknow/Unset position
 		DockBlank,
+
+        // Entire place of main dock node
+		DockFull,
+
+        // Main positions
 		DockUp,
 		DockDown,
-		DockLeft,
 		DockRight,
-		DockFull
+		DockLeft,
+
+        // Secondary, Only used for default behaviors.
+		DockUpLeft, // AppWindow at up + DockLeft
+		DockUpRight, // AppWindow at up + DockRight
+		DockDownLeft, // AppWindow at down + DockLeft
+		DockDownRight, // AppWindow at down + DockRight
+		DockLeftDown, // AppWindow at left + DockDown
+		DockLeftUp, // AppWindow at left + DockUp
+		DockRightUp, // AppWindow at right + DockDown
+		DockRightDown // AppWindow at right + DockUp
 	};
 
 
@@ -62,9 +84,7 @@ namespace UIKit
         std::filesystem::path IconPath;
 
         bool WindowResizeable = true;
-
         bool WindowOnlyClosable = false;
-
         bool WindowSaves = false;
 
         bool DisableTitle = false;

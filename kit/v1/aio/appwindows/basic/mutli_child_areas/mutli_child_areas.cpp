@@ -45,6 +45,8 @@ namespace UIKit
     {
     }
 
+
+
     void MultiChildAreas::RefreshRender(const std::shared_ptr<MultiChildAreas> &instance)
     {
         m_AppWindow->SetRenderCallback([instance]()
@@ -55,12 +57,11 @@ namespace UIKit
                                                const float margin = 10.0f;
 
                                                auto &children = instance->m_Childs;
-                                               const bool isHorizontal = instance->m_IsHorizontal;
 
                                                ImGuiWindow *window = ImGui::GetCurrentWindow();
                                                ImVec2 windowSize = window->ContentRegionRect.GetSize();
 
-                                               float totalAvailableSize = isHorizontal ? windowSize.y : windowSize.x;
+                                               float totalAvailableSize = windowSize.y;
                                                totalAvailableSize -= (children.size() - 1) * splitterSize;
 
                                                float usedSize = 0.0f;
@@ -116,9 +117,9 @@ namespace UIKit
                                                    ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.0f, 0.0f, 0.0f, 1.0f));
                                                    ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
 
-                                                   std::string childname = child.m_Name + "##child" + instance->m_AppWindow->m_Name;
+                                                   std::string childname = child.m_Name + "##childh" + instance->m_AppWindow->m_Name;
                                                    ImGui::BeginChild(childname.c_str(),
-                                                                     isHorizontal ? ImVec2(windowSize.x, child.m_Size) : ImVec2(child.m_Size, windowSize.y),
+                                                                     ImVec2(windowSize.x, child.m_Size),
                                                                      true);
 
                                                    child.m_Child();
@@ -135,29 +136,23 @@ namespace UIKit
                                                            continue;
                                                        }
 
-                                                       if (!isHorizontal)
-                                                       {
-                                                           ImGui::SameLine();
-                                                       }
-                                                       else
-                                                       {
                                                            ImGui::Dummy(ImVec2(0.0f, splitterSize));
-                                                       }
+                                                       
 
                                                        std::string lab = "##splitter" + child.m_Name + instance->m_AppWindow->m_Name;
 
                                                        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.5f, 0.5f, 0.5f, 1.0f));
-                                                       ImGui::Button(lab.c_str(), isHorizontal ? ImVec2(-1, splitterSize) : ImVec2(splitterSize, -1));
+                                                       ImGui::Button(lab.c_str(), ImVec2(-1, splitterSize));
                                                        ImGui::PopStyleColor();
 
                                                        if (ImGui::IsItemHovered())
                                                        {
-                                                           ImGui::SetMouseCursor(isHorizontal ? ImGuiMouseCursor_ResizeNS : ImGuiMouseCursor_ResizeEW);
+                                                           ImGui::SetMouseCursor(ImGuiMouseCursor_ResizeNS);
                                                        }
 
                                                        if (ImGui::IsItemActive())
                                                        {
-                                                           float delta = isHorizontal ? ImGui::GetIO().MouseDelta.y : ImGui::GetIO().MouseDelta.x;
+                                                           float delta = ImGui::GetIO().MouseDelta.y;
 
                                                            child.m_Size += delta;
                                                            next_child.m_Size -= delta;
@@ -177,10 +172,8 @@ namespace UIKit
                                                            }
                                                        }
 
-                                                       if (isHorizontal)
-                                                       {
                                                            ImGui::Dummy(ImVec2(0.0f, splitterSize));
-                                                       }
+                                                       
                                                    }
                                                }
                                            }
@@ -190,7 +183,6 @@ namespace UIKit
                                                const float margin = 10.0f;
 
                                                auto &children = instance->m_Childs;
-                                               const bool isHorizontal = instance->m_IsHorizontal;
 
                                                ImGuiWindow *window = ImGui::GetCurrentWindow();
                                                ImVec2 windowSize = window->ContentRegionRect.GetSize();
@@ -256,7 +248,7 @@ namespace UIKit
                                                    ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.0f, 0.0f, 0.0f, 1.0f));
                                                    ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
 
-                                                   std::string childname = child.m_Name + "##child" + instance->m_AppWindow->m_Name;
+                                                   std::string childname = child.m_Name + "##childnh" + instance->m_AppWindow->m_Name;
                                                    ImGui::BeginChild(childname.c_str(), ImVec2(child.m_Size, windowSize.y), true);
 
                                                    child.m_Child();
@@ -308,5 +300,7 @@ namespace UIKit
                                            }
                                        });
     }
+
+
 
 }
