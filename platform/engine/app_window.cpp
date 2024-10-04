@@ -243,7 +243,9 @@ namespace UIKit
         }
         else
         {
-            ImGui::BeginGroup();
+            ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
+            ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
+            ImGui::BeginChild(ImGui::GetID("MainChild"), ImVec2(0, 0), false, window_flags);
         }
 
         // Prevent undock
@@ -500,7 +502,8 @@ namespace UIKit
         }
         else
         {
-            ImGui::EndGroup();
+            ImGui::EndChild();
+            ImGui::PopStyleColor(2);
         }
     }
 

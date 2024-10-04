@@ -87,9 +87,6 @@ namespace UIKit
                                                  // Add Folder
                                                  // Settings
                                              });
-
-
-        Application::Get().PutWindow(m_AppWindow);
     }
 
     void PropsEditorSimple::RefreshRender(const std::shared_ptr<PropsEditorSimple> &instance)

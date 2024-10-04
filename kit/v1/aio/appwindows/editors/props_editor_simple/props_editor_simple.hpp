@@ -23,7 +23,12 @@ namespace UIKit
         PropsEditorSimple(const std::string &name);
         PropsEditorSimple();
 
-        void RefreshRender(const std::shared_ptr<PropsEditorSimple> &instance);
+        void RefreshRender(const std::shared_ptr<PropsEditorSimple> &instance);        
+        std::shared_ptr<UIKit::AppWindow> &GetAppWindow()
+        {
+            return m_AppWindow;
+        }
+
 
     private:
         // Ui Components

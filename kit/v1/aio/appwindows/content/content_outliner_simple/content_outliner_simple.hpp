@@ -22,6 +22,11 @@ namespace UIKit
 
         void RefreshRender(const std::shared_ptr<ContentOutlinerSimple> &instance);
 
+        std::shared_ptr<UIKit::AppWindow> &GetAppWindow()
+        {
+            return m_AppWindow;
+        }
+
     private:
         // Ui Components
         std::shared_ptr<CustomButtonSimple> cp_ButtonOne;

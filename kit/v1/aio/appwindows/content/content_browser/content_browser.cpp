@@ -490,7 +490,6 @@ namespace UIKit
 
         m_BaseDirectory = start_path;
         m_CurrentDirectory = m_BaseDirectory;
-        Application::Get().PutWindow(m_AppWindow);
     }
 
     void ContentBrowserAppWindow::GoBack()

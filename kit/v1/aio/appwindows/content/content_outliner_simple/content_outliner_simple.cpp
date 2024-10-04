@@ -112,7 +112,6 @@ namespace UIKit
         m_AppWindow->SetRightBottombarCallback([win]()
                                                { ImGui::Button("7 element(s) selected"); });
 
-        Application::Get().PutWindow(m_AppWindow);
     }
 
     void ContentOutlinerSimple::RefreshRender(const std::shared_ptr<ContentOutlinerSimple> &instance)

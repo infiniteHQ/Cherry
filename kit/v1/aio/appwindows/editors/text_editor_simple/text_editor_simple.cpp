@@ -58,6 +58,14 @@ namespace UIKit
 
         v_StringOne = std::make_shared<std::string>("");
 
+
+        cp_SaveButton = Application::Get().CreateComponent<ImageTextButtonSimple>("save_button", Application::Get().GetLocale("loc.content_browser.save_all") + "####content_browser.save_all", UIKit::Application::CookPath("ressources/imgs/icons/misc/icon_save.png"));
+        cp_SaveButton->SetScale(0.85f);
+        cp_SaveButton->SetLogoSize(15, 15);
+        cp_SaveButton->SetInternalMarginX(10.0f);
+        
+
+
         // Components init
         cp_ButtonOne = Application::Get().CreateComponent<CustomButtonSimple>("button_1");
         cp_SearchBar = Application::Get().CreateComponent<SimpleStringInput>("qs", v_StringOne, "Simple string value");
@@ -94,10 +102,16 @@ namespace UIKit
 
         m_AppWindow->SetLeftMenubarCallback([this]()
                                             {
-                                                ImGui::Button("F");
-                                                cp_SearchBar->Render("Normal");
-                                                // Collapse Filter
-                                                // Collapse search bar
+                                                
+            ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0.4f, 0.4f, 0.4f, 0.7f));
+            
+        if(cp_SaveButton->Render())
+        {
+
+        }
+		ImGui::PopStyleColor();
+
+
                                             });
 
         m_AppWindow->SetRightMenubarCallback([win]()
@@ -110,8 +124,6 @@ namespace UIKit
 
         m_AppWindow->SetRightBottombarCallback([win]()
                                                { ImGui::Button("7 element(s) selected"); });
-
-        Application::Get().PutWindow(m_AppWindow);
     }
 
     void TextEditorSimple::RefreshRender(const std::shared_ptr<TextEditorSimple> &instance)

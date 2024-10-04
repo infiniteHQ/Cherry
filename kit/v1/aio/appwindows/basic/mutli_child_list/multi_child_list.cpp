@@ -32,8 +32,6 @@ namespace UIKit
         std::shared_ptr<UIKit::AppWindow> win = m_AppWindow;
         m_AppWindow->SetLeftMenubarCallback([]() {});
         m_AppWindow->SetRightMenubarCallback([win]() {});
-
-        Application::Get().PutWindow(m_AppWindow);
     }
 
     void MultiChildList::AddChild(const std::string &child_name, const std::function<void()> &child)

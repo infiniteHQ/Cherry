@@ -18,6 +18,10 @@ namespace UIKit
     {
     public:
         DockingAppWindow(const std::string& name);
+        std::shared_ptr<UIKit::AppWindow> &GetAppWindow()
+        {
+            return m_AppWindow;
+        }
 
         std::shared_ptr<UIKit::AppWindow> m_AppWindow;
     };

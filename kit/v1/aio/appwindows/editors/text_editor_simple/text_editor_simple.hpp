@@ -6,6 +6,7 @@
 
 #include "../../../../components/buttons/custom_buttons.hpp"
 #include "../../../../components/buttons/image_buttons.hpp"
+#include "../../../../components/buttons/image_text_buttons.hpp"
 #include "../../../../components/lists/custom_lists.hpp"
 #include "../../../../components/inputs/simple/simple_inputs.hpp"
 #include "../../../../../../lib/imgui/misc/text_editors/text_editor.hpp"
@@ -24,6 +25,10 @@ namespace UIKit
         void RefreshRender(const std::shared_ptr<TextEditorSimple> &instance);
         std::shared_ptr<UIKit::AppWindow> m_AppWindow;
 
+        std::shared_ptr<UIKit::AppWindow> &GetAppWindow()
+        {
+            return m_AppWindow;
+        }
     private:
         // Ui Components
         std::shared_ptr<CustomButtonSimple> cp_ButtonOne;
@@ -34,7 +39,7 @@ namespace UIKit
         std::shared_ptr<std::string> v_StringOne; 
 
         // Renderer
-
+        std::shared_ptr<ImageTextButtonSimple> cp_SaveButton;
 
         std::shared_ptr<TextEditor> cp_TextEditor;   
     };

@@ -28,8 +28,6 @@ namespace UIKit
         m_AppWindow->SetInternalPaddingY(12.0f);
         m_AppWindow->SetLeftMenubarCallback([]() {});
         m_AppWindow->SetRightMenubarCallback([win]() {});
-
-        Application::Get().PutWindow(m_AppWindow);
     }
 
     void MultiChildTabs::AddChild(const std::string &child_name, const std::function<void()> &child)

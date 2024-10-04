@@ -27,6 +27,10 @@ namespace UIKit
     public:
         MultiChildTabs(const std::string &name, const std::shared_ptr<AppWindow> &parent);
         MultiChildTabs(const std::string &name);
+        std::shared_ptr<UIKit::AppWindow> &GetAppWindow()
+        {
+            return m_AppWindow;
+        }
 
         void AddChild(const std::string &child_name, const std::function<void()> &child);
         void RemoveChild(const std::string &child_name);

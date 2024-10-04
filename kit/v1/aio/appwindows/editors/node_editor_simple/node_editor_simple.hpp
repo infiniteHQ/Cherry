@@ -929,7 +929,12 @@ namespace UIKit
     public:
         NodeEditorSimple(const std::string &name, const std::shared_ptr<AppWindow> &parent);
         NodeEditorSimple(const std::string &name);
-        NodeEditorSimple();
+        NodeEditorSimple();        
+        std::shared_ptr<UIKit::AppWindow> &GetAppWindow()
+        {
+            return m_AppWindow;
+        }
+
 
         void RefreshRender(const std::shared_ptr<NodeEditorSimple> &instance);
     private:
