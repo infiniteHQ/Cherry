@@ -152,7 +152,7 @@ UIKit::Application *UIKit::CreateApplication(int argc, char **argv)
 
 
   
-  std::shared_ptr<ContentOutlinerSimple> ContentOutliner = std::make_shared<UIKit::ContentOutlinerSimple>("?loc:loc.window_names.outliner"); // Create Window
+  /*std::shared_ptr<ContentOutlinerSimple> ContentOutliner = std::make_shared<UIKit::ContentOutlinerSimple>("?loc:loc.window_names.outliner"); // Create Window
   ContentOutliner->RefreshRender(ContentOutliner); // Refresh the render channel
   Application::Get().PutWindow(ContentOutliner->GetAppWindow()); // Publish this window into the workspace
 
@@ -181,11 +181,21 @@ UIKit::Application *UIKit::CreateApplication(int argc, char **argv)
   TabsWindow->AddChild("Three", [](){ImGui::Text("Three");});
   TabsWindow->RefreshRender(TabsWindow);
   Application::Get().PutWindow(TabsWindow->GetAppWindow()); // Publish this window into the workspace
-   
+  
+  
+  std::shared_ptr<MultiChildList> ListWindow = std::make_shared<UIKit::MultiChildList>("indow_names.list");
+  ListWindow->AddChild("One", [](){ImGui::Text("One");});
+  ListWindow->AddChild("Two", [](){ImGui::Text("Two");});
+  ListWindow->AddChild("Three", [](){ImGui::Text("Three");});
+  ListWindow->AddChild("Four", [](){ImGui::Text("Four");});
+  ListWindow->RefreshRender(ListWindow);
+  Application::Get().PutWindow(ListWindow->GetAppWindow()); // Publish this window into the workspace
+
+
   // Multi childs
   std::shared_ptr<MultiChildAreas> VerticalAreas = std::make_shared<UIKit::MultiChildAreas>("indow_names.content_browser");
   VerticalAreas->m_IsHorizontal = false;
-  VerticalAreas->AddChild(Child("One", [](){ImGui::Text("One");}));
+  VerticalAreas->AddChild(Child("One", [](){ImGui::Text("One");}, 5.0f));
   VerticalAreas->AddChild(Child("Two", [](){ImGui::Text("Two");}, 20.0f));
   VerticalAreas->AddChild(Child("Three", [](){ImGui::Text("Three");}));
   VerticalAreas->AddChild(Child("Four", [](){ImGui::Text("Four");}));
@@ -194,22 +204,13 @@ UIKit::Application *UIKit::CreateApplication(int argc, char **argv)
 
   std::shared_ptr<MultiChildAreas> HorizontalAreas = std::make_shared<UIKit::MultiChildAreas>("indow_names.content_browser2");
   HorizontalAreas->m_IsHorizontal = true;
-  HorizontalAreas->AddChild(Child("One2", [](){ImGui::Text("One");}));
-  HorizontalAreas->AddChild(Child("Two2", [](){ImGui::Text("Two");}, 20.0f));
-  HorizontalAreas->AddChild(Child("Three2", [](){ImGui::Text("Three");}));
+  HorizontalAreas->AddChild(Child("One2", [](){ImGui::Text("One");}, 50.0f));
+  HorizontalAreas->AddChild(Child("Two2", [](){ImGui::Text("Two");}, 30.0f));
+  HorizontalAreas->AddChild(Child("Three2", [](){ImGui::Text("Three");}, 20.0f));
   HorizontalAreas->AddChild(Child("Four2", [](){ImGui::Text("Four");}));
   HorizontalAreas->RefreshRender(HorizontalAreas);
   Application::Get().PutWindow(HorizontalAreas->GetAppWindow()); // Publish this window into the workspace
-
-  std::shared_ptr<MultiChildList> ListWindow = std::make_shared<UIKit::MultiChildList>("indow_names.list");
-  ListWindow->AddChild("One", [](){ImGui::Text("One");});
-  ListWindow->AddChild("Two", [](){ImGui::Text("Two");});
-  ListWindow->AddChild("Three", [](){ImGui::Text("Three");});
-  ListWindow->AddChild("Four", [](){ImGui::Text("Four");});
-  ListWindow->RefreshRender(ListWindow);
-  Application::Get().PutWindow(ListWindow->GetAppWindow()); // Publish this window into the workspace
   
-
   std::shared_ptr<MultiChildTabs> appTabs = std::make_shared<UIKit::MultiChildTabs>("indow_names.tabs");
   appTabs->AddChild("One", [](){ImGui::Text("One");});
   appTabs->AddChild("Two", [](){ImGui::Text("Two");});
@@ -217,6 +218,13 @@ UIKit::Application *UIKit::CreateApplication(int argc, char **argv)
   appTabs->AddChild("Four", [](){ImGui::Text("Four");});
   appTabs->RefreshRender(appTabs);
   
+  */
+  std::shared_ptr<ContentBrowserAppWindow> ContentBrowser = std::make_shared<UIKit::ContentBrowserAppWindow>("?loc:loc.window_names.content_browser", "/home/diego");
+  ContentBrowser->RefreshRender(ContentBrowser);
+  Application::Get().PutWindow(ContentBrowser->GetAppWindow()); // Publish this window into the workspace
+   
+  
+
   
 
   return app;

@@ -1875,6 +1875,15 @@ namespace UIKit
 
         window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse;
         window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+
+        if(Application::GetCurrentRenderedWindow())
+        {
+            if(!Application::GetCurrentRenderedWindow()->m_Specifications.WindowResizeable)
+            {
+                window_flags |= ImGuiWindowFlags_NoResize;
+            }
+        }
+
         if (!window->m_Specifications.CustomTitlebar && m_MenubarCallback)
             window_flags |= ImGuiWindowFlags_MenuBar;
 

@@ -143,9 +143,9 @@ UIKit::Application *UIKit::CreateApplication(int argc, char **argv)
                             ImGui::PopStyleVar();  
                             ImGui::PopStyleColor(2); });
 
-  //static std::shared_ptr<TextEditor> cp_TextEditor = std::make_shared<TextEditor>(Application::CookPath("ressources/testfile.txt"));
-  std::shared_ptr<TextEditorSimple> cp_TextEditor = std::make_shared<TextEditorSimple>("Test");
-cp_TextEditor->RefreshRender(cp_TextEditor);
+  std::shared_ptr<TextEditorSimple> TextEditor = std::make_shared<TextEditorSimple>("Test");
+  TextEditor->RefreshRender(TextEditor);
+  Application::Get().PutWindow(TextEditor->GetAppWindow()); // Publish this window into the workspace
 
   app->SetMainRenderCallback([]()
                              {
@@ -162,8 +162,7 @@ cp_TextEditor->RefreshRender(cp_TextEditor);
                                if (font)
                                {
                                  ImGui::PopFont();
-                               }*/
-                             });
+                               }*/ });
 
   return app;
 }

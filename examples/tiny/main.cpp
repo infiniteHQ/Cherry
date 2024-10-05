@@ -17,11 +17,12 @@ UIKit::Application *UIKit::CreateApplication(int argc, char **argv)
 
   std::string name = "Tiny window";
   spec.Name = name;
-  spec.MinHeight = 500;
-  spec.MinWidth = 500;
-  spec.Height = 400;
+  spec.MinHeight = 200;
+  spec.MinWidth = 200;
+  spec.Height = 300;
   spec.Width = 700;
   spec.CustomTitlebar = false;
+  spec.WindowResizeable = false;
   spec.DisableWindowManagerTitleBar = true;
   spec.RenderMode = WindowRenderingMethod::SimpleWindow;
 
@@ -75,14 +76,14 @@ UIKit::Application *UIKit::CreateApplication(int argc, char **argv)
                               ImVec2(availableSize.x, availableSize.y),
                               ImVec2(-offset.x / displaySize.x, -offset.y / displaySize.y),
                               ImVec2((availableSize.x - offset.x) / displaySize.x, (availableSize.y - offset.y) / displaySize.y));
-                        }, 0.0f, true));
+                        }, 60.0f, true));
   Areas->AddChild(Child("Two", []()
                         { 
                           ImGui::Separator();
                           UIKit::TitleTwo("Welcome to UIKit !!!");
                           UIKit::TitleSixColored("by Infinite"); 
                           ImGui::TextWrapped("UIKit is a powerfull low-level framework to help developpers to create simple or advanced application, with no advanced knowledges required. UIKit provide components, tools, a render engine & all backends you need to make the next revolutionnary app !"); 
-                          }, 20.0f));
+                          }));
 
   Areas->RefreshRender(Areas);
   Application::Get().PutWindow(Areas->GetAppWindow());

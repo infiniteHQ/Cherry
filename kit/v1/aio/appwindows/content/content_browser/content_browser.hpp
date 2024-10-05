@@ -1,6 +1,5 @@
 #include "../../../../../../platform/engine/app.hpp"
 
-
 #ifndef UIKIT_V1_AIO_CONTENT_CONTENTBROWSER
 #define UIKIT_V1_AIO_CONTENT_CONTENTBROWSER
 
@@ -29,22 +28,19 @@
 namespace UIKit
 {
 
-class ContenBrowserItem
-{
-public:
-  bool (*f_Detect)(const std::string &path);
+    class ContenBrowserItem
+    {
+    public:
+        bool (*f_Detect)(const std::string &path);
 
-  std::string m_Name;
+        std::string m_Name;
 
-  ImTextureID m_Logo;
-  ImVec4 m_LineColor;
-  std::string m_Description;
+        ImTextureID m_Logo;
+        ImVec4 m_LineColor;
+        std::string m_Description;
 
-  ContenBrowserItem(bool (*detect_function)(const std::string &path), const std::string& name, const std::string& description, const ImVec4& line_color):
-  m_Name(name), m_Description(description), f_Detect(detect_function), m_LineColor(line_color)
-  {};
-  
-};
+        ContenBrowserItem(bool (*detect_function)(const std::string &path), const std::string &name, const std::string &description, const ImVec4 &line_color) : m_Name(name), m_Description(description), f_Detect(detect_function), m_LineColor(line_color) {};
+    };
     enum class ContentShowMode
     {
         Thumbmails,
@@ -99,25 +95,55 @@ public:
         std::string handler_plugin_name;
     };
 
+    struct ContentBrowserChild
+    {
+        std::function<void()> m_Child;
+        std::string m_Name;
+        float m_DefaultSize = 0.0f;
+        float m_MinSize;
+        float m_MaxSize;
+        float m_Size = 200.0f;
+        float m_Ratio = 0.0f;
+        bool m_Resizable = true;
+        bool m_ResizeDisabled = false;
+        bool m_Initialized = false;
+        bool m_InitializedSec = false;
+        bool m_InitializedTh = false;
+        ImVec4 m_BackgroundColor = ImVec4(0.0f,0.0f,0.0f,0.0f);
+
+        ContentBrowserChild(const std::string &name, const std::function<void()> &child, const float &default_size = 0.0f, const bool &resize_disabled = false, const float &min_size = 0.0f, const float &max_size = 0.0f)
+            : m_Name(name),
+              m_Child(child),
+              m_ResizeDisabled(resize_disabled),
+              m_DefaultSize(default_size),
+              m_MinSize(min_size),
+              m_MaxSize(max_size) {}
+    };
+
     // This window can be a "subappwindow" of a parent if you use the constructor with parent parameter.
     class ContentBrowserAppWindow
     {
     public:
         ContentBrowserAppWindow(const std::string &name, const std::string &start_path);
-        //ContentBrowserAppWindow(const std::string &name);
+        // ContentBrowserAppWindow(const std::string &name);
 
         std::shared_ptr<UIKit::AppWindow> &GetAppWindow()
         {
             return m_AppWindow;
         }
-        
-        void RefreshRender(const std::shared_ptr<ContentBrowserAppWindow> &instance);
-	bool MyButton(const std::string &name, const std::string &path, const std::string &description, const std::string &size, bool selected, const std::string &logo, ImU32 bgColor, ImU32 borderColor, ImU32 lineColor, float maxTextWidth, float borderRadius);
 
+        void RefreshRender(const std::shared_ptr<ContentBrowserAppWindow> &instance);
+        bool MyButton(const std::string &name, const std::string &path, const std::string &description, const std::string &size, bool selected, const std::string &logo, ImU32 bgColor, ImU32 borderColor, ImU32 lineColor, float maxTextWidth, float borderRadius);
+        void AddChild(const ContentBrowserChild &child);
         void ChangeDirectory(const std::filesystem::path &newDirectory);
         void GoBack();
         void GoForward();
         void DrawPathBar();
+
+        void RenderSideBar();
+        void RenderFiltersBar();
+        void RenderContentBar();
+        void RenderDetailsBar();
 
         void Select(const std::string &path)
         {
@@ -141,13 +167,13 @@ public:
         void MyFolderButton(const char *id, ImVec2 size, ImU32 color, const std::string &path);
         void DrawHierarchy(std::filesystem::path path, bool isDir, const std::string &label);
 
-        void SetDefaultFolderColor(const std::string& hex);
+        void SetDefaultFolderColor(const std::string &hex);
 
-        std::string GetContentBrowserFolderColor(const std::string& path)
+        std::string GetContentBrowserFolderColor(const std::string &path)
         {
-            for(auto &colored_folder : m_FolderColors)
+            for (auto &colored_folder : m_FolderColors)
             {
-                if(colored_folder.first == path)
+                if (colored_folder.first == path)
                 {
                     return colored_folder.second;
                 }
@@ -156,9 +182,11 @@ public:
             return "#997D44FF";
         }
 
-        void AddReconizedItem(const std::shared_ptr<ContenBrowserItem>& item){};
-        bool IsPathFavorite(const std::string& path){return false;};
-        void SetColoredFolder(const std::string& path, const std::string& hex_color){};
+        void AddReconizedItem(const std::shared_ptr<ContenBrowserItem> &item) {};
+        bool IsPathFavorite(const std::string &path) { return false; };
+        void SetColoredFolder(const std::string &path, const std::string &hex_color) {};
+
+        std::vector<ContentBrowserChild> m_Childs;
 
     private:
         bool opened;
@@ -190,7 +218,7 @@ public:
         std::string m_DefaultFolderColor;
 
         // Path/Color
-        std::vector<std::pair<std::string,std::string>> m_FolderColors;
+        std::vector<std::pair<std::string, std::string>> m_FolderColors;
         std::vector<std::string> m_FavoriteFolders;
         std::vector<std::string> m_Pools;
         std::vector<std::shared_ptr<ContenBrowserItem>> m_ItemToReconize;
@@ -203,18 +231,16 @@ public:
 
         std::shared_ptr<UIKit::AppWindow> m_AppWindow;
 
-        std::function<void(const std::string&)> m_DeletePathCallback;
-        std::function<void(const std::vector<std::string>&)> m_CopyPathsCallback;
-        std::function<void(const std::vector<std::string>&)> m_PastePathsCallback;
+        std::function<void(const std::string &)> m_DeletePathCallback;
+        std::function<void(const std::vector<std::string> &)> m_CopyPathsCallback;
+        std::function<void(const std::vector<std::string> &)> m_PastePathsCallback;
 
-        std::shared_ptr<ImageTextButtonSimple> cp_SaveButton;     
-        std::shared_ptr<ImageTextButtonSimple> cp_ImportButton;     
-        std::shared_ptr<ImageTextButtonSimple> cp_AddButton;  
+        std::shared_ptr<ImageTextButtonSimple> cp_SaveButton;
+        std::shared_ptr<ImageTextButtonSimple> cp_ImportButton;
+        std::shared_ptr<ImageTextButtonSimple> cp_AddButton;
 
-        std::shared_ptr<ImageButtonSimple> cp_DirectoryUndo;    
-        std::shared_ptr<ImageButtonSimple> cp_DirectoryRedo;      
-
-        
+        std::shared_ptr<ImageButtonSimple> cp_DirectoryUndo;
+        std::shared_ptr<ImageButtonSimple> cp_DirectoryRedo;
     };
 }
 
