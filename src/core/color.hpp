@@ -4,7 +4,7 @@
 
 #include <string>
 
-namespace UIKit
+namespace Cherry
 {
     static ImVec4 HexToRGBA(const std::string &hex)
     {

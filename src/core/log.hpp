@@ -21,7 +21,7 @@
 	#endif
 #endif
 
-namespace UIKit {
+namespace Cherry {
 
 	class Log
 	{
@@ -95,36 +95,36 @@ namespace UIKit {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // Core logging
-#define WL_CORE_TRACE_TAG(tag, ...) ::UIKit::Log::PrintMessage(::UIKit::Log::Type::Core, ::UIKit::Log::Level::Trace, tag, __VA_ARGS__)
-#define WL_CORE_INFO_TAG(tag, ...)  ::UIKit::Log::PrintMessage(::UIKit::Log::Type::Core, ::UIKit::Log::Level::Info, tag, __VA_ARGS__)
-#define WL_CORE_WARN_TAG(tag, ...)  ::UIKit::Log::PrintMessage(::UIKit::Log::Type::Core, ::UIKit::Log::Level::Warn, tag, __VA_ARGS__)
-#define WL_CORE_ERROR_TAG(tag, ...) ::UIKit::Log::PrintMessage(::UIKit::Log::Type::Core, ::UIKit::Log::Level::Error, tag, __VA_ARGS__)
-#define WL_CORE_FATAL_TAG(tag, ...) ::UIKit::Log::PrintMessage(::UIKit::Log::Type::Core, ::UIKit::Log::Level::Fatal, tag, __VA_ARGS__)
+#define WL_CORE_TRACE_TAG(tag, ...) ::Cherry::Log::PrintMessage(::Cherry::Log::Type::Core, ::Cherry::Log::Level::Trace, tag, __VA_ARGS__)
+#define WL_CORE_INFO_TAG(tag, ...)  ::Cherry::Log::PrintMessage(::Cherry::Log::Type::Core, ::Cherry::Log::Level::Info, tag, __VA_ARGS__)
+#define WL_CORE_WARN_TAG(tag, ...)  ::Cherry::Log::PrintMessage(::Cherry::Log::Type::Core, ::Cherry::Log::Level::Warn, tag, __VA_ARGS__)
+#define WL_CORE_ERROR_TAG(tag, ...) ::Cherry::Log::PrintMessage(::Cherry::Log::Type::Core, ::Cherry::Log::Level::Error, tag, __VA_ARGS__)
+#define WL_CORE_FATAL_TAG(tag, ...) ::Cherry::Log::PrintMessage(::Cherry::Log::Type::Core, ::Cherry::Log::Level::Fatal, tag, __VA_ARGS__)
 
 // Client logging
-#define WL_TRACE_TAG(tag, ...) ::UIKit::Log::PrintMessage(::UIKit::Log::Type::Client, ::UIKit::Log::Level::Trace, tag, __VA_ARGS__)
-#define WL_INFO_TAG(tag, ...)  ::UIKit::Log::PrintMessage(::UIKit::Log::Type::Client, ::UIKit::Log::Level::Info, tag, __VA_ARGS__)
-#define WL_WARN_TAG(tag, ...)  ::UIKit::Log::PrintMessage(::UIKit::Log::Type::Client, ::UIKit::Log::Level::Warn, tag, __VA_ARGS__)
-#define WL_ERROR_TAG(tag, ...) ::UIKit::Log::PrintMessage(::UIKit::Log::Type::Client, ::UIKit::Log::Level::Error, tag, __VA_ARGS__)
-#define WL_FATAL_TAG(tag, ...) ::UIKit::Log::PrintMessage(::UIKit::Log::Type::Client, ::UIKit::Log::Level::Fatal, tag, __VA_ARGS__)
+#define WL_TRACE_TAG(tag, ...) ::Cherry::Log::PrintMessage(::Cherry::Log::Type::Client, ::Cherry::Log::Level::Trace, tag, __VA_ARGS__)
+#define WL_INFO_TAG(tag, ...)  ::Cherry::Log::PrintMessage(::Cherry::Log::Type::Client, ::Cherry::Log::Level::Info, tag, __VA_ARGS__)
+#define WL_WARN_TAG(tag, ...)  ::Cherry::Log::PrintMessage(::Cherry::Log::Type::Client, ::Cherry::Log::Level::Warn, tag, __VA_ARGS__)
+#define WL_ERROR_TAG(tag, ...) ::Cherry::Log::PrintMessage(::Cherry::Log::Type::Client, ::Cherry::Log::Level::Error, tag, __VA_ARGS__)
+#define WL_FATAL_TAG(tag, ...) ::Cherry::Log::PrintMessage(::Cherry::Log::Type::Client, ::Cherry::Log::Level::Fatal, tag, __VA_ARGS__)
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // Core Logging
-#define WL_CORE_TRACE(...)  ::UIKit::Log::PrintMessage(::UIKit::Log::Type::Core, ::UIKit::Log::Level::Trace, "", __VA_ARGS__)
-#define WL_CORE_INFO(...)   ::UIKit::Log::PrintMessage(::UIKit::Log::Type::Core, ::UIKit::Log::Level::Info, "", __VA_ARGS__)
-#define WL_CORE_WARN(...)   ::UIKit::Log::PrintMessage(::UIKit::Log::Type::Core, ::UIKit::Log::Level::Warn, "", __VA_ARGS__)
-#define WL_CORE_ERROR(...)  ::UIKit::Log::PrintMessage(::UIKit::Log::Type::Core, ::UIKit::Log::Level::Error, "", __VA_ARGS__)
-#define WL_CORE_FATAL(...)  ::UIKit::Log::PrintMessage(::UIKit::Log::Type::Core, ::UIKit::Log::Level::Fatal, "", __VA_ARGS__)
+#define WL_CORE_TRACE(...)  ::Cherry::Log::PrintMessage(::Cherry::Log::Type::Core, ::Cherry::Log::Level::Trace, "", __VA_ARGS__)
+#define WL_CORE_INFO(...)   ::Cherry::Log::PrintMessage(::Cherry::Log::Type::Core, ::Cherry::Log::Level::Info, "", __VA_ARGS__)
+#define WL_CORE_WARN(...)   ::Cherry::Log::PrintMessage(::Cherry::Log::Type::Core, ::Cherry::Log::Level::Warn, "", __VA_ARGS__)
+#define WL_CORE_ERROR(...)  ::Cherry::Log::PrintMessage(::Cherry::Log::Type::Core, ::Cherry::Log::Level::Error, "", __VA_ARGS__)
+#define WL_CORE_FATAL(...)  ::Cherry::Log::PrintMessage(::Cherry::Log::Type::Core, ::Cherry::Log::Level::Fatal, "", __VA_ARGS__)
 
 // Client Logging
-#define WL_TRACE(...)   ::UIKit::Log::PrintMessage(::UIKit::Log::Type::Client, ::UIKit::Log::Level::Trace, "", __VA_ARGS__)
-#define WL_INFO(...)    ::UIKit::Log::PrintMessage(::UIKit::Log::Type::Client, ::UIKit::Log::Level::Info, "", __VA_ARGS__)
-#define WL_WARN(...)    ::UIKit::Log::PrintMessage(::UIKit::Log::Type::Client, ::UIKit::Log::Level::Warn, "", __VA_ARGS__)
-#define WL_ERROR(...)   ::UIKit::Log::PrintMessage(::UIKit::Log::Type::Client, ::UIKit::Log::Level::Error, "", __VA_ARGS__)
-#define WL_FATAL(...)   ::UIKit::Log::PrintMessage(::UIKit::Log::Type::Client, ::UIKit::Log::Level::Fatal, "", __VA_ARGS__)
+#define WL_TRACE(...)   ::Cherry::Log::PrintMessage(::Cherry::Log::Type::Client, ::Cherry::Log::Level::Trace, "", __VA_ARGS__)
+#define WL_INFO(...)    ::Cherry::Log::PrintMessage(::Cherry::Log::Type::Client, ::Cherry::Log::Level::Info, "", __VA_ARGS__)
+#define WL_WARN(...)    ::Cherry::Log::PrintMessage(::Cherry::Log::Type::Client, ::Cherry::Log::Level::Warn, "", __VA_ARGS__)
+#define WL_ERROR(...)   ::Cherry::Log::PrintMessage(::Cherry::Log::Type::Client, ::Cherry::Log::Level::Error, "", __VA_ARGS__)
+#define WL_FATAL(...)   ::Cherry::Log::PrintMessage(::Cherry::Log::Type::Client, ::Cherry::Log::Level::Fatal, "", __VA_ARGS__)
 
-namespace UIKit {
+namespace Cherry {
 
 	template<typename... Args>
 	void Log::PrintMessage(Log::Type type, Log::Level level, std::string_view tag, Args&&... args)

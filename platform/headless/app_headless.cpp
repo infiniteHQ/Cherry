@@ -7,9 +7,9 @@
 
 extern bool g_ApplicationRunning;
 
-static UIKit::Application* s_Instance = nullptr;
+static Cherry::Application* s_Instance = nullptr;
 
-namespace UIKit {
+namespace Cherry {
 
 	Application::Application(const ApplicationSpecification& specification)
 		: m_Specification(specification)

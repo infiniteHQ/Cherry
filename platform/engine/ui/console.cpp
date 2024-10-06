@@ -4,7 +4,7 @@
 
 #include "misc/cpp/imgui_stdlib.h"
 
-namespace UIKit::UI {
+namespace Cherry::UI {
 
 	Console::Console(std::string_view title)
 		: m_Title(title)

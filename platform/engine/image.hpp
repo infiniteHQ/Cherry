@@ -8,7 +8,7 @@
 #include "../../lib/imgui/backends/imgui_impl_vulkan.h"
 #include "../../lib/imgui/backends/imgui_impl_sdl.h"
 
-namespace UIKit
+namespace Cherry
 {
 	enum class ImageFormat
 	{

@@ -18,11 +18,11 @@
 
 #ifdef WL_ENABLE_ASSERTS
 	#ifdef WL_COMPILER_CLANG
-		#define WL_CORE_ASSERT_MESSAGE_INTERNAL(...)  ::UIKit::Log::PrintAssertMessage(::UIKit::Log::Type::Core, "Assertion Failed", ##__VA_ARGS__)
-		#define WL_ASSERT_MESSAGE_INTERNAL(...)  ::UIKit::Log::PrintAssertMessage(::UIKit::Log::Type::Client, "Assertion Failed", ##__VA_ARGS__)
+		#define WL_CORE_ASSERT_MESSAGE_INTERNAL(...)  ::Cherry::Log::PrintAssertMessage(::Cherry::Log::Type::Core, "Assertion Failed", ##__VA_ARGS__)
+		#define WL_ASSERT_MESSAGE_INTERNAL(...)  ::Cherry::Log::PrintAssertMessage(::Cherry::Log::Type::Client, "Assertion Failed", ##__VA_ARGS__)
 	#else
-		#define WL_CORE_ASSERT_MESSAGE_INTERNAL(...)  ::UIKit::Log::PrintAssertMessage(::UIKit::Log::Type::Core, "Assertion Failed" __VA_OPT__(,) __VA_ARGS__)
-		#define WL_ASSERT_MESSAGE_INTERNAL(...)  ::UIKit::Log::PrintAssertMessage(::UIKit::Log::Type::Client, "Assertion Failed" __VA_OPT__(,) __VA_ARGS__)
+		#define WL_CORE_ASSERT_MESSAGE_INTERNAL(...)  ::Cherry::Log::PrintAssertMessage(::Cherry::Log::Type::Core, "Assertion Failed" __VA_OPT__(,) __VA_ARGS__)
+		#define WL_ASSERT_MESSAGE_INTERNAL(...)  ::Cherry::Log::PrintAssertMessage(::Cherry::Log::Type::Client, "Assertion Failed" __VA_OPT__(,) __VA_ARGS__)
 	#endif
 
 	#define WL_CORE_ASSERT(condition, ...) { if(!(condition)) { WL_CORE_ASSERT_MESSAGE_INTERNAL(__VA_ARGS__); WL_DEBUG_BREAK; } }
@@ -34,11 +34,11 @@
 
 #ifdef WL_ENABLE_VERIFY
 	#ifdef WL_COMPILER_CLANG
-		#define WL_CORE_VERIFY_MESSAGE_INTERNAL(...)  ::UIKit::Log::PrintAssertMessage(::UIKit::Log::Type::Core, "Verify Failed", ##__VA_ARGS__)
-		#define WL_VERIFY_MESSAGE_INTERNAL(...)  ::UIKit::Log::PrintAssertMessage(::UIKit::Log::Type::Client, "Verify Failed", ##__VA_ARGS__)
+		#define WL_CORE_VERIFY_MESSAGE_INTERNAL(...)  ::Cherry::Log::PrintAssertMessage(::Cherry::Log::Type::Core, "Verify Failed", ##__VA_ARGS__)
+		#define WL_VERIFY_MESSAGE_INTERNAL(...)  ::Cherry::Log::PrintAssertMessage(::Cherry::Log::Type::Client, "Verify Failed", ##__VA_ARGS__)
 	#else
-		#define WL_CORE_VERIFY_MESSAGE_INTERNAL(...)  ::UIKit::Log::PrintAssertMessage(::UIKit::Log::Type::Core, "Verify Failed" __VA_OPT__(,) __VA_ARGS__)
-		#define WL_VERIFY_MESSAGE_INTERNAL(...)  ::UIKit::Log::PrintAssertMessage(::UIKit::Log::Type::Client, "Verify Failed" __VA_OPT__(,) __VA_ARGS__)
+		#define WL_CORE_VERIFY_MESSAGE_INTERNAL(...)  ::Cherry::Log::PrintAssertMessage(::Cherry::Log::Type::Core, "Verify Failed" __VA_OPT__(,) __VA_ARGS__)
+		#define WL_VERIFY_MESSAGE_INTERNAL(...)  ::Cherry::Log::PrintAssertMessage(::Cherry::Log::Type::Client, "Verify Failed" __VA_OPT__(,) __VA_ARGS__)
 	#endif
 
 	#define WL_CORE_VERIFY(condition, ...) { if(!(condition)) { WL_CORE_VERIFY_MESSAGE_INTERNAL(__VA_ARGS__); WL_DEBUG_BREAK; } }

@@ -3,7 +3,7 @@
 #include <memory>
 #include <string.h>
 
-namespace UIKit {
+namespace Cherry {
 
 	struct Buffer
 	{

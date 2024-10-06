@@ -38,15 +38,15 @@ extern bool g_ApplicationRunning;
 #define IMGUI_VULKAN_DEBUG_REPORT
 #endif
 
-static UIKit::Application *s_Instance = nullptr;
-static UIKit::Application *app;
+static Cherry::Application *s_Instance = nullptr;
+static Cherry::Application *app;
 
 static bool c_ValidDropZoneFounded = false;
 static bool c_DockIsDragging = false;
 static bool c_MasterSwapChainRebuild = false;
 
-static std::shared_ptr<UIKit::WindowDragDropState> c_CurrentDragDropState;
-static std::shared_ptr<UIKit::Window> c_CurrentRenderedWindow;
+static std::shared_ptr<Cherry::WindowDragDropState> c_CurrentDragDropState;
+static std::shared_ptr<Cherry::Window> c_CurrentRenderedWindow;
 
 static VkAllocationCallbacks *g_Allocator = NULL;
 static VkInstance g_Instance = VK_NULL_HANDLE;
@@ -59,11 +59,11 @@ static VkPipelineCache g_PipelineCache = VK_NULL_HANDLE;
 static VkDescriptorPool g_DescriptorPool = VK_NULL_HANDLE;
 static std::unordered_map<std::string, ImFont *> s_Fonts;
 
-static std::shared_ptr<UIKit::Image> m_AppHeaderIcon;
-static std::shared_ptr<UIKit::Image> m_IconClose;
-static std::shared_ptr<UIKit::Image> m_IconMinimize;
-static std::shared_ptr<UIKit::Image> m_IconMaximize;
-static std::shared_ptr<UIKit::Image> m_IconRestore;
+static std::shared_ptr<Cherry::Image> m_AppHeaderIcon;
+static std::shared_ptr<Cherry::Image> m_IconClose;
+static std::shared_ptr<Cherry::Image> m_IconMinimize;
+static std::shared_ptr<Cherry::Image> m_IconMaximize;
+static std::shared_ptr<Cherry::Image> m_IconRestore;
 
 static int g_MinImageCount = 2;
 static int c_WindowsCount = 0;
@@ -79,7 +79,7 @@ static std::string ff;
 static int RedockCount = 0;
 // dfound_validd_drop_zone_global
 
-static std::shared_ptr<UIKit::RedockRequest> latest_req;
+static std::shared_ptr<Cherry::RedockRequest> latest_req;
 
 // Per-frame-in-flight
 
@@ -118,7 +118,7 @@ static void glfw_error_callback(int error, const char *description)
     fprintf(stderr, "Glfw Error %d: %s\n", error, description);
 }
 
-namespace UIKit
+namespace Cherry
 {
 
 #include "embed/not_found_img.embed"
@@ -295,7 +295,7 @@ namespace UIKit
     }
     // All the ImGui_ImplVulkanH_XXX structures/functions are optional helpers used by the demo.
     // Your real engine/app may not use them.
-    void Application::SetupVulkanWindow(ImGui_ImplVulkanH_Window *wd, VkSurfaceKHR surface, int width, int height, UIKit::Window *win)
+    void Application::SetupVulkanWindow(ImGui_ImplVulkanH_Window *wd, VkSurfaceKHR surface, int width, int height, Cherry::Window *win)
     {
         wd->Surface = surface;
 
@@ -327,7 +327,7 @@ namespace UIKit
         ImGui_ImplVulkanH_CreateOrResizeWindow(g_Instance, g_PhysicalDevice, g_Device, wd, g_QueueFamily, g_Allocator, width, height, g_MinImageCount);
     }
 
-    void Application::CleanupVulkan(UIKit::Window *win)
+    void Application::CleanupVulkan(Cherry::Window *win)
     {
         vkDestroyDescriptorPool(g_Device, g_DescriptorPool, g_Allocator);
 
@@ -341,12 +341,12 @@ namespace UIKit
         vkDestroyInstance(g_Instance, g_Allocator);
     }
 
-    void Application::CleanupVulkanWindow(UIKit::Window *win)
+    void Application::CleanupVulkanWindow(Cherry::Window *win)
     {
         ImGui_ImplVulkanH_DestroyWindow(g_Instance, g_Device, &win->m_WinData, g_Allocator);
     }
 
-    void Application::CleanupSpecificVulkanWindow(UIKit::Window *win)
+    void Application::CleanupSpecificVulkanWindow(Cherry::Window *win)
     {
         ImGui_ImplVulkanH_DestroyWindow(g_Instance, g_Device, &win->m_WinData, g_Allocator);
     }
@@ -415,12 +415,12 @@ namespace UIKit
         return g_MinImageCount;
     }
 
-    std::shared_ptr<UIKit::Window> &Application::GetCurrentRenderedWindow()
+    std::shared_ptr<Cherry::Window> &Application::GetCurrentRenderedWindow()
     {
         return c_CurrentRenderedWindow;
     }
 
-    std::shared_ptr<UIKit::WindowDragDropState> &Application::GetCurrentDragDropState()
+    std::shared_ptr<Cherry::WindowDragDropState> &Application::GetCurrentDragDropState()
     {
         return c_CurrentDragDropState;
     }
@@ -450,7 +450,7 @@ namespace UIKit
         c_ValidDropZoneFounded = founded;
     }
 
-    void Application::SetCurrentDragDropState(const std::shared_ptr<UIKit::WindowDragDropState> &state)
+    void Application::SetCurrentDragDropState(const std::shared_ptr<Cherry::WindowDragDropState> &state)
     {
         c_CurrentDragDropState = state;
     }
@@ -494,13 +494,13 @@ namespace UIKit
         return s_Fonts;
     }
 
-    void Application::PushRedockEvent(const std::shared_ptr<UIKit::WindowDragDropState> &state)
+    void Application::PushRedockEvent(const std::shared_ptr<Cherry::WindowDragDropState> &state)
     {
         for (auto app_win : s_Instance->m_AppWindows)
         {
             if (app_win->m_IdName == state->LastDraggingAppWindowHost)
             {
-                std::shared_ptr<UIKit::RedockRequest> req = app_win->CreateRedockEvent(
+                std::shared_ptr<Cherry::RedockRequest> req = app_win->CreateRedockEvent(
                     state->LastDraggingWindow,
                     state->LastDraggingPlace,
                     state->FromSave,
@@ -725,7 +725,7 @@ namespace UIKit
         }
     }
 
-    void Application::FrameRender(ImGui_ImplVulkanH_Window *wd, UIKit::Window *win, ImDrawData *draw_data)
+    void Application::FrameRender(ImGui_ImplVulkanH_Window *wd, Cherry::Window *win, ImDrawData *draw_data)
     {
         VkResult err;
         VkSemaphore image_acquired_semaphore = wd->FrameSemaphores[wd->SemaphoreIndex].ImageAcquiredSemaphore;
@@ -798,7 +798,7 @@ namespace UIKit
         }
     }
 
-    void Application::FramePresent(ImGui_ImplVulkanH_Window *wd, UIKit::Window *win)
+    void Application::FramePresent(ImGui_ImplVulkanH_Window *wd, Cherry::Window *win)
     {
         if (win->g_SwapChainRebuild)
             return;
@@ -1576,25 +1576,25 @@ namespace UIKit
         {
             uint32_t w, h;
             void *data = Image::Decode(g_WindowMinimizeIcon, sizeof(g_WindowMinimizeIcon), w, h);
-            m_IconMinimize = std::make_shared<UIKit::Image>(w, h, ImageFormat::RGBA, data);
+            m_IconMinimize = std::make_shared<Cherry::Image>(w, h, ImageFormat::RGBA, data);
             free(data);
         }
         {
             uint32_t w, h;
             void *data = Image::Decode(g_WindowMaximizeIcon, sizeof(g_WindowMaximizeIcon), w, h);
-            m_IconMaximize = std::make_shared<UIKit::Image>(w, h, ImageFormat::RGBA, data);
+            m_IconMaximize = std::make_shared<Cherry::Image>(w, h, ImageFormat::RGBA, data);
             free(data);
         }
         {
             uint32_t w, h;
             void *data = Image::Decode(g_WindowRestoreIcon, sizeof(g_WindowRestoreIcon), w, h);
-            m_IconRestore = std::make_shared<UIKit::Image>(w, h, ImageFormat::RGBA, data);
+            m_IconRestore = std::make_shared<Cherry::Image>(w, h, ImageFormat::RGBA, data);
             free(data);
         }
         {
             uint32_t w, h;
             void *data = Image::Decode(g_WindowCloseIcon, sizeof(g_WindowCloseIcon), w, h);
-            m_IconClose = std::make_shared<UIKit::Image>(w, h, ImageFormat::RGBA, data);
+            m_IconClose = std::make_shared<Cherry::Image>(w, h, ImageFormat::RGBA, data);
             free(data);
         }
     }
@@ -1986,6 +1986,19 @@ namespace UIKit
 
     void Application::HandleSimpleRendering(Window *window)
     {
+        float oldsize = ImGui::GetFont()->Scale;
+        ImGui::GetFont()->Scale *= 0.84;
+        ImGui::PushFont(ImGui::GetFont());
+        if (m_MainRenderCallback)
+        {
+            m_MainRenderCallback();
+        }
+        ImGui::GetFont()->Scale = oldsize;
+        ImGui::PopFont();
+    }
+
+    void Application::HandleSimpleWindowRendering(Window *window)
+    {
         bool finded = false;
         for (auto &appwin : Application::Get().m_AppWindows)
         {
@@ -2143,7 +2156,7 @@ namespace UIKit
         }
         case (WindowRenderingMethod::SimpleWindow):
         {
-            HandleTabsModeRendering(window);
+            HandleSimpleWindowRendering(window);
             break;
         }
         case (WindowRenderingMethod::SimpleRender):

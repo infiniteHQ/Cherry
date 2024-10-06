@@ -3,7 +3,7 @@
 #ifndef UIKIT_V1_H4_TITLES
 #define UIKIT_V1_H4_TITLES
 
-namespace UIKit
+namespace Cherry
 {
     inline void TitleFour(
         const std::string &label)

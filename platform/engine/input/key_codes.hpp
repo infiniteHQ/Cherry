@@ -3,7 +3,7 @@
 #include <stdint.h>
 #include <iostream>
 
-namespace UIKit {
+namespace Cherry {
 
 	typedef enum class KeyCode : uint16_t
 	{

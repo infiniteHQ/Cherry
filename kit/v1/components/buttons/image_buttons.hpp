@@ -3,7 +3,7 @@
 #ifndef UIKIT_V1_IMAGE_BUTTONS
 #define UIKIT_V1_IMAGE_BUTTONS
 
-namespace UIKit
+namespace Cherry
 {
 
     class ImageButtonSimple : public Component

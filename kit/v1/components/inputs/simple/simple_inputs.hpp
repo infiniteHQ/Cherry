@@ -3,7 +3,7 @@
 #ifndef UIKIT_V1_SIMPLE_INPUTS
 #define UIKIT_V1_SIMPLE_INPUTS
 
-namespace UIKit
+namespace Cherry
 {
 
     class SimpleStringInput : public Component

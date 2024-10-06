@@ -1,6 +1,6 @@
 #include "ImGuiTheme.h"
 
-namespace UIKit::UI {
+namespace Cherry::UI {
 
 	void SetHazelTheme()
 	{

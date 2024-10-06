@@ -12,18 +12,18 @@
 
 #include "../../../aio/appwindows/basic/empty/empty_appwindow.hpp"
 
-namespace UIKit
+namespace Cherry
 {
     class DockingAppWindow
     {
     public:
         DockingAppWindow(const std::string& name);
-        std::shared_ptr<UIKit::AppWindow> &GetAppWindow()
+        std::shared_ptr<Cherry::AppWindow> &GetAppWindow()
         {
             return m_AppWindow;
         }
 
-        std::shared_ptr<UIKit::AppWindow> m_AppWindow;
+        std::shared_ptr<Cherry::AppWindow> m_AppWindow;
     };
 }
 

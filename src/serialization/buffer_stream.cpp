@@ -1,6 +1,6 @@
 #include "buffer_stream.hpp"
 
-namespace UIKit
+namespace Cherry
 {
 	//==============================================================================
 	/// BufferStreamWriter
@@ -40,4 +40,4 @@ namespace UIKit
 		return true;
 	}
 
-} // namespace UIKit
+} // namespace Cherry

@@ -3,7 +3,7 @@
 #ifndef UIKIT_V1_IMAGE_INPUTS
 #define UIKIT_V1_IMAGE_INPUTS
 
-namespace UIKit
+namespace Cherry
 {
 
     class ImageStringInput : public Component

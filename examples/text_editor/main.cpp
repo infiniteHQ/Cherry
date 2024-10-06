@@ -1,18 +1,18 @@
-#define UIKIT_V1
-#include "../../uikit.hpp"
+#define CHERRY_V1
+#include "../../cherry.hpp"
 
 #include <thread>
 #include <memory>
 
-class Layer : public UIKit::Layer
+class Layer : public Cherry::Layer
 {
 public:
   Layer() {};
 };
 
-UIKit::Application *UIKit::CreateApplication(int argc, char **argv)
+Cherry::Application *Cherry::CreateApplication(int argc, char **argv)
 {
-  UIKit::ApplicationSpecification spec;
+  Cherry::ApplicationSpecification spec;
   std::shared_ptr<Layer> layer = std::make_shared<Layer>();
 
   std::string name = "Text Editor";
@@ -26,7 +26,7 @@ UIKit::Application *UIKit::CreateApplication(int argc, char **argv)
   spec.WindowSaves = false;
   spec.IconPath = BINPATH("ressources/imgs/icon.png");
 
-  UIKit::Application *app = new UIKit::Application(spec);
+  Cherry::Application *app = new Cherry::Application(spec);
   app->SetFavIconPath(Application::CookPath("ressources/imgs/favicon.png"));
   app->AddFont("Consola", Application::CookPath("ressources/fonts/consola.ttf"), 17.0f);
 
@@ -171,7 +171,7 @@ int main(int argc, char *argv[])
 {
   std::thread mainthread;
   std::thread Thread([&]()
-                     { UIKit::Main(argc, argv); });
+                     { Cherry::Main(argc, argv); });
   mainthread.swap(Thread);
 
   while (g_ApplicationRunning)

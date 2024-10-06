@@ -3,7 +3,7 @@
 #include "../../src/layer.hpp"
 #include "../../src/core/color.hpp"
 
-namespace UIKit
+namespace Cherry
 {
     class Component
     {

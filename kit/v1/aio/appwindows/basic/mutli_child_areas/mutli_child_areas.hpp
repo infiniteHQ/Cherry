@@ -21,7 +21,7 @@
 
 // Horizontal or vertical areas with resizing
 
-namespace UIKit
+namespace Cherry
 {
 struct Child
 {
@@ -54,7 +54,7 @@ struct Child
         MultiChildAreas(const std::string &name, const std::shared_ptr<AppWindow> &parent);
         MultiChildAreas(const std::string &name);
 
-        std::shared_ptr<UIKit::AppWindow> &GetAppWindow()
+        std::shared_ptr<Cherry::AppWindow> &GetAppWindow()
         {
             return m_AppWindow;
         }
@@ -67,7 +67,7 @@ struct Child
         std::vector<Child> m_Childs;
         bool m_IsHorizontal = false;
         std::string m_SelectedChildName;
-        std::shared_ptr<UIKit::AppWindow> m_AppWindow;
+        std::shared_ptr<Cherry::AppWindow> m_AppWindow;
     };
 }
 

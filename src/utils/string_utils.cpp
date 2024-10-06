@@ -1,6 +1,6 @@
 #include "string_utils.hpp"
 
-namespace UIKit::Utils {
+namespace Cherry::Utils {
 
 	std::vector<std::string> SplitString(const std::string_view string, const std::string_view& delimiters)
 	{

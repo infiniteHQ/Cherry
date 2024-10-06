@@ -5,7 +5,7 @@
 
 #include "./custom_buttons.hpp"
 
-namespace UIKit
+namespace Cherry
 {
     class CustomGroupedButtons : public Component
     {

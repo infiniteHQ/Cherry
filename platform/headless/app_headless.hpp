@@ -8,7 +8,7 @@
 #include <memory>
 #include <functional>
 
-namespace UIKit {
+namespace Cherry {
 
 	struct ApplicationSpecification
 	{

@@ -1,6 +1,6 @@
 #include "stream_reader.hpp"
 
-namespace UIKit
+namespace Cherry
 {
 	bool StreamReader::ReadBuffer(Buffer& buffer, uint32_t size)
 	{

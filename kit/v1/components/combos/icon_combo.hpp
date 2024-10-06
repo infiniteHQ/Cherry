@@ -3,7 +3,7 @@
 #ifndef UIKIT_V1_ICON_COMBO
 #define UIKIT_V1_ICON_COMBO
 
-namespace UIKit
+namespace Cherry
 {
 
 

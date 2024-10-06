@@ -3,7 +3,7 @@
 #ifndef UIKIT_V1_INPUTS_KEYVAL_DOUBLE
 #define UIKIT_V1_INPUTS_KEYVAL_DOUBLE
 
-namespace UIKit
+namespace Cherry
 {
     class DoubleKeyValString : public Component
     {

@@ -37,7 +37,7 @@ make
 #include <thread>
 #include <memory>
 
-class Layer : public UIKit::Layer
+class Layer : public Cherry::Layer
 {
 public:
   Layer(){};
@@ -49,16 +49,16 @@ public:
   }
 };
 
-UIKit::Application *UIKit::CreateApplication(int argc, char **argv)
+Cherry::Application *Cherry::CreateApplication(int argc, char **argv)
 {
-  UIKit::ApplicationSpecification spec;
+  Cherry::ApplicationSpecification spec;
   std::shared_ptr<Layer> layer = std::make_shared<Layer>();
   
   std::string name = "UIKit example";
   spec.Name = name;
   spec.CustomTitlebar = true;
 
-  UIKit::Application *app = new UIKit::Application(spec);
+  Cherry::Application *app = new Cherry::Application(spec);
 
   app->PushLayer(layer);
   app->SetMenubarCallback([app, layer]()

@@ -45,7 +45,7 @@ struct ImGuiDockPreviewData
     }
 };
 
-namespace UIKit
+namespace Cherry
 {
     class Application;
 
@@ -60,7 +60,7 @@ namespace UIKit
 
         VkCommandBuffer GetCommandBuffer(bool begin);
         SDL_Window *GetWindowHandle() const { return m_WindowHandler; }
-        static void ShowDockingPreview(ImGuiID dockspaceID, Window *win, const std::shared_ptr<UIKit::WindowDragDropState>& dragState, const std::shared_ptr<AppWindow> appwin = nullptr);
+        static void ShowDockingPreview(ImGuiID dockspaceID, Window *win, const std::shared_ptr<Cherry::WindowDragDropState>& dragState, const std::shared_ptr<AppWindow> appwin = nullptr);
 
         // void OnWindowResize(GLFWwindow *windowHandle, int width, int height);
         // void OnWindowMove(int xpos, int ypos);
@@ -83,7 +83,7 @@ namespace UIKit
             return m_Name;
         }
 
-        void CreateImage(std::shared_ptr<UIKit::Image> image, void *data);
+        void CreateImage(std::shared_ptr<Cherry::Image> image, void *data);
 
         void UI_DrawTitlebar(float &outTitlebarHeight);
         void UI_DrawMenubar();
@@ -206,12 +206,12 @@ void SetFavIcon(const std::string &path)
 
 
         // List of all images (absolute path / image ref)
-        std::vector<std::pair<std::string, std::shared_ptr<UIKit::Image>>> m_ImageList;
+        std::vector<std::pair<std::string, std::shared_ptr<Cherry::Image>>> m_ImageList;
 
-        std::shared_ptr<UIKit::Image> add(const std::string &path);
-        std::shared_ptr<UIKit::Image> add(const uint8_t data[], const std::string &name);
-        std::shared_ptr<UIKit::Image> get(const std::string &path);
-        std::shared_ptr<UIKit::Image> get(const uint8_t data[], const std::string &name);
+        std::shared_ptr<Cherry::Image> add(const std::string &path);
+        std::shared_ptr<Cherry::Image> add(const uint8_t data[], const std::string &name);
+        std::shared_ptr<Cherry::Image> get(const std::string &path);
+        std::shared_ptr<Cherry::Image> get(const uint8_t data[], const std::string &name);
         ImTextureID get_texture(const std::string &path);
         ImVec2 get_texture_size(const std::string &path);
         void free();

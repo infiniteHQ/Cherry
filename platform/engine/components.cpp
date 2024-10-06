@@ -1,6 +1,6 @@
 #include "components.hpp"
 
-namespace UIKit
+namespace Cherry
 {
     
 }

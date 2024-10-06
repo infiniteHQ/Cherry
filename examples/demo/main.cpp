@@ -1,18 +1,18 @@
-#define UIKIT_V1
-#include "../../uikit.hpp"
+#define CHERRY_V1
+#include "../../cherry.hpp"
 
 #include <thread>
 #include <memory>
 
-class Layer : public UIKit::Layer
+class Layer : public Cherry::Layer
 {
 public:
   Layer() {};
 };
 
-UIKit::Application *UIKit::CreateApplication(int argc, char **argv)
+Cherry::Application *Cherry::CreateApplication(int argc, char **argv)
 {
-  UIKit::ApplicationSpecification spec;
+  Cherry::ApplicationSpecification spec;
   std::shared_ptr<Layer> layer = std::make_shared<Layer>();
 
   std::string name = "UIKit example";
@@ -28,7 +28,7 @@ UIKit::Application *UIKit::CreateApplication(int argc, char **argv)
   spec.WindowSaves = true;
   spec.IconPath = Application::CookPath("ressources/imgs/icon.png");
 
-  UIKit::Application *app = new UIKit::Application(spec);
+  Cherry::Application *app = new Cherry::Application(spec);
   app->SetWindowSaveDataFile("savedatda.json", true);
   app->SetFavIconPath(Application::CookPath("ressources/imgs/favicon.png"));
   app->AddFont("Consola", Application::CookPath("ressources/fonts/consola.ttf"), 17.0f);
@@ -150,7 +150,7 @@ UIKit::Application *UIKit::CreateApplication(int argc, char **argv)
                             ImGui::PopStyleColor(2); 
                             });
 
-  std::shared_ptr<DemoAppWindow> DemoWindow = std::make_shared<UIKit::DemoAppWindow>("?loc:loc.window_names.demo");
+  std::shared_ptr<DemoAppWindow> DemoWindow = std::make_shared<Cherry::DemoAppWindow>("?loc:loc.window_names.demo");
   DemoWindow->RefreshRender(DemoWindow);
   Application::Get().PutWindow(DemoWindow->GetAppWindow());
 
@@ -161,7 +161,7 @@ int main(int argc, char *argv[])
 {
   std::thread mainthread;
   std::thread Thread([&]()
-                     { UIKit::Main(argc, argv); });
+                     { Cherry::Main(argc, argv); });
   mainthread.swap(Thread);
 
   while (g_ApplicationRunning)

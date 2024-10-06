@@ -42,7 +42,7 @@ static void AppPopTabStyle()
 	ImGui::PopStyleVar(3);
 }
 
-namespace UIKit
+namespace Cherry
 {
 	class Window;
 	class Component;
@@ -70,8 +70,8 @@ namespace UIKit
 		static VkPipelineCache &GetVkPipelineCache();
 		static VkDescriptorPool &GetVkDescriptorPool();
 		static int &GetMinImageCount();
-		static std::shared_ptr<UIKit::Window> &GetCurrentRenderedWindow();
-		static std::shared_ptr<UIKit::WindowDragDropState> &GetCurrentDragDropState();
+		static std::shared_ptr<Cherry::Window> &GetCurrentRenderedWindow();
+		static std::shared_ptr<Cherry::WindowDragDropState> &GetCurrentDragDropState();
 		static bool &GetDockIsDragging();
 		static std::string &GetLastWindowPressed();
 		static bool &GetValidDropZoneFounded();
@@ -88,7 +88,7 @@ namespace UIKit
 		std::vector<std::pair<std::string, std::pair<std::string, float>>> &GetCustomFonts();
 
 		// Set static components
-		static void SetCurrentDragDropState(const std::shared_ptr<UIKit::WindowDragDropState>& state);
+		static void SetCurrentDragDropState(const std::shared_ptr<Cherry::WindowDragDropState>& state);
 		static void SetValidDropZoneFounded(const bool &founded);
 		static void SetCurrentDragDropStateDragOwner(const std::string &new_name);
 		static void SetCurrentDragDropStateDockIsDragging(const bool &is_dragging);
@@ -104,7 +104,7 @@ namespace UIKit
 		static void FlushCommandBuffer(VkCommandBuffer commandBuffer);
 		static void SubmitResourceFree(std::function<void()> &&func, const std::string &winname);
 		static std::string CookPath(const std::string input_path);
-		static void PushRedockEvent(const std::shared_ptr<UIKit::WindowDragDropState>& state);
+		static void PushRedockEvent(const std::shared_ptr<Cherry::WindowDragDropState>& state);
 		static std::vector<uint8_t> LoadPngHexa(const std::string &path);
 
 		// Set callbacks
@@ -133,20 +133,21 @@ namespace UIKit
 		void HandleResizing(Window *window);
 		void HandleDockingModeRendering(Window *window);
 		void HandleTabsModeRendering(Window *window);
+		void HandleSimpleWindowRendering(Window *window);
 		void HandleSimpleRendering(Window *window);
 		void HandleLayerStackUpdate(Window *window);
 		void PrepareViewport(Window *window);
 
-		static void FramePresent(ImGui_ImplVulkanH_Window *wd, UIKit::Window *win);
-		static void FrameRender(ImGui_ImplVulkanH_Window *wd, UIKit::Window *win, ImDrawData *draw_data);
+		static void FramePresent(ImGui_ImplVulkanH_Window *wd, Cherry::Window *win);
+		static void FrameRender(ImGui_ImplVulkanH_Window *wd, Cherry::Window *win, ImDrawData *draw_data);
 
 		// All the ImGui_ImplVulkanH_XXX structures/functions are optional helpers used by the demo.
 		// Your real engine/app may not use them.
-		static void SetupVulkanWindow(ImGui_ImplVulkanH_Window *wd, VkSurfaceKHR surface, int width, int height, UIKit::Window *win);
-		static void CleanupVulkanWindow(UIKit::Window *win);
-		static void CleanupSpecificVulkanWindow(UIKit::Window *win);
+		static void SetupVulkanWindow(ImGui_ImplVulkanH_Window *wd, VkSurfaceKHR surface, int width, int height, Cherry::Window *win);
+		static void CleanupVulkanWindow(Cherry::Window *win);
+		static void CleanupSpecificVulkanWindow(Cherry::Window *win);
 		static void CleanupVulkan();
-		static void CleanupVulkan(UIKit::Window *win);
+		static void CleanupVulkan(Cherry::Window *win);
 		static void SetupVulkan(const char **extensions, uint32_t extensions_count);
 
 		Window *GetWindowByHandle(SDL_Window *window_handle);
@@ -254,7 +255,7 @@ namespace UIKit
 		bool m_TitleBarHovered = false;
 	};
 
-#define BINPATH(rpath) UIKit::Application::CookPath(rpath);
+#define BINPATH(rpath) Cherry::Application::CookPath(rpath);
 
 #define UIKIT_DATA(id, topic) Application::Get().GetComponentData(id, topic)
 

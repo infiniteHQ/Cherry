@@ -1,7 +1,7 @@
 #include "image.hpp"
 #include "app.hpp"
 
-namespace UIKit {
+namespace Cherry {
 
 	namespace Utils {
 

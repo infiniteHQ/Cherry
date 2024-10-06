@@ -6,7 +6,7 @@
 #include "../../../../components/buttons/custom_buttons.hpp"
 #include "../../../../components/buttons/image_buttons.hpp"
 
-namespace UIKit
+namespace Cherry
 {
 
     // This window can be a "subappwindow" of a parent if you use the constructor with parent parameter.
@@ -22,7 +22,7 @@ namespace UIKit
 
         std::shared_ptr<CustomButtonSimple> cp_ButtonOne;
 
-        std::shared_ptr<UIKit::AppWindow> m_AppWindow;
+        std::shared_ptr<Cherry::AppWindow> m_AppWindow;
     };
 }
 

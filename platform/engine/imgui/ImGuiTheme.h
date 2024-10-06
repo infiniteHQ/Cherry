@@ -3,7 +3,7 @@
 #include "../../../lib/imgui/imgui.h"
 #include "../../../lib/glm/glm/glm.hpp"
 
-namespace UIKit::UI {
+namespace Cherry::UI {
 
 	namespace Colors
 	{

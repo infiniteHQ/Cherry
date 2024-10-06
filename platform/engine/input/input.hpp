@@ -4,7 +4,7 @@
 
 #include "../../../lib/glm/glm/glm.hpp"
 
-namespace UIKit {
+namespace Cherry {
 
 	class Input
 	{

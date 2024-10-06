@@ -3,7 +3,7 @@
 #ifndef UIKIT_V1_HEADERS_CUSTOMCOLLAPSING
 #define UIKIT_V1_HEADERS_CUSTOMCOLLAPSING
 
-namespace UIKit
+namespace Cherry
 {
 
     inline bool CustomCollapsingHeaderSimple(

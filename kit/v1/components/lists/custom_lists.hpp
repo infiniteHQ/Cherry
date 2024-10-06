@@ -3,7 +3,7 @@
 #ifndef UIKIT_V1_CUSTOM_LISTS
 #define UIKIT_V1_CUSTOM_LISTS
 
-namespace UIKit
+namespace Cherry
 {
     static bool DrawArrowButton(const std::string &id, bool isExpanded)
     {

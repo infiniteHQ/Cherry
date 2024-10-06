@@ -1,10 +1,10 @@
 #include "./demo.hpp"
 
-namespace UIKit
+namespace Cherry
 {
     DemoAppWindow::DemoAppWindow(const std::string &name)
     {
-        m_AppWindow = std::make_shared<UIKit::AppWindow>(name, name);
+        m_AppWindow = std::make_shared<Cherry::AppWindow>(name, name);
         m_AppWindow->SetIcon("/usr/local/include/Vortex/imgs/vortex.png");
 
         m_AppWindow->m_TabMenuCallback = []()
@@ -1466,7 +1466,7 @@ namespace UIKit
             //
         });
 
-        std::shared_ptr<UIKit::AppWindow> win = m_AppWindow;
+        std::shared_ptr<Cherry::AppWindow> win = m_AppWindow;
         m_AppWindow->SetLeftMenubarCallback([]() {});
         m_AppWindow->SetRightMenubarCallback([win]() {});
     }

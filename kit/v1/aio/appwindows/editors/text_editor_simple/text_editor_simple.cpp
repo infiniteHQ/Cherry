@@ -1,10 +1,10 @@
 #include "./text_editor_simple.hpp"
 
-namespace UIKit
+namespace Cherry
 {
     TextEditorSimple::TextEditorSimple(const std::string &name, const std::shared_ptr<AppWindow> &parent)
     {
-        m_AppWindow = std::make_shared<UIKit::AppWindow>(name, name);
+        m_AppWindow = std::make_shared<Cherry::AppWindow>(name, name);
         m_AppWindow->SetIcon("/usr/local/include/Vortex/imgs/vortex.png");
         m_AppWindow->SetDefaultBehavior(DefaultAppWindowBehaviors::DefaultDocking, "full");
 
@@ -17,7 +17,7 @@ namespace UIKit
 
         cp_ButtonOne = Application::Get().CreateComponent<CustomButtonSimple>("button_1");
 
-        std::shared_ptr<UIKit::AppWindow> win = m_AppWindow;
+        std::shared_ptr<Cherry::AppWindow> win = m_AppWindow;
 
         m_AppWindow->SetLeftMenubarCallback([]()
                                             { ImGui::Text("ll"); });
@@ -28,7 +28,7 @@ namespace UIKit
 
     TextEditorSimple::TextEditorSimple()
     {
-        m_AppWindow = std::make_shared<UIKit::AppWindow>("Sec", "Sec");
+        m_AppWindow = std::make_shared<Cherry::AppWindow>("Sec", "Sec");
         m_AppWindow->SetIcon("/usr/local/include/Vortex/imgs/vortex.png");
         m_AppWindow->SetSaveMode(true);
         m_AppWindow->SetRenderCallback([this]()
@@ -36,7 +36,7 @@ namespace UIKit
         ImGui::Text("name");
         ImGui::Button("qsd"); });
 
-        std::shared_ptr<UIKit::AppWindow> win = m_AppWindow;
+        std::shared_ptr<Cherry::AppWindow> win = m_AppWindow;
 
         m_AppWindow->SetLeftMenubarCallback([]()
                                             { ImGui::Text("ll"); });
@@ -47,7 +47,7 @@ namespace UIKit
 
     TextEditorSimple::TextEditorSimple(const std::string &name)
     {
-        m_AppWindow = std::make_shared<UIKit::AppWindow>(name, name);
+        m_AppWindow = std::make_shared<Cherry::AppWindow>(name, name);
         m_AppWindow->SetIcon("/usr/local/include/Vortex/imgs/vortex.png");
         m_AppWindow->SetDefaultBehavior(DefaultAppWindowBehaviors::DefaultDocking, "right");
 
@@ -59,7 +59,7 @@ namespace UIKit
         v_StringOne = std::make_shared<std::string>("");
 
 
-        cp_SaveButton = Application::Get().CreateComponent<ImageTextButtonSimple>("save_button", Application::Get().GetLocale("loc.content_browser.save_all") + "####content_browser.save_all", UIKit::Application::CookPath("ressources/imgs/icons/misc/icon_save.png"));
+        cp_SaveButton = Application::Get().CreateComponent<ImageTextButtonSimple>("save_button", Application::Get().GetLocale("loc.content_browser.save_all") + "####content_browser.save_all", Cherry::Application::CookPath("ressources/imgs/icons/misc/icon_save.png"));
         cp_SaveButton->SetScale(0.85f);
         cp_SaveButton->SetLogoSize(15, 15);
         cp_SaveButton->SetInternalMarginX(10.0f);
@@ -98,7 +98,7 @@ namespace UIKit
         ImGui::Text(name.c_str());
         ImGui::Button("qsd"); });
 
-        std::shared_ptr<UIKit::AppWindow> win = m_AppWindow;
+        std::shared_ptr<Cherry::AppWindow> win = m_AppWindow;
 
         m_AppWindow->SetLeftMenubarCallback([this]()
                                             {

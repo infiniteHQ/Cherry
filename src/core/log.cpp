@@ -7,7 +7,7 @@
 
 #define WL_HAS_CONSOLE !WL_DIST
 
-namespace UIKit {
+namespace Cherry {
 
 	std::shared_ptr<spdlog::logger> Log::s_CoreLogger;
 	std::shared_ptr<spdlog::logger> Log::s_ClientLogger;

@@ -1,30 +1,18 @@
-#define UIKIT_V1
-#include "../../uikit.hpp"
+#define CHERRY_V1
+#include "../../cherry.hpp"
 
 #include <thread>
 #include <memory>
 
-
-/*
-BUGS :
- - On horizontal areas Y overflow
- - Sizes not apply on X et Y 
-
-
-
-
-
-*/
-
-class Layer : public UIKit::Layer
+class Layer : public Cherry::Layer
 {
 public:
   Layer() {};
 };
 
-UIKit::Application *UIKit::CreateApplication(int argc, char **argv)
+Cherry::Application *Cherry::CreateApplication(int argc, char **argv)
 {
-  UIKit::ApplicationSpecification spec;
+  Cherry::ApplicationSpecification spec;
   std::shared_ptr<Layer> layer = std::make_shared<Layer>();
 
   std::string name = "UIKit example";
@@ -40,7 +28,7 @@ UIKit::Application *UIKit::CreateApplication(int argc, char **argv)
   spec.WindowSaves = true;
   spec.IconPath = Application::CookPath("ressources/imgs/icon.png");
 
-  UIKit::Application *app = new UIKit::Application(spec);
+  Cherry::Application *app = new Cherry::Application(spec);
   app->SetWindowSaveDataFile("savedatda.json", true);
   app->SetFavIconPath(Application::CookPath("ressources/imgs/favicon.png"));
   app->AddFont("Consola", Application::CookPath("ressources/fonts/consola.ttf"), 17.0f);
@@ -164,30 +152,30 @@ UIKit::Application *UIKit::CreateApplication(int argc, char **argv)
 
 
   
-  /*std::shared_ptr<ContentOutlinerSimple> ContentOutliner = std::make_shared<UIKit::ContentOutlinerSimple>("?loc:loc.window_names.outliner"); // Create Window
+  /*std::shared_ptr<ContentOutlinerSimple> ContentOutliner = std::make_shared<Cherry::ContentOutlinerSimple>("?loc:loc.window_names.outliner"); // Create Window
   ContentOutliner->RefreshRender(ContentOutliner); // Refresh the render channel
   Application::Get().PutWindow(ContentOutliner->GetAppWindow()); // Publish this window into the workspace
 
-  std::shared_ptr<TextEditorSimple> TextEditor = std::make_shared<UIKit::TextEditorSimple>("?loc:loc.window_names.text_editor");
+  std::shared_ptr<TextEditorSimple> TextEditor = std::make_shared<Cherry::TextEditorSimple>("?loc:loc.window_names.text_editor");
   TextEditor->RefreshRender(TextEditor);
   Application::Get().PutWindow(TextEditor->GetAppWindow()); // Publish this window into the workspace
 
-  std::shared_ptr<PropsEditorSimple> PropsEditor = std::make_shared<UIKit::PropsEditorSimple>("?loc:loc.window_names.props_editor");
+  std::shared_ptr<PropsEditorSimple> PropsEditor = std::make_shared<Cherry::PropsEditorSimple>("?loc:loc.window_names.props_editor");
   PropsEditor->RefreshRender(PropsEditor);
   Application::Get().PutWindow(PropsEditor->GetAppWindow()); // Publish this window into the workspace
   
-  std::shared_ptr<ContentBrowserAppWindow> ContentBrowser = std::make_shared<UIKit::ContentBrowserAppWindow>("?loc:loc.window_names.content_browser", "/home/diego");
+  std::shared_ptr<ContentBrowserAppWindow> ContentBrowser = std::make_shared<Cherry::ContentBrowserAppWindow>("?loc:loc.window_names.content_browser", "/home/diego");
   ContentBrowser->RefreshRender(ContentBrowser);
   Application::Get().PutWindow(ContentBrowser->GetAppWindow()); // Publish this window into the workspace
 
-  std::shared_ptr<NodeEditorSimple> NodalEditor = std::make_shared<UIKit::NodeEditorSimple>("?loc:loc.window_names.node_editor");
+  std::shared_ptr<NodeEditorSimple> NodalEditor = std::make_shared<Cherry::NodeEditorSimple>("?loc:loc.window_names.node_editor");
   NodalEditor->RefreshRender(NodalEditor);
   Application::Get().PutWindow(NodalEditor->GetAppWindow()); // Publish this window into the workspace
   
-  std::shared_ptr<DockingAppWindow> WindowWithDockspace = std::make_shared<UIKit::DockingAppWindow>("fqdow_names.texqsd");
+  std::shared_ptr<DockingAppWindow> WindowWithDockspace = std::make_shared<Cherry::DockingAppWindow>("fqdow_names.texqsd");
   Application::Get().PutWindow(WindowWithDockspace->GetAppWindow());
    
-  std::shared_ptr<MultiChildTabs> TabsWindow = std::make_shared<UIKit::MultiChildTabs>("Vertical Tabs");
+  std::shared_ptr<MultiChildTabs> TabsWindow = std::make_shared<Cherry::MultiChildTabs>("Vertical Tabs");
   TabsWindow->AddChild("One", [](){ImGui::Text("One");});
   TabsWindow->AddChild("Two", [](){ImGui::Text("Two");});
   TabsWindow->AddChild("Three", [](){ImGui::Text("Three");});
@@ -195,7 +183,7 @@ UIKit::Application *UIKit::CreateApplication(int argc, char **argv)
   Application::Get().PutWindow(TabsWindow->GetAppWindow()); // Publish this window into the workspace
   
   
-  std::shared_ptr<MultiChildList> ListWindow = std::make_shared<UIKit::MultiChildList>("indow_names.list");
+  std::shared_ptr<MultiChildList> ListWindow = std::make_shared<Cherry::MultiChildList>("indow_names.list");
   ListWindow->AddChild("One", [](){ImGui::Text("One");});
   ListWindow->AddChild("Two", [](){ImGui::Text("Two");});
   ListWindow->AddChild("Three", [](){ImGui::Text("Three");});
@@ -205,7 +193,7 @@ UIKit::Application *UIKit::CreateApplication(int argc, char **argv)
 
 
 
-  std::shared_ptr<MultiChildTabs> appTabs = std::make_shared<UIKit::MultiChildTabs>("indow_names.tabs");
+  std::shared_ptr<MultiChildTabs> appTabs = std::make_shared<Cherry::MultiChildTabs>("indow_names.tabs");
   appTabs->AddChild("One", [](){ImGui::Text("One");});
   appTabs->AddChild("Two", [](){ImGui::Text("Two");});
   appTabs->AddChild("Three", [](){ImGui::Text("Three");});
@@ -213,13 +201,13 @@ UIKit::Application *UIKit::CreateApplication(int argc, char **argv)
   appTabs->RefreshRender(appTabs);
   
   */
-  std::shared_ptr<ContentBrowserAppWindow> ContentBrowser = std::make_shared<UIKit::ContentBrowserAppWindow>("?loc:loc.window_names.content_browser", "/home/diego");
+  std::shared_ptr<ContentBrowserAppWindow> ContentBrowser = std::make_shared<Cherry::ContentBrowserAppWindow>("?loc:loc.window_names.content_browser", "/home/diego");
   ContentBrowser->RefreshRender(ContentBrowser);
   Application::Get().PutWindow(ContentBrowser->GetAppWindow()); // Publish this window into the workspace
    
   
   // Multi childs
-  std::shared_ptr<MultiChildAreas> VerticalAreas = std::make_shared<UIKit::MultiChildAreas>("indow_names.content_browser");
+  std::shared_ptr<MultiChildAreas> VerticalAreas = std::make_shared<Cherry::MultiChildAreas>("indow_names.content_browser");
   VerticalAreas->m_IsHorizontal = false;
   VerticalAreas->AddChild(Child("One", [](){ImGui::Text("One");}, 5.0f));
   VerticalAreas->AddChild(Child("Two", [](){ImGui::Text("Two");}, 20.0f));
@@ -228,7 +216,7 @@ UIKit::Application *UIKit::CreateApplication(int argc, char **argv)
   VerticalAreas->RefreshRender(VerticalAreas);
   Application::Get().PutWindow(VerticalAreas->GetAppWindow()); // Publish this window into the workspace
 
-  std::shared_ptr<MultiChildAreas> HorizontalAreas = std::make_shared<UIKit::MultiChildAreas>("indow_names.content_browser2");
+  std::shared_ptr<MultiChildAreas> HorizontalAreas = std::make_shared<Cherry::MultiChildAreas>("indow_names.content_browser2");
   HorizontalAreas->m_IsHorizontal = true;
   HorizontalAreas->AddChild(Child("One2", [](){ImGui::Text("One");}, 50.0f));
   HorizontalAreas->AddChild(Child("Two2", [](){ImGui::Text("Two");}, 30.0f));
@@ -246,7 +234,7 @@ int main(int argc, char *argv[])
 {
   std::thread mainthread;
   std::thread Thread([&]()
-                     { UIKit::Main(argc, argv); });
+                     { Cherry::Main(argc, argv); });
   mainthread.swap(Thread);
 
   while (g_ApplicationRunning)

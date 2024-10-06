@@ -19,7 +19,7 @@
 #include "../../../../components/inputs/keyval/keyval_double.hpp"
 #include "../../../../components/lists/custom_lists.hpp"
 
-namespace UIKit
+namespace Cherry
 {
     // This window can be a "subappwindow" of a parent if you use the constructor with parent parameter.
     class MultiChildTabs
@@ -27,7 +27,7 @@ namespace UIKit
     public:
         MultiChildTabs(const std::string &name, const std::shared_ptr<AppWindow> &parent);
         MultiChildTabs(const std::string &name);
-        std::shared_ptr<UIKit::AppWindow> &GetAppWindow()
+        std::shared_ptr<Cherry::AppWindow> &GetAppWindow()
         {
             return m_AppWindow;
         }
@@ -40,7 +40,7 @@ namespace UIKit
         std::unordered_map<std::string, std::function<void()>> m_Childs;
 
         std::string m_SelectedChildName;
-        std::shared_ptr<UIKit::AppWindow> m_AppWindow;
+        std::shared_ptr<Cherry::AppWindow> m_AppWindow;
     };
 }
 

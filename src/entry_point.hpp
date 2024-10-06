@@ -5,19 +5,19 @@
 #ifndef UIKIT_ENTRYPOINT_H
 #define UIKIT_ENTRYPOINT_H
 
-namespace UIKit {
-    extern UIKit::Application* CreateApplication(int argc, char** argv);
+namespace Cherry {
+    extern Cherry::Application* CreateApplication(int argc, char** argv);
 }
 
 inline bool g_ApplicationRunning = true;
-namespace UIKit {
+namespace Cherry {
 
 	// For multiple app usage
-	static int ThirdMain(int argc, char** argv, UIKit::Application*(*create_app)(int argc, char** argv))
+	static int ThirdMain(int argc, char** argv, Cherry::Application*(*create_app)(int argc, char** argv))
 	{
 		while (g_ApplicationRunning)
 		{
-			UIKit::Application* app = create_app(argc, argv);
+			Cherry::Application* app = create_app(argc, argv);
 			app->Run();
 			delete app;
 		}
@@ -30,7 +30,7 @@ namespace UIKit {
 	{
 		while (g_ApplicationRunning)
 		{
-			UIKit::Application* app = UIKit::CreateApplication(argc, argv);
+			Cherry::Application* app = Cherry::CreateApplication(argc, argv);
 			app->Run();
 			delete app;
 		}
@@ -46,7 +46,7 @@ namespace UIKit {
 
 int APIENTRY WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, int cmdshow)
 {
-	return UIKit::Main(__argc, __argv, ctx);
+	return Cherry::Main(__argc, __argv, ctx);
 }
 
 #else

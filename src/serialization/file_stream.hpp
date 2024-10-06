@@ -6,7 +6,7 @@
 #include <filesystem>
 #include <fstream>
 
-namespace UIKit
+namespace Cherry
 {
 	//==============================================================================
 	/// FileStreamWriter

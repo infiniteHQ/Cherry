@@ -1,17 +1,17 @@
 #include "./multi_child_list.hpp"
 
-namespace UIKit
+namespace Cherry
 {
     MultiChildList::MultiChildList(const std::string &name, const std::shared_ptr<AppWindow> &parent)
     {
-        m_AppWindow = std::make_shared<UIKit::AppWindow>(name, name);
+        m_AppWindow = std::make_shared<Cherry::AppWindow>(name, name);
         m_AppWindow->SetIcon("/usr/local/include/Vortex/imgs/vortex.png");
         m_AppWindow->SetParent(parent);
         m_AppWindow->SetRenderCallback([this]() {
 
         });
 
-        std::shared_ptr<UIKit::AppWindow> win = m_AppWindow;
+        std::shared_ptr<Cherry::AppWindow> win = m_AppWindow;
 
         m_AppWindow->SetLeftMenubarCallback([]() {});
 
@@ -20,7 +20,7 @@ namespace UIKit
 
     MultiChildList::MultiChildList(const std::string &name)
     {
-        m_AppWindow = std::make_shared<UIKit::AppWindow>(name, name);
+        m_AppWindow = std::make_shared<Cherry::AppWindow>(name, name);
         m_AppWindow->SetIcon("/usr/local/include/Vortex/imgs/vortex.png");
 
         this->AddChild("Color Pickers", [this]() {
@@ -29,7 +29,7 @@ namespace UIKit
 
         m_SelectedChildName = "TEst1";
 
-        std::shared_ptr<UIKit::AppWindow> win = m_AppWindow;
+        std::shared_ptr<Cherry::AppWindow> win = m_AppWindow;
         m_AppWindow->SetLeftMenubarCallback([]() {});
         m_AppWindow->SetRightMenubarCallback([win]() {});
     }

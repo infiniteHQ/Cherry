@@ -2,7 +2,7 @@
 
 #include "../app.hpp"
 
-namespace UIKit {
+namespace Cherry {
 
 	bool Input::IsKeyDown(KeyCode keycode, const std::string& winname)
 	{

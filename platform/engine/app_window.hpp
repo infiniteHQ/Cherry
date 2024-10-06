@@ -20,7 +20,7 @@
 #include "imgui/ImGuiTheme.h"
 #include "vulkan/vulkan.h"
 
-namespace UIKit
+namespace Cherry
 {
     enum class DefaultAppWindowBehaviors
     {
@@ -46,7 +46,7 @@ namespace UIKit
         std::shared_ptr<RedockRequest> CreateRedockEvent(const std::string &parentWindow, DockEmplacement emplacement, const bool &fromSave = false, const std::string &appWindow = "none",  const bool& newwin = false);
         void AttachOnNewWindow(ApplicationSpecification spec);
         void AttachOnWindow(const std::string winname);
-        std::shared_ptr<UIKit::Image> GetImage(const std::string &path);
+        std::shared_ptr<Cherry::Image> GetImage(const std::string &path);
         ImTextureID *GetTexture(const std::string &path);
         float EstimateMenubarRightWidth();
         void SetSimpleStorage(const std::string &key, const std::string &data, const bool &persistant);

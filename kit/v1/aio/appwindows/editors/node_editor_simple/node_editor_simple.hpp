@@ -920,7 +920,7 @@ struct Example
 };
 
 
-namespace UIKit
+namespace Cherry
 {
 
     // This window can be a "subappwindow" of a parent if you use the constructor with parent parameter.
@@ -930,7 +930,7 @@ namespace UIKit
         NodeEditorSimple(const std::string &name, const std::shared_ptr<AppWindow> &parent);
         NodeEditorSimple(const std::string &name);
         NodeEditorSimple();        
-        std::shared_ptr<UIKit::AppWindow> &GetAppWindow()
+        std::shared_ptr<Cherry::AppWindow> &GetAppWindow()
         {
             return m_AppWindow;
         }
@@ -947,7 +947,7 @@ namespace UIKit
         std::shared_ptr<std::string> v_StringOne; 
 
         // Renderer
-        std::shared_ptr<UIKit::AppWindow> m_AppWindow;
+        std::shared_ptr<Cherry::AppWindow> m_AppWindow;
 
         std::shared_ptr<Example> m_NodeEngine;
 

@@ -13,7 +13,7 @@
 
 #pragma once
 
-namespace UIKit {
+namespace Cherry {
 
 	class Layer
 	{

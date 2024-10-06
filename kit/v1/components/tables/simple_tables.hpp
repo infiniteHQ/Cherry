@@ -3,7 +3,7 @@
 #ifndef UIKIT_V1_TABLES_SIMPLES
 #define UIKIT_V1_TABLES_SIMPLES
 
-namespace UIKit
+namespace Cherry
 {
     class SimpleTable : public Component
     {

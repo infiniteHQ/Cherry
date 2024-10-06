@@ -3,7 +3,7 @@
 #ifndef UIKIT_V1_SIMPLE_COMBO
 #define UIKIT_V1_SIMPLE_COMBO
 
-namespace UIKit
+namespace Cherry
 {
     class ComboSimple : public Component
     {

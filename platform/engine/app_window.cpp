@@ -3,7 +3,7 @@
 
 #include "../../src/core/log.hpp"
 
-namespace UIKit
+namespace Cherry
 {
 
     AppWindow::AppWindow() : m_ID("undefined"), m_Name("undefined")
@@ -715,7 +715,7 @@ namespace UIKit
         }
     }
 
-    std::shared_ptr<UIKit::Image> AppWindow::GetImage(const std::string &path)
+    std::shared_ptr<Cherry::Image> AppWindow::GetImage(const std::string &path)
     {
         for (auto &win : Application::Get().m_Windows)
         {

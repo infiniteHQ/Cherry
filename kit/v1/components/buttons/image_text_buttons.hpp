@@ -3,7 +3,7 @@
 #ifndef UIKIT_V1_IMAGE_TEXT_BUTTONS
 #define UIKIT_V1_IMAGE_TEXT_BUTTONS
 
-namespace UIKit
+namespace Cherry
 {
     class ImageTextButtonSimple : public Component
     {

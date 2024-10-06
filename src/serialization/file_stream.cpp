@@ -1,6 +1,6 @@
 #include "file_stream.hpp"
 
-namespace UIKit
+namespace Cherry
 {
 	//==============================================================================
 	/// FileStreamWriter

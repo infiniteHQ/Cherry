@@ -8,7 +8,7 @@
 #include <unordered_map>
 
 
-namespace UIKit
+namespace Cherry
 {
 	class StreamReader
 	{

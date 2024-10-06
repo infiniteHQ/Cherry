@@ -8,7 +8,7 @@
 #include <filesystem>
 #include <fstream>
 
-namespace UIKit
+namespace Cherry
 {
 	//==============================================================================
 	/// BufferStreamWriter
@@ -52,4 +52,4 @@ namespace UIKit
 		uint64_t m_BufferPosition = 0;
 	};
 
-} // namespace UIKit
+} // namespace Cherry

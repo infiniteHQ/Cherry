@@ -12,7 +12,7 @@
 #include "../../../../components/inputs/simple/image_inputs.hpp"
 #include "../../../../components/inputs/keyval/keyval_double.hpp"
 
-namespace UIKit
+namespace Cherry
 {
 
     // This window can be a "subappwindow" of a parent if you use the constructor with parent parameter.
@@ -42,7 +42,7 @@ namespace UIKit
         std::shared_ptr<std::string> v_Description; 
 
         // Renderer
-        std::shared_ptr<UIKit::AppWindow> m_AppWindow;
+        std::shared_ptr<Cherry::AppWindow> m_AppWindow;
     };
 }
 

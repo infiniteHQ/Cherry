@@ -1,6 +1,6 @@
 #include "ui.hpp"
 
-namespace UIKit::UI {
+namespace Cherry::UI {
 
 	void ShiftCursorX(float distance)
 	{
@@ -48,7 +48,7 @@ namespace UIKit::UI {
 		return RectOffset(rect, xy.x, xy.y);
 	}
 
-	void DrawButtonImage(const std::shared_ptr<UIKit::Image>& imageNormal, const std::shared_ptr<UIKit::Image>& imageHovered, const std::shared_ptr<UIKit::Image>& imagePressed,
+	void DrawButtonImage(const std::shared_ptr<Cherry::Image>& imageNormal, const std::shared_ptr<Cherry::Image>& imageHovered, const std::shared_ptr<Cherry::Image>& imagePressed,
 		ImU32 tintNormal, ImU32 tintHovered, ImU32 tintPressed,
 		ImVec2 rectMin, ImVec2 rectMax)
 	{
@@ -61,21 +61,21 @@ namespace UIKit::UI {
 			drawList->AddImage(imagePressed->GetDescriptorSet(), rectMin, rectMax, ImVec2(0, 0), ImVec2(1, 1), tintNormal);
 	};
 
-	void DrawButtonImage(const std::shared_ptr<UIKit::Image>& imageNormal, const std::shared_ptr<UIKit::Image>& imageHovered, const std::shared_ptr<UIKit::Image>& imagePressed,
+	void DrawButtonImage(const std::shared_ptr<Cherry::Image>& imageNormal, const std::shared_ptr<Cherry::Image>& imageHovered, const std::shared_ptr<Cherry::Image>& imagePressed,
 		ImU32 tintNormal, ImU32 tintHovered, ImU32 tintPressed,
 		ImRect rectangle)
 	{
 		DrawButtonImage(imageNormal, imageHovered, imagePressed, tintNormal, tintHovered, tintPressed, rectangle.Min, rectangle.Max);
 	};
 
-	void DrawButtonImage(const std::shared_ptr<UIKit::Image>& image,
+	void DrawButtonImage(const std::shared_ptr<Cherry::Image>& image,
 		ImU32 tintNormal, ImU32 tintHovered, ImU32 tintPressed,
 		ImVec2 rectMin, ImVec2 rectMax)
 	{
 		DrawButtonImage(image, image, image, tintNormal, tintHovered, tintPressed, rectMin, rectMax);
 	};
 
-	void DrawButtonImage(const std::shared_ptr<UIKit::Image>& image,
+	void DrawButtonImage(const std::shared_ptr<Cherry::Image>& image,
 		ImU32 tintNormal, ImU32 tintHovered, ImU32 tintPressed,
 		ImRect rectangle)
 	{
@@ -83,13 +83,13 @@ namespace UIKit::UI {
 	};
 
 
-	void DrawButtonImage(const std::shared_ptr<UIKit::Image>& imageNormal, const std::shared_ptr<UIKit::Image>& imageHovered, const std::shared_ptr<UIKit::Image>& imagePressed,
+	void DrawButtonImage(const std::shared_ptr<Cherry::Image>& imageNormal, const std::shared_ptr<Cherry::Image>& imageHovered, const std::shared_ptr<Cherry::Image>& imagePressed,
 		ImU32 tintNormal, ImU32 tintHovered, ImU32 tintPressed)
 	{
 		DrawButtonImage(imageNormal, imageHovered, imagePressed, tintNormal, tintHovered, tintPressed, ImGui::GetItemRectMin(), ImGui::GetItemRectMax());
 	};
 
-	void DrawButtonImage(const std::shared_ptr<UIKit::Image>& image,
+	void DrawButtonImage(const std::shared_ptr<Cherry::Image>& image,
 		ImU32 tintNormal, ImU32 tintHovered, ImU32 tintPressed)
 	{
 		DrawButtonImage(image, image, image, tintNormal, tintHovered, tintPressed, ImGui::GetItemRectMin(), ImGui::GetItemRectMax());

@@ -29,7 +29,7 @@
 
 #include "../../../../../lib/imgui/misc/text_editors/text_editor.hpp"
 
-namespace UIKit
+namespace Cherry
 {
     // This window can be a "subappwindow" of a parent if you use the constructor with parent parameter.
     class DemoAppWindow
@@ -42,7 +42,7 @@ namespace UIKit
         std::function<void()> GetChild(const std::string &child_name);
         void RefreshRender(const std::shared_ptr<DemoAppWindow>& instance);
 
-        std::shared_ptr<UIKit::AppWindow> &GetAppWindow()
+        std::shared_ptr<Cherry::AppWindow> &GetAppWindow()
         {
             return m_AppWindow;
         }
@@ -92,7 +92,7 @@ namespace UIKit
         std::shared_ptr<ComboCustom> cp_ComboTwo;   
 
         std::string m_SelectedChildName;
-        std::shared_ptr<UIKit::AppWindow> m_AppWindow;
+        std::shared_ptr<Cherry::AppWindow> m_AppWindow;
     };
 }
 

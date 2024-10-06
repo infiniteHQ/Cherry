@@ -7,7 +7,7 @@
 #include <map>
 #include <unordered_map>
 
-namespace UIKit
+namespace Cherry
 {
 	class StreamWriter
 	{
@@ -121,4 +121,4 @@ namespace UIKit
 				WriteString(element);
 		}
 	};
-} // namespace UIKit
+} // namespace Cherry

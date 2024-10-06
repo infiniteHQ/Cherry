@@ -3,7 +3,7 @@
 #ifndef UIKIT_V1_SIMPLE_TEXTS
 #define UIKIT_V1_SIMPLE_TEXTS
 
-namespace UIKit
+namespace Cherry
 {
 inline void SimpleTextCentred(const std::string &text)
 {

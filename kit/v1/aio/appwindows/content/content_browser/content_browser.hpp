@@ -26,7 +26,7 @@
 #include <cctype>
 #include <unordered_set>
 
-namespace UIKit
+namespace Cherry
 {
 
     class ContenBrowserItem
@@ -139,7 +139,7 @@ namespace UIKit
         ContentBrowserAppWindow(const std::string &name, const std::string &start_path);
         // ContentBrowserAppWindow(const std::string &name);
 
-        std::shared_ptr<UIKit::AppWindow> &GetAppWindow()
+        std::shared_ptr<Cherry::AppWindow> &GetAppWindow()
         {
             return m_AppWindow;
         }
@@ -237,11 +237,11 @@ namespace UIKit
 
         std::vector<std::filesystem::path> m_Favorites;
 
-        std::shared_ptr<UIKit::Image> m_ProjectIcon;
-        std::shared_ptr<UIKit::Image> m_FileIcon;
-        std::shared_ptr<UIKit::Image> m_DirectoryIcon;
+        std::shared_ptr<Cherry::Image> m_ProjectIcon;
+        std::shared_ptr<Cherry::Image> m_FileIcon;
+        std::shared_ptr<Cherry::Image> m_DirectoryIcon;
 
-        std::shared_ptr<UIKit::AppWindow> m_AppWindow;
+        std::shared_ptr<Cherry::AppWindow> m_AppWindow;
 
         std::function<void(const std::string &)> m_DeletePathCallback;
         std::function<void(const std::vector<std::string> &)> m_CopyPathsCallback;

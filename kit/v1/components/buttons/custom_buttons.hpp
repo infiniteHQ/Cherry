@@ -3,7 +3,7 @@
 #ifndef UIKIT_V1_CUSTOM_BUTTONS
 #define UIKIT_V1_CUSTOM_BUTTONS
 
-namespace UIKit
+namespace Cherry
 {
     class CustomButtonSimple : public Component
     {

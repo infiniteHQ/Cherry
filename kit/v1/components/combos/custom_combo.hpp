@@ -3,7 +3,7 @@
 #ifndef UIKIT_V1_CUSTOM_COMBO
 #define UIKIT_V1_CUSTOM_COMBO
 
-namespace UIKit
+namespace Cherry
 {
 
 class ComboCustom : public Component

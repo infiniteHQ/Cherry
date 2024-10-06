@@ -301,7 +301,7 @@ static ImU32 DarkenColor(ImU32 color, float amount)
     return IM_COL32(r, g, b, a);
 }
 
-namespace UIKit
+namespace Cherry
 {
     std::string get_extension(const std::string &path)
     {
@@ -354,34 +354,34 @@ namespace UIKit
 
     ContentBrowserAppWindow::ContentBrowserAppWindow(const std::string &name, const std::string &start_path)
     {
-        m_AppWindow = std::make_shared<UIKit::AppWindow>(name, name);
+        m_AppWindow = std::make_shared<Cherry::AppWindow>(name, name);
         m_AppWindow->SetIcon("/usr/local/include/Vortex/imgs/vortex.png");
-        std::shared_ptr<UIKit::AppWindow> win = m_AppWindow;
+        std::shared_ptr<Cherry::AppWindow> win = m_AppWindow;
 
-        cp_SaveButton = Application::Get().CreateComponent<ImageTextButtonSimple>("save_button", Application::Get().GetLocale("loc.content_browser.save_all") + "####content_browser.save_all", UIKit::Application::CookPath("ressources/imgs/icons/misc/icon_save.png"));
+        cp_SaveButton = Application::Get().CreateComponent<ImageTextButtonSimple>("save_button", Application::Get().GetLocale("loc.content_browser.save_all") + "####content_browser.save_all", Cherry::Application::CookPath("ressources/imgs/icons/misc/icon_save.png"));
         cp_SaveButton->SetScale(0.85f);
         cp_SaveButton->SetLogoSize(15, 15);
         cp_SaveButton->SetBackgroundColorIdle("#00000000");
         cp_SaveButton->SetBorderColorIdle("#00000000");
 
-        cp_ImportButton = Application::Get().CreateComponent<ImageTextButtonSimple>("import_button", Application::Get().GetLocale("loc.content_browser.import") + "####content_browser.import", UIKit::Application::CookPath("ressources/imgs/icons/misc/icon_import.png"));
+        cp_ImportButton = Application::Get().CreateComponent<ImageTextButtonSimple>("import_button", Application::Get().GetLocale("loc.content_browser.import") + "####content_browser.import", Cherry::Application::CookPath("ressources/imgs/icons/misc/icon_import.png"));
         cp_ImportButton->SetScale(0.85f);
         cp_ImportButton->SetLogoSize(15, 15);
         cp_ImportButton->SetBackgroundColorIdle("#00000000");
         cp_ImportButton->SetBorderColorIdle("#00000000");
 
-        cp_AddButton = Application::Get().CreateComponent<ImageTextButtonSimple>("add_button", Application::Get().GetLocale("loc.content_browser.add") + "####content_browser.add", UIKit::Application::CookPath("ressources/imgs/icons/misc/icon_add.png"));
+        cp_AddButton = Application::Get().CreateComponent<ImageTextButtonSimple>("add_button", Application::Get().GetLocale("loc.content_browser.add") + "####content_browser.add", Cherry::Application::CookPath("ressources/imgs/icons/misc/icon_add.png"));
         cp_AddButton->SetScale(0.85f);
         cp_AddButton->SetInternalMarginX(10.0f);
         cp_AddButton->SetLogoSize(15, 15);
 
-        cp_SettingsButton = Application::Get().CreateComponent<CustomDrowpdownImageButtonSimple>("setgings_button", Application::Get().GetLocale("loc.content_browser.add") + "####content_browser.settings", UIKit::Application::CookPath("ressources/imgs/icons/misc/icon_add.png"));
+        cp_SettingsButton = Application::Get().CreateComponent<CustomDrowpdownImageButtonSimple>("setgings_button", Application::Get().GetLocale("loc.content_browser.add") + "####content_browser.settings", Cherry::Application::CookPath("ressources/imgs/icons/misc/icon_add.png"));
         cp_SettingsButton->SetScale(0.85f);
         cp_SettingsButton->SetInternalMarginX(10.0f);
         cp_SettingsButton->SetLogoSize(15, 15);
 
-        cp_DirectoryUndo = Application::Get().CreateComponent<ImageButtonSimple>("directory_undo", UIKit::Application::CookPath("ressources/imgs/icons/misc/icon_arrow_l_disabled.png"));
-        cp_DirectoryRedo = Application::Get().CreateComponent<ImageButtonSimple>("directory_redo", UIKit::Application::CookPath("ressources/imgs/icons/misc/icon_arrow_r_disabled.png"));
+        cp_DirectoryUndo = Application::Get().CreateComponent<ImageButtonSimple>("directory_undo", Cherry::Application::CookPath("ressources/imgs/icons/misc/icon_arrow_l_disabled.png"));
+        cp_DirectoryRedo = Application::Get().CreateComponent<ImageButtonSimple>("directory_redo", Cherry::Application::CookPath("ressources/imgs/icons/misc/icon_arrow_r_disabled.png"));
 
         cp_DirectoryRedo->SetBackgroundColorIdle("#00000000");
         cp_DirectoryRedo->SetBorderColorIdle("#00000000");
@@ -978,17 +978,17 @@ namespace UIKit
 
     void ContentBrowserAppWindow::RenderSideBar()
     {
-        CustomCollapsingHeaderLogo("Favorite", UIKit::Application::CookPath("ressources/imgs/icons/misc/icon_star.png"), [this]()
+        CustomCollapsingHeaderLogo("Favorite", Cherry::Application::CookPath("ressources/imgs/icons/misc/icon_star.png"), [this]()
                                    {
                                        for (auto custom_dir : m_FavoriteFolders)
                                        {
                                            DrawHierarchy(custom_dir, true);
                                        } });
 
-        CustomCollapsingHeaderLogo("Main", UIKit::Application::CookPath("ressources/imgs/icons/misc/icon_home.png"), [this]()
+        CustomCollapsingHeaderLogo("Main", Cherry::Application::CookPath("ressources/imgs/icons/misc/icon_home.png"), [this]()
                                    { DrawHierarchy(m_BaseDirectory, true, "Main"); });
 
-        CustomCollapsingHeaderLogo("Pools & Collections", UIKit::Application::CookPath("ressources/imgs/icons/misc/icon_collection.png"), [this]()
+        CustomCollapsingHeaderLogo("Pools & Collections", Cherry::Application::CookPath("ressources/imgs/icons/misc/icon_collection.png"), [this]()
                                    {
                                        ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(12.0f, 2.0f));
 
@@ -1031,7 +1031,7 @@ namespace UIKit
 
     void ContentBrowserAppWindow::RenderFiltersBar()
     {
-        CustomCollapsingHeaderLogo("Favorite", UIKit::Application::CookPath("ressources/imgs/icons/misc/icon_star.png"), [this]()
+        CustomCollapsingHeaderLogo("Favorite", Cherry::Application::CookPath("ressources/imgs/icons/misc/icon_star.png"), [this]()
                                    {
                                        for (auto custom_dir : m_FavoriteFolders)
                                        {

@@ -1,5 +1,5 @@
-#ifndef UIKIT_H
-#define UIKIT_H
+#ifndef CHERRY_H
+#define CHERRY_H
 
 #ifndef IMGUI_DEFINE_MATH_OPERATORS
 #define IMGUI_DEFINE_MATH_OPERATORS
@@ -17,7 +17,7 @@
 #include "./platform/engine/app.hpp"
 #include "./assets/icons.h"
 
-#ifdef UIKIT_V1
+#ifdef CHERRY_V1
 // Buttons
 #include "./kit/v1/components/buttons/dropdown_buttons.hpp"
 #include "./kit/v1/components/buttons/custom_buttons.hpp"
@@ -64,4 +64,4 @@
 
 // AIO kits & components includes
 
-#endif // UIKIT_H
+#endif // CHERRY_H

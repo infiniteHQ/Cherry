@@ -10,7 +10,7 @@
 #include "../../../lib/fmt/include/fmt/args.h"
 #include "../../../lib/fmt/include/fmt/format.h"
 
-namespace UIKit::UI {
+namespace Cherry::UI {
 
 	class Console
 	{

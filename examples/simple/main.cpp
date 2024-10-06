@@ -1,10 +1,10 @@
-#define UIKIT_V1
-#include "../../uikit.hpp"
+#define CHERRY_V1
+#include "../../cherry.hpp"
 
 #include <thread>
 #include <memory>
 
-class Layer : public UIKit::Layer
+class Layer : public Cherry::Layer
 {
 public:
   Layer() {};
@@ -16,9 +16,9 @@ public:
   }
 };
 
-UIKit::Application *UIKit::CreateApplication(int argc, char **argv)
+Cherry::Application *Cherry::CreateApplication(int argc, char **argv)
 {
-  UIKit::ApplicationSpecification spec;
+  Cherry::ApplicationSpecification spec;
   std::shared_ptr<Layer> layer = std::make_shared<Layer>();
 
   std::string name = "UIKit example";
@@ -27,12 +27,12 @@ UIKit::Application *UIKit::CreateApplication(int argc, char **argv)
   spec.MinWidth = 500;
   spec.CustomTitlebar = true;
   spec.DisableWindowManagerTitleBar = true;
-  spec.EnableDocking = true;
+  spec.RenderMode = WindowRenderingMethod::DockingWindows;
   spec.DisableTitle = true;
   spec.WindowSaves = true;
   spec.IconPath = "icon.png";
 
-  UIKit::Application *app = new UIKit::Application(spec);
+  Cherry::Application *app = new Cherry::Application(spec);
   app->SetWindowSaveDataFile("savedatda.json", true);
   app->SetFavIconPath("/usr/local/include/Vortex/imgs/vortex.png");
 
@@ -131,17 +131,10 @@ UIKit::Application *UIKit::CreateApplication(int argc, char **argv)
                             ImGui::PopStyleVar();  
                             ImGui::PopStyleColor(2); });
 
-  /*app->SetCloseCallback([app, layer]()
-                          {
-                          });*/
+  std::shared_ptr<DemoAppWindow> demo = std::make_shared<Cherry::DemoAppWindow>("Demo Window");
+  demo->RefreshRender(demo);
+  Application::Get().PutWindow(demo->m_AppWindow);
 
-  // std::shared_ptr<ContentBrowserAppWindow> windododf = std::make_shared<UIKit::ContentBrowserAppWindow>("Content Brobro", "/home/diego/.vx");
-  // windododf->RefreshRender(windododf);
-
-  std::shared_ptr<DemoAppWindow> qsd = std::make_shared<UIKit::DemoAppWindow>("Demo Window");
-qsd->RefreshRender(qsd);
-
-  // qsdf->RefreshRender(qsdf);
 
   return app;
 }
@@ -150,7 +143,7 @@ int main(int argc, char *argv[])
 {
   std::thread mainthread;
   std::thread Thread([&]()
-                     { UIKit::Main(argc, argv); });
+                     { Cherry::Main(argc, argv); });
   mainthread.swap(Thread);
 
   while (true)

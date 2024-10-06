@@ -1,10 +1,10 @@
 #include "./props_editor_sections.hpp"
 
-namespace UIKit
+namespace Cherry
 {
     PropsEditorSections::PropsEditorSections(const std::string &name, const std::shared_ptr<AppWindow> &parent)
     {
-        m_AppWindow = std::make_shared<UIKit::AppWindow>(name, name);
+        m_AppWindow = std::make_shared<Cherry::AppWindow>(name, name);
         m_AppWindow->SetIcon("/usr/local/include/Vortex/imgs/vortex.png");
         m_AppWindow->SetDefaultBehavior(DefaultAppWindowBehaviors::DefaultDocking, "full");
 
@@ -16,7 +16,7 @@ namespace UIKit
         ImGui::Button("qsd"); });
 
 
-        std::shared_ptr<UIKit::AppWindow> win = m_AppWindow;
+        std::shared_ptr<Cherry::AppWindow> win = m_AppWindow;
 
         m_AppWindow->SetLeftMenubarCallback([]()
                                             { ImGui::Text("ll"); });
@@ -27,7 +27,7 @@ namespace UIKit
 
     PropsEditorSections::PropsEditorSections()
     {
-        m_AppWindow = std::make_shared<UIKit::AppWindow>("Sec", "Sec");
+        m_AppWindow = std::make_shared<Cherry::AppWindow>("Sec", "Sec");
         m_AppWindow->SetIcon("/usr/local/include/Vortex/imgs/vortex.png");
         m_AppWindow->SetSaveMode(true);
         m_AppWindow->SetRenderCallback([this]()
@@ -35,7 +35,7 @@ namespace UIKit
         ImGui::Text("name");
         ImGui::Button("qsd"); });
 
-        std::shared_ptr<UIKit::AppWindow> win = m_AppWindow;
+        std::shared_ptr<Cherry::AppWindow> win = m_AppWindow;
 
         m_AppWindow->SetLeftMenubarCallback([]()
                                             { ImGui::Text("ll"); });
@@ -46,7 +46,7 @@ namespace UIKit
 
     PropsEditorSections::PropsEditorSections(const std::string &name)
     {
-        m_AppWindow = std::make_shared<UIKit::AppWindow>(name, name);
+        m_AppWindow = std::make_shared<Cherry::AppWindow>(name, name);
         m_AppWindow->SetIcon("/usr/local/include/Vortex/imgs/vortex.png");
         m_AppWindow->SetDefaultBehavior(DefaultAppWindowBehaviors::DefaultDocking, "right");
 
@@ -70,7 +70,7 @@ namespace UIKit
         cp_SimpleTable->SetHeaderCellPaddingX(10.0f);
         cp_SimpleTable->SetRowsCellPaddingY(100.0f);
 
-        std::shared_ptr<UIKit::AppWindow> win = m_AppWindow;
+        std::shared_ptr<Cherry::AppWindow> win = m_AppWindow;
 
         m_AppWindow->SetInternalPaddingX(1.0f);
         m_AppWindow->SetInternalPaddingY(0.0f);

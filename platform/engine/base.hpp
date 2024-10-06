@@ -4,7 +4,7 @@
 #include "../../src/core/color.hpp"
 #include "image.hpp"
 
-namespace UIKit
+namespace Cherry
 {
 	enum class WindowType
 	{
@@ -74,7 +74,7 @@ namespace UIKit
 		std::string LastDraggingAppWindow = "unknown";
 		bool LastDraggingAppWindowHaveParent = false;
 		bool DockIsDragging = false;
-		UIKit::DockEmplacement LastDraggingPlace = UIKit::DockEmplacement::DockBlank;
+		Cherry::DockEmplacement LastDraggingPlace = Cherry::DockEmplacement::DockBlank;
 		bool CreateNewWindow = false;
 		bool FromSave = false;
 		std::string DragOwner = "none";

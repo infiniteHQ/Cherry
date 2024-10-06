@@ -4,7 +4,7 @@
 #include <string>
 #include <chrono>
 
-namespace UIKit {
+namespace Cherry {
 
 	class Timer
 	{

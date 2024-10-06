@@ -3,7 +3,7 @@
 #ifndef UIKIT_V1_CUSTOM_DROPDOWN_BUTTONS
 #define UIKIT_V1_CUSTOM_DROPDOWN_BUTTONS
 
-namespace UIKit
+namespace Cherry
 {
     class CustomDrowpdownButtonSimple : public Component
     {

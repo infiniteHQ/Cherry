@@ -3,7 +3,7 @@
 #ifndef UIKIT_V1_HEADERS_ICONCOLLAPSING
 #define UIKIT_V1_HEADERS_ICONCOLLAPSING
 
-namespace UIKit
+namespace Cherry
 {
 
     inline bool IconCollapsingHeader(

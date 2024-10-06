@@ -1,6 +1,6 @@
 #include "stream_writer.hpp"
 
-namespace UIKit
+namespace Cherry
 {
 	void StreamWriter::WriteBuffer(Buffer buffer, bool writeSize)
 	{
@@ -31,4 +31,4 @@ namespace UIKit
 		WriteData((char*)string.data(), sizeof(char) * string.size());
 	}
 
-} // namespace UIKit
+} // namespace Cherry

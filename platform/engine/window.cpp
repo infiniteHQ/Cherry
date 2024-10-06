@@ -216,7 +216,7 @@ namespace ImGui
 
 }
 
-namespace UIKit
+namespace Cherry
 {
     Window::Window(const std::string &name, int width, int height, ApplicationSpecification specs, bool cold_start)
         : m_Name(name), m_Width(specs.Width), m_Height(specs.Height)
@@ -395,7 +395,7 @@ namespace UIKit
         }
     }
 
-    void Window::ShowDockingPreview(ImGuiID dockspaceID, Window *win, const std::shared_ptr<UIKit::WindowDragDropState> &dragState, const std::shared_ptr<AppWindow> appwin)
+    void Window::ShowDockingPreview(ImGuiID dockspaceID, Window *win, const std::shared_ptr<Cherry::WindowDragDropState> &dragState, const std::shared_ptr<AppWindow> appwin)
     {
         ImGuiContext *ctx = ImGui::GetCurrentContext();
         if (ctx == nullptr)
@@ -466,7 +466,7 @@ namespace UIKit
                     ImRect preview_rect;
                     if (dir == ImGuiDir_None)
                     {
-                        Application::SetCurrentDragDropStateDraggingPlace(UIKit::DockEmplacement::DockFull);
+                        Application::SetCurrentDragDropStateDraggingPlace(Cherry::DockEmplacement::DockFull);
                         preview_rect = dock_rect;
                     }
                     else
@@ -474,23 +474,23 @@ namespace UIKit
                         switch (dir)
                         {
                         case ImGuiDir_Left:
-                            Application::SetCurrentDragDropStateDraggingPlace(UIKit::DockEmplacement::DockLeft);
+                            Application::SetCurrentDragDropStateDraggingPlace(Cherry::DockEmplacement::DockLeft);
                             preview_rect = ImRect(dock_rect.Min.x, dock_rect.Min.y, c.x, dock_rect.Max.y);
                             break;
                         case ImGuiDir_Up:
-                            Application::SetCurrentDragDropStateDraggingPlace(UIKit::DockEmplacement::DockUp);
+                            Application::SetCurrentDragDropStateDraggingPlace(Cherry::DockEmplacement::DockUp);
                             preview_rect = ImRect(dock_rect.Min.x, dock_rect.Min.y, dock_rect.Max.x, c.y);
                             break;
                         case ImGuiDir_Right:
-                            Application::SetCurrentDragDropStateDraggingPlace(UIKit::DockEmplacement::DockRight);
+                            Application::SetCurrentDragDropStateDraggingPlace(Cherry::DockEmplacement::DockRight);
                             preview_rect = ImRect(c.x, dock_rect.Min.y, dock_rect.Max.x, dock_rect.Max.y);
                             break;
                         case ImGuiDir_Down:
-                            Application::SetCurrentDragDropStateDraggingPlace(UIKit::DockEmplacement::DockDown);
+                            Application::SetCurrentDragDropStateDraggingPlace(Cherry::DockEmplacement::DockDown);
                             preview_rect = ImRect(dock_rect.Min.x, c.y, dock_rect.Max.x, dock_rect.Max.y);
                             break;
                         default:
-                            Application::SetCurrentDragDropStateDraggingPlace(UIKit::DockEmplacement::DockBlank);
+                            Application::SetCurrentDragDropStateDraggingPlace(Cherry::DockEmplacement::DockBlank);
                             break;
                         }
                     }
@@ -504,7 +504,7 @@ namespace UIKit
 
             if (!Application::GetValidDropZoneFounded())
             {
-                Application::SetCurrentDragDropStateDraggingPlace(UIKit::DockEmplacement::DockBlank);
+                Application::SetCurrentDragDropStateDraggingPlace(Cherry::DockEmplacement::DockBlank);
                 Application::SetCurrentDragDropStateWindow(win->GetName());
             }
         };
@@ -816,7 +816,7 @@ namespace UIKit
             Application::FramePresent(wd, this);
     }
 
-    std::shared_ptr<UIKit::Image> Window::add(const std::string &path)
+    std::shared_ptr<Cherry::Image> Window::add(const std::string &path)
     {
         if (path.empty() || path == "none")
         {
@@ -842,14 +842,14 @@ namespace UIKit
         }
 
         size_t dataSize = hexTable.empty() ? sizeof(g_NotFoundIcon) : hexTable.size();
-        void *data = UIKit::Image::Decode(hexData, dataSize, w, h);
+        void *data = Cherry::Image::Decode(hexData, dataSize, w, h);
 
         if (!data)
         {
             return nullptr;
         }
 
-        std::shared_ptr<UIKit::Image> _icon = std::make_shared<UIKit::Image>(w, h, UIKit::ImageFormat::RGBA, this->GetName(), data);
+        std::shared_ptr<Cherry::Image> _icon = std::make_shared<Cherry::Image>(w, h, Cherry::ImageFormat::RGBA, this->GetName(), data);
         m_ImageList.push_back(std::make_pair(path, _icon));
 
         IM_FREE(data);
@@ -857,7 +857,7 @@ namespace UIKit
         return _icon;
     }
 
-    std::shared_ptr<UIKit::Image> Window::get(const std::string &path)
+    std::shared_ptr<Cherry::Image> Window::get(const std::string &path)
     {
         if (path.empty() || path == "none")
         {
@@ -875,7 +875,7 @@ namespace UIKit
         return this->add(path);
     }
 
-    std::shared_ptr<UIKit::Image> Window::add(const uint8_t data[], const std::string &name)
+    std::shared_ptr<Cherry::Image> Window::add(const uint8_t data[], const std::string &name)
     {
         if (std::find(c_ImageList.begin(), c_ImageList.end(), name) == c_ImageList.end())
         {
@@ -893,14 +893,14 @@ namespace UIKit
         uint32_t w, h;
         const size_t dataSize = sizeof(g_NotFoundIcon);
 
-        void *icondata = UIKit::Image::Decode(data, dataSize, w, h);
+        void *icondata = Cherry::Image::Decode(data, dataSize, w, h);
 
         if (!icondata)
         {
             return nullptr;
         }
 
-        std::shared_ptr<UIKit::Image> _icon = std::make_shared<UIKit::Image>(w, h, UIKit::ImageFormat::RGBA, this->GetName(), icondata);
+        std::shared_ptr<Cherry::Image> _icon = std::make_shared<Cherry::Image>(w, h, Cherry::ImageFormat::RGBA, this->GetName(), icondata);
         m_ImageList.push_back(std::make_pair(name, _icon));
 
         IM_FREE(icondata);
@@ -908,7 +908,7 @@ namespace UIKit
         return _icon;
     }
 
-    std::shared_ptr<UIKit::Image> Window::get(const uint8_t data[], const std::string &name)
+    std::shared_ptr<Cherry::Image> Window::get(const uint8_t data[], const std::string &name)
     {
         for (auto &image : m_ImageList)
         {
@@ -934,7 +934,7 @@ namespace UIKit
             return it->second;
         }
 
-        std::shared_ptr<UIKit::Image> image = this->get(path);
+        std::shared_ptr<Cherry::Image> image = this->get(path);
         if (image)
         {
             ImTextureID texture = image->GetImGuiTextureID();
@@ -952,7 +952,7 @@ namespace UIKit
             return ImVec2(0,0);
         }
 
-        std::shared_ptr<UIKit::Image> image = this->get(path);
+        std::shared_ptr<Cherry::Image> image = this->get(path);
         if (image)
         {
             return ImVec2(image->GetWidth(), image->GetHeight());

@@ -13,7 +13,7 @@
 #include "../../../../components/inputs/keyval/keyval_double.hpp"
 #include "../../../../../../lib/imgui/misc/text_editors/text_editor.hpp"
 
-namespace UIKit
+namespace Cherry
 {
 
     // This window can be a "subappwindow" of a parent if you use the constructor with parent parameter.
@@ -42,7 +42,7 @@ namespace UIKit
             }
         }
 
-        std::shared_ptr<UIKit::AppWindow> &GetAppWindow()
+        std::shared_ptr<Cherry::AppWindow> &GetAppWindow()
         {
             return m_AppWindow;
         }
@@ -66,7 +66,7 @@ namespace UIKit
         std::string m_FilePath;
 
         // Renderer
-        std::shared_ptr<UIKit::AppWindow> m_AppWindow;
+        std::shared_ptr<Cherry::AppWindow> m_AppWindow;
     };
 }
 
