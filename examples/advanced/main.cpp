@@ -4,6 +4,18 @@
 #include <thread>
 #include <memory>
 
+
+/*
+BUGS :
+ - On horizontal areas Y overflow
+ - Sizes not apply on X et Y 
+
+
+
+
+
+*/
+
 class Layer : public UIKit::Layer
 {
 public:
@@ -192,6 +204,20 @@ UIKit::Application *UIKit::CreateApplication(int argc, char **argv)
   Application::Get().PutWindow(ListWindow->GetAppWindow()); // Publish this window into the workspace
 
 
+
+  std::shared_ptr<MultiChildTabs> appTabs = std::make_shared<UIKit::MultiChildTabs>("indow_names.tabs");
+  appTabs->AddChild("One", [](){ImGui::Text("One");});
+  appTabs->AddChild("Two", [](){ImGui::Text("Two");});
+  appTabs->AddChild("Three", [](){ImGui::Text("Three");});
+  appTabs->AddChild("Four", [](){ImGui::Text("Four");});
+  appTabs->RefreshRender(appTabs);
+  
+  */
+  std::shared_ptr<ContentBrowserAppWindow> ContentBrowser = std::make_shared<UIKit::ContentBrowserAppWindow>("?loc:loc.window_names.content_browser", "/home/diego");
+  ContentBrowser->RefreshRender(ContentBrowser);
+  Application::Get().PutWindow(ContentBrowser->GetAppWindow()); // Publish this window into the workspace
+   
+  
   // Multi childs
   std::shared_ptr<MultiChildAreas> VerticalAreas = std::make_shared<UIKit::MultiChildAreas>("indow_names.content_browser");
   VerticalAreas->m_IsHorizontal = false;
@@ -210,20 +236,6 @@ UIKit::Application *UIKit::CreateApplication(int argc, char **argv)
   HorizontalAreas->AddChild(Child("Four2", [](){ImGui::Text("Four");}));
   HorizontalAreas->RefreshRender(HorizontalAreas);
   Application::Get().PutWindow(HorizontalAreas->GetAppWindow()); // Publish this window into the workspace
-  
-  std::shared_ptr<MultiChildTabs> appTabs = std::make_shared<UIKit::MultiChildTabs>("indow_names.tabs");
-  appTabs->AddChild("One", [](){ImGui::Text("One");});
-  appTabs->AddChild("Two", [](){ImGui::Text("Two");});
-  appTabs->AddChild("Three", [](){ImGui::Text("Three");});
-  appTabs->AddChild("Four", [](){ImGui::Text("Four");});
-  appTabs->RefreshRender(appTabs);
-  
-  */
-  std::shared_ptr<ContentBrowserAppWindow> ContentBrowser = std::make_shared<UIKit::ContentBrowserAppWindow>("?loc:loc.window_names.content_browser", "/home/diego");
-  ContentBrowser->RefreshRender(ContentBrowser);
-  Application::Get().PutWindow(ContentBrowser->GetAppWindow()); // Publish this window into the workspace
-   
-  
 
   
 

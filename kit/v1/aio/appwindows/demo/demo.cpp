@@ -353,9 +353,7 @@ namespace UIKit
                             ImGui::Button("Copy code");
                         }
                     }
-                    
                 }
-            
             }
             ImGui::EndTable();
         } });
@@ -1159,8 +1157,6 @@ namespace UIKit
                                            }
                                            else if (column == 2)
                                            {
-
-
                                                 std::vector<SimpleTable::SimpleTableRow> keyvals;
 
                                                 keyvals.push_back(SimpleTable::SimpleTableRow({[this]()
@@ -1194,11 +1190,11 @@ namespace UIKit
                            } });
 
         this->AddChild("Grids", [this]() {
-
+            //
         });
 
         this->AddChild("Menus", [this]() {
-
+            //
         });
 
         this->AddChild("Trees", [this]()
@@ -1264,11 +1260,11 @@ namespace UIKit
 
         this->AddChild("Lists", [this]() {});
         this->AddChild("Radios", [this]() {
-
+            //
         });
 
         this->AddChild("Selectables", [this]() {
-
+            //
         });
 
         this->AddChild("Headers", [this]()
@@ -1351,8 +1347,6 @@ namespace UIKit
                                                ImGui::Button("Copy code");
                                            }
                                        }
-
-                                       
                                    }
                                }
                                ImGui::EndTable();
@@ -1360,7 +1354,6 @@ namespace UIKit
 
         this->AddChild("Combos", [this]()
                        {
-                    
                            ImGuiTableFlags flags2 = ImGuiTableFlags_Resizable | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Hideable | ImGuiTableFlags_Borders;
                            if (ImGui::BeginTable("table_context_menu_2", 4, flags2))
                            {
@@ -1463,14 +1456,14 @@ namespace UIKit
                            } });
 
         this->AddChild("Nodes", [this]() {
-
+            //
         });
 
         this->AddChild("Nodes editor", [this]() {
-
+            //
         });
         this->AddChild("Color Pickers", [this]() {
-
+            //
         });
 
         std::shared_ptr<UIKit::AppWindow> win = m_AppWindow;

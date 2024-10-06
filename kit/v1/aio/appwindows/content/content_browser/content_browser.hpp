@@ -8,6 +8,7 @@
 #include "../../../../components/buttons/image_buttons.hpp"
 #include "../../../../components/buttons/image_text_buttons.hpp"
 #include "../../../../components/buttons/text_buttons.hpp"
+#include "../../../../components/buttons/dropdown_buttons.hpp"
 #include "../../../../components/titles/h1.hpp"
 #include "../../../../components/titles/h2.hpp"
 #include "../../../../components/titles/h3.hpp"
@@ -99,6 +100,7 @@ namespace UIKit
     {
         std::function<void()> m_Child;
         std::string m_Name;
+        bool m_Disabled = true;
         float m_DefaultSize = 0.0f;
         float m_MinSize;
         float m_MaxSize;
@@ -110,6 +112,16 @@ namespace UIKit
         bool m_InitializedSec = false;
         bool m_InitializedTh = false;
         ImVec4 m_BackgroundColor = ImVec4(0.0f,0.0f,0.0f,0.0f);
+
+        void Enable()
+        {
+            m_Disabled = true;
+        }
+
+        void Disable()
+        {
+            m_Disabled = false;
+        }
 
         ContentBrowserChild(const std::string &name, const std::function<void()> &child, const float &default_size = 0.0f, const bool &resize_disabled = false, const float &min_size = 0.0f, const float &max_size = 0.0f)
             : m_Name(name),
@@ -238,6 +250,8 @@ namespace UIKit
         std::shared_ptr<ImageTextButtonSimple> cp_SaveButton;
         std::shared_ptr<ImageTextButtonSimple> cp_ImportButton;
         std::shared_ptr<ImageTextButtonSimple> cp_AddButton;
+
+        std::shared_ptr<CustomDrowpdownImageButtonSimple> cp_SettingsButton;
 
         std::shared_ptr<ImageButtonSimple> cp_DirectoryUndo;
         std::shared_ptr<ImageButtonSimple> cp_DirectoryRedo;

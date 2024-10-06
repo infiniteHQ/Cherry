@@ -212,6 +212,7 @@ bool ColorPicker3U32(const char *label, ImU32 *color, ImGuiColorEditFlags flags 
 
     if (ImGui::Button("Cancel", ImVec2(75.0f, 0.0f)))
     {
+        //
     }
 
     ImGui::PopStyleColor(3);
@@ -374,6 +375,11 @@ namespace UIKit
         cp_AddButton->SetInternalMarginX(10.0f);
         cp_AddButton->SetLogoSize(15, 15);
 
+        cp_SettingsButton = Application::Get().CreateComponent<CustomDrowpdownImageButtonSimple>("setgings_button", Application::Get().GetLocale("loc.content_browser.add") + "####content_browser.settings", UIKit::Application::CookPath("ressources/imgs/icons/misc/icon_add.png"));
+        cp_SettingsButton->SetScale(0.85f);
+        cp_SettingsButton->SetInternalMarginX(10.0f);
+        cp_SettingsButton->SetLogoSize(15, 15);
+
         cp_DirectoryUndo = Application::Get().CreateComponent<ImageButtonSimple>("directory_undo", UIKit::Application::CookPath("ressources/imgs/icons/misc/icon_arrow_l_disabled.png"));
         cp_DirectoryRedo = Application::Get().CreateComponent<ImageButtonSimple>("directory_redo", UIKit::Application::CookPath("ressources/imgs/icons/misc/icon_arrow_r_disabled.png"));
 
@@ -391,7 +397,7 @@ namespace UIKit
             
         if(cp_AddButton->Render())
         {
-
+            //
         }
 		ImGui::PopStyleColor();
 
@@ -402,12 +408,12 @@ namespace UIKit
         
         if(cp_SaveButton->Render())
         {
-
+            //
         }
 
         if(cp_ImportButton->Render())
         {
-
+            //
         }
         
 		ImGui::PopStyleColor(4);
@@ -469,7 +475,6 @@ namespace UIKit
 
 		if (m_Selected.size() > 0)
 		{
-
 			std::string label = std::to_string(m_Selected.size()) + " copies";
 			ImGui::TextColored(ImVec4(0.5f, 0.5f, 0.5f, 1.0f), label.c_str());
 		}
@@ -486,21 +491,39 @@ namespace UIKit
 			ImGui::Text(label.c_str());
 		} });
 
-        m_AppWindow->SetRightMenubarCallback([win]() {});
+        m_AppWindow->SetRightMenubarCallback([this]()
+                                             {
+            ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0.4f, 0.4f, 0.4f, 0.7f));
+            
+        if(cp_SettingsButton->Render())
+        {
+            //
+        }
+		ImGui::PopStyleColor(); });
 
         m_BaseDirectory = start_path;
         m_CurrentDirectory = m_BaseDirectory;
 
         ContentBrowserChild sidebar("RenderSideBar", [this]()
                                     { RenderSideBar(); });
+        sidebar.Enable();
+        sidebar.m_BackgroundColor = ImVec4(0.0f,0.6f,0.6f,1.0f);
         AddChild(sidebar);
 
-        AddChild(ContentBrowserChild("RenderFiltersBar", [this]()
-                                     { RenderFiltersBar(); }));
-        AddChild(ContentBrowserChild("RenderContentBar", [this]()
-                                     { RenderContentBar(); }));
-        AddChild(ContentBrowserChild("RenderDetailsBar", [this]()
-                                     { RenderDetailsBar(); }));
+        ContentBrowserChild filterbar("RenderFiltersBar", [this]()
+                                      { RenderFiltersBar(); });
+        filterbar.Disable();
+        AddChild(filterbar);
+
+        ContentBrowserChild contentbar("RenderContentBar", [this]()
+                                       { RenderContentBar(); });
+        contentbar.Enable();
+        AddChild(ContentBrowserChild(contentbar));
+
+        ContentBrowserChild detailsbar("RenderDetailsBar", [this]()
+                                       { RenderDetailsBar(); });
+        detailsbar.Disable();
+        AddChild(ContentBrowserChild(detailsbar));
     }
 
     void ContentBrowserAppWindow::AddChild(const ContentBrowserChild &child)
@@ -527,7 +550,7 @@ namespace UIKit
             m_ForwardHistory.pop();
         }
     }
-    
+
     void ContentBrowserAppWindow::ChangeDirectory(const std::filesystem::path &newDirectory)
     {
         if (newDirectory != m_CurrentDirectory)
@@ -972,7 +995,6 @@ namespace UIKit
                                        ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0.4f, 0.4f, 0.4f, 0.7f));
                                        if (!pool_add_mode)
                                        {
-
                                            if (ImGui::ImageButtonWithText(Application::Get().GetCurrentRenderedWindow()->get_texture("/usr/local/include/Vortex/imgs/vortex.png"), "Add pool", ImVec2(0, 0), ImVec2(0, 0), ImVec2(1, 1), -1, ImVec4(0, 0, 0, 0), ImVec4(1, 1, 1, 1)))
                                            {
                                                pool_add_mode = true;
@@ -1575,9 +1597,11 @@ namespace UIKit
 
                         if (ImGui::MenuItem("Change color"))
                         {
+                            //
                         }
                         if (ImGui::MenuItem("Mark as favorite"))
                         {
+                            //
                         }
 
                         ImGui::EndPopup();
@@ -1670,7 +1694,6 @@ namespace UIKit
 
                         if (ImGui::IsItemClicked(ImGuiMouseButton_Left))
                         {
-
                             if (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) || ImGui::IsKeyDown(ImGuiKey_RightCtrl))
                             {
                                 m_Selected.push_back(path);
@@ -1875,36 +1898,37 @@ namespace UIKit
                         }
                         case FileTypes::File_GIT:
                         {
-
+                            //
                             break;
                         }
                         case FileTypes::File_H:
                         {
-
+                            //
                             break;
                         }
                         case FileTypes::File_C:
                         {
-
+                            //
                             break;
                         }
                         case FileTypes::File_HPP:
                         {
-
+                            //
                             break;
                         }
                         case FileTypes::File_CPP:
                         {
-
+                            //                            
                             break;
                         }
                         case FileTypes::File_INI:
                         {
+                            //
                             break;
                         }
                         default:
                         {
-
+                            //
                             break;
                         }
 
@@ -1984,9 +2008,11 @@ namespace UIKit
 
                             if (ImGui::MenuItem("Change color"))
                             {
+                                //
                             }
                             if (ImGui::MenuItem("Mark as favorite"))
                             {
+                                //
                             }
 
                             ImGui::EndPopup();
@@ -2005,8 +2031,6 @@ namespace UIKit
                 ImGui::EndTable();
             }
         }
-
-        ImGui::EndChild();
     }
 
     void ContentBrowserAppWindow::RenderDetailsBar()
@@ -2047,6 +2071,11 @@ namespace UIKit
 
                                                for (auto &child : children)
                                                {
+                                                if(child.m_Disabled)
+                                                {
+                                                    continue;
+                                                }
+                                                
                                                    if (!child.m_Initialized || totalAvailableSize != lastTotalWidth)
                                                    {
                                                        if (child.m_DefaultSize > 0.0f)
@@ -2081,7 +2110,7 @@ namespace UIKit
                                                ImGui::PushStyleColor(ImGuiCol_ChildBg, child.m_BackgroundColor);
                                                ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
 
-                                               std::string childname = child.m_Name + "##childnh" + instance->m_AppWindow->m_Name;
+                                               std::string childname = child.m_Name + "##cbchildnh" + instance->m_AppWindow->m_Name;
                                                ImGui::BeginChild(childname.c_str(), ImVec2(child.m_Size, availableSize.y), true);
 
                                                child.m_Child();
@@ -2094,7 +2123,7 @@ namespace UIKit
                                                    auto &next_child = children[i + 1];
                                                    ImGui::SameLine();
 
-                                                   std::string lab = "##splitter" + child.m_Name + instance->m_AppWindow->m_Name;
+                                                   std::string lab = "##cbsplitter" + child.m_Name + instance->m_AppWindow->m_Name;
 
                                                    ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.5f, 0.5f, 0.5f, 1.0f));
                                                    ImGui::Button(lab.c_str(), ImVec2(splitterWidth, -1));

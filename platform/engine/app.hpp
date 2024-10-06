@@ -121,6 +121,22 @@ namespace UIKit
 		void SpawnWindow(const std::string &name, ApplicationSpecification spec);
 		void UnspawnWindow(const std::string &name);
 
+		// Main loop utilities
+		void ApplyDockingFromSave();
+		void ApplyDockingFromDefault();
+		void RebuildDockingLinks();
+		void PresentAllWindows();
+		void CleanupEmptyWindows();
+		void CurrentDockRequestOnNewWindow();
+
+		// Window "Low" Rendering
+		void HandleResizing(Window *window);
+		void HandleDockingModeRendering(Window *window);
+		void HandleTabsModeRendering(Window *window);
+		void HandleSimpleRendering(Window *window);
+		void HandleLayerStackUpdate(Window *window);
+		void PrepareViewport(Window *window);
+
 		static void FramePresent(ImGui_ImplVulkanH_Window *wd, UIKit::Window *win);
 		static void FrameRender(ImGui_ImplVulkanH_Window *wd, UIKit::Window *win, ImDrawData *draw_data);
 
