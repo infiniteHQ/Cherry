@@ -1,4 +1,6 @@
 #include "../../../../../../platform/engine/app.hpp"
+#include "../../../../../../platform/engine/ui/notifications/notifications.hpp"
+
 
 #ifndef UIKIT_V1_AIO_CONTENT_CONTENTBROWSER
 #define UIKIT_V1_AIO_CONTENT_CONTENTBROWSER

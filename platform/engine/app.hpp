@@ -7,6 +7,7 @@
 #include "app_window.hpp"
 #include "base.hpp"
 #include "components.hpp"
+#include "ui/notifications/notifications.hpp"
 
 #include <string>
 #include <vector>

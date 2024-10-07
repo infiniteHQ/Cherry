@@ -2135,6 +2135,9 @@ namespace Cherry
             ImGui::SetCursorPosY(titleBarHeight);
         }
 
+        // Render notifications
+        ImGui::RenderNotifications();
+
         ImGuiIO &io = ImGui::GetIO();
         ImGuiStyle &style = ImGui::GetStyle();
         float minWinSizeX = style.WindowMinSize.x;

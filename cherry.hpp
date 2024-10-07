@@ -6,8 +6,7 @@
 #endif // IMGUI_DEFINE_MATH_OPERATORS
 
 // Backend includes
-#include "./platform/engine/ui/spinner.hpp"
-#include "./platform/engine/ui/notification.hpp"
+#include "./platform/engine/ui/notifications/notifications.hpp"
 #include "./platform/engine/ui/ui.hpp"
 #include "./src/layer.hpp"
 #include "./src/random.hpp"

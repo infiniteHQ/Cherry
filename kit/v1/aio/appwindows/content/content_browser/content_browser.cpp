@@ -398,6 +398,7 @@ namespace Cherry
         if(cp_AddButton->Render())
         {
             //
+            ImGui::InsertNotification({ImGuiToastType::Success, 3000, "That is a success! %s", "(Format here)"});
         }
 		ImGui::PopStyleColor();
 
