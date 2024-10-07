@@ -2428,4 +2428,30 @@ namespace Cherry
 
         return "locale_undefined";
     }
+
+    // Simplicity utils
+	void AddWindow(std::shared_ptr<AppWindow> win)
+	{
+		Application::Get().PutWindow(win);
+	}
+
+	ImTextureID GetTexture(const std::string &path)
+	{
+		return Application::Get().GetCurrentRenderedWindow()->get_texture(path);
+	}
+
+	ImVec2 GetTextureSize(const std::string &path)
+	{
+		return Application::Get().GetCurrentRenderedWindow()->get_texture_size(path);
+	}
+
+	std::string GetPath(const std::string &path)
+	{
+		return Application::CookPath(path);
+	}
+
+	std::string GetLocale(const std::string &topic)
+	{
+		return Application::Get().GetLocale(topic);
+	}
 }

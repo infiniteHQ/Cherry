@@ -26,16 +26,17 @@ Cherry::Application *Cherry::CreateApplication(int argc, char **argv)
   spec.UniqueAppWindowName = "?loc:loc.window_names.demo";
   spec.DisableTitle = true;
   spec.WindowSaves = true;
-  spec.IconPath = Application::CookPath("ressources/imgs/icon.png");
+  spec.IconPath = Cherry::GetPath("ressources/imgs/icon.png");
 
   Cherry::Application *app = new Cherry::Application(spec);
   app->SetWindowSaveDataFile("savedatda.json", true);
-  app->SetFavIconPath(Application::CookPath("ressources/imgs/favicon.png"));
-  app->AddFont("Consola", Application::CookPath("ressources/fonts/consola.ttf"), 17.0f);
+  app->SetFavIconPath(Cherry::GetPath("ressources/imgs/favicon.png"));
+  app->AddFont("Consola", Cherry::GetPath("ressources/fonts/consola.ttf"), 17.0f);
 
-  app->AddLocale("fr", Application::CookPath("ressources/locales/fr.json"));
-  app->AddLocale("en", Application::CookPath("ressources/locales/en.json"));
-  app->AddLocale("es", Application::CookPath("ressources/locales/es.json")); // With not suffisent locales to show the "default" behavior
+  app->AddLocale("fr", Cherry::GetPath("ressources/locales/fr.json"));
+  app->AddLocale("fr", Cherry::GetPath("ressources/locales/fr.json"));
+  app->AddLocale("en", Cherry::GetPath("ressources/locales/en.json"));
+  app->AddLocale("es", Cherry::GetPath("ressources/locales/es.json")); // With not suffisent locales to show the "default" behavior
   app->SetDefaultLocale("en"); // The "default" behavior
   app->SetLocale("fr");
 
@@ -203,7 +204,7 @@ Cherry::Application *Cherry::CreateApplication(int argc, char **argv)
   */
   std::shared_ptr<ContentBrowserAppWindow> ContentBrowser = std::make_shared<Cherry::ContentBrowserAppWindow>("?loc:loc.window_names.content_browser", "/home/diego");
   ContentBrowser->RefreshRender(ContentBrowser);
-  Application::Get().PutWindow(ContentBrowser->GetAppWindow()); // Publish this window into the workspace
+  Cherry::AddWindow(ContentBrowser->GetAppWindow());
    
   
   // Multi childs
@@ -214,7 +215,7 @@ Cherry::Application *Cherry::CreateApplication(int argc, char **argv)
   VerticalAreas->AddChild(Child("Three", [](){ImGui::Text("Three");}));
   VerticalAreas->AddChild(Child("Four", [](){ImGui::Text("Four");}));
   VerticalAreas->RefreshRender(VerticalAreas);
-  Application::Get().PutWindow(VerticalAreas->GetAppWindow()); // Publish this window into the workspace
+  Cherry::AddWindow(VerticalAreas->GetAppWindow());
 
   std::shared_ptr<MultiChildAreas> HorizontalAreas = std::make_shared<Cherry::MultiChildAreas>("indow_names.content_browser2");
   HorizontalAreas->m_IsHorizontal = true;
@@ -223,7 +224,7 @@ Cherry::Application *Cherry::CreateApplication(int argc, char **argv)
   HorizontalAreas->AddChild(Child("Three2", [](){ImGui::Text("Three");}, 20.0f));
   HorizontalAreas->AddChild(Child("Four2", [](){ImGui::Text("Four");}));
   HorizontalAreas->RefreshRender(HorizontalAreas);
-  Application::Get().PutWindow(HorizontalAreas->GetAppWindow()); // Publish this window into the workspace
+  Cherry::AddWindow(HorizontalAreas->GetAppWindow());
 
   
 

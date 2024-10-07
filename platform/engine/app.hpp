@@ -88,7 +88,7 @@ namespace Cherry
 		std::vector<std::pair<std::string, std::pair<std::string, float>>> &GetCustomFonts();
 
 		// Set static components
-		static void SetCurrentDragDropState(const std::shared_ptr<Cherry::WindowDragDropState>& state);
+		static void SetCurrentDragDropState(const std::shared_ptr<Cherry::WindowDragDropState> &state);
 		static void SetValidDropZoneFounded(const bool &founded);
 		static void SetCurrentDragDropStateDragOwner(const std::string &new_name);
 		static void SetCurrentDragDropStateDockIsDragging(const bool &is_dragging);
@@ -97,14 +97,14 @@ namespace Cherry
 		static void SetCurrentDragDropStateWindow(const std::string &new_name);
 		static void SetCurrentDragDropStateDraggingPlace(const DockEmplacement &place);
 		static void SetMasterSwapChainRebuild(const bool &new_state);
-    	static void SetLastWindowPressed(const std::string& name);
+		static void SetLastWindowPressed(const std::string &name);
 		static void IncrementWindowNumber();
 
 		// Utils
 		static void FlushCommandBuffer(VkCommandBuffer commandBuffer);
 		static void SubmitResourceFree(std::function<void()> &&func, const std::string &winname);
 		static std::string CookPath(const std::string input_path);
-		static void PushRedockEvent(const std::shared_ptr<Cherry::WindowDragDropState>& state);
+		static void PushRedockEvent(const std::shared_ptr<Cherry::WindowDragDropState> &state);
 		static std::vector<uint8_t> LoadPngHexa(const std::string &path);
 
 		// Set callbacks
@@ -186,10 +186,10 @@ namespace Cherry
 		// Locales & Traductions
 		void AddLocale(const std::string &locale_name, const std::string &data_path);
 		void SetLocale(const std::string &locale_name);
-    	void SetDefaultLocale(const std::string &locale_name);
+		void SetDefaultLocale(const std::string &locale_name);
 		std::string GetLocale(const std::string &locale_type);
 
-		// Generic utils 
+		// Generic utils
 		template <typename T, typename... Args>
 		std::shared_ptr<T> CreateComponent(Args... args)
 		{
@@ -255,7 +255,12 @@ namespace Cherry
 		bool m_TitleBarHovered = false;
 	};
 
-#define BINPATH(rpath) Cherry::Application::CookPath(rpath);
+	// Simple utilities
+ 	void AddWindow(std::shared_ptr<AppWindow> win);
+	ImTextureID GetTexture(const std::string &path);
+	ImVec2 GetTextureSize(const std::string &path);
+	std::string GetPath(const std::string &path);
+	std::string GetLocale(const std::string &topic);
 
 #define UIKIT_DATA(id, topic) Application::Get().GetComponentData(id, topic)
 
