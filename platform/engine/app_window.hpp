@@ -80,6 +80,7 @@ namespace Cherry
         void SetDisableContextMenu(const bool &new_state);
         void SetInternalPaddingX(const float& new_padding);
         void SetInternalPaddingY(const float& new_padding);
+        void SetVisibility(const bool& new_visibility);
 
     public:
         ImGuiID m_DockID;
@@ -97,6 +98,8 @@ namespace Cherry
         ImGuiID m_ParentDockSpaceID;
 
         std::string m_Icon = "none";
+
+        bool m_Visible = true;
 
         bool m_Closable = true;
         bool m_CloseSignal = true;

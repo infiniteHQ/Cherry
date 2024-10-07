@@ -50,6 +50,11 @@ namespace Cherry
             return;
         }
 
+        if(!m_Visible)
+        {
+            return;
+        }
+
         if (m_Closable)
         {
             if (!m_CloseSignal)
@@ -505,6 +510,11 @@ namespace Cherry
             ImGui::EndChild();
             ImGui::PopStyleColor(2);
         }
+    }
+
+    void AppWindow::SetVisibility(const bool &new_visibility)
+    {
+        m_Visible = new_visibility;
     }
 
     bool AppWindow::CheckWinParent(const std::string &parentname)
