@@ -224,14 +224,14 @@ namespace Cherry
         {
             if (this->GetImage(m_Icon))
             {
-                static ImTextureID texture = Application::Get().GetCurrentRenderedWindow()->get_texture(m_Icon);
+                ImTextureID texture = Application::Get().GetCurrentRenderedWindow()->get_texture(m_Icon);
                 if (m_Closable)
                 {
-                    ImGui::Begin(m_IdName.c_str(), &texture, &m_CloseSignal, window_flags, ImVec2(m_InternalPaddingX, m_InternalPaddingY));
+                    ImGui::Begin(m_IdName.c_str(), texture, &m_CloseSignal, window_flags, ImVec2(m_InternalPaddingX, m_InternalPaddingY));
                 }
                 else
                 {
-                    ImGui::Begin(m_IdName.c_str(), &texture, nullptr, window_flags, ImVec2(m_InternalPaddingX, m_InternalPaddingY));
+                    ImGui::Begin(m_IdName.c_str(), texture, nullptr, window_flags, ImVec2(m_InternalPaddingX, m_InternalPaddingY));
                 }
             }
             else
