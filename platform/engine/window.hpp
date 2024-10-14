@@ -186,6 +186,7 @@ void SetFavIcon(const std::string &path)
         ImVec2 clickOffset = {0.0f, 0.0f};
         // If true, listen mouse pos and click and return a dropp emplacement response.
         bool m_IsDraggingAppWindow = false;
+        bool m_ClosePending = false;
 
         bool m_Resizing = false;
 

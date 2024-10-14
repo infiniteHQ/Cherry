@@ -183,6 +183,7 @@ namespace Cherry
 		std::string PutWindow(std::shared_ptr<AppWindow> win);
 		void AddFont(const std::string &name, const std::string &ttf_file_path, const float &size = 20.0f);
 		void SetFavIconPath(const std::string &icon_path);
+		void DeleteAppWindow(const std::shared_ptr<AppWindow>& win);
 
 		// Locales & Traductions
 		void AddLocale(const std::string &locale_name, const std::string &data_path);
@@ -256,12 +257,29 @@ namespace Cherry
 		bool m_TitleBarHovered = false;
 	};
 
-	// Simple utilities
- 	void AddWindow(std::shared_ptr<AppWindow> win);
+	//
+	// Main utilities
+	//
+
+	// Window
+	std::shared_ptr<Cherry::Window> &GetCurrentRenderedWindow();
+
+	// AppWindow
+ 	void AddAppWindow(const std::shared_ptr<AppWindow>& win);
+ 	void DeleteAppWindow(const std::shared_ptr<AppWindow>& win);
+ 	std::shared_ptr<AppWindow> GetAppWindowByName(const std::string& win_name);
+
+	// Images
 	ImTextureID GetTexture(const std::string &path);
 	ImVec2 GetTextureSize(const std::string &path);
+
+	// Runtime
 	std::string GetPath(const std::string &path);
-	std::string GetLocale(const std::string &topic);
+	std::string GetLocale(const std::string &topic); 
+
+	// Data (theses functions can return JSON to string format or legacy string.)
+	std::string GetComponentData(const std::string& id, const std::string topic);
+	std::string GetWindowData(const std::string& id, const std::string topic);
 
 #define UIKIT_DATA(id, topic) Application::Get().GetComponentData(id, topic)
 

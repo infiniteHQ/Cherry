@@ -8,15 +8,22 @@ namespace Cherry
 
     AppWindow::AppWindow() : m_ID("undefined"), m_Name("undefined")
     {
+        //
     }
 
     AppWindow::AppWindow(const std::string &id, const std::string &name) : m_ID(id), m_Name(name)
     {
+        //
     }
 
     AppWindow::AppWindow(const std::string &id, const std::string &name, const std::string &icon) : m_ID(id), m_Name(name), m_Icon(icon)
     {
         SetIcon(m_Icon);
+    }
+
+    AppWindow::~AppWindow()
+    {
+        //
     }
 
     std::shared_ptr<RedockRequest> AppWindow::CreateRedockEvent(const std::string &parentWindow, DockEmplacement emplacement, const bool &fromSave, const std::string &appWindow, const bool &new_win)
@@ -43,6 +50,22 @@ namespace Cherry
         //
     }
 
+    void AppWindow::SetDeleteCallback(const std::function<void()> &callback)
+    {
+        if(callback)
+        {
+            m_DeleteCallback = callback;
+        }
+    }
+
+    void AppWindow::DeleteSignal()
+    {
+        /*if(m_DeleteCallback)
+        {
+            m_DeleteCallback();
+        }*/
+    }
+
     void AppWindow::CtxRender(std::vector<std::shared_ptr<RedockRequest>> *reqs, const std::string &winname)
     {
         if (!m_IsRendering)
@@ -50,7 +73,7 @@ namespace Cherry
             return;
         }
 
-        if(!m_Visible)
+        if (!m_Visible)
         {
             return;
         }

@@ -1408,6 +1408,7 @@ namespace Cherry
         this->BoostrappWindow();
         while (m_Running)
         {
+            std::cout << "Number of appwins : " << s_Instance->m_AppWindows.size() << std::endl;
             c_ValidDropZoneFounded = false;
 
             if (s_Instance->m_Specification.WindowSaves)
@@ -2433,28 +2434,60 @@ namespace Cherry
     }
 
     // Simplicity utils
-	void AddWindow(std::shared_ptr<AppWindow> win)
-	{
-		Application::Get().PutWindow(win);
-	}
 
-	ImTextureID GetTexture(const std::string &path)
-	{
-		return Application::Get().GetCurrentRenderedWindow()->get_texture(path);
-	}
+    std::shared_ptr<Cherry::Window> &GetCurrentRenderedWindow()
+    {
+        return Application::GetCurrentRenderedWindow();
+    }
 
-	ImVec2 GetTextureSize(const std::string &path)
-	{
-		return Application::Get().GetCurrentRenderedWindow()->get_texture_size(path);
-	}
+    void AddAppWindow(const std::shared_ptr<AppWindow> &win)
+    {
+        Application::Get().PutWindow(win);
+    }
 
-	std::string GetPath(const std::string &path)
-	{
-		return Application::CookPath(path);
-	}
+    std::shared_ptr<AppWindow> GetAppWindowByName(const std::string &win_name)
+    {
+        for (auto &appwin : s_Instance->m_AppWindows)
+        {
+            if (appwin->m_IdName == win_name)
+            {
+                return appwin;
+            }
+        }
+        return nullptr;
+    }
 
-	std::string GetLocale(const std::string &topic)
-	{
-		return Application::Get().GetLocale(topic);
-	}
+    void Application::DeleteAppWindow(const std::shared_ptr<AppWindow> &win)
+    {
+        if(win)
+        {
+            win->SetParentWindow("__blank");
+            m_AppWindows.erase(std::remove(m_AppWindows.begin(), m_AppWindows.end(), win), m_AppWindows.end());
+        }
+    }
+
+    void DeleteAppWindow(const std::shared_ptr<AppWindow> &win)
+    {
+        Application::Get().DeleteAppWindow(win);
+    }
+
+    ImTextureID GetTexture(const std::string &path)
+    {
+        return Application::Get().GetCurrentRenderedWindow()->get_texture(path);
+    }
+
+    ImVec2 GetTextureSize(const std::string &path)
+    {
+        return Application::Get().GetCurrentRenderedWindow()->get_texture_size(path);
+    }
+
+    std::string GetPath(const std::string &path)
+    {
+        return Application::CookPath(path);
+    }
+
+    std::string GetLocale(const std::string &topic)
+    {
+        return Application::Get().GetLocale(topic);
+    }
 }

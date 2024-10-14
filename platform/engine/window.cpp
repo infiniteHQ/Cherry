@@ -580,7 +580,7 @@ namespace Cherry
             const ImVec2 logoOffset(16.0f + windowPadding.x, 5.0f + windowPadding.y + titlebarVerticalOffset);
             const ImVec2 logoRectStart = {ImGui::GetItemRectMin().x + logoOffset.x, ImGui::GetItemRectMin().y + logoOffset.y};
             const ImVec2 logoRectMax = {logoRectStart.x + logoWidth, logoRectStart.y + logoHeight};
-            fgDrawList->AddImage(this->get(this->m_Specifications.IconPath)->GetDescriptorSet(), logoRectStart, logoRectMax);
+            fgDrawList->AddImage(this->get_texture(this->m_Specifications.IconPath), logoRectStart, logoRectMax);
         }
 
         ImGui::SetItemAllowOverlap();
@@ -692,7 +692,7 @@ namespace Cherry
                     std::string label = "Close###" + this->GetName();
                     if (ImGui::InvisibleButton("Close", ImVec2(buttonWidth, buttonHeight)))
                     {
-                        Application::Get().m_ClosePending = true;
+                        m_ClosePending = true;
                     }
 
                     UI::DrawButtonImage(this->get(g_WindowCloseIcon, "Close"), UI::Colors::Theme::text, UI::Colors::ColorWithMultipliedValue(UI::Colors::Theme::text, 1.4f), buttonColP);
@@ -701,15 +701,26 @@ namespace Cherry
                 ImGui::Spring(-1.0f, 18.0f);
             }
 
-            if (Application::Get().m_ClosePending)
+            if (m_ClosePending)
             {
-                if (Application::Get().m_CloseCallback)
+                if (m_Specifications.UsingCloseCallback)
                 {
-                    Application::Get().m_CloseCallback();
+                    if (m_Specifications.CloseCallback)
+                    {
+                        m_Specifications.CloseCallback();
+                    }
+                    m_ClosePending = false;
                 }
                 else
                 {
-                    Application::Get().Close();
+                    if (Application::Get().m_CloseCallback)
+                    {
+                        Application::Get().m_CloseCallback();
+                    }
+                    else
+                    {
+                        Application::Get().Close();
+                    }
                 }
             }
         }
@@ -949,7 +960,7 @@ namespace Cherry
     {
         if (path.empty() || path == "none")
         {
-            return ImVec2(0,0);
+            return ImVec2(0, 0);
         }
 
         std::shared_ptr<Cherry::Image> image = this->get(path);
@@ -958,7 +969,7 @@ namespace Cherry
             return ImVec2(image->GetWidth(), image->GetHeight());
         }
 
-            return ImVec2(0,0);
+        return ImVec2(0, 0);
     }
 
     void Window::free()

@@ -40,6 +40,7 @@ namespace Cherry
         AppWindow();
         AppWindow(const std::string &id, const std::string &name);
         AppWindow(const std::string &id, const std::string &name, const std::string &icon);
+        ~AppWindow();
 
         void push_event();
         void CtxRender(std::vector<std::shared_ptr<RedockRequest>> *reqs, const std::string &winname);
@@ -81,6 +82,8 @@ namespace Cherry
         void SetInternalPaddingX(const float& new_padding);
         void SetInternalPaddingY(const float& new_padding);
         void SetVisibility(const bool& new_visibility);
+        void SetDeleteCallback(const std::function<void()>& callback);
+        void DeleteSignal();
 
     public:
         ImGuiID m_DockID;
@@ -129,6 +132,7 @@ namespace Cherry
 
         std::function<void()> m_CloseCallback;
         std::function<void()> m_TabMenuCallback;
+        std::function<void()> m_DeleteCallback;
 
         //
         bool m_WindowRebuilded = false;

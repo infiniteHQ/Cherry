@@ -103,6 +103,9 @@ namespace Cherry
         WindowRenderingMethod RenderMode;
         std::string UniqueAppWindowName;
 
+        bool UsingCloseCallback = false;
+        std::function<void()> CloseCallback;
+
         // Uses custom UIKit titlebar instead
         // of Windows default
         bool CustomTitlebar = false;
