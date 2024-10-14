@@ -13,7 +13,7 @@ namespace Cherry
 {
 
     // This window can be a "subappwindow" of a parent if you use the constructor with parent parameter.
-    class ContentOutlinerSimple
+    class ContentOutlinerSimple : public std::enable_shared_from_this<ContentOutlinerSimple>
     {
     public:
         ContentOutlinerSimple(const std::string &name, const std::shared_ptr<AppWindow> &parent);
@@ -22,11 +22,11 @@ namespace Cherry
 
         void RefreshRender(const std::shared_ptr<ContentOutlinerSimple> &instance);
 
-        std::shared_ptr<Cherry::AppWindow> &GetAppWindow()
-        {
-            return m_AppWindow;
-        }
+        std::shared_ptr<Cherry::AppWindow> &GetAppWindow();
 
+        static std::shared_ptr<ContentOutlinerSimple> Create(const std::string &name);
+        void SetupRenderCallback();
+        void Render();
     private:
         // Ui Components
         std::shared_ptr<CustomButtonSimple> cp_ButtonOne;

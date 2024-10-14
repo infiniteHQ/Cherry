@@ -10,10 +10,9 @@ namespace Cherry
 
         m_AppWindow->SetParent(parent);
         m_AppWindow->SetSaveMode(true);
-        m_AppWindow->SetRenderCallback([this, name]()
-                                       {
-                                        
-                                        });
+        m_AppWindow->SetRenderCallback([this, name]() {
+
+        });
 
         cp_ButtonOne = Application::Get().CreateComponent<CustomButtonSimple>("button_1");
 
@@ -43,6 +42,29 @@ namespace Cherry
 
         m_AppWindow->SetRightMenubarCallback([win]() {});
         Application::Get().PutWindow(m_AppWindow);
+    }
+
+    std::shared_ptr<Cherry::AppWindow> &NodeEditorSimple::GetAppWindow()
+    {
+        return m_AppWindow;
+    }
+
+    std::shared_ptr<NodeEditorSimple> NodeEditorSimple::Create(const std::string &name)
+    {
+        auto instance = std::shared_ptr<NodeEditorSimple>(new NodeEditorSimple(name));
+        instance->SetupRenderCallback();
+        instance->BuildNodes();
+        return instance;
+    }
+
+    void NodeEditorSimple::SetupRenderCallback()
+    {
+        auto self = shared_from_this();
+        m_AppWindow->SetRenderCallback([self]()
+                                       {
+            if (self) {
+                self->Render();
+            } });
     }
 
     NodeEditorSimple::NodeEditorSimple(const std::string &name)
@@ -150,75 +172,75 @@ namespace Cherry
         m_AppWindow->SetRightBottombarCallback([win]()
                                                { ImGui::Button("7 element(s) selected"); });
     }
-
-    void NodeEditorSimple::RefreshRender(const std::shared_ptr<NodeEditorSimple> &instance)
+    void NodeEditorSimple::BuildNodes()
     {
         Node *node;
-        node = instance->m_NodeEngine->SpawnInputActionNode();
+        node = m_NodeEngine->SpawnInputActionNode();
         ed::SetNodePosition(node->ID, ImVec2(-252, 220));
-        node = instance->m_NodeEngine->SpawnBranchNode();
+        node = m_NodeEngine->SpawnBranchNode();
         ed::SetNodePosition(node->ID, ImVec2(-300, 351));
-        node = instance->m_NodeEngine->SpawnDoNNode();
+        node = m_NodeEngine->SpawnDoNNode();
         ed::SetNodePosition(node->ID, ImVec2(-238, 504));
-        node = instance->m_NodeEngine->SpawnOutputActionNode();
+        node = m_NodeEngine->SpawnOutputActionNode();
         ed::SetNodePosition(node->ID, ImVec2(71, 80));
-        node = instance->m_NodeEngine->SpawnSetTimerNode();
+        node = m_NodeEngine->SpawnSetTimerNode();
         ed::SetNodePosition(node->ID, ImVec2(168, 316));
 
-        node = instance->m_NodeEngine->SpawnTreeSequenceNode();
+        node = m_NodeEngine->SpawnTreeSequenceNode();
         ed::SetNodePosition(node->ID, ImVec2(1028, 329));
-        node = instance->m_NodeEngine->SpawnTreeTaskNode();
+        node = m_NodeEngine->SpawnTreeTaskNode();
         ed::SetNodePosition(node->ID, ImVec2(1204, 458));
-        node = instance->m_NodeEngine->SpawnTreeTask2Node();
+        node = m_NodeEngine->SpawnTreeTask2Node();
         ed::SetNodePosition(node->ID, ImVec2(868, 538));
 
-        node = instance->m_NodeEngine->SpawnComment();
+        node = m_NodeEngine->SpawnComment();
         ed::SetNodePosition(node->ID, ImVec2(112, 576));
         ed::SetGroupSize(node->ID, ImVec2(384, 154));
-        node = instance->m_NodeEngine->SpawnComment();
+        node = m_NodeEngine->SpawnComment();
         ed::SetNodePosition(node->ID, ImVec2(800, 224));
         ed::SetGroupSize(node->ID, ImVec2(640, 400));
 
-        node = instance->m_NodeEngine->SpawnLessNode();
+        node = m_NodeEngine->SpawnLessNode();
         ed::SetNodePosition(node->ID, ImVec2(366, 652));
-        node = instance->m_NodeEngine->SpawnWeirdNode();
+        node = m_NodeEngine->SpawnWeirdNode();
         ed::SetNodePosition(node->ID, ImVec2(144, 652));
-        node = instance->m_NodeEngine->SpawnMessageNode();
+        node = m_NodeEngine->SpawnMessageNode();
         ed::SetNodePosition(node->ID, ImVec2(-348, 698));
-        node = instance->m_NodeEngine->SpawnPrintStringNode();
+        node = m_NodeEngine->SpawnPrintStringNode();
         ed::SetNodePosition(node->ID, ImVec2(-69, 652));
 
-        node = instance->m_NodeEngine->SpawnHoudiniTransformNode();
+        node = m_NodeEngine->SpawnHoudiniTransformNode();
         ed::SetNodePosition(node->ID, ImVec2(500, -70));
-        node = instance->m_NodeEngine->SpawnHoudiniGroupNode();
+        node = m_NodeEngine->SpawnHoudiniGroupNode();
         ed::SetNodePosition(node->ID, ImVec2(500, 42));
 
-        instance->m_NodeEngine->BuildNodes();
+        m_NodeEngine->BuildNodes();
 
-        instance->m_NodeEngine->m_Links.push_back(Link(instance->m_NodeEngine->GetNextLinkId(), instance->m_NodeEngine->m_Nodes[5].Outputs[0].ID, instance->m_NodeEngine->m_Nodes[6].Inputs[0].ID));
-        instance->m_NodeEngine->m_Links.push_back(Link(instance->m_NodeEngine->GetNextLinkId(), instance->m_NodeEngine->m_Nodes[5].Outputs[0].ID, instance->m_NodeEngine->m_Nodes[7].Inputs[0].ID));
+        m_NodeEngine->m_Links.push_back(Link(m_NodeEngine->GetNextLinkId(), m_NodeEngine->m_Nodes[5].Outputs[0].ID, m_NodeEngine->m_Nodes[6].Inputs[0].ID));
+        m_NodeEngine->m_Links.push_back(Link(m_NodeEngine->GetNextLinkId(), m_NodeEngine->m_Nodes[5].Outputs[0].ID, m_NodeEngine->m_Nodes[7].Inputs[0].ID));
 
-        instance->m_NodeEngine->m_Links.push_back(Link(instance->m_NodeEngine->GetNextLinkId(), instance->m_NodeEngine->m_Nodes[14].Outputs[0].ID, instance->m_NodeEngine->m_Nodes[15].Inputs[0].ID));
+        m_NodeEngine->m_Links.push_back(Link(m_NodeEngine->GetNextLinkId(), m_NodeEngine->m_Nodes[14].Outputs[0].ID, m_NodeEngine->m_Nodes[15].Inputs[0].ID));
+    }
 
-        m_AppWindow->SetRenderCallback([instance]()
-                                       {
-                                        static ImTextureID textone = Application::Get().GetCurrentRenderedWindow()->get_texture("/home/diego/data/BlueprintBackground.png");
-                                        static ImTextureID texttwo = Application::Get().GetCurrentRenderedWindow()->get_texture("/home/diego/data/ic_save_white_24dp.png");
-                                        static ImTextureID textthree = Application::Get().GetCurrentRenderedWindow()->get_texture("/home/diego/data/ic_restore_white_24dp.png");
+    void NodeEditorSimple::Render()
+    {
+        static ImTextureID textone = Application::Get().GetCurrentRenderedWindow()->get_texture("/home/diego/data/BlueprintBackground.png");
+        static ImTextureID texttwo = Application::Get().GetCurrentRenderedWindow()->get_texture("/home/diego/data/ic_save_white_24dp.png");
+        static ImTextureID textthree = Application::Get().GetCurrentRenderedWindow()->get_texture("/home/diego/data/ic_restore_white_24dp.png");
 
-        instance->m_NodeEngine->m_HeaderBackground = &textone;
-        instance->m_NodeEngine->m_SaveIcon = &texttwo;
-        instance->m_NodeEngine->m_RestoreIcon = &textthree;
+        m_NodeEngine->m_HeaderBackground = &textone;
+        m_NodeEngine->m_SaveIcon = &texttwo;
+        m_NodeEngine->m_RestoreIcon = &textthree;
 
-        instance->m_NodeEngine->UpdateTouch();
+        m_NodeEngine->UpdateTouch();
 
-        auto& io = ImGui::GetIO();
+        auto &io = ImGui::GetIO();
 
         ImGui::Text("FPS: %.2f (%.2gms)", io.Framerate, io.Framerate ? 1000.0f / io.Framerate : 0.0f);
 
-        ed::SetCurrentEditor(instance->m_NodeEngine->m_Editor);
+        ed::SetCurrentEditor(m_NodeEngine->m_Editor);
 
-            // auto& style = ImGui::GetStyle();
+        // auto& style = ImGui::GetStyle();
 
 #if 0
         {
@@ -230,35 +252,33 @@ namespace Cherry
         }
 #endif
 
+        static ed::NodeId contextNodeId = 0;
+        static ed::LinkId contextLinkId = 0;
+        static ed::PinId contextPinId = 0;
+        static bool createNewNode = false;
+        static Pin *newNodeLinkPin = nullptr;
+        static Pin *newLinkPin = nullptr;
 
-        static ed::NodeId contextNodeId      = 0;
-        static ed::LinkId contextLinkId      = 0;
-        static ed::PinId  contextPinId       = 0;
-        static bool createNewNode  = false;
-        static Pin* newNodeLinkPin = nullptr;
-        static Pin* newLinkPin     = nullptr;
-
-        static float leftPaneWidth  = 400.0f;
+        static float leftPaneWidth = 400.0f;
         static float rightPaneWidth = 800.0f;
         static bool navigated = false;
 
-        if(!navigated)
+        if (!navigated)
         {
-        ed::NavigateToContent();
+            ed::NavigateToContent();
             navigated = true;
         }
 
-
         ed::Begin("Node qsd");
         {
-                                         auto cursorTopLeft = ImGui::GetCursorScreenPos();
+            auto cursorTopLeft = ImGui::GetCursorScreenPos();
 
             util::BlueprintNodeBuilder builder(
-                instance->m_NodeEngine->m_HeaderBackground, 
-                Application::Get().GetCurrentRenderedWindow()->get("/home/diego/data/BlueprintBackground.png")->GetWidth(), 
+                m_NodeEngine->m_HeaderBackground,
+                Application::Get().GetCurrentRenderedWindow()->get("/home/diego/data/BlueprintBackground.png")->GetWidth(),
                 Application::Get().GetCurrentRenderedWindow()->get("/home/diego/data/BlueprintBackground.png")->GetHeight());
 
-            for (auto& node : instance->m_NodeEngine->m_Nodes)
+            for (auto &node : m_NodeEngine->m_Nodes)
             {
                 if (node.Type != NodeType::Blueprint && node.Type != NodeType::Simple)
                     continue;
@@ -266,157 +286,156 @@ namespace Cherry
                 const auto isSimple = node.Type == NodeType::Simple;
 
                 bool hasOutputDelegates = false;
-                for (auto& output : node.Outputs)
+                for (auto &output : node.Outputs)
                     if (output.Type == PinType::Delegate)
                         hasOutputDelegates = true;
 
                 builder.Begin(node.ID);
-                
-                    if (!isSimple)
+
+                if (!isSimple)
+                {
+                    builder.Header(node.Color);
+                    ImGui::Spring(0);
+                    ImGui::TextUnformatted(node.Name.c_str());
+                    ImGui::Spring(1);
+                    ImGui::Dummy(ImVec2(0, 28));
+                    if (hasOutputDelegates)
                     {
-                        builder.Header(node.Color);
-                            ImGui::Spring(0);
-                            ImGui::TextUnformatted(node.Name.c_str());
-                            ImGui::Spring(1);
-                            ImGui::Dummy(ImVec2(0, 28));
-                            if (hasOutputDelegates)
+                        ImGui::BeginVertical("delegates", ImVec2(0, 28));
+                        ImGui::Spring(1, 0);
+                        for (auto &output : node.Outputs)
+                        {
+                            if (output.Type != PinType::Delegate)
+                                continue;
+
+                            auto alpha = ImGui::GetStyle().Alpha;
+
+                            if (newLinkPin && !m_NodeEngine->CanCreateLink(newLinkPin, &output) && &output != newLinkPin)
+                                alpha = alpha * (48.0f / 255.0f);
+
+                            ed::BeginPin(output.ID, ed::PinKind::Output);
+                            ed::PinPivotAlignment(ImVec2(1.0f, 0.5f));
+                            ed::PinPivotSize(ImVec2(0, 0));
+                            ImGui::BeginHorizontal(output.ID.AsPointer());
+                            ImGui::PushStyleVar(ImGuiStyleVar_Alpha, alpha);
+                            if (!output.Name.empty())
                             {
-                                ImGui::BeginVertical("delegates", ImVec2(0, 28));
-                                ImGui::Spring(1, 0);
-                                for (auto& output : node.Outputs)
-                                {
-                                    if (output.Type != PinType::Delegate)
-                                        continue;
-
-                                    auto alpha = ImGui::GetStyle().Alpha;
-
-                                    
-                                    if (newLinkPin && !instance->m_NodeEngine->CanCreateLink(newLinkPin, &output) && &output != newLinkPin)
-                                        alpha = alpha * (48.0f / 255.0f);
-
-                                    ed::BeginPin(output.ID, ed::PinKind::Output);
-                                    ed::PinPivotAlignment(ImVec2(1.0f, 0.5f));
-                                    ed::PinPivotSize(ImVec2(0, 0));
-                                    ImGui::BeginHorizontal(output.ID.AsPointer());
-                                    ImGui::PushStyleVar(ImGuiStyleVar_Alpha, alpha);
-                                    if (!output.Name.empty())
-                                    {
-                                        ImGui::TextUnformatted(output.Name.c_str());
-                                        ImGui::Spring(0);
-                                    }
-                                    instance->m_NodeEngine->DrawPinIcon(output, instance->m_NodeEngine->IsPinLinked(output.ID), (int)(alpha * 255));
-                                    ImGui::Spring(0, ImGui::GetStyle().ItemSpacing.x / 2);
-                                    ImGui::EndHorizontal();
-                                    ImGui::PopStyleVar();
-                                    ed::EndPin();
-
-                                    // DrawItemRect(ImColor(255, 0, 0));
-                                }
-                                ImGui::Spring(1, 0);
-                                ImGui::EndVertical();
-                                ImGui::Spring(0, ImGui::GetStyle().ItemSpacing.x / 2);
-                            }
-                            else
+                                ImGui::TextUnformatted(output.Name.c_str());
                                 ImGui::Spring(0);
-                        builder.EndHeader();
-                    }
-
-                    for (auto& input : node.Inputs)
-                    {
-                        auto alpha = ImGui::GetStyle().Alpha;
-                        if (newLinkPin && !instance->m_NodeEngine->CanCreateLink(newLinkPin, &input) && &input != newLinkPin)
-                            alpha = alpha * (48.0f / 255.0f);
-
-                        builder.Input(input.ID);
-                        ImGui::PushStyleVar(ImGuiStyleVar_Alpha, alpha);
-                        instance->m_NodeEngine->DrawPinIcon(input, instance->m_NodeEngine->IsPinLinked(input.ID), (int)(alpha * 255));
-                        ImGui::Spring(0);
-                        if (!input.Name.empty())
-                        {
-                            ImGui::TextUnformatted(input.Name.c_str());
-                            ImGui::Spring(0);
-                        }
-                        if (input.Type == PinType::Bool)
-                        {
-                             ImGui::Button("Hello");
-                             ImGui::Spring(0);
-                        }
-                        ImGui::PopStyleVar();
-                        builder.EndInput();
-                    }
-
-                    if (isSimple)
-                    {
-                        builder.Middle();
-
-                        ImGui::Spring(1, 0);
-                        ImGui::TextUnformatted(node.Name.c_str());
-                        ImGui::Spring(1, 0);
-                    }
-
-                    for (auto& output : node.Outputs)
-                    {
-                        if (!isSimple && output.Type == PinType::Delegate)
-                            continue;
-
-                        auto alpha = ImGui::GetStyle().Alpha;
-                        if (newLinkPin && !instance->m_NodeEngine->CanCreateLink(newLinkPin, &output) && &output != newLinkPin)
-                            alpha = alpha * (48.0f / 255.0f);
-
-                        ImGui::PushStyleVar(ImGuiStyleVar_Alpha, alpha);
-                        builder.Output(output.ID);
-                        if (output.Type == PinType::String)
-                        {
-                            static char buffer[128] = "Edit Me\nMultiline!";
-                            static bool wasActive = false;
-
-                            ImGui::PushItemWidth(100.0f);
-                            ImGui::InputText("##edit", buffer, 127);
-                            ImGui::PopItemWidth();
-                            if (ImGui::IsItemActive() && !wasActive)
-                            {
-                                ed::EnableShortcuts(false);
-                                wasActive = true;
                             }
-                            else if (!ImGui::IsItemActive() && wasActive)
-                            {
-                                ed::EnableShortcuts(true);
-                                wasActive = false;
-                            }
-                            ImGui::Spring(0);
+                            m_NodeEngine->DrawPinIcon(output, m_NodeEngine->IsPinLinked(output.ID), (int)(alpha * 255));
+                            ImGui::Spring(0, ImGui::GetStyle().ItemSpacing.x / 2);
+                            ImGui::EndHorizontal();
+                            ImGui::PopStyleVar();
+                            ed::EndPin();
+
+                            // DrawItemRect(ImColor(255, 0, 0));
                         }
-                        if (!output.Name.empty())
+                        ImGui::Spring(1, 0);
+                        ImGui::EndVertical();
+                        ImGui::Spring(0, ImGui::GetStyle().ItemSpacing.x / 2);
+                    }
+                    else
+                        ImGui::Spring(0);
+                    builder.EndHeader();
+                }
+
+                for (auto &input : node.Inputs)
+                {
+                    auto alpha = ImGui::GetStyle().Alpha;
+                    if (newLinkPin && !m_NodeEngine->CanCreateLink(newLinkPin, &input) && &input != newLinkPin)
+                        alpha = alpha * (48.0f / 255.0f);
+
+                    builder.Input(input.ID);
+                    ImGui::PushStyleVar(ImGuiStyleVar_Alpha, alpha);
+                    m_NodeEngine->DrawPinIcon(input, m_NodeEngine->IsPinLinked(input.ID), (int)(alpha * 255));
+                    ImGui::Spring(0);
+                    if (!input.Name.empty())
+                    {
+                        ImGui::TextUnformatted(input.Name.c_str());
+                        ImGui::Spring(0);
+                    }
+                    if (input.Type == PinType::Bool)
+                    {
+                        ImGui::Button("Hello");
+                        ImGui::Spring(0);
+                    }
+                    ImGui::PopStyleVar();
+                    builder.EndInput();
+                }
+
+                if (isSimple)
+                {
+                    builder.Middle();
+
+                    ImGui::Spring(1, 0);
+                    ImGui::TextUnformatted(node.Name.c_str());
+                    ImGui::Spring(1, 0);
+                }
+
+                for (auto &output : node.Outputs)
+                {
+                    if (!isSimple && output.Type == PinType::Delegate)
+                        continue;
+
+                    auto alpha = ImGui::GetStyle().Alpha;
+                    if (newLinkPin && !m_NodeEngine->CanCreateLink(newLinkPin, &output) && &output != newLinkPin)
+                        alpha = alpha * (48.0f / 255.0f);
+
+                    ImGui::PushStyleVar(ImGuiStyleVar_Alpha, alpha);
+                    builder.Output(output.ID);
+                    if (output.Type == PinType::String)
+                    {
+                        static char buffer[128] = "Edit Me\nMultiline!";
+                        static bool wasActive = false;
+
+                        ImGui::PushItemWidth(100.0f);
+                        ImGui::InputText("##edit", buffer, 127);
+                        ImGui::PopItemWidth();
+                        if (ImGui::IsItemActive() && !wasActive)
                         {
-                            ImGui::Spring(0);
-                            ImGui::TextUnformatted(output.Name.c_str());
+                            ed::EnableShortcuts(false);
+                            wasActive = true;
+                        }
+                        else if (!ImGui::IsItemActive() && wasActive)
+                        {
+                            ed::EnableShortcuts(true);
+                            wasActive = false;
                         }
                         ImGui::Spring(0);
-                        instance->m_NodeEngine->DrawPinIcon(output, instance->m_NodeEngine->IsPinLinked(output.ID), (int)(alpha * 255));
-                        ImGui::PopStyleVar();
-                        builder.EndOutput();
                     }
+                    if (!output.Name.empty())
+                    {
+                        ImGui::Spring(0);
+                        ImGui::TextUnformatted(output.Name.c_str());
+                    }
+                    ImGui::Spring(0);
+                    m_NodeEngine->DrawPinIcon(output, m_NodeEngine->IsPinLinked(output.ID), (int)(alpha * 255));
+                    ImGui::PopStyleVar();
+                    builder.EndOutput();
+                }
 
                 builder.End();
             }
 
-            for (auto& node : instance->m_NodeEngine->m_Nodes)
+            for (auto &node : m_NodeEngine->m_Nodes)
             {
                 if (node.Type != NodeType::Tree)
                     continue;
 
                 const float rounding = 5.0f;
-                const float padding  = 12.0f;
+                const float padding = 12.0f;
 
                 const auto pinBackground = ed::GetStyle().Colors[ed::StyleColor_NodeBg];
 
-                ed::PushStyleColor(ed::StyleColor_NodeBg,        ImColor(128, 128, 128, 200));
-                ed::PushStyleColor(ed::StyleColor_NodeBorder,    ImColor( 32,  32,  32, 200));
-                ed::PushStyleColor(ed::StyleColor_PinRect,       ImColor( 60, 180, 255, 150));
-                ed::PushStyleColor(ed::StyleColor_PinRectBorder, ImColor( 60, 180, 255, 150));
+                ed::PushStyleColor(ed::StyleColor_NodeBg, ImColor(128, 128, 128, 200));
+                ed::PushStyleColor(ed::StyleColor_NodeBorder, ImColor(32, 32, 32, 200));
+                ed::PushStyleColor(ed::StyleColor_PinRect, ImColor(60, 180, 255, 150));
+                ed::PushStyleColor(ed::StyleColor_PinRectBorder, ImColor(60, 180, 255, 150));
 
-                ed::PushStyleVar(ed::StyleVar_NodePadding,  ImVec4(0, 0, 0, 0));
+                ed::PushStyleVar(ed::StyleVar_NodePadding, ImVec4(0, 0, 0, 0));
                 ed::PushStyleVar(ed::StyleVar_NodeRounding, rounding);
-                ed::PushStyleVar(ed::StyleVar_SourceDirection, ImVec2(0.0f,  1.0f));
+                ed::PushStyleVar(ed::StyleVar_SourceDirection, ImVec2(0.0f, 1.0f));
                 ed::PushStyleVar(ed::StyleVar_TargetDirection, ImVec2(0.0f, -1.0f));
                 ed::PushStyleVar(ed::StyleVar_LinkStrength, 0.0f);
                 ed::PushStyleVar(ed::StyleVar_PinBorderWidth, 1.0f);
@@ -431,26 +450,26 @@ namespace Cherry
                 int inputAlpha = 200;
                 if (!node.Inputs.empty())
                 {
-                        auto& pin = node.Inputs[0];
-                        ImGui::Dummy(ImVec2(0, padding));
-                        ImGui::Spring(1, 0);
-                        inputsRect = ImGui_GetItemRect();
+                    auto &pin = node.Inputs[0];
+                    ImGui::Dummy(ImVec2(0, padding));
+                    ImGui::Spring(1, 0);
+                    inputsRect = ImGui_GetItemRect();
 
-                        ed::PushStyleVar(ed::StyleVar_PinArrowSize, 10.0f);
-                        ed::PushStyleVar(ed::StyleVar_PinArrowWidth, 10.0f);
+                    ed::PushStyleVar(ed::StyleVar_PinArrowSize, 10.0f);
+                    ed::PushStyleVar(ed::StyleVar_PinArrowWidth, 10.0f);
 #if IMGUI_VERSION_NUM > 18101
-                        ed::PushStyleVar(ed::StyleVar_PinCorners, ImDrawFlags_RoundCornersBottom);
+                    ed::PushStyleVar(ed::StyleVar_PinCorners, ImDrawFlags_RoundCornersBottom);
 #else
-                        ed::PushStyleVar(ed::StyleVar_PinCorners, 12);
+                    ed::PushStyleVar(ed::StyleVar_PinCorners, 12);
 #endif
-                        ed::BeginPin(pin.ID, ed::PinKind::Input);
-                        ed::PinPivotRect(inputsRect.GetTL(), inputsRect.GetBR());
-                        ed::PinRect(inputsRect.GetTL(), inputsRect.GetBR());
-                        ed::EndPin();
-                        ed::PopStyleVar(3);
+                    ed::BeginPin(pin.ID, ed::PinKind::Input);
+                    ed::PinPivotRect(inputsRect.GetTL(), inputsRect.GetBR());
+                    ed::PinRect(inputsRect.GetTL(), inputsRect.GetBR());
+                    ed::EndPin();
+                    ed::PopStyleVar(3);
 
-                        if (newLinkPin && !instance->m_NodeEngine->CanCreateLink(newLinkPin, &pin) && &pin != newLinkPin)
-                            inputAlpha = (int)(255 * ImGui::GetStyle().Alpha * (48.0f / 255.0f));
+                    if (newLinkPin && !m_NodeEngine->CanCreateLink(newLinkPin, &pin) && &pin != newLinkPin)
+                        inputAlpha = (int)(255 * ImGui::GetStyle().Alpha * (48.0f / 255.0f));
                 }
                 else
                     ImGui::Dummy(ImVec2(0, padding));
@@ -479,7 +498,7 @@ namespace Cherry
                 int outputAlpha = 200;
                 if (!node.Outputs.empty())
                 {
-                    auto& pin = node.Outputs[0];
+                    auto &pin = node.Outputs[0];
                     ImGui::Dummy(ImVec2(0, padding));
                     ImGui::Spring(1, 0);
                     outputsRect = ImGui_GetItemRect();
@@ -495,7 +514,7 @@ namespace Cherry
                     ed::EndPin();
                     ed::PopStyleVar();
 
-                    if (newLinkPin && !instance->m_NodeEngine->CanCreateLink(newLinkPin, &pin) && &pin != newLinkPin)
+                    if (newLinkPin && !m_NodeEngine->CanCreateLink(newLinkPin, &pin) && &pin != newLinkPin)
                         outputAlpha = (int)(255 * ImGui::GetStyle().Alpha * (48.0f / 255.0f));
                 }
                 else
@@ -512,65 +531,64 @@ namespace Cherry
 
                 auto drawList = ed::GetNodeBackgroundDrawList(node.ID);
 
-                    // const auto fringeScale = ImGui::GetStyle().AntiAliasFringeScale;
-                    // const auto unitSize    = 1.0f / fringeScale;
+                // const auto fringeScale = ImGui::GetStyle().AntiAliasFringeScale;
+                // const auto unitSize    = 1.0f / fringeScale;
 
-                    // const auto ImDrawList_AddRect = [](ImDrawList* drawList, const ImVec2& a, const ImVec2& b, ImU32 col, float rounding, int rounding_corners, float thickness)
-                    //{
-                    //     if ((col >> 24) == 0)
-                    //         return;
-                    //     drawList->PathRect(a, b, rounding, rounding_corners);
-                    //     drawList->PathStroke(col, true, thickness);
-                    // };
+                // const auto ImDrawList_AddRect = [](ImDrawList* drawList, const ImVec2& a, const ImVec2& b, ImU32 col, float rounding, int rounding_corners, float thickness)
+                //{
+                //     if ((col >> 24) == 0)
+                //         return;
+                //     drawList->PathRect(a, b, rounding, rounding_corners);
+                //     drawList->PathStroke(col, true, thickness);
+                // };
 
 #if IMGUI_VERSION_NUM > 18101
-                const auto    topRoundCornersFlags = ImDrawFlags_RoundCornersTop;
+                const auto topRoundCornersFlags = ImDrawFlags_RoundCornersTop;
                 const auto bottomRoundCornersFlags = ImDrawFlags_RoundCornersBottom;
 #else
-                const auto    topRoundCornersFlags = 1 | 2;
+                const auto topRoundCornersFlags = 1 | 2;
                 const auto bottomRoundCornersFlags = 4 | 8;
 #endif
 
                 drawList->AddRectFilled(inputsRect.GetTL() + ImVec2(0, 1), inputsRect.GetBR(),
-                    IM_COL32((int)(255 * pinBackground.x), (int)(255 * pinBackground.y), (int)(255 * pinBackground.z), inputAlpha), 4.0f, bottomRoundCornersFlags);
-                //ImGui::PushStyleVar(ImGuiStyleVar_AntiAliasFringeScale, 1.0f);
+                                        IM_COL32((int)(255 * pinBackground.x), (int)(255 * pinBackground.y), (int)(255 * pinBackground.z), inputAlpha), 4.0f, bottomRoundCornersFlags);
+                // ImGui::PushStyleVar(ImGuiStyleVar_AntiAliasFringeScale, 1.0f);
                 drawList->AddRect(inputsRect.GetTL() + ImVec2(0, 1), inputsRect.GetBR(),
-                    IM_COL32((int)(255 * pinBackground.x), (int)(255 * pinBackground.y), (int)(255 * pinBackground.z), inputAlpha), 4.0f, bottomRoundCornersFlags);
-                //ImGui::PopStyleVar();
+                                  IM_COL32((int)(255 * pinBackground.x), (int)(255 * pinBackground.y), (int)(255 * pinBackground.z), inputAlpha), 4.0f, bottomRoundCornersFlags);
+                // ImGui::PopStyleVar();
                 drawList->AddRectFilled(outputsRect.GetTL(), outputsRect.GetBR() - ImVec2(0, 1),
-                    IM_COL32((int)(255 * pinBackground.x), (int)(255 * pinBackground.y), (int)(255 * pinBackground.z), outputAlpha), 4.0f, topRoundCornersFlags);
-                //ImGui::PushStyleVar(ImGuiStyleVar_AntiAliasFringeScale, 1.0f);
+                                        IM_COL32((int)(255 * pinBackground.x), (int)(255 * pinBackground.y), (int)(255 * pinBackground.z), outputAlpha), 4.0f, topRoundCornersFlags);
+                // ImGui::PushStyleVar(ImGuiStyleVar_AntiAliasFringeScale, 1.0f);
                 drawList->AddRect(outputsRect.GetTL(), outputsRect.GetBR() - ImVec2(0, 1),
-                    IM_COL32((int)(255 * pinBackground.x), (int)(255 * pinBackground.y), (int)(255 * pinBackground.z), outputAlpha), 4.0f, topRoundCornersFlags);
-                //ImGui::PopStyleVar();
+                                  IM_COL32((int)(255 * pinBackground.x), (int)(255 * pinBackground.y), (int)(255 * pinBackground.z), outputAlpha), 4.0f, topRoundCornersFlags);
+                // ImGui::PopStyleVar();
                 drawList->AddRectFilled(contentRect.GetTL(), contentRect.GetBR(), IM_COL32(24, 64, 128, 200), 0.0f);
-                //ImGui::PushStyleVar(ImGuiStyleVar_AntiAliasFringeScale, 1.0f);
+                // ImGui::PushStyleVar(ImGuiStyleVar_AntiAliasFringeScale, 1.0f);
                 drawList->AddRect(
                     contentRect.GetTL(),
                     contentRect.GetBR(),
                     IM_COL32(48, 128, 255, 100), 0.0f);
-                //ImGui::PopStyleVar();
+                // ImGui::PopStyleVar();
             }
 
-            for (auto& node : instance->m_NodeEngine->m_Nodes)
+            for (auto &node : m_NodeEngine->m_Nodes)
             {
                 if (node.Type != NodeType::Houdini)
                     continue;
 
                 const float rounding = 10.0f;
-                const float padding  = 12.0f;
+                const float padding = 12.0f;
 
-
-                ed::PushStyleColor(ed::StyleColor_NodeBg,        ImColor(229, 229, 229, 200));
-                ed::PushStyleColor(ed::StyleColor_NodeBorder,    ImColor(125, 125, 125, 200));
-                ed::PushStyleColor(ed::StyleColor_PinRect,       ImColor(229, 229, 229, 60));
+                ed::PushStyleColor(ed::StyleColor_NodeBg, ImColor(229, 229, 229, 200));
+                ed::PushStyleColor(ed::StyleColor_NodeBorder, ImColor(125, 125, 125, 200));
+                ed::PushStyleColor(ed::StyleColor_PinRect, ImColor(229, 229, 229, 60));
                 ed::PushStyleColor(ed::StyleColor_PinRectBorder, ImColor(125, 125, 125, 60));
 
                 const auto pinBackground = ed::GetStyle().Colors[ed::StyleColor_NodeBg];
 
-                ed::PushStyleVar(ed::StyleVar_NodePadding,  ImVec4(0, 0, 0, 0));
+                ed::PushStyleVar(ed::StyleVar_NodePadding, ImVec4(0, 0, 0, 0));
                 ed::PushStyleVar(ed::StyleVar_NodeRounding, rounding);
-                ed::PushStyleVar(ed::StyleVar_SourceDirection, ImVec2(0.0f,  1.0f));
+                ed::PushStyleVar(ed::StyleVar_SourceDirection, ImVec2(0.0f, 1.0f));
                 ed::PushStyleVar(ed::StyleVar_TargetDirection, ImVec2(0.0f, -1.0f));
                 ed::PushStyleVar(ed::StyleVar_LinkStrength, 0.0f);
                 ed::PushStyleVar(ed::StyleVar_PinBorderWidth, 1.0f);
@@ -585,7 +603,7 @@ namespace Cherry
 
                     ImRect inputsRect;
                     int inputAlpha = 200;
-                    for (auto& pin : node.Inputs)
+                    for (auto &pin : node.Inputs)
                     {
                         ImGui::Dummy(ImVec2(padding, padding));
                         inputsRect = ImGui_GetItemRect();
@@ -598,28 +616,28 @@ namespace Cherry
 #else
                         const auto allRoundCornersFlags = 15;
 #endif
-                        //ed::PushStyleVar(ed::StyleVar_PinArrowSize, 10.0f);
-                        //ed::PushStyleVar(ed::StyleVar_PinArrowWidth, 10.0f);
+                        // ed::PushStyleVar(ed::StyleVar_PinArrowSize, 10.0f);
+                        // ed::PushStyleVar(ed::StyleVar_PinArrowWidth, 10.0f);
                         ed::PushStyleVar(ed::StyleVar_PinCorners, allRoundCornersFlags);
 
                         ed::BeginPin(pin.ID, ed::PinKind::Input);
                         ed::PinPivotRect(inputsRect.GetCenter(), inputsRect.GetCenter());
                         ed::PinRect(inputsRect.GetTL(), inputsRect.GetBR());
                         ed::EndPin();
-                        //ed::PopStyleVar(3);
+                        // ed::PopStyleVar(3);
                         ed::PopStyleVar(1);
 
                         auto drawList = ImGui::GetWindowDrawList();
                         drawList->AddRectFilled(inputsRect.GetTL(), inputsRect.GetBR(),
-                            IM_COL32((int)(255 * pinBackground.x), (int)(255 * pinBackground.y), (int)(255 * pinBackground.z), inputAlpha), 4.0f, allRoundCornersFlags);
+                                                IM_COL32((int)(255 * pinBackground.x), (int)(255 * pinBackground.y), (int)(255 * pinBackground.z), inputAlpha), 4.0f, allRoundCornersFlags);
                         drawList->AddRect(inputsRect.GetTL(), inputsRect.GetBR(),
-                            IM_COL32((int)(255 * pinBackground.x), (int)(255 * pinBackground.y), (int)(255 * pinBackground.z), inputAlpha), 4.0f, allRoundCornersFlags);
+                                          IM_COL32((int)(255 * pinBackground.x), (int)(255 * pinBackground.y), (int)(255 * pinBackground.z), inputAlpha), 4.0f, allRoundCornersFlags);
 
-                        if (newLinkPin && !instance->m_NodeEngine->CanCreateLink(newLinkPin, &pin) && &pin != newLinkPin)
+                        if (newLinkPin && !m_NodeEngine->CanCreateLink(newLinkPin, &pin) && &pin != newLinkPin)
                             inputAlpha = (int)(255 * ImGui::GetStyle().Alpha * (48.0f / 255.0f));
                     }
 
-                    //ImGui::Spring(1, 0);
+                    // ImGui::Spring(1, 0);
                     ImGui::EndHorizontal();
                 }
 
@@ -646,7 +664,7 @@ namespace Cherry
 
                     ImRect outputsRect;
                     int outputAlpha = 200;
-                    for (auto& pin : node.Outputs)
+                    for (auto &pin : node.Outputs)
                     {
                         ImGui::Dummy(ImVec2(padding, padding));
                         outputsRect = ImGui_GetItemRect();
@@ -669,15 +687,13 @@ namespace Cherry
                         ed::EndPin();
                         ed::PopStyleVar();
 
-
                         auto drawList = ImGui::GetWindowDrawList();
                         drawList->AddRectFilled(outputsRect.GetTL(), outputsRect.GetBR(),
-                            IM_COL32((int)(255 * pinBackground.x), (int)(255 * pinBackground.y), (int)(255 * pinBackground.z), outputAlpha), 4.0f, allRoundCornersFlags);
+                                                IM_COL32((int)(255 * pinBackground.x), (int)(255 * pinBackground.y), (int)(255 * pinBackground.z), outputAlpha), 4.0f, allRoundCornersFlags);
                         drawList->AddRect(outputsRect.GetTL(), outputsRect.GetBR(),
-                            IM_COL32((int)(255 * pinBackground.x), (int)(255 * pinBackground.y), (int)(255 * pinBackground.z), outputAlpha), 4.0f, allRoundCornersFlags);
+                                          IM_COL32((int)(255 * pinBackground.x), (int)(255 * pinBackground.y), (int)(255 * pinBackground.z), outputAlpha), 4.0f, allRoundCornersFlags);
 
-
-                        if (newLinkPin && !instance->m_NodeEngine->CanCreateLink(newLinkPin, &pin) && &pin != newLinkPin)
+                        if (newLinkPin && !m_NodeEngine->CanCreateLink(newLinkPin, &pin) && &pin != newLinkPin)
                             outputAlpha = (int)(255 * ImGui::GetStyle().Alpha * (48.0f / 255.0f));
                     }
 
@@ -692,39 +708,39 @@ namespace Cherry
 
                 // auto drawList = ed::GetNodeBackgroundDrawList(node.ID);
 
-                //const auto fringeScale = ImGui::GetStyle().AntiAliasFringeScale;
-                //const auto unitSize    = 1.0f / fringeScale;
+                // const auto fringeScale = ImGui::GetStyle().AntiAliasFringeScale;
+                // const auto unitSize    = 1.0f / fringeScale;
 
-                //const auto ImDrawList_AddRect = [](ImDrawList* drawList, const ImVec2& a, const ImVec2& b, ImU32 col, float rounding, int rounding_corners, float thickness)
+                // const auto ImDrawList_AddRect = [](ImDrawList* drawList, const ImVec2& a, const ImVec2& b, ImU32 col, float rounding, int rounding_corners, float thickness)
                 //{
-                //    if ((col >> 24) == 0)
-                //        return;
-                //    drawList->PathRect(a, b, rounding, rounding_corners);
-                //    drawList->PathStroke(col, true, thickness);
-                //};
+                //     if ((col >> 24) == 0)
+                //         return;
+                //     drawList->PathRect(a, b, rounding, rounding_corners);
+                //     drawList->PathStroke(col, true, thickness);
+                // };
 
-                //drawList->AddRectFilled(inputsRect.GetTL() + ImVec2(0, 1), inputsRect.GetBR(),
-                //    IM_COL32((int)(255 * pinBackground.x), (int)(255 * pinBackground.y), (int)(255 * pinBackground.z), inputAlpha), 4.0f, 12);
-                //ImGui::PushStyleVar(ImGuiStyleVar_AntiAliasFringeScale, 1.0f);
-                //drawList->AddRect(inputsRect.GetTL() + ImVec2(0, 1), inputsRect.GetBR(),
-                //    IM_COL32((int)(255 * pinBackground.x), (int)(255 * pinBackground.y), (int)(255 * pinBackground.z), inputAlpha), 4.0f, 12);
-                //ImGui::PopStyleVar();
-                //drawList->AddRectFilled(outputsRect.GetTL(), outputsRect.GetBR() - ImVec2(0, 1),
-                //    IM_COL32((int)(255 * pinBackground.x), (int)(255 * pinBackground.y), (int)(255 * pinBackground.z), outputAlpha), 4.0f, 3);
+                // drawList->AddRectFilled(inputsRect.GetTL() + ImVec2(0, 1), inputsRect.GetBR(),
+                //     IM_COL32((int)(255 * pinBackground.x), (int)(255 * pinBackground.y), (int)(255 * pinBackground.z), inputAlpha), 4.0f, 12);
+                // ImGui::PushStyleVar(ImGuiStyleVar_AntiAliasFringeScale, 1.0f);
+                // drawList->AddRect(inputsRect.GetTL() + ImVec2(0, 1), inputsRect.GetBR(),
+                //     IM_COL32((int)(255 * pinBackground.x), (int)(255 * pinBackground.y), (int)(255 * pinBackground.z), inputAlpha), 4.0f, 12);
+                // ImGui::PopStyleVar();
+                // drawList->AddRectFilled(outputsRect.GetTL(), outputsRect.GetBR() - ImVec2(0, 1),
+                //     IM_COL32((int)(255 * pinBackground.x), (int)(255 * pinBackground.y), (int)(255 * pinBackground.z), outputAlpha), 4.0f, 3);
                 ////ImGui::PushStyleVar(ImGuiStyleVar_AntiAliasFringeScale, 1.0f);
-                //drawList->AddRect(outputsRect.GetTL(), outputsRect.GetBR() - ImVec2(0, 1),
-                //    IM_COL32((int)(255 * pinBackground.x), (int)(255 * pinBackground.y), (int)(255 * pinBackground.z), outputAlpha), 4.0f, 3);
+                // drawList->AddRect(outputsRect.GetTL(), outputsRect.GetBR() - ImVec2(0, 1),
+                //     IM_COL32((int)(255 * pinBackground.x), (int)(255 * pinBackground.y), (int)(255 * pinBackground.z), outputAlpha), 4.0f, 3);
                 ////ImGui::PopStyleVar();
-                //drawList->AddRectFilled(contentRect.GetTL(), contentRect.GetBR(), IM_COL32(24, 64, 128, 200), 0.0f);
-                //ImGui::PushStyleVar(ImGuiStyleVar_AntiAliasFringeScale, 1.0f);
-                //drawList->AddRect(
-                //    contentRect.GetTL(),
-                //    contentRect.GetBR(),
-                //    IM_COL32(48, 128, 255, 100), 0.0f);
-                //ImGui::PopStyleVar();
+                // drawList->AddRectFilled(contentRect.GetTL(), contentRect.GetBR(), IM_COL32(24, 64, 128, 200), 0.0f);
+                // ImGui::PushStyleVar(ImGuiStyleVar_AntiAliasFringeScale, 1.0f);
+                // drawList->AddRect(
+                //     contentRect.GetTL(),
+                //     contentRect.GetBR(),
+                //     IM_COL32(48, 128, 255, 100), 0.0f);
+                // ImGui::PopStyleVar();
             }
 
-            for (auto& node : instance->m_NodeEngine->m_Nodes)
+            for (auto &node : m_NodeEngine->m_Nodes)
             {
                 if (node.Type != NodeType::Comment)
                     continue;
@@ -751,13 +767,13 @@ namespace Cherry
 
                 if (ed::BeginGroupHint(node.ID))
                 {
-                    //auto alpha   = static_cast<int>(commentAlpha * ImGui::GetStyle().Alpha * 255);
+                    // auto alpha   = static_cast<int>(commentAlpha * ImGui::GetStyle().Alpha * 255);
                     auto bgAlpha = static_cast<int>(ImGui::GetStyle().Alpha * 255);
 
-                    //ImGui::PushStyleVar(ImGuiStyleVar_Alpha, commentAlpha * ImGui::GetStyle().Alpha);
+                    // ImGui::PushStyleVar(ImGuiStyleVar_Alpha, commentAlpha * ImGui::GetStyle().Alpha);
 
                     auto min = ed::GetGroupMin();
-                    //auto max = ed::GetGroupMax();
+                    // auto max = ed::GetGroupMax();
 
                     ImGui::SetCursorScreenPos(min - ImVec2(-8, ImGui::GetTextLineHeightWithSpacing() + 4));
                     ImGui::BeginGroup();
@@ -766,7 +782,7 @@ namespace Cherry
 
                     auto drawList = ed::GetHintBackgroundDrawList();
 
-                    auto hintBounds      = ImGui_GetItemRect();
+                    auto hintBounds = ImGui_GetItemRect();
                     auto hintFrameBounds = ImRect_Expanded(hintBounds, 8, 4);
 
                     drawList->AddRectFilled(
@@ -779,19 +795,19 @@ namespace Cherry
                         hintFrameBounds.GetBR(),
                         IM_COL32(255, 255, 255, 128 * bgAlpha / 255), 4.0f);
 
-                    //ImGui::PopStyleVar();
+                    // ImGui::PopStyleVar();
                 }
                 ed::EndGroupHint();
             }
 
-            for (auto& link : instance->m_NodeEngine->m_Links)
+            for (auto &link : m_NodeEngine->m_Links)
                 ed::Link(link.ID, link.StartPinID, link.EndPinID, link.Color, 2.0f);
-                
+
             if (!createNewNode)
             {
                 if (ed::BeginCreate(ImColor(255, 255, 255), 2.0f))
                 {
-                    auto showLabel = [](const char* label, ImColor color)
+                    auto showLabel = [](const char *label, ImColor color)
                     {
                         ImGui::SetCursorPosY(ImGui::GetCursorPosY() - ImGui::GetTextLineHeight());
                         auto size = ImGui::CalcTextSize(label);
@@ -812,8 +828,8 @@ namespace Cherry
                     ed::PinId startPinId = 0, endPinId = 0;
                     if (ed::QueryNewLink(&startPinId, &endPinId))
                     {
-                        auto startPin = instance->m_NodeEngine->FindPin(startPinId);
-                        auto endPin   = instance->m_NodeEngine->FindPin(endPinId);
+                        auto startPin = m_NodeEngine->FindPin(startPinId);
+                        auto endPin = m_NodeEngine->FindPin(endPinId);
 
                         newLinkPin = startPin ? startPin : endPin;
 
@@ -834,11 +850,11 @@ namespace Cherry
                                 showLabel("x Incompatible Pin Kind", ImColor(45, 32, 32, 180));
                                 ed::RejectNewItem(ImColor(255, 0, 0), 2.0f);
                             }
-                            //else if (endPin->Node == startPin->Node)
+                            // else if (endPin->Node == startPin->Node)
                             //{
-                            //    showLabel("x Cannot connect to self", ImColor(45, 32, 32, 180));
-                            //    ed::RejectNewItem(ImColor(255, 0, 0), 1.0f);
-                            //}
+                            //     showLabel("x Cannot connect to self", ImColor(45, 32, 32, 180));
+                            //     ed::RejectNewItem(ImColor(255, 0, 0), 1.0f);
+                            // }
                             else if (endPin->Type != startPin->Type)
                             {
                                 showLabel("x Incompatible Pin Type", ImColor(45, 32, 32, 180));
@@ -849,8 +865,8 @@ namespace Cherry
                                 showLabel("+ Create Link", ImColor(32, 45, 32, 180));
                                 if (ed::AcceptNewItem(ImColor(128, 255, 128), 4.0f))
                                 {
-                                    instance->m_NodeEngine->m_Links.emplace_back(Link(instance->m_NodeEngine->GetNextId(), startPinId, endPinId));
-                                    instance->m_NodeEngine->m_Links.back().Color = instance->m_NodeEngine->GetIconColor(startPin->Type);
+                                    m_NodeEngine->m_Links.emplace_back(Link(m_NodeEngine->GetNextId(), startPinId, endPinId));
+                                    m_NodeEngine->m_Links.back().Color = m_NodeEngine->GetIconColor(startPin->Type);
                                 }
                             }
                         }
@@ -859,14 +875,14 @@ namespace Cherry
                     ed::PinId pinId = 0;
                     if (ed::QueryNewNode(&pinId))
                     {
-                        newLinkPin = instance->m_NodeEngine->FindPin(pinId);
+                        newLinkPin = m_NodeEngine->FindPin(pinId);
                         if (newLinkPin)
                             showLabel("+ Create Node", ImColor(32, 45, 32, 180));
 
                         if (ed::AcceptNewItem())
                         {
-                            createNewNode  = true;
-                            newNodeLinkPin = instance->m_NodeEngine->FindPin(pinId);
+                            createNewNode = true;
+                            newNodeLinkPin = m_NodeEngine->FindPin(pinId);
                             newLinkPin = nullptr;
                             ed::Suspend();
                             ImGui::OpenPopup("Create New Node");
@@ -886,9 +902,10 @@ namespace Cherry
                     {
                         if (ed::AcceptDeletedItem())
                         {
-                            auto id = std::find_if(instance->m_NodeEngine->m_Nodes.begin(), instance->m_NodeEngine->m_Nodes.end(), [nodeId](auto& node) { return node.ID == nodeId; });
-                            if (id != instance->m_NodeEngine->m_Nodes.end())
-                                instance->m_NodeEngine->m_Nodes.erase(id);
+                            auto id = std::find_if(m_NodeEngine->m_Nodes.begin(), m_NodeEngine->m_Nodes.end(), [nodeId](auto &node)
+                                                   { return node.ID == nodeId; });
+                            if (id != m_NodeEngine->m_Nodes.end())
+                                m_NodeEngine->m_Nodes.erase(id);
                         }
                     }
 
@@ -897,9 +914,10 @@ namespace Cherry
                     {
                         if (ed::AcceptDeletedItem())
                         {
-                            auto id = std::find_if(instance->m_NodeEngine->m_Links.begin(),instance->m_NodeEngine-> m_Links.end(), [linkId](auto& link) { return link.ID == linkId; });
-                            if (id != instance->m_NodeEngine->m_Links.end())
-                                instance->m_NodeEngine->m_Links.erase(id);
+                            auto id = std::find_if(m_NodeEngine->m_Links.begin(), m_NodeEngine->m_Links.end(), [linkId](auto &link)
+                                                   { return link.ID == linkId; });
+                            if (id != m_NodeEngine->m_Links.end())
+                                m_NodeEngine->m_Links.erase(id);
                         }
                     }
                 }
@@ -929,7 +947,7 @@ namespace Cherry
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(8, 8));
         if (ImGui::BeginPopup("Node Context Menu"))
         {
-            auto node = instance->m_NodeEngine->FindNode(contextNodeId);
+            auto node = m_NodeEngine->FindNode(contextNodeId);
 
             ImGui::TextUnformatted("Node Context Menu");
             ImGui::Separator();
@@ -950,7 +968,7 @@ namespace Cherry
 
         if (ImGui::BeginPopup("Pin Context Menu"))
         {
-            auto pin = instance->m_NodeEngine->FindPin(contextPinId);
+            auto pin = m_NodeEngine->FindPin(contextPinId);
 
             ImGui::TextUnformatted("Pin Context Menu");
             ImGui::Separator();
@@ -970,7 +988,7 @@ namespace Cherry
 
         if (ImGui::BeginPopup("Link Context Menu"))
         {
-            auto link = instance->m_NodeEngine->FindLink(contextLinkId);
+            auto link = m_NodeEngine->FindLink(contextLinkId);
 
             ImGui::TextUnformatted("Link Context Menu");
             ImGui::Separator();
@@ -991,52 +1009,52 @@ namespace Cherry
         if (ImGui::BeginPopup("Create New Node"))
         {
             auto newNodePostion = openPopupPosition;
-            //ImGui::SetCursorScreenPos(ImGui::GetMousePosOnOpeningCurrentPopup());
+            // ImGui::SetCursorScreenPos(ImGui::GetMousePosOnOpeningCurrentPopup());
 
-            //auto drawList = ImGui::GetWindowDrawList();
-            //drawList->AddCircleFilled(ImGui::GetMousePosOnOpeningCurrentPopup(), 10.0f, 0xFFFF00FF);
+            // auto drawList = ImGui::GetWindowDrawList();
+            // drawList->AddCircleFilled(ImGui::GetMousePosOnOpeningCurrentPopup(), 10.0f, 0xFFFF00FF);
 
-            Node* node = nullptr;
+            Node *node = nullptr;
             if (ImGui::MenuItem("Input Action"))
-                node = instance->m_NodeEngine->SpawnInputActionNode();
+                node = m_NodeEngine->SpawnInputActionNode();
             if (ImGui::MenuItem("Output Action"))
-                node = instance->m_NodeEngine->SpawnOutputActionNode();
+                node = m_NodeEngine->SpawnOutputActionNode();
             if (ImGui::MenuItem("Branch"))
-                node = instance->m_NodeEngine->SpawnBranchNode();
+                node = m_NodeEngine->SpawnBranchNode();
             if (ImGui::MenuItem("Do N"))
-                node = instance->m_NodeEngine->SpawnDoNNode();
+                node = m_NodeEngine->SpawnDoNNode();
             if (ImGui::MenuItem("Set Timer"))
-                node = instance->m_NodeEngine->SpawnSetTimerNode();
+                node = m_NodeEngine->SpawnSetTimerNode();
             if (ImGui::MenuItem("Less"))
-                node = instance->m_NodeEngine->SpawnLessNode();
+                node = m_NodeEngine->SpawnLessNode();
             if (ImGui::MenuItem("Weird"))
-                node = instance->m_NodeEngine->SpawnWeirdNode();
+                node = m_NodeEngine->SpawnWeirdNode();
             if (ImGui::MenuItem("Trace by Channel"))
-                node = instance->m_NodeEngine->SpawnTraceByChannelNode();
+                node = m_NodeEngine->SpawnTraceByChannelNode();
             if (ImGui::MenuItem("Print String"))
-                node = instance->m_NodeEngine->SpawnPrintStringNode();
+                node = m_NodeEngine->SpawnPrintStringNode();
             ImGui::Separator();
             if (ImGui::MenuItem("Comment"))
-                node = instance->m_NodeEngine->SpawnComment();
+                node = m_NodeEngine->SpawnComment();
             ImGui::Separator();
             if (ImGui::MenuItem("Sequence"))
-                node = instance->m_NodeEngine->SpawnTreeSequenceNode();
+                node = m_NodeEngine->SpawnTreeSequenceNode();
             if (ImGui::MenuItem("Move To"))
-                node = instance->m_NodeEngine->SpawnTreeTaskNode();
+                node = m_NodeEngine->SpawnTreeTaskNode();
             if (ImGui::MenuItem("Random Wait"))
-                node = instance->m_NodeEngine->SpawnTreeTask2Node();
+                node = m_NodeEngine->SpawnTreeTask2Node();
             ImGui::Separator();
             if (ImGui::MenuItem("Message"))
-                node = instance->m_NodeEngine->SpawnMessageNode();
+                node = m_NodeEngine->SpawnMessageNode();
             ImGui::Separator();
             if (ImGui::MenuItem("Transform"))
-                node = instance->m_NodeEngine->SpawnHoudiniTransformNode();
+                node = m_NodeEngine->SpawnHoudiniTransformNode();
             if (ImGui::MenuItem("Group"))
-                node = instance->m_NodeEngine->SpawnHoudiniGroupNode();
+                node = m_NodeEngine->SpawnHoudiniGroupNode();
 
             if (node)
             {
-                instance->m_NodeEngine->BuildNodes();
+                m_NodeEngine->BuildNodes();
 
                 createNewNode = false;
 
@@ -1044,18 +1062,18 @@ namespace Cherry
 
                 if (auto startPin = newNodeLinkPin)
                 {
-                    auto& pins = startPin->Kind == PinKind::Input ? node->Outputs : node->Inputs;
+                    auto &pins = startPin->Kind == PinKind::Input ? node->Outputs : node->Inputs;
 
-                    for (auto& pin : pins)
+                    for (auto &pin : pins)
                     {
-                        if (instance->m_NodeEngine->CanCreateLink(startPin, &pin))
+                        if (m_NodeEngine->CanCreateLink(startPin, &pin))
                         {
                             auto endPin = &pin;
                             if (startPin->Kind == PinKind::Input)
                                 std::swap(startPin, endPin);
 
-                            instance->m_NodeEngine->m_Links.emplace_back(Link(instance->m_NodeEngine->GetNextId(), startPin->ID, endPin->ID));
-                            instance->m_NodeEngine->m_Links.back().Color = instance->m_NodeEngine->GetIconColor(startPin->Type);
+                            m_NodeEngine->m_Links.emplace_back(Link(m_NodeEngine->GetNextId(), startPin->ID, endPin->ID));
+                            m_NodeEngine->m_Links.back().Color = m_NodeEngine->GetIconColor(startPin->Type);
 
                             break;
                         }
@@ -1072,34 +1090,32 @@ namespace Cherry
 #endif
 
         ed::End();
-         auto editorMin = ImGui::GetItemRectMin();
+        auto editorMin = ImGui::GetItemRectMin();
         auto editorMax = ImGui::GetItemRectMax();
 
-        if (instance->m_NodeEngine->m_ShowOrdinals)
+        if (m_NodeEngine->m_ShowOrdinals)
         {
             int nodeCount = ed::GetNodeCount();
             std::vector<ed::NodeId> orderedNodeIds;
             orderedNodeIds.resize(static_cast<size_t>(nodeCount));
             ed::GetOrderedNodeIds(orderedNodeIds.data(), nodeCount);
 
-
             auto drawList = ImGui::GetWindowDrawList();
             drawList->PushClipRect(editorMin, editorMax);
 
             int ordinal = 0;
-            for (auto& nodeId : orderedNodeIds)
+            for (auto &nodeId : orderedNodeIds)
             {
                 auto p0 = ed::GetNodePosition(nodeId);
                 auto p1 = p0 + ed::GetNodeSize(nodeId);
                 p0 = ed::CanvasToScreen(p0);
                 p1 = ed::CanvasToScreen(p1);
 
-
                 ImGuiTextBuffer builder;
                 builder.appendf("#%d", ordinal++);
 
-                auto textSize   = ImGui::CalcTextSize(builder.c_str());
-                auto padding    = ImVec2(2.0f, 2.0f);
+                auto textSize = ImGui::CalcTextSize(builder.c_str());
+                auto padding = ImVec2(2.0f, 2.0f);
                 auto widgetSize = textSize + padding * 2;
 
                 auto widgetPosition = ImVec2(p1.x, p0.y) + ImVec2(0.0f, -widgetSize.y);
@@ -1110,6 +1126,7 @@ namespace Cherry
             }
 
             drawList->PopClipRect();
-        } });
+        }
     }
 }
+

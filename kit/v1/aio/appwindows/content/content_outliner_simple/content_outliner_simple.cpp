@@ -103,24 +103,41 @@ namespace Cherry
 
         m_AppWindow->SetRightMenubarCallback([win]()
                                              {
-                                                ImGui::Button("Add");
-                                                ImGui::Button("Settings");
+                                                 ImGui::Button("Add");
+                                                 ImGui::Button("Settings");
                                                  // Add Folder
                                                  // Settings
                                              });
 
         m_AppWindow->SetRightBottombarCallback([win]()
                                                { ImGui::Button("7 element(s) selected"); });
-
     }
 
-    void ContentOutlinerSimple::RefreshRender(const std::shared_ptr<ContentOutlinerSimple> &instance)
+    std::shared_ptr<Cherry::AppWindow> &ContentOutlinerSimple::GetAppWindow()
     {
+        return m_AppWindow;
+    }
 
-        m_AppWindow->SetRenderCallback([instance]()
+    std::shared_ptr<ContentOutlinerSimple> ContentOutlinerSimple::Create(const std::string &name)
+    {
+        auto instance = std::shared_ptr<ContentOutlinerSimple>(new ContentOutlinerSimple(name));
+        instance->SetupRenderCallback();
+        return instance;
+    }
+
+    void ContentOutlinerSimple::SetupRenderCallback()
+    {
+        auto self = shared_from_this();
+        m_AppWindow->SetRenderCallback([self]()
                                        {
-                                           instance->cp_Tree->Render();
-                                       });
+            if (self) {
+                self->Render();
+            } });
+    }
+
+    void ContentOutlinerSimple::Render()
+    {
+        cp_Tree->Render();
     }
 
 }

@@ -152,9 +152,8 @@ namespace Cherry
             instance->SetupRenderCallback();
             return instance;
         }
+
         void SetupRenderCallback();
-
-
         void Render();
         bool MyButton(const std::string &name, const std::string &path, const std::string &description, const std::string &size, bool selected, const std::string &logo, ImU32 bgColor, ImU32 borderColor, ImU32 lineColor, float maxTextWidth, float borderRadius);
         void AddChild(const ContentBrowserChild &child);

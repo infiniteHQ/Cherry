@@ -16,19 +16,17 @@ namespace Cherry
 {
 
     // This window can be a "subappwindow" of a parent if you use the constructor with parent parameter.
-    class PropsEditorSimple
+    class PropsEditorSimple : public std::enable_shared_from_this<PropsEditorSimple>
     {
     public:
         PropsEditorSimple(const std::string &name, const std::shared_ptr<AppWindow> &parent);
         PropsEditorSimple(const std::string &name);
-        PropsEditorSimple();
+        PropsEditorSimple();       
+        std::shared_ptr<Cherry::AppWindow> &GetAppWindow();
 
-        void RefreshRender(const std::shared_ptr<PropsEditorSimple> &instance);        
-        std::shared_ptr<Cherry::AppWindow> &GetAppWindow()
-        {
-            return m_AppWindow;
-        }
-
+        static std::shared_ptr<PropsEditorSimple> Create(const std::string &name);
+        void SetupRenderCallback();
+        void Render();
 
     private:
         // Ui Components

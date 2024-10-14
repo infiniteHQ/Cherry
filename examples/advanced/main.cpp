@@ -150,84 +150,41 @@ Cherry::Application *Cherry::CreateApplication(int argc, char **argv)
                             ImGui::PopStyleVar();  
                             ImGui::PopStyleColor(2); });
 
-  /*std::shared_ptr<ContentOutlinerSimple> ContentOutliner = std::make_shared<Cherry::ContentOutlinerSimple>("?loc:loc.window_names.outliner"); // Create Window
-  ContentOutliner->RefreshRender(ContentOutliner); // Refresh the render channel
-  Application::Get().PutWindow(ContentOutliner->GetAppWindow()); // Publish this window into the workspace
 
-  std::shared_ptr<TextEditorSimple> TextEditor = std::make_shared<Cherry::TextEditorSimple>("?loc:loc.window_names.text_editor");
-  TextEditor->RefreshRender(TextEditor);
-  Application::Get().PutWindow(TextEditor->GetAppWindow()); // Publish this window into the workspace
+  auto ContentOutliner = ContentOutlinerSimple::Create("?loc:loc.window_names.outliner"); 
+  Cherry::AddAppWindow(ContentOutliner->GetAppWindow());
 
-  std::shared_ptr<PropsEditorSimple> PropsEditor = std::make_shared<Cherry::PropsEditorSimple>("?loc:loc.window_names.props_editor");
-  PropsEditor->RefreshRender(PropsEditor);
-  Application::Get().PutWindow(PropsEditor->GetAppWindow()); // Publish this window into the workspace
+  auto TextEditor = TextEditorSimple::Create("?loc:loc.window_names.text_editor");
+  Cherry::AddAppWindow(TextEditor->GetAppWindow());
 
-  std::shared_ptr<ContentBrowserAppWindow> ContentBrowser = std::make_shared<Cherry::ContentBrowserAppWindow>("?loc:loc.window_names.content_browser", "/home/diego");
-  ContentBrowser->RefreshRender(ContentBrowser);
-  Application::Get().PutWindow(ContentBrowser->GetAppWindow()); // Publish this window into the workspace
+  auto PropsEditor = PropsEditorSimple::Create("?loc:loc.window_names.props_editor");
+  Cherry::AddAppWindow(PropsEditor->GetAppWindow());
 
-  std::shared_ptr<NodeEditorSimple> NodalEditor = std::make_shared<Cherry::NodeEditorSimple>("?loc:loc.window_names.node_editor");
-  NodalEditor->RefreshRender(NodalEditor);
-  Application::Get().PutWindow(NodalEditor->GetAppWindow()); // Publish this window into the workspace
+  auto NodalEditor = NodeEditorSimple::Create("?loc:loc.window_names.node_editor");
+  Cherry::AddAppWindow(NodalEditor->GetAppWindow());
 
-  std::shared_ptr<DockingAppWindow> WindowWithDockspace = std::make_shared<Cherry::DockingAppWindow>("fqdow_names.texqsd");
-  Application::Get().PutWindow(WindowWithDockspace->GetAppWindow());
+  auto WindowWithDockspace = DockingAppWindow::Create("fqdow_names.texqsd");
+  //Application::Get().PutWindow(WindowWithDockspace->GetAppWindow());
 
-  std::shared_ptr<MultiChildTabs> TabsWindow = std::make_shared<Cherry::MultiChildTabs>("Vertical Tabs");
+  auto ContentBrowser = ContentBrowserAppWindow::Create("?loc:loc.window_names.content_browser", "/home/diego");
+  Cherry::AddAppWindow(ContentBrowser->GetAppWindow());
+
+  auto Demo = DemoAppWindow::Create("?loc:loc.window_names.demo");
+  Cherry::AddAppWindow(Demo->GetAppWindow());
+
+  auto TabsWindow = MultiChildTabs::Create("Vertical Tabs");
   TabsWindow->AddChild("One", [](){ImGui::Text("One");});
   TabsWindow->AddChild("Two", [](){ImGui::Text("Two");});
   TabsWindow->AddChild("Three", [](){ImGui::Text("Three");});
-  TabsWindow->RefreshRender(TabsWindow);
-  Application::Get().PutWindow(TabsWindow->GetAppWindow()); // Publish this window into the workspace
+  Cherry::AddAppWindow(TabsWindow->GetAppWindow());
 
 
-  std::shared_ptr<MultiChildList> ListWindow = std::make_shared<Cherry::MultiChildList>("indow_names.list");
+  auto ListWindow = MultiChildList::Create("List Childs");
   ListWindow->AddChild("One", [](){ImGui::Text("One");});
   ListWindow->AddChild("Two", [](){ImGui::Text("Two");});
   ListWindow->AddChild("Three", [](){ImGui::Text("Three");});
   ListWindow->AddChild("Four", [](){ImGui::Text("Four");});
-  ListWindow->RefreshRender(ListWindow);
-  Application::Get().PutWindow(ListWindow->GetAppWindow()); // Publish this window into the workspace
-
-
-
-  std::shared_ptr<MultiChildTabs> appTabs = std::make_shared<Cherry::MultiChildTabs>("indow_names.tabs");
-  appTabs->AddChild("One", [](){ImGui::Text("One");});
-  appTabs->AddChild("Two", [](){ImGui::Text("Two");});
-  appTabs->AddChild("Three", [](){ImGui::Text("Three");});
-  appTabs->AddChild("Four", [](){ImGui::Text("Four");});
-  appTabs->RefreshRender(appTabs);
-
-  */
-  /*std::shared_ptr<ContentBrowserAppWindow> ContentBrowser = std::make_shared<Cherry::ContentBrowserAppWindow>("?loc:loc.window_names.content_browser", "/home/diego");
-  Cherry::AddAppWindow(ContentBrowser->GetAppWindow());*/
-
-  /*Cherry::ApplicationSpecification newspec;
-  newspec.Name = "Select folder";
-  newspec.MinHeight = 500;
-  newspec.MinWidth = 500;
-  newspec.Height = 500;
-  newspec.Width = 950;
-  newspec.CustomTitlebar = true;
-  newspec.DisableWindowManagerTitleBar = true;
-  newspec.WindowOnlyClosable = true;
-  newspec.RenderMode = Cherry::WindowRenderingMethod::SimpleWindow;
-  newspec.UniqueAppWindowName = ContentBrowser->GetAppWindow()->m_Name;
-  newspec.DisableTitle = true;
-  newspec.WindowSaves = false;
-  newspec.IconPath = Cherry::GetPath("ressources/imgs/icon_update.png");
-  newspec.UsingCloseCallback = true;
-  newspec.CloseCallback = [ContentBrowser](){
-    if(ContentBrowser->GetAppWindow())
-    {
-      Cherry::DeleteAppWindow(ContentBrowser->GetAppWindow());
-    }
-  };
-
-  ContentBrowser->GetAppWindow()->AttachOnNewWindow(newspec);
-  ContentBrowser->GetAppWindow()->SetVisibility(true);*/
-  auto ContentBrowser = ContentBrowserAppWindow::Create("?loc:loc.window_names.content_browser", "/home/diego");
-  Cherry::AddAppWindow(ContentBrowser->GetAppWindow());
+  Cherry::AddAppWindow(ListWindow->GetAppWindow());
 
   // Multi childs
   auto VerticalAreas = MultiChildAreas::Create("indow_names.content_browser");
@@ -266,3 +223,28 @@ int main(int argc, char *argv[])
 
   return 0;
 }
+
+ /*Cherry::ApplicationSpecification newspec;
+  newspec.Name = "Select folder";
+  newspec.MinHeight = 500;
+  newspec.MinWidth = 500;
+  newspec.Height = 500;
+  newspec.Width = 950;
+  newspec.CustomTitlebar = true;
+  newspec.DisableWindowManagerTitleBar = true;
+  newspec.WindowOnlyClosable = true;
+  newspec.RenderMode = Cherry::WindowRenderingMethod::SimpleWindow;
+  newspec.UniqueAppWindowName = ContentBrowser->GetAppWindow()->m_Name;
+  newspec.DisableTitle = true;
+  newspec.WindowSaves = false;
+  newspec.IconPath = Cherry::GetPath("ressources/imgs/icon_update.png");
+  newspec.UsingCloseCallback = true;
+  newspec.CloseCallback = [ContentBrowser](){
+    if(ContentBrowser->GetAppWindow())
+    {
+      Cherry::DeleteAppWindow(ContentBrowser->GetAppWindow());
+    }
+  };
+
+  ContentBrowser->GetAppWindow()->AttachOnNewWindow(newspec);
+  ContentBrowser->GetAppWindow()->SetVisibility(true);*/

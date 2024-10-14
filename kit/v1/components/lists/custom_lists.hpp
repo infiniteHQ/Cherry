@@ -45,7 +45,7 @@ namespace Cherry
               m_Nodes(nodes),
               m_ColumnCount(columnCount)
         {
-            m_ID = id;
+            SetID(id);
         }
 
         void Render()
@@ -145,7 +145,7 @@ namespace Cherry
               m_Nodes(nodes),
               m_ColumnCount(columnCount)
         {
-            m_ID = id;
+            SetID(id);
         }
 
         void Render()

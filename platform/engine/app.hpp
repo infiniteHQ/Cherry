@@ -46,7 +46,6 @@ static void AppPopTabStyle()
 namespace Cherry
 {
 	class Window;
-	class Component;
 
 	struct ParentWindow
 	{

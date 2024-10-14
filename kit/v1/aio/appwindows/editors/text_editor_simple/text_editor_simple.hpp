@@ -15,7 +15,7 @@ namespace Cherry
 {
 
     // This window can be a "subappwindow" of a parent if you use the constructor with parent parameter.
-    class TextEditorSimple
+    class TextEditorSimple : public std::enable_shared_from_this<TextEditorSimple>
     {
     public:
         TextEditorSimple(const std::string &name, const std::shared_ptr<AppWindow> &parent);
@@ -23,12 +23,12 @@ namespace Cherry
         TextEditorSimple();
 
         void RefreshRender(const std::shared_ptr<TextEditorSimple> &instance);
-        std::shared_ptr<Cherry::AppWindow> m_AppWindow;
+        static std::shared_ptr<TextEditorSimple> Create(const std::string &name);
+        void SetupRenderCallback();
+        void Render();
+        std::shared_ptr<Cherry::AppWindow> &GetAppWindow();
 
-        std::shared_ptr<Cherry::AppWindow> &GetAppWindow()
-        {
-            return m_AppWindow;
-        }
+
     private:
         // Ui Components
         std::shared_ptr<CustomButtonSimple> cp_ButtonOne;
@@ -42,6 +42,7 @@ namespace Cherry
         std::shared_ptr<ImageTextButtonSimple> cp_SaveButton;
 
         std::shared_ptr<TextEditor> cp_TextEditor;   
+        std::shared_ptr<Cherry::AppWindow> m_AppWindow;
     };
 }
 

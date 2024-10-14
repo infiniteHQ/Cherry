@@ -53,24 +53,13 @@ namespace Cherry
         MultiChildAreas(const std::string &name, const std::shared_ptr<AppWindow> &parent);
         MultiChildAreas(const std::string &name);
 
-        std::shared_ptr<Cherry::AppWindow> &GetAppWindow()
-        {
-            return m_AppWindow;
-        }
-
-        static std::shared_ptr<MultiChildAreas> Create(const std::string &name)
-        {
-            auto instance = std::shared_ptr<MultiChildAreas>(new MultiChildAreas(name));
-            instance->SetupRenderCallback();
-            return instance;
-        }
-        
+        std::shared_ptr<Cherry::AppWindow> &GetAppWindow();
+        static std::shared_ptr<MultiChildAreas> Create(const std::string &name);
         void SetupRenderCallback();
 
         void AddChild(const Child &child);
         void RemoveChild(const std::string &child_name);
         std::function<void()> GetChild(const std::string &child_name);
-        void RefreshRender(const std::shared_ptr<MultiChildAreas> &instance);
         void Render();
 
         void Initialize();

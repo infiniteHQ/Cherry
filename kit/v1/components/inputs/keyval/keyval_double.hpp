@@ -21,7 +21,7 @@ namespace Cherry
               m_Label(label),
               m_Value(value)
         {
-            m_ID = id;
+            SetID(id);
         }
 
         void Render(int column)
@@ -87,7 +87,7 @@ namespace Cherry
               m_Label(label),
               m_Value(value)
         {
-            m_ID = id;
+            SetID(id);
         }
 
         void Render(int column, int step = 1, int fast_step = 100)
@@ -148,7 +148,7 @@ namespace Cherry
               m_Label(label),
               m_Value(value)
         {
-            m_ID = id;
+            SetID(id);
         }
         void Render(int column, int step = 1, int fast_step = 100)
         {
@@ -213,7 +213,7 @@ namespace Cherry
               m_Label(label),
               m_Value(value)
         {
-            m_ID = id;
+            SetID(id);
         }
 
         void Render(int column, int step = 1, int fast_step = 100)
@@ -274,7 +274,7 @@ namespace Cherry
               m_Label(label),
               m_Value(value)
         {
-            m_ID = id;
+            SetID(id);
         }
 
         void Render(int column, int step = 1, int fast_step = 100)
@@ -339,7 +339,7 @@ namespace Cherry
               m_YValue(y),
               m_ZValue(z)
         {
-            m_ID = id;
+            SetID(id);
         }
 
         void Render(int column, int step = 1, int fast_step = 100)
@@ -446,7 +446,7 @@ namespace Cherry
               m_DefaultIndex(default_index),
               m_SelectedIndex(default_index)
         {
-            m_ID = id;
+            SetID(id);
         }
 
         void Render(int column, int step = 1, int fast_step = 100)

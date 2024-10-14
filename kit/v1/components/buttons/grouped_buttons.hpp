@@ -16,7 +16,7 @@ namespace Cherry
             : Component(id),
               m_Label(label)
         {
-            m_ID = id;
+            SetID(id);
         }
 
 

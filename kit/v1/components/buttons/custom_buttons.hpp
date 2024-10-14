@@ -28,7 +28,7 @@ namespace Cherry
               m_HexBorderClicked(hex_border_clicked),
               m_IsPressed(false)
         {
-            m_ID = id;
+            SetID(id);
         }
 
         bool Render(const std::string &duplication_name, const ImVec2 &size = ImVec2(0, 0))

@@ -58,13 +58,10 @@ namespace Cherry
 
         v_StringOne = std::make_shared<std::string>("");
 
-
         cp_SaveButton = Application::Get().CreateComponent<ImageTextButtonSimple>("save_button", Application::Get().GetLocale("loc.content_browser.save_all") + "####content_browser.save_all", Cherry::Application::CookPath("ressources/imgs/icons/misc/icon_save.png"));
         cp_SaveButton->SetScale(0.85f);
         cp_SaveButton->SetLogoSize(15, 15);
         cp_SaveButton->SetInternalMarginX(10.0f);
-        
-
 
         // Components init
         cp_ButtonOne = Application::Get().CreateComponent<CustomButtonSimple>("button_1");
@@ -102,16 +99,12 @@ namespace Cherry
 
         m_AppWindow->SetLeftMenubarCallback([this]()
                                             {
-                                                
-            ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0.4f, 0.4f, 0.4f, 0.7f));
-            
-        if(cp_SaveButton->Render())
-        {
+                                                ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0.4f, 0.4f, 0.4f, 0.7f));
 
-        }
-		ImGui::PopStyleColor();
-
-
+                                                if (cp_SaveButton->Render())
+                                                {
+                                                }
+                                                ImGui::PopStyleColor();
                                             });
 
         m_AppWindow->SetRightMenubarCallback([win]()
@@ -126,26 +119,44 @@ namespace Cherry
                                                { ImGui::Button("7 element(s) selected"); });
     }
 
-    void TextEditorSimple::RefreshRender(const std::shared_ptr<TextEditorSimple> &instance)
+    std::shared_ptr<TextEditorSimple> TextEditorSimple::Create(const std::string &name)
     {
+        auto instance = std::shared_ptr<TextEditorSimple>(new TextEditorSimple(name));
+        instance->SetupRenderCallback();
+        return instance;
+    }
 
-        m_AppWindow->SetRenderCallback([instance]()
+    void TextEditorSimple::SetupRenderCallback()
+    {
+        auto self = shared_from_this();
+        m_AppWindow->SetRenderCallback([self]()
                                        {
-                                           static ImFont* font = Application::GetFontList()["Consola"];
+            if (self) {
+                self->Render();
+            } });
+    }
 
-                                            ImFont* old = ImGui::GetFont();
-                                           if(font)
-                                           {
-                                            ImGui::PushFont(font);
-                                           }
+    std::shared_ptr<Cherry::AppWindow> &TextEditorSimple::GetAppWindow()
+    {
+        return m_AppWindow;
+    }
 
-                                           instance->cp_TextEditor->Render("Title");
+    void TextEditorSimple::Render()
+    {
+        static ImFont *font = Application::GetFontList()["Consola"];
 
-                                           if(font)
-                                           {
-                                            ImGui::PopFont();
-                                           }
-                                       });
+        ImFont *old = ImGui::GetFont();
+        if (font)
+        {
+            ImGui::PushFont(font);
+        }
+
+        cp_TextEditor->Render("Title");
+
+        if (font)
+        {
+            ImGui::PopFont();
+        }
     }
 
 }

@@ -30,6 +30,28 @@ namespace Cherry
         m_AppWindow->SetRightMenubarCallback([win]() {});
     }
 
+    std::shared_ptr<Cherry::AppWindow> &MultiChildTabs::GetAppWindow()
+    {
+        return m_AppWindow;
+    }
+
+    std::shared_ptr<MultiChildTabs> MultiChildTabs::Create(const std::string &name)
+    {
+        auto instance = std::shared_ptr<MultiChildTabs>(new MultiChildTabs(name));
+        instance->SetupRenderCallback();
+        return instance;
+    }
+
+    void MultiChildTabs::SetupRenderCallback()
+    {
+        auto self = shared_from_this();
+        m_AppWindow->SetRenderCallback([self]()
+                                       {
+            if (self) {
+                self->Render();
+            } });
+    }
+
     void MultiChildTabs::AddChild(const std::string &child_name, const std::function<void()> &child)
     {
         m_Childs[child_name] = child;
@@ -54,32 +76,30 @@ namespace Cherry
         return nullptr;
     }
 
-    void MultiChildTabs::RefreshRender(const std::shared_ptr<MultiChildTabs> &instance)
+    void MultiChildTabs::Render()
     {
-        m_AppWindow->SetRenderCallback([instance]()
-                                       {
-                                           static float leftPaneWidth = 300.0f;
-                                           const float minPaneWidth = 50.0f;
-                                           const float splitterWidth = 1.5f;
-                                           static int selected;
+        static float leftPaneWidth = 300.0f;
+        const float minPaneWidth = 50.0f;
+        const float splitterWidth = 1.5f;
+        static int selected;
 
-                                           TitleThree("Uikit Components");
+        TitleThree("Uikit Components");
 
-                                           ImGuiTabBarFlags tab_bar_flags = ImGuiTabBarFlags_None;
-                                           if (ImGui::BeginTabBar("TabBar", tab_bar_flags))
-                                           {
-                                               for (const auto &child : instance->m_Childs)
-                                               {
-                                                   if (ImGui::BeginTabItem(child.first.c_str()))
-                                                   {
-                                                    if(child.second)
-                                                        {
-                                                            child.second();
-                                                        }
-                                                       ImGui::EndTabItem();
-                                                   }
-                                               }
-                                               ImGui::EndTabBar();
-                                           } });
+        ImGuiTabBarFlags tab_bar_flags = ImGuiTabBarFlags_None;
+        if (ImGui::BeginTabBar("TabBar", tab_bar_flags))
+        {
+            for (const auto &child : m_Childs)
+            {
+                if (ImGui::BeginTabItem(child.first.c_str()))
+                {
+                    if (child.second)
+                    {
+                        child.second();
+                    }
+                    ImGui::EndTabItem();
+                }
+            }
+            ImGui::EndTabBar();
+        }
     }
 }

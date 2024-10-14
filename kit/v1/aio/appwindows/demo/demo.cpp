@@ -1189,13 +1189,15 @@ namespace Cherry
                                ImGui::EndTable();
                            } });
 
-        this->AddChild("Grids", [this]() {
-            //
-        });
+        this->AddChild("Grids", [this]()
+                       {
+                           //
+                       });
 
-        this->AddChild("Menus", [this]() {
-            //
-        });
+        this->AddChild("Menus", [this]()
+                       {
+                           //
+                       });
 
         this->AddChild("Trees", [this]()
                        {
@@ -1259,13 +1261,15 @@ namespace Cherry
                            } });
 
         this->AddChild("Lists", [this]() {});
-        this->AddChild("Radios", [this]() {
-            //
-        });
+        this->AddChild("Radios", [this]()
+                       {
+                           //
+                       });
 
-        this->AddChild("Selectables", [this]() {
-            //
-        });
+        this->AddChild("Selectables", [this]()
+                       {
+                           //
+                       });
 
         this->AddChild("Headers", [this]()
                        {
@@ -1455,16 +1459,19 @@ namespace Cherry
                                ImGui::EndTable();
                            } });
 
-        this->AddChild("Nodes", [this]() {
-            //
-        });
+        this->AddChild("Nodes", [this]()
+                       {
+                           //
+                       });
 
-        this->AddChild("Nodes editor", [this]() {
-            //
-        });
-        this->AddChild("Color Pickers", [this]() {
-            //
-        });
+        this->AddChild("Nodes editor", [this]()
+                       {
+                           //
+                       });
+        this->AddChild("Color Pickers", [this]()
+                       {
+                           //
+                       });
 
         std::shared_ptr<Cherry::AppWindow> win = m_AppWindow;
         m_AppWindow->SetLeftMenubarCallback([]() {});
@@ -1495,73 +1502,91 @@ namespace Cherry
         return nullptr;
     }
 
-    void DemoAppWindow::RefreshRender(const std::shared_ptr<DemoAppWindow> &instance)
+    void DemoAppWindow::SetupRenderCallback()
     {
-        m_AppWindow->SetRenderCallback([instance]()
+        auto self = shared_from_this();
+        m_AppWindow->SetRenderCallback([self]()
                                        {
-                                           static float leftPaneWidth = 300.0f;
-                                           const float minPaneWidth = 50.0f;
-                                           const float splitterWidth = 1.5f;
-                                           static int selected;
+            if (self) {
+                self->Render();
+            } });
+    }
 
+    std::shared_ptr<Cherry::AppWindow> &DemoAppWindow::GetAppWindow()
+    {
+        return m_AppWindow;
+    }
 
-                                           ImGui::BeginChild("left_pane", ImVec2(leftPaneWidth, 0), true, ImGuiWindowFlags_NoBackground);
+    std::shared_ptr<DemoAppWindow> DemoAppWindow::Create(const std::string &name)
+    {
+        auto instance = std::shared_ptr<DemoAppWindow>(new DemoAppWindow(name));
+        instance->SetupRenderCallback();
+        return instance;
+    }
 
+    void DemoAppWindow::Render()
+    {
+        static float leftPaneWidth = 300.0f;
+        const float minPaneWidth = 50.0f;
+        const float splitterWidth = 1.5f;
+        static int selected;
 
-            TitleThree("Uikit Components");
+        ImGui::BeginChild("left_pane", ImVec2(leftPaneWidth, 0), true, ImGuiWindowFlags_NoBackground);
 
-        for (const auto &child : instance->m_Childs)                                           
+        TitleThree("Uikit Components");
+
+        for (const auto &child : m_Childs)
         {
-                                               if (child.first == instance->m_SelectedChildName)
-                                               {
-                                                   ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f)); 
-                                               }
-                                               else
-                                               {
-                                                   ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.5f, 0.5f, 0.5f, 1.0f)); 
-                                               }
+            if (child.first == m_SelectedChildName)
+            {
+                ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
+            }
+            else
+            {
+                ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.5f, 0.5f, 0.5f, 1.0f));
+            }
 
-                                               if (TextButtonUnderline(child.first.c_str()))
-                                               {
-                                                   instance->m_SelectedChildName = child.first;
-                                               }
+            if (TextButtonUnderline(child.first.c_str()))
+            {
+                m_SelectedChildName = child.first;
+            }
 
-                                               ImGui::PopStyleColor();
-                                           }
-                                           ImGui::EndChild();
+            ImGui::PopStyleColor();
+        }
+        ImGui::EndChild();
 
-                                           ImGui::SameLine();
+        ImGui::SameLine();
 
-                                           ImGui::PushStyleColor(ImGuiCol_Button, HexToRGBA("#44444466"));
-                                           ImGui::Button("splitter", ImVec2(splitterWidth, -1));
-                                           ImGui::PopStyleVar();
+        ImGui::PushStyleColor(ImGuiCol_Button, HexToRGBA("#44444466"));
+        ImGui::Button("splitter", ImVec2(splitterWidth, -1));
+        ImGui::PopStyleVar();
 
-                                           if (ImGui::IsItemHovered())
-                                           {
-                                               ImGui::SetMouseCursor(ImGuiMouseCursor_ResizeEW);
-                                           }
+        if (ImGui::IsItemHovered())
+        {
+            ImGui::SetMouseCursor(ImGuiMouseCursor_ResizeEW);
+        }
 
-                                           if (ImGui::IsItemActive())
-                                           {
-                                               float delta = ImGui::GetIO().MouseDelta.x;
-                                               leftPaneWidth += delta;
-                                               if (leftPaneWidth < minPaneWidth)
-                                                   leftPaneWidth = minPaneWidth;
-                                           }
+        if (ImGui::IsItemActive())
+        {
+            float delta = ImGui::GetIO().MouseDelta.x;
+            leftPaneWidth += delta;
+            if (leftPaneWidth < minPaneWidth)
+                leftPaneWidth = minPaneWidth;
+        }
 
-                                           ImGui::SameLine();
-                                           ImGui::BeginGroup();
+        ImGui::SameLine();
+        ImGui::BeginGroup();
 
-                                           if(!instance->m_SelectedChildName.empty())
-                                           {
-                                                std::function<void()> pannel_render = instance->GetChild(instance->m_SelectedChildName);
-                                                if(pannel_render)
-                                                {
-                                                    pannel_render();
-                                                }
-                                           }
-                                        
-                                           ImGui::EndGroup(); });
+        if (!m_SelectedChildName.empty())
+        {
+            std::function<void()> pannel_render = GetChild(m_SelectedChildName);
+            if (pannel_render)
+            {
+                pannel_render();
+            }
+        }
+
+        ImGui::EndGroup();
     }
 
 }

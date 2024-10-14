@@ -2348,7 +2348,7 @@ namespace Cherry
     {
         for (auto &component : m_ApplicationComponents)
         {
-            if (component->m_ID == id)
+            if (component->GetID() == id)
             {
                 return component->GetData(topic);
             }
@@ -2505,5 +2505,17 @@ namespace Cherry
     std::string GetLocale(const std::string &topic)
     {
         return Application::Get().GetLocale(topic);
+    }
+
+	std::string GetComponentData(const std::string& id, const std::string topic)
+    {
+        for(auto &component : Application::Get().m_ApplicationComponents)
+        {
+            if(component->GetID() == id)
+            {
+                component->GetProp(topic);
+            }
+        }
+        return 0;
     }
 }

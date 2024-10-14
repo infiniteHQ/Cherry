@@ -922,21 +922,21 @@ struct Example
 
 namespace Cherry
 {
-
     // This window can be a "subappwindow" of a parent if you use the constructor with parent parameter.
-    class NodeEditorSimple
+    class NodeEditorSimple : public std::enable_shared_from_this<NodeEditorSimple>
     {
     public:
         NodeEditorSimple(const std::string &name, const std::shared_ptr<AppWindow> &parent);
         NodeEditorSimple(const std::string &name);
         NodeEditorSimple();        
-        std::shared_ptr<Cherry::AppWindow> &GetAppWindow()
-        {
-            return m_AppWindow;
-        }
+        std::shared_ptr<Cherry::AppWindow> &GetAppWindow();
 
 
-        void RefreshRender(const std::shared_ptr<NodeEditorSimple> &instance);
+        static std::shared_ptr<NodeEditorSimple> Create(const std::string &name);
+        void SetupRenderCallback();
+        void Render();
+        void BuildNodes();
+
     private:
         // Ui Components
         std::shared_ptr<CustomButtonSimple> cp_ButtonOne;
