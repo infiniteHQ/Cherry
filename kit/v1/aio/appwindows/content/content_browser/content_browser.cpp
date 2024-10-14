@@ -502,13 +502,23 @@ namespace Cherry
         }
 		ImGui::PopStyleColor(); });
 
+        m_AppWindow->SetRightBottombarCallback([this]()
+                                               {
+            ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0.4f, 0.4f, 0.4f, 0.7f));
+            
+        if(cp_SettingsButton->Render())
+        {
+            //
+        }
+		ImGui::PopStyleColor(); });
+
         m_BaseDirectory = start_path;
         m_CurrentDirectory = m_BaseDirectory;
 
         ContentBrowserChild sidebar("RenderSideBar", [this]()
                                     { RenderSideBar(); });
         sidebar.Enable();
-        sidebar.m_BackgroundColor = ImVec4(0.0f,0.6f,0.6f,1.0f);
+        sidebar.m_BackgroundColor = ImVec4(0.0f, 0.6f, 0.6f, 1.0f);
         AddChild(sidebar);
 
         ContentBrowserChild filterbar("RenderFiltersBar", [this]()
@@ -525,6 +535,22 @@ namespace Cherry
                                        { RenderDetailsBar(); });
         detailsbar.Disable();
         AddChild(ContentBrowserChild(detailsbar));
+        m_AppWindow->SetRenderCallback([=]()
+                                       {
+            std::cout << "TEST" << std::endl;
+            Render();
+            std::cout << "TEST" << std::endl;
+        });
+
+    }
+
+    void ContentBrowserAppWindow::SetupRenderCallback() {
+        auto self = shared_from_this();
+        m_AppWindow->SetRenderCallback([self]() {
+            if (self) {
+                self->Render();
+            } 
+        });
     }
 
     void ContentBrowserAppWindow::AddChild(const ContentBrowserChild &child)
@@ -1919,7 +1945,7 @@ namespace Cherry
                         }
                         case FileTypes::File_CPP:
                         {
-                            //                            
+                            //
                             break;
                         }
                         case FileTypes::File_INI:
@@ -2038,127 +2064,126 @@ namespace Cherry
     {
     }
 
-    void ContentBrowserAppWindow::RefreshRender(const std::shared_ptr<ContentBrowserAppWindow> &instance)
+    void ContentBrowserAppWindow::Render()
     {
-        m_AppWindow->SetRenderCallback([instance]()
-                                       {
-                                           const float splitterWidth = 2.5f;
-                                           const float margin = 10.0f;
+        std::cout << "EQF" << std::endl;
+        const float splitterWidth = 2.5f;
+        const float margin = 10.0f;
 
-                                           auto &children = instance->m_Childs;
-                                           static float lastTotalWidth = 0.0f;
-                                           
-                                           ImVec2 availableSize = ImGui::GetContentRegionAvail();
-                                           float totalAvailableSize = availableSize.x - (children.size() - 1) * splitterWidth - 40.0f;
+        auto &children = m_Childs;
+        static float lastTotalWidth = 0.0f;
 
-                                           float usedSize = 0.0f;
-                                           int childrenWithoutDefaultSize = 0;
+        ImVec2 availableSize = ImGui::GetContentRegionAvail();
+        float totalAvailableSize = availableSize.x - (children.size() - 1) * splitterWidth - 40.0f;
 
-                                           if (totalAvailableSize != lastTotalWidth && lastTotalWidth > 0.0f)
-                                           {
-                                               float scale = totalAvailableSize / lastTotalWidth;
+        float usedSize = 0.0f;
+        int childrenWithoutDefaultSize = 0;
 
-                                               for (auto &child : children)
-                                               {
-                                                   child.m_Size *= scale;
-                                               }
+        if (totalAvailableSize != lastTotalWidth && lastTotalWidth > 0.0f)
+        {
+            float scale = totalAvailableSize / lastTotalWidth;
 
-                                               lastTotalWidth = totalAvailableSize;
-                                           }
+            for (auto &child : children)
+            {
+                child.m_Size *= scale;
+            }
 
-                                           if (lastTotalWidth == 0.0f)
-                                           {
-                                               float totalSizeAssigned = 0.0f;
+            lastTotalWidth = totalAvailableSize;
+        }
 
-                                               for (auto &child : children)
-                                               {
-                                                if(child.m_Disabled)
-                                                {
-                                                    continue;
-                                                }
-                                                
-                                                   if (!child.m_Initialized || totalAvailableSize != lastTotalWidth)
-                                                   {
-                                                       if (child.m_DefaultSize > 0.0f)
-                                                       {
-                                                           child.m_Size = child.m_DefaultSize;
-                                                       }
-                                                       else
-                                                       {
-                                                           child.m_Size = totalAvailableSize / children.size();
-                                                       }
-                                                       child.m_Initialized = true;
-                                                   }
-                                                   totalSizeAssigned += child.m_Size;
-                                               }
+        if (lastTotalWidth == 0.0f)
+        {
+            float totalSizeAssigned = 0.0f;
 
-                                               if (totalSizeAssigned < totalAvailableSize)
-                                               {
-                                                   float remainingSize = totalAvailableSize - totalSizeAssigned;
-                                                   for (auto &child : children)
-                                                   {
-                                                       child.m_Size += remainingSize / children.size();
-                                                   }
-                                               }
+            for (auto &child : children)
+            {
+                if (child.m_Disabled)
+                {
+                    continue;
+                }
 
-                                               lastTotalWidth = totalAvailableSize;
-                                           }
+                if (!child.m_Initialized || totalAvailableSize != lastTotalWidth)
+                {
+                    if (child.m_DefaultSize > 0.0f)
+                    {
+                        child.m_Size = child.m_DefaultSize;
+                    }
+                    else
+                    {
+                        child.m_Size = totalAvailableSize / children.size();
+                    }
+                    child.m_Initialized = true;
+                }
+                totalSizeAssigned += child.m_Size;
+            }
 
-                                           for (size_t i = 0; i < children.size(); ++i)
-                                           {
-                                               auto &child = children[i];
-                                               
-                                               ImGui::PushStyleColor(ImGuiCol_ChildBg, child.m_BackgroundColor);
-                                               ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
+            if (totalSizeAssigned < totalAvailableSize)
+            {
+                float remainingSize = totalAvailableSize - totalSizeAssigned;
+                for (auto &child : children)
+                {
+                    child.m_Size += remainingSize / children.size();
+                }
+            }
 
-                                               std::string childname = child.m_Name + "##cbchildnh" + instance->m_AppWindow->m_Name;
-                                               ImGui::BeginChild(childname.c_str(), ImVec2(child.m_Size, availableSize.y), true);
+            lastTotalWidth = totalAvailableSize;
+        }
 
-                                               child.m_Child();
+        for (size_t i = 0; i < children.size(); ++i)
+        {
+            auto &child = children[i];
 
-                                               ImGui::EndChild();
-                                               ImGui::PopStyleColor(2);
+            ImGui::PushStyleColor(ImGuiCol_ChildBg, child.m_BackgroundColor);
+            ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
 
-                                               if (i + 1 < children.size())
-                                               {
-                                                   auto &next_child = children[i + 1];
-                                                   ImGui::SameLine();
+            std::string childname = child.m_Name + "##cbchildnh" + m_AppWindow->m_Name;
+            ImGui::BeginChild(childname.c_str(), ImVec2(child.m_Size, availableSize.y), true);
 
-                                                   std::string lab = "##cbsplitter" + child.m_Name + instance->m_AppWindow->m_Name;
+            child.m_Child();
 
-                                                   ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.5f, 0.5f, 0.5f, 1.0f));
-                                                   ImGui::Button(lab.c_str(), ImVec2(splitterWidth, -1));
-                                                   ImGui::PopStyleColor();
+            ImGui::EndChild();
+            ImGui::PopStyleColor(2);
 
-                                                   if (ImGui::IsItemHovered())
-                                                   {
-                                                       ImGui::SetMouseCursor(ImGuiMouseCursor_ResizeEW);
-                                                   }
+            if (i + 1 < children.size())
+            {
+                auto &next_child = children[i + 1];
+                ImGui::SameLine();
 
-                                                   if (ImGui::IsItemActive())
-                                                   {
-                                                       float delta = ImGui::GetIO().MouseDelta.x;
+                std::string lab = "##cbsplitter" + child.m_Name + m_AppWindow->m_Name;
 
-                                                       if (child.m_Size + delta < child.m_MinSize + margin)
-                                                       {
-                                                           delta = child.m_MinSize + margin - child.m_Size;
-                                                       }
-                                                       if (next_child.m_Size - delta < next_child.m_MinSize + margin)
-                                                       {
-                                                           delta = next_child.m_Size - next_child.m_MinSize - margin;
-                                                       }
+                ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.5f, 0.5f, 0.5f, 1.0f));
+                ImGui::Button(lab.c_str(), ImVec2(splitterWidth, -1));
+                ImGui::PopStyleColor();
 
-                                                       if (child.m_Size + delta >= child.m_MinSize + margin && next_child.m_Size - delta >= next_child.m_MinSize + margin)
-                                                       {
-                                                           child.m_Size += delta;
-                                                           next_child.m_Size -= delta;
-                                                           lastTotalWidth = totalAvailableSize;
-                                                       }
-                                                   }
+                if (ImGui::IsItemHovered())
+                {
+                    ImGui::SetMouseCursor(ImGuiMouseCursor_ResizeEW);
+                }
 
-                                                   ImGui::SameLine();
-                                               }
-                                           } });
+                if (ImGui::IsItemActive())
+                {
+                    float delta = ImGui::GetIO().MouseDelta.x;
+
+                    if (child.m_Size + delta < child.m_MinSize + margin)
+                    {
+                        delta = child.m_MinSize + margin - child.m_Size;
+                    }
+                    if (next_child.m_Size - delta < next_child.m_MinSize + margin)
+                    {
+                        delta = next_child.m_Size - next_child.m_MinSize - margin;
+                    }
+
+                    if (child.m_Size + delta >= child.m_MinSize + margin && next_child.m_Size - delta >= next_child.m_MinSize + margin)
+                    {
+                        child.m_Size += delta;
+                        next_child.m_Size -= delta;
+                        lastTotalWidth = totalAvailableSize;
+                    }
+                }
+
+                ImGui::SameLine();
+            }
+        }
     }
 
 }

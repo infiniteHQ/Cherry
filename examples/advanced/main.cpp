@@ -199,18 +199,17 @@ Cherry::Application *Cherry::CreateApplication(int argc, char **argv)
   appTabs->RefreshRender(appTabs);
 
   */
-  std::shared_ptr<ContentBrowserAppWindow> ContentBrowser = std::make_shared<Cherry::ContentBrowserAppWindow>("?loc:loc.window_names.content_browser", "/home/diego");
-  ContentBrowser->RefreshRender(ContentBrowser);
-  Cherry::AddAppWindow(ContentBrowser->GetAppWindow());
+  /*std::shared_ptr<ContentBrowserAppWindow> ContentBrowser = std::make_shared<Cherry::ContentBrowserAppWindow>("?loc:loc.window_names.content_browser", "/home/diego");
+  Cherry::AddAppWindow(ContentBrowser->GetAppWindow());*/
 
-  Cherry::ApplicationSpecification newspec;
+  /*Cherry::ApplicationSpecification newspec;
   newspec.Name = "Select folder";
   newspec.MinHeight = 500;
   newspec.MinWidth = 500;
   newspec.Height = 500;
   newspec.Width = 950;
   newspec.CustomTitlebar = true;
-  newspec.DisableWindowManagerTitleBar = false;
+  newspec.DisableWindowManagerTitleBar = true;
   newspec.WindowOnlyClosable = true;
   newspec.RenderMode = Cherry::WindowRenderingMethod::SimpleWindow;
   newspec.UniqueAppWindowName = ContentBrowser->GetAppWindow()->m_Name;
@@ -226,35 +225,28 @@ Cherry::Application *Cherry::CreateApplication(int argc, char **argv)
   };
 
   ContentBrowser->GetAppWindow()->AttachOnNewWindow(newspec);
-  ContentBrowser->GetAppWindow()->SetVisibility(true);
+  ContentBrowser->GetAppWindow()->SetVisibility(true);*/
+  auto ContentBrowser = ContentBrowserAppWindow::Create("?loc:loc.window_names.content_browser", "/home/diego");
+  Cherry::AddAppWindow(ContentBrowser->GetAppWindow());
 
   // Multi childs
-  std::shared_ptr<MultiChildAreas> VerticalAreas = std::make_shared<Cherry::MultiChildAreas>("indow_names.content_browser");
+  auto VerticalAreas = MultiChildAreas::Create("indow_names.content_browser");
   VerticalAreas->m_IsHorizontal = false;
-  VerticalAreas->AddChild(Child("One", []()
-                                { ImGui::Text("One"); }, 5.0f));
-  VerticalAreas->AddChild(Child("Two", []()
-                                { ImGui::Text("Two"); }, 20.0f));
-  VerticalAreas->AddChild(Child("Three", []()
-                                { ImGui::Text("Three"); }));
-  VerticalAreas->AddChild(Child("Four", []()
-                                { ImGui::Text("Four"); }));
-  VerticalAreas->RefreshRender(VerticalAreas);
+  VerticalAreas->AddChild(Child("One", [](){ ImGui::Text("One"); }, 5.0f));
+  VerticalAreas->AddChild(Child("Two", [](){ ImGui::Text("Two"); }, 20.0f));
+  VerticalAreas->AddChild(Child("Three", []() { ImGui::Text("Three"); }));
+  VerticalAreas->AddChild(Child("Four", [](){ ImGui::Text("Four"); }));
   Cherry::AddAppWindow(VerticalAreas->GetAppWindow());
 
-  std::shared_ptr<MultiChildAreas> HorizontalAreas = std::make_shared<Cherry::MultiChildAreas>("indow_names.content_browser2");
+ 
+  auto HorizontalAreas = MultiChildAreas::Create("indow_names.content_browser2");
   HorizontalAreas->m_IsHorizontal = true;
-  HorizontalAreas->AddChild(Child("One2", []()
-                                  { ImGui::Text("One"); }, 50.0f));
-  HorizontalAreas->AddChild(Child("Two2", []()
-                                  { ImGui::Text("Two"); }, 30.0f));
-  HorizontalAreas->AddChild(Child("Three2", []()
-                                  { ImGui::Text("Three"); }, 20.0f));
-  HorizontalAreas->AddChild(Child("Four2", []()
-                                  { ImGui::Text("Four"); }));
-  HorizontalAreas->RefreshRender(HorizontalAreas);
+  HorizontalAreas->AddChild(Child("One2", [](){ ImGui::Text("One"); }, 50.0f));
+  HorizontalAreas->AddChild(Child("Two2", [](){ ImGui::Text("Two"); }, 30.0f));
+  HorizontalAreas->AddChild(Child("Three2", [](){ ImGui::Text("Three"); }, 20.0f));
+  HorizontalAreas->AddChild(Child("Four2", [](){ ImGui::Text("Four"); }));
   Cherry::AddAppWindow(HorizontalAreas->GetAppWindow());
-
+                                  
   return app;
 }
 

@@ -23,32 +23,31 @@
 
 namespace Cherry
 {
-struct Child
-{
-    std::function<void()> m_Child;
-    std::string m_Name;
-    float m_DefaultSize = 0.0f;
-    float m_MinSize;
-    float m_MaxSize;
-    float m_Size = 200.0f;
-    float m_Ratio = 0.0f;
-    bool m_Resizable = true;
-    bool m_ResizeDisabled = false;
-    bool m_Initialized = false;
-    bool m_InitializedSec = false;
-    bool m_InitializedTh = false;
+    struct Child
+    {
+        std::function<void()> m_Child;
+        std::string m_Name;
+        float m_DefaultSize = 0.0f;
+        float m_MinSize;
+        float m_MaxSize;
+        float m_Size = 0.0f;
+        float m_Ratio = 0.0f;
+        bool m_Resizable = true;
+        bool m_ResizeDisabled = false;
+        bool m_Initialized = false;
+        bool m_InitializedSec = false;
+        bool m_InitializedTh = false;
 
-    Child(const std::string &name, const std::function<void()> &child, const float &default_size = 0.0f, const bool &resize_disabled = false, const float &min_size = 0.0f, const float &max_size = 0.0f)
-        : m_Name(name),
-          m_Child(child),
-          m_ResizeDisabled(resize_disabled),
-          m_DefaultSize(default_size),
-          m_MinSize(min_size),
-          m_MaxSize(max_size) {}
-};
+        Child(const std::string &name, const std::function<void()> &child, const float &default_size = 0.0f, const bool &resize_disabled = false, const float &min_size = 0.0f, const float &max_size = 0.0f)
+            : m_Name(name),
+              m_Child(child),
+              m_ResizeDisabled(resize_disabled),
+              m_DefaultSize(default_size),
+              m_MinSize(min_size),
+              m_MaxSize(max_size) {}
+    };
 
-
-    class MultiChildAreas
+    class MultiChildAreas : public std::enable_shared_from_this<MultiChildAreas>
     {
     public:
         MultiChildAreas(const std::string &name, const std::shared_ptr<AppWindow> &parent);
@@ -59,10 +58,22 @@ struct Child
             return m_AppWindow;
         }
 
+        static std::shared_ptr<MultiChildAreas> Create(const std::string &name)
+        {
+            auto instance = std::shared_ptr<MultiChildAreas>(new MultiChildAreas(name));
+            instance->SetupRenderCallback();
+            return instance;
+        }
+        
+        void SetupRenderCallback();
+
         void AddChild(const Child &child);
         void RemoveChild(const std::string &child_name);
         std::function<void()> GetChild(const std::string &child_name);
         void RefreshRender(const std::shared_ptr<MultiChildAreas> &instance);
+        void Render();
+
+        void Initialize();
 
         std::vector<Child> m_Childs;
         bool m_IsHorizontal = false;

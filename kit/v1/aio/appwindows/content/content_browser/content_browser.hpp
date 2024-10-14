@@ -104,8 +104,8 @@ namespace Cherry
         std::string m_Name;
         bool m_Disabled = true;
         float m_DefaultSize = 0.0f;
-        float m_MinSize;
-        float m_MaxSize;
+        float m_MinSize = 0.0f;
+        float m_MaxSize = 0.0f;
         float m_Size = 200.0f;
         float m_Ratio = 0.0f;
         bool m_Resizable = true;
@@ -135,7 +135,7 @@ namespace Cherry
     };
 
     // This window can be a "subappwindow" of a parent if you use the constructor with parent parameter.
-    class ContentBrowserAppWindow
+    class ContentBrowserAppWindow : public std::enable_shared_from_this<ContentBrowserAppWindow>
     {
     public:
         ContentBrowserAppWindow(const std::string &name, const std::string &start_path);
@@ -146,7 +146,16 @@ namespace Cherry
             return m_AppWindow;
         }
 
-        void RefreshRender(const std::shared_ptr<ContentBrowserAppWindow> &instance);
+        static std::shared_ptr<ContentBrowserAppWindow> Create(const std::string &name, const std::string &start_path)
+        {
+            auto instance = std::shared_ptr<ContentBrowserAppWindow>(new ContentBrowserAppWindow(name, start_path));
+            instance->SetupRenderCallback();
+            return instance;
+        }
+        void SetupRenderCallback();
+
+
+        void Render();
         bool MyButton(const std::string &name, const std::string &path, const std::string &description, const std::string &size, bool selected, const std::string &logo, ImU32 bgColor, ImU32 borderColor, ImU32 lineColor, float maxTextWidth, float borderRadius);
         void AddChild(const ContentBrowserChild &child);
         void ChangeDirectory(const std::filesystem::path &newDirectory);
@@ -199,7 +208,7 @@ namespace Cherry
         void AddReconizedItem(const std::shared_ptr<ContenBrowserItem> &item) {};
         bool IsPathFavorite(const std::string &path) { return false; };
         void SetColoredFolder(const std::string &path, const std::string &hex_color) {};
-
+            
         std::vector<ContentBrowserChild> m_Childs;
 
     private:
@@ -216,6 +225,7 @@ namespace Cherry
         bool m_ShowFilterPannel = false;
         bool m_ShowThumbnailVisualizer = false;
         bool m_ShowSelectionQuantifier = false;
+        bool m_IsInitialized;
 
         ContentShowMode m_ShowMode = ContentShowMode::Thumbmails;
 
