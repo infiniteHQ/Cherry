@@ -1484,9 +1484,25 @@ namespace Cherry
 
                     if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE && event.window.windowID == windowID)
                     {
-                        m_Running = false;
-                        eventHandled = true;
-                        break;
+                        if (window->m_Specifications.UsingCloseCallback)
+                        {
+                            if (window->m_Specifications.CloseCallback)
+                            {
+                                window->m_Specifications.CloseCallback();
+                            }
+                            m_ClosePending = false;
+                        }
+                        else
+                        {
+                            if (Application::Get().m_CloseCallback)
+                            {
+                                Application::Get().m_CloseCallback();
+                            }
+                            else
+                            {
+                                Application::Get().Close();
+                            }
+                        }
                     }
                 }
 
@@ -2459,7 +2475,7 @@ namespace Cherry
 
     void Application::DeleteAppWindow(const std::shared_ptr<AppWindow> &win)
     {
-        if(win)
+        if (win)
         {
             win->SetParentWindow("__blank");
             m_AppWindows.erase(std::remove(m_AppWindows.begin(), m_AppWindows.end(), win), m_AppWindows.end());

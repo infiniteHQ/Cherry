@@ -210,7 +210,7 @@ Cherry::Application *Cherry::CreateApplication(int argc, char **argv)
   newspec.Height = 500;
   newspec.Width = 950;
   newspec.CustomTitlebar = true;
-  newspec.DisableWindowManagerTitleBar = true;
+  newspec.DisableWindowManagerTitleBar = false;
   newspec.WindowOnlyClosable = true;
   newspec.RenderMode = Cherry::WindowRenderingMethod::SimpleWindow;
   newspec.UniqueAppWindowName = ContentBrowser->GetAppWindow()->m_Name;
