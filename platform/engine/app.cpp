@@ -60,6 +60,7 @@ static VkPipelineCache g_PipelineCache = VK_NULL_HANDLE;
 static std::unordered_map<std::string, ImFont *> s_Fonts;
 static VkDescriptorPool g_DescriptorPool = VK_NULL_HANDLE;
 
+static bool g_LogicalDeviceInitialized = false;
 static int g_MinImageCount = 0;
 static int c_WindowsCount = 0;
 static std::string LastWindowPressed = "";
@@ -234,6 +235,7 @@ namespace Cherry
         }
 
         // Create Logical Device (with 1 queue)
+        if (!g_LogicalDeviceInitialized)
         {
             int device_extension_count = 1;
             const char *device_extensions[] = {"VK_KHR_swapchain"};
@@ -252,8 +254,9 @@ namespace Cherry
             err = vkCreateDevice(g_PhysicalDevice, &create_info, g_Allocator, &g_Device);
             check_vk_result(err);
             vkGetDeviceQueue(g_Device, g_QueueFamily, 0, &g_Queue);
+            g_LogicalDeviceInitialized = true;
         }
-        
+
         // Create Descriptor Pool
         {
             VkDescriptorPoolSize pool_sizes[] =
@@ -565,7 +568,7 @@ namespace Cherry
         g_ApplicationRunning = false;
         Log::Shutdown();
     }
-    
+
     void Application::FrameRender(ImGui_ImplVulkanH_Window *wd, Cherry::Window *win, ImDrawData *draw_data)
     {
         VkResult err;
@@ -1312,7 +1315,7 @@ namespace Cherry
                     {
                         continue;
                     }
-                    
+
                     ImGui::SetCurrentContext(window->m_ImGuiContext);
                     ImGui_ImplSDL2_ProcessEvent(&event);
 
@@ -1428,7 +1431,7 @@ namespace Cherry
             AppWindowRedocked = false;
         }
     }
-    
+
     void Application::Close()
     {
         m_Running = false;
@@ -1520,7 +1523,7 @@ namespace Cherry
         return hexContent;
     }
 
-    VkCommandBuffer Application::GetCommandBuffer(bool begin, const std::shared_ptr<Window>& win)
+    VkCommandBuffer Application::GetCommandBuffer(bool begin, const std::shared_ptr<Window> &win)
     {
         ImGui_ImplVulkanH_Window *wd = &win->m_WinData;
 
@@ -1655,27 +1658,30 @@ namespace Cherry
         bool context_loaded = false;
         for (auto &appwindow : m_AppWindows)
         {
-            for (auto &subwin : m_AppWindows)
+            if (appwindow)
             {
-                if (context_loaded)
+                for (auto &subwin : m_AppWindows)
                 {
-                    continue;
-                }
-
-                if (subwin->m_HaveParentAppWindow)
-                {
-                    if (subwin->m_ParentAppWindow->m_IdName == appwindow->m_IdName)
+                    if (context_loaded)
                     {
-                        appwindow->CtxRender(&m_RedockRequests, window->GetName());
-                        context_loaded = true;
+                        continue;
+                    }
+
+                    if (subwin->m_HaveParentAppWindow)
+                    {
+                        if (subwin->m_ParentAppWindow->m_IdName == appwindow->m_IdName)
+                        {
+                            appwindow->CtxRender(&m_RedockRequests, window->GetName());
+                            context_loaded = true;
+                        }
                     }
                 }
-            }
 
-            if (appwindow->CheckWinParent(window->GetName()) && !appwindow->m_HaveParentAppWindow)
-            {
-                appwindow->CtxRender(&m_RedockRequests, window->GetName());
-                context_loaded = true;
+                if (appwindow->CheckWinParent(window->GetName()) && !appwindow->m_HaveParentAppWindow)
+                {
+                    appwindow->CtxRender(&m_RedockRequests, window->GetName());
+                    context_loaded = true;
+                }
             }
         }
     }
@@ -1714,27 +1720,30 @@ namespace Cherry
         bool context_loaded = false;
         for (auto &appwindow : m_AppWindows)
         {
-            for (auto &subwin : m_AppWindows)
+            if (appwindow)
             {
-                if (context_loaded)
+                for (auto &subwin : m_AppWindows)
                 {
-                    continue;
-                }
-
-                if (subwin->m_HaveParentAppWindow)
-                {
-                    if (subwin->m_ParentAppWindow->m_IdName == appwindow->m_IdName)
+                    if (context_loaded)
                     {
-                        appwindow->CtxRender(&m_RedockRequests, window->GetName());
-                        context_loaded = true;
+                        continue;
+                    }
+
+                    if (subwin->m_HaveParentAppWindow)
+                    {
+                        if (subwin->m_ParentAppWindow->m_IdName == appwindow->m_IdName)
+                        {
+                            appwindow->CtxRender(&m_RedockRequests, window->GetName());
+                            context_loaded = true;
+                        }
                     }
                 }
-            }
 
-            if (appwindow->CheckWinParent(window->GetName()) && !appwindow->m_HaveParentAppWindow)
-            {
-                appwindow->CtxRender(&m_RedockRequests, window->GetName());
-                context_loaded = true;
+                if (appwindow->CheckWinParent(window->GetName()) && !appwindow->m_HaveParentAppWindow)
+                {
+                    appwindow->CtxRender(&m_RedockRequests, window->GetName());
+                    context_loaded = true;
+                }
             }
         }
     }
@@ -1757,10 +1766,13 @@ namespace Cherry
         bool finded = false;
         for (auto &appwin : Application::Get().m_AppWindows)
         {
-            if (appwin->m_Name == Application::GetCurrentRenderedWindow()->m_Specifications.UniqueAppWindowName)
+            if (appwin)
             {
-                appwin->CtxRender(nullptr, window->GetName());
-                finded = true;
+                if (appwin->m_Name == Application::GetCurrentRenderedWindow()->m_Specifications.UniqueAppWindowName)
+                {
+                    appwin->CtxRender(nullptr, window->GetName());
+                    finded = true;
+                }
             }
         }
 
@@ -2218,7 +2230,6 @@ namespace Cherry
         return nullptr;
     }
 
-
     void Application::DeleteAppWindow(const std::shared_ptr<AppWindow> &win)
     {
         if (win)
@@ -2253,11 +2264,11 @@ namespace Cherry
         return Application::Get().GetLocale(topic);
     }
 
-	std::string GetComponentData(const std::string& id, const std::string topic)
+    std::string GetComponentData(const std::string &id, const std::string topic)
     {
-        for(auto &component : Application::Get().m_ApplicationComponents)
+        for (auto &component : Application::Get().m_ApplicationComponents)
         {
-            if(component->GetID() == id)
+            if (component->GetID() == id)
             {
                 component->GetProp(topic);
             }

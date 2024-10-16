@@ -155,7 +155,7 @@ Cherry::Application *Cherry::CreateApplication(int argc, char **argv)
   auto TextEditor = TextEditorSimple::Create("?loc:loc.window_names.text_editor");
   Cherry::AddAppWindow(TextEditor->GetAppWindow());
 
-  auto WindowWithDockspace = DockingAppWindow::Create("fqdow_names.texqsd");
+  /*auto WindowWithDockspace = DockingAppWindow::Create("fqdow_names.texqsd");
   // Application::Get().PutWindow(WindowWithDockspace->GetAppWindow());
   auto ContentOutliner = ContentOutlinerSimple::Create("?loc:loc.window_names.outliner");
   Cherry::AddAppWindow(ContentOutliner->GetAppWindow());
@@ -174,7 +174,7 @@ Cherry::Application *Cherry::CreateApplication(int argc, char **argv)
   TabsWindow->AddChild("One", [](){ImGui::Text("One");});
   TabsWindow->AddChild("Two", [](){ImGui::Text("Two");});
   TabsWindow->AddChild("Three", [](){ImGui::Text("Three");});
-  Cherry::AddAppWindow(TabsWindow->GetAppWindow());
+  Cherry::AddAppWindow(TabsWindow->GetAppWindow());*/
 
 
   auto ListWindow = MultiChildList::Create("List Childs");
@@ -183,7 +183,7 @@ Cherry::Application *Cherry::CreateApplication(int argc, char **argv)
   ListWindow->AddChild("Three", [](){ImGui::Text("Three");});
   ListWindow->AddChild("Four", [](){ImGui::Text("Four");});
   Cherry::AddAppWindow(ListWindow->GetAppWindow());
-  /*Cherry::ApplicationSpecification newspec = spec;
+  Cherry::ApplicationSpecification newspec = spec;
   newspec.Width = 850;
   newspec.Height = 600;
   newspec.WindowOnlyClosable = true;
@@ -210,7 +210,7 @@ Cherry::Application *Cherry::CreateApplication(int argc, char **argv)
   };
 
   TextEditor->GetAppWindow()->AttachOnNewWindow(newspec);
-  TextEditor->GetAppWindow()->SetVisibility(true);*/
+  TextEditor->GetAppWindow()->SetVisibility(true);
 
   /*
 
