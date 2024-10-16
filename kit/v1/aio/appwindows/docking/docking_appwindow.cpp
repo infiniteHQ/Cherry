@@ -11,21 +11,19 @@ namespace Cherry
 
         });
 
-        std::shared_ptr<Cherry::AppWindow> win = m_AppWindow;
-
         m_AppWindow->SetLeftMenubarCallback([]()
                                             { ImGui::Text("ll"); });
 
-        m_AppWindow->SetRightMenubarCallback([win]() {});
+        std::shared_ptr<Cherry::AppWindow> win = m_AppWindow;
 
-        std::shared_ptr<EmptyAppWindow> windodo = std::make_shared<Cherry::EmptyAppWindow>("sec1", win);
-        Application::Get().PutWindow(windodo->m_AppWindow);
-        std::shared_ptr<EmptyAppWindow> windodof = std::make_shared<Cherry::EmptyAppWindow>("sec2", win);
-        Application::Get().PutWindow(windodof->m_AppWindow);
-        std::shared_ptr<EmptyAppWindow> windodofg = std::make_shared<Cherry::EmptyAppWindow>("sec3");
-        Application::Get().PutWindow(windodofg->m_AppWindow);
-        std::shared_ptr<EmptyAppWindow> windodofh = std::make_shared<Cherry::EmptyAppWindow>("sec4");
-        Application::Get().PutWindow(windodofh->m_AppWindow);
+        auto windodo_one = EmptyAppWindow::Create("sec1", win);
+        Cherry::AddAppWindow(windodo_one->m_AppWindow);
+        auto window_two = EmptyAppWindow::Create("sec2", win);
+        Cherry::AddAppWindow(window_two->m_AppWindow);
+        auto window_three = EmptyAppWindow::Create("sec3");
+        Cherry::AddAppWindow(window_three->m_AppWindow);
+        auto window_four = EmptyAppWindow::Create("sec4");
+        Cherry::AddAppWindow(window_four->m_AppWindow);
     }
 
     std::shared_ptr<DockingAppWindow> DockingAppWindow::Create(const std::string &name)

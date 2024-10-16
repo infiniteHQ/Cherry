@@ -14,7 +14,7 @@ namespace Cherry
 
         });
 
-        cp_ButtonOne = Application::Get().CreateComponent<CustomButtonSimple>("button_1");
+        cp_ButtonOne = CustomButtonSimple::Create("button_1","Button");
 
         std::shared_ptr<Cherry::AppWindow> win = m_AppWindow;
 
@@ -120,7 +120,7 @@ namespace Cherry
         ed::SetCurrentEditor(m_NodeEngine->m_Editor);
 
         // Components init
-        cp_ButtonOne = Application::Get().CreateComponent<CustomButtonSimple>("button_1");
+        cp_ButtonOne = CustomButtonSimple::Create("button_1","Button");
         cp_SearchBar = Application::Get().CreateComponent<SimpleStringInput>("qs", v_StringOne, "Simple string value");
 
         std::vector<SimpleTree::SimpleTreeNode> node2 = {

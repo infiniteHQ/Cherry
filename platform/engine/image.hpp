@@ -23,12 +23,9 @@ namespace Cherry
 	public:
 		Image(std::string_view path, const std::string &winname);
 		Image(uint32_t width, uint32_t height, ImageFormat format, const std::string &winname, const void *data = nullptr);
-		Image(uint32_t width, uint32_t height, ImageFormat format, const void *data = nullptr);
-		Image(uint32_t width, uint32_t height, ImageFormat format, ImGui_ImplVulkanH_Window *wd, const std::string &winname, const void *data = nullptr);
 		~Image();
 
 		// void SetData(const void* data);
-		void SetData(const void *data, ImGui_ImplVulkanH_Window *wd);
 		void SetData(const void *data, const std::string &winname);
 		void SetData(const void *ImGuiDataType);
 
@@ -38,6 +35,7 @@ namespace Cherry
 		{
 			return ImGui_ImplVulkan_AddTexture(m_Sampler, m_ImageView, layout);
 		}
+		
 		void Resize(uint32_t width, uint32_t height);
 
 		uint32_t GetWidth() const { return m_Width; }
@@ -51,7 +49,7 @@ namespace Cherry
 
 	private:
 		uint32_t m_Width = 0, m_Height = 0;
-
+		VkSemaphore imageReadySemaphore;
 		VkImage m_Image = nullptr;
 		VkImageView m_ImageView = nullptr;
 		VkDeviceMemory m_Memory = nullptr;

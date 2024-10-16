@@ -27,10 +27,11 @@ Cherry::Application *Cherry::CreateApplication(int argc, char **argv)
   spec.DisableTitle = true;
   spec.WindowSaves = true;
   spec.IconPath = Cherry::GetPath("ressources/imgs/icon.png");
+  spec.FavIconPath = Cherry::GetPath("ressources/imgs/icon.png");
 
   Cherry::Application *app = new Cherry::Application(spec);
   app->SetWindowSaveDataFile("savedatda.json", true);
-  app->SetFavIconPath(Cherry::GetPath("ressources/imgs/favicon.png"));
+  // app->SetFavIconPath(Cherry::GetPath("ressources/imgs/favicon.png"));
   app->AddFont("Consola", Cherry::GetPath("ressources/fonts/consola.ttf"), 17.0f);
 
   app->AddLocale("fr", Cherry::GetPath("ressources/locales/fr.json"));
@@ -150,22 +151,52 @@ Cherry::Application *Cherry::CreateApplication(int argc, char **argv)
                             ImGui::PopStyleVar();  
                             ImGui::PopStyleColor(2); });
 
+  auto PropsEditor = PropsEditorSimple::Create("?loc:loc.window_names.props_editor");
+  Cherry::AddAppWindow(PropsEditor->GetAppWindow());
 
-  auto ContentOutliner = ContentOutlinerSimple::Create("?loc:loc.window_names.outliner"); 
-  Cherry::AddAppWindow(ContentOutliner->GetAppWindow());
 
   auto TextEditor = TextEditorSimple::Create("?loc:loc.window_names.text_editor");
   Cherry::AddAppWindow(TextEditor->GetAppWindow());
+  Cherry::ApplicationSpecification newspec = spec;
+  newspec.Width = 850;
+  newspec.Height = 600;
+  newspec.WindowOnlyClosable = true;
+  newspec.RenderMode = Cherry::WindowRenderingMethod::SimpleWindow;
+  newspec.UsingCloseCallback = true;
+  newspec.WindowSaves = false;
+  newspec.UniqueAppWindowName = TextEditor->GetAppWindow()->m_Name;
+  newspec.IconPath = Cherry::GetPath("ressources/imgs/icons/misc/icon_add.png");
+  newspec.FavIconPath = Cherry::GetPath("ressources/imgs/icons/misc/icon_add.png");
+  newspec.MenubarCallback = [TextEditor]()
+  {
+    if (ImGui::BeginMenu("Edit"))
+    {
+      ImGui::Text("Main stuff");
+      ImGui::EndMenu();
+    }
+  };
+  newspec.CloseCallback = [TextEditor]()
+  {
+    if (TextEditor->GetAppWindow())
+    {
+      Cherry::DeleteAppWindow(TextEditor->GetAppWindow());
+    }
+  };
 
+  TextEditor->GetAppWindow()->AttachOnNewWindow(newspec);
+  TextEditor->GetAppWindow()->SetVisibility(true);
+
+  /*
+
+  auto WindowWithDockspace = DockingAppWindow::Create("fqdow_names.texqsd");
+  // Application::Get().PutWindow(WindowWithDockspace->GetAppWindow());
+  auto ContentOutliner = ContentOutlinerSimple::Create("?loc:loc.window_names.outliner");
+  Cherry::AddAppWindow(ContentOutliner->GetAppWindow());
   auto PropsEditor = PropsEditorSimple::Create("?loc:loc.window_names.props_editor");
   Cherry::AddAppWindow(PropsEditor->GetAppWindow());
 
   auto NodalEditor = NodeEditorSimple::Create("?loc:loc.window_names.node_editor");
   Cherry::AddAppWindow(NodalEditor->GetAppWindow());
-
-  auto WindowWithDockspace = DockingAppWindow::Create("fqdow_names.texqsd");
-  //Application::Get().PutWindow(WindowWithDockspace->GetAppWindow());
-
   auto ContentBrowser = ContentBrowserAppWindow::Create("?loc:loc.window_names.content_browser", "/home/diego");
   Cherry::AddAppWindow(ContentBrowser->GetAppWindow());
 
@@ -195,15 +226,15 @@ Cherry::Application *Cherry::CreateApplication(int argc, char **argv)
   VerticalAreas->AddChild(Child("Four", [](){ ImGui::Text("Four"); }));
   Cherry::AddAppWindow(VerticalAreas->GetAppWindow());
 
- 
+
   auto HorizontalAreas = MultiChildAreas::Create("indow_names.content_browser2");
   HorizontalAreas->m_IsHorizontal = true;
   HorizontalAreas->AddChild(Child("One2", [](){ ImGui::Text("One"); }, 50.0f));
   HorizontalAreas->AddChild(Child("Two2", [](){ ImGui::Text("Two"); }, 30.0f));
   HorizontalAreas->AddChild(Child("Three2", [](){ ImGui::Text("Three"); }, 20.0f));
   HorizontalAreas->AddChild(Child("Four2", [](){ ImGui::Text("Four"); }));
-  Cherry::AddAppWindow(HorizontalAreas->GetAppWindow());
-                                  
+  Cherry::AddAppWindow(HorizontalAreas->GetAppWindow());*/
+
   return app;
 }
 
@@ -223,28 +254,3 @@ int main(int argc, char *argv[])
 
   return 0;
 }
-
- /*Cherry::ApplicationSpecification newspec;
-  newspec.Name = "Select folder";
-  newspec.MinHeight = 500;
-  newspec.MinWidth = 500;
-  newspec.Height = 500;
-  newspec.Width = 950;
-  newspec.CustomTitlebar = true;
-  newspec.DisableWindowManagerTitleBar = true;
-  newspec.WindowOnlyClosable = true;
-  newspec.RenderMode = Cherry::WindowRenderingMethod::SimpleWindow;
-  newspec.UniqueAppWindowName = ContentBrowser->GetAppWindow()->m_Name;
-  newspec.DisableTitle = true;
-  newspec.WindowSaves = false;
-  newspec.IconPath = Cherry::GetPath("ressources/imgs/icon_update.png");
-  newspec.UsingCloseCallback = true;
-  newspec.CloseCallback = [ContentBrowser](){
-    if(ContentBrowser->GetAppWindow())
-    {
-      Cherry::DeleteAppWindow(ContentBrowser->GetAppWindow());
-    }
-  };
-
-  ContentBrowser->GetAppWindow()->AttachOnNewWindow(newspec);
-  ContentBrowser->GetAppWindow()->SetVisibility(true);*/

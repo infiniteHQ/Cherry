@@ -8,31 +8,47 @@ namespace Cherry
     class CustomButtonSimple : public Component
     {
     public:
-        CustomButtonSimple(
-            const std::string &id,
-            const std::string &label = "Button",
-            const std::string &hex_bg_idle = "#242424FF",
-            const std::string &hex_border_idle = "#454545B2",
-            const std::string &hex_bg_hovered = "#343434FF",
-            const std::string &hex_border_hovered = "#454545B2",
-            const std::string &hex_bg_clicked = "#444444FF",
-            const std::string &hex_border_clicked = "#454545B2")
-            : Component(id),
-              m_Label(label),
-              m_LastClickTime("never"),
-              m_HexBgIdle(hex_bg_idle),
-              m_HexBorderIdle(hex_border_idle),
-              m_HexBgHovered(hex_bg_hovered),
-              m_HexBorderHovered(hex_border_hovered),
-              m_HexBgClicked(hex_bg_clicked),
-              m_HexBorderClicked(hex_border_clicked),
-              m_IsPressed(false)
+        CustomButtonSimple(const std::string &id, const std::string &label)
+            : Component(id)
         {
             SetID(id);
+
+            // String Props
+            SetProp("label", label);
+            SetProp("last_time_clicked", "never");
+            SetProp("bg", "#242424FF");
+            SetProp("bg_hovered", "#343434FF");
+            SetProp("bg_clicked", "#444444FF");
+            SetProp("border", "#454545B2");
+            SetProp("border_hovered", "#454545B2");
+            SetProp("border_clicked", "#454545B2");
+            SetProp("is_pressed", "false");
         }
 
-        bool Render(const std::string &duplication_name, const ImVec2 &size = ImVec2(0, 0))
+        static std::shared_ptr<CustomButtonSimple> Create(const std::string &id, const std::string &label)
         {
+            auto instance = std::shared_ptr<CustomButtonSimple>(new CustomButtonSimple(id, label));
+            return instance;
+        }
+
+        void Refresh()
+        {
+            if (NeedRefreshing())
+            {
+                m_IsPressed = GetProp("is_pressed") == "true" ? true : false;
+                m_HexBgIdle = GetProp("bg");
+                m_HexBgHovered = GetProp("bg_hovered");
+                m_HexBgClicked = GetProp("bg_clicked");
+                m_HexBorderIdle = GetProp("border");
+                m_HexBorderHovered = GetProp("border_hovered");
+                m_HexBorderClicked = GetProp("border_clicked");
+                m_Label = GetProp("label");
+            }
+        }
+
+        bool Render(const std::string &duplication_name = "__blank", const ImVec2 &size = ImVec2(0, 0))
+        {
+            Refresh();
             ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(6, 6));
 
             ImGui::PushStyleColor(ImGuiCol_Border, HexToRGBA(m_HexBorderIdle));
@@ -44,21 +60,22 @@ namespace Cherry
 
             if (ImGui::Button(Label.c_str(), size))
             {
-                m_IsPressed = true;
+                SetProp("is_pressed", "true");
                 UpdateLastClickTime();
             }
             else
             {
-                m_IsPressed = false;
+                SetProp("is_pressed", "false");
             }
 
             ImGui::PopStyleColor(4);
             ImGui::PopStyleVar();
 
+            Refresh();
             return m_IsPressed;
         }
 
-        void SetBackgroundColor(){}
+        void SetBackgroundColor() {}
 
         std::string GetData(const std::string &data_type) override
         {
@@ -77,10 +94,10 @@ namespace Cherry
         std::string m_Label;
         std::string m_LastClickTime;
         std::string m_HexBgIdle;
-        std::string m_HexBorderIdle;
         std::string m_HexBgHovered;
-        std::string m_HexBorderHovered;
         std::string m_HexBgClicked;
+        std::string m_HexBorderIdle;
+        std::string m_HexBorderHovered;
         std::string m_HexBorderClicked;
         bool m_IsPressed;
 

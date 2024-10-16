@@ -90,7 +90,8 @@ namespace Cherry
         uint32_t MinWidth = 100;
         uint32_t MinHeight = 100;
 
-        std::filesystem::path IconPath;
+        std::string IconPath;
+        std::string FavIconPath;
 
         bool WindowResizeable = true;
         bool WindowOnlyClosable = false;
@@ -105,6 +106,7 @@ namespace Cherry
 
         bool UsingCloseCallback = false;
         std::function<void()> CloseCallback;
+        std::function<void()> MenubarCallback;
 
         // Uses custom UIKit titlebar instead
         // of Windows default

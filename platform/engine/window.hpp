@@ -60,7 +60,7 @@ namespace Cherry
 
         VkCommandBuffer GetCommandBuffer(bool begin);
         SDL_Window *GetWindowHandle() const { return m_WindowHandler; }
-        static void ShowDockingPreview(ImGuiID dockspaceID, Window *win, const std::shared_ptr<Cherry::WindowDragDropState>& dragState, const std::shared_ptr<AppWindow> appwin = nullptr);
+        static void ShowDockingPreview(ImGuiID dockspaceID, Window *win, const std::shared_ptr<Cherry::WindowDragDropState> &dragState, const std::shared_ptr<AppWindow> appwin = nullptr);
 
         // void OnWindowResize(GLFWwindow *windowHandle, int width, int height);
         // void OnWindowMove(int xpos, int ypos);
@@ -103,28 +103,15 @@ namespace Cherry
 
         void RestoreTTFFont();
 
-        std::unordered_map<std::string, ImFont*> m_FontMap;
+        std::unordered_map<std::string, ImFont *> m_FontMap;
         bool m_NeedToRebuildFontMap = false;
         bool m_FontLoaded = false;
-        
+
         std::shared_ptr<AppWindow> m_UniqueAppWindow;
-        void PutUniqueAppwindow(const std::shared_ptr<AppWindow>& appwindow)
+        void PutUniqueAppwindow(const std::shared_ptr<AppWindow> &appwindow)
         {
             m_UniqueAppWindow = appwindow;
         }
-
-        bool hasImage(const std::string &image)
-        {
-            for (const auto &existingImage : this->m_ImageList)
-            {
-                if (existingImage.first == image)
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-
         void ApplyPendingResize()
         {
             if (m_ResizePending)
@@ -138,30 +125,29 @@ namespace Cherry
             }
         }
 
+        void SetFavIcon(const std::string &path)
+        {
+            int width, height, channels;
+            unsigned char *imageData = stbi_load(path.c_str(), &width, &height, &channels, 4); // 4 channels for RGBA
+            if (!imageData)
+            {
+                return;
+            }
 
-void SetFavIcon(const std::string &path)
-{
-    int width, height, channels;
-    unsigned char *imageData = stbi_load(path.c_str(), &width, &height, &channels, 4); // 4 channels for RGBA
-    if (!imageData)
-    {
-        return;
-    }
+            SDL_Surface *iconSurface = SDL_CreateRGBSurfaceWithFormatFrom(
+                imageData, width, height, 32, width * 4, SDL_PIXELFORMAT_RGBA32);
 
-    SDL_Surface *iconSurface = SDL_CreateRGBSurfaceWithFormatFrom(
-        imageData, width, height, 32, width * 4, SDL_PIXELFORMAT_RGBA32);
-    
-    if (!iconSurface)
-    {
-        stbi_image_free(imageData);
-        return;
-    }
+            if (!iconSurface)
+            {
+                stbi_image_free(imageData);
+                return;
+            }
 
-    SDL_SetWindowIcon(m_WindowHandler, iconSurface);
+            SDL_SetWindowIcon(m_WindowHandler, iconSurface);
 
-    SDL_FreeSurface(iconSurface);
-    stbi_image_free(imageData);
-}
+            SDL_FreeSurface(iconSurface);
+            stbi_image_free(imageData);
+        }
 
         void Render();
 
@@ -184,7 +170,6 @@ void SetFavIcon(const std::string &path)
 
         bool isMoving = false;
         ImVec2 clickOffset = {0.0f, 0.0f};
-        // If true, listen mouse pos and click and return a dropp emplacement response.
         bool m_IsDraggingAppWindow = false;
         bool m_ClosePending = false;
 
@@ -203,11 +188,11 @@ void SetFavIcon(const std::string &path)
         uint32_t s_CurrentFrameIndex = 0;
         std::vector<VkCommandBuffer> m_CommandBuffers;
         ImGuiWindow *m_ImGuiWindow;
+
+        std::unordered_map<std::string, ImFont *> s_Fonts;
         std::unordered_map<std::string, ImTextureID> m_TextureCache;
-
-
-        // List of all images (absolute path / image ref)
-        std::vector<std::pair<std::string, std::shared_ptr<Cherry::Image>>> m_ImageList;
+        std::unordered_map<std::string, std::shared_ptr<Cherry::Image>> m_ImageMap;
+        std::unordered_map<std::string, std::shared_ptr<Cherry::Image>> m_HexImageMap;
 
         std::shared_ptr<Cherry::Image> add(const std::string &path);
         std::shared_ptr<Cherry::Image> add(const uint8_t data[], const std::string &name);
@@ -215,8 +200,9 @@ void SetFavIcon(const std::string &path)
         std::shared_ptr<Cherry::Image> get(const uint8_t data[], const std::string &name);
         ImTextureID get_texture(const std::string &path);
         ImVec2 get_texture_size(const std::string &path);
+        VkDescriptorSet get_texture_descriptor(const std::string &path);
         void free();
-
+        
         VkSurfaceKHR m_Surface;
         std::shared_ptr<WindowClickEvent> m_PendingClick = nullptr;
         std::shared_ptr<WindowMoveEvent> m_PendingMove = nullptr;

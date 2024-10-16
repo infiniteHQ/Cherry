@@ -15,8 +15,7 @@ namespace Cherry
         ImGui::Text(name.c_str());
         ImGui::Button("qsd"); });
 
-        cp_ButtonOne = Application::Get().CreateComponent<CustomButtonSimple>("button_1");
-
+        cp_ButtonOne = CustomButtonSimple::Create("button_one", "Test");
         std::shared_ptr<Cherry::AppWindow> win = m_AppWindow;
 
         m_AppWindow->SetLeftMenubarCallback([]()
@@ -48,7 +47,7 @@ namespace Cherry
     ContentOutlinerSimple::ContentOutlinerSimple(const std::string &name)
     {
         m_AppWindow = std::make_shared<Cherry::AppWindow>(name, name);
-        m_AppWindow->SetIcon("/usr/local/include/Vortex/imgs/vortex.png");
+        m_AppWindow->SetIcon(Cherry::GetPath("ressources/imgs/icon.png"));
         m_AppWindow->SetDefaultBehavior(DefaultAppWindowBehaviors::DefaultDocking, "right");
 
         m_AppWindow->SetSaveMode(true);
@@ -60,7 +59,7 @@ namespace Cherry
         v_StringOne = std::make_shared<std::string>("");
 
         // Components init
-        cp_ButtonOne = Application::Get().CreateComponent<CustomButtonSimple>("button_1");
+        cp_ButtonOne = CustomButtonSimple::Create("button_one", "Test");
         cp_SearchBar = Application::Get().CreateComponent<SimpleStringInput>("qs", v_StringOne, "Simple string value");
 
         std::vector<SimpleTree::SimpleTreeNode> node2 = {
@@ -97,6 +96,8 @@ namespace Cherry
                                             {
                                                 ImGui::Button("F");
                                                 cp_SearchBar->Render("Normal");
+                                                static auto SuperButton = CustomButtonSimple::Create("button_simple", "Test");
+                                                SuperButton->Render();
                                                 // Collapse Filter
                                                 // Collapse search bar
                                             });

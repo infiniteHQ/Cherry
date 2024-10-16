@@ -30,6 +30,7 @@ namespace Cherry
     private:
         // Ui Components
         std::shared_ptr<CustomButtonSimple> cp_ButtonOne;
+        
         std::shared_ptr<SimpleTree> cp_Tree;
         std::shared_ptr<SimpleStringInput> cp_SearchBar;   
 

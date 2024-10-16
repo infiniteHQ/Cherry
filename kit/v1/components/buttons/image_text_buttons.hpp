@@ -33,6 +33,12 @@ namespace Cherry
             SetID(id);
         }
 
+        static std::shared_ptr<ImageTextButtonSimple> Create(const std::string &id, const std::string &label)
+        {
+            auto instance = std::shared_ptr<ImageTextButtonSimple>(new ImageTextButtonSimple(id, label));
+            return instance;
+        }
+
         bool Render(const std::string &duplication_name = "first", const ImVec2 &size = ImVec2(0, 0))
         {
             if (m_Scale != 0.0f)
@@ -207,6 +213,12 @@ namespace Cherry
               m_IsPressed(false)
         {
             SetID(id);
+        }
+        
+        static std::shared_ptr<ReverseImageTextButtonSimple> Create(const std::string &id, const std::string &label)
+        {
+            auto instance = std::shared_ptr<ReverseImageTextButtonSimple>(new ReverseImageTextButtonSimple(id, label));
+            return instance;
         }
 
         bool Render(const std::string &duplication_name, const ImVec2 &size = ImVec2(0, 0))

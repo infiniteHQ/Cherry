@@ -23,9 +23,11 @@ namespace Cherry
         void ClearProp(const std::string &key);
         void SetID(const std::string &id);
         std::string GetID();
+        bool NeedRefreshing();
 
     private:
         std::string m_ID;
+        bool m_IsPropsChanged = false;
         std::unordered_map<std::string, std::string> m_Properties;
     };
 }

@@ -15,7 +15,7 @@ namespace Cherry
         ImGui::Text(name.c_str());
         ImGui::Button("qsd"); });
 
-        cp_ButtonOne = Application::Get().CreateComponent<CustomButtonSimple>("button_1");
+        cp_ButtonOne = CustomButtonSimple::Create("button_1", "Button");
 
         std::shared_ptr<Cherry::AppWindow> win = m_AppWindow;
 
@@ -60,7 +60,7 @@ namespace Cherry
         v_StringOne = std::make_shared<std::string>("");
 
         // Components init
-        cp_ButtonOne = Application::Get().CreateComponent<CustomButtonSimple>("button_1");
+        cp_ButtonOne = CustomButtonSimple::Create("button_1","Button");
         cp_SearchBar = Application::Get().CreateComponent<SimpleStringInput>("qs", v_StringOne, "Simple string value");
 
         std::vector<SimpleTree::SimpleTreeNode> node2 = {

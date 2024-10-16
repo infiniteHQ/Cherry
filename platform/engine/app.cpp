@@ -16,6 +16,7 @@
 #include <stdlib.h> // abort
 #include <vulkan/vulkan.h>
 #include <iostream>
+#include <mutex>
 
 // Emedded font
 #include "imgui/Roboto-Regular.embed"
@@ -56,30 +57,15 @@ static uint32_t g_QueueFamily = (uint32_t)-1;
 static VkQueue g_Queue = VK_NULL_HANDLE;
 static VkDebugReportCallbackEXT g_DebugReport = VK_NULL_HANDLE;
 static VkPipelineCache g_PipelineCache = VK_NULL_HANDLE;
-static VkDescriptorPool g_DescriptorPool = VK_NULL_HANDLE;
 static std::unordered_map<std::string, ImFont *> s_Fonts;
+static VkDescriptorPool g_DescriptorPool = VK_NULL_HANDLE;
 
-static std::shared_ptr<Cherry::Image> m_AppHeaderIcon;
-static std::shared_ptr<Cherry::Image> m_IconClose;
-static std::shared_ptr<Cherry::Image> m_IconMinimize;
-static std::shared_ptr<Cherry::Image> m_IconMaximize;
-static std::shared_ptr<Cherry::Image> m_IconRestore;
-
-static int g_MinImageCount = 2;
+static int g_MinImageCount = 0;
 static int c_WindowsCount = 0;
-
-// Temp :
 static std::string LastWindowPressed = "";
-static bool drag_rendered = false;
-static int finded = 0;
-static std::string dd = "";
-static std::string LastReqMode = "";
-
-static std::string ff;
 static int RedockCount = 0;
-// dfound_validd_drop_zone_global
-
-static std::shared_ptr<Cherry::RedockRequest> latest_req;
+static bool DragRendered = false;
+static std::shared_ptr<Cherry::RedockRequest> LatestRequest;
 
 // Per-frame-in-flight
 
@@ -125,7 +111,7 @@ namespace Cherry
 #include "embed/window.embed"
 
     Application::Application(const ApplicationSpecification &specification)
-        : m_Specification(specification)
+        : m_DefaultSpecification(specification)
     {
         s_Instance = this;
 
@@ -267,7 +253,7 @@ namespace Cherry
             check_vk_result(err);
             vkGetDeviceQueue(g_Device, g_QueueFamily, 0, &g_Queue);
         }
-
+        
         // Create Descriptor Pool
         {
             VkDescriptorPoolSize pool_sizes[] =
@@ -506,7 +492,7 @@ namespace Cherry
                     state->FromSave,
                     state->LastDraggingAppWindow,
                     c_CurrentDragDropState->CreateNewWindow);
-                latest_req = req;
+                LatestRequest = req;
                 s_Instance->m_RedockRequests.push_back(req);
                 RedockCount++;
             }
@@ -533,7 +519,7 @@ namespace Cherry
     {
         // Bootstrapp with a first window
         // TODO: Default win name.
-        this->m_Windows.push_back(std::make_shared<Window>("0", app->m_Specification.Width, app->m_Specification.Height, app->m_Specification));
+        this->m_Windows.push_back(std::make_shared<Window>("0", app->m_DefaultSpecification.Width, app->m_DefaultSpecification.Height, app->m_DefaultSpecification));
     }
 
     void Application::Shutdown()
@@ -579,152 +565,7 @@ namespace Cherry
         g_ApplicationRunning = false;
         Log::Shutdown();
     }
-
-    void Application::UI_DrawTitlebar(float &outTitlebarHeight, Window *window)
-    {
-        const float titlebarHeight = 58.0f;
-        float titlebarVerticalOffset = 0.0f;
-        const ImVec2 windowPadding = ImGui::GetCurrentWindow()->WindowPadding;
-
-        ImGui::SetCursorPos(ImVec2(windowPadding.x, windowPadding.y + titlebarVerticalOffset));
-        const ImVec2 titlebarMin = ImGui::GetCursorScreenPos();
-        const ImVec2 titlebarMax = {ImGui::GetCursorScreenPos().x + ImGui::GetWindowWidth() - windowPadding.y * 2.0f,
-                                    ImGui::GetCursorScreenPos().y + titlebarHeight};
-        auto *bgDrawList = ImGui::GetBackgroundDrawList();
-        auto *fgDrawList = ImGui::GetForegroundDrawList();
-        bgDrawList->AddRectFilled(titlebarMin, titlebarMax, UI::Colors::Theme::titlebar);
-        // DEBUG TITLEBAR BOUNDS
-        // fgDrawList->AddRect(titlebarMin, titlebarMax, UI::Colors::Theme::invalidPrefab);
-
-        // Logo
-        {
-            const int logoWidth = 48;  // m_LogoTex->GetWidth();
-            const int logoHeight = 48; // m_LogoTex->GetHeight();
-            const ImVec2 logoOffset(16.0f + windowPadding.x, 5.0f + windowPadding.y + titlebarVerticalOffset);
-            const ImVec2 logoRectStart = {ImGui::GetItemRectMin().x + logoOffset.x, ImGui::GetItemRectMin().y + logoOffset.y};
-            const ImVec2 logoRectMax = {logoRectStart.x + logoWidth, logoRectStart.y + logoHeight};
-
-            fgDrawList->AddImage(m_AppHeaderIcon->GetDescriptorSet(), logoRectStart, logoRectMax);
-        }
-
-        ImGui::BeginHorizontal("Titlebar", {ImGui::GetWindowWidth() - windowPadding.y * 2.0f, ImGui::GetFrameHeightWithSpacing()});
-
-        static float moveOffsetX;
-        static float moveOffsetY;
-        const float w = ImGui::GetContentRegionAvail().x;
-        const float buttonsAreaWidth = 94;
-        // Title bar drag area
-        // On Windows we hook into the GLFW win32 window internals
-        ImGui::SetCursorPos(ImVec2(windowPadding.x, windowPadding.y + titlebarVerticalOffset)); // Reset cursor pos
-        // DEBUG DRAG BOUNDS
-        // fgDrawList->AddRect(ImGui::GetCursorScreenPos(), ImVec2(ImGui::GetCursorScreenPos().x + w - buttonsAreaWidth, ImGui::GetCursorScreenPos().y + titlebarHeight), UI::Colors::Theme::invalidPrefab);
-        ImGui::InvisibleButton("##titleBarDragZone", ImVec2(w - buttonsAreaWidth, titlebarHeight));
-
-        m_TitleBarHovered = ImGui::IsItemHovered();
-
-        // Inside your Application class
-
-        // Initialize a static variable to keep track of click state
-        static bool isFirstClick = true;
-        static double lastClickTime = -1;
-
-        // Inside your ImGui rendering code
-
-        // Initialize a static variable to keep track of dragging state
-        static bool isDraggingWindow = false;
-        static ImVec2 windowDragStartPos;
-
-        int windowPosX, windowPosY;
-        static ImVec2 windowPos{static_cast<float>(windowPosX), static_cast<float>(windowPosY)};
-
-        // Title bar drag area
-        ImGui::SetCursorPos(ImVec2(windowPadding.x, windowPadding.y + titlebarVerticalOffset)); // Reset cursor pos
-        ImGui::InvisibleButton("##titleBarDragZone", ImVec2(w - buttonsAreaWidth, titlebarHeight));
-
-        m_TitleBarHovered = ImGui::IsItemHovered();
-
-        // Draw Menubar
-        if (m_MenubarCallback)
-        {
-            ImGui::SuspendLayout();
-            {
-                ImGui::SetItemAllowOverlap();
-                const float logoHorizontalOffset = 16.0f * 2.0f + 48.0f + windowPadding.x;
-                ImGui::SetCursorPos(ImVec2(logoHorizontalOffset, 6.0f + titlebarVerticalOffset));
-                UI_DrawMenubar();
-
-                if (ImGui::IsItemHovered())
-                    m_TitleBarHovered = false;
-            }
-            ImGui::ResumeLayout();
-        }
-
-        {
-            // Centered Window title
-            ImVec2 currentCursorPos = ImGui::GetCursorPos();
-            ImVec2 textSize = ImGui::CalcTextSize(window->m_Specifications.Name.c_str());
-            ImGui::SetCursorPos(ImVec2(ImGui::GetWindowWidth() * 0.5f - textSize.x * 0.5f, 2.0f + windowPadding.y + 6.0f));
-            ImGui::Text("%s", window->m_Specifications.Name.c_str()); // Draw title
-            ImGui::SetCursorPos(currentCursorPos);
-        }
-
-        // Window buttons
-        const ImU32 buttonColN = UI::Colors::ColorWithMultipliedValue(UI::Colors::Theme::text, 0.9f);
-        const ImU32 buttonColH = UI::Colors::ColorWithMultipliedValue(UI::Colors::Theme::text, 1.2f);
-        const ImU32 buttonColP = UI::Colors::Theme::textDarker;
-        const float buttonWidth = 11.0f;
-        const float buttonHeight = 11.0f;
-
-        if (window->m_Specifications.CustomTitlebar)
-        {
-
-            // Close Button
-            ImGui::Spring(-1.0f, 15.0f);
-            UI::ShiftCursorY(8.0f);
-            {
-                const int iconWidth = m_IconClose->GetWidth();
-                const int iconHeight = m_IconClose->GetHeight();
-                if (ImGui::InvisibleButton("Close", ImVec2(buttonWidth, buttonHeight)))
-                    Application::Get().Close();
-
-                UI::DrawButtonImage(m_IconClose, UI::Colors::Theme::text, UI::Colors::ColorWithMultipliedValue(UI::Colors::Theme::text, 1.4f), buttonColP);
-            }
-
-            ImGui::Spring(-1.0f, 18.0f);
-        }
-        ImGui::EndHorizontal();
-
-        outTitlebarHeight = titlebarHeight;
-    }
-
-    void Application::UI_DrawMenubar()
-    {
-        if (!m_MenubarCallback)
-            return;
-
-        if (m_Specification.CustomTitlebar)
-        {
-            const ImRect menuBarRect = {ImGui::GetCursorPos(), {ImGui::GetContentRegionAvail().x + ImGui::GetCursorScreenPos().x, ImGui::GetFrameHeightWithSpacing()}};
-
-            ImGui::BeginGroup();
-            if (UI::BeginMenubar(menuBarRect))
-            {
-                m_MenubarCallback();
-            }
-
-            UI::EndMenubar();
-            ImGui::EndGroup();
-        }
-        else
-        {
-            if (ImGui::BeginMenuBar())
-            {
-                m_MenubarCallback();
-                ImGui::EndMenuBar();
-            }
-        }
-    }
-
+    
     void Application::FrameRender(ImGui_ImplVulkanH_Window *wd, Cherry::Window *win, ImDrawData *draw_data)
     {
         VkResult err;
@@ -825,11 +666,12 @@ namespace Cherry
         std::string name = std::to_string(c_WindowsCount);
         ImGuiContext *res_ctx = ImGui::GetCurrentContext();
 
-        std::shared_ptr<Window> new_win = std::make_shared<Window>(name, app->m_Specification.Width, app->m_Specification.Height, spec);
+        std::shared_ptr<Window> new_win = std::make_shared<Window>(name, spec.Width, spec.Height, spec);
 
         this->m_Windows.push_back(new_win);
 
         ImGui::SetCurrentContext(res_ctx);
+
         return name;
     }
 
@@ -838,7 +680,7 @@ namespace Cherry
         std::string name = winname;
         ImGuiContext *res_ctx = ImGui::GetCurrentContext();
 
-        std::shared_ptr<Window> new_win = std::make_shared<Window>(name, app->m_Specification.Width, app->m_Specification.Height, spec);
+        std::shared_ptr<Window> new_win = std::make_shared<Window>(name, spec.Width, spec.Height, spec);
 
         this->m_Windows.push_back(new_win);
 
@@ -850,7 +692,7 @@ namespace Cherry
         std::string name = std::to_string(c_WindowsCount);
         ImGuiContext *res_ctx = ImGui::GetCurrentContext();
 
-        std::shared_ptr<Window> new_win = std::make_shared<Window>(name, app->m_Specification.Width, app->m_Specification.Height, app->m_Specification);
+        std::shared_ptr<Window> new_win = std::make_shared<Window>(name, app->m_DefaultSpecification.Width, app->m_DefaultSpecification.Height, app->m_DefaultSpecification);
 
         this->m_Windows.push_back(new_win);
 
@@ -862,7 +704,7 @@ namespace Cherry
     {
         ImGuiContext *res_ctx = ImGui::GetCurrentContext();
 
-        std::shared_ptr<Window> new_win = std::make_shared<Window>(name, app->m_Specification.Width, app->m_Specification.Height, app->m_Specification);
+        std::shared_ptr<Window> new_win = std::make_shared<Window>(name, app->m_DefaultSpecification.Width, app->m_DefaultSpecification.Height, app->m_DefaultSpecification);
 
         this->m_Windows.push_back(new_win);
 
@@ -1028,7 +870,7 @@ namespace Cherry
 
     void Application::ApplyDockingFromSave()
     {
-        if (s_Instance->m_Specification.RenderMode == WindowRenderingMethod::DockingWindows || s_Instance->m_Specification.RenderMode == WindowRenderingMethod::TabWidows)
+        if (s_Instance->m_DefaultSpecification.RenderMode == WindowRenderingMethod::DockingWindows || s_Instance->m_DefaultSpecification.RenderMode == WindowRenderingMethod::TabWidows)
         {
             for (auto &appwin : s_Instance->m_AppWindows)
             {
@@ -1167,7 +1009,7 @@ namespace Cherry
                     }
                     if (!win_finded)
                     {
-                        appwin->AttachOnNewWindow(s_Instance->m_Specification);
+                        appwin->AttachOnNewWindow(s_Instance->m_DefaultSpecification);
                     }
 
                     c_CurrentDragDropState = dragdropstate;
@@ -1184,7 +1026,7 @@ namespace Cherry
 
     void Application::ApplyDockingFromDefault()
     {
-        if (s_Instance->m_Specification.RenderMode == WindowRenderingMethod::DockingWindows || s_Instance->m_Specification.RenderMode == WindowRenderingMethod::TabWidows)
+        if (s_Instance->m_DefaultSpecification.RenderMode == WindowRenderingMethod::DockingWindows || s_Instance->m_DefaultSpecification.RenderMode == WindowRenderingMethod::TabWidows)
         {
             for (auto &appwin : s_Instance->m_AppWindows)
             {
@@ -1369,7 +1211,7 @@ namespace Cherry
 
     void Application::CleanupEmptyWindows()
     {
-        if (s_Instance->m_Specification.RenderMode == WindowRenderingMethod::DockingWindows)
+        if (s_Instance->m_DefaultSpecification.RenderMode == WindowRenderingMethod::DockingWindows)
         {
             std::vector<std::shared_ptr<Window>> to_remove;
 
@@ -1408,10 +1250,9 @@ namespace Cherry
         this->BoostrappWindow();
         while (m_Running)
         {
-            std::cout << "Number of appwins : " << s_Instance->m_AppWindows.size() << std::endl;
             c_ValidDropZoneFounded = false;
 
-            if (s_Instance->m_Specification.WindowSaves)
+            if (s_Instance->m_DefaultSpecification.WindowSaves)
             {
                 if (!m_IsDataInitialized)
                 {
@@ -1440,7 +1281,7 @@ namespace Cherry
 
             for (auto &window : m_Windows)
             {
-                window->SetFavIcon(s_Instance->m_FavIconPath);
+                window->SetFavIcon(window->m_Specifications.FavIconPath);
 
                 c_CurrentRenderedWindow = window;
                 if (window->drag_dropstate->DockIsDragging)
@@ -1471,7 +1312,7 @@ namespace Cherry
                     {
                         continue;
                     }
-
+                    
                     ImGui::SetCurrentContext(window->m_ImGuiContext);
                     ImGui_ImplSDL2_ProcessEvent(&event);
 
@@ -1513,7 +1354,7 @@ namespace Cherry
             }
 
             bool AppWindowRedocked = false;
-            if (s_Instance->m_Specification.RenderMode == WindowRenderingMethod::DockingWindows || Application::GetCurrentRenderedWindow()->m_Specifications.RenderMode == WindowRenderingMethod::TabWidows)
+            if (s_Instance->m_DefaultSpecification.RenderMode == WindowRenderingMethod::DockingWindows || Application::GetCurrentRenderedWindow()->m_Specifications.RenderMode == WindowRenderingMethod::TabWidows)
             {
                 for (auto &req : m_RedockRequests)
                 {
@@ -1548,7 +1389,7 @@ namespace Cherry
                 }
             }
 
-            if (s_Instance->m_Specification.RenderMode == WindowRenderingMethod::DockingWindows || Application::GetCurrentRenderedWindow()->m_Specifications.RenderMode == WindowRenderingMethod::TabWidows)
+            if (s_Instance->m_DefaultSpecification.RenderMode == WindowRenderingMethod::DockingWindows || Application::GetCurrentRenderedWindow()->m_Specifications.RenderMode == WindowRenderingMethod::TabWidows)
             {
                 for (auto &appwin : s_Instance->m_AppWindows)
                 {
@@ -1564,7 +1405,7 @@ namespace Cherry
                 }
             }
 
-            drag_rendered = false;
+            DragRendered = false;
 
             PresentAllWindows();
 
@@ -1587,50 +1428,10 @@ namespace Cherry
             AppWindowRedocked = false;
         }
     }
-
-    void Application::LoadImages()
-    {
-        {
-            uint32_t w, h;
-            void *data = Image::Decode(g_WindowMinimizeIcon, sizeof(g_WindowMinimizeIcon), w, h);
-            m_IconMinimize = std::make_shared<Cherry::Image>(w, h, ImageFormat::RGBA, data);
-            free(data);
-        }
-        {
-            uint32_t w, h;
-            void *data = Image::Decode(g_WindowMaximizeIcon, sizeof(g_WindowMaximizeIcon), w, h);
-            m_IconMaximize = std::make_shared<Cherry::Image>(w, h, ImageFormat::RGBA, data);
-            free(data);
-        }
-        {
-            uint32_t w, h;
-            void *data = Image::Decode(g_WindowRestoreIcon, sizeof(g_WindowRestoreIcon), w, h);
-            m_IconRestore = std::make_shared<Cherry::Image>(w, h, ImageFormat::RGBA, data);
-            free(data);
-        }
-        {
-            uint32_t w, h;
-            void *data = Image::Decode(g_WindowCloseIcon, sizeof(g_WindowCloseIcon), w, h);
-            m_IconClose = std::make_shared<Cherry::Image>(w, h, ImageFormat::RGBA, data);
-            free(data);
-        }
-    }
-
+    
     void Application::Close()
     {
         m_Running = false;
-    }
-
-    std::shared_ptr<Image> Application::GetApplicationIcon(const std::string &window) const
-    {
-        for (auto win : app->m_Windows)
-        {
-            if (win->GetName() == window)
-            {
-                return m_AppHeaderIcon;
-            }
-        }
-        return nullptr;
     }
 
     bool Application::IsMaximized(const std::shared_ptr<Window> &win) const
@@ -1657,40 +1458,6 @@ namespace Cherry
     VkDevice Application::GetDevice()
     {
         return g_Device;
-    }
-
-    VkCommandBuffer Application::GetCommandBuffer(const std::string &win_name, bool begin)
-    {
-        ImGui_ImplVulkanH_Window *wd = nullptr;
-
-        for (auto window : app->m_Windows)
-        {
-            if (window->GetName() == win_name)
-            {
-                wd = &window->m_WinData;
-
-                VkCommandPool command_pool = wd->Frames[wd->FrameIndex].CommandPool;
-
-                VkCommandBufferAllocateInfo cmdBufAllocateInfo = {};
-                cmdBufAllocateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-                cmdBufAllocateInfo.commandPool = command_pool;
-                cmdBufAllocateInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-                cmdBufAllocateInfo.commandBufferCount = 1;
-
-                VkCommandBuffer &command_buffer = window->s_AllocatedCommandBuffers[wd->FrameIndex].emplace_back();
-                auto err = vkAllocateCommandBuffers(g_Device, &cmdBufAllocateInfo, &command_buffer);
-
-                VkCommandBufferBeginInfo begin_info = {};
-                begin_info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-                begin_info.flags |= VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
-                err = vkBeginCommandBuffer(command_buffer, &begin_info);
-                check_vk_result(err);
-
-                return command_buffer;
-            }
-        }
-
-        return nullptr;
     }
 
     VkCommandBuffer Application::GetCommandBufferOfWin(const std::string &win_name, bool begin)
@@ -1753,9 +1520,9 @@ namespace Cherry
         return hexContent;
     }
 
-    VkCommandBuffer Application::GetCommandBuffer(bool begin)
+    VkCommandBuffer Application::GetCommandBuffer(bool begin, const std::shared_ptr<Window>& win)
     {
-        ImGui_ImplVulkanH_Window *wd = &app->m_Windows[0]->m_WinData;
+        ImGui_ImplVulkanH_Window *wd = &win->m_WinData;
 
         VkCommandPool command_pool = wd->Frames[wd->FrameIndex].CommandPool;
 
@@ -1765,7 +1532,7 @@ namespace Cherry
         cmdBufAllocateInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
         cmdBufAllocateInfo.commandBufferCount = 1;
 
-        VkCommandBuffer &command_buffer = app->m_Windows[0]->s_AllocatedCommandBuffers[wd->FrameIndex].emplace_back();
+        VkCommandBuffer &command_buffer = win->s_AllocatedCommandBuffers[wd->FrameIndex].emplace_back();
         auto err = vkAllocateCommandBuffers(g_Device, &cmdBufAllocateInfo, &command_buffer);
 
         VkCommandBufferBeginInfo begin_info = {};
@@ -1775,35 +1542,6 @@ namespace Cherry
         check_vk_result(err);
 
         return command_buffer;
-    }
-
-    VkCommandBuffer Application::GetCommandBuffer(bool begin, ImGui_ImplVulkanH_Window *wd, const std::string &winname)
-    {
-        for (auto win : app->m_Windows)
-        {
-            if (win->GetName() == winname)
-            {
-                VkCommandPool command_pool = wd->Frames[wd->FrameIndex].CommandPool;
-
-                VkCommandBufferAllocateInfo cmdBufAllocateInfo = {};
-                cmdBufAllocateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-                cmdBufAllocateInfo.commandPool = command_pool;
-                cmdBufAllocateInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-                cmdBufAllocateInfo.commandBufferCount = 1;
-
-                VkCommandBuffer &command_buffer = win->s_AllocatedCommandBuffers[wd->FrameIndex].emplace_back();
-                auto err = vkAllocateCommandBuffers(g_Device, &cmdBufAllocateInfo, &command_buffer);
-
-                VkCommandBufferBeginInfo begin_info = {};
-                begin_info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-                begin_info.flags |= VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
-                err = vkBeginCommandBuffer(command_buffer, &begin_info);
-                check_vk_result(err);
-
-                return command_buffer;
-            }
-        }
-        return nullptr;
     }
 
     void Application::FlushCommandBuffer(VkCommandBuffer commandBuffer)
@@ -2190,9 +1928,6 @@ namespace Cherry
 
         style.WindowMinSize.x = minWinSizeX;
 
-        if (!window->m_Specifications.CustomTitlebar)
-            window->UI_DrawMenubar();
-
         ImGui::End();
 
         return &window->DrawData;
@@ -2288,8 +2023,6 @@ namespace Cherry
         this->m_WindowSaveDataPath = path;
         this->m_SaveWindowData = true;
     }
-
-#include <mutex>
 
     std::string Application::CookPath(const std::string input_path)
     {
@@ -2472,6 +2205,19 @@ namespace Cherry
         }
         return nullptr;
     }
+
+    std::shared_ptr<Window> GetWindowByName(const std::string &win_name)
+    {
+        for (auto &win : s_Instance->m_Windows)
+        {
+            if (win->GetName() == win_name)
+            {
+                return win;
+            }
+        }
+        return nullptr;
+    }
+
 
     void Application::DeleteAppWindow(const std::shared_ptr<AppWindow> &win)
     {

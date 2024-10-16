@@ -112,6 +112,17 @@ namespace Cherry
             return;
         }
 
+                std::shared_ptr<Window> wind;
+
+                for (auto &win : Application::Get().m_Windows)
+                {
+                    if (win->GetName() == winname)
+                    {
+                        wind = win;
+                    }
+                }
+
+
         if (!ImGui::DockBuilderGetNode(m_DockSpaceID))
         {
             ImGui::DockBuilderRemoveNode(m_DockSpaceID);
@@ -243,7 +254,7 @@ namespace Cherry
 
         m_IdName = window_name;
 
-        if (Application::GetCurrentRenderedWindow()->m_Specifications.RenderMode != WindowRenderingMethod::SimpleWindow)
+        if (wind->m_Specifications.RenderMode != WindowRenderingMethod::SimpleWindow)
         {
             if (this->GetImage(m_Icon))
             {
@@ -277,20 +288,10 @@ namespace Cherry
         }
 
         // Prevent undock
-        if (Application::GetCurrentRenderedWindow()->m_Specifications.RenderMode == WindowRenderingMethod::DockingWindows || Application::GetCurrentRenderedWindow()->m_Specifications.RenderMode == WindowRenderingMethod::TabWidows)
+        if (wind->m_Specifications.RenderMode == WindowRenderingMethod::DockingWindows || wind->m_Specifications.RenderMode == WindowRenderingMethod::TabWidows)
         {
             if (!ImGui::IsWindowDocked())
             {
-                std::shared_ptr<Window> wind;
-
-                for (auto &win : Application::Get().m_Windows)
-                {
-                    if (win->GetName() == winname)
-                    {
-                        wind = win;
-                    }
-                }
-
                 Application::SetCurrentDragDropState(wind->drag_dropstate);
 
                 Application::SetCurrentDragDropStateAppWindow("none");
@@ -358,18 +359,8 @@ namespace Cherry
         ImGui::GetCurrentWindow()->DragDisabled = this->m_DisableDragging;
         ImGui::GetCurrentWindow()->ContextMenuDisabled = this->m_DisableContextMenu;
 
-        std::shared_ptr<Window> wind;
-
-        for (auto &win : Application::Get().m_Windows)
-        {
-            if (win->GetName() == winname)
-            {
-                wind = win;
-            }
-        }
-
         // Drag
-        if (m_DockingMode || Application::GetCurrentRenderedWindow()->m_Specifications.RenderMode == WindowRenderingMethod::DockingWindows)
+        if (m_DockingMode || wind->m_Specifications.RenderMode == WindowRenderingMethod::DockingWindows)
         {
             if (ctx->DockTabStaticSelection.Pressed)
             {
@@ -524,7 +515,7 @@ namespace Cherry
         ImGui::GetFont()->Scale = oldsize;
         ImGui::PopFont();
 
-        if (Application::GetCurrentRenderedWindow()->m_Specifications.RenderMode != WindowRenderingMethod::SimpleWindow)
+        if (wind->m_Specifications.RenderMode != WindowRenderingMethod::SimpleWindow)
         {
             ImGui::End();
         }

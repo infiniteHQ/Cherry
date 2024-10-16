@@ -12,8 +12,6 @@
 #include "imgui/Hack-Regular.embed"
 #include "imgui/Inconsolatas.embed"
 
-static std::vector<std::string> c_ImageList;
-
 namespace ImGui
 {
     // Docking
@@ -244,8 +242,9 @@ namespace Cherry
         Application::SetupVulkan(extensions, extensions_count);
         delete[] extensions;
 
-        // Create Window Surface
         VkResult err;
+
+        // Create Window Surface
         if (SDL_Vulkan_CreateSurface(m_WindowHandler, Application::GetInstance(), &m_Surface) == 0)
         {
             printf("Failed to create Vulkan surface.\n");
@@ -533,10 +532,9 @@ namespace Cherry
 
     void Window::UI_DrawTitlebar(float &outTitlebarHeight)
     {
+        ImGui::SetCurrentContext(this->m_ImGuiContext);
+
         float titlebarVerticalOffset = 0.0f;
-
-        ImGui::SetCurrentContext(this->m_ImGuiContext); // Assurez-vous que vous avez le bon contexte pour la fenêtre active
-
         const float titlebarHeight = 58.0f;
         const ImVec2 windowPadding = ImGui::GetCurrentWindow()->WindowPadding;
 
@@ -544,7 +542,6 @@ namespace Cherry
         ImVec2 titlebarMax = {titlebarMin.x + ImGui::GetWindowWidth() - windowPadding.y * 2.0f,
                               titlebarMin.y + titlebarHeight};
 
-        // Détection du drag & drop pour déplacer la fenêtre
         if (ImGui::IsMouseHoveringRect(titlebarMin, titlebarMax) && ImGui::IsMouseClicked(ImGuiMouseButton_Left))
         {
             this->isMoving = true;
@@ -575,12 +572,14 @@ namespace Cherry
         // fgDrawList->AddRect(titlebarMin, titlebarMax, UI::Colors::Theme::invalidPrefab);
         // Logo
         {
-            const int logoWidth = 48;  // m_LogoTex->GetWidth();
-            const int logoHeight = 48; // m_LogoTex->GetHeight();
+            const int logoWidth = 48;  // Largeur du logo
+            const int logoHeight = 48; // Hauteur du logo
             const ImVec2 logoOffset(16.0f + windowPadding.x, 5.0f + windowPadding.y + titlebarVerticalOffset);
-            const ImVec2 logoRectStart = {ImGui::GetItemRectMin().x + logoOffset.x, ImGui::GetItemRectMin().y + logoOffset.y};
+            const ImVec2 logoRectStart = {titlebarMin.x + logoOffset.x, titlebarMin.y + logoOffset.y};
             const ImVec2 logoRectMax = {logoRectStart.x + logoWidth, logoRectStart.y + logoHeight};
-            fgDrawList->AddImage(this->get_texture(this->m_Specifications.IconPath), logoRectStart, logoRectMax);
+
+            ImTextureID logo = this->get_texture(this->m_Specifications.IconPath);
+            fgDrawList->AddImage(logo, logoRectStart, logoRectMax);
         }
 
         ImGui::SetItemAllowOverlap();
@@ -741,12 +740,20 @@ namespace Cherry
             ImGui::BeginGroup();
             if (UI::BeginMenubar(menuBarRect))
             {
-
+                // TODO global scale
                 float oldsize = ImGui::GetFont()->Scale;
                 ImGui::GetFont()->Scale *= 0.84;
                 ImGui::PushFont(ImGui::GetFont());
 
-                Application::Get().m_MenubarCallback();
+                if(this->m_Specifications.MenubarCallback)
+                {
+                    this->m_Specifications.MenubarCallback();
+                }
+                else
+                {
+                    Application::Get().m_MenubarCallback();
+                }
+
 
                 ImGui::GetFont()->Scale = oldsize;
                 ImGui::PopFont();
@@ -834,23 +841,15 @@ namespace Cherry
             return nullptr;
         }
 
-        if (std::find(c_ImageList.begin(), c_ImageList.end(), path) == c_ImageList.end())
+        auto it = m_ImageMap.find(path);
+        if (it != m_ImageMap.end())
         {
-            c_ImageList.push_back(path);
+            return it->second;
         }
 
         uint32_t w = 0, h = 0;
-
         std::vector<uint8_t> hexTable = Application::LoadPngHexa(path);
         const uint8_t *hexData = hexTable.empty() ? g_NotFoundIcon : hexTable.data();
-
-        for (auto &image : m_ImageList)
-        {
-            if (image.first == path)
-            {
-                return image.second;
-            }
-        }
 
         size_t dataSize = hexTable.empty() ? sizeof(g_NotFoundIcon) : hexTable.size();
         void *data = Cherry::Image::Decode(hexData, dataSize, w, h);
@@ -861,7 +860,7 @@ namespace Cherry
         }
 
         std::shared_ptr<Cherry::Image> _icon = std::make_shared<Cherry::Image>(w, h, Cherry::ImageFormat::RGBA, this->GetName(), data);
-        m_ImageList.push_back(std::make_pair(path, _icon));
+        m_ImageMap[path] = _icon;
 
         IM_FREE(data);
 
@@ -875,12 +874,10 @@ namespace Cherry
             return nullptr;
         }
 
-        for (auto &image : m_ImageList)
+        auto it = m_ImageMap.find(path);
+        if (it != m_ImageMap.end())
         {
-            if (image.first == path)
-            {
-                return image.second;
-            }
+            return it->second;
         }
 
         return this->add(path);
@@ -888,31 +885,23 @@ namespace Cherry
 
     std::shared_ptr<Cherry::Image> Window::add(const uint8_t data[], const std::string &name)
     {
-        if (std::find(c_ImageList.begin(), c_ImageList.end(), name) == c_ImageList.end())
+        auto it = m_HexImageMap.find(name);
+        if (it != m_HexImageMap.end())
         {
-            c_ImageList.push_back(name);
+            return it->second;
         }
 
-        for (auto &image : m_ImageList)
-        {
-            if (image.first == name)
-            {
-                return image.second;
-            }
-        }
-
-        uint32_t w, h;
+        uint32_t w = 0, h = 0;
         const size_t dataSize = sizeof(g_NotFoundIcon);
 
         void *icondata = Cherry::Image::Decode(data, dataSize, w, h);
-
         if (!icondata)
         {
             return nullptr;
         }
 
         std::shared_ptr<Cherry::Image> _icon = std::make_shared<Cherry::Image>(w, h, Cherry::ImageFormat::RGBA, this->GetName(), icondata);
-        m_ImageList.push_back(std::make_pair(name, _icon));
+        m_HexImageMap[name] = _icon;
 
         IM_FREE(icondata);
 
@@ -921,12 +910,10 @@ namespace Cherry
 
     std::shared_ptr<Cherry::Image> Window::get(const uint8_t data[], const std::string &name)
     {
-        for (auto &image : m_ImageList)
+        auto it = m_HexImageMap.find(name);
+        if (it != m_HexImageMap.end())
         {
-            if (image.first == name)
-            {
-                return image.second;
-            }
+            return it->second;
         }
 
         return this->add(data, name);
@@ -956,6 +943,22 @@ namespace Cherry
         return nullptr;
     }
 
+    VkDescriptorSet Window::get_texture_descriptor(const std::string &path)
+    {
+        if (path.empty() || path == "none")
+        {
+            return nullptr;
+        }
+
+        std::shared_ptr<Cherry::Image> image = this->get(path);
+        if (image)
+        {
+            return image->GetDescriptorSet();
+        }
+
+        return nullptr;
+    }
+
     ImVec2 Window::get_texture_size(const std::string &path)
     {
         if (path.empty() || path == "none")
@@ -974,6 +977,7 @@ namespace Cherry
 
     void Window::free()
     {
+        //
     }
 
     void Window::CleanupVulkanWindow()

@@ -78,11 +78,8 @@ namespace Cherry
 		static VkInstance GetInstance();
 		static VkPhysicalDevice GetPhysicalDevice();
 		static VkDevice GetDevice();
-		static VkCommandBuffer GetCommandBuffer(bool begin);
-		// static VkCommandBuffer GetCommandBuffer(bool begin);
-		static VkCommandBuffer GetCommandBuffer(bool begin, ImGui_ImplVulkanH_Window *wd, const std::string &win);
 		static VkCommandBuffer GetCommandBufferOfWin(const std::string &win_name, bool begin);
-		static VkCommandBuffer GetCommandBuffer(const std::string &win_name, bool begin);
+    	static VkCommandBuffer GetCommandBuffer(bool begin, const std::shared_ptr<Window>& win);
 		static ImFont *GetFont(const std::string &name);
 		static std::unordered_map<std::string, ImFont *> &GetFontList();
 		std::vector<std::pair<std::string, std::pair<std::string, float>>> &GetCustomFonts();
@@ -157,20 +154,15 @@ namespace Cherry
 
 		void BoostrappWindow();
 		void Run();
-		void LoadImages();
 
 		void PushLayer(const std::shared_ptr<Layer> &layer);
 		void NewWinInstance(const std::string &name);
 
 		void Close();
 		bool IsMaximized() const;
-		std::shared_ptr<Image> GetApplicationIcon(const std::string &window) const;
 		float GetTime();
 		bool IsTitleBarHovered() const { return m_TitleBarHovered; }
 
-		ApplicationSpecification m_Specification;
-		void UI_DrawTitlebar(float &outTitlebarHeight, Window *window);
-		void UI_DrawMenubar();
 
 		ImDrawData *RenderWindow(Window *window);
 		void InitializeWindowStates();
@@ -213,6 +205,7 @@ namespace Cherry
 		std::function<void()> m_FramebarCallback;
 		std::function<void()> m_MainRenderCallback;
 		std::function<void()> m_CloseCallback;
+		ApplicationSpecification m_DefaultSpecification;
 
 		std::vector<std::shared_ptr<Layer>> m_LayerStack;
 
@@ -267,6 +260,7 @@ namespace Cherry
  	void AddAppWindow(const std::shared_ptr<AppWindow>& win);
  	void DeleteAppWindow(const std::shared_ptr<AppWindow>& win);
  	std::shared_ptr<AppWindow> GetAppWindowByName(const std::string& win_name);
+    std::shared_ptr<Window> GetWindowByName(const std::string &win_name);
 
 	// Images
 	ImTextureID GetTexture(const std::string &path);

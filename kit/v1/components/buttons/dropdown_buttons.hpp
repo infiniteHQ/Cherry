@@ -33,6 +33,13 @@ namespace Cherry
             SetID(id);
         }
 
+
+        static std::shared_ptr<CustomDrowpdownButtonSimple> Create(const std::string &id, const std::string &label)
+        {
+            auto instance = std::shared_ptr<CustomDrowpdownButtonSimple>(new CustomDrowpdownButtonSimple(id, label));
+            return instance;
+        }
+
         bool Render(const std::string &duplication_name, const ImVec2 &size = ImVec2(0, 0))
         {
             ImTextureID texture = Application::Get().GetCurrentRenderedWindow()->get_texture(m_DropdownLogo);
