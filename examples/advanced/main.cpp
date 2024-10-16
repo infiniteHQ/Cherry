@@ -151,13 +151,39 @@ Cherry::Application *Cherry::CreateApplication(int argc, char **argv)
                             ImGui::PopStyleVar();  
                             ImGui::PopStyleColor(2); });
 
-  auto PropsEditor = PropsEditorSimple::Create("?loc:loc.window_names.props_editor");
-  Cherry::AddAppWindow(PropsEditor->GetAppWindow());
-
 
   auto TextEditor = TextEditorSimple::Create("?loc:loc.window_names.text_editor");
   Cherry::AddAppWindow(TextEditor->GetAppWindow());
-  Cherry::ApplicationSpecification newspec = spec;
+
+  auto WindowWithDockspace = DockingAppWindow::Create("fqdow_names.texqsd");
+  // Application::Get().PutWindow(WindowWithDockspace->GetAppWindow());
+  auto ContentOutliner = ContentOutlinerSimple::Create("?loc:loc.window_names.outliner");
+  Cherry::AddAppWindow(ContentOutliner->GetAppWindow());
+  auto PropsEditor = PropsEditorSimple::Create("?loc:loc.window_names.props_editor");
+  Cherry::AddAppWindow(PropsEditor->GetAppWindow());
+
+  //auto NodalEditor = NodeEditorSimple::Create("?loc:loc.window_names.node_editor");
+  //Cherry::AddAppWindow(NodalEditor->GetAppWindow());
+  auto ContentBrowser = ContentBrowserAppWindow::Create("?loc:loc.window_names.content_browser", "/home/diego");
+  Cherry::AddAppWindow(ContentBrowser->GetAppWindow());
+
+  auto Demo = DemoAppWindow::Create("?loc:loc.window_names.demo");
+  Cherry::AddAppWindow(Demo->GetAppWindow());
+
+  auto TabsWindow = MultiChildTabs::Create("Vertical Tabs");
+  TabsWindow->AddChild("One", [](){ImGui::Text("One");});
+  TabsWindow->AddChild("Two", [](){ImGui::Text("Two");});
+  TabsWindow->AddChild("Three", [](){ImGui::Text("Three");});
+  Cherry::AddAppWindow(TabsWindow->GetAppWindow());
+
+
+  auto ListWindow = MultiChildList::Create("List Childs");
+  ListWindow->AddChild("One", [](){ImGui::Text("One");});
+  ListWindow->AddChild("Two", [](){ImGui::Text("Two");});
+  ListWindow->AddChild("Three", [](){ImGui::Text("Three");});
+  ListWindow->AddChild("Four", [](){ImGui::Text("Four");});
+  Cherry::AddAppWindow(ListWindow->GetAppWindow());
+  /*Cherry::ApplicationSpecification newspec = spec;
   newspec.Width = 850;
   newspec.Height = 600;
   newspec.WindowOnlyClosable = true;
@@ -184,7 +210,7 @@ Cherry::Application *Cherry::CreateApplication(int argc, char **argv)
   };
 
   TextEditor->GetAppWindow()->AttachOnNewWindow(newspec);
-  TextEditor->GetAppWindow()->SetVisibility(true);
+  TextEditor->GetAppWindow()->SetVisibility(true);*/
 
   /*
 
