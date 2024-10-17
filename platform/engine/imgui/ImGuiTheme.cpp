@@ -1,8 +1,8 @@
 #include "ImGuiTheme.h"
 
-namespace Cherry::UI {
-
-	void SetHazelTheme()
+namespace Cherry::UI 
+{
+	void SetTheme()
 	{
 		auto& style = ImGui::GetStyle();
 		auto& colors = ImGui::GetStyle().Colors;

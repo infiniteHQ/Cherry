@@ -111,6 +111,8 @@ namespace Cherry
 		void SetCloseCallback(const std::function<bool()> &closeCallback) { m_CloseCallback = closeCallback; }
 		void SetMainRenderCallback(const std::function<void()> &mainRenderCallback) { m_MainRenderCallback = mainRenderCallback; }
 
+		std::string CertifyWindowName(const std::string &name);
+
 		// Window factory
 		std::string SpawnWindow();
 		std::string SpawnWindow(ApplicationSpecification spec);

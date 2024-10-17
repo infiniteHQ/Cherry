@@ -271,10 +271,10 @@ namespace Cherry
         io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
         io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;     // Enable Docking
         io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;   // Enable Multi-Viewport / Platform Windows
-        io.FontGlobalScale = 0.83f;
+        io.FontGlobalScale = specs.FontGlobalScale;
 
         // Setup Dear ImGui style
-        UI::SetHazelTheme();
+        UI::SetTheme();
         // ImGui::StyleColorsClassic();
         // Style
         ImGuiStyle &style = ImGui::GetStyle();
@@ -740,12 +740,11 @@ namespace Cherry
             ImGui::BeginGroup();
             if (UI::BeginMenubar(menuBarRect))
             {
-                // TODO global scale
                 float oldsize = ImGui::GetFont()->Scale;
-                ImGui::GetFont()->Scale *= 0.84;
+                ImGui::GetFont()->Scale *= m_Specifications.FontGlobalScale;
                 ImGui::PushFont(ImGui::GetFont());
 
-                if(this->m_Specifications.MenubarCallback)
+                if (this->m_Specifications.MenubarCallback)
                 {
                     this->m_Specifications.MenubarCallback();
                 }
@@ -753,7 +752,6 @@ namespace Cherry
                 {
                     Application::Get().m_MenubarCallback();
                 }
-
 
                 ImGui::GetFont()->Scale = oldsize;
                 ImGui::PopFont();
@@ -973,6 +971,19 @@ namespace Cherry
         }
 
         return ImVec2(0, 0);
+    }
+
+    void Window::PushTheme(const std::vector<WindowThemeColorObject> &theme)
+    {
+        for(auto &theme_directive : theme)
+        {
+            ImGui::PushStyleColor(theme_directive.m_Entry, theme_directive.m_Value);
+        }
+    }
+
+    void Window::PopTheme(const std::vector<WindowThemeColorObject> &theme)
+    {
+        ImGui::PopStyleColor(theme.size());
     }
 
     void Window::free()

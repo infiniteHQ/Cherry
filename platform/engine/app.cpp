@@ -17,6 +17,8 @@
 #include <vulkan/vulkan.h>
 #include <iostream>
 #include <mutex>
+#include <regex>
+#include <sstream>
 
 // Emedded font
 #include "imgui/Roboto-Regular.embed"
@@ -282,6 +284,7 @@ namespace Cherry
             check_vk_result(err);
         }
     }
+    
     // All the ImGui_ImplVulkanH_XXX structures/functions are optional helpers used by the demo.
     // Your real engine/app may not use them.
     void Application::SetupVulkanWindow(ImGui_ImplVulkanH_Window *wd, VkSurfaceKHR surface, int width, int height, Cherry::Window *win)
@@ -666,7 +669,17 @@ namespace Cherry
 
     std::string Application::SpawnWindow(ApplicationSpecification spec)
     {
-        std::string name = std::to_string(c_WindowsCount);
+        std::string name;
+
+        if(spec.DefaultWindowName.empty())
+        {
+            name = CertifyWindowName(spec.Name);
+        }
+        else
+        {
+            name = CertifyWindowName(spec.DefaultWindowName);
+        }
+
         ImGuiContext *res_ctx = ImGui::GetCurrentContext();
 
         std::shared_ptr<Window> new_win = std::make_shared<Window>(name, spec.Width, spec.Height, spec);
@@ -680,7 +693,8 @@ namespace Cherry
 
     void Application::SpawnWindow(const std::string &winname, ApplicationSpecification spec)
     {
-        std::string name = winname;
+        std::string name = CertifyWindowName(winname);
+
         ImGuiContext *res_ctx = ImGui::GetCurrentContext();
 
         std::shared_ptr<Window> new_win = std::make_shared<Window>(name, spec.Width, spec.Height, spec);
@@ -692,7 +706,17 @@ namespace Cherry
 
     std::string Application::SpawnWindow()
     {
-        std::string name = std::to_string(c_WindowsCount);
+        std::string name;
+
+        if(app->m_DefaultSpecification.DefaultWindowName.empty())
+        {
+            name = CertifyWindowName(app->m_DefaultSpecification.Name);
+        }
+        else
+        {
+            name = CertifyWindowName(app->m_DefaultSpecification.DefaultWindowName);
+        }
+
         ImGuiContext *res_ctx = ImGui::GetCurrentContext();
 
         std::shared_ptr<Window> new_win = std::make_shared<Window>(name, app->m_DefaultSpecification.Width, app->m_DefaultSpecification.Height, app->m_DefaultSpecification);
@@ -703,8 +727,10 @@ namespace Cherry
         return name;
     }
 
-    void Application::SpawnWindow(const std::string &name)
+    void Application::SpawnWindow(const std::string &winname)
     {
+        std::string name = CertifyWindowName(winname);
+
         ImGuiContext *res_ctx = ImGui::GetCurrentContext();
 
         std::shared_ptr<Window> new_win = std::make_shared<Window>(name, app->m_DefaultSpecification.Width, app->m_DefaultSpecification.Height, app->m_DefaultSpecification);
@@ -1111,6 +1137,7 @@ namespace Cherry
         for (auto &window : m_Windows)
         {
             ImGui::SetCurrentContext(window->m_ImGuiContext);
+
             c_CurrentRenderedWindow = window;
 
             if (c_MasterSwapChainRebuild)
@@ -1138,9 +1165,11 @@ namespace Cherry
 
             ImGui::NewFrame();
 
+            window->PushTheme(window->m_Specifications.ColorTheme.Colors);
             ImGui::PushFont(Application::GetFontList()["Default"]);
 
             app->RenderWindow(window.get());
+
 
             if (c_DockIsDragging && c_CurrentDragDropState)
             {
@@ -1148,7 +1177,7 @@ namespace Cherry
 
                 {
                     float oldsize = ImGui::GetFont()->Scale;
-                    ImGui::GetFont()->Scale *= 0.84;
+                    ImGui::GetFont()->Scale *= window->m_Specifications.FontGlobalScale;
                     ImGui::PushFont(ImGui::GetFont());
 
                     ImVec4 grayColor = ImVec4(0.4f, 0.4f, 0.4f, 1.0f);
@@ -1157,9 +1186,7 @@ namespace Cherry
                     ImVec4 lightBorderColor = ImVec4(0.2f, 0.2f, 0.2f, 1.0f);
 
                     ImGui::PushStyleColor(ImGuiCol_PopupBg, darkBackgroundColor);
-
                     ImGui::PushStyleColor(ImGuiCol_Border, lightBorderColor);
-
                     ImGui::PushStyleVar(ImGuiStyleVar_PopupRounding, 3.0f);
 
                     ImGui::SetNextWindowPos(ImVec2((float)c_CurrentDragDropState->mouseX - 75, (float)c_CurrentDragDropState->mouseY - 25));
@@ -1172,7 +1199,7 @@ namespace Cherry
                         ImGui::GetFont()->Scale *= 0.64;
                         ImGui::TextColored(ImVec4(0.5f, 0.5f, 0.5f, 1.0f), "This is the current state");
 
-                        ImGui::GetFont()->Scale *= 0.84;
+                        ImGui::GetFont()->Scale *= window->m_Specifications.FontGlobalScale;
 
                         ImGui::EndPopup();
                     }
@@ -1186,6 +1213,7 @@ namespace Cherry
             }
 
             ImGui::PopFont();
+            window->PopTheme(window->m_Specifications.ColorTheme.Colors);
 
             ImGui_ImplVulkanH_Window *wd = &window->m_WinData;
             ImGuiIO &io = ImGui::GetIO();
@@ -1211,6 +1239,42 @@ namespace Cherry
             }
         }
     }
+
+std::string Application::CertifyWindowName(const std::string &name) {
+    int max_suffix = 0;
+    bool name_exists = false;
+    
+    std::regex suffix_regex(R"(^(.*?)(?: <(\d+)>)?$)");
+    std::smatch match;
+    
+    for (const auto& win : s_Instance->m_Windows) {
+        std::string window_name = win->GetName();
+        
+        if (std::regex_match(window_name, match, suffix_regex)) {
+            std::string base_name = match[1];
+            std::string suffix_str = match[2];
+
+            if (base_name == name) {
+                name_exists = true;
+                
+                if (!suffix_str.empty()) {
+                    int suffix_value = std::stoi(suffix_str);
+                    max_suffix = std::max(max_suffix, suffix_value);
+                } else {
+                    max_suffix = std::max(max_suffix, 0);
+                }
+            }
+        }
+    }
+
+    if (name_exists) {
+        std::stringstream new_name;
+        new_name << name << " <" << (max_suffix + 1) << ">";
+        return new_name.str();
+    }
+
+    return name;
+}
 
     void Application::CleanupEmptyWindows()
     {
@@ -1615,9 +1679,8 @@ namespace Cherry
 
         ImGuiID dockspaceID = ImGui::GetID("MainDockspace");
 
-        // TODO Set a global scale
         float oldsize = ImGui::GetFont()->Scale;
-        ImGui::GetFont()->Scale *= 0.84;
+        ImGui::GetFont()->Scale *= window->m_Specifications.FontGlobalScale;
         ImGui::PushFont(ImGui::GetFont());
 
         ImVec4 grayColor = ImVec4(0.4f, 0.4f, 0.4f, 1.0f);
@@ -1693,7 +1756,7 @@ namespace Cherry
 
         // TODO Set a global scale
         float oldsize = ImGui::GetFont()->Scale;
-        ImGui::GetFont()->Scale *= 0.84;
+        ImGui::GetFont()->Scale *= window->m_Specifications.FontGlobalScale;
         ImGui::PushFont(ImGui::GetFont());
 
         ImVec4 grayColor = ImVec4(0.4f, 0.4f, 0.4f, 1.0f);
@@ -1751,7 +1814,7 @@ namespace Cherry
     void Application::HandleSimpleRendering(Window *window)
     {
         float oldsize = ImGui::GetFont()->Scale;
-        ImGui::GetFont()->Scale *= 0.84;
+        ImGui::GetFont()->Scale *= window->m_Specifications.FontGlobalScale;
         ImGui::PushFont(ImGui::GetFont());
         if (m_MainRenderCallback)
         {

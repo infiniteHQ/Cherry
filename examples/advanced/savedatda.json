@@ -7,9 +7,109 @@
                     "window_storage": []
                 },
                 "docknodeparent": "default",
+                "dockparent": "fqdow_names.texqsd",
                 "dockplace": "default",
                 "id": "test_window",
-                "name": "Editeur de texte####loc.window_names.text_editor",
+                "name": "sec1",
+                "type": "instanciable,static",
+                "win": "0"
+            },
+            {
+                "data": {
+                    "simple_storage": [],
+                    "window_storage": []
+                },
+                "docknodeparent": "default",
+                "dockparent": "fqdow_names.texqsd",
+                "dockplace": "default",
+                "id": "test_window",
+                "name": "sec1",
+                "type": "instanciable,static",
+                "win": "0"
+            },
+            {
+                "data": {
+                    "simple_storage": [],
+                    "window_storage": []
+                },
+                "docknodeparent": "default",
+                "dockparent": "fqdow_names.texqsd",
+                "dockplace": "default",
+                "id": "test_window",
+                "name": "sec2",
+                "type": "instanciable,static",
+                "win": "0"
+            },
+            {
+                "data": {
+                    "simple_storage": [],
+                    "window_storage": []
+                },
+                "docknodeparent": "default",
+                "dockparent": "fqdow_names.texqsd",
+                "dockplace": "default",
+                "id": "test_window",
+                "name": "sec2",
+                "type": "instanciable,static",
+                "win": "0"
+            },
+            {
+                "data": {
+                    "simple_storage": [],
+                    "window_storage": []
+                },
+                "docknodeparent": "default",
+                "dockplace": "default",
+                "id": "test_window",
+                "name": "sec3",
+                "type": "instanciable,static",
+                "win": "0"
+            },
+            {
+                "data": {
+                    "simple_storage": [],
+                    "window_storage": []
+                },
+                "docknodeparent": "default",
+                "dockplace": "default",
+                "id": "test_window",
+                "name": "sec3",
+                "type": "instanciable,static",
+                "win": "0"
+            },
+            {
+                "data": {
+                    "simple_storage": [],
+                    "window_storage": []
+                },
+                "docknodeparent": "default",
+                "dockplace": "default",
+                "id": "test_window",
+                "name": "sec4",
+                "type": "instanciable,static",
+                "win": "0"
+            },
+            {
+                "data": {
+                    "simple_storage": [],
+                    "window_storage": []
+                },
+                "docknodeparent": "default",
+                "dockplace": "default",
+                "id": "test_window",
+                "name": "sec4",
+                "type": "instanciable,static",
+                "win": "0"
+            },
+            {
+                "data": {
+                    "simple_storage": [],
+                    "window_storage": []
+                },
+                "docknodeparent": "default",
+                "dockplace": "default",
+                "id": "test_window",
+                "name": "fqdow_names.texqsd",
                 "type": "instanciable,static",
                 "win": "0"
             },

@@ -306,7 +306,7 @@ namespace Cherry
         if (ImGui::BeginMenuBar())
         {
             float oldsize = ImGui::GetFont()->Scale;
-            ImGui::GetFont()->Scale *= 0.85;
+            ImGui::GetFont()->Scale *= window_instance->m_Specifications.FontGlobalScale;
             ImGui::PushFont(ImGui::GetFont());
 
             float menuBarHeight = ImGui::GetCurrentWindow()->MenuBarHeight();
@@ -359,6 +359,15 @@ namespace Cherry
         ImGui::GetCurrentWindow()->DragDisabled = this->m_DisableDragging;
         ImGui::GetCurrentWindow()->ContextMenuDisabled = this->m_DisableContextMenu;
 
+        if(m_HaveParentAppWindow)
+        {
+            ImGui::GetCurrentWindow()->CustomThresholdY = 5.0f;
+        }
+        else
+        {
+            ImGui::GetCurrentWindow()->CustomThresholdY = 10.0f;
+        }
+
         // Drag
         if (m_DockingMode || wind->m_Specifications.RenderMode == WindowRenderingMethod::DockingWindows)
         {
@@ -406,7 +415,7 @@ namespace Cherry
 
         ImGuiID dockID = ImGui::GetID("AppWindowDockspace");
         float oldsize = ImGui::GetFont()->Scale;
-        ImGui::GetFont()->Scale *= 0.84;
+        ImGui::GetFont()->Scale *= window_instance->m_Specifications.FontGlobalScale;
         ImGui::PushFont(ImGui::GetFont());
 
         ImVec4 grayColor = ImVec4(0.4f, 0.4f, 0.4f, 1.0f);
@@ -476,7 +485,7 @@ namespace Cherry
         if (ImGui::BeginBottomBar())
         {
             float oldsize = ImGui::GetFont()->Scale;
-            ImGui::GetFont()->Scale *= 0.85;
+            ImGui::GetFont()->Scale *= window_instance->m_Specifications.FontGlobalScale;
             ImGui::PushFont(ImGui::GetFont());
 
             float menuBarHeight = ImGui::GetCurrentWindow()->BottomBarHeight();

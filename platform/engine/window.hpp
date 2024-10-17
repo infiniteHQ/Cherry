@@ -194,6 +194,9 @@ namespace Cherry
         std::unordered_map<std::string, std::shared_ptr<Cherry::Image>> m_ImageMap;
         std::unordered_map<std::string, std::shared_ptr<Cherry::Image>> m_HexImageMap;
 
+        void PushTheme(const std::vector<WindowThemeColorObject> &theme);        
+        void PopTheme(const std::vector<WindowThemeColorObject> &theme);
+
         std::shared_ptr<Cherry::Image> add(const std::string &path);
         std::shared_ptr<Cherry::Image> add(const uint8_t data[], const std::string &name);
         std::shared_ptr<Cherry::Image> get(const std::string &path);

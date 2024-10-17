@@ -121,6 +121,6 @@ namespace Cherry::UI {
 		}
 	}
 
-	void SetHazelTheme();
+	void SetTheme();
 
 }

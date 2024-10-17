@@ -82,6 +82,35 @@ namespace Cherry
 		int mouseY;
 	};
 
+    enum class WindowThemeColorEntry
+    {
+        FrameColor,
+        BackgroundColor,
+        BorderColor
+    };
+
+    struct WindowThemeColorObject
+    {
+        ImGuiCol_ m_Entry;
+        ImVec4 m_Value;
+
+        WindowThemeColorObject(ImGuiCol_ entry, const ImVec4 val):
+        m_Entry(entry),
+        m_Value(val)
+        {}
+    };
+
+    struct WindowThemeColor
+    {
+        std::vector<WindowThemeColorObject> Colors;
+
+        void SetColor(ImGuiCol_ key, std::string val)
+        {
+            Colors.push_back(WindowThemeColorObject(key, Cherry::HexToRGBA(val)));
+        }
+    };
+    
+
     struct ApplicationSpecification
     {
         std::string Name = "UIKit App";
@@ -92,6 +121,12 @@ namespace Cherry
 
         std::string IconPath;
         std::string FavIconPath;
+
+        std::string DefaultWindowName;
+        float GlobalScale = 0.84f;
+        float FontGlobalScale = 0.83f;
+
+        WindowThemeColor ColorTheme;
 
         bool WindowResizeable = true;
         bool WindowOnlyClosable = false;

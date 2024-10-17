@@ -17,7 +17,10 @@ Cherry::Application *Cherry::CreateApplication(int argc, char **argv)
 
   std::string name = "UIKit example";
   spec.Name = name;
+  spec.DefaultWindowName = name;
   spec.MinHeight = 500;
+  spec.GlobalScale = 0.84f;
+  spec.FontGlobalScale = 0.84f;
   spec.MinWidth = 500;
   spec.CustomTitlebar = true;
   spec.DisableWindowManagerTitleBar = true;
@@ -42,7 +45,7 @@ Cherry::Application *Cherry::CreateApplication(int argc, char **argv)
   app->SetLocale("fr");
 
   app->PushLayer(layer);
-  app->SetMenubarCallback([app, layer]()
+  app->SetMenubarCallback([app, layer, spec]()
                           {
                             ImVec4 grayColor = ImVec4(0.4f, 0.4f, 0.4f, 1.0f);        
                             ImVec4 graySeparatorColor = ImVec4(0.4f, 0.4f, 0.4f, 0.5f);
@@ -78,6 +81,40 @@ Cherry::Application *Cherry::CreateApplication(int argc, char **argv)
 
                               if (ImGui::MenuItem("Project Settings", "Main configurations of this project", &t))
                               {
+  auto TextEditor = TextEditorSimple::Create("?loc:loc.window_names.text_editor");
+  Cherry::AddAppWindow(TextEditor->GetAppWindow());
+
+  Cherry::ApplicationSpecification newspec = spec;
+  newspec.Width = 850;
+  newspec.Height = 600;
+  newspec.WindowOnlyClosable = true;
+  newspec.RenderMode = Cherry::WindowRenderingMethod::SimpleWindow;
+  newspec.UsingCloseCallback = true;
+  newspec.WindowSaves = false;
+  newspec.UniqueAppWindowName = TextEditor->GetAppWindow()->m_Name;
+  newspec.IconPath = Cherry::GetPath("ressources/imgs/icons/misc/icon_add.png");
+  newspec.FavIconPath = Cherry::GetPath("ressources/imgs/icons/misc/icon_add.png");
+  newspec.ColorTheme.SetColor(ImGuiCol_Border, "#B1FF31FF");
+
+  newspec.MenubarCallback = [TextEditor]()
+  {
+    if (ImGui::BeginMenu("Edit"))
+    {
+      ImGui::Text("Main stuff");
+      ImGui::EndMenu();
+    }
+  };
+  newspec.CloseCallback = [TextEditor]()
+  {
+    if (TextEditor->GetAppWindow())
+    {
+      Cherry::DeleteAppWindow(TextEditor->GetAppWindow());
+    }
+  };
+
+  TextEditor->GetAppWindow()->AttachOnNewWindow(newspec);
+  TextEditor->GetAppWindow()->SetVisibility(true);
+
                               }
 
 
@@ -152,12 +189,10 @@ Cherry::Application *Cherry::CreateApplication(int argc, char **argv)
                             ImGui::PopStyleColor(2); });
 
 
-  auto TextEditor = TextEditorSimple::Create("?loc:loc.window_names.text_editor");
-  Cherry::AddAppWindow(TextEditor->GetAppWindow());
 
-  /*auto WindowWithDockspace = DockingAppWindow::Create("fqdow_names.texqsd");
-  // Application::Get().PutWindow(WindowWithDockspace->GetAppWindow());
-  auto ContentOutliner = ContentOutlinerSimple::Create("?loc:loc.window_names.outliner");
+auto WindowWithDockspace = DockingAppWindow::Create("fqdow_names.texqsd");
+Application::Get().PutWindow(WindowWithDockspace->GetAppWindow());
+/*  auto ContentOutliner = ContentOutlinerSimple::Create("?loc:loc.window_names.outliner");
   Cherry::AddAppWindow(ContentOutliner->GetAppWindow());
   auto PropsEditor = PropsEditorSimple::Create("?loc:loc.window_names.props_editor");
   Cherry::AddAppWindow(PropsEditor->GetAppWindow());
@@ -183,35 +218,6 @@ Cherry::Application *Cherry::CreateApplication(int argc, char **argv)
   ListWindow->AddChild("Three", [](){ImGui::Text("Three");});
   ListWindow->AddChild("Four", [](){ImGui::Text("Four");});
   Cherry::AddAppWindow(ListWindow->GetAppWindow());
-  Cherry::ApplicationSpecification newspec = spec;
-  newspec.Width = 850;
-  newspec.Height = 600;
-  newspec.WindowOnlyClosable = true;
-  newspec.RenderMode = Cherry::WindowRenderingMethod::SimpleWindow;
-  newspec.UsingCloseCallback = true;
-  newspec.WindowSaves = false;
-  newspec.UniqueAppWindowName = TextEditor->GetAppWindow()->m_Name;
-  newspec.IconPath = Cherry::GetPath("ressources/imgs/icons/misc/icon_add.png");
-  newspec.FavIconPath = Cherry::GetPath("ressources/imgs/icons/misc/icon_add.png");
-  newspec.MenubarCallback = [TextEditor]()
-  {
-    if (ImGui::BeginMenu("Edit"))
-    {
-      ImGui::Text("Main stuff");
-      ImGui::EndMenu();
-    }
-  };
-  newspec.CloseCallback = [TextEditor]()
-  {
-    if (TextEditor->GetAppWindow())
-    {
-      Cherry::DeleteAppWindow(TextEditor->GetAppWindow());
-    }
-  };
-
-  TextEditor->GetAppWindow()->AttachOnNewWindow(newspec);
-  TextEditor->GetAppWindow()->SetVisibility(true);
-
   /*
 
   auto WindowWithDockspace = DockingAppWindow::Create("fqdow_names.texqsd");
