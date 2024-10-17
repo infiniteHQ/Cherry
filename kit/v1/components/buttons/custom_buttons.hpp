@@ -14,15 +14,15 @@ namespace Cherry
             SetID(id);
 
             // String Props
-            SetProp("label", label);
-            SetProp("last_time_clicked", "never");
-            SetProp("bg", "#242424FF");
-            SetProp("bg_hovered", "#343434FF");
-            SetProp("bg_clicked", "#444444FF");
-            SetProp("border", "#454545B2");
-            SetProp("border_hovered", "#454545B2");
-            SetProp("border_clicked", "#454545B2");
-            SetProp("is_pressed", "false");
+            SetProperty("label", label);
+            SetProperty("last_time_clicked", "never");
+            SetProperty("bg", "#242424FF");
+            SetProperty("bg_hovered", "#343434FF");
+            SetProperty("bg_clicked", "#444444FF");
+            SetProperty("border", "#454545B2");
+            SetProperty("border_hovered", "#454545B2");
+            SetProperty("border_clicked", "#454545B2");
+            SetProperty("is_pressed", "false");
         }
 
         static std::shared_ptr<CustomButtonSimple> Create(const std::string &id, const std::string &label)
@@ -35,14 +35,14 @@ namespace Cherry
         {
             if (NeedRefreshing())
             {
-                m_IsPressed = GetProp("is_pressed") == "true" ? true : false;
-                m_HexBgIdle = GetProp("bg");
-                m_HexBgHovered = GetProp("bg_hovered");
-                m_HexBgClicked = GetProp("bg_clicked");
-                m_HexBorderIdle = GetProp("border");
-                m_HexBorderHovered = GetProp("border_hovered");
-                m_HexBorderClicked = GetProp("border_clicked");
-                m_Label = GetProp("label");
+                m_IsPressed = GetProperty("is_pressed") == "true" ? true : false;
+                m_HexBgIdle = GetProperty("bg");
+                m_HexBgHovered = GetProperty("bg_hovered");
+                m_HexBgClicked = GetProperty("bg_clicked");
+                m_HexBorderIdle = GetProperty("border");
+                m_HexBorderHovered = GetProperty("border_hovered");
+                m_HexBorderClicked = GetProperty("border_clicked");
+                m_Label = GetProperty("label");
             }
         }
 
@@ -60,12 +60,12 @@ namespace Cherry
 
             if (ImGui::Button(Label.c_str(), size))
             {
-                SetProp("is_pressed", "true");
+                SetProperty("is_pressed", "true");
                 UpdateLastClickTime();
             }
             else
             {
-                SetProp("is_pressed", "false");
+                SetProperty("is_pressed", "false");
             }
 
             ImGui::PopStyleColor(4);

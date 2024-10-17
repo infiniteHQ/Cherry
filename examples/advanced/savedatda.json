@@ -12,7 +12,7 @@
                 "id": "test_window",
                 "name": "sec1",
                 "type": "instanciable,static",
-                "win": "0"
+                "win": "UIKit example"
             },
             {
                 "data": {
@@ -25,7 +25,7 @@
                 "id": "test_window",
                 "name": "sec1",
                 "type": "instanciable,static",
-                "win": "0"
+                "win": "UIKit example"
             },
             {
                 "data": {
@@ -38,7 +38,7 @@
                 "id": "test_window",
                 "name": "sec2",
                 "type": "instanciable,static",
-                "win": "0"
+                "win": "UIKit example"
             },
             {
                 "data": {
@@ -51,7 +51,7 @@
                 "id": "test_window",
                 "name": "sec2",
                 "type": "instanciable,static",
-                "win": "0"
+                "win": "UIKit example"
             },
             {
                 "data": {
@@ -63,7 +63,7 @@
                 "id": "test_window",
                 "name": "sec3",
                 "type": "instanciable,static",
-                "win": "0"
+                "win": "UIKit example"
             },
             {
                 "data": {
@@ -75,7 +75,7 @@
                 "id": "test_window",
                 "name": "sec3",
                 "type": "instanciable,static",
-                "win": "0"
+                "win": "UIKit example"
             },
             {
                 "data": {
@@ -87,7 +87,7 @@
                 "id": "test_window",
                 "name": "sec4",
                 "type": "instanciable,static",
-                "win": "0"
+                "win": "UIKit example"
             },
             {
                 "data": {
@@ -99,7 +99,7 @@
                 "id": "test_window",
                 "name": "sec4",
                 "type": "instanciable,static",
-                "win": "0"
+                "win": "UIKit example"
             },
             {
                 "data": {
@@ -111,7 +111,7 @@
                 "id": "test_window",
                 "name": "fqdow_names.texqsd",
                 "type": "instanciable,static",
-                "win": "0"
+                "win": "UIKit example"
             },
             {
                 "data": {
@@ -123,7 +123,7 @@
                 "id": "test_window",
                 "name": "List Childs",
                 "type": "instanciable,static",
-                "win": "0"
+                "win": "UIKit example"
             }
         ]
     },

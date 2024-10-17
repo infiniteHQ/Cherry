@@ -1,3 +1,4 @@
+#define SDL_MAIN_HANDLED
 #define CHERRY_V1
 #include "../../cherry.hpp"
 
@@ -142,9 +143,10 @@ Cherry::Application *Cherry::CreateApplication(int argc, char **argv)
 
                             ImGui::PopStyleVar();  
                             ImGui::PopStyleColor(2); });
+                            
+    auto ContentBrowser = ContentBrowserAppWindow::Create("?loc:loc.window_names.content_browser", "/home/diego");
+    Cherry::AddAppWindow(ContentBrowser->GetAppWindow());
 
-  auto WindowWithDockspace = DockingAppWindow::Create("fqdow_names.texqsd");
-  Application::Get().PutWindow(WindowWithDockspace->GetAppWindow());
   /*  auto ContentOutliner = ContentOutlinerSimple::Create("?loc:loc.window_names.outliner");
     Cherry::AddAppWindow(ContentOutliner->GetAppWindow());
     auto PropsEditor = PropsEditorSimple::Create("?loc:loc.window_names.props_editor");
@@ -152,8 +154,6 @@ Cherry::Application *Cherry::CreateApplication(int argc, char **argv)
 
     //auto NodalEditor = NodeEditorSimple::Create("?loc:loc.window_names.node_editor");
     //Cherry::AddAppWindow(NodalEditor->GetAppWindow());
-    auto ContentBrowser = ContentBrowserAppWindow::Create("?loc:loc.window_names.content_browser", "/home/diego");
-    Cherry::AddAppWindow(ContentBrowser->GetAppWindow());
 
     auto Demo = DemoAppWindow::Create("?loc:loc.window_names.demo");
     Cherry::AddAppWindow(Demo->GetAppWindow());
@@ -164,6 +164,10 @@ Cherry::Application *Cherry::CreateApplication(int argc, char **argv)
     TabsWindow->AddChild("Three", [](){ImGui::Text("Three");});
     Cherry::AddAppWindow(TabsWindow->GetAppWindow());*/
 
+  /*
+
+  auto WindowWithDockspace = DockingAppWindow::Create("fqdow_names.texqsd");
+  Application::Get().PutWindow(WindowWithDockspace->GetAppWindow());
   auto ListWindow = MultiChildList::Create("List Childs");
   ListWindow->AddChild("One", []()
                        { ImGui::Text("One"); });
@@ -174,7 +178,6 @@ Cherry::Application *Cherry::CreateApplication(int argc, char **argv)
   ListWindow->AddChild("Four", []()
                        { ImGui::Text("Four"); });
   Cherry::AddAppWindow(ListWindow->GetAppWindow());
-  /*
 
   auto WindowWithDockspace = DockingAppWindow::Create("fqdow_names.texqsd");
   // Application::Get().PutWindow(WindowWithDockspace->GetAppWindow());

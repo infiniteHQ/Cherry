@@ -986,11 +986,11 @@ namespace Cherry
         ImVec2 pos = ImGui::GetCursorScreenPos();
         ImU32 col;
 
-        DrawFolderIcon(pos, ImVec2(12, 12), HexToImU32(GetContentBrowserFolderColor(path)));
+        DrawFolderIcon(pos, ImVec2(12, 12), HexToImU32(GetContentBrowserFolderColor(path.string())));
 
         if (ImGui::TreeNode(tree_label.c_str()))
         {
-            for (auto &dirEntry : std::filesystem::directory_iterator(path))
+            for (auto &dirEntry : std::filesystem::directory_iterator(path.string()))
             {
                 const std::filesystem::path &otherPath = dirEntry.path();
 
@@ -1164,7 +1164,7 @@ namespace Cherry
                 {
                     if (m_PastePathsCallback)
                     {
-                        m_PastePathsCallback({m_CurrentDirectory});
+                        m_PastePathsCallback({m_CurrentDirectory.string()});
                     }
                 }
                 ImGui::GetFont()->Scale = 1.0f;
@@ -1209,11 +1209,11 @@ namespace Cherry
 
                     if (current_editing_folder.first == path.string())
                     {
-                        MyFolderButton("folder_icon", folderSize, current_editing_folder.second, path);
+                        MyFolderButton("folder_icon", folderSize, current_editing_folder.second, path.string());
                     }
                     else
                     {
-                        MyFolderButton("folder_icon", folderSize, HexToImU32(GetContentBrowserFolderColor(path)), path);
+                        MyFolderButton("folder_icon", folderSize, HexToImU32(GetContentBrowserFolderColor(path.string())), path.string());
                     }
 
                     float oldsize = ImGui::GetFont()->Scale;
@@ -1412,128 +1412,128 @@ namespace Cherry
                     {
                     case FileTypes::File_PICTURE:
                     {
-                        if (MyButton(filenameString, path, "Picture file", fileSizeString, selected, Application::CookPath("ressources/imgs/icons/files/icon_picture_file.png"), IM_COL32(56, 56, 56, 150), IM_COL32(50, 50, 50, 255), IM_COL32(255, 100, 150, 255)))
+                        if (MyButton(filenameString, path.string(), "Picture file", fileSizeString, selected, Application::CookPath("ressources/imgs/icons/files/icon_picture_file.png"), IM_COL32(56, 56, 56, 150), IM_COL32(50, 50, 50, 255), IM_COL32(255, 100, 150, 255)))
                         {
                             if (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) || ImGui::IsKeyDown(ImGuiKey_RightCtrl))
                             {
-                                m_Selected.push_back(path);
+                                m_Selected.push_back(path.string());
                             }
                             else
                             {
                                 m_Selected.clear();
-                                m_Selected.push_back(path);
+                                m_Selected.push_back(path.string());
                             }
                         }
                         break;
                     }
                     case FileTypes::File_GIT:
                     {
-                        if (MyButton(filenameString, path, "Git File", fileSizeString, selected, Application::CookPath("ressources/imgs/icons/files/icon_git_file.png"), IM_COL32(56, 56, 56, 150), IM_COL32(50, 50, 50, 255), IM_COL32(100, 100, 255, 255)))
+                        if (MyButton(filenameString, path.string(), "Git File", fileSizeString, selected, Application::CookPath("ressources/imgs/icons/files/icon_git_file.png"), IM_COL32(56, 56, 56, 150), IM_COL32(50, 50, 50, 255), IM_COL32(100, 100, 255, 255)))
                         {
                             if (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) || ImGui::IsKeyDown(ImGuiKey_RightCtrl))
                             {
-                                m_Selected.push_back(path);
+                                m_Selected.push_back(path.string());
                             }
                             else
                             {
                                 m_Selected.clear();
-                                m_Selected.push_back(path);
+                                m_Selected.push_back(path.string());
                             }
                         }
                         break;
                     }
                     case FileTypes::File_H:
                     {
-                        if (MyButton(filenameString, path, "C Header File", fileSizeString, selected, Application::CookPath("ressources/imgs/icons/files/icon_c_h_file.png"), IM_COL32(56, 56, 56, 150), IM_COL32(50, 50, 50, 255), IM_COL32(220, 100, 220, 255)))
+                        if (MyButton(filenameString, path.string(), "C Header File", fileSizeString, selected, Application::CookPath("ressources/imgs/icons/files/icon_c_h_file.png"), IM_COL32(56, 56, 56, 150), IM_COL32(50, 50, 50, 255), IM_COL32(220, 100, 220, 255)))
                         {
                             if (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) || ImGui::IsKeyDown(ImGuiKey_RightCtrl))
                             {
-                                m_Selected.push_back(path);
+                                m_Selected.push_back(path.string());
                             }
                             else
                             {
                                 m_Selected.clear();
-                                m_Selected.push_back(path);
+                                m_Selected.push_back(path.string());
                             }
                         }
                         break;
                     }
                     case FileTypes::File_C:
                     {
-                        if (MyButton(filenameString, path, "C Source File", fileSizeString, selected, Application::CookPath("ressources/imgs/icons/files/icon_c_file.png"), IM_COL32(56, 56, 56, 150), IM_COL32(50, 50, 50, 255), IM_COL32(100, 100, 255, 255)))
+                        if (MyButton(filenameString, path.string(), "C Source File", fileSizeString, selected, Application::CookPath("ressources/imgs/icons/files/icon_c_file.png"), IM_COL32(56, 56, 56, 150), IM_COL32(50, 50, 50, 255), IM_COL32(100, 100, 255, 255)))
                         {
                             if (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) || ImGui::IsKeyDown(ImGuiKey_RightCtrl))
                             {
-                                m_Selected.push_back(path);
+                                m_Selected.push_back(path.string());
                             }
                             else
                             {
                                 m_Selected.clear();
-                                m_Selected.push_back(path);
+                                m_Selected.push_back(path.string());
                             }
                         }
                         break;
                     }
                     case FileTypes::File_HPP:
                     {
-                        if (MyButton(filenameString, path, "C++ Header File", fileSizeString, selected, Application::CookPath("ressources/imgs/icons/files/icon_cpp_h_file.png"), IM_COL32(56, 56, 56, 150), IM_COL32(50, 50, 50, 255), IM_COL32(100, 100, 255, 255)))
+                        if (MyButton(filenameString, path.string(), "C++ Header File", fileSizeString, selected, Application::CookPath("ressources/imgs/icons/files/icon_cpp_h_file.png"), IM_COL32(56, 56, 56, 150), IM_COL32(50, 50, 50, 255), IM_COL32(100, 100, 255, 255)))
                         {
                             if (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) || ImGui::IsKeyDown(ImGuiKey_RightCtrl))
                             {
-                                m_Selected.push_back(path);
+                                m_Selected.push_back(path.string());
                             }
                             else
                             {
                                 m_Selected.clear();
-                                m_Selected.push_back(path);
+                                m_Selected.push_back(path.string());
                             }
                         }
                         break;
                     }
                     case FileTypes::File_CPP:
                     {
-                        if (MyButton(filenameString, path, "C++ Source File", fileSizeString, selected, Application::CookPath("ressources/imgs/icons/files/icon_cpp_file.png"), IM_COL32(56, 56, 56, 150), IM_COL32(50, 50, 50, 255), IM_COL32(100, 100, 255, 255)))
+                        if (MyButton(filenameString, path.string(), "C++ Source File", fileSizeString, selected, Application::CookPath("ressources/imgs/icons/files/icon_cpp_file.png"), IM_COL32(56, 56, 56, 150), IM_COL32(50, 50, 50, 255), IM_COL32(100, 100, 255, 255)))
                         {
                             if (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) || ImGui::IsKeyDown(ImGuiKey_RightCtrl))
                             {
-                                m_Selected.push_back(path);
+                                m_Selected.push_back(path.string());
                             }
                             else
                             {
                                 m_Selected.clear();
-                                m_Selected.push_back(path);
+                                m_Selected.push_back(path.string());
                             }
                         }
                         break;
                     }
                     case FileTypes::File_INI:
                     {
-                        if (MyButton(filenameString, path, "Init File", fileSizeString, selected, Application::CookPath("ressources/imgs/icons/files/icon_ini_file.png"), IM_COL32(56, 56, 56, 150), IM_COL32(50, 50, 50, 255), IM_COL32(150, 150, 150, 255)))
+                        if (MyButton(filenameString, path.string(), "Init File", fileSizeString, selected, Application::CookPath("ressources/imgs/icons/files/icon_ini_file.png"), IM_COL32(56, 56, 56, 150), IM_COL32(50, 50, 50, 255), IM_COL32(150, 150, 150, 255)))
                         {
                             if (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) || ImGui::IsKeyDown(ImGuiKey_RightCtrl))
                             {
-                                m_Selected.push_back(path);
+                                m_Selected.push_back(path.string());
                             }
                             else
                             {
                                 m_Selected.clear();
-                                m_Selected.push_back(path);
+                                m_Selected.push_back(path.string());
                             }
                         }
                         break;
                     }
                     default:
                     {
-                        if (MyButton(filenameString, path, "File", fileSizeString, selected, Application::CookPath("ressources/imgs/icons/files/icon_unknow_file.png"), IM_COL32(56, 56, 56, 150), IM_COL32(50, 50, 50, 255), IM_COL32(150, 150, 150, 255)))
+                        if (MyButton(filenameString, path.string(), "File", fileSizeString, selected, Application::CookPath("ressources/imgs/icons/files/icon_unknow_file.png"), IM_COL32(56, 56, 56, 150), IM_COL32(50, 50, 50, 255), IM_COL32(150, 150, 150, 255)))
                         {
                             if (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) || ImGui::IsKeyDown(ImGuiKey_RightCtrl))
                             {
-                                m_Selected.push_back(path);
+                                m_Selected.push_back(path.string());
                             }
                             else
                             {
                                 m_Selected.clear();
-                                m_Selected.push_back(path);
+                                m_Selected.push_back(path.string());
                             }
                         }
                         break;
@@ -1693,7 +1693,7 @@ namespace Cherry
                         {
                             if (selected)
                             {
-                                m_Selected.push_back(path);
+                                m_Selected.push_back(path.string());
                             }
                             else
                             {
@@ -1723,12 +1723,12 @@ namespace Cherry
                         {
                             if (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) || ImGui::IsKeyDown(ImGuiKey_RightCtrl))
                             {
-                                m_Selected.push_back(path);
+                                m_Selected.push_back(path.string());
                             }
                             else
                             {
                                 m_Selected.clear();
-                                m_Selected.push_back(path);
+                                m_Selected.push_back(path.string());
                             }
                         }
 
@@ -2062,11 +2062,11 @@ namespace Cherry
 
     void ContentBrowserAppWindow::RenderDetailsBar()
     {
+        //
     }
 
     void ContentBrowserAppWindow::Render()
     {
-        std::cout << "EQF" << std::endl;
         const float splitterWidth = 2.5f;
         const float margin = 10.0f;
 

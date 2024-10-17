@@ -10,14 +10,14 @@ namespace Cherry
         return "not_implemented";
     };
 
-    std::string Component::SetProp(const std::string &key, const std::string &val)
+    std::string Component::SetProperty(const std::string &key, const std::string &val)
     {
         m_Properties[key] = val;
         m_IsPropsChanged = true;
         return val;
     }
 
-    std::string Component::GetProp(const std::string &key)
+    std::string Component::GetProperty(const std::string &key)
     {
         auto it = m_Properties.find(key);
         if (it != m_Properties.end())
@@ -27,7 +27,7 @@ namespace Cherry
         return 0;
     }
 
-    void Component::ClearProp(const std::string &key)
+    void Component::ClearProperty(const std::string &key)
     {
         m_IsPropsChanged = true;
         m_Properties.erase(key);

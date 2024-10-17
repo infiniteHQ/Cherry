@@ -1,3 +1,4 @@
+#define SDL_MAIN_HANDLED
 #define CHERRY_V1
 #include "../../cherry.hpp"
 

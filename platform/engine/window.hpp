@@ -7,6 +7,8 @@
 #include "app.hpp"
 #include "base.hpp"
 #include "app_window.hpp"
+#include "../../lib/sdl2/include/SDL.h"
+#include "../../lib/sdl2/include/SDL_vulkan.h"
 
 #include <string>
 #include <vector>
@@ -16,7 +18,6 @@
 #include <memory>
 #include <functional>
 #include <filesystem>
-#include <SDL2/SDL_image.h>
 
 #include "ui/ui.hpp"
 #include "imgui/ImGuiTheme.h"

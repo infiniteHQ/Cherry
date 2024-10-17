@@ -18,9 +18,9 @@ namespace Cherry
 
         // OBSOLETE
         virtual std::string GetData(const std::string &data_type);
-        std::string SetProp(const std::string &key, const std::string &val);
-        std::string GetProp(const std::string &key);
-        void ClearProp(const std::string &key);
+        std::string SetProperty(const std::string &key, const std::string &val);
+        std::string GetProperty(const std::string &key);
+        void ClearProperty(const std::string &key);
         void SetID(const std::string &id);
         std::string GetID();
         bool NeedRefreshing();

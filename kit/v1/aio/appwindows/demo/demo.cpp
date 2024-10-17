@@ -48,12 +48,12 @@ namespace Cherry
 
         // Colored button
         cp_ButtonOneColored = CustomButtonSimple::Create("button_1_colored", "Custom Simple");
-        cp_ButtonOneColored->SetProp("bg", "#2424F4FF");
-        cp_ButtonOneColored->SetProp("bg_hovered", "#2525F5FF");
-        cp_ButtonOneColored->SetProp("bg_clicked", "#2626F6FF");
-        cp_ButtonOneColored->SetProp("border", "#2424F4FF");
-        cp_ButtonOneColored->SetProp("border_hovered", "#2525F5FF");
-        cp_ButtonOneColored->SetProp("border_clicked", "#2525F5FF");
+        cp_ButtonOneColored->SetProperty("bg", "#2424F4FF");
+        cp_ButtonOneColored->SetProperty("bg_hovered", "#2525F5FF");
+        cp_ButtonOneColored->SetProperty("bg_clicked", "#2626F6FF");
+        cp_ButtonOneColored->SetProperty("border", "#2424F4FF");
+        cp_ButtonOneColored->SetProperty("border_hovered", "#2525F5FF");
+        cp_ButtonOneColored->SetProperty("border_clicked", "#2525F5FF");
 
         cp_ButtonDropdownTwo = Application::Get().CreateComponent<CustomDrowpdownImageButtonSimple>("dbutton_1", "Advanced dropdown");
         cp_ButtonDropdownTwo->SetDropDownImage(Application::CookPath("ressources/imgs/icons/misc/icon_collection.png"));

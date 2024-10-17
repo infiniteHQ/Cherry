@@ -2,8 +2,6 @@
 
 #include "embed/not_found_img.embed"
 #include "embed/window.embed"
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_vulkan.h>
 
 // Emedded font
 #include "imgui/Roboto-Regular.embed"

@@ -1,3 +1,4 @@
+#define SDL_MAIN_HANDLED
 #define CHERRY_V1
 #include "../../cherry.hpp"
 
@@ -36,7 +37,7 @@ Cherry::Application *Cherry::CreateApplication(int argc, char **argv)
   app->AddLocale("fr", Application::CookPath("ressources/locales/fr.json"));
   app->AddLocale("en", Application::CookPath("ressources/locales/en.json"));
   app->AddLocale("es", Application::CookPath("ressources/locales/es.json")); // With not suffisent locales to show the "default" behavior
-  app->SetDefaultLocale("en"); // The "default" behavior
+  app->SetDefaultLocale("en");                                               // The "default" behavior
   app->SetLocale("fr");
 
   app->PushLayer(layer);
@@ -147,12 +148,10 @@ Cherry::Application *Cherry::CreateApplication(int argc, char **argv)
                             }
 
                             ImGui::PopStyleVar();  
-                            ImGui::PopStyleColor(2); 
-                            });
+                            ImGui::PopStyleColor(2); });
 
-  std::shared_ptr<DemoAppWindow> DemoWindow = std::make_shared<Cherry::DemoAppWindow>("?loc:loc.window_names.demo");
-  DemoWindow->RefreshRender(DemoWindow);
-  Application::Get().PutWindow(DemoWindow->GetAppWindow());
+  auto DemoWindow = Cherry::DemoAppWindow::Create("?loc:loc.window_names.demo");
+  Cherry::AddAppWindow(DemoWindow->GetAppWindow());
 
   return app;
 }

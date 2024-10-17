@@ -147,6 +147,7 @@ namespace Cherry
         VkResult err;
 
         // Create Vulkan Instance
+        if (!g_LogicalDeviceInitialized)
         {
             VkInstanceCreateInfo create_info = {};
             create_info.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
@@ -191,6 +192,7 @@ namespace Cherry
         }
 
         // Select GPU
+        if (!g_LogicalDeviceInitialized)
         {
             uint32_t gpu_count;
             err = vkEnumeratePhysicalDevices(g_Instance, &gpu_count, NULL);
@@ -221,6 +223,7 @@ namespace Cherry
         }
 
         // Select graphics queue family
+        if (!g_LogicalDeviceInitialized)
         {
             uint32_t count;
             vkGetPhysicalDeviceQueueFamilyProperties(g_PhysicalDevice, &count, NULL);
@@ -2140,7 +2143,7 @@ std::string Application::CertifyWindowName(const std::string &name) {
         }
 #endif
 
-        root_path = std::filesystem::path(root_path).parent_path();
+        root_path = std::filesystem::path(root_path).parent_path().string();
 
         if (!input_path.empty() && input_path.front() == '/')
         {
@@ -2341,7 +2344,7 @@ std::string Application::CertifyWindowName(const std::string &name) {
         {
             if (component->GetID() == id)
             {
-                component->GetProp(topic);
+                component->GetProperty(topic);
             }
         }
         return 0;

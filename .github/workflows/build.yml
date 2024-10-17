@@ -12,12 +12,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest]
+        os: [ubuntu-latest, windows-latest]
         build_type: [Release]
 
     steps:
     - uses: actions/checkout@v3
 
+    # Steps for Ubuntu
     - name: Install Dependencies and Configure Build (ubuntu-latest)
       if: matrix.os == 'ubuntu-latest'
       run: |
@@ -32,3 +33,17 @@ jobs:
         # Configure and build
         cd "examples/simple"
         sudo bash build.sh
+
+    # Steps for Windows
+    - name: Install CMake and Vulkan SDK (windows-latest)
+      if: matrix.os == 'windows-latest'
+      run: |
+        choco install cmake --installargs 'ADD_CMAKE_TO_PATH=System'
+        choco install vulkan-sdk
+
+        # Initialize and update submodules
+        git submodule update --init --recursive
+
+        # Configure and build
+        cd "examples/simple"
+        ./build.bat
