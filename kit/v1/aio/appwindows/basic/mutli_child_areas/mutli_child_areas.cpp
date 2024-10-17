@@ -110,7 +110,7 @@ namespace Cherry
             {
                 auto &child = children[i];
 
-                ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.0f, 0.0f, 0.0f, 1.0f));
+                ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
                 ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
 
                 std::string childname = child.m_Name + "##childvh" + m_AppWindow->m_Name;

@@ -53,31 +53,14 @@ Cherry::Application *Cherry::CreateApplication(int argc, char **argv)
                             ImVec4 lightBorderColor = ImVec4(0.2f, 0.2f, 0.2f, 1.0f);       
 
                             ImGui::PushStyleColor(ImGuiCol_PopupBg, darkBackgroundColor);
-
                             ImGui::PushStyleColor(ImGuiCol_Border, lightBorderColor);
-
                             ImGui::PushStyleVar(ImGuiStyleVar_PopupRounding, 3.0f);
 
                             static bool t;
 
                             if (ImGui::BeginMenu("Options"))
                             {
-                              ImGui::GetFont()->Scale *= 0.8;
-                              ImGui::PushFont(ImGui::GetFont());
-
-                              ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5.0f);
-
-                              ImGui::PushStyleColor(ImGuiCol_Text, grayColor);
-                              ImGui::Text("Main stuff");
-                              ImGui::PopStyleColor();
-
-                              ImGui::PushStyleColor(ImGuiCol_Separator, graySeparatorColor);
-                              ImGui::Separator();
-                              ImGui::PopStyleColor();
-
-                              ImGui::GetFont()->Scale = 0.84;
-                              ImGui::PopFont();
-                              ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2.0f);
+                              Cherry::MenuItemTextSeparator("Test Stuff");
 
                               if (ImGui::MenuItem("Project Settings", "Main configurations of this project", &t))
                               {
@@ -120,65 +103,37 @@ Cherry::Application *Cherry::CreateApplication(int argc, char **argv)
 
                               if(ImGui::Button("Set en"))
                               {
-  app->SetLocale("en");
+                                app->SetLocale("en");
                               }
 
                               if(ImGui::Button("Set fr"))
                               {
-  app->SetLocale("fr");
+                                app->SetLocale("fr");
                               }
 
                               if(ImGui::Button("Set es"))
                               {
-  app->SetLocale("es");
+                                app->SetLocale("es");
                               }
-                              ImGui::GetFont()->Scale *= 0.8;
-                              ImGui::PushFont(ImGui::GetFont());
 
-                              ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5.0f);
-
-                              ImGui::PushStyleColor(ImGuiCol_Text, grayColor);
-                              ImGui::Text("Main stuff");
-                              ImGui::PopStyleColor();
-
-                              ImGui::PushStyleColor(ImGuiCol_Separator, graySeparatorColor);
-                              ImGui::Separator();
-                              ImGui::PopStyleColor();
-
-                              ImGui::GetFont()->Scale = 0.84;
-                              ImGui::PopFont();
-                              ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2.0f);
+                              Cherry::MenuItemTextSeparator("Main stuff");
 
                               if (ImGui::MenuItem("Logs Utility", "Overview of all logs", &t))
                               {
                               }
 
-                              ImGui::GetFont()->Scale *= 0.8;
-                              ImGui::PushFont(ImGui::GetFont());
+                              Cherry::MenuItemTextSeparator("Main stuff");
+                             
 
-                              ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5.0f);
-
-                              ImGui::PushStyleColor(ImGuiCol_Text, grayColor);
-                              ImGui::Text("Main stuff");
-                              ImGui::PopStyleColor();
-
-                              ImGui::PushStyleColor(ImGuiCol_Separator, graySeparatorColor);
-                              ImGui::Separator();
-                              ImGui::PopStyleColor();
-
-                              ImGui::GetFont()->Scale = 0.84;
-                              ImGui::PopFont();
-                              ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2.0f);
-
-                              if (ImGui::MenuItem("Manage plugins", "Add, remove, edit plugins of this project"))
+                              if (Cherry::MenuItemSimple("Manage plugins", "Add, remove, edit plugins of this project"))
                               {
                               }
 
-                              if (ImGui::MenuItem("Manage modules", "Manage modules loaded/registered", &t))
+                              if (Cherry::MenuItemSimple("Manage modules", "Manage modules loaded/registered", &t))
                               {
                               }
 
-                              if (ImGui::MenuItem("Templates modules", "Create, add template in your project", &t))
+                              if (Cherry::MenuItemSimple("Templates modules", "Create, add template in your project", &t))
                               {
                               }
 
@@ -188,35 +143,36 @@ Cherry::Application *Cherry::CreateApplication(int argc, char **argv)
                             ImGui::PopStyleVar();  
                             ImGui::PopStyleColor(2); });
 
+  auto WindowWithDockspace = DockingAppWindow::Create("fqdow_names.texqsd");
+  Application::Get().PutWindow(WindowWithDockspace->GetAppWindow());
+  /*  auto ContentOutliner = ContentOutlinerSimple::Create("?loc:loc.window_names.outliner");
+    Cherry::AddAppWindow(ContentOutliner->GetAppWindow());
+    auto PropsEditor = PropsEditorSimple::Create("?loc:loc.window_names.props_editor");
+    Cherry::AddAppWindow(PropsEditor->GetAppWindow());
 
+    //auto NodalEditor = NodeEditorSimple::Create("?loc:loc.window_names.node_editor");
+    //Cherry::AddAppWindow(NodalEditor->GetAppWindow());
+    auto ContentBrowser = ContentBrowserAppWindow::Create("?loc:loc.window_names.content_browser", "/home/diego");
+    Cherry::AddAppWindow(ContentBrowser->GetAppWindow());
 
-auto WindowWithDockspace = DockingAppWindow::Create("fqdow_names.texqsd");
-Application::Get().PutWindow(WindowWithDockspace->GetAppWindow());
-/*  auto ContentOutliner = ContentOutlinerSimple::Create("?loc:loc.window_names.outliner");
-  Cherry::AddAppWindow(ContentOutliner->GetAppWindow());
-  auto PropsEditor = PropsEditorSimple::Create("?loc:loc.window_names.props_editor");
-  Cherry::AddAppWindow(PropsEditor->GetAppWindow());
+    auto Demo = DemoAppWindow::Create("?loc:loc.window_names.demo");
+    Cherry::AddAppWindow(Demo->GetAppWindow());
 
-  //auto NodalEditor = NodeEditorSimple::Create("?loc:loc.window_names.node_editor");
-  //Cherry::AddAppWindow(NodalEditor->GetAppWindow());
-  auto ContentBrowser = ContentBrowserAppWindow::Create("?loc:loc.window_names.content_browser", "/home/diego");
-  Cherry::AddAppWindow(ContentBrowser->GetAppWindow());
-
-  auto Demo = DemoAppWindow::Create("?loc:loc.window_names.demo");
-  Cherry::AddAppWindow(Demo->GetAppWindow());
-
-  auto TabsWindow = MultiChildTabs::Create("Vertical Tabs");
-  TabsWindow->AddChild("One", [](){ImGui::Text("One");});
-  TabsWindow->AddChild("Two", [](){ImGui::Text("Two");});
-  TabsWindow->AddChild("Three", [](){ImGui::Text("Three");});
-  Cherry::AddAppWindow(TabsWindow->GetAppWindow());*/
-
+    auto TabsWindow = MultiChildTabs::Create("Vertical Tabs");
+    TabsWindow->AddChild("One", [](){ImGui::Text("One");});
+    TabsWindow->AddChild("Two", [](){ImGui::Text("Two");});
+    TabsWindow->AddChild("Three", [](){ImGui::Text("Three");});
+    Cherry::AddAppWindow(TabsWindow->GetAppWindow());*/
 
   auto ListWindow = MultiChildList::Create("List Childs");
-  ListWindow->AddChild("One", [](){ImGui::Text("One");});
-  ListWindow->AddChild("Two", [](){ImGui::Text("Two");});
-  ListWindow->AddChild("Three", [](){ImGui::Text("Three");});
-  ListWindow->AddChild("Four", [](){ImGui::Text("Four");});
+  ListWindow->AddChild("One", []()
+                       { ImGui::Text("One"); });
+  ListWindow->AddChild("Two", []()
+                       { ImGui::Text("Two"); });
+  ListWindow->AddChild("Three", []()
+                       { ImGui::Text("Three"); });
+  ListWindow->AddChild("Four", []()
+                       { ImGui::Text("Four"); });
   Cherry::AddAppWindow(ListWindow->GetAppWindow());
   /*
 

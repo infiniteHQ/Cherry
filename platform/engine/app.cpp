@@ -523,9 +523,18 @@ namespace Cherry
 
     void Application::BoostrappWindow()
     {
-        // Bootstrapp with a first window
-        // TODO: Default win name.
-        this->m_Windows.push_back(std::make_shared<Window>("0", app->m_DefaultSpecification.Width, app->m_DefaultSpecification.Height, app->m_DefaultSpecification));
+        std::string name;
+
+        if(s_Instance->m_DefaultSpecification.DefaultWindowName.empty())
+        {
+            name = CertifyWindowName(s_Instance->m_DefaultSpecification.Name);
+        }
+        else
+        {
+            name = CertifyWindowName(s_Instance->m_DefaultSpecification.DefaultWindowName);
+        }
+
+        this->m_Windows.push_back(std::make_shared<Window>(name, app->m_DefaultSpecification.Width, app->m_DefaultSpecification.Height, app->m_DefaultSpecification));
     }
 
     void Application::Shutdown()

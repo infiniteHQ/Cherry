@@ -38,6 +38,10 @@
 #include "./kit/v1/components/titles/h4.hpp"
 #include "./kit/v1/components/titles/h5.hpp"
 #include "./kit/v1/components/titles/h6.hpp"
+// MenuItems
+#include "./kit/v1/components/menuitems/separator.hpp"
+#include "./kit/v1/components/menuitems/menuitem.hpp"
+
 // AppWindows templates
 #include "./kit/v1/aio/appwindows/demo/demo.hpp"
 #include "./kit/v1/aio/appwindows/basic/empty/empty_appwindow.hpp"

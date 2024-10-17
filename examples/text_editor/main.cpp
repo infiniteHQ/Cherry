@@ -24,14 +24,14 @@ Cherry::Application *Cherry::CreateApplication(int argc, char **argv)
   spec.RenderMode = WindowRenderingMethod::SimpleWindow;
   spec.UniqueAppWindowName = "Test";
   spec.WindowSaves = false;
-  spec.IconPath = BINPATH("ressources/imgs/icon.png");
+  spec.IconPath = Cherry::GetPath("ressources/imgs/favicon.png");
 
   Cherry::Application *app = new Cherry::Application(spec);
-  app->SetFavIconPath(Application::CookPath("ressources/imgs/favicon.png"));
-  app->AddFont("Consola", Application::CookPath("ressources/fonts/consola.ttf"), 17.0f);
+  app->SetFavIconPath(Cherry::GetPath("ressources/imgs/favicon.png"));
+  app->AddFont("Consola", Cherry::GetPath("ressources/fonts/consola.ttf"), 17.0f);
 
-  app->AddLocale("fr", Application::CookPath("ressources/locales/fr.json"));
-  app->AddLocale("en", Application::CookPath("ressources/locales/en.json"));
+  app->AddLocale("fr", Cherry::GetPath("ressources/locales/fr.json"));
+  app->AddLocale("en", Cherry::GetPath("ressources/locales/en.json"));
   app->SetLocale("fr");
 
   app->PushLayer(layer);
@@ -52,117 +52,41 @@ Cherry::Application *Cherry::CreateApplication(int argc, char **argv)
 
                             if (ImGui::BeginMenu("Edit"))
                             {
-                              ImGui::GetFont()->Scale *= 0.8;
-                              ImGui::PushFont(ImGui::GetFont());
+                              Cherry::MenuItemTextSeparator("Main stuff");
 
-                              ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5.0f);
-
-                              ImGui::PushStyleColor(ImGuiCol_Text, grayColor);
-                              ImGui::Text("Main stuff");
-                              ImGui::PopStyleColor();
-
-                              ImGui::PushStyleColor(ImGuiCol_Separator, graySeparatorColor);
-                              ImGui::Separator();
-                              ImGui::PopStyleColor();
-
-                              ImGui::GetFont()->Scale = 0.84;
-                              ImGui::PopFont();
-                              ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2.0f);
-
-                              if (ImGui::MenuItem("Project Settings", "Main configurations of this project", &t))
+                              if (Cherry::MenuItemSimple("Project Settings", "Main configurations of this project", &t))
                               {
                               }
 
-                              if(ImGui::Button("Set en"))
-                              {
-  app->SetLocale("en");
-                              }
+                              Cherry::MenuItemTextSeparator("Main stuff");
 
-                              if(ImGui::Button("Set fr"))
-                              {
-  app->SetLocale("fr");
-                              }
-
-                              if(ImGui::Button("Set es"))
-                              {
-  app->SetLocale("es");
-                              }
-                              ImGui::GetFont()->Scale *= 0.8;
-                              ImGui::PushFont(ImGui::GetFont());
-
-                              ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5.0f);
-
-                              ImGui::PushStyleColor(ImGuiCol_Text, grayColor);
-                              ImGui::Text("Main stuff");
-                              ImGui::PopStyleColor();
-
-                              ImGui::PushStyleColor(ImGuiCol_Separator, graySeparatorColor);
-                              ImGui::Separator();
-                              ImGui::PopStyleColor();
-
-                              ImGui::GetFont()->Scale = 0.84;
-                              ImGui::PopFont();
-                              ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2.0f);
-
-                              if (ImGui::MenuItem("Logs Utility", "Overview of all logs", &t))
+                              if (Cherry::MenuItemSimple("Logs Utility", "Overview of all logs", &t))
                               {
                               }
 
-                              ImGui::GetFont()->Scale *= 0.8;
-                              ImGui::PushFont(ImGui::GetFont());
+                              Cherry::MenuItemTextSeparator("Main stuff");
 
-                              ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5.0f);
-
-                              ImGui::PushStyleColor(ImGuiCol_Text, grayColor);
-                              ImGui::Text("Main stuff");
-                              ImGui::PopStyleColor();
-
-                              ImGui::PushStyleColor(ImGuiCol_Separator, graySeparatorColor);
-                              ImGui::Separator();
-                              ImGui::PopStyleColor();
-
-                              ImGui::GetFont()->Scale = 0.84;
-                              ImGui::PopFont();
-                              ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2.0f);
-
-                              if (ImGui::MenuItem("Manage plugins", "Add, remove, edit plugins of this project"))
+                              if (Cherry::MenuItemSimple("Manage plugins", "Add, remove, edit plugins of this project"))
                               {
                               }
 
-                              if (ImGui::MenuItem("Manage modules", "Manage modules loaded/registered", &t))
+                              if (Cherry::MenuItemSimple("Manage modules", "Manage modules loaded/registered", &t))
                               {
                               }
 
-                              if (ImGui::MenuItem("Templates modules", "Create, add template in your project", &t))
+                              if (Cherry::MenuItemSimple("Templates modules", "Create, add template in your project", &t))
                               {
                               }
 
                               ImGui::EndMenu();
                             }
 
+
                             ImGui::PopStyleVar();  
                             ImGui::PopStyleColor(2); });
 
-  std::shared_ptr<TextEditorSimple> TextEditor = std::make_shared<TextEditorSimple>("Test");
-  TextEditor->RefreshRender(TextEditor);
-  Application::Get().PutWindow(TextEditor->GetAppWindow()); // Publish this window into the workspace
-
-  app->SetMainRenderCallback([]()
-                             {
-                               /*static ImFont *font = Application::GetFontList()["Consola"];
-
-                               ImFont *old = ImGui::GetFont();
-                               if (font)
-                               {
-                                 ImGui::PushFont(font);
-                               }
-
-                               cp_TextEditor->Render("Title");
-
-                               if (font)
-                               {
-                                 ImGui::PopFont();
-                               }*/ });
+  auto TextEditor = TextEditorSimple::Create("Test");
+  Cherry::AddAppWindow(TextEditor->GetAppWindow());
 
   return app;
 }
