@@ -1763,7 +1763,6 @@ std::string Application::CertifyWindowName(const std::string &name) {
         ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_DockingEnable;
         ImGuiID dockspaceID = ImGui::GetID("MainDockspace");
 
-        // TODO Set a global scale
         float oldsize = ImGui::GetFont()->Scale;
         ImGui::GetFont()->Scale *= window->m_Specifications.FontGlobalScale;
         ImGui::PushFont(ImGui::GetFont());
