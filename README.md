@@ -32,6 +32,9 @@
 </div>
 
 
+> [!NOTE]  
+> This framework is new and still under active development, so some bugs may occur, and content is subject to change. We are also working to improve the overall stability of Cherry, particularly with regard to memory safety and the rendering stack, as well as the graphical libraries used. Thank you for your understanding! Stay tuned :)
+
 ## Features
 
 > **Components & Kits**
