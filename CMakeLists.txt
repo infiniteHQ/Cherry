@@ -10,9 +10,9 @@ if(NOT MSVC)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GCC_COVERAGE_COMPILE_FLAGS}")
 endif()
 
-
 # Find Vulkan on the system
 find_package(Vulkan REQUIRED)
+include_directories(${Vulkan_INCLUDE_DIRS})
 
 # Add libraries
 add_subdirectory(lib/glm)
