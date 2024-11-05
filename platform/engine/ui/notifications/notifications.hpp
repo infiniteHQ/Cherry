@@ -1,10 +1,10 @@
 /**
  * @file ImGuiNotify.hpp
  * @brief A header-only library for creating toast notifications with ImGui.
- * 
+ *
  * Based on imgui-notify by patrickcjk
  * https://github.com/patrickcjk/imgui-notify
- * 
+ *
  * @version 0.0.3 WIP by TyomaVader
  * @date 18.01.2024
  */
@@ -13,39 +13,46 @@
 #define IMGUI_NOTIFY
 
 #pragma once
-
-#include <vector>			// Vector for storing notifications list
-#include <string>
-#include <chrono>			// For the notifications timed dissmiss
-#include <functional>		// For storing the code, which executest on the button click in the notification
-
 #include "../../app.hpp"
+#include "../../window.hpp"
+
+#include <vector> // Vector for storing notifications list
+#include <string>
+#include <chrono>	  // For the notifications timed dissmiss
+#include <functional> // For storing the code, which executest on the button click in the notification
 
 #include "icons.hpp"
 
 /**
  * CONFIGURATION SECTION Start
-*/
+ */
 
-#define NOTIFY_MAX_MSG_LENGTH				4096		// Max message content length
-#define NOTIFY_PADDING_X					20.f		// Bottom-left X padding
-#define NOTIFY_PADDING_Y					20.f		// Bottom-left Y padding
-#define NOTIFY_PADDING_MESSAGE_Y			10.f		// Padding Y between each message
-#define NOTIFY_FADE_IN_OUT_TIME				150			// Fade in and out duration
-#define NOTIFY_DEFAULT_DISMISS				3000		// Auto dismiss after X ms (default, applied only of no data provided in constructors)
-#define NOTIFY_OPACITY						0.8f		// 0-1 Toast opacity
-#define NOTIFY_USE_SEPARATOR 				false 		// If true, a separator will be rendered between the title and the content
-#define NOTIFY_USE_DISMISS_BUTTON			true		// If true, a dismiss button will be rendered in the top right corner of the toast
-#define NOTIFY_RENDER_LIMIT					5			// Max number of toasts rendered at the same time. Set to 0 for unlimited
+#define NOTIFY_MAX_MSG_LENGTH 4096	   // Max message content length
+#define NOTIFY_PADDING_X 20.f		   // Bottom-left X padding
+#define NOTIFY_PADDING_Y 20.f		   // Bottom-left Y padding
+#define NOTIFY_PADDING_MESSAGE_Y 10.f  // Padding Y between each message
+#define NOTIFY_FADE_IN_OUT_TIME 150	   // Fade in and out duration
+#define NOTIFY_DEFAULT_DISMISS 3000	   // Auto dismiss after X ms (default, applied only of no data provided in constructors)
+#define NOTIFY_OPACITY 0.8f			   // 0-1 Toast opacity
+#define NOTIFY_USE_SEPARATOR true	   // If true, a separator will be rendered between the title and the content
+#define NOTIFY_USE_DISMISS_BUTTON true // If true, a dismiss button will be rendered in the top right corner of the toast
+#define NOTIFY_RENDER_LIMIT 5		   // Max number of toasts rendered at the same time. Set to 0 for unlimited
 
 /**
  * CONFIGURATION SECTION End
-*/
+ */
 
 static const ImGuiWindowFlags NOTIFY_DEFAULT_TOAST_FLAGS = ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoFocusOnAppearing;
 
-#define NOTIFY_NULL_OR_EMPTY(str)		(!str || !strlen(str))
-#define NOTIFY_FORMAT(fn, format, ...)	if (format) {va_list args; va_start(args, format); fn(format, args, ##__VA_ARGS__); va_end(args);}
+#define NOTIFY_NULL_OR_EMPTY(str) (!str || !strlen(str))
+#define NOTIFY_FORMAT(fn, format, ...)   \
+	if (format)                          \
+	{                                    \
+		va_list args;                    \
+		va_start(args, format);          \
+		fn(format, args, ##__VA_ARGS__); \
+		va_end(args);                    \
+	}
 
 enum class ImGuiToastType : uint8_t
 {
@@ -84,66 +91,65 @@ enum class ImGuiToastPos : uint8_t
 class ImGuiToast
 {
 private:
-	ImGuiWindowFlags							flags = NOTIFY_DEFAULT_TOAST_FLAGS;
+	ImGuiWindowFlags flags = NOTIFY_DEFAULT_TOAST_FLAGS;
 
-	ImGuiToastType								type = ImGuiToastType::None;
-	char										title[NOTIFY_MAX_MSG_LENGTH];
-	char										content[NOTIFY_MAX_MSG_LENGTH];
+	ImGuiToastType type = ImGuiToastType::None;
+	char title[NOTIFY_MAX_MSG_LENGTH];
+	char content[NOTIFY_MAX_MSG_LENGTH];
 
-	int											dismissTime = NOTIFY_DEFAULT_DISMISS;
-	std::chrono::system_clock::time_point		creationTime = std::chrono::system_clock::now();
+	int dismissTime = NOTIFY_DEFAULT_DISMISS;
+	std::chrono::system_clock::time_point creationTime = std::chrono::system_clock::now();
 
-	std::function<void()>						onButtonPress = nullptr; // A lambda variable, which will be executed when button in notification is pressed
-	char 										buttonLabel[NOTIFY_MAX_MSG_LENGTH];
+	std::function<void()> onButtonPress = nullptr; // A lambda variable, which will be executed when button in notification is pressed
+	char buttonLabel[NOTIFY_MAX_MSG_LENGTH];
 
 private:
 	// Setters
 
-	inline void setTitle(const char* format, va_list args)
+	inline void setTitle(const char *format, va_list args)
 	{
 		vsnprintf(this->title, sizeof(this->title), format, args);
 	}
 
-	inline void setContent(const char* format, va_list args)
+	inline void setContent(const char *format, va_list args)
 	{
 		vsnprintf(this->content, sizeof(this->content), format, args);
 	}
 
-	inline void setButtonLabel(const char* format, va_list args)
+	inline void setButtonLabel(const char *format, va_list args)
 	{
 		vsnprintf(this->buttonLabel, sizeof(this->buttonLabel), format, args);
 	}
 
 public:
-
 	/**
 	 * @brief Set the title of the toast notification.
-	 * 
+	 *
 	 * @param format The format string for the title.
 	 * @param ... The arguments for the format string.
 	 */
-	inline void setTitle(const char* format, ...)
+	inline void setTitle(const char *format, ...)
 	{
 		NOTIFY_FORMAT(this->setTitle, format);
 	}
 
 	/**
 	 * @brief Set the content of the toast notification.
-	 * 
+	 *
 	 * @param format The format string for the content.
 	 * @param ... The arguments for the format string.
 	 */
-	inline void setContent(const char* format, ...)
+	inline void setContent(const char *format, ...)
 	{
 		NOTIFY_FORMAT(this->setContent, format);
 	}
 
 	/**
 	 * @brief Set the type of the toast notification.
-	 * 
+	 *
 	 * @param type The type of the toast notification.
 	 */
-	inline void setType(const ImGuiToastType& type)
+	inline void setType(const ImGuiToastType &type)
 	{
 		IM_ASSERT(type < ImGuiToastType::COUNT);
 		this->type = type;
@@ -151,31 +157,31 @@ public:
 
 	/**
 	 * @brief Set the ImGui window flags for the notification.
-	 * 
+	 *
 	 * @param flags ImGui window flags to set.
-	*/
-	inline void setWindowFlags(const ImGuiWindowFlags& flags)
+	 */
+	inline void setWindowFlags(const ImGuiWindowFlags &flags)
 	{
 		this->flags = flags;
 	}
 
 	/**
 	 * @brief Set the function to run on the button click in the notification.
-	 * 
+	 *
 	 * @param onButtonPress std::fuction or lambda expression, which contains the code for execution.
-	*/
-	inline void setOnButtonPress(const std::function<void()>& onButtonPress)
+	 */
+	inline void setOnButtonPress(const std::function<void()> &onButtonPress)
 	{
 		this->onButtonPress = onButtonPress;
 	}
 
 	/**
 	 * @brief Set the label for the button in the notification.
-	 * 
+	 *
 	 * @param format The format string for the label.
 	 * @param ... The arguments for the format string.
-	*/
-	inline void setButtonLabel(const char* format, ...)
+	 */
+	inline void setButtonLabel(const char *format, ...)
 	{
 		NOTIFY_FORMAT(this->setButtonLabel, format);
 	}
@@ -185,20 +191,20 @@ public:
 
 	/**
 	 * @brief Get the title of the toast notification.
-	 * 
+	 *
 	 * @return const char* The title of the toast notification.
 	 */
-	inline const char* getTitle()
+	inline const char *getTitle()
 	{
 		return this->title;
 	};
 
 	/**
 	 * @brief Get the default title of the toast notification based on its type.
-	 * 
+	 *
 	 * @return const char* The default title of the toast notification.
 	 */
-	inline const char* getDefaultTitle()
+	inline const char *getDefaultTitle()
 	{
 		if (!strlen(this->title))
 		{
@@ -224,7 +230,7 @@ public:
 
 	/**
 	 * @brief Get the type of the toast notification.
-	 * 
+	 *
 	 * @return ImGuiToastType The type of the toast notification.
 	 */
 	inline ImGuiToastType getType()
@@ -234,7 +240,7 @@ public:
 
 	/**
 	 * @brief Get the color of the toast notification based on its type.
-	 * 
+	 *
 	 * @return ImVec4 The color of the toast notification.
 	 */
 	inline ImVec4 getColor()
@@ -258,10 +264,10 @@ public:
 
 	/**
 	 * @brief Get the icon of the toast notification based on its type.
-	 * 
+	 *
 	 * @return const char* The icon of the toast notification.
 	 */
-	inline const char* getIcon() 
+	inline const char *getIcon()
 	{
 		switch (this->type)
 		{
@@ -282,28 +288,28 @@ public:
 
 	/**
 	 * @brief Get the content of the toast notification.
-	 * 
+	 *
 	 * @return char* The content of the toast notification.
 	 */
-	inline char* getContent() 
+	inline char *getContent()
 	{
 		return this->content;
 	};
 
 	/**
 	 * @brief Get the elapsed time in milliseconds since the creation of the object.
-	 * 
+	 *
 	 * @return int64_t The elapsed time in milliseconds.
 	 * @throws An exception with the message "Unsupported platform" if the platform is not supported.
 	 */
-	inline std::chrono::nanoseconds getElapsedTime() 
+	inline std::chrono::nanoseconds getElapsedTime()
 	{
 		return std::chrono::system_clock::now() - this->creationTime;
 	}
 
 	/**
 	 * @brief Get the current phase of the toast notification based on the elapsed time since its creation.
-	 * 
+	 *
 	 * @return ImGuiToastPhase The current phase of the toast notification.
 	 *         - ImGuiToastPhase::FadeIn: The notification is fading in.
 	 *         - ImGuiToastPhase::Wait: The notification is waiting to be dismissed.
@@ -317,15 +323,16 @@ public:
 		if (elapsed > NOTIFY_FADE_IN_OUT_TIME + this->dismissTime + NOTIFY_FADE_IN_OUT_TIME)
 		{
 			return ImGuiToastPhase::Expired;
-		} else 
-		if (elapsed > NOTIFY_FADE_IN_OUT_TIME + this->dismissTime)
+		}
+		else if (elapsed > NOTIFY_FADE_IN_OUT_TIME + this->dismissTime)
 		{
 			return ImGuiToastPhase::FadeOut;
-		} else 
-		if (elapsed > NOTIFY_FADE_IN_OUT_TIME)
+		}
+		else if (elapsed > NOTIFY_FADE_IN_OUT_TIME)
 		{
 			return ImGuiToastPhase::Wait;
-		} else
+		}
+		else
 		{
 			return ImGuiToastPhase::FadeIn;
 		}
@@ -343,8 +350,8 @@ public:
 		if (phase == ImGuiToastPhase::FadeIn)
 		{
 			return ((float)elapsed / (float)NOTIFY_FADE_IN_OUT_TIME) * NOTIFY_OPACITY;
-		} else 
-		if (phase == ImGuiToastPhase::FadeOut)
+		}
+		else if (phase == ImGuiToastPhase::FadeOut)
 		{
 			return (1.f - (((float)elapsed - (float)NOTIFY_FADE_IN_OUT_TIME - (float)this->dismissTime) / (float)NOTIFY_FADE_IN_OUT_TIME)) * NOTIFY_OPACITY;
 		}
@@ -354,7 +361,7 @@ public:
 
 	/**
 	 * @return ImGui window flags for the notification.
-	*/
+	 */
 	inline ImGuiWindowFlags getWindowFlags()
 	{
 		return this->flags;
@@ -362,7 +369,7 @@ public:
 
 	/**
 	 * @return The function, which is executed on the button click in the notification.
-	*/
+	 */
 	inline std::function<void()> getOnButtonPress()
 	{
 		return this->onButtonPress;
@@ -370,8 +377,8 @@ public:
 
 	/**
 	 * @return The label on the button in notification.
-	*/
-	inline const char* getButtonLabel()
+	 */
+	inline const char *getButtonLabel()
 	{
 		return this->buttonLabel;
 	}
@@ -381,16 +388,19 @@ public:
 
 	/**
 	 * @brief Creates a new ImGuiToast object with the specified type and dismiss time.
-	 * 
+	 *
 	 * @param type The type of the toast.
 	 * @param dismissTime The time in milliseconds after which the toast should be dismissed. Default is NOTIFY_DEFAULT_DISMISS.
 	 */
-	ImGuiToast(ImGuiToastType type, int dismissTime = NOTIFY_DEFAULT_DISMISS)
+	ImGuiToast(ImGuiToastType type, int dismissTime = NOTIFY_DEFAULT_DISMISS, std::function<void()> actionBtnCallback = nullptr, std::function<bool()> btnCallback = nullptr, const ImTextureID &logo = nullptr)
 	{
 		IM_ASSERT(type < ImGuiToastType::COUNT);
 
 		this->type = type;
 		this->dismissTime = dismissTime;
+		this->buttonRenderCallback = btnCallback;
+		this->actionButtonRenderCallback = actionBtnCallback;
+		this->customLogo = logo;
 
 		this->creationTime = std::chrono::system_clock::now();
 
@@ -400,32 +410,32 @@ public:
 
 	/**
 	 * @brief Constructor for creating an ImGuiToast object with a specified type and message format.
-	 * 
+	 *
 	 * @param type The type of the toast message.
 	 * @param format The format string for the message.
 	 * @param ... The variable arguments to be formatted according to the format string.
 	 */
-	ImGuiToast(ImGuiToastType type, const char* format, ...) : ImGuiToast(type)
+	ImGuiToast(ImGuiToastType type, const char *format, ...) : ImGuiToast(type)
 	{
 		NOTIFY_FORMAT(this->setContent, format);
 	}
 
 	/**
 	 * @brief Constructor for creating a new ImGuiToast object with a specified type, dismiss time, and content format.
-	 * 
+	 *
 	 * @param type The type of the toast message.
 	 * @param dismissTime The time in milliseconds before the toast message is dismissed.
 	 * @param format The format string for the content of the toast message.
 	 * @param ... The variable arguments to be formatted according to the format string.
 	 */
-	ImGuiToast(ImGuiToastType type, int dismissTime, const char* format, ...) : ImGuiToast(type, dismissTime)
+	ImGuiToast(ImGuiToastType type, int dismissTime, const char *format, ...) : ImGuiToast(type, dismissTime)
 	{
 		NOTIFY_FORMAT(this->setContent, format);
 	}
 
 	/**
 	 * @brief Constructor for creating a new ImGuiToast object with a specified type, dismiss time, title format, content format and a button.
-	 * 
+	 *
 	 * @param type The type of the toast message.
 	 * @param dismissTime The time in milliseconds before the toast message is dismissed.
 	 * @param buttonLabel The label for the button.
@@ -433,13 +443,19 @@ public:
 	 * @param format The format string for the content of the toast message.
 	 * @param ... The variable arguments to be formatted according to the format string.
 	 */
-	ImGuiToast(ImGuiToastType type, int dismissTime, const char* buttonLabel, const std::function<void()>& onButtonPress, const char* format, ...) : ImGuiToast(type, dismissTime)
+	ImGuiToast(ImGuiToastType type, int dismissTime, const char *buttonLabel, const std::function<void()> &onButtonPress, const char *format, ...) : ImGuiToast(type, dismissTime)
 	{
 		NOTIFY_FORMAT(this->setContent, format);
 
 		this->onButtonPress = onButtonPress;
 		this->setButtonLabel(buttonLabel);
 	}
+
+public:
+	std::function<bool()> buttonRenderCallback = nullptr;
+	std::function<void()> actionButtonRenderCallback = nullptr;
+	std::function<void()> logoRenderCallback = nullptr;
+	ImTextureID customLogo = nullptr;
 };
 
 #include <iostream>
@@ -452,21 +468,20 @@ namespace ImGui
 	 * Inserts a new notification into the notification queue.
 	 * @param toast The notification to be inserted.
 	 */
-	inline void InsertNotification(const ImGuiToast& toast)
+	inline void InsertNotification(const ImGuiToast &toast)
 	{
 		notifications.push_back(toast);
 	}
 
 	/**
 	 * @brief Removes a notification from the list of notifications.
-	 * 
+	 *
 	 * @param index The index of the notification to remove.
 	 */
 	inline void RemoveNotification(int index)
 	{
 		notifications.erase(notifications.begin() + index);
 	}
-
 
 	/**
 	 * Renders all notifications in the notifications vector.
@@ -481,7 +496,7 @@ namespace ImGui
 
 		for (size_t i = 0; i < notifications.size(); ++i)
 		{
-			ImGuiToast* currentToast = &notifications[i];
+			ImGuiToast *currentToast = &notifications[i];
 
 			// Remove toast if expired
 			if (currentToast->getPhase() == ImGuiToastPhase::Expired)
@@ -490,18 +505,18 @@ namespace ImGui
 				continue;
 			}
 
-			#if NOTIFY_RENDER_LIMIT > 0
-				if (i > NOTIFY_RENDER_LIMIT)
-				{
-					continue;
-				}
-			#endif
+#if NOTIFY_RENDER_LIMIT > 0
+			if (i > NOTIFY_RENDER_LIMIT)
+			{
+				continue;
+			}
+#endif
 
 			// Get icon, title and other data
-			const char* icon = currentToast->getIcon();
-			const char* title = currentToast->getTitle();
-			const char* content = currentToast->getContent();
-			const char* defaultTitle = currentToast->getDefaultTitle();
+			const char *icon = currentToast->getIcon();
+			const char *title = currentToast->getTitle();
+			const char *content = currentToast->getContent();
+			const char *defaultTitle = currentToast->getDefaultTitle();
 			const float opacity = currentToast->getFadePercent(); // Get opacity based of the current phase
 
 			// Window rendering
@@ -510,15 +525,15 @@ namespace ImGui
 
 			// Generate new unique name for this toast
 			char windowName[50];
-			#ifdef _WIN32
-				sprintf_s(windowName, "##TOAST%d", (int)i);
-			#elif defined(__linux__) || defined(__EMSCRIPTEN__)
-				sprintf(windowName, "##TOAST%d", (int)i);
-			#else
-				throw "Unsupported platform";
-			#endif
+#ifdef _WIN32
+			sprintf_s(windowName, "##TOAST%d", (int)i);
+#elif defined(__linux__) || defined(__EMSCRIPTEN__)
+			sprintf(windowName, "##TOAST%d", (int)i);
+#else
+			throw "Unsupported platform";
+#endif
 
-			//PushStyleColor(ImGuiCol_Text, textColor);
+			// PushStyleColor(ImGuiCol_Text, textColor);
 			SetNextWindowBgAlpha(opacity);
 
 			// Set notification window position to bottom right corner of the main window, considering the main window size and location in relation to the display
@@ -531,6 +546,14 @@ namespace ImGui
 				currentToast->setWindowFlags(NOTIFY_DEFAULT_TOAST_FLAGS | ImGuiWindowFlags_NoInputs);
 			}
 
+			float oldsize = ImGui::GetFont()->Scale;
+			ImGui::GetFont()->Scale *= 0.80f;
+			ImGui::PushFont(ImGui::GetFont());
+
+			ImGui::PushStyleColor(ImGuiCol_WindowBg, Cherry::HexToRGBA("#232323FF"));
+			ImGui::PushStyleColor(ImGuiCol_Border, Cherry::HexToRGBA("#FFFFFFFF"));
+			ImGui::PushStyleColor(ImGuiCol_Separator, Cherry::HexToRGBA("#434343FF"));
+
 			Begin(windowName, nullptr, currentToast->getWindowFlags());
 
 			// Render over all other windows
@@ -542,30 +565,44 @@ namespace ImGui
 
 				bool wasTitleRendered = false;
 
-				// If an icon is set
-				if (!NOTIFY_NULL_OR_EMPTY(icon))
+				if (currentToast->customLogo)
 				{
-					//Text(icon); // Render icon text
-					TextColored(textColor, "%s", icon);
-					wasTitleRendered = true;
+					ImGui::Image(currentToast->customLogo, ImVec2(15, 15));
+				}
+				else
+				{
+					// If an icon is set
+					if (!NOTIFY_NULL_OR_EMPTY(icon))
+					{
+						// Text(icon); // Render icon text
+						TextColored(textColor, "%s", icon);
+						wasTitleRendered = true;
+					}
 				}
 
-				// If a title is set
-				if (!NOTIFY_NULL_OR_EMPTY(title))
+				if (!NOTIFY_NULL_OR_EMPTY(title) || !NOTIFY_NULL_OR_EMPTY(defaultTitle))
 				{
-					// If a title and an icon is set, we want to render on same line
-					if (!NOTIFY_NULL_OR_EMPTY(icon))
-						SameLine();
+					ImGui::GetFont()->Scale = oldsize * 1.0f;
+					ImGui::PushFont(ImGui::GetFont());
 
-					Text("%s", title); // Render title text
-					wasTitleRendered = true;
-				} else 
-				if (!NOTIFY_NULL_OR_EMPTY(defaultTitle))
-				{
 					if (!NOTIFY_NULL_OR_EMPTY(icon))
+					{
 						SameLine();
+					}
 
-					Text("%s", defaultTitle); // Render default title text (ImGuiToastType_Success -> "Success", etc...)
+					if (!NOTIFY_NULL_OR_EMPTY(title))
+					{
+						Text("%s", title);
+					}
+					else
+					{
+						Text("%s", defaultTitle);
+					}
+
+					ImGui::PopFont();
+					ImGui::GetFont()->Scale = oldsize * 0.80f;
+					ImGui::PushFont(ImGui::GetFont());
+
 					wasTitleRendered = true;
 				}
 
@@ -589,10 +626,20 @@ namespace ImGui
 
 					SetCursorPosX(GetCursorPosX() + (GetWindowSize().x - GetCursorPosX()) * scale);
 
-					// If the button is pressed, we want to remove the notification
-					if (Button(ICON_FA_XMARK))
+					if (currentToast->buttonRenderCallback)
 					{
-						RemoveNotification(i);
+						if (currentToast->buttonRenderCallback())
+						{
+							RemoveNotification(i);
+						}
+					}
+					else
+					{
+						// If the button is pressed, we want to remove the notification
+						if (Button(ICON_FA_XMARK))
+						{
+							RemoveNotification(i);
+						}
 					}
 				}
 
@@ -607,21 +654,28 @@ namespace ImGui
 				{
 					if (wasTitleRendered)
 					{
-						#if NOTIFY_USE_SEPARATOR
-							Separator();
-						#endif
+#if NOTIFY_USE_SEPARATOR
+						Separator();
+#endif
 					}
 
 					Text("%s", content); // Render content text
 				}
 
-				// If a button is set
-				if (currentToast->getOnButtonPress() != nullptr)
+				// If the button is pressed, we want to execute the lambda function
+				if (currentToast->actionButtonRenderCallback)
 				{
-					// If the button is pressed, we want to execute the lambda function
-					if (Button(currentToast->getButtonLabel()))
+					currentToast->actionButtonRenderCallback();
+				}
+				else
+				{
+					// If a button is set
+					if (currentToast->getOnButtonPress() != nullptr)
 					{
-						currentToast->getOnButtonPress()();
+						if (Button(currentToast->getButtonLabel()))
+						{
+							currentToast->getOnButtonPress()();
+						}
 					}
 				}
 
@@ -633,6 +687,10 @@ namespace ImGui
 
 			// End
 			End();
+			ImGui::PopStyleColor(3);
+
+			ImGui::GetFont()->Scale = oldsize;
+			ImGui::PopFont();
 		}
 	}
 }

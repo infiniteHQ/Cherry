@@ -39,7 +39,7 @@ namespace Cherry
             return instance;
         }
         
-        bool Render(const std::string &duplication_name, const ImVec2 &size = ImVec2(0, 0))
+        bool Render(const std::string &duplication_name = "__blank", const ImVec2 &size = ImVec2(0, 0))
         {
             if (m_Scale != 0.0f)
             {
