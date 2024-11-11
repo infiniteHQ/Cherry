@@ -72,7 +72,8 @@
 > cd Cherry
 > git submodule update --init --recursive
 > cd example/demo
-> build.bat```
+> build.bat
+> ```
 
 
 > 🐧 On **Linux** based distributions
@@ -81,7 +82,8 @@
 > cd Cherry
 > git submodule update --init --recursive
 > cd example/demo
-> bash build.sh```
+> bash build.sh
+> ```
 
 
 ## Documentation
