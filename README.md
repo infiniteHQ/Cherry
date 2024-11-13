@@ -63,7 +63,7 @@
 
 ## Getting started
 > [!WARNING]  
-> The only dependance you need is the VulkanSDK installed & ready. Please refer to the https://www.lunarg.com/vulkan-sdk/ website to see how install Vulkan on your system (compatible on Linux & Windows).
+> The only dependance you need to compile Cherry is the VulkanSDK installed & ready. Please refer to the https://www.lunarg.com/vulkan-sdk/ website to see how install Vulkan on your system (compatible on Linux & Windows).
 
 
 > 🪟 On **Microsoft Windows**

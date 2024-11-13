@@ -499,8 +499,17 @@ namespace Cherry
             {
                 return std::to_string(m_SelectedIndex);
             }
+            else if (data_type == "selected_string")
+            {
+                return m_List[m_SelectedIndex];
+            }
 
             return "none";
+        }
+
+        void SetList(const std::vector<std::string>& list)
+        {
+            m_List = list;
         }
 
     private:
