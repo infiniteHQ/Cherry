@@ -10,5 +10,5 @@ examples/demo/build
 examples/demo/imgui.ini
 examples/text_editor/build
 examples/text_editor/imgui.ini
-
+build
 .vscode
