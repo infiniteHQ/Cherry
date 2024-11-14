@@ -8,6 +8,9 @@
 #include <memory>
 #include <functional>
 
+#ifndef APP_HEADLESS_HPP
+#define APP_HEADLESS_HPP
+
 namespace Cherry {
 
 	struct ApplicationSpecification
@@ -62,3 +65,5 @@ namespace Cherry {
 	// Implemented by CLIENT
 	Application* CreateApplication(int argc, char** argv);
 }
+
+#endif // APP_HEADLESS_HPP

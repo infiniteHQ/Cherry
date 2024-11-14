@@ -7,7 +7,7 @@ set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/modules")
 set(GCC_COVERAGE_COMPILE_FLAGS "")
 
 if(NOT MSVC)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GCC_COVERAGE_COMPILE_FLAGS}")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GCC_COVERAGE_COMPILE_FLAGS} -fPIC")
 endif()
 
 # Find Vulkan on the system
@@ -32,8 +32,8 @@ file(
     "${PROJECT_SOURCE_DIR}/kit/*.h" "${PROJECT_SOURCE_DIR}/kit/*.hpp" "${PROJECT_SOURCE_DIR}/kit/*.cpp"
 )
 
-# Add sources files
-add_library(cherry STATIC ${CHERRY_SRC})
+# Create cherry as a shared library
+add_library(cherry SHARED ${CHERRY_SRC})
 
 # Linking
 target_link_libraries(cherry PUBLIC Vulkan::Vulkan)

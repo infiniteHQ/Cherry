@@ -9,6 +9,9 @@ extern bool g_ApplicationRunning;
 
 static Cherry::Application* s_Instance = nullptr;
 
+#ifndef APP_HEADLESS_HPP
+#define APP_HEADLESS_HPP
+
 namespace Cherry {
 
 	Application::Application(const ApplicationSpecification& specification)
@@ -102,3 +105,4 @@ ImGui::PopStyleVar(8);
 	}
 
 }
+#endif
