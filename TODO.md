@@ -1,14 +1,22 @@
--- Backends --
-FIXME : Bad image release causing core dumped at the close..
+# Project - Task & Fix List
 
--- Render engine --
-TODO : Default docking behavior : Stack Right, Up, Left, Down
-TODO : Docking previous state save & load.
+## Backends
+- **FIXME**: Bad image release causing a core dump on close.
 
--- Components -- 
-TODO : More abstraction of ImGui & more custom components !
-TODO : Better toasts & notifications with custom png/jpg logos
+## Render Engine
+- **TODO**: Set default docking behavior:
+  - Stack Right
+  - Stack Up
+  - Stack Left
+  - Stack Down
+- **TODO**: Save and load previous docking state.
+- **FIXME**: Some cursors superposition bugs
+- **TODO**: Close behavior on multidock windows (close single win/close all)
 
--- Cherry nodals editor --
-FIXME : Node editor freeze sometimes when the Blueprints.json is on the bin directory
-FIXME : Nodes header colors & customizations.
+## Components
+- **TODO**: Increase ImGui abstraction and add more custom components!
+- **TODO**: Improve toasts and notifications with custom PNG/JPG logos.
+
+## Cherry Node Editor
+- **FIXME**: Node editor occasionally freezes when `Blueprints.json` is in the `bin` directory.
+- **FIXME**: Customize node header colors and add more customization options.
