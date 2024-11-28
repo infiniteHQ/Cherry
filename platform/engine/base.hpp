@@ -121,6 +121,7 @@ namespace Cherry
 
         std::string IconPath;
         std::string FavIconPath;
+        std::string LastFavIconPath;
 
         std::string DefaultWindowName;
         float GlobalScale = 0.84f;

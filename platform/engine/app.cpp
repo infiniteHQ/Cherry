@@ -287,7 +287,7 @@ namespace Cherry
             check_vk_result(err);
         }
     }
-    
+
     // All the ImGui_ImplVulkanH_XXX structures/functions are optional helpers used by the demo.
     // Your real engine/app may not use them.
     void Application::SetupVulkanWindow(ImGui_ImplVulkanH_Window *wd, VkSurfaceKHR surface, int width, int height, Cherry::Window *win)
@@ -528,7 +528,7 @@ namespace Cherry
     {
         std::string name;
 
-        if(s_Instance->m_DefaultSpecification.DefaultWindowName.empty())
+        if (s_Instance->m_DefaultSpecification.DefaultWindowName.empty())
         {
             name = CertifyWindowName(s_Instance->m_DefaultSpecification.Name);
         }
@@ -683,7 +683,7 @@ namespace Cherry
     {
         std::string name;
 
-        if(spec.DefaultWindowName.empty())
+        if (spec.DefaultWindowName.empty())
         {
             name = CertifyWindowName(spec.Name);
         }
@@ -720,7 +720,7 @@ namespace Cherry
     {
         std::string name;
 
-        if(app->m_DefaultSpecification.DefaultWindowName.empty())
+        if (app->m_DefaultSpecification.DefaultWindowName.empty())
         {
             name = CertifyWindowName(app->m_DefaultSpecification.Name);
         }
@@ -1182,7 +1182,6 @@ namespace Cherry
 
             app->RenderWindow(window.get());
 
-
             if (c_DockIsDragging && c_CurrentDragDropState)
             {
                 SDL_GetGlobalMouseState(&c_CurrentDragDropState->mouseX, &c_CurrentDragDropState->mouseY);
@@ -1252,41 +1251,49 @@ namespace Cherry
         }
     }
 
-std::string Application::CertifyWindowName(const std::string &name) {
-    int max_suffix = 0;
-    bool name_exists = false;
-    
-    std::regex suffix_regex(R"(^(.*?)(?: <(\d+)>)?$)");
-    std::smatch match;
-    
-    for (const auto& win : s_Instance->m_Windows) {
-        std::string window_name = win->GetName();
-        
-        if (std::regex_match(window_name, match, suffix_regex)) {
-            std::string base_name = match[1];
-            std::string suffix_str = match[2];
+    std::string Application::CertifyWindowName(const std::string &name)
+    {
+        int max_suffix = 0;
+        bool name_exists = false;
 
-            if (base_name == name) {
-                name_exists = true;
-                
-                if (!suffix_str.empty()) {
-                    int suffix_value = std::stoi(suffix_str);
-                    max_suffix = std::max(max_suffix, suffix_value);
-                } else {
-                    max_suffix = std::max(max_suffix, 0);
+        std::regex suffix_regex(R"(^(.*?)(?: <(\d+)>)?$)");
+        std::smatch match;
+
+        for (const auto &win : s_Instance->m_Windows)
+        {
+            std::string window_name = win->GetName();
+
+            if (std::regex_match(window_name, match, suffix_regex))
+            {
+                std::string base_name = match[1];
+                std::string suffix_str = match[2];
+
+                if (base_name == name)
+                {
+                    name_exists = true;
+
+                    if (!suffix_str.empty())
+                    {
+                        int suffix_value = std::stoi(suffix_str);
+                        max_suffix = std::max(max_suffix, suffix_value);
+                    }
+                    else
+                    {
+                        max_suffix = std::max(max_suffix, 0);
+                    }
                 }
             }
         }
-    }
 
-    if (name_exists) {
-        std::stringstream new_name;
-        new_name << name << " <" << (max_suffix + 1) << ">";
-        return new_name.str();
-    }
+        if (name_exists)
+        {
+            std::stringstream new_name;
+            new_name << name << " <" << (max_suffix + 1) << ">";
+            return new_name.str();
+        }
 
-    return name;
-}
+        return name;
+    }
 
     void Application::CleanupEmptyWindows()
     {
@@ -1360,7 +1367,11 @@ std::string Application::CertifyWindowName(const std::string &name) {
 
             for (auto &window : m_Windows)
             {
-                window->SetFavIcon(window->m_Specifications.FavIconPath);
+                if (window->m_Specifications.FavIconPath != window->m_Specifications.LastFavIconPath)
+                {
+                    window->SetFavIcon(window->m_Specifications.FavIconPath);
+                    window->m_Specifications.LastFavIconPath = window->m_Specifications.FavIconPath;
+                }
 
                 c_CurrentRenderedWindow = window;
                 if (window->drag_dropstate->DockIsDragging)
