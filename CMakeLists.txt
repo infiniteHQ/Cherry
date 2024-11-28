@@ -36,10 +36,10 @@ file(
 add_library(cherry SHARED ${CHERRY_SRC})
 
 # Linking
-target_link_libraries(cherry PUBLIC Vulkan::Vulkan)
-target_link_libraries(cherry PUBLIC imgui)
-target_link_libraries(cherry PUBLIC glm)
-target_link_libraries(cherry PUBLIC stbimage)
+target_link_libraries(cherry PRIVATE Vulkan::Vulkan)
+target_link_libraries(cherry PRIVATE imgui)
+target_link_libraries(cherry PRIVATE glm)
+target_link_libraries(cherry PRIVATE stbimage)
 target_link_libraries(cherry PUBLIC spdlog)
 target_link_libraries(cherry PUBLIC SDL2)
 
