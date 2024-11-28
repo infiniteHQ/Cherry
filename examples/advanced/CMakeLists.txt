@@ -10,6 +10,17 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../ cherry_build)
 add_executable(advanced ${CHERRYSOURCES} main.cpp)
 target_link_libraries(advanced PRIVATE cherry)
 
+set_target_properties(advanced PROPERTIES
+    INSTALL_RPATH "$ORIGIN/../lib"
+    BUILD_RPATH "$ORIGIN/../lib"
+)
+
+add_custom_command(TARGET advanced POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    $<TARGET_FILE:cherry>
+    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/
+)
+
 add_custom_command(TARGET advanced POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
     ${CMAKE_CURRENT_SOURCE_DIR}/assets

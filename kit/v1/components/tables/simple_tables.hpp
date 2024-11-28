@@ -28,9 +28,9 @@ namespace Cherry
             UpdateLastChangedTime();
         }
 
-        void Render(std::vector<SimpleTableRow> rows, const std::string &duplication_name = "base")
+        void Render(std::vector<SimpleTableRow> rows, const std::string &duplication_name = "base", ImGuiTableFlags other_flags = 0)
         {
-            ImGuiTableFlags flags = ImGuiTableFlags_Resizable | ImGuiTableFlags_SizingStretchSame | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Hideable | ImGuiTableFlags_Borders;
+            ImGuiTableFlags flags = ImGuiTableFlags_SizingStretchSame | other_flags;
 
             ImGuiStyle style = ImGui::GetStyle();
             m_HeaderCellPaddingX = style.CellPadding.x;
