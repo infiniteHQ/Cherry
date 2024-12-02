@@ -26,7 +26,7 @@
 ## Examples & Preview
   
 > [!NOTE]  
-> This example are real-world examples of the use of Cherry. More examples will be uploaded.
+> These examples are real-world examples of the use of Cherry. More examples will be uploaded.
 <table>
   <tr>
     <td align="center">
