@@ -24,42 +24,42 @@
 > This framework is new and still under active development, so some bugs may occur, and content is subject to change. We are also working to improve the overall stability of Cherry, particularly with regard to memory safety and the rendering stack, as well as the graphical libraries used. Thank you for your understanding! Stay tuned :)
 
 ## Examples & Preview
-
+  
 > [!NOTE]  
 > This example are real-world examples of the use of Cherry. More examples will be uploaded.
 <table>
   <tr>
     <td align="center">
       <img src="./.github/imgs/Cherry1.png" alt="Cherry 1" width="250">
-      <p>Cherry 1 Description</p>
+      <p>Simple window with sidebar</p>
     </td>
     <td align="center">
       <img src="./.github/imgs/Cherry2.png" alt="Cherry 2" width="250">
-      <p>Cherry 2 Description</p>
+      <p>Toast notification</p>
     </td>
     <td align="center">
       <img src="./.github/imgs/Cherry3.png" alt="Cherry 3" width="250">
-      <p>Cherry 3 Description</p>
+      <p>Rich menubar</p>
     </td>
   </tr>
   <tr>
     <td align="center">
       <img src="./.github/imgs/Cherry4.png" alt="Cherry 4" width="250">
-      <p>Cherry 4 Description</p>
+      <p>Project selector with custom widgets</p>
     </td>
     <td align="center">
       <img src="./.github/imgs/Cherry5.png" alt="Cherry 5" width="250">
-      <p>Cherry 5 Description</p>
+      <p>Item selection & navigation</p>
     </td>
     <td align="center">
       <img src="./.github/imgs/Cherry6.png" alt="Cherry 6" width="250">
-      <p>Cherry 6 Description</p>
+      <p>Rich windows & Docking</p>
     </td>
   </tr>
   <tr>
     <td align="center">
       <img src="./.github/imgs/Cherry7.png" alt="Cherry 7" width="250">
-      <p>Cherry 7 Description</p>
+      <p>Multi-windows on single app</p>
     </td>
   </tr>
 </table>
