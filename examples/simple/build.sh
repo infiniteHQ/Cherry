@@ -1,4 +1,5 @@
 rm build/example
+rm build/bin
 mkdir build
 cd build
 cmake ..

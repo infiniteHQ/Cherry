@@ -35,31 +35,83 @@
 > [!NOTE]  
 > This framework is new and still under active development, so some bugs may occur, and content is subject to change. We are also working to improve the overall stability of Cherry, particularly with regard to memory safety and the rendering stack, as well as the graphical libraries used. Thank you for your understanding! Stay tuned :)
 
+## Examples & Preview
+
+> [!NOTE]  
+> This example are real-world examples of the use of Cherry. More examples will be uploaded.
+
+<div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;">
+
+  <div style="text-align: center;">
+    <img src="./.github/imgs/Cherry1.png" alt="Cherry 1" style="width: 250px; height: auto; border-radius: 5px;">
+    <p>Simple window with sidebar</p>
+  </div>
+
+  <div style="text-align: center;">
+    <img src="./.github/imgs/Cherry2.png" alt="Cherry 2" style="width: 250px; height: auto; border-radius: 5px;">
+    <p>Toast notification</p>
+  </div>
+
+  <div style="text-align: center;">
+    <img src="./.github/imgs/Cherry3.png" alt="Cherry 3" style="width: 250px; height: auto; border-radius: 5px;">
+    <p>Rich menubar</p>
+  </div>
+
+  <div style="text-align: center;">
+    <img src="./.github/imgs/Cherry4.png" alt="Cherry 4" style="width: 250px; height: auto; border-radius: 5px;">
+    <p>Project selector with custom widgets</p>
+  </div>
+
+  <div style="text-align: center;">
+    <img src="./.github/imgs/Cherry5.png" alt="Cherry 5" style="width: 250px; height: auto; border-radius: 5px;">
+    <p>Item selection & navigation</p>
+  </div>
+
+  <div style="text-align: center;">
+    <img src="./.github/imgs/Cherry6.png" alt="Cherry 6" style="width: 250px; height: auto; border-radius: 5px;">
+    <p>Rich windows & Docking</p>
+  </div>
+
+  <div style="text-align: center;">
+    <img src="./.github/imgs/Cherry7.png" alt="Cherry 7" style="width: 250px; height: auto; border-radius: 5px;">
+    <p>Multi-windows on single app</p>
+  </div>
+
+</div>
+
+
 ## Features
 
 > **Components & Kits**
 > - 🧰 Many single components ready to use with data managment
 > - 📦 Many all in one windows, ready to use and manage
 > - 📦 ImGui abstractions for simplicity
+> - 📦 SDL abstractions for inputs & user managment
 > - 📦 Short inlines components
 
 > **Render engine**
 > - 📈 Data handler for windows & components
 > - 💬 Localization & Traduction managment
-> - 🎨 Themes manager
+> - 🎨 Themes manager, Dark & Ligth themes
 > - ❓ Fonts manager
 > - 🖼️ Images & textures manager
 > - 🗂️ Menubar & Bottombar simple callbacks
 > - 💪 Custom window close behaviors
 > - 🗄️ Advanced Docking (WIP)
+> - 🖼️ Toasts, Notifications & pop-ups
+> - 🛠️ Behaviros callbacks (closing, moving, etc...)
 > - 🏗️ Windows customisations (size, colors, properties & styles)
 
 > **Backends**
 > - 🛠️ Multi context with contexts cohesion & communication (ImGui/SDL)
-> - 🛠️ Complete image load & show
+> - 🛠️ Complete image load & show, cache & optimization
 > - 🛠️ Window builder
 
 
+> **Planned features for next updates :**
+> - 🏗️ Webviews & Website loading
+> - 🏗️ More components with more properties & customizations
+> - 🏗️ Internet images loading & cache managment
 
 ## Getting started
 > [!WARNING]  
@@ -84,7 +136,6 @@
 > cd example/demo
 > bash build.sh
 > ```
-
 
 ## Documentation
 The documentation is in progress...

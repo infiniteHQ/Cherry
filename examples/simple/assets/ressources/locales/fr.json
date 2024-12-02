@@ -1,0 +1,13 @@
+{
+    "locales": [
+        {"loc.window_names.details":"Détails"},
+        {"loc.window_names.content_browser":"Gestionnaire de fichiers"},
+        {"loc.window_names.props_editor":"Editeur de propriétés"},
+        {"loc.window_names.text_editor":"Editeur de texte"},
+        {"loc.window_names.outliner":"Liste"},
+        {"loc.window_names.node_editor":"Editeur de nodes"},
+        {"loc.content_browser.add":"Ajouter"},
+        {"loc.content_browser.import":"Importer"},
+        {"loc.content_browser.save_all":"Tout sauver"}
+    ]
+}
