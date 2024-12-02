@@ -19,18 +19,6 @@
 ### Summary
 *Cherry is a modern, minimalist yet comprehensive UI/UX framework for low-level native applications. It provides a complete solution, including backend support, a rendering engine, and UI components. Cherry is built using technologies like ImGui, Vulkan, and SDL, offering developers advanced tools to create efficient and high-performance interfaces.*
 
-### About tech
-
-<div style="display: flex; align-items: center;">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="./.github/imgs/stack.png">
-    <img width="500" src="./.github/imgs/stack.png" alt="Stack Image">
-  </picture>
-  <div style="margin-left: 20px;">
-    Cherry provides 3 main components, the first is complete backends to handle the Vulkan initialization, the sdl surface creation and the imgui initialization. Theses backends
-  </div>
-</div>
-
 
 > [!NOTE]  
 > This framework is new and still under active development, so some bugs may occur, and content is subject to change. We are also working to improve the overall stability of Cherry, particularly with regard to memory safety and the rendering stack, as well as the graphical libraries used. Thank you for your understanding! Stay tuned :)
@@ -39,45 +27,43 @@
 
 > [!NOTE]  
 > This example are real-world examples of the use of Cherry. More examples will be uploaded.
+<table>
+  <tr>
+    <td align="center">
+      <img src="./.github/imgs/Cherry1.png" alt="Cherry 1" width="250">
+      <p>Cherry 1 Description</p>
+    </td>
+    <td align="center">
+      <img src="./.github/imgs/Cherry2.png" alt="Cherry 2" width="250">
+      <p>Cherry 2 Description</p>
+    </td>
+    <td align="center">
+      <img src="./.github/imgs/Cherry3.png" alt="Cherry 3" width="250">
+      <p>Cherry 3 Description</p>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="./.github/imgs/Cherry4.png" alt="Cherry 4" width="250">
+      <p>Cherry 4 Description</p>
+    </td>
+    <td align="center">
+      <img src="./.github/imgs/Cherry5.png" alt="Cherry 5" width="250">
+      <p>Cherry 5 Description</p>
+    </td>
+    <td align="center">
+      <img src="./.github/imgs/Cherry6.png" alt="Cherry 6" width="250">
+      <p>Cherry 6 Description</p>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="./.github/imgs/Cherry7.png" alt="Cherry 7" width="250">
+      <p>Cherry 7 Description</p>
+    </td>
+  </tr>
+</table>
 
-<div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;">
-
-  <div style="text-align: center;">
-    <img src="./.github/imgs/Cherry1.png" alt="Cherry 1" style="width: 250px; height: auto; border-radius: 5px;">
-    <p>Simple window with sidebar</p>
-  </div>
-
-  <div style="text-align: center;">
-    <img src="./.github/imgs/Cherry2.png" alt="Cherry 2" style="width: 250px; height: auto; border-radius: 5px;">
-    <p>Toast notification</p>
-  </div>
-
-  <div style="text-align: center;">
-    <img src="./.github/imgs/Cherry3.png" alt="Cherry 3" style="width: 250px; height: auto; border-radius: 5px;">
-    <p>Rich menubar</p>
-  </div>
-
-  <div style="text-align: center;">
-    <img src="./.github/imgs/Cherry4.png" alt="Cherry 4" style="width: 250px; height: auto; border-radius: 5px;">
-    <p>Project selector with custom widgets</p>
-  </div>
-
-  <div style="text-align: center;">
-    <img src="./.github/imgs/Cherry5.png" alt="Cherry 5" style="width: 250px; height: auto; border-radius: 5px;">
-    <p>Item selection & navigation</p>
-  </div>
-
-  <div style="text-align: center;">
-    <img src="./.github/imgs/Cherry6.png" alt="Cherry 6" style="width: 250px; height: auto; border-radius: 5px;">
-    <p>Rich windows & Docking</p>
-  </div>
-
-  <div style="text-align: center;">
-    <img src="./.github/imgs/Cherry7.png" alt="Cherry 7" style="width: 250px; height: auto; border-radius: 5px;">
-    <p>Multi-windows on single app</p>
-  </div>
-
-</div>
 
 
 ## Features
@@ -136,6 +122,20 @@
 > cd example/demo
 > bash build.sh
 > ```
+
+### About tech
+How Cherry works ?
+<div style="display: flex; align-items: center;">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="./.github/imgs/Graph.png">
+    <img width="500" src="./.github/imgs/Graph.png" alt="Stack Image">
+  </picture>
+</div>
+
+At the low level, we have all the backends, including Vulkan and SDL contexts, handling input management, event dispatching, and Vulkan-accessible resources such as the swapchain, framebuffers, etc. At the upper level, we have the Cherry render engine, whose role is to manage, create, and delete OS windows, while providing user-level windows within these OS windows. Additionally, we ensure seamless coordination for an optimal user experience.
+
+Within these user-side windows, we include all components and widgets, along with a robust system for complete user data management. The entire stack is highly optimized to ensure the best performance and maximum stability.
+
 
 ## Documentation
 The documentation is in progress...
