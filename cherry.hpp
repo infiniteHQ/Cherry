@@ -1,6 +1,8 @@
 #ifndef CHERRY_H
 #define CHERRY_H
 
+#include "./options.hpp"
+
 #ifndef IMGUI_DEFINE_MATH_OPERATORS
 #define IMGUI_DEFINE_MATH_OPERATORS
 #endif // IMGUI_DEFINE_MATH_OPERATORS

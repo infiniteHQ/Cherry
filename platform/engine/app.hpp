@@ -2,6 +2,9 @@
 
 #include "../../src/layer.hpp"
 #include "../../src/core/color.hpp"
+
+#include "../../options.hpp"
+
 #include "image.hpp"
 #include "window.hpp"
 #include "app_window.hpp"
@@ -184,6 +187,10 @@ namespace Cherry
 		void SetDefaultLocale(const std::string &locale_name);
 		std::string GetLocale(const std::string &locale_type);
 
+		// Net & Cache
+		std::string GetHttpCacheFolderName();
+		void SetHttpCacheFolderName(const std::string& name);
+
 		// Generic utils
 		template <typename T, typename... Args>
 		std::shared_ptr<T> CreateComponent(Args... args)
@@ -239,6 +246,8 @@ namespace Cherry
 		std::string m_SelectedLocale;
 		std::string m_DefaultLocale;
 
+		std::string m_HttpCacheFolderName = "http_cache";
+
 	private:
 		void Init();
 		void Shutdown();
@@ -271,6 +280,9 @@ namespace Cherry
 	// Runtime
 	std::string GetPath(const std::string &path);
 	std::string GetLocale(const std::string &topic); 
+#ifdef CHERRY_NET
+	std::string GetHttpPath(const std::string &url);
+#endif // CHERRY_NET
 
 	// Data (theses functions can return JSON to string format or legacy string.)
 	std::string GetComponentData(const std::string& id, const std::string topic);
