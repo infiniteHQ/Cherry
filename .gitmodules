@@ -19,3 +19,9 @@
 [submodule "lib/sdl2"]
 	path = lib/sdl2
 	url = https://github.com/infiniteHQ/sdl2
+[submodule "lib/cef"]
+	path = lib/cef
+	url = https://github.com/chromiumembedded/cef
+[submodule "lib/cef-project"]
+	path = lib/cef-project
+	url = https://github.com/chromiumembedded/cef-project
