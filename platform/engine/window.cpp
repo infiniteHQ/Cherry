@@ -1,4 +1,5 @@
 #include "window.hpp"
+#include "cef.hpp"
 
 #include "embed/not_found_img.embed"
 #include "embed/window.embed"
@@ -359,6 +360,10 @@ namespace Cherry
             check_vk_result(err);
             ImGui_ImplVulkan_DestroyFontUploadObjects();
         }
+
+#ifdef CHERRY_CEF // Testing
+        InitCEF(500,500);
+        #endif
 
         Application::IncrementWindowNumber();
         Application::SetMasterSwapChainRebuild(true);
