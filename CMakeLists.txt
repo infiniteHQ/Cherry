@@ -35,11 +35,19 @@ target_link_libraries(cherry PRIVATE glm)
 target_link_libraries(cherry PRIVATE stbimage)
 target_link_libraries(cherry PUBLIC spdlog)
 
-target_include_directories(cherry PUBLIC ${Vulkan_INCLUDE_DIRS})
+target_include_directories(cherry PUBLIC "${Vulkan_INCLUDE_DIRS}")
 target_include_directories(cherry PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src")
 target_include_directories(cherry PUBLIC "${PROJECT_SOURCE_DIR}/lib/stb_image")
 
+#
+# Optional features
+#
 
+# Cherry Net functions (http fetch)
+if(CHERRY_NET)
+endif()
+
+# Cherry chromium embedded framework (browser)
 if(CHERRY_CEF)
 target_include_directories(cherry PUBLIC "${PROJECT_SOURCE_DIR}/lib/cef-project")
 
