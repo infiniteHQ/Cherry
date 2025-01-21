@@ -144,10 +144,10 @@ Cherry::Application *Cherry::CreateApplication(int argc, char **argv)
                             ImGui::PopStyleVar();  
                             ImGui::PopStyleColor(2); });
                             
-    auto ContentBrowser = ContentBrowserAppWindow::Create("?loc:loc.window_names.content_browser", "/home/diego");
+     /*auto ContentBrowser = ContentBrowserAppWindow::Create("?loc:loc.window_names.content_browser", "/home/diego");
     Cherry::AddAppWindow(ContentBrowser->GetAppWindow());
 
-  /*  auto ContentOutliner = ContentOutlinerSimple::Create("?loc:loc.window_names.outliner");
+   auto ContentOutliner = ContentOutlinerSimple::Create("?loc:loc.window_names.outliner");
     Cherry::AddAppWindow(ContentOutliner->GetAppWindow());
     auto PropsEditor = PropsEditorSimple::Create("?loc:loc.window_names.props_editor");
     Cherry::AddAppWindow(PropsEditor->GetAppWindow());
@@ -155,8 +155,6 @@ Cherry::Application *Cherry::CreateApplication(int argc, char **argv)
     //auto NodalEditor = NodeEditorSimple::Create("?loc:loc.window_names.node_editor");
     //Cherry::AddAppWindow(NodalEditor->GetAppWindow());
 
-    auto Demo = DemoAppWindow::Create("?loc:loc.window_names.demo");
-    Cherry::AddAppWindow(Demo->GetAppWindow());
 
     auto TabsWindow = MultiChildTabs::Create("Vertical Tabs");
     TabsWindow->AddChild("One", [](){ImGui::Text("One");});
@@ -226,6 +224,8 @@ Cherry::Application *Cherry::CreateApplication(int argc, char **argv)
   HorizontalAreas->AddChild(Child("Four2", [](){ ImGui::Text("Four"); }));
   Cherry::AddAppWindow(HorizontalAreas->GetAppWindow());*/
 
+    auto Demo = DemoAppWindow::Create("?loc:loc.window_names.demo");
+    Cherry::AddAppWindow(Demo->GetAppWindow());
   return app;
 }
 

@@ -45,6 +45,10 @@ target_include_directories(cherry PUBLIC "${PROJECT_SOURCE_DIR}/lib/stb_image")
 
 # Cherry Net functions (http fetch)
 if(CHERRY_NET)
+find_package(CURL REQUIRED)
+target_compile_definitions(cherry PUBLIC CHERRY_NET)
+target_link_libraries(cherry PRIVATE CURL::libcurl)
+target_include_directories(cherry PRIVATE ${CURL_INCLUDE_DIRS})
 endif()
 
 # Cherry chromium embedded framework (browser)
