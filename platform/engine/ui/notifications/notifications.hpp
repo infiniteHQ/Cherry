@@ -13,14 +13,13 @@
 #define IMGUI_NOTIFY
 
 #pragma once
-#include "../../app.hpp"
-#include "../../window.hpp"
 
 #include <vector> // Vector for storing notifications list
 #include <string>
 #include <chrono>	  // For the notifications timed dissmiss
 #include <functional> // For storing the code, which executest on the button click in the notification
 
+#include "../../base.hpp"
 #include "icons.hpp"
 
 /**
@@ -550,9 +549,9 @@ namespace ImGui
 			ImGui::GetFont()->Scale *= 0.80f;
 			ImGui::PushFont(ImGui::GetFont());
 
-			ImGui::PushStyleColor(ImGuiCol_WindowBg, Cherry::HexToRGBA("#232323FF"));
-			ImGui::PushStyleColor(ImGuiCol_Border, Cherry::HexToRGBA("#FFFFFFFF"));
-			ImGui::PushStyleColor(ImGuiCol_Separator, Cherry::HexToRGBA("#434343FF"));
+			//ImGui::PushStyleColor(ImGuiCol_WindowBg, Cherry::HexToRGBA("#232323FF"));
+			//ImGui::PushStyleColor(ImGuiCol_Border, Cherry::HexToRGBA("#FFFFFFFF"));
+			//ImGui::PushStyleColor(ImGuiCol_Separator, Cherry::HexToRGBA("#434343FF"));
 
 			Begin(windowName, nullptr, currentToast->getWindowFlags());
 
@@ -687,7 +686,7 @@ namespace ImGui
 
 			// End
 			End();
-			ImGui::PopStyleColor(3);
+			//ImGui::PopStyleColor(3);
 
 			ImGui::GetFont()->Scale = oldsize;
 			ImGui::PopFont();

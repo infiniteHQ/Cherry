@@ -540,15 +540,15 @@ namespace Cherry
         }
     }
 
-		std::string Application::GetHttpCacheFolderName()
-        {
-            return m_HttpCacheFolderName;
-        }
+    std::string Application::GetHttpCacheFolderName()
+    {
+        return m_HttpCacheFolderName;
+    }
 
-		void Application::SetHttpCacheFolderName(const std::string& name)
-        {
-            m_HttpCacheFolderName = name;
-        }
+    void Application::SetHttpCacheFolderName(const std::string &name)
+    {
+        m_HttpCacheFolderName = name;
+    }
 
     void Application::BoostrappWindow()
     {
@@ -2365,106 +2365,120 @@ namespace Cherry
         return Application::Get().GetCurrentRenderedWindow()->get_texture_size(path);
     }
 
+#ifdef _WIN32
+std::string convertPathToWindowsStyle(const std::string &path)
+{
+    std::string windowsPath = path;
+    std::replace(windowsPath.begin(), windowsPath.end(), '/', '\\');
+    return windowsPath;
+}
+#endif
+
     std::string GetPath(const std::string &path)
     {
+        
+#ifdef _WIN32
+        return convertPathToWindowsStyle(Application::CookPath(path));
+#else
         return Application::CookPath(path);
+#endif
     }
 
 #ifdef CHERRY_NET
-  size_t WriteCallback(void *contents, size_t size, size_t nmemb, void *userp)
-{
-    std::ofstream *ofs = static_cast<std::ofstream *>(userp);
-    size_t totalSize = size * nmemb;
-    ofs->write(static_cast<char *>(contents), totalSize);
-    return totalSize;
-}
-
-std::string SanitizeUrl(const std::string &url)
-{
-    std::string sanitized = url;
-    for (char &c : sanitized)
+    size_t WriteCallback(void *contents, size_t size, size_t nmemb, void *userp)
     {
-        if (c == '/')
+        std::ofstream *ofs = static_cast<std::ofstream *>(userp);
+        size_t totalSize = size * nmemb;
+        ofs->write(static_cast<char *>(contents), totalSize);
+        return totalSize;
+    }
+
+    std::string SanitizeUrl(const std::string &url)
+    {
+        std::string sanitized = url;
+        for (char &c : sanitized)
         {
-            c = '-';
+            if (c == '/')
+            {
+                c = '-';
+            }
         }
+        return sanitized;
     }
-    return sanitized;
-}
 
-std::string GetTemporaryDirectory()
-{
+    std::string GetTemporaryDirectory()
+    {
 #ifdef _WIN32
-    char tempPath[MAX_PATH];
-    if (GetTempPathA(MAX_PATH, tempPath))
-    {
-        return std::string(tempPath);
-    }
-    else
-    {
-        throw std::runtime_error("Failed to get temporary directory path");
-    }
+        char tempPath[MAX_PATH];
+        if (GetTempPathA(MAX_PATH, tempPath))
+        {
+            return std::string(tempPath);
+        }
+        else
+        {
+            throw std::runtime_error("Failed to get temporary directory path");
+        }
 #else
-    const char *tmpDir = getenv("TMPDIR");
-    if (tmpDir)
-    {
-        return std::string(tmpDir);
-    }
-    return "/tmp";
+        const char *tmpDir = getenv("TMPDIR");
+        if (tmpDir)
+        {
+            return std::string(tmpDir);
+        }
+        return "/tmp";
 #endif
-}
-
-std::string GetHttpPath(const std::string &url)
-{
-    bool use_cache = true;
-    std::string cache_path = GetTemporaryDirectory() + "/" + Application::Get().GetHttpCacheFolderName() + "/";
-
-    if (!fs::exists(cache_path))
-    {
-        fs::create_directories(cache_path);
     }
 
-    std::string filename = SanitizeUrl(url);
-    std::string file_path = cache_path + filename;
-
-    if (use_cache && fs::exists(file_path))
+    std::string GetHttpPath(const std::string &url)
     {
+        bool use_cache = true;
+        std::string cache_path = GetTemporaryDirectory() + "/" + Application::Get().GetHttpCacheFolderName() + "/";
+
+        if (!fs::exists(cache_path))
+        {
+            fs::create_directories(cache_path);
+        }
+
+        std::string filename = SanitizeUrl(url);
+        std::string file_path = cache_path + filename;
+
+        if (use_cache && fs::exists(file_path))
+        {
+            return file_path;
+        }
+
+        CURL *curl;
+        CURLcode res;
+        curl = curl_easy_init();
+        if (!curl)
+        {
+            throw std::runtime_error("Failed to initialize CURL");
+        }
+
+        std::ofstream ofs(file_path, std::ios::binary);
+        if (!ofs.is_open())
+        {
+            throw std::runtime_error("Failed to open file for writing: " + file_path);
+        }
+
+        curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &ofs);
+
+        res = curl_easy_perform(curl);
+        if (res != CURLE_OK)
+        {
+            ofs.close();
+            fs::remove(file_path);
+            curl_easy_cleanup(curl);
+            throw std::runtime_error("CURL download failed: " + std::string(curl_easy_strerror(res)));
+        }
+
+        curl_easy_cleanup(curl);
+
+        ofs.close();
+
         return file_path;
     }
-
-    CURL *curl;
-    CURLcode res;
-    curl = curl_easy_init();
-    if (!curl)
-    {
-        throw std::runtime_error("Failed to initialize CURL");
-    }
-
-    std::ofstream ofs(file_path, std::ios::binary);
-    if (!ofs.is_open())
-    {
-        throw std::runtime_error("Failed to open file for writing: " + file_path);
-    }
-
-    curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
-    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &ofs);
-
-    res = curl_easy_perform(curl);
-    if (res != CURLE_OK)
-    {
-        ofs.close();
-        fs::remove(file_path);
-        curl_easy_cleanup(curl);
-        throw std::runtime_error("CURL download failed: " + std::string(curl_easy_strerror(res)));
-    }
-
-    curl_easy_cleanup(curl);
-
-    ofs.close();
-
-    return file_path;
-}
 
 #endif // CHERRY_NET
 
@@ -2483,5 +2497,10 @@ std::string GetHttpPath(const std::string &url)
             }
         }
         return 0;
+    }
+
+	void AddNotification(const ImGuiToast& toast)
+    {
+        ImGui::InsertNotification(toast);
     }
 }

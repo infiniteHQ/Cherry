@@ -277,6 +277,9 @@ namespace Cherry
 	ImTextureID GetTexture(const std::string &path);
 	ImVec2 GetTextureSize(const std::string &path);
 
+	// Notification
+	void AddNotification(const ImGuiToast& toast);
+	
 	// Runtime
 	std::string GetPath(const std::string &path);
 	std::string GetLocale(const std::string &topic); 
