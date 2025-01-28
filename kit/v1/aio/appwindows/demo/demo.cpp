@@ -7,6 +7,7 @@ namespace Cherry
         m_AppWindow = std::make_shared<Cherry::AppWindow>(name, name);
         m_AppWindow->SetIcon("/usr/local/include/Vortex/imgs/vortex.png");
 
+        
         m_AppWindow->m_TabMenuCallback = []()
         {
             ImVec4 grayColor = ImVec4(0.4f, 0.4f, 0.4f, 1.0f);
@@ -1277,7 +1278,8 @@ namespace Cherry
 
         this->AddChild("Selectables", [this]()
                        {
-                           //
+                        bool suppme = true;
+            ShowBrowserWindow(&suppme, ImGui_ImplSDL2_GetCefTexture());
                        });
 
         this->AddChild("Headers", [this]()

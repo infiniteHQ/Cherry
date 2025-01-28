@@ -332,6 +332,7 @@ namespace Cherry
         init_info.CheckVkResultFn = check_vk_result;
         ImGui_ImplVulkan_Init(&init_info, wd->RenderPass);
 
+
         {
             // Use any command queue
             VkCommandPool command_pool = wd->Frames[wd->FrameIndex].CommandPool;
@@ -361,9 +362,6 @@ namespace Cherry
             ImGui_ImplVulkan_DestroyFontUploadObjects();
         }
 
-#ifdef CHERRY_CEF // Testing
-        InitCEF(500,500);
-        #endif
 
         Application::IncrementWindowNumber();
         Application::SetMasterSwapChainRebuild(true);

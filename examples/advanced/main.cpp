@@ -143,24 +143,24 @@ Cherry::Application *Cherry::CreateApplication(int argc, char **argv)
 
                             ImGui::PopStyleVar();  
                             ImGui::PopStyleColor(2); });
-                            
-     /*auto ContentBrowser = ContentBrowserAppWindow::Create("?loc:loc.window_names.content_browser", "/home/diego");
-    Cherry::AddAppWindow(ContentBrowser->GetAppWindow());
 
-   auto ContentOutliner = ContentOutlinerSimple::Create("?loc:loc.window_names.outliner");
-    Cherry::AddAppWindow(ContentOutliner->GetAppWindow());
-    auto PropsEditor = PropsEditorSimple::Create("?loc:loc.window_names.props_editor");
-    Cherry::AddAppWindow(PropsEditor->GetAppWindow());
+  /*auto ContentBrowser = ContentBrowserAppWindow::Create("?loc:loc.window_names.content_browser", "/home/diego");
+ Cherry::AddAppWindow(ContentBrowser->GetAppWindow());
 
-    //auto NodalEditor = NodeEditorSimple::Create("?loc:loc.window_names.node_editor");
-    //Cherry::AddAppWindow(NodalEditor->GetAppWindow());
+auto ContentOutliner = ContentOutlinerSimple::Create("?loc:loc.window_names.outliner");
+ Cherry::AddAppWindow(ContentOutliner->GetAppWindow());
+ auto PropsEditor = PropsEditorSimple::Create("?loc:loc.window_names.props_editor");
+ Cherry::AddAppWindow(PropsEditor->GetAppWindow());
+
+ //auto NodalEditor = NodeEditorSimple::Create("?loc:loc.window_names.node_editor");
+ //Cherry::AddAppWindow(NodalEditor->GetAppWindow());
 
 
-    auto TabsWindow = MultiChildTabs::Create("Vertical Tabs");
-    TabsWindow->AddChild("One", [](){ImGui::Text("One");});
-    TabsWindow->AddChild("Two", [](){ImGui::Text("Two");});
-    TabsWindow->AddChild("Three", [](){ImGui::Text("Three");});
-    Cherry::AddAppWindow(TabsWindow->GetAppWindow());*/
+ auto TabsWindow = MultiChildTabs::Create("Vertical Tabs");
+ TabsWindow->AddChild("One", [](){ImGui::Text("One");});
+ TabsWindow->AddChild("Two", [](){ImGui::Text("Two");});
+ TabsWindow->AddChild("Three", [](){ImGui::Text("Three");});
+ Cherry::AddAppWindow(TabsWindow->GetAppWindow());*/
 
   /*
 
@@ -224,8 +224,25 @@ Cherry::Application *Cherry::CreateApplication(int argc, char **argv)
   HorizontalAreas->AddChild(Child("Four2", [](){ ImGui::Text("Four"); }));
   Cherry::AddAppWindow(HorizontalAreas->GetAppWindow());*/
 
-    auto Demo = DemoAppWindow::Create("?loc:loc.window_names.demo");
-    Cherry::AddAppWindow(Demo->GetAppWindow());
+  auto Demo = DemoAppWindow::Create("?loc:loc.window_names.demo");
+  Cherry::AddAppWindow(Demo->GetAppWindow());
+  CefMainArgs main_args(argc, argv);
+
+  int cef_result = CefExecuteProcess(main_args, nullptr, nullptr);
+  if (cef_result >= 0)
+  {
+    return nullptr;
+  }
+
+  if (ImGui_ImplSDL2_CefInit(argc, argv) < 0)
+  {
+    std::cerr << "Failed to initialize ImGui SDL2 CEF integration." << std::endl;
+    return nullptr;
+  }
+
+  InitCEF(500, 500);
+  OnCEFFrame();
+
   return app;
 }
 

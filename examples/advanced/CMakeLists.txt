@@ -5,6 +5,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
+set(CHERRY_CEF ON)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../ cherry_build)
 
 add_executable(advanced ${CHERRYSOURCES} main.cpp)

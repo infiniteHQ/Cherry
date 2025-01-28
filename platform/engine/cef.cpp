@@ -13,27 +13,106 @@ namespace Cherry
     uint32_t FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties)
     {
         VkPhysicalDeviceMemoryProperties memProperties;
-        vkGetPhysicalDeviceMemoryProperties(Application::GetPhysicalDevice(), &memProperties); // g_physicalDevice est votre appareil physique Vulkan.
+        vkGetPhysicalDeviceMemoryProperties(Cherry::Application::GetVkPhysicalDevice(), &memProperties);
 
-        // Parcourir tous les types de mémoire disponibles
         for (uint32_t i = 0; i < memProperties.memoryTypeCount; i++)
         {
-            // Vérifier si le type de mémoire est compatible avec les propriétés demandées
-            if ((typeFilter & (1 << i)) &&
-                (memProperties.memoryTypes[i].propertyFlags & properties) == properties)
+            if ((typeFilter & (1 << i)) && (memProperties.memoryTypes[i].propertyFlags & properties) == properties)
             {
                 return i;
             }
         }
 
-        throw std::runtime_error("Failed to find suitable memory type!");
+        throw std::runtime_error("Failed to find suitable memory type.");
     }
 
-    // Fonction pour créer une image Vulkan
-    void CreateVulkanImage(VkDevice device, uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling,
-                           VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage &image, VkDeviceMemory &imageMemory)
+    void RenderHandler::GetViewRect(CefRefPtr<CefBrowser> browser, CefRect &rect)
     {
-        VkImageCreateInfo imageCreateInfo{};
+        rect = CefRect(0, 0, width, height);
+    }
+
+    VkCommandBuffer BeginSingleTimeCommands()
+    {
+        ImGui_ImplVulkanH_Window *wd = &Cherry::GetCurrentRenderedWindow()->m_WinData;
+
+        VkCommandPool command_pool = wd->Frames[wd->FrameIndex].CommandPool;
+        VkCommandBufferAllocateInfo allocInfo = {};
+        allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+        allocInfo.commandPool = command_pool;
+        allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+        allocInfo.commandBufferCount = 1;
+
+        VkCommandBuffer commandBuffer;
+        vkAllocateCommandBuffers(Cherry::Application::GetVkDevice(), &allocInfo, &commandBuffer);
+
+        VkCommandBufferBeginInfo beginInfo = {};
+        beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+        beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+        beginInfo.pInheritanceInfo = nullptr;
+
+        vkBeginCommandBuffer(commandBuffer, &beginInfo);
+
+        return commandBuffer;
+    }
+
+    void EndSingleTimeCommands(VkCommandBuffer commandBuffer)
+    {
+        vkEndCommandBuffer(commandBuffer);
+
+        ImGui_ImplVulkanH_Window *wd = &Cherry::GetCurrentRenderedWindow()->m_WinData;
+
+        VkCommandPool command_pool = wd->Frames[wd->FrameIndex].CommandPool;
+        VkSubmitInfo submitInfo = {};
+        submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+        submitInfo.commandBufferCount = 1;
+        submitInfo.pCommandBuffers = &commandBuffer;
+
+        vkQueueSubmit(Cherry::Application::GetVkQueue(), 1, &submitInfo, VK_NULL_HANDLE);
+        vkQueueWaitIdle(Cherry::Application::GetVkQueue());
+
+        vkFreeCommandBuffers(Cherry::Application::GetVkDevice(), command_pool, 1, &commandBuffer);
+    }
+
+    ImTextureID ImGui_ImplSDL2_GetCefTexture()
+    {
+        return cefTextureId;
+    }
+
+    void UpdateCefTexture(const void *buffer, int width, int height)
+    {
+        VkBuffer stagingBuffer;
+        VkDeviceMemory stagingBufferMemory;
+
+        VkBufferCreateInfo bufferCreateInfo = {};
+        bufferCreateInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+        bufferCreateInfo.size = width * height * 4;
+        bufferCreateInfo.usage = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
+        bufferCreateInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+
+        vkCreateBuffer(Cherry::Application::GetDevice(), &bufferCreateInfo, nullptr, &stagingBuffer);
+
+        VkMemoryRequirements memoryRequirements;
+        vkGetBufferMemoryRequirements(Cherry::Application::GetDevice(), stagingBuffer, &memoryRequirements);
+
+        VkMemoryAllocateInfo allocInfo = {};
+        allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+        allocInfo.allocationSize = memoryRequirements.size;
+        allocInfo.memoryTypeIndex = FindMemoryType(memoryRequirements.memoryTypeBits, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+
+        vkAllocateMemory(Cherry::Application::GetDevice(), &allocInfo, nullptr, &stagingBufferMemory);
+        vkBindBufferMemory(Cherry::Application::GetDevice(), stagingBuffer, stagingBufferMemory, 0);
+
+        void *data;
+        VkResult result = vkMapMemory(Cherry::Application::GetDevice(), stagingBufferMemory, 0, VK_WHOLE_SIZE, 0, &data);
+        if (result != VK_SUCCESS)
+        {
+            std::cerr << "Failed to map Vulkan memory: " << result << std::endl;
+            return;
+        }
+        memcpy(data, buffer, width * height * 4);
+        vkUnmapMemory(Cherry::Application::GetDevice(), stagingBufferMemory);
+
+        VkImageCreateInfo imageCreateInfo = {};
         imageCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
         imageCreateInfo.imageType = VK_IMAGE_TYPE_2D;
         imageCreateInfo.extent.width = width;
@@ -41,139 +120,56 @@ namespace Cherry
         imageCreateInfo.extent.depth = 1;
         imageCreateInfo.mipLevels = 1;
         imageCreateInfo.arrayLayers = 1;
-        imageCreateInfo.format = format;
-        imageCreateInfo.tiling = tiling;
+        imageCreateInfo.format = VK_FORMAT_B8G8R8A8_UNORM; // BGRA Format
+        imageCreateInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
         imageCreateInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-        imageCreateInfo.usage = usage;
+        imageCreateInfo.usage = VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
         imageCreateInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
         imageCreateInfo.samples = VK_SAMPLE_COUNT_1_BIT;
         imageCreateInfo.flags = 0;
 
-        if (vkCreateImage(device, &imageCreateInfo, nullptr, &image) != VK_SUCCESS)
+        VkImage image;
+        if (vkCreateImage(Cherry::Application::GetDevice(), &imageCreateInfo, nullptr, &image) != VK_SUCCESS)
         {
-            throw std::runtime_error("Failed to create Vulkan image!");
+            std::cerr << "Failed to create Vulkan image." << std::endl;
+            return;
         }
 
-        VkMemoryRequirements memRequirements;
-        vkGetImageMemoryRequirements(device, image, &memRequirements);
+        VkMemoryRequirements imageMemoryRequirements;
+        vkGetImageMemoryRequirements(Cherry::Application::GetDevice(), image, &imageMemoryRequirements);
 
-        VkMemoryAllocateInfo allocInfo{};
-        allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-        allocInfo.allocationSize = memRequirements.size;
-        allocInfo.memoryTypeIndex = FindMemoryType(memRequirements.memoryTypeBits, properties);
+        VkMemoryAllocateInfo imageAllocInfo = {};
+        imageAllocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+        imageAllocInfo.allocationSize = imageMemoryRequirements.size;
+        imageAllocInfo.memoryTypeIndex = FindMemoryType(imageMemoryRequirements.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
 
-        if (vkAllocateMemory(device, &allocInfo, nullptr, &imageMemory) != VK_SUCCESS)
-        {
-            throw std::runtime_error("Failed to allocate memory for Vulkan image!");
-        }
+        VkDeviceMemory imageMemory;
+        vkAllocateMemory(Cherry::Application::GetDevice(), &imageAllocInfo, nullptr, &imageMemory);
+        vkBindImageMemory(Cherry::Application::GetDevice(), image, imageMemory, 0);
 
-        vkBindImageMemory(device, image, imageMemory, 0);
-    }
+        VkCommandBuffer commandBuffer = BeginSingleTimeCommands();
 
-    // Fonction pour créer un ImageView Vulkan
-    void CreateVulkanImageView(VkDevice device, VkImage image, VkFormat format, VkImageView &imageView)
-    {
-        VkImageViewCreateInfo viewCreateInfo{};
-        viewCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-        viewCreateInfo.image = image;
-        viewCreateInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
-        viewCreateInfo.format = format;
-        viewCreateInfo.components.r = VK_COMPONENT_SWIZZLE_R;
-        viewCreateInfo.components.g = VK_COMPONENT_SWIZZLE_G;
-        viewCreateInfo.components.b = VK_COMPONENT_SWIZZLE_B;
-        viewCreateInfo.components.a = VK_COMPONENT_SWIZZLE_A;
-        viewCreateInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-        viewCreateInfo.subresourceRange.baseMipLevel = 0;
-        viewCreateInfo.subresourceRange.levelCount = 1;
-        viewCreateInfo.subresourceRange.baseArrayLayer = 0;
-        viewCreateInfo.subresourceRange.layerCount = 1;
+        VkImageMemoryBarrier imageBarrier = {};
+        imageBarrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+        imageBarrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+        imageBarrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+        imageBarrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+        imageBarrier.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 
-        if (vkCreateImageView(device, &viewCreateInfo, nullptr, &imageView) != VK_SUCCESS)
-        {
-            throw std::runtime_error("Failed to create Vulkan image view!");
-        }
-    }
+        imageBarrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+        imageBarrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+        imageBarrier.image = image;
+        imageBarrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+        imageBarrier.subresourceRange.baseMipLevel = 0;
+        imageBarrier.subresourceRange.levelCount = 1;
+        imageBarrier.subresourceRange.baseArrayLayer = 0;
+        imageBarrier.subresourceRange.layerCount = 1;
 
-    void VulkanCreateBuffer(VkDevice device, VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer &buffer, VkDeviceMemory &bufferMemory)
-    {
-        VkBufferCreateInfo bufferInfo{};
-        bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
-        bufferInfo.size = size;
-        bufferInfo.usage = usage;
-        bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+        vkCmdPipelineBarrier(commandBuffer,
+                             VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT,
+                             0, 0, nullptr, 0, nullptr, 1, &imageBarrier);
 
-        if (vkCreateBuffer(device, &bufferInfo, nullptr, &buffer) != VK_SUCCESS)
-        {
-            throw std::runtime_error("Failed to create buffer");
-        }
-
-        VkMemoryRequirements memRequirements;
-        vkGetBufferMemoryRequirements(device, buffer, &memRequirements);
-
-        VkMemoryAllocateInfo allocInfo{};
-        allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-        allocInfo.allocationSize = memRequirements.size;
-        allocInfo.memoryTypeIndex = FindMemoryType(memRequirements.memoryTypeBits, properties);
-
-        if (vkAllocateMemory(device, &allocInfo, nullptr, &bufferMemory) != VK_SUCCESS)
-        {
-            throw std::runtime_error("Failed to allocate buffer memory");
-        }
-
-        vkBindBufferMemory(device, buffer, bufferMemory, 0);
-    }
-
-    void VulkanTransitionImageLayout(VkCommandBuffer commandBuffer, VkImage image, VkImageLayout oldLayout, VkImageLayout newLayout)
-    {
-        VkImageMemoryBarrier barrier{};
-        barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-        barrier.oldLayout = oldLayout;
-        barrier.newLayout = newLayout;
-        barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-        barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-        barrier.image = image;
-        barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-        barrier.subresourceRange.baseMipLevel = 0;
-        barrier.subresourceRange.levelCount = 1;
-        barrier.subresourceRange.baseArrayLayer = 0;
-        barrier.subresourceRange.layerCount = 1;
-
-        VkPipelineStageFlags sourceStage;
-        VkPipelineStageFlags destinationStage;
-
-        if (oldLayout == VK_IMAGE_LAYOUT_UNDEFINED && newLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL)
-        {
-            barrier.srcAccessMask = 0;
-            barrier.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
-
-            sourceStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
-            destinationStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
-        }
-        else if (oldLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL && newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL)
-        {
-            barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
-            barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
-
-            sourceStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
-            destinationStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
-        }
-        else
-        {
-            throw std::invalid_argument("Unsupported layout transition!");
-        }
-
-        vkCmdPipelineBarrier(
-            commandBuffer,
-            sourceStage, destinationStage,
-            0,
-            0, nullptr,
-            0, nullptr,
-            1, &barrier);
-    }
-
-    void VulkanCopyBufferToImage(VkCommandBuffer commandBuffer, VkBuffer buffer, VkImage image, uint32_t width, uint32_t height)
-    {
-        VkBufferImageCopy region{};
+        VkBufferImageCopy region = {};
         region.bufferOffset = 0;
         region.bufferRowLength = 0;
         region.bufferImageHeight = 0;
@@ -182,190 +178,184 @@ namespace Cherry
         region.imageSubresource.baseArrayLayer = 0;
         region.imageSubresource.layerCount = 1;
         region.imageOffset = {0, 0, 0};
-        region.imageExtent = {width, height, 1};
+        region.imageExtent = {static_cast<uint32_t>(width), static_cast<uint32_t>(height), 1};
 
-        vkCmdCopyBufferToImage(
-            commandBuffer,
-            buffer,
-            image,
-            VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-            1,
-            &region);
+        vkCmdCopyBufferToImage(commandBuffer, stagingBuffer, image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
+
+        imageBarrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+        imageBarrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+        imageBarrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+        imageBarrier.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+
+        vkCmdPipelineBarrier(commandBuffer,
+                             VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
+                             0, 0, nullptr, 0, nullptr, 1, &imageBarrier);
+
+        EndSingleTimeCommands(commandBuffer);
+
+        VkImageViewCreateInfo imageViewCreateInfo = {};
+        imageViewCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+        imageViewCreateInfo.image = image;
+        imageViewCreateInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+        imageViewCreateInfo.format = VK_FORMAT_B8G8R8A8_UNORM;
+        imageViewCreateInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+        imageViewCreateInfo.subresourceRange.baseMipLevel = 0;
+        imageViewCreateInfo.subresourceRange.levelCount = 1;
+        imageViewCreateInfo.subresourceRange.baseArrayLayer = 0;
+        imageViewCreateInfo.subresourceRange.layerCount = 1;
+
+        VkImageView imageView;
+        vkCreateImageView(Cherry::Application::GetDevice(), &imageViewCreateInfo, nullptr, &imageView);
+
+        if (imageView == VK_NULL_HANDLE)
+        {
+            std::cerr << "Failed to create image view." << std::endl;
+            return;
+        }
+
+        cefTextureId = (ImTextureID)imageView;
+
+        std::cout << " QFS" << std::endl;
+
+        vkDestroyBuffer(Cherry::Application::GetDevice(), stagingBuffer, nullptr);
+        vkFreeMemory(Cherry::Application::GetDevice(), stagingBufferMemory, nullptr);
     }
 
-    void VulkanSubmitCommandBuffer(VkCommandBuffer commandBuffer, VkQueue queue)
+    void RenderHandler::OnPaint(CefRefPtr<CefBrowser> browser, PaintElementType type, const RectList &dirtyRects, const void *buffer, int width, int height)
     {
-        vkEndCommandBuffer(commandBuffer);
+        std::cout << "Buffer received from CEF: " << buffer << ", Width: " << width << ", Height: " << height << std::endl;
 
-        VkSubmitInfo submitInfo{};
-        submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-        submitInfo.commandBufferCount = 1;
-        submitInfo.pCommandBuffers = &commandBuffer;
-
-        vkQueueSubmit(queue, 1, &submitInfo, VK_NULL_HANDLE);
-        vkQueueWaitIdle(queue);
+        UpdateCefTexture(buffer, width, height);
     }
 
-    ImTextureID ImGui_ImplSDL2_GetCefTexture()
+    void RenderHandler::resize(int w, int h)
     {
-        return (ImTextureID)(intptr_t)vulkanImage;
+        width = w;
+        height = h;
     }
 
-    void RenderHandler::GetViewRect(CefRefPtr<CefBrowser> browser, CefRect &rect)
-	{
-		rect = CefRect(0, 0, width, height);
-	}
+    void RenderHandler::render()
+    {
+        // SDL_RenderCopy(renderer, texture, NULL, NULL);
+    }
 
-	void RenderHandler::OnPaint(CefRefPtr<CefBrowser> browser, PaintElementType type, const RectList &dirtyRects, const void *buffer, int width, int height)
-	{
-		// Assurez-vous que ces objets sont initialisés au préalable :
-		VkDevice device = Application::GetDevice();									   // Exemple global
-		VkCommandBuffer commandBuffer = Application::GetCommandBufferOfWin("0", true); // CommandBuffer global pour l'exemple
-		VkQueue graphicsQueue = Application::GetVkQueue();
+    void ChangeBrowserURL(char *URL)
+    {
+        browser->GetMainFrame()->LoadURL(CefString(URL));
+    }
 
-		// Créez l'image Vulkan pour afficher la texture
-		VkDeviceMemory vulkanImageMemory;
-		VkImageView vulkanImageView;
-		CreateVulkanImage(device, width, height, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_TILING_OPTIMAL,
-						  VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-						  vulkanImage, vulkanImageMemory);
+    void ShowBrowserWindow(bool *p_open, ImTextureID tex_id)
+    {
+        //// Menu
+        // if (ImGui::BeginMenuBar())
+        //{
+        //     if (ImGui::BeginMenu("Menu"))
+        //     {
+        //         //ShowExampleMenuFile();
+        //         ImGui::EndMenu();
+        //     }
+        //     if (ImGui::BeginMenu("Examples"))
+        //     {
+        //         ImGui::EndMenu();
+        //     }
+        //     if (ImGui::BeginMenu("Help"))
+        //     {
+        //         ImGui::EndMenu();
+        //     }
+        //     ImGui::EndMenuBar();
+        // }
+        // ImGui::Spacing();
 
-		CreateVulkanImageView(device, vulkanImage, VK_FORMAT_R8G8B8A8_UNORM, vulkanImageView);
+        static char AddressURL[500] = "https://www.google.com";
 
-		// Taille de la mémoire du buffer en octets
-		VkDeviceSize imageSize = width * height * 4; // RGBA (4 bytes par pixel)
+        ImGui::Text("Address:");
+        ImGui::SameLine();
+        ImGui::InputText("", AddressURL, IM_ARRAYSIZE(AddressURL));
+        ImGui::SameLine();
+        if (ImGui::Button("Go"))
+        {
+            // switch the url
+            ChangeBrowserURL(AddressURL);
+        }
 
-		// Création du buffer source temporaire
-		VkBuffer stagingBuffer;
-		VkDeviceMemory stagingBufferMemory;
+        if (tex_id != nullptr)
+        {
+            ImTextureID my_tex_id = tex_id;
+            float my_tex_w = 800.0f;
+            float my_tex_h = 600.0f;
 
-		VulkanCreateBuffer(device, imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
+            ImVec2 curpos = ImGui::GetCursorPos();
+            ImVec2 winpos = ImGui::GetWindowPos();
 
-		// Copie des données de buffer dans le staging buffer
-		void *data;
-		vkMapMemory(device, stagingBufferMemory, 0, imageSize, 0, &data);
-		memcpy(data, buffer, static_cast<size_t>(imageSize));
-		vkUnmapMemory(device, stagingBufferMemory);
+            ImGui::ImageButton(my_tex_id, ImVec2(my_tex_w, my_tex_h), ImVec2(0, 0), ImVec2(1, 1), ImColor(255, 255, 255, 255), ImColor(255, 255, 255, 128));
+            if (ImGui::IsItemHovered())
+            {
+                UpdateBrowserMouse(winpos, curpos);
+                // process mouse data
+                // cancel all mouse event
+            }
+        }
+        else
+        {
+            std::cout << "null texture" << std::endl;
+        }
+    }
 
-		// Transition de l'image Vulkan pour qu'elle soit prête à recevoir les données (layout transition)
-		VulkanTransitionImageLayout(commandBuffer, vulkanImage, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+    void InitCEF(int width, int height)
+    {
+        renderHandler = new RenderHandler(width, height);
 
-		// Copier le staging buffer dans l'image Vulkan
-		VulkanCopyBufferToImage(commandBuffer, stagingBuffer, vulkanImage, static_cast<uint32_t>(width), static_cast<uint32_t>(height));
+        CefWindowInfo window_info;
+        CefBrowserSettings browserSettings;
 
-		// Transition de l'image Vulkan pour qu'elle soit prête à être échantillonnée par le shader
-		VulkanTransitionImageLayout(commandBuffer, vulkanImage, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+        browserSettings.windowless_frame_rate = 60; // 30 is default
+        window_info.SetAsWindowless(NULL);          // false means no transparency (site background colour)
+        browserClient = new BrowserClient(renderHandler);
+        browser = CefBrowserHost::CreateBrowserSync(window_info, browserClient.get(), "https://google.com", browserSettings, nullptr, nullptr);
+    }
 
-		// Soumettre les commandes et attendre leur exécution
-		VulkanSubmitCommandBuffer(commandBuffer, graphicsQueue);
+    void OnCEFFrame()
+    {
+        CefDoMessageLoopWork();
+    }
 
-		// Nettoyage du buffer temporaire
-		vkDestroyBuffer(device, stagingBuffer, nullptr);
-		vkFreeMemory(device, stagingBufferMemory, nullptr);
-	}
+    int ImGui_ImplSDL2_CefInit(int argc, char **argv)
+    {
+        CefMainArgs main_args(argc, argv);
 
-    	void RenderHandler::resize(int w, int h)
-	{
-		width = w;
-		height = h;
-	}
+        CefRefPtr<CefCommandLine> command_line = CefCommandLine::CreateCommandLine();
+        command_line->AppendSwitch("--disable-gpu");
+        command_line->AppendSwitch("--no-sandbox");
 
-	void RenderHandler::render()
-	{
-		// SDL_RenderCopy(renderer, texture, NULL, NULL);
-	}
+        int result = CefExecuteProcess(main_args, nullptr, nullptr);
+        if (result >= 0)
+        {
+            return result;
+        }
 
+        // Configurer CEF
+        CefSettings settings;
+        settings.windowless_rendering_enabled = true;
+        settings.no_sandbox = true;
+        settings.log_severity = LOGSEVERITY_VERBOSE; 
 
-	void ChangeBrowserURL(char *URL)
-	{
-		browser->GetMainFrame()->LoadURL(CefString(URL));
-	}
+        std::ostringstream ss;
+        ss << SDL_GetBasePath() << "locales/";
+        CefString(&settings.locales_dir_path) = ss.str();
+        CefString(&settings.resources_dir_path) = SDL_GetBasePath();
+        CefString(&settings.root_cache_path) = SDL_GetBasePath();
+        CefString(&settings.browser_subprocess_path) = SDL_GetBasePath() + std::string("/advanced");
+        CefString(&settings.cache_path) = std::string(SDL_GetBasePath()) + "cache/";
+        CefString(&settings.log_file) = "cef_log.txt";
 
-	void ShowBrowserWindow(bool *p_open, ImTextureID tex_id)
-	{
-		// We specify a default position/size in case there's no data in the .ini file. Typically this isn't required! We only do it to make the Demo applications a little more welcoming.
-		ImGui::SetNextWindowPos(ImVec2(650, 20), ImGuiCond_FirstUseEver);
-		ImGui::SetNextWindowSize(ImVec2(680, 680), ImGuiCond_FirstUseEver);
+        if (!CefInitialize(main_args, settings, nullptr, nullptr))
+        {
+            std::cerr << "Failed to initialize CEF." << std::endl;
+            return -1;
+        }
 
-		ImGuiWindowFlags window_flags = 0;
-		window_flags |= ImGuiWindowFlags_MenuBar;
+        return 0;
+    }
 
-		if (!ImGui::Begin("ImGui Browser", p_open, window_flags))
-		{
-			// Early out if the window is collapsed, as an optimization.
-			ImGui::End();
-			return;
-		}
-
-		//// Menu
-		// if (ImGui::BeginMenuBar())
-		//{
-		//     if (ImGui::BeginMenu("Menu"))
-		//     {
-		//         //ShowExampleMenuFile();
-		//         ImGui::EndMenu();
-		//     }
-		//     if (ImGui::BeginMenu("Examples"))
-		//     {
-		//         ImGui::EndMenu();
-		//     }
-		//     if (ImGui::BeginMenu("Help"))
-		//     {
-		//         ImGui::EndMenu();
-		//     }
-		//     ImGui::EndMenuBar();
-		// }
-		// ImGui::Spacing();
-
-		static char AddressURL[500] = "https://www.google.com";
-
-		ImGui::Text("Address:");
-		ImGui::SameLine();
-		ImGui::InputText("", AddressURL, IM_ARRAYSIZE(AddressURL));
-		ImGui::SameLine();
-		if (ImGui::Button("Go"))
-		{
-			// switch the url
-			ChangeBrowserURL(AddressURL);
-		}
-
-		if (tex_id != nullptr)
-		{
-			ImTextureID my_tex_id = tex_id;
-			float my_tex_w = 800.0f;
-			float my_tex_h = 600.0f;
-
-			ImVec2 curpos = ImGui::GetCursorPos();
-			ImVec2 winpos = ImGui::GetWindowPos();
-
-			ImGui::ImageButton(my_tex_id, ImVec2(my_tex_w, my_tex_h), ImVec2(0, 0), ImVec2(1, 1), ImColor(255, 255, 255, 255), ImColor(255, 255, 255, 128));
-			if (ImGui::IsItemHovered())
-			{
-				UpdateBrowserMouse(winpos, curpos);
-				// process mouse data
-				// cancel all mouse event
-			}
-		}
-		// End of ShowDemoWindow()
-		ImGui::End();
-	}
-
-	void InitCEF(int width, int height)
-	{
-		renderHandler = new RenderHandler(width, height);
-
-		CefWindowInfo window_info;
-		CefBrowserSettings browserSettings;
-
-		// browserSettings.windowless_frame_rate = 60; // 30 is default
-		window_info.SetAsWindowless(NULL); // false means no transparency (site background colour)
-		browserClient = new BrowserClient(renderHandler);
-		browser = CefBrowserHost::CreateBrowserSync(window_info, browserClient.get(), "https://google.com", browserSettings, nullptr, nullptr);
-	}
-
-	void OnCEFFrame()
-	{
-		CefDoMessageLoopWork();
-	}
 }
 #endif // CHERRY_CEF

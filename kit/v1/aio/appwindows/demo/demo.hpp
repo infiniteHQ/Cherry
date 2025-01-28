@@ -1,4 +1,5 @@
 #include "../../../../../platform/engine/app.hpp"
+#include "../../../../../platform/engine/cef.hpp"
 
 #ifndef UIKIT_V1_DEMO_APPWINDOW
 #define UIKIT_V1_DEMO_APPWINDOW
