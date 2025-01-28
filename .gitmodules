@@ -22,3 +22,6 @@
 [submodule "lib/cef-project"]
 	path = lib/cef-project
 	url = https://github.com/chromiumembedded/cef-project
+[submodule "lib/cef_cmake"]
+	path = lib/cef_cmake
+	url = https://github.com/infiniteHQ/cef_cmake
