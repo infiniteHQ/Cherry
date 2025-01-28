@@ -324,8 +324,8 @@ namespace Cherry
         CefMainArgs main_args(argc, argv);
 
         CefRefPtr<CefCommandLine> command_line = CefCommandLine::CreateCommandLine();
-        command_line->AppendSwitch("--disable-gpu");
-        command_line->AppendSwitch("--no-sandbox");
+
+        command_line->AppendSwitch("in-process-gpu");
 
         int result = CefExecuteProcess(main_args, nullptr, nullptr);
         if (result >= 0)
@@ -333,20 +333,20 @@ namespace Cherry
             return result;
         }
 
-        // Configurer CEF
         CefSettings settings;
-        settings.windowless_rendering_enabled = true;
         settings.no_sandbox = true;
-        settings.log_severity = LOGSEVERITY_VERBOSE; 
-
+        
+        CefString(&settings.browser_subprocess_path) = SDL_GetBasePath();
+        CefString(&settings.root_cache_path) = SDL_GetBasePath();
+        CefString(&settings.cache_path) = std::string(SDL_GetBasePath()) + "cache/";
         std::ostringstream ss;
         ss << SDL_GetBasePath() << "locales/";
         CefString(&settings.locales_dir_path) = ss.str();
         CefString(&settings.resources_dir_path) = SDL_GetBasePath();
-        CefString(&settings.root_cache_path) = SDL_GetBasePath();
-        CefString(&settings.browser_subprocess_path) = SDL_GetBasePath() + std::string("/advanced");
-        CefString(&settings.cache_path) = std::string(SDL_GetBasePath()) + "cache/";
-        CefString(&settings.log_file) = "cef_log.txt";
+        // Configure CEF
+#if !defined(CEF_USE_SANDBOX)
+        settings.no_sandbox = true;
+#endif
 
         if (!CefInitialize(main_args, settings, nullptr, nullptr))
         {
