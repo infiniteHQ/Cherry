@@ -1204,6 +1204,8 @@ namespace Cherry
 
             ImGui::NewFrame();
 
+            OnCEFFrame();
+
             window->PushTheme(window->m_Specifications.ColorTheme.Colors);
             ImGui::PushFont(Application::GetFontList()["Default"]);
 

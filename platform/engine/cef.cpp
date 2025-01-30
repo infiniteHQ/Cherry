@@ -297,7 +297,7 @@ namespace Cherry
         }
         else
         {
-            std::cout << "null texture" << std::endl;
+            ImGui::Text("Null");
         }
     }
 
@@ -308,10 +308,14 @@ namespace Cherry
         CefWindowInfo window_info;
         CefBrowserSettings browserSettings;
 
-        browserSettings.windowless_frame_rate = 60; // 30 is default
-        window_info.SetAsWindowless(NULL);          // false means no transparency (site background colour)
+        // browserSettings.windowless_frame_rate = 60; // 30 is default
+        window_info.SetAsWindowless(NULL); // false means no transparency (site background colour)
         browserClient = new BrowserClient(renderHandler);
         browser = CefBrowserHost::CreateBrowserSync(window_info, browserClient.get(), "https://google.com", browserSettings, nullptr, nullptr);
+
+        CefDoMessageLoopWork();
+        CefDoMessageLoopWork();
+        CefDoMessageLoopWork();
     }
 
     void OnCEFFrame()
@@ -324,8 +328,7 @@ namespace Cherry
         CefMainArgs main_args(argc, argv);
 
         CefRefPtr<CefCommandLine> command_line = CefCommandLine::CreateCommandLine();
-
-        command_line->AppendSwitch("in-process-gpu");
+        command_line->InitFromArgv(argc, argv);
 
         int result = CefExecuteProcess(main_args, nullptr, nullptr);
         if (result >= 0)
@@ -335,18 +338,25 @@ namespace Cherry
 
         CefSettings settings;
         settings.no_sandbox = true;
-        
-        CefString(&settings.browser_subprocess_path) = SDL_GetBasePath();
+        settings.command_line_args_disabled = false;
+        settings.windowless_rendering_enabled = true;
+
+
         CefString(&settings.root_cache_path) = SDL_GetBasePath();
         CefString(&settings.cache_path) = std::string(SDL_GetBasePath()) + "cache/";
         std::ostringstream ss;
         ss << SDL_GetBasePath() << "locales/";
+
         CefString(&settings.locales_dir_path) = ss.str();
         CefString(&settings.resources_dir_path) = SDL_GetBasePath();
-        // Configure CEF
+        settings.log_severity = LOGSEVERITY_VERBOSE;
+        CefString(&settings.log_file) = "cef_debug.log";
+
 #if !defined(CEF_USE_SANDBOX)
         settings.no_sandbox = true;
 #endif
+
+        settings.windowless_rendering_enabled = true;
 
         if (!CefInitialize(main_args, settings, nullptr, nullptr))
         {

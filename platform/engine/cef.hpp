@@ -24,8 +24,8 @@ static ImVec2 g_windowPos, g_cursorPos;
 namespace Cherry
 {
 
-void CreateCefImage(int width, int height);
-void UpdateCefTexture(const void* buffer, int width, int height);
+	void CreateCefImage(int width, int height);
+	void UpdateCefTexture(const void *buffer, int width, int height);
 	void UpdateBrowserMouse(ImVec2 windowPos, ImVec2 cursorPos);
 	uint32_t FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
 	void CreateVulkanImage(VkDevice device, uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling,
@@ -36,7 +36,7 @@ void UpdateCefTexture(const void* buffer, int width, int height);
 	void VulkanCopyBufferToImage(VkCommandBuffer commandBuffer, VkBuffer buffer, VkImage image, uint32_t width, uint32_t height);
 	void VulkanSubmitCommandBuffer(VkCommandBuffer commandBuffer, VkQueue queue);
 	ImTextureID ImGui_ImplSDL2_GetCefTexture();
-int ImGui_ImplSDL2_CefInit(int argc, char** argv);
+	int ImGui_ImplSDL2_CefInit(int argc, char **argv);
 
 	class RenderHandler : public CefRenderHandler
 	{
@@ -53,6 +53,7 @@ int ImGui_ImplSDL2_CefInit(int argc, char** argv);
 		void GetViewRect(CefRefPtr<CefBrowser> browser, CefRect &rect);
 
 		void OnPaint(CefRefPtr<CefBrowser> browser, PaintElementType type, const RectList &dirtyRects, const void *buffer, int width, int height);
+		void OnAcceleratedPaint(CefRefPtr<CefBrowser> browser, PaintElementType type, const RectList &dirtyRects, const void *buffer, int width, int height);
 		void resize(int w, int h);
 		void render();
 
@@ -91,10 +92,9 @@ int ImGui_ImplSDL2_CefInit(int argc, char** argv);
 		// CefLifeSpanHandler methods.
 		void OnAfterCreated(CefRefPtr<CefBrowser> browser)
 		{
-			// Must be executed on the UI thread.
 			CEF_REQUIRE_UI_THREAD();
-
 			browser_id = browser->GetIdentifier();
+			printf("OnAfterCreated: Browser ID %d\n", browser_id);
 		}
 
 		bool DoClose(CefRefPtr<CefBrowser> browser)
@@ -126,10 +126,13 @@ int ImGui_ImplSDL2_CefInit(int argc, char** argv);
 			loaded = true;
 		}
 
-		bool OnLoadError(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefLoadHandler::ErrorCode errorCode, const CefString &failedUrl, CefString &errorText)
+		void OnLoadError(CefRefPtr<CefBrowser> browser,
+						 CefRefPtr<CefFrame> frame,
+						 ErrorCode errorCode,
+						 const CefString &errorText,
+						 const CefString &failedUrl)
 		{
-			printf("OnLoadError(%d)\n", errorCode);
-			loaded = true;
+			printf("OnLoadError: %s (Error code: %d)\n", errorText.ToString().c_str(), errorCode);
 		}
 
 		void OnLoadingStateChange(CefRefPtr<CefBrowser> browser, bool isLoading, bool canGoBack, bool canGoForward)

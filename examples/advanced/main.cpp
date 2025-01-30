@@ -239,9 +239,10 @@ auto ContentOutliner = ContentOutlinerSimple::Create("?loc:loc.window_names.outl
     std::cerr << "Failed to initialize ImGui SDL2 CEF integration." << std::endl;
     return nullptr;
   }
-
+std::cout << "Inited" << std::endl;
   InitCEF(500, 500);
-  OnCEFFrame();
+std::cout << "Cef" << std::endl;
+
 
   return app;
 }
