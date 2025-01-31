@@ -1,870 +1,301 @@
-[64441:64442:0130/012106.883157:VERBOSE1:variations_field_trial_creator_base.cc(78)] VariationsSeedUsage:12
-[64441:64442:0130/012106.883206:VERBOSE1:variations_field_trial_creator_base.cc(347)] VariationsSetupComplete
-[64441:64455:0130/012106.884738:VERBOSE1:bus.cc(916)] Method call: message_type: MESSAGE_METHOD_CALL
-interface: org.freedesktop.DBus
-member: GetNameOwner
-signature: s
-
-string "org.freedesktop.login1"
-
-[64441:64442:0130/012106.888718:WARNING:wayland_object.cc(179)] Binding to wl_seat version 8 but version 9 is available.
-[64441:64442:0130/012106.888747:WARNING:wayland_object.cc(179)] Binding to zwp_pointer_gestures_v1 version 1 but version 3 is available.
-[64441:64442:0130/012106.888842:WARNING:wayland_object.cc(179)] Binding to zwp_linux_dmabuf_v1 version 3 but version 4 is available.
-[64441:64442:0130/012106.941876:VERBOSE1:webrtc_event_log_manager.cc(97)] WebRTC remote-bound event logging enabled.
-[64441:64465:0130/012106.942002:VERBOSE1:bus.cc(916)] Method call: message_type: MESSAGE_METHOD_CALL
+[51927:51928:0131/115206.128633:VERBOSE1:variations_field_trial_creator_base.cc(78)] VariationsSeedUsage:12
+[51927:51928:0131/115206.128685:VERBOSE1:variations_field_trial_creator_base.cc(347)] VariationsSetupComplete
+[51927:51928:0131/115206.135835:WARNING:wayland_object.cc(179)] Binding to wl_seat version 8 but version 9 is available.
+[51927:51928:0131/115206.135931:WARNING:wayland_object.cc(179)] Binding to zwp_pointer_gestures_v1 version 1 but version 3 is available.
+[51927:51928:0131/115206.136011:WARNING:wayland_object.cc(179)] Binding to zwp_linux_dmabuf_v1 version 3 but version 4 is available.
+[51927:51951:0131/115206.197422:VERBOSE1:bus.cc(916)] Method call: message_type: MESSAGE_METHOD_CALL
 interface: org.freedesktop.DBus
 member: GetNameOwner
 signature: s
 
 string "org.chromium.bluetooth.Manager"
 
-[64441:64442:0130/012106.942041:VERBOSE1:pref_proxy_config_tracker_impl.cc(199)] 0x728a5428a870: set chrome proxy config service to 0x728a54288cd0
-[64441:64442:0130/012106.945548:VERBOSE1:device_event_log_impl.cc(203)] [01:21:06.943] Display: EVENT: wayland_screen.cc:143 Displays updated, count: 1
-[64441:64442:0130/012106.945596:VERBOSE1:device_event_log_impl.cc(203)] [01:21:06.945] Display: EVENT: wayland_screen.cc:146 Display[66] bounds=[2560,0 2560x1440], workarea=[2560,0 2560x1440], scale=1, rotation=0, panel_rotation=0 external detected
-[64441:64442:0130/012106.945632:VERBOSE1:device_event_log_impl.cc(203)] [01:21:06.945] Display: EVENT: wayland_screen.cc:143 Displays updated, count: 2
-[64441:64442:0130/012106.945662:VERBOSE1:device_event_log_impl.cc(203)] [01:21:06.945] Display: EVENT: wayland_screen.cc:146 Display[66] bounds=[2560,0 2560x1440], workarea=[2560,0 2560x1440], scale=1, rotation=0, panel_rotation=0 external detected
-[64441:64442:0130/012106.945690:VERBOSE1:device_event_log_impl.cc(203)] [01:21:06.945] Display: EVENT: wayland_screen.cc:146 Display[67] bounds=[0,20 2560x1440], workarea=[0,20 2560x1440], scale=1, rotation=0, panel_rotation=0 external detected
-[64441:64442:0130/012106.945720:VERBOSE1:device_event_log_impl.cc(203)] [01:21:06.945] Display: EVENT: wayland_screen.cc:143 Displays updated, count: 3
-[64441:64442:0130/012106.945747:VERBOSE1:device_event_log_impl.cc(203)] [01:21:06.945] Display: EVENT: wayland_screen.cc:146 Display[66] bounds=[2560,0 2560x1440], workarea=[2560,0 2560x1440], scale=1, rotation=0, panel_rotation=0 external detected
-[64441:64442:0130/012106.945775:VERBOSE1:device_event_log_impl.cc(203)] [01:21:06.945] Display: EVENT: wayland_screen.cc:146 Display[67] bounds=[0,20 2560x1440], workarea=[0,20 2560x1440], scale=1, rotation=0, panel_rotation=0 external detected
-[64441:64442:0130/012106.945802:VERBOSE1:device_event_log_impl.cc(203)] [01:21:06.945] Display: EVENT: wayland_screen.cc:146 Display[68] bounds=[5120,0 2560x1440], workarea=[5120,0 2560x1440], scale=1, rotation=0, panel_rotation=0 external detected
-[64441:64442:0130/012106.945927:VERBOSE1:cdm_registration.cc(294)] Widevine enabled but no library found
-[64441:64457:0130/012106.947224:VERBOSE1:media_stream_manager.cc(1517)] MSM::InitializeMaybeAsync([this=0x728a5430d160])
-[64441:64457:0130/012106.947314:VERBOSE1:media_stream_manager.cc(1517)] MDM::MediaDevicesManager()
-[64441:64457:0130/012106.947403:VERBOSE1:media_stream_manager.cc(1517)] MSM::MediaStreamManager([this=0x728a5430d160]))
-[64441:64455:0130/012106.947383:VERBOSE1:bus.cc(916)] Method call: message_type: MESSAGE_METHOD_CALL
+[51927:51928:0131/115206.197552:VERBOSE1:webrtc_event_log_manager.cc(97)] WebRTC remote-bound event logging enabled.
+[51927:51928:0131/115206.197720:VERBOSE1:pref_proxy_config_tracker_impl.cc(199)] 0x78bf8021ba40: set chrome proxy config service to 0x5a91520a4430
+[51927:51928:0131/115206.201241:VERBOSE1:device_event_log_impl.cc(203)] [11:52:06.198] Display: EVENT: wayland_screen.cc:143 Displays updated, count: 1
+[51927:51928:0131/115206.201292:VERBOSE1:device_event_log_impl.cc(203)] [11:52:06.201] Display: EVENT: wayland_screen.cc:146 Display[66] bounds=[5120,0 2560x1440], workarea=[5120,0 2560x1440], scale=1, rotation=0, panel_rotation=0 external detected
+[51927:51928:0131/115206.201427:VERBOSE1:cdm_registration.cc(294)] Widevine enabled but no library found
+[51927:51941:0131/115206.202092:VERBOSE1:bus.cc(916)] Method call: message_type: MESSAGE_METHOD_CALL
+interface: org.freedesktop.DBus
+member: GetNameOwner
+signature: s
+
+string "org.freedesktop.login1"
+
+[51927:51944:0131/115206.202648:VERBOSE1:media_stream_manager.cc(1517)] MSM::InitializeMaybeAsync([this=0x78bf80268db0])
+[51927:51944:0131/115206.202668:VERBOSE1:media_stream_manager.cc(1517)] MDM::MediaDevicesManager()
+[51927:51941:0131/115206.202901:VERBOSE1:bus.cc(916)] Method call: message_type: MESSAGE_METHOD_CALL
 interface: org.freedesktop.DBus
 member: GetNameOwner
 signature: s
 
 string "org.freedesktop.portal.Desktop"
 
-[64441:64455:0130/012106.949787:VERBOSE1:select_file_dialog_linux_portal.cc(292)] File chooser portal available: yes
-[64441:64454:0130/012106.951123:VERBOSE1:file_util_posix.cc(310)] Cannot stat "/home/diego/Workspace/Cherry-1/examples/advanced/build/bin/Consent To Send Stats": Aucun fichier ou dossier de ce nom (2)
-[64441:64442:0130/012106.955045:VERBOSE1:key_storage_util_linux.cc(51)] Password storage detected desktop environment: KDE6
-[64441:64442:0130/012106.955142:VERBOSE1:key_storage_linux.cc(118)] Selected backend for OSCrypt: KWALLET6
-[64441:64442:0130/012106.956095:VERBOSE1:key_storage_linux.cc(188)] OSCrypt using KWallet as backend.
-[64441:64442:0130/012106.956933:VERBOSE1:bus.cc(720)] Requested to remove an unknown filter function: 1 with associated data: 0x728a54402480
-[64441:64442:0130/012106.957315:VERBOSE1:chrome_browser_cloud_management_controller.cc(161)] Cloud management controller initialization aborted as CBCM is not enabled. Please use the `--enable-chrome-browser-cloud-management` command line flag to enable it if you are not using the official Google Chrome build.
-[64441:64442:0130/012106.962114:WARNING:account_consistency_mode_manager.cc(77)] Desktop Identity Consistency cannot be enabled as no OAuth client ID and client secret have been configured.
-[64441:64442:0130/012106.962139:VERBOSE1:account_consistency_mode_manager.cc(212)] Desktop Identity Consistency disabled as sign-in to Chrome is not allowed
-[64441:64458:0130/012106.963743:VERBOSE1:file_util_posix.cc(310)] Cannot stat "/home/diego/Workspace/Cherry-1/examples/advanced/build/bin/Default/Web Applications/Logs/WebAppInstallManager.log": Aucun fichier ou dossier de ce nom (2)
-[64441:64442:0130/012106.964716:VERBOSE1:pref_proxy_config_tracker_impl.cc(199)] 0x728a5424e3d0: set chrome proxy config service to 0x728a544edcd0
-[64441:64442:0130/012106.964817:VERBOSE1:account_consistency_mode_manager.cc(212)] Desktop Identity Consistency disabled as sign-in to Chrome is not allowed
-[64441:64442:0130/012106.965091:VERBOSE1:mutable_profile_oauth2_token_service_delegate.cc(282)] MutablePO2TS::MutablePO2TS
-[64441:64442:0130/012106.966054:VERBOSE1:pref_proxy_config_tracker_impl.cc(199)] 0x728a5418e620: set chrome proxy config service to 0x728a54518240
-[64441:64442:0130/012106.966178:VERBOSE1:device_event_log_impl.cc(203)] [01:21:06.966] Bluetooth: EVENT: bluetooth_api.cc:82 BluetoothAPI: 0x728a54081bb0
-[64441:64442:0130/012106.966707:VERBOSE1:account_consistency_mode_manager.cc(212)] Desktop Identity Consistency disabled as sign-in to Chrome is not allowed
-[64441:64442:0130/012106.966751:VERBOSE1:gaia_auth_util.cc(51)] Canonicalized @gmail.com to @gmail.com
-[64441:64442:0130/012106.966758:VERBOSE1:gaia_auth_util.cc(51)] Canonicalized @gmail.com to @gmail.com
-[64441:64442:0130/012106.967478:VERBOSE1:bluetooth_low_energy_event_router.cc(291)] Initializing BluetoothLowEnergyEventRouter.
-[64441:64442:0130/012106.969285:VERBOSE1:gaia_auth_util.cc(51)] Canonicalized @gmail.com to @gmail.com
-[64441:64442:0130/012106.969304:VERBOSE1:gaia_auth_util.cc(51)] Canonicalized @gmail.com to @gmail.com
-[64441:64442:0130/012106.969335:VERBOSE1:account_consistency_mode_manager.cc(212)] Desktop Identity Consistency disabled as sign-in to Chrome is not allowed
-[64441:64442:0130/012106.969342:VERBOSE1:account_consistency_mode_manager.cc(212)] Desktop Identity Consistency disabled as sign-in to Chrome is not allowed
-[64441:64442:0130/012106.969347:VERBOSE1:account_consistency_mode_manager.cc(212)] Desktop Identity Consistency disabled as sign-in to Chrome is not allowed
-[64441:64442:0130/012106.969352:VERBOSE1:account_reconcilor.cc(187)] AccountReconcilor::AccountReconcilor
-[64441:64442:0130/012106.969365:VERBOSE1:account_reconcilor.cc(225)] AccountReconcilor::Initialize
-[64441:64442:0130/012106.971047:VERBOSE1:cached_result_provider.cc(54)] CachedResultProvider loaded prefs with results from previous session: PredictionResult: timestamp: 13382662049517309 result 0: 0 for segmentation key shopping_user
-[64441:64442:0130/012106.972655:VERBOSE1:extension_service.cc(1609)] AddComponentExtension Web Store
-[64441:64442:0130/012106.972896:VERBOSE1:extension_service.cc(1609)] AddComponentExtension Chromium PDF Viewer
-[64441:64442:0130/012106.973389:VERBOSE1:mutable_profile_oauth2_token_service_delegate.cc(369)] MutablePO2TS::RefreshTokenIsAvailable
-[64441:64442:0130/012106.973409:VERBOSE1:mutable_profile_oauth2_token_service_delegate.cc(369)] MutablePO2TS::RefreshTokenIsAvailable
-[64441:64454:0130/012106.973424:WARNING:user_type_filter.cc(59)] No user type filter specified for cimiefiiaegbelhefglklhhakcgmhkai. Using default user type filter, please update the app.
-[64441:64442:0130/012106.973511:VERBOSE1:profile_manager.cc(1918)] ForceSigninCheck: 0, 0, 1
-[64441:64454:0130/012106.973732:VERBOSE1:file_util_posix.cc(310)] Cannot stat "/home/diego/Workspace/Cherry-1/examples/advanced/build/bin/Default/Policy/User Policy": Aucun fichier ou dossier de ce nom (2)
-[64441:64454:0130/012106.973781:VERBOSE1:file_util_posix.cc(310)] Cannot stat "/home/diego/Workspace/Cherry-1/examples/advanced/build/bin/Default/Policy/Signing Key": Aucun fichier ou dossier de ce nom (2)
-[64441:64454:0130/012106.973920:VERBOSE1:component_installer.cc(482)] StartRegistration for Widevine Content Decryption Module
-[64441:64467:0130/012106.973935:VERBOSE1:component_installer.cc(482)] StartRegistration for Subresource Filter Rules
-[64441:64442:0130/012106.973924:VERBOSE1:on_device_head_suggest_component_installer.cc(61)] On Device Head Component will fetch model for locale: FR500000
-[64441:64442:0130/012106.974015:VERBOSE1:trust_token_key_commitments_component_installer.cc(30)] Registering Trust Token Key Commitments component.
-[64441:64442:0130/012106.974033:VERBOSE1:first_party_sets_component_installer.cc(39)] Registering Related Website Sets component.
-[64441:64442:0130/012106.974042:VERBOSE1:privacy_sandbox_attestations_component_installer.cc(190)] Registering Privacy Sandbox Attestations component
-[64441:64442:0130/012106.974074:VERBOSE1:file_type_policies_component_installer.cc(134)] Registering File Type Policies component.
-[64441:64469:0130/012106.974094:VERBOSE1:component_installer.cc(482)] StartRegistration for Privacy Sandbox Attestations
-[64441:64469:0130/012106.974150:VERBOSE1:component_installer.cc(482)] StartRegistration for OnDeviceHeadSuggest
-[64441:64454:0130/012106.974159:VERBOSE1:component_installer.cc(482)] StartRegistration for Trust Token Key Commitments
-[64441:64471:0130/012106.974186:VERBOSE1:component_installer.cc(482)] StartRegistration for Certificate Error Assistant
-[64441:64469:0130/012106.974195:VERBOSE1:component_installer.cc(482)] StartRegistration for File Type Policies
-[64441:64454:0130/012106.974203:VERBOSE1:component_installer.cc(482)] StartRegistration for CRLSet
-[64441:64469:0130/012106.974233:VERBOSE1:component_installer.cc(482)] StartRegistration for Origin Trials
-[64441:64454:0130/012106.974247:VERBOSE1:component_installer.cc(482)] StartRegistration for MEI Preload
-[64441:64482:0130/012106.974315:VERBOSE1:component_installer.cc(482)] StartRegistration for Optimization Hints
-[64441:64442:0130/012106.974322:VERBOSE1:hyphenation_component_installer.cc(157)] Registering Hyphenation component.
-[64441:64467:0130/012106.974349:VERBOSE1:component_installer.cc(482)] StartRegistration for PKI Metadata
-[64441:64482:0130/012106.974361:VERBOSE1:component_installer.cc(482)] StartRegistration for Safety Tips
-[64441:64442:0130/012106.974368:VERBOSE1:tpcd_metadata_component_installer.cc(23)] Third Party Cookie Deprecation Metadata component.
-[64441:64442:0130/012106.974379:VERBOSE1:translate_kit_component_installer.cc(156)] Registering TranslateKit component.
-[64441:64482:0130/012106.974400:VERBOSE1:component_installer.cc(482)] StartRegistration for Crowd Deny
-[64441:64454:0130/012106.974410:VERBOSE1:component_installer.cc(482)] StartRegistration for Zxcvbn Data Dictionaries
-[64441:64442:0130/012106.974427:VERBOSE1:profile_manager.cc(1270)] AddKeepAlive(Default, kAppWindow). keep_alives=[kWaitingForFirstBrowserWindow (1), kAppWindow (1)]
-[64441:64485:0130/012106.974434:VERBOSE1:component_installer.cc(482)] StartRegistration for Autofill States Data
-[64441:64482:0130/012106.974442:VERBOSE1:component_installer.cc(482)] StartRegistration for Third-Party Cookie Deprecation Metadata
-[64441:64467:0130/012106.974402:VERBOSE1:component_installer.cc(482)] StartRegistration for Hyphenation
-[64441:64442:0130/012106.983244:VERBOSE1:mutable_profile_oauth2_token_service_delegate.cc(369)] MutablePO2TS::RefreshTokenIsAvailable
-[64441:64442:0130/012106.983269:VERBOSE1:account_consistency_mode_manager.cc(212)] Desktop Identity Consistency disabled as sign-in to Chrome is not allowed
-[64441:64455:0130/012107.004670:VERBOSE1:bus.cc(916)] Method call: message_type: MESSAGE_METHOD_CALL
+[51927:51944:0131/115206.202961:VERBOSE1:media_stream_manager.cc(1517)] MSM::MediaStreamManager([this=0x78bf80268db0]))
+[51927:51941:0131/115206.204006:VERBOSE1:select_file_dialog_linux_portal.cc(292)] File chooser portal available: yes
+[51927:51940:0131/115206.207041:VERBOSE1:file_util_posix.cc(310)] Cannot stat "/home/diego/Workspace/Cherry-1/examples/advanced/build/bin/Consent To Send Stats": No such file or directory (2)
+[51927:51928:0131/115206.208842:VERBOSE1:key_storage_util_linux.cc(51)] Password storage detected desktop environment: KDE6
+[51927:51928:0131/115206.208861:VERBOSE1:key_storage_linux.cc(118)] Selected backend for OSCrypt: KWALLET6
+[51927:51928:0131/115206.211004:VERBOSE1:key_storage_linux.cc(188)] OSCrypt using KWallet as backend.
+[51927:51928:0131/115206.211626:VERBOSE1:bus.cc(720)] Requested to remove an unknown filter function: 1 with associated data: 0x78bf802df1f0
+[51927:51928:0131/115206.211819:VERBOSE1:chrome_browser_cloud_management_controller.cc(161)] Cloud management controller initialization aborted as CBCM is not enabled. Please use the `--enable-chrome-browser-cloud-management` command line flag to enable it if you are not using the official Google Chrome build.
+[51927:51928:0131/115206.216085:WARNING:account_consistency_mode_manager.cc(77)] Desktop Identity Consistency cannot be enabled as no OAuth client ID and client secret have been configured.
+[51927:51928:0131/115206.216105:VERBOSE1:account_consistency_mode_manager.cc(212)] Desktop Identity Consistency disabled as sign-in to Chrome is not allowed
+[51927:51942:0131/115206.218106:VERBOSE1:file_util_posix.cc(310)] Cannot stat "/home/diego/Workspace/Cherry-1/examples/advanced/build/bin/Default/Web Applications/Logs/WebAppInstallManager.log": No such file or directory (2)
+[51927:51928:0131/115206.219084:VERBOSE1:pref_proxy_config_tracker_impl.cc(199)] 0x78bf801dfff0: set chrome proxy config service to 0x78bf8043db90
+[51927:51928:0131/115206.219158:VERBOSE1:account_consistency_mode_manager.cc(212)] Desktop Identity Consistency disabled as sign-in to Chrome is not allowed
+[51927:51928:0131/115206.219239:VERBOSE1:mutable_profile_oauth2_token_service_delegate.cc(282)] MutablePO2TS::MutablePO2TS
+[51927:51928:0131/115206.220283:VERBOSE1:pref_proxy_config_tracker_impl.cc(199)] 0x78bf800836e0: set chrome proxy config service to 0x78bf80467be0
+[51927:51928:0131/115206.220471:VERBOSE1:device_event_log_impl.cc(203)] [11:52:06.220] Bluetooth: EVENT: bluetooth_api.cc:82 BluetoothAPI: 0x78bf80066fa0
+[51927:51928:0131/115206.221439:VERBOSE1:account_consistency_mode_manager.cc(212)] Desktop Identity Consistency disabled as sign-in to Chrome is not allowed
+[51927:51928:0131/115206.223610:VERBOSE1:gaia_auth_util.cc(51)] Canonicalized @gmail.com to @gmail.com
+[51927:51928:0131/115206.223702:VERBOSE1:gaia_auth_util.cc(51)] Canonicalized @gmail.com to @gmail.com
+[51927:51928:0131/115206.224505:VERBOSE1:bluetooth_low_energy_event_router.cc(291)] Initializing BluetoothLowEnergyEventRouter.
+[51927:51928:0131/115206.226083:VERBOSE1:gaia_auth_util.cc(51)] Canonicalized @gmail.com to @gmail.com
+[51927:51928:0131/115206.226099:VERBOSE1:gaia_auth_util.cc(51)] Canonicalized @gmail.com to @gmail.com
+[51927:51928:0131/115206.226132:VERBOSE1:account_consistency_mode_manager.cc(212)] Desktop Identity Consistency disabled as sign-in to Chrome is not allowed
+[51927:51928:0131/115206.226139:VERBOSE1:account_consistency_mode_manager.cc(212)] Desktop Identity Consistency disabled as sign-in to Chrome is not allowed
+[51927:51928:0131/115206.226145:VERBOSE1:account_consistency_mode_manager.cc(212)] Desktop Identity Consistency disabled as sign-in to Chrome is not allowed
+[51927:51928:0131/115206.226150:VERBOSE1:account_reconcilor.cc(187)] AccountReconcilor::AccountReconcilor
+[51927:51928:0131/115206.226154:VERBOSE1:account_reconcilor.cc(225)] AccountReconcilor::Initialize
+[51927:51928:0131/115206.227046:VERBOSE1:cached_result_provider.cc(54)] CachedResultProvider loaded prefs with results from previous session: PredictionResult: timestamp: 13382788513711603 result 0: 0 for segmentation key shopping_user
+[51927:51928:0131/115206.228387:VERBOSE1:extension_service.cc(1609)] AddComponentExtension Web Store
+[51927:51928:0131/115206.228603:VERBOSE1:extension_service.cc(1609)] AddComponentExtension Chromium PDF Viewer
+[51927:51928:0131/115206.229184:VERBOSE1:mutable_profile_oauth2_token_service_delegate.cc(369)] MutablePO2TS::RefreshTokenIsAvailable
+[51927:51928:0131/115206.229198:VERBOSE1:mutable_profile_oauth2_token_service_delegate.cc(369)] MutablePO2TS::RefreshTokenIsAvailable
+[51927:51928:0131/115206.229291:VERBOSE1:profile_manager.cc(1918)] ForceSigninCheck: 0, 0, 1
+[51927:51940:0131/115206.229300:WARNING:user_type_filter.cc(59)] No user type filter specified for cimiefiiaegbelhefglklhhakcgmhkai. Using default user type filter, please update the app.
+[51927:51940:0131/115206.229541:VERBOSE1:file_util_posix.cc(310)] Cannot stat "/home/diego/Workspace/Cherry-1/examples/advanced/build/bin/Default/Policy/User Policy": No such file or directory (2)
+[51927:51940:0131/115206.229612:VERBOSE1:file_util_posix.cc(310)] Cannot stat "/home/diego/Workspace/Cherry-1/examples/advanced/build/bin/Default/Policy/Signing Key": No such file or directory (2)
+[51927:51928:0131/115206.229717:VERBOSE1:on_device_head_suggest_component_installer.cc(61)] On Device Head Component will fetch model for locale: FR500000
+[51927:51940:0131/115206.229725:VERBOSE1:component_installer.cc(482)] StartRegistration for Widevine Content Decryption Module
+[51927:51942:0131/115206.229718:VERBOSE1:component_installer.cc(482)] StartRegistration for Subresource Filter Rules
+[51927:51928:0131/115206.229747:VERBOSE1:trust_token_key_commitments_component_installer.cc(30)] Registering Trust Token Key Commitments component.
+[51927:51928:0131/115206.229767:VERBOSE1:first_party_sets_component_installer.cc(39)] Registering Related Website Sets component.
+[51927:51928:0131/115206.229778:VERBOSE1:privacy_sandbox_attestations_component_installer.cc(190)] Registering Privacy Sandbox Attestations component
+[51927:51942:0131/115206.229795:VERBOSE1:component_installer.cc(482)] StartRegistration for Privacy Sandbox Attestations
+[51927:51928:0131/115206.229811:VERBOSE1:file_type_policies_component_installer.cc(134)] Registering File Type Policies component.
+[51927:51942:0131/115206.229837:VERBOSE1:component_installer.cc(482)] StartRegistration for Optimization Hints
+[51927:51942:0131/115206.229888:VERBOSE1:component_installer.cc(482)] StartRegistration for Certificate Error Assistant
+[51927:51954:0131/115206.229906:VERBOSE1:component_installer.cc(482)] StartRegistration for File Type Policies
+[51927:51953:0131/115206.229942:VERBOSE1:component_installer.cc(482)] StartRegistration for CRLSet
+[51927:51968:0131/115206.229956:VERBOSE1:component_installer.cc(482)] StartRegistration for MEI Preload
+[51927:51954:0131/115206.229975:VERBOSE1:component_installer.cc(482)] StartRegistration for PKI Metadata
+[51927:51968:0131/115206.230000:VERBOSE1:component_installer.cc(482)] StartRegistration for Safety Tips
+[51927:51955:0131/115206.229838:VERBOSE1:component_installer.cc(482)] StartRegistration for OnDeviceHeadSuggest
+[51927:51942:0131/115206.229946:VERBOSE1:component_installer.cc(482)] StartRegistration for Origin Trials
+[51927:51958:0131/115206.230137:VERBOSE1:component_installer.cc(482)] StartRegistration for Trust Token Key Commitments
+[51927:51928:0131/115206.230151:VERBOSE1:hyphenation_component_installer.cc(157)] Registering Hyphenation component.
+[51927:51956:0131/115206.230164:VERBOSE1:component_installer.cc(482)] StartRegistration for Crowd Deny
+[51927:51958:0131/115206.230190:VERBOSE1:component_installer.cc(482)] StartRegistration for Hyphenation
+[51927:51928:0131/115206.230191:VERBOSE1:tpcd_metadata_component_installer.cc(23)] Third Party Cookie Deprecation Metadata component.
+[51927:51969:0131/115206.230206:VERBOSE1:component_installer.cc(482)] StartRegistration for Zxcvbn Data Dictionaries
+[51927:51928:0131/115206.230216:VERBOSE1:translate_kit_component_installer.cc(156)] Registering TranslateKit component.
+[51927:51956:0131/115206.230226:VERBOSE1:component_installer.cc(482)] StartRegistration for Autofill States Data
+[51927:51958:0131/115206.230238:VERBOSE1:component_installer.cc(482)] StartRegistration for Third-Party Cookie Deprecation Metadata
+[51927:51928:0131/115206.230256:VERBOSE1:profile_manager.cc(1270)] AddKeepAlive(Default, kAppWindow). keep_alives=[kWaitingForFirstBrowserWindow (1), kAppWindow (1)]
+[51927:51941:0131/115206.269886:VERBOSE1:object_proxy.cc(513)] Signal received: message_type: MESSAGE_SIGNAL
+path: /org/freedesktop/portal/desktop
+interface: org.freedesktop.portal.Settings
+member: SettingChanged
+sender: :1.8
+signature: ssv
+serial: 3591
+
+string "org.kde.VirtualKeyboard"
+string "active"
+variant   bool false
+
+[51927:51941:0131/115206.280099:VERBOSE1:object_proxy.cc(513)] Signal received: message_type: MESSAGE_SIGNAL
+path: /org/freedesktop/portal/desktop
+interface: org.freedesktop.portal.Settings
+member: SettingChanged
+sender: :1.8
+signature: ssv
+serial: 3592
+
+string "org.kde.VirtualKeyboard"
+string "activeClientSupportsTextInput"
+variant   bool false
+
+[51927:51959:0131/115206.482751:WARNING:vaapi_wrapper.cc(1534)] Skipping nVidia device named: nvidia-drm
+[51927:51959:0131/115206.483049:VERBOSE1:vaapi_wrapper.cc(1556)] GetHandle(): Either VADisplayStateSingleton::PreSandboxInitialization() hasn't been called or that method failed to find a suitable render node
+[51927:51959:0131/115206.483114:WARNING:viz_main_impl.cc(85)] VizNullHypothesis is disabled (not a warning)
+[51927:51928:0131/115206.618420:VERBOSE1:mutable_profile_oauth2_token_service_delegate.cc(369)] MutablePO2TS::RefreshTokenIsAvailable
+[51927:51928:0131/115206.618451:VERBOSE1:account_consistency_mode_manager.cc(212)] Desktop Identity Consistency disabled as sign-in to Chrome is not allowed
+[51927:51941:0131/115206.637855:VERBOSE1:bus.cc(916)] Method call: message_type: MESSAGE_METHOD_CALL
 interface: org.freedesktop.DBus
 member: GetNameOwner
 signature: s
 
 string "org.freedesktop.portal.Desktop"
 
-[64441:64455:0130/012107.006308:VERBOSE1:object_proxy.cc(513)] Signal received: message_type: MESSAGE_SIGNAL
-destination: :1.985
-path: /org/freedesktop/portal/desktop/request/1_985/cr_secret_portal_response_token
+[51927:51928:0131/115206.638744:VERBOSE1:profile_manager.cc(1270)] AddKeepAlive(Default, kExtensionUpdater). keep_alives=[kWaitingForFirstBrowserWindow (1), kAppWindow (1), kExtensionUpdater (1)]
+[51927:51928:0131/115206.638984:VERBOSE1:component_installer.cc(561)] FinishRegistration for Subresource Filter Rules
+[51927:51928:0131/115206.639009:VERBOSE1:component_updater_service.cc(165)] CrxUpdateService starting up. First update attempt will take place in 60 s seconds. Next update attempt will take place in 18000 s seconds. 
+[51927:51928:0131/115206.639027:VERBOSE1:component_installer.cc(561)] FinishRegistration for Privacy Sandbox Attestations
+[51927:51928:0131/115206.639041:VERBOSE1:component_installer.cc(561)] FinishRegistration for Optimization Hints
+[51927:51928:0131/115206.639058:VERBOSE1:component_installer.cc(561)] FinishRegistration for Certificate Error Assistant
+[51927:51928:0131/115206.639069:VERBOSE1:component_installer.cc(561)] FinishRegistration for File Type Policies
+[51927:51928:0131/115206.639081:VERBOSE1:component_installer.cc(561)] FinishRegistration for MEI Preload
+[51927:51928:0131/115206.639091:VERBOSE1:component_installer.cc(561)] FinishRegistration for PKI Metadata
+[51927:51928:0131/115206.639103:VERBOSE1:component_installer.cc(561)] FinishRegistration for Safety Tips
+[51927:51928:0131/115206.639113:VERBOSE1:component_installer.cc(561)] FinishRegistration for Widevine Content Decryption Module
+[51927:51928:0131/115206.639126:VERBOSE1:component_installer.cc(561)] FinishRegistration for OnDeviceHeadSuggest
+[51927:51928:0131/115206.639138:VERBOSE1:component_installer.cc(561)] FinishRegistration for Origin Trials
+[51927:51928:0131/115206.639149:VERBOSE1:component_installer.cc(561)] FinishRegistration for Trust Token Key Commitments
+[51927:51928:0131/115206.639160:VERBOSE1:component_installer.cc(561)] FinishRegistration for Crowd Deny
+[51927:51928:0131/115206.639171:VERBOSE1:component_installer.cc(561)] FinishRegistration for Hyphenation
+[51927:51928:0131/115206.639182:VERBOSE1:component_installer.cc(561)] FinishRegistration for Zxcvbn Data Dictionaries
+[51927:51928:0131/115206.639194:VERBOSE1:component_installer.cc(561)] FinishRegistration for Autofill States Data
+[51927:51928:0131/115206.639204:VERBOSE1:component_installer.cc(561)] FinishRegistration for Third-Party Cookie Deprecation Metadata
+[51927:51928:0131/115206.639268:VERBOSE1:component_installer.cc(561)] FinishRegistration for CRLSet
+[51927:51928:0131/115206.639816:VERBOSE1:gaia_cookie_manager_service.cc(824)] GaiaCookieManagerService::ListAccounts
+[51965:51981:0131/115206.640374:VERBOSE1:network_delegate.cc(37)] NetworkDelegate::NotifyBeforeURLRequest: https://google.com/
+[51965:51981:0131/115206.640848:VERBOSE1:network_delegate.cc(37)] NetworkDelegate::NotifyBeforeURLRequest: https://clients2.google.com/service/update2/crx?os=linux&arch=x64&os_arch=x86_64&nacl_arch=x86-64&prod=chromiumcrx&prodchannel=&prodversion=132.0.6834.83&lang=fr&acceptformat=crx3,puff&x=id%3Dcimiefiiaegbelhefglklhhakcgmhkai%26v%3D0.0.0.0%26installedby%3Dexternal%26uc%26ping%3Dr%253D-1%2526e%253D1
+[51965:51981:0131/115206.641014:VERBOSE1:network_delegate.cc(37)] NetworkDelegate::NotifyBeforeURLRequest: https://accounts.google.com/ListAccounts?gpsia=1&source=ChromiumBrowser&json=standard
+[51927:52014:0131/115206.641836:VERBOSE1:bus.cc(916)] Method call: message_type: MESSAGE_METHOD_CALL
+interface: org.freedesktop.DBus
+member: GetNameOwner
+signature: s
+
+string "org.freedesktop.UPower"
+
+[51927:52014:0131/115206.642021:VERBOSE1:bus.cc(699)] Filter function already exists: 1 with associated data: 0x78beb40015f0
+[51927:52014:0131/115206.642039:VERBOSE1:bus.cc(916)] Method call: message_type: MESSAGE_METHOD_CALL
+interface: org.freedesktop.DBus
+member: GetNameOwner
+signature: s
+
+string "org.freedesktop.UPower"
+
+[51927:51941:0131/115206.642250:VERBOSE1:object_proxy.cc(513)] Signal received: message_type: MESSAGE_SIGNAL
+destination: :1.1253
+path: /org/freedesktop/portal/desktop/request/1_1253/cr_secret_portal_response_token
 interface: org.freedesktop.portal.Request
 member: Response
 sender: :1.8
 signature: ua{sv}
-serial: 3384
+serial: 3600
 
 uint32_t 0
 array [
 ]
 
-[64441:64442:0130/012107.006430:VERBOSE1:profile_manager.cc(1270)] AddKeepAlive(Default, kExtensionUpdater). keep_alives=[kWaitingForFirstBrowserWindow (1), kAppWindow (1), kExtensionUpdater (1)]
-[64441:64442:0130/012107.006758:VERBOSE1:component_installer.cc(561)] FinishRegistration for Subresource Filter Rules
-[64441:64442:0130/012107.006784:VERBOSE1:component_updater_service.cc(165)] CrxUpdateService starting up. First update attempt will take place in 60 s seconds. Next update attempt will take place in 18000 s seconds. 
-[64441:64442:0130/012107.006799:VERBOSE1:component_installer.cc(561)] FinishRegistration for Widevine Content Decryption Module
-[64441:64442:0130/012107.006822:VERBOSE1:component_installer.cc(561)] FinishRegistration for Privacy Sandbox Attestations
-[64441:64442:0130/012107.006834:VERBOSE1:component_installer.cc(561)] FinishRegistration for OnDeviceHeadSuggest
-[64441:64442:0130/012107.006846:VERBOSE1:component_installer.cc(561)] FinishRegistration for Trust Token Key Commitments
-[64441:64442:0130/012107.006857:VERBOSE1:component_installer.cc(561)] FinishRegistration for File Type Policies
-[64441:64442:0130/012107.006868:VERBOSE1:component_installer.cc(561)] FinishRegistration for CRLSet
-[64441:64442:0130/012107.006878:VERBOSE1:component_installer.cc(561)] FinishRegistration for Certificate Error Assistant
-[64441:64442:0130/012107.006889:VERBOSE1:component_installer.cc(561)] FinishRegistration for MEI Preload
-[64441:64442:0130/012107.006903:VERBOSE1:component_installer.cc(561)] FinishRegistration for Optimization Hints
-[64441:64442:0130/012107.006913:VERBOSE1:component_installer.cc(561)] FinishRegistration for Safety Tips
-[64441:64442:0130/012107.006924:VERBOSE1:component_installer.cc(561)] FinishRegistration for PKI Metadata
-[64441:64442:0130/012107.006933:VERBOSE1:component_installer.cc(561)] FinishRegistration for Crowd Deny
-[64441:64442:0130/012107.006944:VERBOSE1:component_installer.cc(561)] FinishRegistration for Zxcvbn Data Dictionaries
-[64441:64442:0130/012107.006954:VERBOSE1:component_installer.cc(561)] FinishRegistration for Third-Party Cookie Deprecation Metadata
-[64441:64442:0130/012107.006965:VERBOSE1:component_installer.cc(561)] FinishRegistration for Autofill States Data
-[64441:64442:0130/012107.006976:VERBOSE1:component_installer.cc(561)] FinishRegistration for Hyphenation
-[64441:64442:0130/012107.007041:VERBOSE1:component_installer.cc(561)] FinishRegistration for Origin Trials
-[64441:64491:0130/012107.008880:VERBOSE1:bus.cc(916)] Method call: message_type: MESSAGE_METHOD_CALL
-interface: org.freedesktop.DBus
-member: GetNameOwner
-signature: s
-
-string "org.freedesktop.UPower"
-
-[64441:64491:0130/012107.009110:VERBOSE1:bus.cc(699)] Filter function already exists: 1 with associated data: 0x7289a80015f0
-[64441:64491:0130/012107.009172:VERBOSE1:bus.cc(916)] Method call: message_type: MESSAGE_METHOD_CALL
-interface: org.freedesktop.DBus
-member: GetNameOwner
-signature: s
-
-string "org.freedesktop.UPower"
-
-[64441:64442:0130/012107.010003:VERBOSE1:partitioned_lock_manager.cc(212)] Acquiring <PartitionedLockId>{id: 0x31, partition: 0} for Start@chrome/browser/web_applications/generated_icon_fix_manager.cc:58
-[64441:64442:0130/012107.010809:VERBOSE1:partitioned_lock_manager.cc(194)] All locks acquired for Start@chrome/browser/web_applications/generated_icon_fix_manager.cc:58
-[64441:64491:0130/012107.010130:VERBOSE1:bus.cc(720)] Requested to remove an unknown filter function: 1 with associated data: 0x7289a8006490
-[64441:64442:0130/012107.011307:VERBOSE1:partitioned_lock_manager.cc(236)] Releasing <PartitionedLockId>{id: 0x31, partition: 0} requested by Start@chrome/browser/web_applications/generated_icon_fix_manager.cc:58
-[64441:64456:0130/012107.012360:VERBOSE1:token_service_table.cc(202)] Loaded tokens: result = 3 ; number of tokens loaded = 0
-[64479:64501:0130/012107.060688:VERBOSE1:network_delegate.cc(37)] NetworkDelegate::NotifyBeforeURLRequest: https://google.com/
-[64479:64501:0130/012107.060872:VERBOSE1:network_delegate.cc(37)] NetworkDelegate::NotifyBeforeURLRequest: https://clients2.google.com/service/update2/crx?os=linux&arch=x64&os_arch=x86_64&nacl_arch=x86-64&prod=chromiumcrx&prodchannel=&prodversion=132.0.6834.83&lang=fr&acceptformat=crx3,puff&x=id%3Dcimiefiiaegbelhefglklhhakcgmhkai%26v%3D0.0.0.0%26installedby%3Dexternal%26uc%26ping%3Dr%253D-1%2526e%253D1
-[64441:64455:0130/012107.119270:VERBOSE1:object_proxy.cc(513)] Signal received: message_type: MESSAGE_SIGNAL
+[51965:51982:0131/115206.642429:VERBOSE1:simple_index_file.cc(606)] Simple Cache Index is being restored from disk.
+[51927:51928:0131/115206.642842:VERBOSE1:partitioned_lock_manager.cc(212)] Acquiring <PartitionedLockId>{id: 0x31, partition: 0} for Start@chrome/browser/web_applications/generated_icon_fix_manager.cc:58
+[51927:51928:0131/115206.642859:VERBOSE1:partitioned_lock_manager.cc(194)] All locks acquired for Start@chrome/browser/web_applications/generated_icon_fix_manager.cc:58
+[51927:51928:0131/115206.643619:VERBOSE1:partitioned_lock_manager.cc(236)] Releasing <PartitionedLockId>{id: 0x31, partition: 0} requested by Start@chrome/browser/web_applications/generated_icon_fix_manager.cc:58
+[51927:52014:0131/115206.643657:VERBOSE1:bus.cc(720)] Requested to remove an unknown filter function: 1 with associated data: 0x78beb4006050
+[51927:51994:0131/115206.644713:VERBOSE1:video_capture_oracle.cc(96)] Capture size auto-throttling is now enabled.
+[51927:51994:0131/115206.644789:VERBOSE1:video_capture_oracle.cc(125)] Capture size auto-throttling is now disabled.
+[51927:51994:0131/115206.644811:VERBOSE1:capture_resolution_chooser.cc(205)] Recomputed snapped frame sizes: 500x500
+[51927:51994:0131/115206.644818:VERBOSE1:capture_resolution_chooser.cc(157)] Recomputed capture size from 640x360 to 500x500 (100% of ideal size)
+[51927:51943:0131/115206.645347:VERBOSE1:token_service_table.cc(202)] Loaded tokens: result = 3 ; number of tokens loaded = 0
+[51927:51928:0131/115206.645806:VERBOSE1:mutable_profile_oauth2_token_service_delegate.cc(486)] MutablePO2TS::OnWebDataServiceRequestDone. Result type: 5
+[51927:51928:0131/115206.645820:VERBOSE1:mutable_profile_oauth2_token_service_delegate.cc(546)] MutablePO2TS::LoadAllCredentialsIntoMemory; 0 credential(s).
+[51927:51928:0131/115206.645866:VERBOSE1:mutable_profile_oauth2_token_service_delegate.cc(369)] MutablePO2TS::RefreshTokenIsAvailable
+[51927:51928:0131/115206.645875:VERBOSE1:mutable_profile_oauth2_token_service_delegate.cc(369)] MutablePO2TS::RefreshTokenIsAvailable
+[51927:51928:0131/115206.645944:VERBOSE1:mutable_profile_oauth2_token_service_delegate.cc(369)] MutablePO2TS::RefreshTokenIsAvailable
+[51927:51928:0131/115206.645965:VERBOSE1:mutable_profile_oauth2_token_service_delegate.cc(369)] MutablePO2TS::RefreshTokenIsAvailable
+[51927:51928:0131/115206.645970:VERBOSE1:mutable_profile_oauth2_token_service_delegate.cc(369)] MutablePO2TS::RefreshTokenIsAvailable
+[51927:51928:0131/115206.647001:VERBOSE1:mutable_profile_oauth2_token_service_delegate.cc(369)] MutablePO2TS::RefreshTokenIsAvailable
+[51927:51928:0131/115206.647025:VERBOSE1:account_consistency_mode_manager.cc(212)] Desktop Identity Consistency disabled as sign-in to Chrome is not allowed
+[51965:51981:0131/115206.648147:VERBOSE1:tls_handshaker.cc(105)] TlsClient: Continuing handshake
+[51965:51981:0131/115206.649127:VERBOSE1:network_delegate.cc(37)] NetworkDelegate::NotifyBeforeURLRequest: https://www.google.com/
+[51965:51981:0131/115206.650831:VERBOSE1:tls_handshaker.cc(105)] TlsClient: Continuing handshake
+[51965:51981:0131/115206.651392:VERBOSE1:tls_handshaker.cc(105)] TlsClient: Continuing handshake
+[51965:51981:0131/115206.658138:VERBOSE1:tls_handshaker.cc(105)] TlsClient: Continuing handshake
+[51965:51981:0131/115206.658176:VERBOSE1:tls_handshaker.cc(105)] TlsClient: Continuing handshake
+[51965:51981:0131/115206.659112:VERBOSE1:tls_handshaker.cc(105)] TlsClient: Continuing handshake
+[51965:51981:0131/115206.659193:VERBOSE1:tls_handshaker.cc(105)] TlsClient: Continuing handshake
+[51965:51981:0131/115206.659427:VERBOSE1:tls_handshaker.cc(105)] TlsClient: Continuing handshake
+[51965:51981:0131/115206.659500:VERBOSE1:tls_handshaker.cc(105)] TlsClient: Continuing handshake
+[51965:51981:0131/115206.659586:VERBOSE1:tls_handshaker.cc(105)] TlsClient: Continuing handshake
+[51965:51981:0131/115206.661515:VERBOSE1:tls_handshaker.cc(105)] TlsClient: Continuing handshake
+[51965:51981:0131/115206.661554:VERBOSE1:tls_handshaker.cc(105)] TlsClient: Continuing handshake
+[51965:51981:0131/115206.661593:VERBOSE1:tls_handshaker.cc(105)] TlsClient: Continuing handshake
+[51965:51981:0131/115206.662171:VERBOSE1:tls_handshaker.cc(105)] TlsClient: Continuing handshake
+[51965:51981:0131/115206.662196:VERBOSE1:tls_handshaker.cc(105)] TlsClient: Continuing handshake
+[51965:51981:0131/115206.664697:VERBOSE1:tls_handshaker.cc(105)] TlsClient: Continuing handshake
+[51927:51928:0131/115206.664966:VERBOSE1:signal_filter_processor.cc(61)] Segmentation platform started observing Session.TotalDuration
+[51927:51928:0131/115206.664978:VERBOSE1:signal_filter_processor.cc(61)] Segmentation platform started observing Commerce.PriceDrops.ActiveTabNavigationComplete.IsProductDetailPage
+[51927:51928:0131/115206.664984:VERBOSE1:signal_filter_processor.cc(54)] Segmentation platform started observing Autofill_PolledCreditCardSuggestions
+[51927:51928:0131/115206.664990:VERBOSE1:signal_filter_processor.cc(61)] Segmentation platform started observing IOS.ParcelTracking.Tracked.AutoTrack
+[51927:51928:0131/115206.664994:VERBOSE1:signal_filter_processor.cc(61)] Segmentation platform started observing Omnibox.SuggestionUsed.ClientSummarizedResultType
+[51927:51928:0131/115206.665000:VERBOSE1:signal_filter_processor.cc(54)] Segmentation platform started observing MetadataWriter
+[51927:51928:0131/115206.665005:VERBOSE1:signal_filter_processor.cc(61)] Segmentation platform started observing Sync.DeviceCount2
+[51927:51928:0131/115206.665009:VERBOSE1:signal_filter_processor.cc(61)] Segmentation platform started observing Sync.DeviceCount2.Phone
+[51927:51928:0131/115206.665013:VERBOSE1:signal_filter_processor.cc(61)] Segmentation platform started observing Sync.DeviceCount2.Desktop
+[51927:51928:0131/115206.665017:VERBOSE1:signal_filter_processor.cc(61)] Segmentation platform started observing Sync.DeviceCount2.Tablet
+[51927:51928:0131/115206.665022:VERBOSE1:signal_filter_processor.cc(54)] Segmentation platform started observing MobileBookmarkManagerOpen
+[51927:51928:0131/115206.665026:VERBOSE1:signal_filter_processor.cc(54)] Segmentation platform started observing NewTabPage.MostVisited.Clicked
+[51927:51928:0131/115206.665030:VERBOSE1:signal_filter_processor.cc(54)] Segmentation platform started observing TabGroup.Created.OpenInNewTab
+[51927:51928:0131/115206.665034:VERBOSE1:signal_filter_processor.cc(54)] Segmentation platform started observing Android.HistoryPage.OpenItem
+[51927:51928:0131/115206.665039:VERBOSE1:signal_filter_processor.cc(54)] Segmentation platform started observing MobileMenuRecentTabs
+[51927:51928:0131/115206.665043:VERBOSE1:signal_filter_processor.cc(61)] Segmentation platform started observing PasswordManager.ManagePasswordsReferrer
+[51927:51928:0131/115206.665047:VERBOSE1:signal_filter_processor.cc(61)] Segmentation platform started observing PasswordManager.ProfileStore.TotalAccountsHiRes3.WithScheme.Https
+[51927:51928:0131/115206.665051:VERBOSE1:signal_filter_processor.cc(61)] Segmentation platform started observing PasswordManager.FillingAssistance
+[51927:51928:0131/115206.665061:VERBOSE1:signal_filter_processor.cc(61)] Segmentation platform started observing PasswordManager.SavedPasswordIsGenerated
+[51927:51928:0131/115206.665065:VERBOSE1:signal_filter_processor.cc(61)] Segmentation platform started observing PasswordManager.SaveUIDismissalReason
+[51927:51928:0131/115206.665070:VERBOSE1:signal_filter_processor.cc(61)] Segmentation platform started observing PasswordManager.SaveUIDismissalReason
+[51927:51928:0131/115206.665074:VERBOSE1:signal_filter_processor.cc(61)] Segmentation platform started observing IOS.CredentialExtension.IsEnabled.Startup
+[51965:51981:0131/115206.665936:VERBOSE1:tls_handshaker.cc(105)] TlsClient: Continuing handshake
+[51965:51981:0131/115206.665985:VERBOSE1:tls_handshaker.cc(105)] TlsClient: Continuing handshake
+[51965:51981:0131/115206.666027:VERBOSE1:tls_handshaker.cc(105)] TlsClient: Continuing handshake
+[51965:51981:0131/115206.668527:VERBOSE1:tls_handshaker.cc(105)] TlsClient: Continuing handshake
+[51965:51981:0131/115206.670151:VERBOSE1:tls_handshaker.cc(105)] TlsClient: Continuing handshake
+[51965:51981:0131/115206.703122:VERBOSE1:tls_handshaker.cc(105)] TlsClient: Continuing handshake
+[51965:51981:0131/115206.703756:VERBOSE1:tls_handshaker.cc(105)] TlsClient: Continuing handshake
+[51965:51981:0131/115206.704472:VERBOSE1:tls_handshaker.cc(105)] TlsClient: Continuing handshake
+[51927:51928:0131/115206.724893:VERBOSE1:profile_manager.cc(1326)] RemoveKeepAlive(Default, kExtensionUpdater). keep_alives=[kWaitingForFirstBrowserWindow (1), kAppWindow (1)]
+[51965:51980:0131/115206.764206:VERBOSE1:file_util_posix.cc(310)] Cannot stat "/home/diego/Workspace/Cherry-1/examples/advanced/build/bin/Default/Cache/Cache_Data/dc76683fa5e501c0_0": No such file or directory (2)
+[51965:51980:0131/115206.764331:VERBOSE1:file_util_posix.cc(310)] Cannot stat "/home/diego/Workspace/Cherry-1/examples/advanced/build/bin/Default/Cache/Cache_Data/dc76683fa5e501c0_1": No such file or directory (2)
+[51965:51980:0131/115206.764379:VERBOSE1:file_util_posix.cc(310)] Cannot stat "/home/diego/Workspace/Cherry-1/examples/advanced/build/bin/Default/Cache/Cache_Data/dc76683fa5e501c0_s": No such file or directory (2)
+[51927:51928:0131/115206.800196:VERBOSE1:gaia_cookie_manager_service.cc(688)] ListAccounts successful
+[51927:51928:0131/115206.800349:VERBOSE1:gaia_cookie_manager_service.cc(860)] GaiaCookieManagerService::HandleNextRequest
+[51927:51994:0131/115206.819856:VERBOSE1:video_capture_oracle.cc(96)] Capture size auto-throttling is now enabled.
+[51927:51994:0131/115206.819970:VERBOSE1:video_capture_oracle.cc(125)] Capture size auto-throttling is now disabled.
+[51927:51994:0131/115206.819996:VERBOSE1:capture_resolution_chooser.cc(205)] Recomputed snapped frame sizes: 500x500
+[51927:51994:0131/115206.820007:VERBOSE1:capture_resolution_chooser.cc(157)] Recomputed capture size from 640x360 to 500x500 (100% of ideal size)
+[51927:51928:0131/115206.820226:VERBOSE1:mutable_profile_oauth2_token_service_delegate.cc(369)] MutablePO2TS::RefreshTokenIsAvailable
+[51927:51958:0131/115206.827118:VERBOSE1:file_util_posix.cc(310)] Cannot stat "/home/diego/Workspace/Cherry-1/examples/advanced/build/bin/DeferredBrowserMetrics": No such file or directory (2)
+[51927:51958:0131/115206.827156:VERBOSE1:file_util_posix.cc(310)] Cannot stat "/home/diego/Workspace/Cherry-1/examples/advanced/build/bin/CrashpadMetrics.pma": No such file or directory (2)
+[51927:51943:0131/115206.827224:VERBOSE1:file_util_posix.cc(310)] Cannot stat "/home/diego/Workspace/Cherry-1/examples/advanced/build/bin/Breadcrumbs": No such file or directory (2)
+[51927:51943:0131/115206.827252:VERBOSE1:file_util_posix.cc(310)] Cannot stat "/home/diego/Workspace/Cherry-1/examples/advanced/build/bin/Default/Media Cache": No such file or directory (2)
+[51927:51958:0131/115206.827292:VERBOSE1:file_util_posix.cc(310)] Cannot stat "/home/diego/Workspace/Cherry-1/examples/advanced/build/bin/Default/databases": No such file or directory (2)
+[51927:51943:0131/115206.827314:VERBOSE1:file_util_posix.cc(310)] Cannot stat "/home/diego/Workspace/Cherry-1/examples/advanced/build/bin/Default/optimization_guide_prediction_model_downloads": No such file or directory (2)
+[51927:51958:0131/115206.827320:VERBOSE1:file_util_posix.cc(310)] Cannot stat "/home/diego/Workspace/Cherry-1/examples/advanced/build/bin/Default/webrtc_event_logs": No such file or directory (2)
+[51927:51958:0131/115206.827429:VERBOSE1:component_installer.cc(482)] StartRegistration for Related Website Sets
+[51927:51958:0131/115206.827530:VERBOSE1:file_util_posix.cc(310)] Cannot stat "/home/diego/Workspace/Cherry-1/examples/advanced/build/bin/DesktopSharingHub": No such file or directory (2)
+[51927:51958:0131/115206.827549:VERBOSE1:file_util_posix.cc(310)] Cannot stat "/home/diego/Workspace/Cherry-1/examples/advanced/build/bin/HistorySearch": No such file or directory (2)
+[51927:51928:0131/115206.827781:VERBOSE1:component_installer.cc(561)] FinishRegistration for Related Website Sets
+[51927:51928:0131/115206.827840:VERBOSE1:first_party_sets_component_installer.cc(44)] Received Related Website Sets
+[51927:51928:0131/115206.828868:VERBOSE1:partitioned_lock_manager.cc(212)] Acquiring <PartitionedLockId>{id: 0x31, partition: 0} for SynchronizeInstalledApps@chrome/browser/web_applications/externally_managed_app_manager.cc:186
+[51927:51928:0131/115206.828885:VERBOSE1:partitioned_lock_manager.cc(194)] All locks acquired for SynchronizeInstalledApps@chrome/browser/web_applications/externally_managed_app_manager.cc:186
+[51927:51928:0131/115206.829308:VERBOSE1:partitioned_lock_manager.cc(236)] Releasing <PartitionedLockId>{id: 0x31, partition: 0} requested by SynchronizeInstalledApps@chrome/browser/web_applications/externally_managed_app_manager.cc:186
+[51927:51928:0131/115206.830297:VERBOSE1:partitioned_lock_manager.cc(212)] Acquiring <PartitionedLockId>{id: 0x31, partition: 0} for SynchronizeInstalledApps@chrome/browser/web_applications/externally_managed_app_manager.cc:186
+[51927:51928:0131/115206.830315:VERBOSE1:partitioned_lock_manager.cc(194)] All locks acquired for SynchronizeInstalledApps@chrome/browser/web_applications/externally_managed_app_manager.cc:186
+[51927:51928:0131/115206.830346:VERBOSE1:partitioned_lock_manager.cc(236)] Releasing <PartitionedLockId>{id: 0x31, partition: 0} requested by SynchronizeInstalledApps@chrome/browser/web_applications/externally_managed_app_manager.cc:186
+[51927:51928:0131/115206.843767:VERBOSE1:device_event_log_impl.cc(203)] [11:52:06.843] USB: USER: usb_service_linux.cc:302 USB device added: path=/dev/bus/usb/001/002 vendor=3034 "Realtek", product=51232 "802.11ac NIC", serial="123456", guid=16c3f367-2d1d-4e25-b546-def26a3da462
+[51927:51928:0131/115206.843829:VERBOSE1:device_event_log_impl.cc(203)] [11:52:06.843] USB: USER: usb_service_linux.cc:302 USB device added: path=/dev/bus/usb/001/009 vendor=6940 "Corsair", product=3088 "Commander PRO", serial="05050320040F0818", guid=17558594-bb6c-49d9-83c6-191c9d1a5349
+[51927:51928:0131/115206.843871:VERBOSE1:device_event_log_impl.cc(203)] [11:52:06.843] USB: USER: usb_service_linux.cc:302 USB device added: path=/dev/bus/usb/001/010 vendor=6940 "Corsair", product=3083 "Lighting Node PRO", serial="19200207C01C7CAF2F0B955F051C00F5", guid=940933e6-0ae0-4904-8873-ee9c103c6425
+[51927:51928:0131/115206.843912:VERBOSE1:device_event_log_impl.cc(203)] [11:52:06.843] USB: USER: usb_service_linux.cc:302 USB device added: path=/dev/bus/usb/001/005 vendor=6940 "Corsair Components, Inc.", product=6971 "Corsair Gaming MM800 RGB POLARIS", serial="43E00116440445AFCDD1025CC61B00F5", guid=b49a2c2d-d8bf-4c92-9138-8c88cafdd373
+[51927:51928:0131/115206.843950:VERBOSE1:device_event_log_impl.cc(203)] [11:52:06.843] USB: USER: usb_service_linux.cc:302 USB device added: path=/dev/bus/usb/001/007 vendor=6940 "Corsair", product=7028 "CORSAIR GLAIVE RGB PRO Gaming Mouse", serial="0F020007AF4784E35C1BD1D3F5001BC6", guid=4e9ee2fb-321a-4249-a112-cfad49df968c
+[51927:51928:0131/115206.843989:VERBOSE1:device_event_log_impl.cc(203)] [11:52:06.843] USB: USER: usb_service_linux.cc:302 USB device added: path=/dev/bus/usb/001/004 vendor=6940 "Corsair", product=6957 "Corsair Gaming K95 RGB PLATINUM Keyboard", serial="0502F019AF3DA0275C096961F5001BC5", guid=497ac562-02a6-44b9-acf4-cab64bca90d2
+[51927:51928:0131/115206.844025:VERBOSE1:device_event_log_impl.cc(203)] [11:52:06.844] USB: USER: usb_service_linux.cc:302 USB device added: path=/dev/bus/usb/001/006 vendor=6940 "Cosair", product=2642 "Corsair VOID ELITE USB Gaming Headset", serial="00000000", guid=153f12b7-a72a-49c0-994b-f6dc601d4c6a
+[51927:51928:0131/115206.873648:VERBOSE1:segment_result_provider.cc(136)] GetSegmentResult: segment=OPTIMIZATION_TARGET_SEGMENTATION_DEVICE_SWITCHER ignoring DB score, executing model.
+[51927:51928:0131/115206.873671:VERBOSE1:segment_result_provider.cc(277)] ExecuteModelAndGetScore: segment=OPTIMIZATION_TARGET_SEGMENTATION_DEVICE_SWITCHER server segment info not available
+[51927:51928:0131/115206.873677:VERBOSE1:segment_result_provider.cc(210)] OnGotModelScore: segment=OPTIMIZATION_TARGET_SEGMENTATION_DEVICE_SWITCHER failed to get database model score, trying default model.
+[51927:51941:0131/115209.307844:VERBOSE1:object_proxy.cc(513)] Signal received: message_type: MESSAGE_SIGNAL
 path: /org/freedesktop/portal/desktop
 interface: org.freedesktop.portal.Settings
 member: SettingChanged
 sender: :1.8
 signature: ssv
-serial: 3387
-
-string "org.kde.VirtualKeyboard"
-string "active"
-variant   bool false
-
-[64441:64455:0130/012107.132612:VERBOSE1:object_proxy.cc(513)] Signal received: message_type: MESSAGE_SIGNAL
-path: /org/freedesktop/portal/desktop
-interface: org.freedesktop.portal.Settings
-member: SettingChanged
-sender: :1.8
-signature: ssv
-serial: 3388
-
-string "org.kde.VirtualKeyboard"
-string "activeClientSupportsTextInput"
-variant   bool false
-
-[64441:64473:0130/012107.246680:WARNING:vaapi_wrapper.cc(1534)] Skipping nVidia device named: nvidia-drm
-[64441:64473:0130/012107.246980:VERBOSE1:vaapi_wrapper.cc(1556)] GetHandle(): Either VADisplayStateSingleton::PreSandboxInitialization() hasn't been called or that method failed to find a suitable render node
-[64441:64473:0130/012107.247052:WARNING:viz_main_impl.cc(85)] VizNullHypothesis is disabled (not a warning)
-[64441:64442:0130/012107.423453:VERBOSE1:mutable_profile_oauth2_token_service_delegate.cc(486)] MutablePO2TS::OnWebDataServiceRequestDone. Result type: 5
-[64441:64442:0130/012107.423475:VERBOSE1:mutable_profile_oauth2_token_service_delegate.cc(546)] MutablePO2TS::LoadAllCredentialsIntoMemory; 0 credential(s).
-[64441:64442:0130/012107.423556:VERBOSE1:mutable_profile_oauth2_token_service_delegate.cc(369)] MutablePO2TS::RefreshTokenIsAvailable
-[64441:64442:0130/012107.423563:VERBOSE1:mutable_profile_oauth2_token_service_delegate.cc(369)] MutablePO2TS::RefreshTokenIsAvailable
-[64441:64442:0130/012107.423706:VERBOSE1:mutable_profile_oauth2_token_service_delegate.cc(369)] MutablePO2TS::RefreshTokenIsAvailable
-[64441:64442:0130/012107.423744:VERBOSE1:mutable_profile_oauth2_token_service_delegate.cc(369)] MutablePO2TS::RefreshTokenIsAvailable
-[64441:64442:0130/012107.423751:VERBOSE1:mutable_profile_oauth2_token_service_delegate.cc(369)] MutablePO2TS::RefreshTokenIsAvailable
-[64441:64442:0130/012107.424628:VERBOSE1:gaia_cookie_manager_service.cc(824)] GaiaCookieManagerService::ListAccounts
-[64479:64501:0130/012107.424849:VERBOSE1:network_delegate.cc(37)] NetworkDelegate::NotifyBeforeURLRequest: https://accounts.google.com/ListAccounts?gpsia=1&source=ChromiumBrowser&json=standard
-[64441:64442:0130/012107.425646:VERBOSE1:signal_filter_processor.cc(61)] Segmentation platform started observing Session.TotalDuration
-[64441:64442:0130/012107.425664:VERBOSE1:signal_filter_processor.cc(61)] Segmentation platform started observing Commerce.PriceDrops.ActiveTabNavigationComplete.IsProductDetailPage
-[64441:64442:0130/012107.425670:VERBOSE1:signal_filter_processor.cc(54)] Segmentation platform started observing Autofill_PolledCreditCardSuggestions
-[64441:64442:0130/012107.425674:VERBOSE1:signal_filter_processor.cc(61)] Segmentation platform started observing IOS.ParcelTracking.Tracked.AutoTrack
-[64441:64442:0130/012107.425683:VERBOSE1:signal_filter_processor.cc(61)] Segmentation platform started observing Omnibox.SuggestionUsed.ClientSummarizedResultType
-[64441:64442:0130/012107.425689:VERBOSE1:signal_filter_processor.cc(54)] Segmentation platform started observing MetadataWriter
-[64441:64442:0130/012107.425693:VERBOSE1:signal_filter_processor.cc(61)] Segmentation platform started observing Sync.DeviceCount2
-[64441:64442:0130/012107.425697:VERBOSE1:signal_filter_processor.cc(61)] Segmentation platform started observing Sync.DeviceCount2.Phone
-[64441:64442:0130/012107.425701:VERBOSE1:signal_filter_processor.cc(61)] Segmentation platform started observing Sync.DeviceCount2.Desktop
-[64441:64442:0130/012107.425705:VERBOSE1:signal_filter_processor.cc(61)] Segmentation platform started observing Sync.DeviceCount2.Tablet
-[64441:64442:0130/012107.425710:VERBOSE1:signal_filter_processor.cc(54)] Segmentation platform started observing MobileBookmarkManagerOpen
-[64441:64442:0130/012107.425714:VERBOSE1:signal_filter_processor.cc(54)] Segmentation platform started observing NewTabPage.MostVisited.Clicked
-[64441:64442:0130/012107.425717:VERBOSE1:signal_filter_processor.cc(54)] Segmentation platform started observing TabGroup.Created.OpenInNewTab
-[64441:64442:0130/012107.425721:VERBOSE1:signal_filter_processor.cc(54)] Segmentation platform started observing Android.HistoryPage.OpenItem
-[64441:64442:0130/012107.425725:VERBOSE1:signal_filter_processor.cc(54)] Segmentation platform started observing MobileMenuRecentTabs
-[64441:64442:0130/012107.425729:VERBOSE1:signal_filter_processor.cc(61)] Segmentation platform started observing PasswordManager.ManagePasswordsReferrer
-[64441:64442:0130/012107.425734:VERBOSE1:signal_filter_processor.cc(61)] Segmentation platform started observing PasswordManager.ProfileStore.TotalAccountsHiRes3.WithScheme.Https
-[64441:64442:0130/012107.425738:VERBOSE1:signal_filter_processor.cc(61)] Segmentation platform started observing PasswordManager.FillingAssistance
-[64441:64442:0130/012107.425742:VERBOSE1:signal_filter_processor.cc(61)] Segmentation platform started observing PasswordManager.SavedPasswordIsGenerated
-[64441:64442:0130/012107.425746:VERBOSE1:signal_filter_processor.cc(61)] Segmentation platform started observing PasswordManager.SaveUIDismissalReason
-[64441:64442:0130/012107.425750:VERBOSE1:signal_filter_processor.cc(61)] Segmentation platform started observing PasswordManager.SaveUIDismissalReason
-[64441:64442:0130/012107.425754:VERBOSE1:signal_filter_processor.cc(61)] Segmentation platform started observing IOS.CredentialExtension.IsEnabled.Startup
-[64441:64515:0130/012107.430603:VERBOSE1:video_capture_oracle.cc(96)] Capture size auto-throttling is now enabled.
-[64441:64515:0130/012107.430659:VERBOSE1:video_capture_oracle.cc(125)] Capture size auto-throttling is now disabled.
-[64441:64515:0130/012107.430673:VERBOSE1:capture_resolution_chooser.cc(205)] Recomputed snapped frame sizes: 500x500
-[64441:64515:0130/012107.430678:VERBOSE1:capture_resolution_chooser.cc(157)] Recomputed capture size from 640x360 to 500x500 (100% of ideal size)
-[64441:64442:0130/012107.434918:VERBOSE1:mutable_profile_oauth2_token_service_delegate.cc(369)] MutablePO2TS::RefreshTokenIsAvailable
-[64441:64442:0130/012107.434961:VERBOSE1:account_consistency_mode_manager.cc(212)] Desktop Identity Consistency disabled as sign-in to Chrome is not allowed
-[64479:64501:0130/012107.454224:VERBOSE1:network_delegate.cc(37)] NetworkDelegate::NotifyBeforeURLRequest: https://www.google.com/
-[64479:64499:0130/012107.511158:VERBOSE1:file_util_posix.cc(310)] Cannot stat "/home/diego/Workspace/Cherry-1/examples/advanced/build/bin/Default/Cache/Cache_Data/dc76683fa5e501c0_0": Aucun fichier ou dossier de ce nom (2)
-[64479:64499:0130/012107.512148:VERBOSE1:file_util_posix.cc(310)] Cannot stat "/home/diego/Workspace/Cherry-1/examples/advanced/build/bin/Default/Cache/Cache_Data/dc76683fa5e501c0_1": Aucun fichier ou dossier de ce nom (2)
-[64479:64499:0130/012107.512163:VERBOSE1:file_util_posix.cc(310)] Cannot stat "/home/diego/Workspace/Cherry-1/examples/advanced/build/bin/Default/Cache/Cache_Data/dc76683fa5e501c0_s": Aucun fichier ou dossier de ce nom (2)
-[64441:64442:0130/012107.524898:VERBOSE1:gaia_cookie_manager_service.cc(688)] ListAccounts successful
-[64441:64442:0130/012107.524932:VERBOSE1:gaia_cookie_manager_service.cc(860)] GaiaCookieManagerService::HandleNextRequest
-[64441:64442:0130/012107.556896:VERBOSE1:profile_manager.cc(1326)] RemoveKeepAlive(Default, kExtensionUpdater). keep_alives=[kWaitingForFirstBrowserWindow (1), kAppWindow (1)]
-[64441:64442:0130/012107.640068:VERBOSE1:segment_result_provider.cc(136)] GetSegmentResult: segment=OPTIMIZATION_TARGET_SEGMENTATION_DEVICE_SWITCHER ignoring DB score, executing model.
-[64441:64442:0130/012107.640099:VERBOSE1:segment_result_provider.cc(277)] ExecuteModelAndGetScore: segment=OPTIMIZATION_TARGET_SEGMENTATION_DEVICE_SWITCHER server segment info not available
-[64441:64442:0130/012107.640106:VERBOSE1:segment_result_provider.cc(210)] OnGotModelScore: segment=OPTIMIZATION_TARGET_SEGMENTATION_DEVICE_SWITCHER failed to get database model score, trying default model.
-[64441:64515:0130/012108.611700:VERBOSE1:video_capture_oracle.cc(96)] Capture size auto-throttling is now enabled.
-[64441:64515:0130/012108.611765:VERBOSE1:video_capture_oracle.cc(125)] Capture size auto-throttling is now disabled.
-[64441:64515:0130/012108.611791:VERBOSE1:capture_resolution_chooser.cc(205)] Recomputed snapped frame sizes: 500x500
-[64441:64515:0130/012108.611802:VERBOSE1:capture_resolution_chooser.cc(157)] Recomputed capture size from 640x360 to 500x500 (100% of ideal size)
-[64441:64442:0130/012108.612031:VERBOSE1:mutable_profile_oauth2_token_service_delegate.cc(369)] MutablePO2TS::RefreshTokenIsAvailable
-[64441:64456:0130/012108.619272:VERBOSE1:file_util_posix.cc(310)] Cannot stat "/home/diego/Workspace/Cherry-1/examples/advanced/build/bin/DeferredBrowserMetrics": Aucun fichier ou dossier de ce nom (2)
-[64441:64454:0130/012108.619300:VERBOSE1:file_util_posix.cc(310)] Cannot stat "/home/diego/Workspace/Cherry-1/examples/advanced/build/bin/CrashpadMetrics.pma": Aucun fichier ou dossier de ce nom (2)
-[64441:64454:0130/012108.619331:VERBOSE1:file_util_posix.cc(310)] Cannot stat "/home/diego/Workspace/Cherry-1/examples/advanced/build/bin/Breadcrumbs": Aucun fichier ou dossier de ce nom (2)
-[64441:64454:0130/012108.619350:VERBOSE1:file_util_posix.cc(310)] Cannot stat "/home/diego/Workspace/Cherry-1/examples/advanced/build/bin/Default/Media Cache": Aucun fichier ou dossier de ce nom (2)
-[64441:64456:0130/012108.619407:VERBOSE1:file_util_posix.cc(310)] Cannot stat "/home/diego/Workspace/Cherry-1/examples/advanced/build/bin/Default/databases": Aucun fichier ou dossier de ce nom (2)
-[64441:64454:0130/012108.619439:VERBOSE1:file_util_posix.cc(310)] Cannot stat "/home/diego/Workspace/Cherry-1/examples/advanced/build/bin/Default/optimization_guide_prediction_model_downloads": Aucun fichier ou dossier de ce nom (2)
-[64441:64456:0130/012108.619444:VERBOSE1:file_util_posix.cc(310)] Cannot stat "/home/diego/Workspace/Cherry-1/examples/advanced/build/bin/Default/webrtc_event_logs": Aucun fichier ou dossier de ce nom (2)
-[64441:64456:0130/012108.619603:VERBOSE1:component_installer.cc(482)] StartRegistration for Related Website Sets
-[64441:64456:0130/012108.619704:VERBOSE1:file_util_posix.cc(310)] Cannot stat "/home/diego/Workspace/Cherry-1/examples/advanced/build/bin/DesktopSharingHub": Aucun fichier ou dossier de ce nom (2)
-[64441:64456:0130/012108.619725:VERBOSE1:file_util_posix.cc(310)] Cannot stat "/home/diego/Workspace/Cherry-1/examples/advanced/build/bin/HistorySearch": Aucun fichier ou dossier de ce nom (2)
-[64441:64442:0130/012108.619918:VERBOSE1:component_installer.cc(561)] FinishRegistration for Related Website Sets
-[64441:64442:0130/012108.619948:VERBOSE1:first_party_sets_component_installer.cc(44)] Received Related Website Sets
-[64441:64442:0130/012108.621060:VERBOSE1:partitioned_lock_manager.cc(212)] Acquiring <PartitionedLockId>{id: 0x31, partition: 0} for SynchronizeInstalledApps@chrome/browser/web_applications/externally_managed_app_manager.cc:186
-[64441:64442:0130/012108.621086:VERBOSE1:partitioned_lock_manager.cc(194)] All locks acquired for SynchronizeInstalledApps@chrome/browser/web_applications/externally_managed_app_manager.cc:186
-[64441:64442:0130/012108.621541:VERBOSE1:partitioned_lock_manager.cc(236)] Releasing <PartitionedLockId>{id: 0x31, partition: 0} requested by SynchronizeInstalledApps@chrome/browser/web_applications/externally_managed_app_manager.cc:186
-[64441:64442:0130/012108.622047:VERBOSE1:partitioned_lock_manager.cc(212)] Acquiring <PartitionedLockId>{id: 0x31, partition: 0} for SynchronizeInstalledApps@chrome/browser/web_applications/externally_managed_app_manager.cc:186
-[64441:64442:0130/012108.622064:VERBOSE1:partitioned_lock_manager.cc(194)] All locks acquired for SynchronizeInstalledApps@chrome/browser/web_applications/externally_managed_app_manager.cc:186
-[64441:64442:0130/012108.622097:VERBOSE1:partitioned_lock_manager.cc(236)] Releasing <PartitionedLockId>{id: 0x31, partition: 0} requested by SynchronizeInstalledApps@chrome/browser/web_applications/externally_managed_app_manager.cc:186
-[64441:64442:0130/012108.640442:VERBOSE1:device_event_log_impl.cc(203)] [01:21:08.640] USB: USER: usb_service_linux.cc:302 USB device added: path=/dev/bus/usb/001/002 vendor=3034 "Realtek", product=51232 "802.11ac NIC", serial="123456", guid=f46cc6f7-ddf4-40b2-9df2-06ad890a2646
-[64441:64442:0130/012108.640502:VERBOSE1:device_event_log_impl.cc(203)] [01:21:08.640] USB: USER: usb_service_linux.cc:302 USB device added: path=/dev/bus/usb/001/009 vendor=6940 "Corsair", product=3088 "Commander PRO", serial="05050320040F0818", guid=05abbd4d-8b30-4932-9604-74255214500b
-[64441:64442:0130/012108.640542:VERBOSE1:device_event_log_impl.cc(203)] [01:21:08.640] USB: USER: usb_service_linux.cc:302 USB device added: path=/dev/bus/usb/001/010 vendor=6940 "Corsair", product=3083 "Lighting Node PRO", serial="19200207C01C7CAF2F0B955F051C00F5", guid=b0b7edac-73aa-4b9b-8e27-0aea7ecff22b
-[64441:64442:0130/012108.640580:VERBOSE1:device_event_log_impl.cc(203)] [01:21:08.640] USB: USER: usb_service_linux.cc:302 USB device added: path=/dev/bus/usb/001/005 vendor=6940 "Corsair Components, Inc.", product=6971 "Corsair Gaming MM800 RGB POLARIS", serial="43E00116440445AFCDD1025CC61B00F5", guid=306d6b3e-33b1-4128-9cb6-340817736893
-[64441:64442:0130/012108.640616:VERBOSE1:device_event_log_impl.cc(203)] [01:21:08.640] USB: USER: usb_service_linux.cc:302 USB device added: path=/dev/bus/usb/001/007 vendor=6940 "Corsair", product=7028 "CORSAIR GLAIVE RGB PRO Gaming Mouse", serial="0F020007AF4784E35C1BD1D3F5001BC6", guid=bf8c1426-62ff-4fc7-a2af-af0da7226a3b
-[64441:64442:0130/012108.640654:VERBOSE1:device_event_log_impl.cc(203)] [01:21:08.640] USB: USER: usb_service_linux.cc:302 USB device added: path=/dev/bus/usb/001/004 vendor=6940 "Corsair", product=6957 "Corsair Gaming K95 RGB PLATINUM Keyboard", serial="0502F019AF3DA0275C096961F5001BC5", guid=006df035-d08d-4365-b6fe-e17a769eff12
-[64441:64442:0130/012108.640716:VERBOSE1:device_event_log_impl.cc(203)] [01:21:08.640] USB: USER: usb_service_linux.cc:302 USB device added: path=/dev/bus/usb/001/006 vendor=6940 "Cosair", product=2642 "Corsair VOID ELITE USB Gaming Headset", serial="00000000", guid=6087217b-4dcd-4267-84b0-68462169acf0
-[64479:64501:0130/012111.969554:VERBOSE1:tls_handshaker.cc(105)] TlsClient: Continuing handshake
-[64479:64501:0130/012111.981239:VERBOSE1:tls_handshaker.cc(105)] TlsClient: Continuing handshake
-[64479:64501:0130/012111.981308:VERBOSE1:tls_handshaker.cc(105)] TlsClient: Continuing handshake
-[64479:64501:0130/012111.984642:VERBOSE1:tls_handshaker.cc(105)] TlsClient: Continuing handshake
-[64479:64501:0130/012111.984728:VERBOSE1:tls_handshaker.cc(105)] TlsClient: Continuing handshake
-[64479:64501:0130/012111.984834:VERBOSE1:tls_handshaker.cc(105)] TlsClient: Continuing handshake
-[64479:64501:0130/012111.990209:VERBOSE1:tls_handshaker.cc(105)] TlsClient: Continuing handshake
-[64479:64501:0130/012112.003037:VERBOSE1:tls_handshaker.cc(105)] TlsClient: Continuing handshake
-[64441:64442:0130/012112.425943:VERBOSE1:segment_result_provider.cc(226)] GetCachedModelScore: segment=OPTIMIZATION_TARGET_SEGMENTATION_CHROME_LOW_USER_ENGAGEMENT does not have a segment info.
-[64441:64442:0130/012112.425978:VERBOSE1:segment_result_provider.cc(172)] OnGotModelScore: segment=OPTIMIZATION_TARGET_SEGMENTATION_CHROME_LOW_USER_ENGAGEMENT failed to get score from database, executing server model.
-[64441:64442:0130/012112.425989:VERBOSE1:segment_result_provider.cc(277)] ExecuteModelAndGetScore: segment=OPTIMIZATION_TARGET_SEGMENTATION_CHROME_LOW_USER_ENGAGEMENT server segment info not available
-[64441:64442:0130/012112.425998:VERBOSE1:segment_result_provider.cc(201)] OnGotModelScore: segment=OPTIMIZATION_TARGET_SEGMENTATION_CHROME_LOW_USER_ENGAGEMENT failed to get score from executing server model, getting score from default model from db.
-[64441:64442:0130/012112.426007:VERBOSE1:segment_result_provider.cc(240)] GetCachedModelScore: segment=OPTIMIZATION_TARGET_SEGMENTATION_CHROME_LOW_USER_ENGAGEMENT has expired or unavailable result.
-[64441:64442:0130/012112.426015:VERBOSE1:segment_result_provider.cc(210)] OnGotModelScore: segment=OPTIMIZATION_TARGET_SEGMENTATION_CHROME_LOW_USER_ENGAGEMENT failed to get database model score, trying default model.
-[64441:64442:0130/012112.426056:VERBOSE1:segment_result_provider.cc(295)] ExecuteModelAndGetScore: segment=OPTIMIZATION_TARGET_SEGMENTATION_CHROME_LOW_USER_ENGAGEMENT signal collection not met
-[64441:64442:0130/012112.426071:VERBOSE1:segment_result_provider.cc(226)] GetCachedModelScore: segment=OPTIMIZATION_TARGET_SEGMENTATION_SEARCH_USER does not have a segment info.
-[64441:64442:0130/012112.426079:VERBOSE1:segment_result_provider.cc(172)] OnGotModelScore: segment=OPTIMIZATION_TARGET_SEGMENTATION_SEARCH_USER failed to get score from database, executing server model.
-[64441:64442:0130/012112.426087:VERBOSE1:segment_result_provider.cc(277)] ExecuteModelAndGetScore: segment=OPTIMIZATION_TARGET_SEGMENTATION_SEARCH_USER server segment info not available
-[64441:64442:0130/012112.426094:VERBOSE1:segment_result_provider.cc(201)] OnGotModelScore: segment=OPTIMIZATION_TARGET_SEGMENTATION_SEARCH_USER failed to get score from executing server model, getting score from default model from db.
-[64441:64442:0130/012112.426102:VERBOSE1:segment_result_provider.cc(240)] GetCachedModelScore: segment=OPTIMIZATION_TARGET_SEGMENTATION_SEARCH_USER has expired or unavailable result.
-[64441:64442:0130/012112.426109:VERBOSE1:segment_result_provider.cc(210)] OnGotModelScore: segment=OPTIMIZATION_TARGET_SEGMENTATION_SEARCH_USER failed to get database model score, trying default model.
-[64441:64442:0130/012112.426117:VERBOSE1:segment_result_provider.cc(295)] ExecuteModelAndGetScore: segment=OPTIMIZATION_TARGET_SEGMENTATION_SEARCH_USER signal collection not met
-[64441:64442:0130/012112.426130:VERBOSE1:segment_result_provider.cc(226)] GetCachedModelScore: segment=OPTIMIZATION_TARGET_SEGMENTATION_SHOPPING_USER does not have a segment info.
-[64441:64442:0130/012112.426137:VERBOSE1:segment_result_provider.cc(172)] OnGotModelScore: segment=OPTIMIZATION_TARGET_SEGMENTATION_SHOPPING_USER failed to get score from database, executing server model.
-[64441:64442:0130/012112.426145:VERBOSE1:segment_result_provider.cc(277)] ExecuteModelAndGetScore: segment=OPTIMIZATION_TARGET_SEGMENTATION_SHOPPING_USER server segment info not available
-[64441:64442:0130/012112.426152:VERBOSE1:segment_result_provider.cc(201)] OnGotModelScore: segment=OPTIMIZATION_TARGET_SEGMENTATION_SHOPPING_USER failed to get score from executing server model, getting score from default model from db.
-[64441:64442:0130/012112.426161:VERBOSE1:segment_result_provider.cc(252)] GetCachedModelScore: Retrieved prediction from database: PredictionResult: timestamp: 13382662049517309 result 0: 0 for segment OPTIMIZATION_TARGET_SEGMENTATION_SHOPPING_USER
-[64441:64442:0130/012112.426177:VERBOSE1:segment_result_provider.cc(29)] ComputeDiscreteMapping: segment=: result=0, rank=0
-[64441:64442:0130/012112.426188:VERBOSE1:segment_result_provider.cc(226)] GetCachedModelScore: segment=CROSS_DEVICE_USER_SEGMENT does not have a segment info.
-[64441:64442:0130/012112.426204:VERBOSE1:segment_result_provider.cc(172)] OnGotModelScore: segment=CROSS_DEVICE_USER_SEGMENT failed to get score from database, executing server model.
-[64441:64442:0130/012112.426212:VERBOSE1:segment_result_provider.cc(277)] ExecuteModelAndGetScore: segment=CROSS_DEVICE_USER_SEGMENT server segment info not available
-[64441:64442:0130/012112.426219:VERBOSE1:segment_result_provider.cc(201)] OnGotModelScore: segment=CROSS_DEVICE_USER_SEGMENT failed to get score from executing server model, getting score from default model from db.
-[64441:64442:0130/012112.426227:VERBOSE1:segment_result_provider.cc(240)] GetCachedModelScore: segment=CROSS_DEVICE_USER_SEGMENT has expired or unavailable result.
-[64441:64442:0130/012112.426234:VERBOSE1:segment_result_provider.cc(210)] OnGotModelScore: segment=CROSS_DEVICE_USER_SEGMENT failed to get database model score, trying default model.
-[64441:64442:0130/012112.426243:VERBOSE1:segment_result_provider.cc(295)] ExecuteModelAndGetScore: segment=CROSS_DEVICE_USER_SEGMENT signal collection not met
-[64441:64442:0130/012112.426253:VERBOSE1:segment_result_provider.cc(226)] GetCachedModelScore: segment=RESUME_HEAVY_USER_SEGMENT does not have a segment info.
-[64441:64442:0130/012112.426261:VERBOSE1:segment_result_provider.cc(172)] OnGotModelScore: segment=RESUME_HEAVY_USER_SEGMENT failed to get score from database, executing server model.
-[64441:64442:0130/012112.426268:VERBOSE1:segment_result_provider.cc(277)] ExecuteModelAndGetScore: segment=RESUME_HEAVY_USER_SEGMENT server segment info not available
-[64441:64442:0130/012112.426275:VERBOSE1:segment_result_provider.cc(201)] OnGotModelScore: segment=RESUME_HEAVY_USER_SEGMENT failed to get score from executing server model, getting score from default model from db.
-[64441:64442:0130/012112.426283:VERBOSE1:segment_result_provider.cc(240)] GetCachedModelScore: segment=RESUME_HEAVY_USER_SEGMENT has expired or unavailable result.
-[64441:64442:0130/012112.426290:VERBOSE1:segment_result_provider.cc(210)] OnGotModelScore: segment=RESUME_HEAVY_USER_SEGMENT failed to get database model score, trying default model.
-[64441:64442:0130/012112.426304:VERBOSE1:segment_result_provider.cc(295)] ExecuteModelAndGetScore: segment=RESUME_HEAVY_USER_SEGMENT signal collection not met
-[64441:64442:0130/012112.426313:VERBOSE1:segment_result_provider.cc(226)] GetCachedModelScore: segment=PASSWORD_MANAGER_USER does not have a segment info.
-[64441:64442:0130/012112.426322:VERBOSE1:segment_result_provider.cc(172)] OnGotModelScore: segment=PASSWORD_MANAGER_USER failed to get score from database, executing server model.
-[64441:64442:0130/012112.426329:VERBOSE1:segment_result_provider.cc(277)] ExecuteModelAndGetScore: segment=PASSWORD_MANAGER_USER server segment info not available
-[64441:64442:0130/012112.426337:VERBOSE1:segment_result_provider.cc(201)] OnGotModelScore: segment=PASSWORD_MANAGER_USER failed to get score from executing server model, getting score from default model from db.
-[64441:64442:0130/012112.426345:VERBOSE1:segment_result_provider.cc(240)] GetCachedModelScore: segment=PASSWORD_MANAGER_USER has expired or unavailable result.
-[64441:64442:0130/012112.426352:VERBOSE1:segment_result_provider.cc(210)] OnGotModelScore: segment=PASSWORD_MANAGER_USER failed to get database model score, trying default model.
-[64441:64442:0130/012112.426362:VERBOSE1:segment_result_provider.cc(295)] ExecuteModelAndGetScore: segment=PASSWORD_MANAGER_USER signal collection not met
-[64441:64442:0130/012112.426818:VERBOSE1:cached_result_writer.cc(106)] IsPrefUpdateRequiredForClient: previous client_result for segmentation_key: shopping_user has not yet expired. Expiration: 2025-01-31 22:24:01.819004 UTC
-[64441:64515:0130/012113.872137:VERBOSE1:video_capture_oracle.cc(96)] Capture size auto-throttling is now enabled.
-[64441:64515:0130/012113.872313:VERBOSE1:video_capture_oracle.cc(125)] Capture size auto-throttling is now disabled.
-[64441:64515:0130/012113.872400:VERBOSE1:capture_resolution_chooser.cc(205)] Recomputed snapped frame sizes: 500x500
-[64441:64515:0130/012113.872431:VERBOSE1:capture_resolution_chooser.cc(157)] Recomputed capture size from 640x360 to 500x500 (100% of ideal size)
-[64441:64442:0130/012113.874588:VERBOSE1:mutable_profile_oauth2_token_service_delegate.cc(369)] MutablePO2TS::RefreshTokenIsAvailable
-[64441:64442:0130/012113.874676:VERBOSE1:account_consistency_mode_manager.cc(212)] Desktop Identity Consistency disabled as sign-in to Chrome is not allowed
-[64479:64501:0130/012113.876231:VERBOSE1:network_delegate.cc(37)] NetworkDelegate::NotifyBeforeURLRequest: https://www.google.com/
-[64441:64515:0130/012114.443447:VERBOSE1:video_capture_oracle.cc(96)] Capture size auto-throttling is now enabled.
-[64441:64515:0130/012114.443540:VERBOSE1:video_capture_oracle.cc(125)] Capture size auto-throttling is now disabled.
-[64441:64515:0130/012114.443571:VERBOSE1:capture_resolution_chooser.cc(205)] Recomputed snapped frame sizes: 500x500
-[64441:64515:0130/012114.443586:VERBOSE1:capture_resolution_chooser.cc(157)] Recomputed capture size from 640x360 to 500x500 (100% of ideal size)
-[64441:64442:0130/012114.444765:VERBOSE1:mutable_profile_oauth2_token_service_delegate.cc(369)] MutablePO2TS::RefreshTokenIsAvailable
-[64441:64442:0130/012114.444806:VERBOSE1:account_consistency_mode_manager.cc(212)] Desktop Identity Consistency disabled as sign-in to Chrome is not allowed
-[64479:64501:0130/012114.445623:VERBOSE1:network_delegate.cc(37)] NetworkDelegate::NotifyBeforeURLRequest: https://www.google.com/
-[64441:64515:0130/012114.701712:VERBOSE1:video_capture_oracle.cc(96)] Capture size auto-throttling is now enabled.
-[64441:64515:0130/012114.701785:VERBOSE1:video_capture_oracle.cc(125)] Capture size auto-throttling is now disabled.
-[64441:64515:0130/012114.701811:VERBOSE1:capture_resolution_chooser.cc(205)] Recomputed snapped frame sizes: 500x500
-[64441:64515:0130/012114.701823:VERBOSE1:capture_resolution_chooser.cc(157)] Recomputed capture size from 640x360 to 500x500 (100% of ideal size)
-[64441:64442:0130/012114.702812:VERBOSE1:mutable_profile_oauth2_token_service_delegate.cc(369)] MutablePO2TS::RefreshTokenIsAvailable
-[64441:64442:0130/012114.702859:VERBOSE1:account_consistency_mode_manager.cc(212)] Desktop Identity Consistency disabled as sign-in to Chrome is not allowed
-[64479:64501:0130/012114.703553:VERBOSE1:network_delegate.cc(37)] NetworkDelegate::NotifyBeforeURLRequest: https://www.google.com/
-[64441:64515:0130/012114.908968:VERBOSE1:video_capture_oracle.cc(96)] Capture size auto-throttling is now enabled.
-[64441:64515:0130/012114.909005:VERBOSE1:video_capture_oracle.cc(125)] Capture size auto-throttling is now disabled.
-[64441:64515:0130/012114.909017:VERBOSE1:capture_resolution_chooser.cc(205)] Recomputed snapped frame sizes: 500x500
-[64441:64515:0130/012114.909023:VERBOSE1:capture_resolution_chooser.cc(157)] Recomputed capture size from 640x360 to 500x500 (100% of ideal size)
-[64441:64442:0130/012114.909498:VERBOSE1:mutable_profile_oauth2_token_service_delegate.cc(369)] MutablePO2TS::RefreshTokenIsAvailable
-[64441:64442:0130/012114.909516:VERBOSE1:account_consistency_mode_manager.cc(212)] Desktop Identity Consistency disabled as sign-in to Chrome is not allowed
-[64479:64501:0130/012114.909852:VERBOSE1:network_delegate.cc(37)] NetworkDelegate::NotifyBeforeURLRequest: https://www.google.com/
-[64441:64515:0130/012115.067933:VERBOSE1:video_capture_oracle.cc(96)] Capture size auto-throttling is now enabled.
-[64441:64515:0130/012115.067988:VERBOSE1:video_capture_oracle.cc(125)] Capture size auto-throttling is now disabled.
-[64441:64515:0130/012115.068007:VERBOSE1:capture_resolution_chooser.cc(205)] Recomputed snapped frame sizes: 500x500
-[64441:64515:0130/012115.068015:VERBOSE1:capture_resolution_chooser.cc(157)] Recomputed capture size from 640x360 to 500x500 (100% of ideal size)
-[64441:64442:0130/012115.068643:VERBOSE1:mutable_profile_oauth2_token_service_delegate.cc(369)] MutablePO2TS::RefreshTokenIsAvailable
-[64441:64442:0130/012115.068665:VERBOSE1:account_consistency_mode_manager.cc(212)] Desktop Identity Consistency disabled as sign-in to Chrome is not allowed
-[64479:64501:0130/012115.069128:VERBOSE1:network_delegate.cc(37)] NetworkDelegate::NotifyBeforeURLRequest: https://www.google.com/
-[64441:64515:0130/012115.254362:VERBOSE1:video_capture_oracle.cc(96)] Capture size auto-throttling is now enabled.
-[64441:64515:0130/012115.254519:VERBOSE1:video_capture_oracle.cc(125)] Capture size auto-throttling is now disabled.
-[64441:64515:0130/012115.254565:VERBOSE1:capture_resolution_chooser.cc(205)] Recomputed snapped frame sizes: 500x500
-[64441:64515:0130/012115.254586:VERBOSE1:capture_resolution_chooser.cc(157)] Recomputed capture size from 640x360 to 500x500 (100% of ideal size)
-[64441:64442:0130/012115.256170:VERBOSE1:mutable_profile_oauth2_token_service_delegate.cc(369)] MutablePO2TS::RefreshTokenIsAvailable
-[64441:64442:0130/012115.256256:VERBOSE1:account_consistency_mode_manager.cc(212)] Desktop Identity Consistency disabled as sign-in to Chrome is not allowed
-[64479:64501:0130/012115.257510:VERBOSE1:network_delegate.cc(37)] NetworkDelegate::NotifyBeforeURLRequest: https://www.google.com/
-[64441:64515:0130/012115.815685:VERBOSE1:video_capture_oracle.cc(96)] Capture size auto-throttling is now enabled.
-[64441:64515:0130/012115.815758:VERBOSE1:video_capture_oracle.cc(125)] Capture size auto-throttling is now disabled.
-[64441:64515:0130/012115.815784:VERBOSE1:capture_resolution_chooser.cc(205)] Recomputed snapped frame sizes: 500x500
-[64441:64515:0130/012115.815796:VERBOSE1:capture_resolution_chooser.cc(157)] Recomputed capture size from 640x360 to 500x500 (100% of ideal size)
-[64441:64442:0130/012115.816746:VERBOSE1:mutable_profile_oauth2_token_service_delegate.cc(369)] MutablePO2TS::RefreshTokenIsAvailable
-[64441:64442:0130/012115.816785:VERBOSE1:account_consistency_mode_manager.cc(212)] Desktop Identity Consistency disabled as sign-in to Chrome is not allowed
-[64479:64501:0130/012115.817461:VERBOSE1:network_delegate.cc(37)] NetworkDelegate::NotifyBeforeURLRequest: https://www.google.com/
-[64441:64515:0130/012115.976646:VERBOSE1:video_capture_oracle.cc(96)] Capture size auto-throttling is now enabled.
-[64441:64515:0130/012115.976685:VERBOSE1:video_capture_oracle.cc(125)] Capture size auto-throttling is now disabled.
-[64441:64515:0130/012115.976697:VERBOSE1:capture_resolution_chooser.cc(205)] Recomputed snapped frame sizes: 500x500
-[64441:64515:0130/012115.976702:VERBOSE1:capture_resolution_chooser.cc(157)] Recomputed capture size from 640x360 to 500x500 (100% of ideal size)
-[64441:64442:0130/012115.977178:VERBOSE1:mutable_profile_oauth2_token_service_delegate.cc(369)] MutablePO2TS::RefreshTokenIsAvailable
-[64441:64442:0130/012115.977193:VERBOSE1:account_consistency_mode_manager.cc(212)] Desktop Identity Consistency disabled as sign-in to Chrome is not allowed
-[64479:64501:0130/012115.977479:VERBOSE1:network_delegate.cc(37)] NetworkDelegate::NotifyBeforeURLRequest: https://www.google.com/
-[64441:64515:0130/012118.301323:VERBOSE1:video_capture_oracle.cc(96)] Capture size auto-throttling is now enabled.
-[64441:64515:0130/012118.301366:VERBOSE1:video_capture_oracle.cc(125)] Capture size auto-throttling is now disabled.
-[64441:64515:0130/012118.301379:VERBOSE1:capture_resolution_chooser.cc(205)] Recomputed snapped frame sizes: 500x500
-[64441:64515:0130/012118.301386:VERBOSE1:capture_resolution_chooser.cc(157)] Recomputed capture size from 640x360 to 500x500 (100% of ideal size)
-[64441:64455:0130/012131.970055:ERROR:object_proxy.cc(576)] Failed to call method: org.freedesktop.DBus.StartServiceByName: object_path= /org/freedesktop/DBus: org.freedesktop.DBus.Error.NoReply: Did not receive a reply. Possible causes include: the remote application did not send a reply, the message bus security policy blocked the reply, the reply timeout expired, or the network connection was broken.
-[64441:64455:0130/012131.974165:VERBOSE1:bus.cc(720)] Requested to remove an unknown filter function: 1 with associated data: 0x728a3800d540
-[64441:64455:0130/012146.458174:VERBOSE1:object_proxy.cc(513)] Signal received: message_type: MESSAGE_SIGNAL
-path: /org/freedesktop/portal/desktop
-interface: org.freedesktop.portal.Settings
-member: SettingChanged
-sender: :1.8
-signature: ssv
-serial: 3409
+serial: 3603
 
 string "org.kde.VirtualKeyboard"
 string "activeClientSupportsTextInput"
 variant   bool true
 
-[64441:64455:0130/012147.849204:VERBOSE1:object_proxy.cc(513)] Signal received: message_type: MESSAGE_SIGNAL
-path: /org/freedesktop/portal/desktop
-interface: org.freedesktop.portal.Settings
-member: SettingChanged
-sender: :1.8
-signature: ssv
-serial: 3411
-
-string "org.kde.VirtualKeyboard"
-string "active"
-variant   bool true
-
-[64441:64455:0130/012157.071038:VERBOSE1:object_proxy.cc(513)] Signal received: message_type: MESSAGE_SIGNAL
-path: /org/freedesktop/portal/desktop
-interface: org.freedesktop.portal.Settings
-member: SettingChanged
-sender: :1.8
-signature: ssv
-serial: 3416
-
-string "org.kde.VirtualKeyboard"
-string "active"
-variant   bool false
-
-[64441:64455:0130/012157.071078:VERBOSE1:object_proxy.cc(513)] Signal received: message_type: MESSAGE_SIGNAL
-path: /org/freedesktop/portal/desktop
-interface: org.freedesktop.portal.Settings
-member: SettingChanged
-sender: :1.8
-signature: ssv
-serial: 3417
-
-string "org.kde.VirtualKeyboard"
-string "activeClientSupportsTextInput"
-variant   bool true
-
-[64441:64455:0130/012157.071566:VERBOSE1:object_proxy.cc(513)] Signal received: message_type: MESSAGE_SIGNAL
-path: /org/freedesktop/portal/desktop
-interface: org.freedesktop.portal.Settings
-member: SettingChanged
-sender: :1.8
-signature: ssv
-serial: 3418
-
-string "org.kde.VirtualKeyboard"
-string "activeClientSupportsTextInput"
-variant   bool true
-
-[64441:64455:0130/012157.095794:VERBOSE1:object_proxy.cc(513)] Signal received: message_type: MESSAGE_SIGNAL
-path: /org/freedesktop/portal/desktop
-interface: org.freedesktop.portal.Settings
-member: SettingChanged
-sender: :1.8
-signature: ssv
-serial: 3419
-
-string "org.kde.VirtualKeyboard"
-string "active"
-variant   bool true
-
-[64441:64455:0130/012157.722975:VERBOSE1:object_proxy.cc(513)] Signal received: message_type: MESSAGE_SIGNAL
-path: /org/freedesktop/portal/desktop
-interface: org.freedesktop.portal.Settings
-member: SettingChanged
-sender: :1.8
-signature: ssv
-serial: 3420
-
-string "org.kde.VirtualKeyboard"
-string "active"
-variant   bool false
-
-[64441:64455:0130/012158.737911:VERBOSE1:object_proxy.cc(513)] Signal received: message_type: MESSAGE_SIGNAL
-path: /org/freedesktop/portal/desktop
-interface: org.freedesktop.portal.Settings
-member: SettingChanged
-sender: :1.8
-signature: ssv
-serial: 3421
-
-string "org.kde.VirtualKeyboard"
-string "active"
-variant   bool true
-
-[64441:64455:0130/012159.988137:VERBOSE1:object_proxy.cc(513)] Signal received: message_type: MESSAGE_SIGNAL
-path: /org/freedesktop/portal/desktop
-interface: org.freedesktop.portal.Settings
-member: SettingChanged
-sender: :1.8
-signature: ssv
-serial: 3422
-
-string "org.kde.VirtualKeyboard"
-string "active"
-variant   bool false
-
-[64441:64455:0130/012159.988250:VERBOSE1:object_proxy.cc(513)] Signal received: message_type: MESSAGE_SIGNAL
-path: /org/freedesktop/portal/desktop
-interface: org.freedesktop.portal.Settings
-member: SettingChanged
-sender: :1.8
-signature: ssv
-serial: 3423
-
-string "org.kde.VirtualKeyboard"
-string "activeClientSupportsTextInput"
-variant   bool true
-
-[64441:64455:0130/012159.988326:VERBOSE1:object_proxy.cc(513)] Signal received: message_type: MESSAGE_SIGNAL
-path: /org/freedesktop/portal/desktop
-interface: org.freedesktop.portal.Settings
-member: SettingChanged
-sender: :1.8
-signature: ssv
-serial: 3424
-
-string "org.kde.VirtualKeyboard"
-string "activeClientSupportsTextInput"
-variant   bool true
-
-[64441:64455:0130/012200.012854:VERBOSE1:object_proxy.cc(513)] Signal received: message_type: MESSAGE_SIGNAL
-path: /org/freedesktop/portal/desktop
-interface: org.freedesktop.portal.Settings
-member: SettingChanged
-sender: :1.8
-signature: ssv
-serial: 3425
-
-string "org.kde.VirtualKeyboard"
-string "active"
-variant   bool false
-
-[64441:64455:0130/012200.015485:VERBOSE1:object_proxy.cc(513)] Signal received: message_type: MESSAGE_SIGNAL
-path: /org/freedesktop/portal/desktop
-interface: org.freedesktop.portal.Settings
-member: SettingChanged
-sender: :1.8
-signature: ssv
-serial: 3426
-
-string "org.kde.VirtualKeyboard"
-string "active"
-variant   bool false
-
-[64441:64455:0130/012200.882087:VERBOSE1:object_proxy.cc(513)] Signal received: message_type: MESSAGE_SIGNAL
-path: /org/freedesktop/portal/desktop
-interface: org.freedesktop.portal.Settings
-member: SettingChanged
-sender: :1.8
-signature: ssv
-serial: 3427
-
-string "org.kde.VirtualKeyboard"
-string "active"
-variant   bool true
-
-[64479:64501:0130/012207.017001:VERBOSE1:network_delegate.cc(37)] NetworkDelegate::NotifyBeforeURLRequest: https://update.googleapis.com/service/update2/json?cup2key=14:G8wq44wRIXrNtOccrDOgjy-cL7F8cNKID7vAuI8U8sQ&cup2hreq=b3e1bc1aa970ca1b84020133d255e00dca846843288a329153efc8379d6b8f5d
-[64441:64442:0130/012207.072500:VERBOSE1:request_sender.cc(189)] Request completed from url: https://update.googleapis.com/service/update2/json?cup2key=14:G8wq44wRIXrNtOccrDOgjy-cL7F8cNKID7vAuI8U8sQ&cup2hreq=b3e1bc1aa970ca1b84020133d255e00dca846843288a329153efc8379d6b8f5d
-[64479:64501:0130/012207.075686:VERBOSE1:network_delegate.cc(37)] NetworkDelegate::NotifyBeforeURLRequest: http://edgedl.me.gvt1.com/edgedl/release2/chrome_component/aculsbfvftdtqcjji5o6a743svfq_9.54.0/gcmjkmgdlgnkkcocmoeiminaijmmjnii_9.54.0_all_fjvhh4h55icwcaan3v3j6mksxa.crx3
-[64441:64442:0130/012207.107576:VERBOSE1:url_fetcher_downloader.cc(157)] url fetcher response started for: http://edgedl.me.gvt1.com/edgedl/release2/chrome_component/aculsbfvftdtqcjji5o6a743svfq_9.54.0/gcmjkmgdlgnkkcocmoeiminaijmmjnii_9.54.0_all_fjvhh4h55icwcaan3v3j6mksxa.crx3
-[64441:64442:0130/012207.122778:VERBOSE1:url_fetcher_downloader.cc(134)] Downloaded 37324 bytes in 47ms from http://edgedl.me.gvt1.com/edgedl/release2/chrome_component/aculsbfvftdtqcjji5o6a743svfq_9.54.0/gcmjkmgdlgnkkcocmoeiminaijmmjnii_9.54.0_all_fjvhh4h55icwcaan3v3j6mksxa.crx3 to /tmp/.org.chromium.Chromium.NQ3pbY/gcmjkmgdlgnkkcocmoeiminaijmmjnii_9.54.0_all_fjvhh4h55icwcaan3v3j6mksxa.crx3
-[64441:64454:0130/012207.123855:VERBOSE1:unpacker.cc(66)] Verifying component: /home/diego/Workspace/Cherry-1/examples/advanced/build/bin/component_crx_cache/gcmjkmgdlgnkkcocmoeiminaijmmjnii_1.4927ba841546599b3eaa6e1643a5fd15babbb30be00f0f419a7f148a40a71a12
-[64441:64454:0130/012207.124401:VERBOSE1:unpacker.cc(95)] Unpacking in: /tmp/.org.chromium.Chromium.Uk3mRC
-[64441:64454:0130/012207.124707:VERBOSE1:unpacker.cc(103)] Unzipping failed.
-[64479:64501:0130/012207.125920:VERBOSE1:network_delegate.cc(37)] NetworkDelegate::NotifyBeforeURLRequest: https://update.googleapis.com/service/update2/json
-[64479:64501:0130/012207.126181:VERBOSE1:tls_handshaker.cc(105)] TlsClient: Continuing handshake
-[64479:64501:0130/012207.138073:VERBOSE1:tls_handshaker.cc(105)] TlsClient: Continuing handshake
-[64479:64501:0130/012207.138106:VERBOSE1:tls_handshaker.cc(105)] TlsClient: Continuing handshake
-[64479:64501:0130/012207.141669:VERBOSE1:tls_handshaker.cc(105)] TlsClient: Continuing handshake
-[64479:64501:0130/012207.141702:VERBOSE1:tls_handshaker.cc(105)] TlsClient: Continuing handshake
-[64479:64501:0130/012207.141735:VERBOSE1:tls_handshaker.cc(105)] TlsClient: Continuing handshake
-[64441:64442:0130/012207.144477:VERBOSE1:request_sender.cc(189)] Request completed from url: https://update.googleapis.com/service/update2/json
-[64479:64501:0130/012207.145960:VERBOSE1:tls_handshaker.cc(105)] TlsClient: Continuing handshake
-[64479:64501:0130/012207.197197:VERBOSE1:network_delegate.cc(37)] NetworkDelegate::NotifyBeforeURLRequest: http://edgedl.me.gvt1.com/edgedl/release2/chrome_component/pjnu5jyln4kujhcmwstuyyvyyu_4.10.2830.0/oimompecagnajdejgnnjijobebaeigek_4.10.2830.0_linux_ace35m3jiw32bj5wzzow5nia7yta.crx3
-[64441:64442:0130/012207.223747:VERBOSE1:url_fetcher_downloader.cc(157)] url fetcher response started for: http://edgedl.me.gvt1.com/edgedl/release2/chrome_component/pjnu5jyln4kujhcmwstuyyvyyu_4.10.2830.0/oimompecagnajdejgnnjijobebaeigek_4.10.2830.0_linux_ace35m3jiw32bj5wzzow5nia7yta.crx3
-[64441:64442:0130/012207.401241:VERBOSE1:url_fetcher_downloader.cc(134)] Downloaded 14157618 bytes in 204ms from http://edgedl.me.gvt1.com/edgedl/release2/chrome_component/pjnu5jyln4kujhcmwstuyyvyyu_4.10.2830.0/oimompecagnajdejgnnjijobebaeigek_4.10.2830.0_linux_ace35m3jiw32bj5wzzow5nia7yta.crx3 to /tmp/.org.chromium.Chromium.S6L3Oi/oimompecagnajdejgnnjijobebaeigek_4.10.2830.0_linux_ace35m3jiw32bj5wzzow5nia7yta.crx3
-[64441:64454:0130/012207.439443:VERBOSE1:unpacker.cc(66)] Verifying component: /home/diego/Workspace/Cherry-1/examples/advanced/build/bin/component_crx_cache/oimompecagnajdejgnnjijobebaeigek_1.440875847b5cd49226587533608d33de7de4e906f446a63828cc3321a37db13e
-[64441:64454:0130/012207.567940:VERBOSE1:unpacker.cc(95)] Unpacking in: /tmp/.org.chromium.Chromium.RV57bP
-[64441:64454:0130/012207.568357:VERBOSE1:unpacker.cc(103)] Unzipping failed.
-[64479:64501:0130/012207.571551:VERBOSE1:network_delegate.cc(37)] NetworkDelegate::NotifyBeforeURLRequest: https://update.googleapis.com/service/update2/json
-[64441:64442:0130/012207.589109:VERBOSE1:request_sender.cc(189)] Request completed from url: https://update.googleapis.com/service/update2/json
-[64441:64442:0130/012207.640375:VERBOSE1:model_executor_impl.cc(184)] Segmentation model input:  feature 0: 1 feature 1: 0 feature 2: 0 feature 3: 0 feature 4: 0 feature 5: 0 feature 6: 0 feature 7: 0 feature 8: 0 feature 9: 0 for segment OPTIMIZATION_TARGET_SEGMENTATION_DEVICE_SWITCHER
-[64441:64442:0130/012207.640703:VERBOSE1:model_executor_impl.cc(212)] Segmentation model result:  output 0: 0 output 1: 0 output 2: 0 output 3: 0 output 4: 0 output 5: 0 output 6: 0 output 7: 1 for segment OPTIMIZATION_TARGET_SEGMENTATION_DEVICE_SWITCHER
-[64441:64442:0130/012207.640751:VERBOSE1:segment_result_provider.cc(29)] ComputeDiscreteMapping: segment=: result=0, rank=0
-[64441:64442:0130/012207.640759:VERBOSE1:segment_result_provider.cc(359)] OnModelExecuted: Default model executed successfully. Result: PredictionResult: timestamp: 13382670127640748 result 0: 0 result 1: 0 result 2: 0 result 3: 0 result 4: 0 result 5: 0 result 6: 0 result 7: 1 for segment OPTIMIZATION_TARGET_SEGMENTATION_DEVICE_SWITCHER
-[64441:64442:0130/012207.641020:VERBOSE1:request_dispatcher.cc(146)] Computed result for device_switcher: Status: Succeeded output 0: NotSynced
-[64479:64501:0130/012208.017742:VERBOSE1:network_delegate.cc(37)] NetworkDelegate::NotifyBeforeURLRequest: http://edgedl.me.gvt1.com/edgedl/release2/chrome_component/gbgouf6pwo4bhdiy5wup2ihbge_2025.1.29.0/niikhdgajlphfehepabhhblakbdgeefj_2025.01.29.00_all_acx46izrj7syhvykn7cxfw5zmm6q.crx3
-[64441:64442:0130/012208.029215:VERBOSE1:url_fetcher_downloader.cc(157)] url fetcher response started for: http://edgedl.me.gvt1.com/edgedl/release2/chrome_component/gbgouf6pwo4bhdiy5wup2ihbge_2025.1.29.0/niikhdgajlphfehepabhhblakbdgeefj_2025.01.29.00_all_acx46izrj7syhvykn7cxfw5zmm6q.crx3
-[64441:64442:0130/012208.029842:VERBOSE1:url_fetcher_downloader.cc(134)] Downloaded 6709 bytes in 12ms from http://edgedl.me.gvt1.com/edgedl/release2/chrome_component/gbgouf6pwo4bhdiy5wup2ihbge_2025.1.29.0/niikhdgajlphfehepabhhblakbdgeefj_2025.01.29.00_all_acx46izrj7syhvykn7cxfw5zmm6q.crx3 to /tmp/.org.chromium.Chromium.nWapN3/niikhdgajlphfehepabhhblakbdgeefj_2025.01.29.00_all_acx46izrj7syhvykn7cxfw5zmm6q.crx3
-[64441:64454:0130/012208.031158:VERBOSE1:unpacker.cc(66)] Verifying component: /home/diego/Workspace/Cherry-1/examples/advanced/build/bin/component_crx_cache/niikhdgajlphfehepabhhblakbdgeefj_1.9df2e71d42e44b441ef86f5fe2e1a14e787615d77256a0096dd77f51763b0ac5
-[64441:64454:0130/012208.031496:VERBOSE1:unpacker.cc(95)] Unpacking in: /tmp/.org.chromium.Chromium.dmhcR6
-[64441:64456:0130/012208.031817:VERBOSE1:unpacker.cc(103)] Unzipping failed.
-[64479:64501:0130/012208.032508:VERBOSE1:network_delegate.cc(37)] NetworkDelegate::NotifyBeforeURLRequest: https://update.googleapis.com/service/update2/json
-[64441:64442:0130/012208.049289:VERBOSE1:request_sender.cc(189)] Request completed from url: https://update.googleapis.com/service/update2/json
-[64479:64501:0130/012208.493477:VERBOSE1:network_delegate.cc(37)] NetworkDelegate::NotifyBeforeURLRequest: http://edgedl.me.gvt1.com/edgedl/release2/chrome_component/h5mwz6kujz56awdj2hskcqhq6i_20250110.715577970.14/obedbbhbpmojnkanicioggnmelmoomoc_20250110.715577970.14_all_FR500000_acirmibm2yywq4odjeugkvfwqhda.crx3
-[64441:64442:0130/012208.511080:VERBOSE1:url_fetcher_downloader.cc(157)] url fetcher response started for: http://edgedl.me.gvt1.com/edgedl/release2/chrome_component/h5mwz6kujz56awdj2hskcqhq6i_20250110.715577970.14/obedbbhbpmojnkanicioggnmelmoomoc_20250110.715577970.14_all_FR500000_acirmibm2yywq4odjeugkvfwqhda.crx3
-[64441:64442:0130/012208.565485:VERBOSE1:url_fetcher_downloader.cc(134)] Downloaded 5312584 bytes in 72ms from http://edgedl.me.gvt1.com/edgedl/release2/chrome_component/h5mwz6kujz56awdj2hskcqhq6i_20250110.715577970.14/obedbbhbpmojnkanicioggnmelmoomoc_20250110.715577970.14_all_FR500000_acirmibm2yywq4odjeugkvfwqhda.crx3 to /tmp/.org.chromium.Chromium.VnUVx4/obedbbhbpmojnkanicioggnmelmoomoc_20250110.715577970.14_all_FR500000_acirmibm2yywq4odjeugkvfwqhda.crx3
-[64441:64454:0130/012208.580383:VERBOSE1:unpacker.cc(66)] Verifying component: /home/diego/Workspace/Cherry-1/examples/advanced/build/bin/component_crx_cache/obedbbhbpmojnkanicioggnmelmoomoc_1.aa9ebfb619d1590a4f8f850046a68061d629692ee7000e8dffc1b07314863a29
-[64441:64454:0130/012208.626540:VERBOSE1:unpacker.cc(95)] Unpacking in: /tmp/.org.chromium.Chromium.wqIQin
-[64441:64454:0130/012208.627012:VERBOSE1:unpacker.cc(103)] Unzipping failed.
-[64479:64501:0130/012208.628851:VERBOSE1:network_delegate.cc(37)] NetworkDelegate::NotifyBeforeURLRequest: https://update.googleapis.com/service/update2/json
-[64441:64442:0130/012208.645814:VERBOSE1:request_sender.cc(189)] Request completed from url: https://update.googleapis.com/service/update2/json
-[64479:64501:0130/012209.225216:VERBOSE1:network_delegate.cc(37)] NetworkDelegate::NotifyBeforeURLRequest: http://edgedl.me.gvt1.com/edgedl/release2/chrome_component/adrovrpquemobbwthbstjwffhima_2025.1.17.1/kiabhabjdbkjdpjbpigfodbdjmbglcoo_2025.01.17.01_all_dd5w5blqtgwb4xkyhfpmehllye.crx3
-[64441:64442:0130/012209.235920:VERBOSE1:url_fetcher_downloader.cc(157)] url fetcher response started for: http://edgedl.me.gvt1.com/edgedl/release2/chrome_component/adrovrpquemobbwthbstjwffhima_2025.1.17.1/kiabhabjdbkjdpjbpigfodbdjmbglcoo_2025.01.17.01_all_dd5w5blqtgwb4xkyhfpmehllye.crx3
-[64441:64442:0130/012209.236271:VERBOSE1:url_fetcher_downloader.cc(134)] Downloaded 8902 bytes in 11ms from http://edgedl.me.gvt1.com/edgedl/release2/chrome_component/adrovrpquemobbwthbstjwffhima_2025.1.17.1/kiabhabjdbkjdpjbpigfodbdjmbglcoo_2025.01.17.01_all_dd5w5blqtgwb4xkyhfpmehllye.crx3 to /tmp/.org.chromium.Chromium.cDbG5U/kiabhabjdbkjdpjbpigfodbdjmbglcoo_2025.01.17.01_all_dd5w5blqtgwb4xkyhfpmehllye.crx3
-[64441:64454:0130/012209.237106:VERBOSE1:unpacker.cc(66)] Verifying component: /home/diego/Workspace/Cherry-1/examples/advanced/build/bin/component_crx_cache/kiabhabjdbkjdpjbpigfodbdjmbglcoo_1.1987650928271ad440c2b8a50f309139de82c742fb6f1f3ea055b35718ac46e7
-[64441:64454:0130/012209.237409:VERBOSE1:unpacker.cc(95)] Unpacking in: /tmp/.org.chromium.Chromium.UjyjF2
-[64441:64456:0130/012209.237667:VERBOSE1:unpacker.cc(103)] Unzipping failed.
-[64479:64501:0130/012209.238774:VERBOSE1:network_delegate.cc(37)] NetworkDelegate::NotifyBeforeURLRequest: https://update.googleapis.com/service/update2/json
-[64441:64442:0130/012209.255625:VERBOSE1:request_sender.cc(189)] Request completed from url: https://update.googleapis.com/service/update2/json
-[64441:64455:0130/012209.573401:VERBOSE1:object_proxy.cc(513)] Signal received: message_type: MESSAGE_SIGNAL
-path: /org/freedesktop/portal/desktop
-interface: org.freedesktop.portal.Settings
-member: SettingChanged
-sender: :1.8
-signature: ssv
-serial: 3435
-
-string "org.kde.VirtualKeyboard"
-string "active"
-variant   bool false
-
-[64441:64455:0130/012209.573707:VERBOSE1:object_proxy.cc(513)] Signal received: message_type: MESSAGE_SIGNAL
-path: /org/freedesktop/portal/desktop
-interface: org.freedesktop.portal.Settings
-member: SettingChanged
-sender: :1.8
-signature: ssv
-serial: 3436
-
-string "org.kde.VirtualKeyboard"
-string "activeClientSupportsTextInput"
-variant   bool true
-
-[64441:64455:0130/012209.573814:VERBOSE1:object_proxy.cc(513)] Signal received: message_type: MESSAGE_SIGNAL
-path: /org/freedesktop/portal/desktop
-interface: org.freedesktop.portal.Settings
-member: SettingChanged
-sender: :1.8
-signature: ssv
-serial: 3437
-
-string "org.kde.VirtualKeyboard"
-string "activeClientSupportsTextInput"
-variant   bool true
-
-[64441:64455:0130/012209.595525:VERBOSE1:object_proxy.cc(513)] Signal received: message_type: MESSAGE_SIGNAL
-path: /org/freedesktop/portal/desktop
-interface: org.freedesktop.portal.Settings
-member: SettingChanged
-sender: :1.8
-signature: ssv
-serial: 3438
-
-string "org.kde.VirtualKeyboard"
-string "active"
-variant   bool true
-
-[64479:64501:0130/012209.849504:VERBOSE1:network_delegate.cc(37)] NetworkDelegate::NotifyBeforeURLRequest: http://edgedl.me.gvt1.com/edgedl/release2/chrome_component/adtdlc4r4qfcbl4fmn6lqptnbqfa_67/khaoiebndkojlmppeemjhbpbandiljpe_67_linux_ccm7tebhernhlnfspqlje47phi.crx3
-[64441:64442:0130/012209.859729:VERBOSE1:url_fetcher_downloader.cc(157)] url fetcher response started for: http://edgedl.me.gvt1.com/edgedl/release2/chrome_component/adtdlc4r4qfcbl4fmn6lqptnbqfa_67/khaoiebndkojlmppeemjhbpbandiljpe_67_linux_ccm7tebhernhlnfspqlje47phi.crx3
-[64441:64442:0130/012209.860049:VERBOSE1:url_fetcher_downloader.cc(134)] Downloaded 5935 bytes in 10ms from http://edgedl.me.gvt1.com/edgedl/release2/chrome_component/adtdlc4r4qfcbl4fmn6lqptnbqfa_67/khaoiebndkojlmppeemjhbpbandiljpe_67_linux_ccm7tebhernhlnfspqlje47phi.crx3 to /tmp/.org.chromium.Chromium.WpOnHl/khaoiebndkojlmppeemjhbpbandiljpe_67_linux_ccm7tebhernhlnfspqlje47phi.crx3
-[64441:64456:0130/012209.861288:VERBOSE1:unpacker.cc(66)] Verifying component: /home/diego/Workspace/Cherry-1/examples/advanced/build/bin/component_crx_cache/khaoiebndkojlmppeemjhbpbandiljpe_1.05399c5840405f4af2454470ceccaa3d097f07e271705cf37c1e5559ce793eeb
-[64441:64456:0130/012209.861523:VERBOSE1:unpacker.cc(95)] Unpacking in: /tmp/.org.chromium.Chromium.S14zKh
-[64441:64454:0130/012209.861962:VERBOSE1:unpacker.cc(103)] Unzipping failed.
-[64479:64501:0130/012209.863482:VERBOSE1:network_delegate.cc(37)] NetworkDelegate::NotifyBeforeURLRequest: https://update.googleapis.com/service/update2/json
-[64441:64442:0130/012209.881941:VERBOSE1:request_sender.cc(189)] Request completed from url: https://update.googleapis.com/service/update2/json
-[64479:64501:0130/012210.490629:VERBOSE1:network_delegate.cc(37)] NetworkDelegate::NotifyBeforeURLRequest: http://edgedl.me.gvt1.com/edgedl/release2/chrome_component/adobrkjwvplcatt3lnjzjkqefhqa_9528/hfnkpimlhhgieaddgfemjhofmfblmnib_9528_all_c5gye3cth3mgbifho6xh254t4q.crx3
-[64441:64442:0130/012210.501525:VERBOSE1:url_fetcher_downloader.cc(157)] url fetcher response started for: http://edgedl.me.gvt1.com/edgedl/release2/chrome_component/adobrkjwvplcatt3lnjzjkqefhqa_9528/hfnkpimlhhgieaddgfemjhofmfblmnib_9528_all_c5gye3cth3mgbifho6xh254t4q.crx3
-[64441:64442:0130/012210.506549:VERBOSE1:url_fetcher_downloader.cc(134)] Downloaded 588878 bytes in 16ms from http://edgedl.me.gvt1.com/edgedl/release2/chrome_component/adobrkjwvplcatt3lnjzjkqefhqa_9528/hfnkpimlhhgieaddgfemjhofmfblmnib_9528_all_c5gye3cth3mgbifho6xh254t4q.crx3 to /tmp/.org.chromium.Chromium.jSinAY/hfnkpimlhhgieaddgfemjhofmfblmnib_9528_all_c5gye3cth3mgbifho6xh254t4q.crx3
-[64441:64454:0130/012210.508902:VERBOSE1:unpacker.cc(66)] Verifying component: /home/diego/Workspace/Cherry-1/examples/advanced/build/bin/component_crx_cache/hfnkpimlhhgieaddgfemjhofmfblmnib_1.6c2f63b480490f945a766d2cb6df96a636ba971dd40da5f5d4907b959763e234
-[64441:64454:0130/012210.514611:VERBOSE1:unpacker.cc(95)] Unpacking in: /tmp/.org.chromium.Chromium.rzoxxp
-[64441:64456:0130/012210.515004:VERBOSE1:unpacker.cc(103)] Unzipping failed.
-[64479:64501:0130/012210.516870:VERBOSE1:network_delegate.cc(37)] NetworkDelegate::NotifyBeforeURLRequest: https://update.googleapis.com/service/update2/json
-[64441:64442:0130/012210.536467:VERBOSE1:request_sender.cc(189)] Request completed from url: https://update.googleapis.com/service/update2/json
-[64479:64501:0130/012211.172142:VERBOSE1:network_delegate.cc(37)] NetworkDelegate::NotifyBeforeURLRequest: http://edgedl.me.gvt1.com/edgedl/release2/chrome_component/V3P1l2hLvLw_7/7_all_sslErrorAssistant.crx3
-[64441:64442:0130/012211.181548:VERBOSE1:url_fetcher_downloader.cc(157)] url fetcher response started for: http://edgedl.me.gvt1.com/edgedl/release2/chrome_component/V3P1l2hLvLw_7/7_all_sslErrorAssistant.crx3
-[64441:64442:0130/012211.181870:VERBOSE1:url_fetcher_downloader.cc(134)] Downloaded 5407 bytes in 9ms from http://edgedl.me.gvt1.com/edgedl/release2/chrome_component/V3P1l2hLvLw_7/7_all_sslErrorAssistant.crx3 to /tmp/.org.chromium.Chromium.4X0o70/7_all_sslErrorAssistant.crx3
-[64441:64454:0130/012211.183099:VERBOSE1:unpacker.cc(66)] Verifying component: /home/diego/Workspace/Cherry-1/examples/advanced/build/bin/component_crx_cache/giekcmmlnklenlaomppkphknjmnnpneh_1.3eb16d6c28b502ac4cfee8f4a148df05f4d93229fa36a71db8b08d06329ff18a
-[64441:64454:0130/012211.183380:VERBOSE1:unpacker.cc(95)] Unpacking in: /tmp/.org.chromium.Chromium.YcLlW9
-[64441:64454:0130/012211.183912:VERBOSE1:unpacker.cc(103)] Unzipping failed.
-[64479:64501:0130/012211.185132:VERBOSE1:network_delegate.cc(37)] NetworkDelegate::NotifyBeforeURLRequest: https://update.googleapis.com/service/update2/json
-[64441:64442:0130/012211.202876:VERBOSE1:request_sender.cc(189)] Request completed from url: https://update.googleapis.com/service/update2/json
-[64479:64501:0130/012211.852600:VERBOSE1:network_delegate.cc(37)] NetworkDelegate::NotifyBeforeURLRequest: http://edgedl.me.gvt1.com/edgedl/release2/chrome_component/acryyvhve37elhs2oetcrnw3lyfq_1.0.7.1652906823/laoigpblnllgcgjnjnllmfolckpjlhki_1.0.7.1652906823_all_jtggsagwbg7dhs53nvq4e53lva.crx3
-[64441:64442:0130/012211.863615:VERBOSE1:url_fetcher_downloader.cc(157)] url fetcher response started for: http://edgedl.me.gvt1.com/edgedl/release2/chrome_component/acryyvhve37elhs2oetcrnw3lyfq_1.0.7.1652906823/laoigpblnllgcgjnjnllmfolckpjlhki_1.0.7.1652906823_all_jtggsagwbg7dhs53nvq4e53lva.crx3
-[64441:64442:0130/012211.863924:VERBOSE1:url_fetcher_downloader.cc(134)] Downloaded 10823 bytes in 11ms from http://edgedl.me.gvt1.com/edgedl/release2/chrome_component/acryyvhve37elhs2oetcrnw3lyfq_1.0.7.1652906823/laoigpblnllgcgjnjnllmfolckpjlhki_1.0.7.1652906823_all_jtggsagwbg7dhs53nvq4e53lva.crx3 to /tmp/.org.chromium.Chromium.PrfhU5/laoigpblnllgcgjnjnllmfolckpjlhki_1.0.7.1652906823_all_jtggsagwbg7dhs53nvq4e53lva.crx3
-[64441:64454:0130/012211.864761:VERBOSE1:unpacker.cc(66)] Verifying component: /home/diego/Workspace/Cherry-1/examples/advanced/build/bin/component_crx_cache/laoigpblnllgcgjnjnllmfolckpjlhki_1.29661be65c8fb50d3d4df2fe040a1cc6dd525f50a95850aae6a191301c3de744
-[64441:64454:0130/012211.865081:VERBOSE1:unpacker.cc(95)] Unpacking in: /tmp/.org.chromium.Chromium.pZOJEL
-[64441:64454:0130/012211.865553:VERBOSE1:unpacker.cc(103)] Unzipping failed.
-[64479:64501:0130/012211.867123:VERBOSE1:network_delegate.cc(37)] NetworkDelegate::NotifyBeforeURLRequest: https://update.googleapis.com/service/update2/json
-[64441:64442:0130/012211.883841:VERBOSE1:request_sender.cc(189)] Request completed from url: https://update.googleapis.com/service/update2/json
-[64479:64501:0130/012212.028924:VERBOSE1:tls_handshaker.cc(105)] TlsClient: Continuing handshake
-[64479:64501:0130/012212.029380:VERBOSE1:tls_handshaker.cc(126)] TlsClient: SSL_do_handshake returned when entering early data. After retry, rv=-1, SSL_in_early_data=1
-[64479:64501:0130/012212.043246:VERBOSE1:tls_handshaker.cc(105)] TlsClient: Continuing handshake
-[64479:64501:0130/012212.043440:VERBOSE1:tls_handshaker.cc(105)] TlsClient: Continuing handshake
-[64479:64501:0130/012212.549343:VERBOSE1:network_delegate.cc(37)] NetworkDelegate::NotifyBeforeURLRequest: http://edgedl.me.gvt1.com/edgedl/release2/chrome_component/adbtttihz4btanlu675ivcscjhpa_483/lmelglejhemejginpboagddgdfbepgmp_483_all_ZZ_g5ppokzrnbldgqbyzr7ymfef3a.crx3
-[64441:64442:0130/012212.560813:VERBOSE1:url_fetcher_downloader.cc(157)] url fetcher response started for: http://edgedl.me.gvt1.com/edgedl/release2/chrome_component/adbtttihz4btanlu675ivcscjhpa_483/lmelglejhemejginpboagddgdfbepgmp_483_all_ZZ_g5ppokzrnbldgqbyzr7ymfef3a.crx3
-[64441:64442:0130/012212.561354:VERBOSE1:url_fetcher_downloader.cc(134)] Downloaded 56104 bytes in 12ms from http://edgedl.me.gvt1.com/edgedl/release2/chrome_component/adbtttihz4btanlu675ivcscjhpa_483/lmelglejhemejginpboagddgdfbepgmp_483_all_ZZ_g5ppokzrnbldgqbyzr7ymfef3a.crx3 to /tmp/.org.chromium.Chromium.tigk5l/lmelglejhemejginpboagddgdfbepgmp_483_all_ZZ_g5ppokzrnbldgqbyzr7ymfef3a.crx3
-[64441:64454:0130/012212.561888:VERBOSE1:unpacker.cc(66)] Verifying component: /home/diego/Workspace/Cherry-1/examples/advanced/build/bin/component_crx_cache/lmelglejhemejginpboagddgdfbepgmp_1.6f3a58ed84a9ef1d32678172d437983af1248999b751edf3db69861d9ad1b3b6
-[64441:64454:0130/012212.562586:VERBOSE1:unpacker.cc(95)] Unpacking in: /tmp/.org.chromium.Chromium.lYQgIU
-[64441:64454:0130/012212.563061:VERBOSE1:unpacker.cc(103)] Unzipping failed.
-[64479:64501:0130/012212.563727:VERBOSE1:network_delegate.cc(37)] NetworkDelegate::NotifyBeforeURLRequest: https://update.googleapis.com/service/update2/json
-[64441:64442:0130/012212.581078:VERBOSE1:request_sender.cc(189)] Request completed from url: https://update.googleapis.com/service/update2/json
-[64479:64501:0130/012213.262203:VERBOSE1:network_delegate.cc(37)] NetworkDelegate::NotifyBeforeURLRequest: http://edgedl.me.gvt1.com/edgedl/release2/chrome_component/acznlydc3obko4eskuc4buavndaa_3059/jflookgnkcckhobaglndicnbbgbonegd_3059_all_p4wbvhfagpvenzww4fhxcrthqi.crx3
-[64441:64442:0130/012213.274431:VERBOSE1:url_fetcher_downloader.cc(157)] url fetcher response started for: http://edgedl.me.gvt1.com/edgedl/release2/chrome_component/acznlydc3obko4eskuc4buavndaa_3059/jflookgnkcckhobaglndicnbbgbonegd_3059_all_p4wbvhfagpvenzww4fhxcrthqi.crx3
-[64441:64442:0130/012213.274721:VERBOSE1:url_fetcher_downloader.cc(134)] Downloaded 79683 bytes in 12ms from http://edgedl.me.gvt1.com/edgedl/release2/chrome_component/acznlydc3obko4eskuc4buavndaa_3059/jflookgnkcckhobaglndicnbbgbonegd_3059_all_p4wbvhfagpvenzww4fhxcrthqi.crx3 to /tmp/.org.chromium.Chromium.yu4GQe/jflookgnkcckhobaglndicnbbgbonegd_3059_all_p4wbvhfagpvenzww4fhxcrthqi.crx3
-[64441:64454:0130/012213.276003:VERBOSE1:unpacker.cc(66)] Verifying component: /home/diego/Workspace/Cherry-1/examples/advanced/build/bin/component_crx_cache/jflookgnkcckhobaglndicnbbgbonegd_1.9fd2f3e5f3cb7f78d1e30aa930f58f85d7a50c875303b15d711ae20fdc124dce
-[64441:64454:0130/012213.276916:VERBOSE1:unpacker.cc(95)] Unpacking in: /tmp/.org.chromium.Chromium.CdTuSL
-[64441:64456:0130/012213.277361:VERBOSE1:unpacker.cc(103)] Unzipping failed.
-[64479:64501:0130/012213.278195:VERBOSE1:network_delegate.cc(37)] NetworkDelegate::NotifyBeforeURLRequest: https://update.googleapis.com/service/update2/json
-[64441:64442:0130/012213.295546:VERBOSE1:request_sender.cc(189)] Request completed from url: https://update.googleapis.com/service/update2/json
-[64479:64501:0130/012213.993125:VERBOSE1:network_delegate.cc(37)] NetworkDelegate::NotifyBeforeURLRequest: http://edgedl.me.gvt1.com/edgedl/release2/chrome_component/dhys4pleijpkdii3vqr37xjqmi_1209/efniojlnjndmcbiieegkicadnoecjjef_1209_all_acmv36ksfomhxwsggcpmjxsvxfza.crx3
-[64441:64442:0130/012214.003151:VERBOSE1:url_fetcher_downloader.cc(157)] url fetcher response started for: http://edgedl.me.gvt1.com/edgedl/release2/chrome_component/dhys4pleijpkdii3vqr37xjqmi_1209/efniojlnjndmcbiieegkicadnoecjjef_1209_all_acmv36ksfomhxwsggcpmjxsvxfza.crx3
-[64441:64442:0130/012214.003919:VERBOSE1:url_fetcher_downloader.cc(134)] Downloaded 154534 bytes in 10ms from http://edgedl.me.gvt1.com/edgedl/release2/chrome_component/dhys4pleijpkdii3vqr37xjqmi_1209/efniojlnjndmcbiieegkicadnoecjjef_1209_all_acmv36ksfomhxwsggcpmjxsvxfza.crx3 to /tmp/.org.chromium.Chromium.2FbXNo/efniojlnjndmcbiieegkicadnoecjjef_1209_all_acmv36ksfomhxwsggcpmjxsvxfza.crx3
-[64441:64454:0130/012214.005481:VERBOSE1:unpacker.cc(66)] Verifying component: /home/diego/Workspace/Cherry-1/examples/advanced/build/bin/component_crx_cache/efniojlnjndmcbiieegkicadnoecjjef_1.0ffcaa5659647cc2e9d4cc76564bca32ea28197f1136ad932d83bf448cd4caab
-[64441:64454:0130/012214.007025:VERBOSE1:unpacker.cc(95)] Unpacking in: /tmp/.org.chromium.Chromium.WKIeSN
-[64441:64454:0130/012214.007595:VERBOSE1:unpacker.cc(103)] Unzipping failed.
-[64479:64501:0130/012214.008190:VERBOSE1:network_delegate.cc(37)] NetworkDelegate::NotifyBeforeURLRequest: https://update.googleapis.com/service/update2/json
-[64441:64442:0130/012214.025531:VERBOSE1:request_sender.cc(189)] Request completed from url: https://update.googleapis.com/service/update2/json
-[64479:64501:0130/012214.739174:VERBOSE1:network_delegate.cc(37)] NetworkDelegate::NotifyBeforeURLRequest: http://edgedl.me.gvt1.com/edgedl/release2/chrome_component/gxfxw5tpagw5sjcjp5n3fng72a_2024.12.19.1218/ggkkehgbnfjpeggfpleeakpidbkibbmn_2024.12.19.1218_all_fv3otvkif6vzxcwwn5ycxdrxpq.crx3
-[64441:64455:0130/012214.745877:VERBOSE1:object_proxy.cc(513)] Signal received: message_type: MESSAGE_SIGNAL
-path: /org/freedesktop/portal/desktop
-interface: org.freedesktop.portal.Settings
-member: SettingChanged
-sender: :1.8
-signature: ssv
-serial: 3447
-
-string "org.kde.VirtualKeyboard"
-string "active"
-variant   bool false
-
-[64441:64442:0130/012214.748548:VERBOSE1:url_fetcher_downloader.cc(157)] url fetcher response started for: http://edgedl.me.gvt1.com/edgedl/release2/chrome_component/gxfxw5tpagw5sjcjp5n3fng72a_2024.12.19.1218/ggkkehgbnfjpeggfpleeakpidbkibbmn_2024.12.19.1218_all_fv3otvkif6vzxcwwn5ycxdrxpq.crx3
-[64441:64442:0130/012214.748913:VERBOSE1:url_fetcher_downloader.cc(134)] Downloaded 10740 bytes in 9ms from http://edgedl.me.gvt1.com/edgedl/release2/chrome_component/gxfxw5tpagw5sjcjp5n3fng72a_2024.12.19.1218/ggkkehgbnfjpeggfpleeakpidbkibbmn_2024.12.19.1218_all_fv3otvkif6vzxcwwn5ycxdrxpq.crx3 to /tmp/.org.chromium.Chromium.pNNPep/ggkkehgbnfjpeggfpleeakpidbkibbmn_2024.12.19.1218_all_fv3otvkif6vzxcwwn5ycxdrxpq.crx3
-[64441:64454:0130/012214.750184:VERBOSE1:unpacker.cc(66)] Verifying component: /home/diego/Workspace/Cherry-1/examples/advanced/build/bin/component_crx_cache/ggkkehgbnfjpeggfpleeakpidbkibbmn_1.3525216abfc685f109e0efae397d7afe8bd1aec6d081fefc730947cd3e734f2f
-[64441:64454:0130/012214.750522:VERBOSE1:unpacker.cc(95)] Unpacking in: /tmp/.org.chromium.Chromium.hchEOc
-[64441:64456:0130/012214.750939:VERBOSE1:unpacker.cc(103)] Unzipping failed.
-[64479:64501:0130/012214.752304:VERBOSE1:network_delegate.cc(37)] NetworkDelegate::NotifyBeforeURLRequest: https://update.googleapis.com/service/update2/json
-[64441:64442:0130/012214.770900:VERBOSE1:request_sender.cc(189)] Request completed from url: https://update.googleapis.com/service/update2/json
-[64479:64501:0130/012215.499285:VERBOSE1:network_delegate.cc(37)] NetworkDelegate::NotifyBeforeURLRequest: http://edgedl.me.gvt1.com/edgedl/release2/chrome_component/j2hxfei2occ5siitujtlwgp6xi_3/ojhpjlocmbogdgmfpkhlaaeamibhnphh_3_all_gplutbkdljxxbjolk3siq7kive.crx3
-[64441:64442:0130/012215.509928:VERBOSE1:url_fetcher_downloader.cc(157)] url fetcher response started for: http://edgedl.me.gvt1.com/edgedl/release2/chrome_component/j2hxfei2occ5siitujtlwgp6xi_3/ojhpjlocmbogdgmfpkhlaaeamibhnphh_3_all_gplutbkdljxxbjolk3siq7kive.crx3
-[64441:64442:0130/012215.517382:VERBOSE1:url_fetcher_downloader.cc(134)] Downloaded 878447 bytes in 18ms from http://edgedl.me.gvt1.com/edgedl/release2/chrome_component/j2hxfei2occ5siitujtlwgp6xi_3/ojhpjlocmbogdgmfpkhlaaeamibhnphh_3_all_gplutbkdljxxbjolk3siq7kive.crx3 to /tmp/.org.chromium.Chromium.2wuCrv/ojhpjlocmbogdgmfpkhlaaeamibhnphh_3_all_gplutbkdljxxbjolk3siq7kive.crx3
-[64441:64454:0130/012215.520764:VERBOSE1:unpacker.cc(66)] Verifying component: /home/diego/Workspace/Cherry-1/examples/advanced/build/bin/component_crx_cache/ojhpjlocmbogdgmfpkhlaaeamibhnphh_1.545666a4efd056351597bb386aea1368105ededc976ed5650d8682daab9f37ff
-[64441:64454:0130/012215.529104:VERBOSE1:unpacker.cc(95)] Unpacking in: /tmp/.org.chromium.Chromium.0QwEjk
-[64441:64456:0130/012215.529672:VERBOSE1:unpacker.cc(103)] Unzipping failed.
-[64479:64501:0130/012215.530591:VERBOSE1:network_delegate.cc(37)] NetworkDelegate::NotifyBeforeURLRequest: https://update.googleapis.com/service/update2/json
-[64441:64442:0130/012215.547391:VERBOSE1:request_sender.cc(189)] Request completed from url: https://update.googleapis.com/service/update2/json
-[64441:64455:0130/012216.197175:VERBOSE1:object_proxy.cc(513)] Signal received: message_type: MESSAGE_SIGNAL
-path: /org/freedesktop/portal/desktop
-interface: org.freedesktop.portal.Settings
-member: SettingChanged
-sender: :1.8
-signature: ssv
-serial: 3452
-
-string "org.kde.VirtualKeyboard"
-string "active"
-variant   bool true
-
-[64479:64501:0130/012216.307808:VERBOSE1:network_delegate.cc(37)] NetworkDelegate::NotifyBeforeURLRequest: http://edgedl.me.gvt1.com/edgedl/release2/chrome_component/ad73clyhehjptyj63m7bjo43quwq_2025.1.28.1/jflhchccmppkfebkiaminageehmchikm_2025.01.28.01_all_f7oxyjom2bj7pnowf4fthtop7y.crx3
-[64441:64442:0130/012216.318162:VERBOSE1:url_fetcher_downloader.cc(157)] url fetcher response started for: http://edgedl.me.gvt1.com/edgedl/release2/chrome_component/ad73clyhehjptyj63m7bjo43quwq_2025.1.28.1/jflhchccmppkfebkiaminageehmchikm_2025.01.28.01_all_f7oxyjom2bj7pnowf4fthtop7y.crx3
-[64441:64442:0130/012216.318475:VERBOSE1:url_fetcher_downloader.cc(134)] Downloaded 9975 bytes in 10ms from http://edgedl.me.gvt1.com/edgedl/release2/chrome_component/ad73clyhehjptyj63m7bjo43quwq_2025.1.28.1/jflhchccmppkfebkiaminageehmchikm_2025.01.28.01_all_f7oxyjom2bj7pnowf4fthtop7y.crx3 to /tmp/.org.chromium.Chromium.N77qPg/jflhchccmppkfebkiaminageehmchikm_2025.01.28.01_all_f7oxyjom2bj7pnowf4fthtop7y.crx3
-[64441:64456:0130/012216.319280:VERBOSE1:unpacker.cc(66)] Verifying component: /home/diego/Workspace/Cherry-1/examples/advanced/build/bin/component_crx_cache/jflhchccmppkfebkiaminageehmchikm_1.4e14da95a0875b37c5edd2c2b00e801997cdbbc08c65f19d96dbdd4e2b5365e8
-[64441:64456:0130/012216.319701:VERBOSE1:unpacker.cc(95)] Unpacking in: /tmp/.org.chromium.Chromium.jPaIVJ
-[64441:64454:0130/012216.320129:VERBOSE1:unpacker.cc(103)] Unzipping failed.
-[64479:64501:0130/012216.321567:VERBOSE1:network_delegate.cc(37)] NetworkDelegate::NotifyBeforeURLRequest: https://update.googleapis.com/service/update2/json
-[64441:64442:0130/012216.339556:VERBOSE1:request_sender.cc(189)] Request completed from url: https://update.googleapis.com/service/update2/json
-[64479:64501:0130/012217.114959:VERBOSE1:network_delegate.cc(37)] NetworkDelegate::NotifyBeforeURLRequest: http://edgedl.me.gvt1.com/edgedl/release2/chrome_component/adrga7eefaxjfdmmgfkiaxjg4yjq_2024.7.12.235938/eeigpngbgcognadeebkilcpcaedhellh_2024.07.12.235938_all_a6r64uyugl6fjh3lupjqo6w7ai.crx3
-[64441:64442:0130/012217.126190:VERBOSE1:url_fetcher_downloader.cc(157)] url fetcher response started for: http://edgedl.me.gvt1.com/edgedl/release2/chrome_component/adrga7eefaxjfdmmgfkiaxjg4yjq_2024.7.12.235938/eeigpngbgcognadeebkilcpcaedhellh_2024.07.12.235938_all_a6r64uyugl6fjh3lupjqo6w7ai.crx3
-[64441:64442:0130/012217.127089:VERBOSE1:url_fetcher_downloader.cc(134)] Downloaded 139943 bytes in 12ms from http://edgedl.me.gvt1.com/edgedl/release2/chrome_component/adrga7eefaxjfdmmgfkiaxjg4yjq_2024.7.12.235938/eeigpngbgcognadeebkilcpcaedhellh_2024.07.12.235938_all_a6r64uyugl6fjh3lupjqo6w7ai.crx3 to /tmp/.org.chromium.Chromium.YVeolO/eeigpngbgcognadeebkilcpcaedhellh_2024.07.12.235938_all_a6r64uyugl6fjh3lupjqo6w7ai.crx3
-[64441:64454:0130/012217.128603:VERBOSE1:unpacker.cc(66)] Verifying component: /home/diego/Workspace/Cherry-1/examples/advanced/build/bin/component_crx_cache/eeigpngbgcognadeebkilcpcaedhellh_1.8814cb6cab024b119ab991ad7acd74f4df7bc68bbf86c0903c8be9852a5baa55
-[64441:64454:0130/012217.130042:VERBOSE1:unpacker.cc(95)] Unpacking in: /tmp/.org.chromium.Chromium.msj65Z
-[64441:64454:0130/012217.130404:VERBOSE1:unpacker.cc(103)] Unzipping failed.
-[64479:64501:0130/012217.132209:VERBOSE1:network_delegate.cc(37)] NetworkDelegate::NotifyBeforeURLRequest: https://update.googleapis.com/service/update2/json
-[64441:64442:0130/012217.150811:VERBOSE1:request_sender.cc(189)] Request completed from url: https://update.googleapis.com/service/update2/json
-[64441:64455:0130/012217.264647:VERBOSE1:object_proxy.cc(513)] Signal received: message_type: MESSAGE_SIGNAL
-path: /org/freedesktop/portal/desktop
-interface: org.freedesktop.portal.Settings
-member: SettingChanged
-sender: :1.8
-signature: ssv
-serial: 3454
-
-string "org.kde.VirtualKeyboard"
-string "active"
-variant   bool false
-
-[64441:64455:0130/012217.264700:VERBOSE1:object_proxy.cc(513)] Signal received: message_type: MESSAGE_SIGNAL
-path: /org/freedesktop/portal/desktop
-interface: org.freedesktop.portal.Settings
-member: SettingChanged
-sender: :1.8
-signature: ssv
-serial: 3455
-
-string "org.kde.VirtualKeyboard"
-string "activeClientSupportsTextInput"
-variant   bool true
-
-[64441:64455:0130/012217.264711:VERBOSE1:object_proxy.cc(513)] Signal received: message_type: MESSAGE_SIGNAL
-path: /org/freedesktop/portal/desktop
-interface: org.freedesktop.portal.Settings
-member: SettingChanged
-sender: :1.8
-signature: ssv
-serial: 3456
-
-string "org.kde.VirtualKeyboard"
-string "activeClientSupportsTextInput"
-variant   bool true
-
-[64441:64455:0130/012217.298710:VERBOSE1:object_proxy.cc(513)] Signal received: message_type: MESSAGE_SIGNAL
-path: /org/freedesktop/portal/desktop
-interface: org.freedesktop.portal.Settings
-member: SettingChanged
-sender: :1.8
-signature: ssv
-serial: 3457
-
-string "org.kde.VirtualKeyboard"
-string "active"
-variant   bool true
-
-[64479:64501:0130/012217.944031:VERBOSE1:network_delegate.cc(37)] NetworkDelegate::NotifyBeforeURLRequest: http://edgedl.me.gvt1.com/edgedl/release2/chrome_component/acaldksiunzh56452py2db5mnbpa_120.0.6050.0/jamhcnnkihinmdlkakkaopbjbbcngflc_120.0.6050.0_all_dgzfpknn7v3zslsbhrwu6bt44e.crx3
-[64441:64442:0130/012217.957374:VERBOSE1:url_fetcher_downloader.cc(157)] url fetcher response started for: http://edgedl.me.gvt1.com/edgedl/release2/chrome_component/acaldksiunzh56452py2db5mnbpa_120.0.6050.0/jamhcnnkihinmdlkakkaopbjbbcngflc_120.0.6050.0_all_dgzfpknn7v3zslsbhrwu6bt44e.crx3
-[64441:64442:0130/012217.967013:VERBOSE1:url_fetcher_downloader.cc(134)] Downloaded 1114805 bytes in 23ms from http://edgedl.me.gvt1.com/edgedl/release2/chrome_component/acaldksiunzh56452py2db5mnbpa_120.0.6050.0/jamhcnnkihinmdlkakkaopbjbbcngflc_120.0.6050.0_all_dgzfpknn7v3zslsbhrwu6bt44e.crx3 to /tmp/.org.chromium.Chromium.NPvi2T/jamhcnnkihinmdlkakkaopbjbbcngflc_120.0.6050.0_all_dgzfpknn7v3zslsbhrwu6bt44e.crx3
-[64441:64456:0130/012217.971152:VERBOSE1:unpacker.cc(66)] Verifying component: /home/diego/Workspace/Cherry-1/examples/advanced/build/bin/component_crx_cache/jamhcnnkihinmdlkakkaopbjbbcngflc_1.c52c62a7c50daf7d3f73ec16977cd4b0ea401710807d5dbe3850941dd1b73a70
-[64441:64456:0130/012217.981449:VERBOSE1:unpacker.cc(95)] Unpacking in: /tmp/.org.chromium.Chromium.aOJgi4
-[64441:64456:0130/012217.982045:VERBOSE1:unpacker.cc(103)] Unzipping failed.
-[64479:64501:0130/012217.983072:VERBOSE1:network_delegate.cc(37)] NetworkDelegate::NotifyBeforeURLRequest: https://update.googleapis.com/service/update2/json
-[64441:64442:0130/012217.999894:VERBOSE1:request_sender.cc(189)] Request completed from url: https://update.googleapis.com/service/update2/json
-[64479:64501:0130/012218.833160:VERBOSE1:network_delegate.cc(37)] NetworkDelegate::NotifyBeforeURLRequest: http://edgedl.me.gvt1.com/edgedl/chromewebstore/L2Nocm9tZV9leHRlbnNpb24vYmxvYnMvYjhkYWYwZDctOTExOS00MGQ5LTgyNjAtN2FlY2ZjMDg0NmNj/1.0.0.17_llkgjffcdpffmhiakmfcdcblohccpfmo.crx
-[64441:64442:0130/012218.843816:VERBOSE1:url_fetcher_downloader.cc(157)] url fetcher response started for: http://edgedl.me.gvt1.com/edgedl/chromewebstore/L2Nocm9tZV9leHRlbnNpb24vYmxvYnMvYjhkYWYwZDctOTExOS00MGQ5LTgyNjAtN2FlY2ZjMDg0NmNj/1.0.0.17_llkgjffcdpffmhiakmfcdcblohccpfmo.crx
-[64441:64442:0130/012218.844125:VERBOSE1:url_fetcher_downloader.cc(134)] Downloaded 3145 bytes in 11ms from http://edgedl.me.gvt1.com/edgedl/chromewebstore/L2Nocm9tZV9leHRlbnNpb24vYmxvYnMvYjhkYWYwZDctOTExOS00MGQ5LTgyNjAtN2FlY2ZjMDg0NmNj/1.0.0.17_llkgjffcdpffmhiakmfcdcblohccpfmo.crx to /tmp/.org.chromium.Chromium.IBsCfN/1.0.0.17_llkgjffcdpffmhiakmfcdcblohccpfmo.crx
-[64441:64454:0130/012218.844989:VERBOSE1:unpacker.cc(66)] Verifying component: /home/diego/Workspace/Cherry-1/examples/advanced/build/bin/component_crx_cache/llkgjffcdpffmhiakmfcdcblohccpfmo_1.2638e3c2d1fa1d417bfdc31dd21bc938f106d3b436a6488b41b014ca9e2b7541
-[64441:64454:0130/012218.845217:VERBOSE1:unpacker.cc(95)] Unpacking in: /tmp/.org.chromium.Chromium.dmnVua
-[64441:64456:0130/012218.845679:VERBOSE1:unpacker.cc(103)] Unzipping failed.
-[64479:64501:0130/012218.846674:VERBOSE1:network_delegate.cc(37)] NetworkDelegate::NotifyBeforeURLRequest: https://update.googleapis.com/service/update2/json
-[64441:64442:0130/012218.863386:VERBOSE1:request_sender.cc(189)] Request completed from url: https://update.googleapis.com/service/update2/json
-[64479:64501:0130/012219.710950:VERBOSE1:network_delegate.cc(37)] NetworkDelegate::NotifyBeforeURLRequest: http://edgedl.me.gvt1.com/edgedl/release2/chrome_component/adm5fg7myczym5ugfpmw2lireirq_2024.11.8.0/gonpemdgkjcecdgbnaabipppbmgfggbe_2024.11.08.00_all_ol2ffdgccopns43rnwvf6yhqoi.crx3
-[64441:64442:0130/012219.722354:VERBOSE1:url_fetcher_downloader.cc(157)] url fetcher response started for: http://edgedl.me.gvt1.com/edgedl/release2/chrome_component/adm5fg7myczym5ugfpmw2lireirq_2024.11.8.0/gonpemdgkjcecdgbnaabipppbmgfggbe_2024.11.08.00_all_ol2ffdgccopns43rnwvf6yhqoi.crx3
-[64441:64442:0130/012219.722761:VERBOSE1:url_fetcher_downloader.cc(134)] Downloaded 7326 bytes in 11ms from http://edgedl.me.gvt1.com/edgedl/release2/chrome_component/adm5fg7myczym5ugfpmw2lireirq_2024.11.8.0/gonpemdgkjcecdgbnaabipppbmgfggbe_2024.11.08.00_all_ol2ffdgccopns43rnwvf6yhqoi.crx3 to /tmp/.org.chromium.Chromium.FdbzC2/gonpemdgkjcecdgbnaabipppbmgfggbe_2024.11.08.00_all_ol2ffdgccopns43rnwvf6yhqoi.crx3
-[64441:64456:0130/012219.724145:VERBOSE1:unpacker.cc(66)] Verifying component: /home/diego/Workspace/Cherry-1/examples/advanced/build/bin/component_crx_cache/gonpemdgkjcecdgbnaabipppbmgfggbe_1.03cccbb22b17080279ea1707c9ab093c59f4f4dd09580c841cfa794cb372228d
-[64441:64456:0130/012219.724464:VERBOSE1:unpacker.cc(95)] Unpacking in: /tmp/.org.chromium.Chromium.oZVo25
-[64441:64456:0130/012219.724816:VERBOSE1:unpacker.cc(103)] Unzipping failed.
-[64479:64501:0130/012219.725518:VERBOSE1:network_delegate.cc(37)] NetworkDelegate::NotifyBeforeURLRequest: https://update.googleapis.com/service/update2/json
-[64441:64442:0130/012219.742645:VERBOSE1:request_sender.cc(189)] Request completed from url: https://update.googleapis.com/service/update2/json
-[64441:64442:0130/012219.743453:VERBOSE1:component_updater_service.cc(474)] Update completed with error 0
-[64441:64455:0130/012245.931361:VERBOSE1:object_proxy.cc(513)] Signal received: message_type: MESSAGE_SIGNAL
-path: /org/freedesktop/portal/desktop
-interface: org.freedesktop.portal.Settings
-member: SettingChanged
-sender: :1.8
-signature: ssv
-serial: 3469
-
-string "org.kde.VirtualKeyboard"
-string "active"
-variant   bool false
-
-[64441:64455:0130/012245.931404:VERBOSE1:object_proxy.cc(513)] Signal received: message_type: MESSAGE_SIGNAL
-path: /org/freedesktop/portal/desktop
-interface: org.freedesktop.portal.Settings
-member: SettingChanged
-sender: :1.8
-signature: ssv
-serial: 3470
-
-string "org.kde.VirtualKeyboard"
-string "activeClientSupportsTextInput"
-variant   bool false
-
-[64479:64501:0130/012312.070339:VERBOSE1:tls_handshaker.cc(105)] TlsClient: Continuing handshake
-[64479:64501:0130/012312.070835:VERBOSE1:tls_handshaker.cc(126)] TlsClient: SSL_do_handshake returned when entering early data. After retry, rv=-1, SSL_in_early_data=1
-[64479:64501:0130/012312.084853:VERBOSE1:tls_handshaker.cc(105)] TlsClient: Continuing handshake
-[64479:64501:0130/012312.085079:VERBOSE1:tls_handshaker.cc(105)] TlsClient: Continuing handshake

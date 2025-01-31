@@ -53,7 +53,7 @@ namespace Cherry
 		void GetViewRect(CefRefPtr<CefBrowser> browser, CefRect &rect);
 
 		void OnPaint(CefRefPtr<CefBrowser> browser, PaintElementType type, const RectList &dirtyRects, const void *buffer, int width, int height);
-		void OnAcceleratedPaint(CefRefPtr<CefBrowser> browser, PaintElementType type, const RectList &dirtyRects, const void *buffer, int width, int height);
+		void OnAcceleratedPaint(CefRefPtr<CefBrowser> browser, PaintElementType type, const RectList &dirtyRects, const CefAcceleratedPaintInfo& info);
 		void resize(int w, int h);
 		void render();
 
@@ -76,26 +76,35 @@ namespace Cherry
 
 		virtual CefRefPtr<CefLifeSpanHandler> GetLifeSpanHandler()
 		{
+			    std::cout << "GetLifeSpanHandler called!" << std::endl;
 			return this;
 		}
 
 		virtual CefRefPtr<CefLoadHandler> GetLoadHandler()
 		{
+			    std::cout << "GetLoadHandler called!" << std::endl;
 			return this;
 		}
 
-		virtual CefRefPtr<CefRenderHandler> GetRenderHandler()
-		{
-			return handler;
-		}
+virtual CefRefPtr<CefRenderHandler> GetRenderHandler() override
+{
+    if (!handler) {
+        std::cerr << "❌ RenderHandler is NULL!" << std::endl;
+    } else {
+        std::cout << "✅ GetRenderHandler called, RenderHandler is OK!" << std::endl;
+    }
+    return handler;
+}
 
-		// CefLifeSpanHandler methods.
-		void OnAfterCreated(CefRefPtr<CefBrowser> browser)
-		{
-			CEF_REQUIRE_UI_THREAD();
-			browser_id = browser->GetIdentifier();
-			printf("OnAfterCreated: Browser ID %d\n", browser_id);
-		}
+
+void OnAfterCreated(CefRefPtr<CefBrowser> browser) override
+{
+    CEF_REQUIRE_UI_THREAD();
+    browser_id = browser->GetIdentifier();
+    std::cout << "✅ OnAfterCreated: Browser ID " << browser_id << std::endl;
+    //browser->GetHost()->SendFocusEvent(true);
+}
+
 
 		bool DoClose(CefRefPtr<CefBrowser> browser)
 		{
@@ -163,10 +172,6 @@ namespace Cherry
 
 		IMPLEMENT_REFCOUNTING(BrowserClient);
 	};
-
-	static CefRefPtr<CefBrowser> browser;
-	static CefRefPtr<BrowserClient> browserClient;
-	static CefRefPtr<RenderHandler> renderHandler;
 
 	/*CefBrowserHost::MouseButtonType translateMouseButton(SDL_MouseButtonEvent const &e)
 	{

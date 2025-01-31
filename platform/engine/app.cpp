@@ -2369,17 +2369,17 @@ namespace Cherry
     }
 
 #ifdef _WIN32
-std::string convertPathToWindowsStyle(const std::string &path)
-{
-    std::string windowsPath = path;
-    std::replace(windowsPath.begin(), windowsPath.end(), '/', '\\');
-    return windowsPath;
-}
+    std::string convertPathToWindowsStyle(const std::string &path)
+    {
+        std::string windowsPath = path;
+        std::replace(windowsPath.begin(), windowsPath.end(), '/', '\\');
+        return windowsPath;
+    }
 #endif
 
     std::string GetPath(const std::string &path)
     {
-        
+
 #ifdef _WIN32
         return convertPathToWindowsStyle(Application::CookPath(path));
 #else
@@ -2502,7 +2502,7 @@ std::string convertPathToWindowsStyle(const std::string &path)
         return 0;
     }
 
-	void AddNotification(const ImGuiToast& toast)
+    void AddNotification(const ImGuiToast &toast)
     {
         ImGui::InsertNotification(toast);
     }

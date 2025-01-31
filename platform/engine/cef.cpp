@@ -28,6 +28,7 @@ namespace Cherry
 
     void RenderHandler::GetViewRect(CefRefPtr<CefBrowser> browser, CefRect &rect)
     {
+        std::cout << "📏 GetViewRect called: " << width << "x" << height << std::endl;
         rect = CefRect(0, 0, width, height);
     }
 
@@ -215,19 +216,28 @@ namespace Cherry
 
         cefTextureId = (ImTextureID)imageView;
 
-        std::cout << " QFS" << std::endl;
-
         vkDestroyBuffer(Cherry::Application::GetDevice(), stagingBuffer, nullptr);
         vkFreeMemory(Cherry::Application::GetDevice(), stagingBufferMemory, nullptr);
     }
 
     void RenderHandler::OnPaint(CefRefPtr<CefBrowser> browser, PaintElementType type, const RectList &dirtyRects, const void *buffer, int width, int height)
     {
-        std::cout << "Buffer received from CEF: " << buffer << ", Width: " << width << ", Height: " << height << std::endl;
-
-        UpdateCefTexture(buffer, width, height);
+    std::cout << "🖌️ OnPaint called! Size: " << width << "x" << height << std::endl;
+            if (type == PET_VIEW)
+        {
+            UpdateCefTexture(buffer, width, height);
+        }
     }
 
+    void RenderHandler::OnAcceleratedPaint(CefRefPtr<CefBrowser> browser, PaintElementType type, const RectList &dirtyRects, const CefAcceleratedPaintInfo &info)
+    {
+        std::cout << "Buffer received from CEF: " << std::endl;
+
+        if (type == PET_VIEW)
+        {
+            // UpdateCefTexture(buffer, width, height);
+        }
+    }
     void RenderHandler::resize(int w, int h)
     {
         width = w;
@@ -236,8 +246,14 @@ namespace Cherry
 
     void RenderHandler::render()
     {
+
+        std::cout << "render" << std::endl;
         // SDL_RenderCopy(renderer, texture, NULL, NULL);
     }
+
+    CefRefPtr<CefBrowser> browser;
+    CefRefPtr<BrowserClient> browserClient;
+    CefRefPtr<RenderHandler> renderHandler;
 
     void ChangeBrowserURL(char *URL)
     {
@@ -266,7 +282,7 @@ namespace Cherry
         // }
         // ImGui::Spacing();
 
-        static char AddressURL[500] = "https://www.google.com";
+        static char AddressURL[500] = "about:blank";
 
         ImGui::Text("Address:");
         ImGui::SameLine();
@@ -281,8 +297,8 @@ namespace Cherry
         if (tex_id != nullptr)
         {
             ImTextureID my_tex_id = tex_id;
-            float my_tex_w = 800.0f;
-            float my_tex_h = 600.0f;
+            float my_tex_w = 500.0f;
+            float my_tex_h = 500.0f;
 
             ImVec2 curpos = ImGui::GetCursorPos();
             ImVec2 winpos = ImGui::GetWindowPos();
@@ -306,16 +322,22 @@ namespace Cherry
         renderHandler = new RenderHandler(width, height);
 
         CefWindowInfo window_info;
-        CefBrowserSettings browserSettings;
+        window_info.SetAsWindowless(NULL); // Essayer 0 au lieu de NULL
+        window_info.windowless_rendering_enabled = true;
+        window_info.shared_texture_enabled = false;
 
-        // browserSettings.windowless_frame_rate = 60; // 30 is default
-        window_info.SetAsWindowless(NULL); // false means no transparency (site background colour)
+        CefBrowserSettings browserSettings;
+        //browserSettings.windowless_frame_rate = 60; // 60 FPS au lieu de 30
+
+        CefRefPtr<CefRequestContext> requestContext = CefRequestContext::GetGlobalContext();
         browserClient = new BrowserClient(renderHandler);
         browser = CefBrowserHost::CreateBrowserSync(window_info, browserClient.get(), "https://google.com", browserSettings, nullptr, nullptr);
+        browser->GetHost()->WasResized();
 
-        CefDoMessageLoopWork();
-        CefDoMessageLoopWork();
-        CefDoMessageLoopWork();
+        if (!browserClient->GetRenderHandler())
+        {
+            std::cerr << "❌ RenderHandler is NOT set in BrowserClient!" << std::endl;
+        }
     }
 
     void OnCEFFrame()
@@ -337,26 +359,20 @@ namespace Cherry
         }
 
         CefSettings settings;
-        settings.no_sandbox = true;
-        settings.command_line_args_disabled = false;
+        settings.log_severity = LOGSEVERITY_VERBOSE;
         settings.windowless_rendering_enabled = true;
+        settings.no_sandbox = true;
 
-
-        CefString(&settings.root_cache_path) = SDL_GetBasePath();
-        CefString(&settings.cache_path) = std::string(SDL_GetBasePath()) + "cache/";
         std::ostringstream ss;
         ss << SDL_GetBasePath() << "locales/";
-
         CefString(&settings.locales_dir_path) = ss.str();
-        CefString(&settings.resources_dir_path) = SDL_GetBasePath();
-        settings.log_severity = LOGSEVERITY_VERBOSE;
+        CefString(&settings.root_cache_path) = SDL_GetBasePath();
+        CefString(&settings.cache_path) = std::string(SDL_GetBasePath()) + "cache/";
         CefString(&settings.log_file) = "cef_debug.log";
 
 #if !defined(CEF_USE_SANDBOX)
         settings.no_sandbox = true;
 #endif
-
-        settings.windowless_rendering_enabled = true;
 
         if (!CefInitialize(main_args, settings, nullptr, nullptr))
         {
@@ -364,6 +380,7 @@ namespace Cherry
             return -1;
         }
 
+        std::cout << " Initialized" << std::endl;
         return 0;
     }
 
