@@ -1,5 +1,4 @@
 #include "app.hpp"
-#include "cef.hpp"
 #include "app_window.hpp"
 #include "window.hpp"
 
@@ -26,6 +25,8 @@
 #include <filesystem>
 #include <fstream>
 #include <curl/curl.h>
+#include "../../lib/restcpp/include/restclient-cpp/restclient.h"
+#include "../../lib/restcpp/include/restclient-cpp/connection.h"
 
 #ifdef _WIN32
 #include <direct.h>
@@ -1203,8 +1204,6 @@ namespace Cherry
             ImGui::SetCurrentContext(window->m_ImGuiContext);
 
             ImGui::NewFrame();
-
-            OnCEFFrame();
 
             window->PushTheme(window->m_Specifications.ColorTheme.Colors);
             ImGui::PushFont(Application::GetFontList()["Default"]);
@@ -2431,57 +2430,44 @@ namespace Cherry
 #endif
     }
 
-    std::string GetHttpPath(const std::string &url)
+std::string GetHttpPath(const std::string &url)
+{
+    bool use_cache = true;
+    std::string cache_path = GetTemporaryDirectory() + "/" + Application::Get().GetHttpCacheFolderName() + "/";
+
+    if (!fs::exists(cache_path))
     {
-        bool use_cache = true;
-        std::string cache_path = GetTemporaryDirectory() + "/" + Application::Get().GetHttpCacheFolderName() + "/";
+        fs::create_directories(cache_path);
+    }
 
-        if (!fs::exists(cache_path))
-        {
-            fs::create_directories(cache_path);
-        }
+    std::string filename = SanitizeUrl(url);
+    std::string file_path = cache_path + filename;
 
-        std::string filename = SanitizeUrl(url);
-        std::string file_path = cache_path + filename;
-
-        if (use_cache && fs::exists(file_path))
-        {
-            return file_path;
-        }
-
-        CURL *curl;
-        CURLcode res;
-        curl = curl_easy_init();
-        if (!curl)
-        {
-            throw std::runtime_error("Failed to initialize CURL");
-        }
-
-        std::ofstream ofs(file_path, std::ios::binary);
-        if (!ofs.is_open())
-        {
-            throw std::runtime_error("Failed to open file for writing: " + file_path);
-        }
-
-        curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
-        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &ofs);
-
-        res = curl_easy_perform(curl);
-        if (res != CURLE_OK)
-        {
-            ofs.close();
-            fs::remove(file_path);
-            curl_easy_cleanup(curl);
-            throw std::runtime_error("CURL download failed: " + std::string(curl_easy_strerror(res)));
-        }
-
-        curl_easy_cleanup(curl);
-
-        ofs.close();
-
+    if (use_cache && fs::exists(file_path))
+    {
         return file_path;
     }
+    
+    RestClient::Response r = RestClient::get(url);
+
+    if (r.code != 200)
+    {
+        std::cerr << "HTTP request failed: " << r.code << " - " << r.body << std::endl;
+        return "";
+    }
+
+    std::ofstream ofs(file_path, std::ios::binary);
+    if (!ofs.is_open())
+    {
+        std::cerr << "Failed to open file for writing: " << file_path << std::endl;
+        return "";
+    }
+
+    ofs << r.body;
+    ofs.close();
+
+    return file_path;
+}
 
 #endif // CHERRY_NET
 
