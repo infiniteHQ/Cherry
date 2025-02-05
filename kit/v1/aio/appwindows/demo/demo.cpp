@@ -1278,8 +1278,8 @@ namespace Cherry
 
         this->AddChild("Selectables", [this]()
                        {
-                        bool suppme = true;
-            ShowBrowserWindow(&suppme, ImGui_ImplSDL2_GetCefTexture());
+              //          bool suppme = true;
+            //ShowBrowserWindow(&suppme, ImGui_ImplSDL2_GetCefTexture());
                        });
 
         this->AddChild("Headers", [this]()

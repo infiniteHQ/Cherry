@@ -60,7 +60,6 @@ endif()
 # Cherry chromium embedded framework (browser)
 if(CHERRY_CEF)
 target_include_directories(cherry PUBLIC "${PROJECT_SOURCE_DIR}/lib/cef-project")
-
 target_compile_definitions(cherry PUBLIC CHERRY_CEF)
 
 set(CEF_RELEASE_DIR "${CMAKE_BINARY_DIR}/Release")
