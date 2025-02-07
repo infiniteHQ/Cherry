@@ -19,12 +19,10 @@ if(CHERRY_CEF)
 add_subdirectory(lib/cef-project)
 endif()
 
-if(CHERRY_NET)
-    if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/restcpp_build")
-        add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/lib/restcpp restcpp_build)
-    endif()
-endif()
 
+if (NOT TARGET restclient-cpp)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/lib/restcpp restcpp_build)
+endif()
 
 file(GLOB_RECURSE CHERRY_SRC CONFIGURE_DEPENDS
     "${PROJECT_SOURCE_DIR}/platform/*.h" "${PROJECT_SOURCE_DIR}/platform/*.hpp" "${PROJECT_SOURCE_DIR}/platform/*.cpp"
