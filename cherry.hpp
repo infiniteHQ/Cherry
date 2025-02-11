@@ -1,5 +1,6 @@
 #ifndef CHERRY_H
 #define CHERRY_H
+#define SDL_MAIN_HANDLED
 
 #include "./options.hpp"
 
@@ -18,7 +19,12 @@
 #include "./platform/engine/app.hpp"
 #include "./assets/icons.h"
 
-#ifdef CHERRY_V1
+#ifdef CHERRY_ALL
+#endif // CHERRY_ALL
+
+#include "./kit/components/buttons/button_text/button_text.hpp"
+
+#ifdef CHERRY_V1_OBSOLETE
 // Buttons
 #include "./kit/v1/components/buttons/dropdown_buttons.hpp"
 #include "./kit/v1/components/buttons/custom_buttons.hpp"
@@ -66,6 +72,9 @@
 #include "./kit/v1/components/tables/simple_tables.hpp"
 
 #endif
+
+using CherryID = Cherry::Identifier;
+namespace CherryKit = Cherry::Kit;
 
 // AIO kits & components includes
 

@@ -1,0 +1,1 @@
+Functions to interact easely with the whole font API of infinite.

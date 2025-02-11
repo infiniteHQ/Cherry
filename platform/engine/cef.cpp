@@ -1,5 +1,6 @@
 #include "app.hpp"
 #include "cef.hpp"
+#include <thread>
 
 #ifdef CHERRY_CEF
 namespace Cherry
@@ -220,24 +221,6 @@ namespace Cherry
         vkFreeMemory(Cherry::Application::GetDevice(), stagingBufferMemory, nullptr);
     }
 
-    void RenderHandler::OnPaint(CefRefPtr<CefBrowser> browser, PaintElementType type, const RectList &dirtyRects, const void *buffer, int width, int height)
-    {
-    std::cout << "🖌️ OnPaint called! Size: " << width << "x" << height << std::endl;
-            if (type == PET_VIEW)
-        {
-            UpdateCefTexture(buffer, width, height);
-        }
-    }
-
-    void RenderHandler::OnAcceleratedPaint(CefRefPtr<CefBrowser> browser, PaintElementType type, const RectList &dirtyRects, const CefAcceleratedPaintInfo &info)
-    {
-        std::cout << "Buffer received from CEF: " << std::endl;
-
-        if (type == PET_VIEW)
-        {
-            // UpdateCefTexture(buffer, width, height);
-        }
-    }
     void RenderHandler::resize(int w, int h)
     {
         width = w;
@@ -322,21 +305,25 @@ namespace Cherry
         renderHandler = new RenderHandler(width, height);
 
         CefWindowInfo window_info;
-        window_info.SetAsWindowless(NULL); // Essayer 0 au lieu de NULL
+        window_info.SetAsWindowless(NULL);
+
         window_info.windowless_rendering_enabled = true;
-        window_info.shared_texture_enabled = false;
 
         CefBrowserSettings browserSettings;
-        //browserSettings.windowless_frame_rate = 60; // 60 FPS au lieu de 30
 
         CefRefPtr<CefRequestContext> requestContext = CefRequestContext::GetGlobalContext();
         browserClient = new BrowserClient(renderHandler);
-        browser = CefBrowserHost::CreateBrowserSync(window_info, browserClient.get(), "https://google.com", browserSettings, nullptr, nullptr);
-        browser->GetHost()->WasResized();
 
-        if (!browserClient->GetRenderHandler())
+        std::string test_url = "data:text/html,<html><body><h1>Hello, World!</h1></body></html>";
+        browser = CefBrowserHost::CreateBrowserSync(window_info, browserClient.get(), test_url, browserSettings, nullptr, nullptr);
+
+        if (browser)
         {
-            std::cerr << "❌ RenderHandler is NOT set in BrowserClient!" << std::endl;
+            std::cout << "🌐 Browser created successfully!" << std::endl;
+        }
+        else
+        {
+            std::cerr << "❌ Failed to create browser!" << std::endl;
         }
     }
 
@@ -363,16 +350,10 @@ namespace Cherry
         settings.windowless_rendering_enabled = true;
         settings.no_sandbox = true;
 
-        std::ostringstream ss;
-        ss << SDL_GetBasePath() << "locales/";
-        CefString(&settings.locales_dir_path) = ss.str();
-        CefString(&settings.root_cache_path) = SDL_GetBasePath();
-        CefString(&settings.cache_path) = std::string(SDL_GetBasePath()) + "cache/";
+        CefString(&settings.locales_dir_path) = Cherry::GetPath("locales/").c_str();
         CefString(&settings.log_file) = "cef_debug.log";
 
-#if !defined(CEF_USE_SANDBOX)
-        settings.no_sandbox = true;
-#endif
+        std::cout << "CefInitialize" << std::endl;
 
         if (!CefInitialize(main_args, settings, nullptr, nullptr))
         {

@@ -1419,6 +1419,8 @@ namespace Cherry
                 SDL_Window *focusedWindow = SDL_GetMouseFocus();
                 Uint32 focusedWindowID = focusedWindow ? SDL_GetWindowID(focusedWindow) : 0;
 
+                // OnCEFFrame();
+
                 bool eventHandled = false;
 
                 for (auto &window : m_Windows)
@@ -2202,11 +2204,11 @@ namespace Cherry
         layer->OnAttach();
     }
 
-    std::string Application::GetComponentData(const std::string &id, const std::string &topic)
+    std::string Application::GetComponentData(const Identifier &id, const std::string &topic)
     {
         for (auto &component : m_ApplicationComponents)
         {
-            if (component->GetID() == id)
+            if (component->GetIdentifier() == id)
             {
                 return component->GetData(topic);
             }
@@ -2307,6 +2309,18 @@ namespace Cherry
         return "locale_undefined";
     }
 
+    std::shared_ptr<Component> Application::GetComponent(const Identifier &identifier)
+    {
+        for (const auto &existing_component : Application::Get().m_ApplicationComponents)
+        {
+            if (existing_component->GetIdentifier() == identifier)
+            {
+                return existing_component;
+            }
+        }
+        return nullptr;
+    }
+
     // Simplicity utils
 
     std::shared_ptr<Cherry::Window> &GetCurrentRenderedWindow()
@@ -2378,7 +2392,6 @@ namespace Cherry
 
     std::string GetPath(const std::string &path)
     {
-
 #ifdef _WIN32
         return convertPathToWindowsStyle(Application::CookPath(path));
 #else
@@ -2430,44 +2443,44 @@ namespace Cherry
 #endif
     }
 
-std::string GetHttpPath(const std::string &url)
-{
-    bool use_cache = true;
-    std::string cache_path = GetTemporaryDirectory() + "/" + Application::Get().GetHttpCacheFolderName() + "/";
-
-    if (!fs::exists(cache_path))
+    std::string GetHttpPath(const std::string &url)
     {
-        fs::create_directories(cache_path);
-    }
+        bool use_cache = true;
+        std::string cache_path = GetTemporaryDirectory() + "/" + Application::Get().GetHttpCacheFolderName() + "/";
 
-    std::string filename = SanitizeUrl(url);
-    std::string file_path = cache_path + filename;
+        if (!fs::exists(cache_path))
+        {
+            fs::create_directories(cache_path);
+        }
 
-    if (use_cache && fs::exists(file_path))
-    {
+        std::string filename = SanitizeUrl(url);
+        std::string file_path = cache_path + filename;
+
+        if (use_cache && fs::exists(file_path))
+        {
+            return file_path;
+        }
+
+        RestClient::Response r = RestClient::get(url);
+
+        if (r.code != 200)
+        {
+            std::cerr << "HTTP request failed: " << r.code << " - " << r.body << std::endl;
+            return "";
+        }
+
+        std::ofstream ofs(file_path, std::ios::binary);
+        if (!ofs.is_open())
+        {
+            std::cerr << "Failed to open file for writing: " << file_path << std::endl;
+            return "";
+        }
+
+        ofs << r.body;
+        ofs.close();
+
         return file_path;
     }
-    
-    RestClient::Response r = RestClient::get(url);
-
-    if (r.code != 200)
-    {
-        std::cerr << "HTTP request failed: " << r.code << " - " << r.body << std::endl;
-        return "";
-    }
-
-    std::ofstream ofs(file_path, std::ios::binary);
-    if (!ofs.is_open())
-    {
-        std::cerr << "Failed to open file for writing: " << file_path << std::endl;
-        return "";
-    }
-
-    ofs << r.body;
-    ofs.close();
-
-    return file_path;
-}
 
 #endif // CHERRY_NET
 
@@ -2476,16 +2489,16 @@ std::string GetHttpPath(const std::string &url)
         return Application::Get().GetLocale(topic);
     }
 
-    std::string GetComponentData(const std::string &id, const std::string topic)
+    std::string GetData(const Identifier &id, const std::string topic)
     {
         for (auto &component : Application::Get().m_ApplicationComponents)
         {
-            if (component->GetID() == id)
+            if (component->GetIdentifier() == id)
             {
                 component->GetProperty(topic);
             }
         }
-        return 0;
+        return "undefined";
     }
 
     void AddNotification(const ImGuiToast &toast)

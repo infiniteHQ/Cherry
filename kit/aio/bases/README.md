@@ -1,0 +1,1 @@
+Sample bases to base a window on

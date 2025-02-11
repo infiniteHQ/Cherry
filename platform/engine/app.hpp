@@ -5,6 +5,7 @@
 
 #include "../../options.hpp"
 
+#include "cef.hpp"
 #include "image.hpp"
 #include "window.hpp"
 #include "app_window.hpp"
@@ -18,6 +19,7 @@
 #include <iostream>
 #include <mutex>
 #include <memory>
+#include <thread>
 #include <functional>
 #include <filesystem>
 
@@ -82,7 +84,7 @@ namespace Cherry
 		static VkPhysicalDevice GetPhysicalDevice();
 		static VkDevice GetDevice();
 		static VkCommandBuffer GetCommandBufferOfWin(const std::string &win_name, bool begin);
-    	static VkCommandBuffer GetCommandBuffer(bool begin, const std::shared_ptr<Window>& win);
+		static VkCommandBuffer GetCommandBuffer(bool begin, const std::shared_ptr<Window> &win);
 		static ImFont *GetFont(const std::string &name);
 		static std::unordered_map<std::string, ImFont *> &GetFontList();
 		std::vector<std::pair<std::string, std::pair<std::string, float>>> &GetCustomFonts();
@@ -168,18 +170,17 @@ namespace Cherry
 		float GetTime();
 		bool IsTitleBarHovered() const { return m_TitleBarHovered; }
 
-
 		ImDrawData *RenderWindow(Window *window);
 		void InitializeWindowStates();
 		void SaveData();
 		void SetWindowSaveDataFile(const std::string &path, const bool &relative = false);
 		void SynchronizeWindows();
 		std::vector<std::shared_ptr<AppWindow>> GetLastSaveInstanciableAppWindows();
-		std::string GetComponentData(const std::string &id, const std::string &topic);
+		std::string GetComponentData(const Identifier &id, const std::string &topic);
 		std::string PutWindow(std::shared_ptr<AppWindow> win);
 		void AddFont(const std::string &name, const std::string &ttf_file_path, const float &size = 20.0f);
 		void SetFavIconPath(const std::string &icon_path);
-		void DeleteAppWindow(const std::shared_ptr<AppWindow>& win);
+		void DeleteAppWindow(const std::shared_ptr<AppWindow> &win);
 
 		// Locales & Traductions
 		void AddLocale(const std::string &locale_name, const std::string &data_path);
@@ -189,15 +190,32 @@ namespace Cherry
 
 		// Net & Cache
 		std::string GetHttpCacheFolderName();
-		void SetHttpCacheFolderName(const std::string& name);
+		void SetHttpCacheFolderName(const std::string &name);
 
-		// Generic utils
-		template <typename T, typename... Args>
-		std::shared_ptr<T> CreateComponent(Args... args)
+		// Identified component
+		static std::shared_ptr<Component> GetComponent(const Identifier &identifier);
+
+		template <typename T>
+		static std::shared_ptr<Component> CreateComponent(const T &component)
 		{
-			std::shared_ptr<T> component = std::make_shared<T>(args...);
-			this->m_ApplicationComponents.push_back(component);
-			return component;
+			for (const auto &existing_component : Application::Get().m_ApplicationComponents)
+			{
+				if (existing_component->GetIdentifier() == component.GetIdentifier())
+				{
+					return existing_component;
+				}
+			}
+
+			std::shared_ptr<Component> component_ptr = std::make_shared<T>(component);
+			Application::Get().m_ApplicationComponents.push_back(component_ptr);
+			return component_ptr;
+		}
+
+		template <typename T>
+		static std::shared_ptr<Component> CreateAnonymousComponent(const T &component)
+		{
+			std::shared_ptr<Component> component_ptr = std::make_unique<T>(component);
+			return component_ptr;
 		}
 
 		template <typename T>
@@ -268,28 +286,37 @@ namespace Cherry
 	std::shared_ptr<Cherry::Window> &GetCurrentRenderedWindow();
 
 	// AppWindow
- 	void AddAppWindow(const std::shared_ptr<AppWindow>& win);
- 	void DeleteAppWindow(const std::shared_ptr<AppWindow>& win);
- 	std::shared_ptr<AppWindow> GetAppWindowByName(const std::string& win_name);
-    std::shared_ptr<Window> GetWindowByName(const std::string &win_name);
+	void AddAppWindow(const std::shared_ptr<AppWindow> &win);
+	void DeleteAppWindow(const std::shared_ptr<AppWindow> &win);
+	std::shared_ptr<AppWindow> GetAppWindowByName(const std::string &win_name);
+	std::shared_ptr<Window> GetWindowByName(const std::string &win_name);
 
 	// Images
 	ImTextureID GetTexture(const std::string &path);
 	ImVec2 GetTextureSize(const std::string &path);
 
 	// Notification
-	void AddNotification(const ImGuiToast& toast);
-	
+	void AddNotification(const ImGuiToast &toast);
+
 	// Runtime
 	std::string GetPath(const std::string &path);
-	std::string GetLocale(const std::string &topic); 
+	std::string GetLocale(const std::string &topic);
 #ifdef CHERRY_NET
 	std::string GetHttpPath(const std::string &url);
 #endif // CHERRY_NET
 
 	// Data (theses functions can return JSON to string format or legacy string.)
-	std::string GetComponentData(const std::string& id, const std::string topic);
-	std::string GetWindowData(const std::string& id, const std::string topic);
+	std::string GetData(const Identifier &id, const std::string topic);
+	std::string GetWindowData(const std::string &id, const std::string topic);
+
+	bool IsReady()
+	{
+		if(&Application::Get() == 0)
+		{
+			return false;
+		}
+		return true;
+	}
 
 #define UIKIT_DATA(id, topic) Application::Get().GetComponentData(id, topic)
 

@@ -1,8 +1,11 @@
 #pragma once
 
+#include "base.hpp"
+
 #include "../../src/layer.hpp"
 #include "../../src/core/color.hpp"
 
+#include <mutex>
 #include <string>
 #include <unordered_map>
 
@@ -14,21 +17,31 @@ namespace Cherry
     class Component
     {
     public:
-        Component(const std::string &id);
+        Component(const Identifier &id);
+        Component();
 
-        // OBSOLETE
-        virtual std::string GetData(const std::string &data_type);
+        // Properties
         std::string SetProperty(const std::string &key, const std::string &val);
         std::string GetProperty(const std::string &key);
-        void ClearProperty(const std::string &key);
-        void SetID(const std::string &id);
-        std::string GetID();
-        bool NeedRefreshing();
+        void        ClearProperty(const std::string &key);
+
+        // Data
+        std::string SetData(const std::string &key, const std::string &val);
+        std::string GetData(const std::string &key);
+        void        ClearData(const std::string &key);
+
+        // Identifier
+        void        SetIdentifier(Identifier id);
+        Identifier  GetIdentifier() const;
+        bool        NeedRefreshing();
+
+        virtual void Render() {};
 
     private:
-        std::string m_ID;
+        Identifier m_Identifier;
         bool m_IsPropsChanged = false;
         std::unordered_map<std::string, std::string> m_Properties;
+        std::unordered_map<std::string, std::string> m_Data;
     };
 }
 

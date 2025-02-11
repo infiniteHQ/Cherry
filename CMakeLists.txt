@@ -20,12 +20,14 @@ add_subdirectory(lib/cef-project)
 endif()
 
 
+if(CHERRY_NET)
 if (NOT TARGET restclient-cpp)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/lib/restcpp restcpp_build)
 endif()
+endif()
 
 file(GLOB_RECURSE CHERRY_SRC CONFIGURE_DEPENDS
-    "${PROJECT_SOURCE_DIR}/platform/*.h" "${PROJECT_SOURCE_DIR}/platform/*.hpp" "${PROJECT_SOURCE_DIR}/platform/*.cpp"
+    "${PROJECT_SOURCE_DIR}/platform/*.h" "${PROJECT_SOURCE_DIR}/platform/*.hpp" "${PROJECT_SOURCE_DIR}/platform/*.cpp" "${PROJECT_SOURCE_DIR}/platform/*.cc"
     "${PROJECT_SOURCE_DIR}/src/*.h" "${PROJECT_SOURCE_DIR}/src/*.hpp" "${PROJECT_SOURCE_DIR}/src/*.cpp"
     "${PROJECT_SOURCE_DIR}/components/*.h" "${PROJECT_SOURCE_DIR}/components/*.hpp" "${PROJECT_SOURCE_DIR}/components/*.cpp"
     "${PROJECT_SOURCE_DIR}/kit/*.h" "${PROJECT_SOURCE_DIR}/kit/*.hpp" "${PROJECT_SOURCE_DIR}/kit/*.cpp"
@@ -38,6 +40,7 @@ target_link_libraries(cherry PUBLIC SDL2)
 target_link_libraries(cherry PRIVATE imgui)
 target_link_libraries(cherry PRIVATE glm)
 target_link_libraries(cherry PRIVATE stbimage)
+target_link_libraries(cherry PRIVATE spdlog)
 target_link_libraries(cherry PRIVATE spdlog)
 
 target_include_directories(cherry PUBLIC "${Vulkan_INCLUDE_DIRS}")
@@ -57,7 +60,7 @@ endif()
 
 # Cherry chromium embedded framework (browser)
 if(CHERRY_CEF)
-target_include_directories(cherry PUBLIC "${PROJECT_SOURCE_DIR}/lib/cef-project")
+target_include_directories(cherry PUBLIC ${CEF_ROOT})
 target_compile_definitions(cherry PUBLIC CHERRY_CEF)
 
 set(CEF_RELEASE_DIR "${CMAKE_BINARY_DIR}/Release")
@@ -70,7 +73,7 @@ set(CEF_EXTRA_LIBRARIES
     "${CEF_RELEASE_DIR}/libvk_swiftshader.so"
     "${CEF_RELEASE_DIR}/libvulkan.so.1"
 )
-target_link_libraries(cherry PUBLIC ${CEF_EXTRA_LIBRARIES})
+target_link_libraries(cherry PUBLIC libcef_dll_wrapper)
 
 file(GLOB CEF_RESOURCES
     "${CEF_RELEASE_DIR}/icudtl.dat"

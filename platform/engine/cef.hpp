@@ -3,6 +3,7 @@
 #include "base.hpp"
 
 #ifdef CHERRY_CEF
+
 #include "include/cef_base.h"
 #include "include/cef_app.h"
 #include "include/cef_task.h"
@@ -52,8 +53,23 @@ namespace Cherry
 
 		void GetViewRect(CefRefPtr<CefBrowser> browser, CefRect &rect);
 
-		void OnPaint(CefRefPtr<CefBrowser> browser, PaintElementType type, const RectList &dirtyRects, const void *buffer, int width, int height);
-		void OnAcceleratedPaint(CefRefPtr<CefBrowser> browser, PaintElementType type, const RectList &dirtyRects, const CefAcceleratedPaintInfo& info);
+		virtual void OnPaint(CefRefPtr<CefBrowser> browser, PaintElementType type, const RectList &dirtyRects, const void *buffer, int width, int height) override
+		{
+			std::cout << "🖌️ OnPaint called! Size: " << width << "x" << height << std::endl;
+			if (type == PET_VIEW)
+			{
+				UpdateCefTexture(buffer, width, height);
+			}
+		}
+
+		virtual void OnAcceleratedPaint(CefRefPtr<CefBrowser> browser, PaintElementType type, const RectList &dirtyRects, const CefAcceleratedPaintInfo &info) override
+		{
+			std::cout << "Buffer received from CEF: " << std::endl;
+			if (type == PET_VIEW)
+			{
+				// UpdateCefTexture(buffer, width, height);
+			}
+		}
 		void resize(int w, int h);
 		void render();
 
@@ -72,39 +88,50 @@ namespace Cherry
 	public:
 		BrowserClient(CefRefPtr<CefRenderHandler> ptr) : handler(ptr)
 		{
+			std::cout << "✅ BrowserClient initialized with RenderHandler" << std::endl;
 		}
 
 		virtual CefRefPtr<CefLifeSpanHandler> GetLifeSpanHandler()
 		{
-			    std::cout << "GetLifeSpanHandler called!" << std::endl;
+			std::cout << "GetLifeSpanHandler called!" << std::endl;
 			return this;
 		}
 
 		virtual CefRefPtr<CefLoadHandler> GetLoadHandler()
 		{
-			    std::cout << "GetLoadHandler called!" << std::endl;
+			std::cout << "GetLoadHandler called!" << std::endl;
 			return this;
 		}
 
-virtual CefRefPtr<CefRenderHandler> GetRenderHandler() override
-{
-    if (!handler) {
-        std::cerr << "❌ RenderHandler is NULL!" << std::endl;
-    } else {
-        std::cout << "✅ GetRenderHandler called, RenderHandler is OK!" << std::endl;
-    }
-    return handler;
-}
+		virtual CefRefPtr<CefRenderHandler> GetRenderHandler() override
+		{
+			if (!handler)
+			{
+				std::cerr << "❌ RenderHandler is NULL!" << std::endl;
+			}
+			else
+			{
+				std::cout << "✅ GetRenderHandler called, RenderHandler is OK!" << std::endl;
+			}
+			return handler;
+		}
+		
+		void OnLoadingStateChange(CefRefPtr<CefBrowser> browser, bool isLoading, bool canGoBack, bool canGoForward)
+		{
+			std::cout << "🔄 OnLoadingStateChange: isLoading=" << isLoading << std::endl;
+			if (!isLoading)
+			{
+				std::cout << "✅ Page fully loaded!" << std::endl;
+			}
+		}
 
-
-void OnAfterCreated(CefRefPtr<CefBrowser> browser) override
-{
-    CEF_REQUIRE_UI_THREAD();
-    browser_id = browser->GetIdentifier();
-    std::cout << "✅ OnAfterCreated: Browser ID " << browser_id << std::endl;
-    //browser->GetHost()->SendFocusEvent(true);
-}
-
+		void OnAfterCreated(CefRefPtr<CefBrowser> browser) override
+		{
+			CEF_REQUIRE_UI_THREAD();
+			browser_id = browser->GetIdentifier();
+			std::cout << "✅ OnAfterCreated: Browser ID " << browser_id << std::endl;
+			// browser->GetHost()->SendFocusEvent(true);
+		}
 
 		bool DoClose(CefRefPtr<CefBrowser> browser)
 		{
@@ -142,11 +169,6 @@ void OnAfterCreated(CefRefPtr<CefBrowser> browser) override
 						 const CefString &failedUrl)
 		{
 			printf("OnLoadError: %s (Error code: %d)\n", errorText.ToString().c_str(), errorCode);
-		}
-
-		void OnLoadingStateChange(CefRefPtr<CefBrowser> browser, bool isLoading, bool canGoBack, bool canGoForward)
-		{
-			printf("OnLoadingStateChange()\n");
 		}
 
 		void OnLoadStart(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame)
