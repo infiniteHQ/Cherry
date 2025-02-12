@@ -39,84 +39,36 @@ namespace Cherry
 	ImTextureID ImGui_ImplSDL2_GetCefTexture();
 	int ImGui_ImplSDL2_CefInit(int argc, char **argv);
 
-	class RenderHandler : public CefRenderHandler
-	{
-	public:
-		RenderHandler(int w, int h) : width(w),
-									  height(h)
-		{
-		}
-
-		~RenderHandler()
-		{
-		}
-
-		void GetViewRect(CefRefPtr<CefBrowser> browser, CefRect &rect);
-
-		virtual void OnPaint(CefRefPtr<CefBrowser> browser, PaintElementType type, const RectList &dirtyRects, const void *buffer, int width, int height) override
-		{
-			std::cout << "🖌️ OnPaint called! Size: " << width << "x" << height << std::endl;
-			if (type == PET_VIEW)
-			{
-				UpdateCefTexture(buffer, width, height);
-			}
-		}
-
-		virtual void OnAcceleratedPaint(CefRefPtr<CefBrowser> browser, PaintElementType type, const RectList &dirtyRects, const CefAcceleratedPaintInfo &info) override
-		{
-			std::cout << "Buffer received from CEF: " << std::endl;
-			if (type == PET_VIEW)
-			{
-				// UpdateCefTexture(buffer, width, height);
-			}
-		}
-		void resize(int w, int h);
-		void render();
-
-	public:
-		int width;
-		int height;
-
-		IMPLEMENT_REFCOUNTING(RenderHandler);
-	};
-
 	// for manual render handler
 	class BrowserClient : public CefClient,
+						  public CefRenderHandler,
 						  public CefLifeSpanHandler,
 						  public CefLoadHandler
 	{
 	public:
-		BrowserClient(CefRefPtr<CefRenderHandler> ptr) : handler(ptr)
+		BrowserClient(int w, int h) : width(w),
+									  height(h)
 		{
-			std::cout << "✅ BrowserClient initialized with RenderHandler" << std::endl;
 		}
 
-		virtual CefRefPtr<CefLifeSpanHandler> GetLifeSpanHandler()
+		CefRefPtr<CefRenderHandler> GetRenderHandler() override
 		{
-			std::cout << "GetLifeSpanHandler called!" << std::endl;
 			return this;
 		}
 
-		virtual CefRefPtr<CefLoadHandler> GetLoadHandler()
+		CefRefPtr<CefLifeSpanHandler> GetLifeSpanHandler() override
 		{
-			std::cout << "GetLoadHandler called!" << std::endl;
 			return this;
 		}
 
-		virtual CefRefPtr<CefRenderHandler> GetRenderHandler() override
+		CefRefPtr<CefLoadHandler> GetLoadHandler() override
 		{
-			if (!handler)
-			{
-				std::cerr << "❌ RenderHandler is NULL!" << std::endl;
-			}
-			else
-			{
-				std::cout << "✅ GetRenderHandler called, RenderHandler is OK!" << std::endl;
-			}
-			return handler;
+			return this;
 		}
-		
-		void OnLoadingStateChange(CefRefPtr<CefBrowser> browser, bool isLoading, bool canGoBack, bool canGoForward)
+
+		int width;
+		int height;
+		void OnLoadingStateChange(CefRefPtr<CefBrowser> browser, bool isLoading, bool canGoBack, bool canGoForward) override
 		{
 			std::cout << "🔄 OnLoadingStateChange: isLoading=" << isLoading << std::endl;
 			if (!isLoading)
@@ -125,15 +77,17 @@ namespace Cherry
 			}
 		}
 
-		void OnAfterCreated(CefRefPtr<CefBrowser> browser) override
-		{
-			CEF_REQUIRE_UI_THREAD();
-			browser_id = browser->GetIdentifier();
-			std::cout << "✅ OnAfterCreated: Browser ID " << browser_id << std::endl;
-			// browser->GetHost()->SendFocusEvent(true);
-		}
+void OnAfterCreated(CefRefPtr<CefBrowser> browser) override
+{
+    CEF_REQUIRE_UI_THREAD();
+    browser_id = browser->GetIdentifier();
+    std::cout << "✅ OnAfterCreated: Browser ID " << browser_id << std::endl;
 
-		bool DoClose(CefRefPtr<CefBrowser> browser)
+    browser->GetHost()->Invalidate(PET_VIEW); // Force un rafraîchissement du rendu
+}
+
+
+		bool DoClose(CefRefPtr<CefBrowser> browser) override
 		{
 			// Must be executed on the UI thread.
 			CEF_REQUIRE_UI_THREAD();
@@ -186,11 +140,32 @@ namespace Cherry
 			return loaded;
 		}
 
+		void GetViewRect(CefRefPtr<CefBrowser> browser, CefRect &rect);
+
+		void OnPaint(CefRefPtr<CefBrowser> browser, PaintElementType type, const RectList &dirtyRects, const void *buffer, int width, int height) override
+		{
+			std::cout << "🖌️ OnPaint called! Size: " << width << "x" << height << std::endl;
+			if (type == PET_VIEW)
+			{
+				UpdateCefTexture(buffer, width, height);
+			}
+		}
+
+		void OnAcceleratedPaint(CefRefPtr<CefBrowser> browser, PaintElementType type, const RectList &dirtyRects, const CefAcceleratedPaintInfo &info) override
+		{
+			std::cout << "🖌️🖌️🖌️🖌️🖌️🖌️🖌️🖌️Buffer received from CEF: " << std::endl;
+			if (type == PET_VIEW)
+			{
+				// UpdateCefTexture(buffer, width, height);
+			}
+		}
+		void resize(int w, int h);
+		void render();
+
 	private:
 		int browser_id;
 		bool closing = false;
 		bool loaded = false;
-		CefRefPtr<CefRenderHandler> handler;
 
 		IMPLEMENT_REFCOUNTING(BrowserClient);
 	};

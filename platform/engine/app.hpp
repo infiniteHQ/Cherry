@@ -214,7 +214,7 @@ namespace Cherry
 		template <typename T>
 		static std::shared_ptr<Component> CreateAnonymousComponent(const T &component)
 		{
-			std::shared_ptr<Component> component_ptr = std::make_unique<T>(component);
+			std::shared_ptr<Component> component_ptr = std::make_shared<T>(component);
 			return component_ptr;
 		}
 
@@ -309,16 +309,7 @@ namespace Cherry
 	std::string GetData(const Identifier &id, const std::string topic);
 	std::string GetWindowData(const std::string &id, const std::string topic);
 
-	bool IsReady()
-	{
-		if(&Application::Get() == 0)
-		{
-			return false;
-		}
-		return true;
-	}
-
-#define UIKIT_DATA(id, topic) Application::Get().GetComponentData(id, topic)
+	bool IsReady();
 
 	// Implemented by CLIENT
 	static Application *CreateApplication(int argc, char **argv);

@@ -28,7 +28,7 @@ void Render()
   if(CherryKit::ButtonText("My first button"))
   {
     // When the button is clicked, we can add condition and handle it.
-    std::cout << "\"My first button\" pressed !!!";
+    std::cout << "\"My first button\" pressed !!!" << std::endl;
   }
 
   // This is how we call registered component. This text button can be 
@@ -57,7 +57,7 @@ Cherry::Application *Cherry::CreateApplication(int argc, char **argv)
   config.SetDefaultHeight(300);       // The default height
   config.SetGlobalScale(0.84f);       // The flobal scale of components and windows
   config.SetFontGlobalScale(0.84f);   // The flobal scale of fonts
-  config.SetFavIconPath(Cherry::GetPath("ressources/imgs/icon.png")); // Icon of the window. (for folder in [project]/assets)
+  config.SetFavIconPath(Cherry::GetPath("resources/imgs/icon.png")); // Icon of the window. (for folder in [project]/assets)
 
   // Render mode
   // We can specify here the main behavior of the UI app (we can chose 
@@ -67,8 +67,6 @@ Cherry::Application *Cherry::CreateApplication(int argc, char **argv)
 
   // Now, let's create the UI app, and attach the specification.
   Cherry::Application *app = new Cherry::Application(config);
-  app->AddLocale("en", Cherry::GetPath("ressources/locales/en.json"));
-  app->SetDefaultLocale("en");
 
   // We previously choose for a SimpleRender, we need to attach a render 
   // fonction to the "MainRenderCallback". We put here the previous "Render"
@@ -103,6 +101,7 @@ int main(int argc, char *argv[])
 
     // In this example we retrieve our previous button object "button.test"
     // We want to check if the button is currently pressed.
+   // std::cout << Cherry::GetData(CherryID("button.test"), "isPressed") << std::endl;
     if (Cherry::GetData(CherryID("button.test"), "isPressed") == "true")
     {
       std::cout << "Pressed !" << std::endl;

@@ -27,7 +27,7 @@ namespace Cherry
         throw std::runtime_error("Failed to find suitable memory type.");
     }
 
-    void RenderHandler::GetViewRect(CefRefPtr<CefBrowser> browser, CefRect &rect)
+    void BrowserClient::GetViewRect(CefRefPtr<CefBrowser> browser, CefRect &rect)
     {
         std::cout << "📏 GetViewRect called: " << width << "x" << height << std::endl;
         rect = CefRect(0, 0, width, height);
@@ -221,13 +221,13 @@ namespace Cherry
         vkFreeMemory(Cherry::Application::GetDevice(), stagingBufferMemory, nullptr);
     }
 
-    void RenderHandler::resize(int w, int h)
+    void BrowserClient::resize(int w, int h)
     {
         width = w;
         height = h;
     }
 
-    void RenderHandler::render()
+    void BrowserClient::render()
     {
 
         std::cout << "render" << std::endl;
@@ -236,7 +236,7 @@ namespace Cherry
 
     CefRefPtr<CefBrowser> browser;
     CefRefPtr<BrowserClient> browserClient;
-    CefRefPtr<RenderHandler> renderHandler;
+    // CefRefPtr<RenderHandler> renderHandler;
 
     void ChangeBrowserURL(char *URL)
     {
@@ -302,20 +302,19 @@ namespace Cherry
 
     void InitCEF(int width, int height)
     {
-        renderHandler = new RenderHandler(width, height);
-
         CefWindowInfo window_info;
-        window_info.SetAsWindowless(NULL);
-
+        window_info.shared_texture_enabled = true;
+        window_info.external_begin_frame_enabled = true;
         window_info.windowless_rendering_enabled = true;
 
-        CefBrowserSettings browserSettings;
+        CefBrowserSettings settings;
+        settings.windowless_frame_rate = 30;
 
         CefRefPtr<CefRequestContext> requestContext = CefRequestContext::GetGlobalContext();
-        browserClient = new BrowserClient(renderHandler);
+        CefRefPtr<BrowserClient> browserClient = new BrowserClient(width, height);
 
         std::string test_url = "data:text/html,<html><body><h1>Hello, World!</h1></body></html>";
-        browser = CefBrowserHost::CreateBrowserSync(window_info, browserClient.get(), test_url, browserSettings, nullptr, nullptr);
+        browser = CefBrowserHost::CreateBrowserSync(window_info, browserClient, test_url, settings, nullptr, nullptr);
 
         if (browser)
         {
@@ -330,6 +329,10 @@ namespace Cherry
     void OnCEFFrame()
     {
         CefDoMessageLoopWork();
+        if (browser)
+        {
+            browser->GetHost()->SendExternalBeginFrame();
+        }
     }
 
     int ImGui_ImplSDL2_CefInit(int argc, char **argv)
@@ -338,6 +341,11 @@ namespace Cherry
 
         CefRefPtr<CefCommandLine> command_line = CefCommandLine::CreateCommandLine();
         command_line->InitFromArgv(argc, argv);
+        command_line->AppendSwitch("disable-gpu");
+        command_line->AppendSwitch("disable-gpu-compositing");
+        command_line->AppendSwitch("disable-software-rasterizer");
+        command_line->AppendSwitch("enable-begin-frame-scheduling");
+        command_line->AppendSwitch("disable-gpu-process-crash-limit");
 
         int result = CefExecuteProcess(main_args, nullptr, nullptr);
         if (result >= 0)
@@ -346,9 +354,11 @@ namespace Cherry
         }
 
         CefSettings settings;
-        settings.log_severity = LOGSEVERITY_VERBOSE;
-        settings.windowless_rendering_enabled = true;
         settings.no_sandbox = true;
+        settings.multi_threaded_message_loop = false;
+        settings.windowless_rendering_enabled = true;
+
+        CefRunMessageLoop();
 
         CefString(&settings.locales_dir_path) = Cherry::GetPath("locales/").c_str();
         CefString(&settings.log_file) = "cef_debug.log";

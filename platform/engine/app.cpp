@@ -1419,7 +1419,9 @@ namespace Cherry
                 SDL_Window *focusedWindow = SDL_GetMouseFocus();
                 Uint32 focusedWindowID = focusedWindow ? SDL_GetWindowID(focusedWindow) : 0;
 
-                // OnCEFFrame();
+#ifdef CHERRY_CEF
+                OnCEFFrame();
+#endif // CHERRY_CEF
 
                 bool eventHandled = false;
 
@@ -2489,13 +2491,22 @@ namespace Cherry
         return Application::Get().GetLocale(topic);
     }
 
+	bool IsReady()
+	{
+		if(&Application::Get() == 0)
+		{
+			return false;
+		}
+		return true;
+	}
+
     std::string GetData(const Identifier &id, const std::string topic)
     {
         for (auto &component : Application::Get().m_ApplicationComponents)
         {
             if (component->GetIdentifier() == id)
             {
-                component->GetProperty(topic);
+                component->GetData(topic);
             }
         }
         return "undefined";
