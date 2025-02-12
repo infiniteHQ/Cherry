@@ -25,3 +25,6 @@
 [submodule "lib/restcpp"]
 	path = lib/restcpp
 	url = https://github.com/infiniteHQ/RestCpp
+[submodule "lib/cef-project"]
+	path = lib/cef-project
+	url = https://github.com/infiniteHQ/cef-project
