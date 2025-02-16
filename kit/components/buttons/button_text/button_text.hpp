@@ -7,12 +7,10 @@
 
 namespace Cherry
 {
-    namespace Components
-    {
-        class ButtonText : public Component
+        class ButtonTextCmp : public Component
         {
         public:
-            ButtonText(const Cherry::Identifier &id, const std::string &label)
+        ButtonTextCmp(const Cherry::Identifier &id, const std::string &label)
                 : Component(id)
             {
                 // Identifier
@@ -37,16 +35,16 @@ namespace Cherry
             void Render() override
             {
                 const ImVec2 &size = ImVec2(0, 0);
-                ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(6, 6));
+                Cherry::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(6, 6));
 
-                ImGui::PushStyleColor(ImGuiCol_Border, HexToRGBA(GetProperty("color_border")));
-                ImGui::PushStyleColor(ImGuiCol_Button, HexToRGBA(GetProperty("color_border")));
-                ImGui::PushStyleColor(ImGuiCol_ButtonHovered, HexToRGBA(GetProperty("color_bg_hovered")));
-                ImGui::PushStyleColor(ImGuiCol_ButtonActive, HexToRGBA(GetProperty("color_bg_clicked")));
+                Cherry::PushStyleColor(ImGuiCol_Border, HexToRGBA(GetProperty("color_border")));
+                Cherry::PushStyleColor(ImGuiCol_Button, HexToRGBA(GetProperty("color_border")));
+                Cherry::PushStyleColor(ImGuiCol_ButtonHovered, HexToRGBA(GetProperty("color_bg_hovered")));
+                Cherry::PushStyleColor(ImGuiCol_ButtonActive, HexToRGBA(GetProperty("color_bg_clicked")));
 
                 std::string Label = GetProperty("label") + "####" + GetIdentifier().string();
 
-                if (ImGui::Button(Label.c_str(), size))
+                if (Cherry::Button(Label.c_str(), size))
                 {
                     SetData("isPressed", "true");
                     UpdateLastClickTime();
@@ -56,8 +54,8 @@ namespace Cherry
                     SetData("isPressed", "false");
                 }
 
-                ImGui::PopStyleColor(4);
-                ImGui::PopStyleVar();
+                Cherry::PopStyleColor(4);
+                Cherry::PopStyleVar();
             }
 
         private:
@@ -72,14 +70,10 @@ namespace Cherry
             }
         };
 
-    }
-
-    namespace Kit
-    {
         bool ButtonText(const std::string &label)
         {
             // Inline component
-            auto button = Application::CreateAnonymousComponent<Components::ButtonText>(Components::ButtonText(Cherry::Identifier("anonymous"), label));
+            auto button = Application::CreateAnonymousComponent<ButtonTextCmp>(ButtonTextCmp(Cherry::Identifier("anonymous"), label));
             button->Render();
             return button->GetData("isPressed") == "true" ? true : false;
         }
@@ -96,12 +90,12 @@ namespace Cherry
             else
             {
                 // Create the object if not exist
-                auto new_button = Application::CreateComponent<Components::ButtonText>(Components::ButtonText(identifier, label));
+                auto new_button = Application::CreateComponent<ButtonTextCmp>(ButtonTextCmp(identifier, label));
                 new_button->Render();
                 return new_button->GetData("isPressed") == "true" ? true : false;
             }
         }
-    }
+    
 }
 
 #endif // CHERRY_KIT_BUTTON_TEXT

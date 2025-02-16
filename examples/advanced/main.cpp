@@ -26,6 +26,7 @@ void Render()
   // but not really outside, this is the most simple approach. This component
   // is anonymous, not object oriented and cannot be implemnted outside 
   // this simple call.
+  CherryKit::ButtonText("Test");
 
   // This is how we call registered component. This text button can be 
   // initialized with a "CherryID" that we can use to get data, update

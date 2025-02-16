@@ -40,7 +40,7 @@ set_target_properties(cherry PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
 target_link_libraries(cherry PRIVATE Vulkan::Vulkan)
 target_link_libraries(cherry PUBLIC SDL2)
-target_link_libraries(cherry PUBLIC imgui)
+target_link_libraries(cherry PRIVATE imgui)
 target_link_libraries(cherry PRIVATE glm)
 target_link_libraries(cherry PRIVATE stbimage)
 target_link_libraries(cherry PRIVATE spdlog)

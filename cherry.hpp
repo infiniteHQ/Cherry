@@ -14,6 +14,7 @@
 #include "./src/layer.hpp"
 #include "./src/random.hpp"
 #include "./src/entry_point.hpp"
+#include "./platform/engine/imgui/wrappers.hpp"
 #include "./platform/engine/imgui/ImGuiTheme.h"
 #include "./platform/engine/image.hpp"
 #include "./platform/engine/app.hpp"
@@ -25,7 +26,7 @@
 #include "./kit/components/buttons/button_text/button_text.hpp"
 
 using CherryID = Cherry::Identifier;
-namespace CherryKit = Cherry::Kit;
+namespace CherryKit = Cherry;
 
 // AIO kits & components includes
 
