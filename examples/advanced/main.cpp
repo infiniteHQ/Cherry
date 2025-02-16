@@ -21,6 +21,7 @@
 // components in it.
 void Render()
 {
+  std::cout << "Test" << std::endl;
   // This is how we call simple inline component. We can handle it here
   // but not really outside, this is the most simple approach. This component
   // is anonymous, not object oriented and cannot be implemnted outside 
