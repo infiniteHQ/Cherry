@@ -7,7 +7,7 @@
 #include "../../lib/sdl2/include/SDL_vulkan.h"
 
 /**
- * @file ApplicationGUI.cpp
+ * @file app.cpp
  * @brief All sources of master window behaviors & render engine.
  */
 
@@ -19,6 +19,8 @@
 #include <mutex>
 #include <regex>
 #include <sstream>
+#include <string>
+#include <algorithm>
 
 #ifdef CHERRY_NET
 #include <string>
@@ -29,6 +31,9 @@
 #include "../../lib/restcpp/include/restclient-cpp/connection.h"
 
 #ifdef _WIN32
+#include <windows.h>
+#define NOMINMAX  // std::max
+
 #include <direct.h>
 #else
 #include <sys/stat.h>
@@ -1279,49 +1284,89 @@ namespace Cherry
         }
     }
 
-    std::string Application::CertifyWindowName(const std::string &name)
+#ifndef _WIN32
+std::string Application::CertifyWindowName(const std::string &name)
+{
+    int max_suffix = 0;
+    bool name_exists = false;
+
+    std::regex suffix_regex(R"(^(.*?)(?: <(\d+)>)?$)");
+    std::smatch match;
+
+    for (const auto &win : s_Instance->m_Windows)
     {
-        int max_suffix = 0;
-        bool name_exists = false;
+        std::string window_name = win->GetName();
 
-        std::regex suffix_regex(R"(^(.*?)(?: <(\d+)>)?$)");
-        std::smatch match;
-
-        for (const auto &win : s_Instance->m_Windows)
+        if (std::regex_match(window_name, match, suffix_regex))
         {
-            std::string window_name = win->GetName();
+            std::string base_name = match[1].str();
+            std::string suffix_str = match[2].str();
 
-            if (std::regex_match(window_name, match, suffix_regex))
+            if (base_name == name)
             {
-                std::string base_name = match[1];
-                std::string suffix_str = match[2];
+                name_exists = true;
 
-                if (base_name == name)
+                if (!suffix_str.empty())
                 {
-                    name_exists = true;
-
-                    if (!suffix_str.empty())
-                    {
-                        int suffix_value = std::stoi(suffix_str);
-                        max_suffix = std::max(max_suffix, suffix_value);
-                    }
-                    else
-                    {
-                        max_suffix = std::max(max_suffix, 0);
-                    }
+                    int suffix_value = std::stoi(suffix_str);
+                    max_suffix = std::max(max_suffix, suffix_value);
                 }
             }
         }
-
-        if (name_exists)
-        {
-            std::stringstream new_name;
-            new_name << name << " <" << (max_suffix + 1) << ">";
-            return new_name.str();
-        }
-
-        return name;
     }
+
+    if (name_exists)
+    {
+        std::stringstream new_name;
+        new_name << name << " <" << (max_suffix + 1) << ">";
+        return new_name.str();
+    }
+
+    return name;
+}
+#endif
+
+#ifdef _WIN32
+std::string Application::CertifyWindowName(const std::string &name)
+{
+    int max_suffix = 0;
+    bool name_exists = false;
+
+    std::regex suffix_regex(R"(^(.*?)(?: <(\d+)>)?$)");
+    std::smatch match;
+
+    for (const auto &win : s_Instance->m_Windows)
+    {
+        std::string window_name = win->GetName();
+
+        if (std::regex_match(window_name, match, suffix_regex))
+        {
+            std::string base_name = match[1].str();
+            std::string suffix_str = match[2].str();
+
+            if (base_name == name)
+            {
+                name_exists = true;
+
+                if (!suffix_str.empty())
+                {
+                    int suffix_value = std::stoi(suffix_str);
+                    max_suffix = (std::max)(max_suffix, suffix_value);
+                }
+            }
+        }
+    }
+
+    if (name_exists)
+    {
+        std::stringstream new_name;
+        new_name << name << " <" << (max_suffix + 1) << ">";
+        return new_name.str();
+    }
+
+    return name;
+}
+#endif
 
     void Application::CleanupEmptyWindows()
     {

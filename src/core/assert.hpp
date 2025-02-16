@@ -40,9 +40,19 @@
 		#define WL_CORE_VERIFY_MESSAGE_INTERNAL(...)  ::Cherry::Log::PrintAssertMessage(::Cherry::Log::Type::Core, "Verify Failed" __VA_OPT__(,) __VA_ARGS__)
 		#define WL_VERIFY_MESSAGE_INTERNAL(...)  ::Cherry::Log::PrintAssertMessage(::Cherry::Log::Type::Client, "Verify Failed" __VA_OPT__(,) __VA_ARGS__)
 	#endif
-
+	#ifdef WL_ENABLE_VERIFY
+	#ifdef _MSC_VER
+	   #define WL_CORE_VERIFY_MESSAGE_INTERNAL(...)  ::Cherry::Log::PrintAssertMessage(::Cherry::Log::Type::Core, "Verify Failed", __VA_ARGS__)
+	   #define WL_VERIFY_MESSAGE_INTERNAL(...)  ::Cherry::Log::PrintAssertMessage(::Cherry::Log::Type::Client, "Verify Failed", __VA_ARGS__)
+	#else
+	   #define WL_CORE_VERIFY_MESSAGE_INTERNAL(...)  ::Cherry::Log::PrintAssertMessage(::Cherry::Log::Type::Core, "Verify Failed" __VA_OPT__(,) __VA_ARGS__)
+	   #define WL_VERIFY_MESSAGE_INTERNAL(...)  ::Cherry::Log::PrintAssertMessage(::Cherry::Log::Type::Client, "Verify Failed" __VA_OPT__(,) __VA_ARGS__)
+	#endif
+ 
 	#define WL_CORE_VERIFY(condition, ...) { if(!(condition)) { WL_CORE_VERIFY_MESSAGE_INTERNAL(__VA_ARGS__); WL_DEBUG_BREAK; } }
 	#define WL_VERIFY(condition, ...) { if(!(condition)) { WL_VERIFY_MESSAGE_INTERNAL(__VA_ARGS__); WL_DEBUG_BREAK; } }
+ #endif
+ 
 #else
 	#define WL_CORE_VERIFY(condition, ...)
 	#define WL_VERIFY(condition, ...)

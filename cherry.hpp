@@ -17,61 +17,12 @@
 #include "./platform/engine/imgui/ImGuiTheme.h"
 #include "./platform/engine/image.hpp"
 #include "./platform/engine/app.hpp"
-#include "./assets/icons.h"
+#include "./platform/engine/embed/assets/icons.h"
 
 #ifdef CHERRY_ALL
 #endif // CHERRY_ALL
 
 #include "./kit/components/buttons/button_text/button_text.hpp"
-
-#ifdef CHERRY_V1_OBSOLETE
-// Buttons
-#include "./kit/v1/components/buttons/dropdown_buttons.hpp"
-#include "./kit/v1/components/buttons/custom_buttons.hpp"
-#include "./kit/v1/components/buttons/image_text_buttons.hpp"
-#include "./kit/v1/components/buttons/image_buttons.hpp"
-#include "./kit/v1/components/buttons/text_buttons.hpp"
-// Headers
-#include "./kit/v1/components/headers/simple_collapsing.hpp"
-#include "./kit/v1/components/headers/custom_collapsing.hpp"
-// Texts
-#include "./kit/v1/components/texts/simple_text.hpp"
-// Combos
-#include "./kit/v1/components/combos/simple_combo.hpp"
-#include "./kit/v1/components/combos/custom_combo.hpp"
-// Titles
-#include "./kit/v1/components/titles/h1.hpp"
-#include "./kit/v1/components/titles/h2.hpp"
-#include "./kit/v1/components/titles/h3.hpp"
-#include "./kit/v1/components/titles/h4.hpp"
-#include "./kit/v1/components/titles/h5.hpp"
-#include "./kit/v1/components/titles/h6.hpp"
-// MenuItems
-#include "./kit/v1/components/menuitems/separator.hpp"
-#include "./kit/v1/components/menuitems/menuitem.hpp"
-
-// AppWindows templates
-#include "./kit/v1/aio/appwindows/demo/demo.hpp"
-#include "./kit/v1/aio/appwindows/basic/empty/empty_appwindow.hpp"
-#include "./kit/v1/aio/appwindows/basic/mutli_child_list/multi_child_list.hpp"
-#include "./kit/v1/aio/appwindows/basic/mutli_child_areas/mutli_child_areas.hpp"
-#include "./kit/v1/aio/appwindows/basic/mutli_child_tabs/multi_child_tabs.hpp"
-#include "./kit/v1/aio/appwindows/docking/docking_appwindow.hpp"
-#include "./kit/v1/aio/appwindows/data/data_logs_viewer/data_logs_viewer.hpp"
-#include "./kit/v1/aio/appwindows/editors/text_editor_simple/text_editor_simple.hpp"
-#include "./kit/v1/aio/appwindows/editors/node_editor_simple/node_editor_simple.hpp"
-#include "./kit/v1/aio/appwindows/editors/props_editor_simple/props_editor_simple.hpp"
-#include "./kit/v1/aio/appwindows/content/content_browser/content_browser.hpp"
-#include "./kit/v1/aio/appwindows/content/content_outliner_simple/content_outliner_simple.hpp"
-// Trees
-#include "./kit/v1/components/lists/custom_lists.hpp"
-// Inputs
-#include "./kit/v1/components/inputs/keyval/keyval_double.hpp"
-#include "./kit/v1/components/inputs/simple/simple_inputs.hpp"
-#include "./kit/v1/components/inputs/simple/image_inputs.hpp"
-#include "./kit/v1/components/tables/simple_tables.hpp"
-
-#endif
 
 using CherryID = Cherry::Identifier;
 namespace CherryKit = Cherry::Kit;

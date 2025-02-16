@@ -1,5 +1,6 @@
 #pragma once
 #include "../../../../platform/engine/app.hpp"
+#include "../../../../lib/imgui/imgui.h"
 
 #ifndef CHERRY_KIT_BUTTON_TEXT
 #define CHERRY_KIT_BUTTON_TEXT
@@ -36,7 +37,6 @@ namespace Cherry
             void Render() override
             {
                 const ImVec2 &size = ImVec2(0, 0);
-
                 ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(6, 6));
 
                 ImGui::PushStyleColor(ImGuiCol_Border, HexToRGBA(GetProperty("color_border")));

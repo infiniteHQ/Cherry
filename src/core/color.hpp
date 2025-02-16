@@ -3,6 +3,7 @@
 #include "../layer.hpp"
 
 #include <string>
+#include <sstream>
 
 namespace Cherry
 {
