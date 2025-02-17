@@ -337,7 +337,7 @@ namespace Cherry
 
     int ImGui_ImplSDL2_CefInit(int argc, char **argv)
     {
-        CefMainArgs main_args(argc, argv);
+        CefMainArgs main_args;
 
         CefRefPtr<CefCommandLine> command_line = CefCommandLine::CreateCommandLine();
         command_line->InitFromArgv(argc, argv);

@@ -6,7 +6,12 @@ set(CMAKE_CXX_STANDARD 20)
 if(NOT MSVC)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
 endif()
-
+if(MSVC)
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
+endif()
+if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+    add_compile_options(/MT)
+endif()
 find_package(Vulkan REQUIRED)
 
 add_subdirectory(lib/glm)
@@ -36,8 +41,6 @@ add_library(cherry SHARED ${CHERRY_SRC})
 
 set_target_properties(cherry PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
-
-
 target_link_libraries(cherry PRIVATE Vulkan::Vulkan)
 target_link_libraries(cherry PUBLIC SDL2)
 target_link_libraries(cherry PRIVATE imgui)
@@ -56,60 +59,31 @@ if(CHERRY_NET)
 endif()
 
 if(CHERRY_CEF)
-    target_include_directories(cherry PUBLIC ${CEF_ROOT})
-    target_compile_definitions(cherry PUBLIC CHERRY_CEF)
+  
+if(MSVC)
+target_include_directories(cherry PUBLIC ${CEF_ROOT})
+target_compile_definitions(cherry PUBLIC CHERRY_CEF)
 
-    if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-        set(CEF_LIB_EXTENSION ".dll")
-        set(CEF_RELEASE_DIR "${CMAKE_BINARY_DIR}/Release")
-    elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-        set(CEF_LIB_EXTENSION ".so")
-        set(CEF_RELEASE_DIR "${CMAKE_BINARY_DIR}/libcef")
-    elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-        set(CEF_LIB_EXTENSION ".dylib")
-        set(CEF_RELEASE_DIR "${CMAKE_BINARY_DIR}/Frameworks")
-    endif()
+set(CEF_RELEASE_DIR "${CMAKE_BINARY_DIR}/Release")
+set(CEF_LIBRARIES "${CEF_RELEASE_DIR}/libcef.lib")
+target_link_libraries(cherry PUBLIC ${CEF_LIBRARIES})
 
-    set(CEF_LIBRARIES "${CEF_RELEASE_DIR}/libcef${CEF_LIB_EXTENSION}")
-    target_link_libraries(cherry PUBLIC ${CEF_LIBRARIES})
+message(WARNING "RUNTIME : ${CEF_LIBRARIES}")
 
-    if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-        set(CEF_EXTRA_LIBRARIES
-            "${CEF_RELEASE_DIR}/chrome_elf${CEF_LIB_EXTENSION}"
-            "${CEF_RELEASE_DIR}/libEGL${CEF_LIB_EXTENSION}"
-            "${CEF_RELEASE_DIR}/libGLESv2${CEF_LIB_EXTENSION}"
-            "${CEF_RELEASE_DIR}/d3dcompiler_47${CEF_LIB_EXTENSION}"
-        )
-    elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-        set(CEF_EXTRA_LIBRARIES
-            "${CEF_RELEASE_DIR}/libEGL${CEF_LIB_EXTENSION}"
-            "${CEF_RELEASE_DIR}/libGLESv2${CEF_LIB_EXTENSION}"
-            "${CEF_RELEASE_DIR}/libvk_swiftshader${CEF_LIB_EXTENSION}"
-            "${CEF_RELEASE_DIR}/libvulkan${CEF_LIB_EXTENSION}"
-        )
-    elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-        set(CEF_EXTRA_LIBRARIES
-            "${CEF_RELEASE_DIR}/libEGL${CEF_LIB_EXTENSION}"
-            "${CEF_RELEASE_DIR}/libGLESv2${CEF_LIB_EXTENSION}"
-            "${CEF_RELEASE_DIR}/Chromium Embedded Framework.framework"
-        )
-    endif()
-
-    target_link_libraries(cherry PUBLIC ${CEF_EXTRA_LIBRARIES})
-    target_link_libraries(cherry PUBLIC libcef_dll_wrapper)
-
-    file(GLOB_RECURSE CEF_RESOURCES
-        "${CEF_RELEASE_DIR}/*.pak"
-        "${CEF_RELEASE_DIR}/*.bin"
-        "${CEF_RELEASE_DIR}/*.json"
-        "${CEF_RELEASE_DIR}/icudtl.dat"
-    )
-    file(COPY ${CEF_RESOURCES} DESTINATION "${CMAKE_BINARY_DIR}/Resources")
-endif()
-
-
-add_custom_command(TARGET cherry POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy
-    $<TARGET_FILE:cherry>
-    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/
+set(CEF_EXTRA_LIBRARIES
+    "${CEF_RELEASE_DIR}/libEGL.dll"
+    "${CEF_RELEASE_DIR}/libGLESv2.dll"
+    "${CEF_RELEASE_DIR}/vk_swiftshader.dll"
+    "${CEF_RELEASE_DIR}/vulkan-1.dll"
 )
+target_link_libraries(cherry PUBLIC libcef_dll_wrapper)
+
+file(GLOB CEF_RESOURCES
+    "${CEF_RELEASE_DIR}/icudtl.dat"
+    "${CEF_RELEASE_DIR}/*.pak"
+    "${CEF_RELEASE_DIR}/*.bin"
+    "${CEF_RELEASE_DIR}/*.json"
+)
+file(COPY ${CEF_RESOURCES} DESTINATION "${CMAKE_BINARY_DIR}/Resources")
+endif()
+endif()

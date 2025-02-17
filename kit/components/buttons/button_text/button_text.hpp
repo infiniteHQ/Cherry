@@ -1,16 +1,17 @@
 #pragma once
 #include "../../../../platform/engine/app.hpp"
-#include "../../../../lib/imgui/imgui.h"
 
 #ifndef CHERRY_KIT_BUTTON_TEXT
 #define CHERRY_KIT_BUTTON_TEXT
 
 namespace Cherry
 {
-        class ButtonTextCmp : public Component
+    namespace Components
+    {
+        class ButtonText : public Component
         {
         public:
-        ButtonTextCmp(const Cherry::Identifier &id, const std::string &label)
+            ButtonText(const Cherry::Identifier &id, const std::string &label)
                 : Component(id)
             {
                 // Identifier
@@ -35,16 +36,16 @@ namespace Cherry
             void Render() override
             {
                 const ImVec2 &size = ImVec2(0, 0);
-                Cherry::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(6, 6));
+                CherryGUI::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(6, 6));
 
-                Cherry::PushStyleColor(ImGuiCol_Border, HexToRGBA(GetProperty("color_border")));
-                Cherry::PushStyleColor(ImGuiCol_Button, HexToRGBA(GetProperty("color_border")));
-                Cherry::PushStyleColor(ImGuiCol_ButtonHovered, HexToRGBA(GetProperty("color_bg_hovered")));
-                Cherry::PushStyleColor(ImGuiCol_ButtonActive, HexToRGBA(GetProperty("color_bg_clicked")));
+                CherryGUI::PushStyleColor(ImGuiCol_Border, HexToRGBA(GetProperty("color_border")));
+                CherryGUI::PushStyleColor(ImGuiCol_Button, HexToRGBA(GetProperty("color_border")));
+                CherryGUI::PushStyleColor(ImGuiCol_ButtonHovered, HexToRGBA(GetProperty("color_bg_hovered")));
+                CherryGUI::PushStyleColor(ImGuiCol_ButtonActive, HexToRGBA(GetProperty("color_bg_clicked")));
 
                 std::string Label = GetProperty("label") + "####" + GetIdentifier().string();
 
-                if (Cherry::Button(Label.c_str(), size))
+                if (CherryGUI::Button(Label.c_str(), size))
                 {
                     SetData("isPressed", "true");
                     UpdateLastClickTime();
@@ -54,8 +55,8 @@ namespace Cherry
                     SetData("isPressed", "false");
                 }
 
-                Cherry::PopStyleColor(4);
-                Cherry::PopStyleVar();
+                CherryGUI::PopStyleColor(4);
+                CherryGUI::PopStyleVar();
             }
 
         private:
@@ -69,11 +70,14 @@ namespace Cherry
                 SetData("lastClicked", m_LastClickTime);
             }
         };
+    }
 
+    namespace Kit
+    {
         bool ButtonText(const std::string &label)
         {
             // Inline component
-            auto button = Application::CreateAnonymousComponent<ButtonTextCmp>(ButtonTextCmp(Cherry::Identifier("anonymous"), label));
+            auto button = Application::CreateAnonymousComponent<Components::ButtonText>(Components::ButtonText(Cherry::Identifier("anonymous"), label));
             button->Render();
             return button->GetData("isPressed") == "true" ? true : false;
         }
@@ -90,12 +94,13 @@ namespace Cherry
             else
             {
                 // Create the object if not exist
-                auto new_button = Application::CreateComponent<ButtonTextCmp>(ButtonTextCmp(identifier, label));
+                auto new_button = Application::CreateComponent<Components::ButtonText>(Components::ButtonText(identifier, label));
                 new_button->Render();
                 return new_button->GetData("isPressed") == "true" ? true : false;
             }
         }
-    
+    }
+
 }
 
 #endif // CHERRY_KIT_BUTTON_TEXT

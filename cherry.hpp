@@ -18,6 +18,7 @@
 #include "./platform/engine/imgui/ImGuiTheme.h"
 #include "./platform/engine/image.hpp"
 #include "./platform/engine/app.hpp"
+#include "./platform/engine/cef.hpp"
 #include "./platform/engine/embed/assets/icons.h"
 
 #ifdef CHERRY_ALL
@@ -26,7 +27,7 @@
 #include "./kit/components/buttons/button_text/button_text.hpp"
 
 using CherryID = Cherry::Identifier;
-namespace CherryKit = Cherry;
+namespace CherryKit = Cherry::Kit;
 
 // AIO kits & components includes
 
