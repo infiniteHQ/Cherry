@@ -361,7 +361,6 @@ namespace Cherry
         CefRunMessageLoop();
 
         CefString(&settings.locales_dir_path) = Cherry::GetPath("locales/").c_str();
-        CefString(&settings.log_file) = "cef_debug.log";
 
         std::cout << "CefInitialize" << std::endl;
 

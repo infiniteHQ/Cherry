@@ -6,12 +6,11 @@ set(CMAKE_CXX_STANDARD 20)
 if(NOT MSVC)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
 endif()
-if(MSVC)
-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
-endif()
+
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     add_compile_options(/MT)
 endif()
+
 find_package(Vulkan REQUIRED)
 
 add_subdirectory(lib/glm)
