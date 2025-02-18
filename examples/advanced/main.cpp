@@ -35,6 +35,7 @@ void Render()
 // docking window, load-from-save, etc !!
 Cherry::Application *Cherry::CreateApplication(int argc, char **argv)
 {
+  
   // Firstly, let's create a specification configuration, then, we can
   // configure the general behaviors, names of window,
   // sizes, scales, default themes, fonts, locales etc...
@@ -57,19 +58,22 @@ Cherry::Application *Cherry::CreateApplication(int argc, char **argv)
   // Now, let's create the UI app, and attach the specification.
   Cherry::Application *app = new Cherry::Application(config);
 
+  
+  if (ImGui_ImplSDL2_CefInit(argc, argv) < 0)
+  {
+    std::cerr << "Failed to initialize ImGui SDL2 CEF integration." << std::endl;
+    return nullptr;
+  }
+  std::cout << "Inited" << std::endl;
+  InitCEF(500, 500);
+  std::cout << "Cef" << std::endl;
+
+  
   // We previously choose for a SimpleRender, we need to attach a render
   // fonction to the "MainRenderCallback". We put here the previous "Render"
   // function we made with all of our UI components !
   app->SetMainRenderCallback([]()
                              { Render(); });
-                             if (ImGui_ImplSDL2_CefInit(argc, argv) < 0)
-                             {
-                               std::cerr << "Failed to initialize ImGui SDL2 CEF integration." << std::endl;
-                               return nullptr;
-                             }
-                             std::cout << "Inited" << std::endl;
-                             InitCEF(500, 500);
-                             std::cout << "Cef" << std::endl;
                            
   return app;
 }

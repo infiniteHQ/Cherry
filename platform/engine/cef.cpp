@@ -82,143 +82,138 @@ namespace Cherry
 
     void UpdateCefTexture(const void *buffer, int width, int height)
     {
-        VkBuffer stagingBuffer;
-        VkDeviceMemory stagingBufferMemory;
 
-        VkBufferCreateInfo bufferCreateInfo = {};
-        bufferCreateInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
-        bufferCreateInfo.size = width * height * 4;
-        bufferCreateInfo.usage = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
-        bufferCreateInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+        auto &device = Application::GetVkDevice();
+        auto &physicalDevice = Application::GetVkPhysicalDevice();
+        auto &queue = Application::GetVkQueue();
+        auto commandBuffer = Application::GetCommandBuffer(true, Application::GetCurrentRenderedWindow());
 
-        vkCreateBuffer(Cherry::Application::GetDevice(), &bufferCreateInfo, nullptr, &stagingBuffer);
+        // Détruire les ressources précédentes
+        vkDeviceWaitIdle(device); // Attendre que toutes les opérations soient terminées avant destruction
+        if (cefImage != VK_NULL_HANDLE)
+        {
+            vkDestroyImageView(device, cefImageView, nullptr);
+            vkDestroyImage(device, cefImage, nullptr);
+            vkFreeMemory(device, cefImageMemory, nullptr);
+            vkDestroySampler(device, cefSampler, nullptr);
+        }
 
-        VkMemoryRequirements memoryRequirements;
-        vkGetBufferMemoryRequirements(Cherry::Application::GetDevice(), stagingBuffer, &memoryRequirements);
+        // Création d'une image Vulkan
+        VkImageCreateInfo imageInfo{};
+        imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+        imageInfo.imageType = VK_IMAGE_TYPE_2D;
+        imageInfo.format = VK_FORMAT_R8G8B8A8_UNORM;
+        imageInfo.extent.width = width;
+        imageInfo.extent.height = height;
+        imageInfo.extent.depth = 1;
+        imageInfo.mipLevels = 1;
+        imageInfo.arrayLayers = 1;
+        imageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
+        imageInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
+        imageInfo.usage = VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
+        imageInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 
-        VkMemoryAllocateInfo allocInfo = {};
+        vkCreateImage(device, &imageInfo, nullptr, &cefImage);
+
+        VkMemoryRequirements memRequirements;
+        vkGetImageMemoryRequirements(device, cefImage, &memRequirements);
+
+        VkMemoryAllocateInfo allocInfo{};
         allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-        allocInfo.allocationSize = memoryRequirements.size;
-        allocInfo.memoryTypeIndex = FindMemoryType(memoryRequirements.memoryTypeBits, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+        allocInfo.allocationSize = memRequirements.size;
 
-        vkAllocateMemory(Cherry::Application::GetDevice(), &allocInfo, nullptr, &stagingBufferMemory);
-        vkBindBufferMemory(Cherry::Application::GetDevice(), stagingBuffer, stagingBufferMemory, 0);
+        uint32_t memoryTypeIndex;
+        VkPhysicalDeviceMemoryProperties memProperties;
+        vkGetPhysicalDeviceMemoryProperties(physicalDevice, &memProperties);
 
-        void *data;
-        VkResult result = vkMapMemory(Cherry::Application::GetDevice(), stagingBufferMemory, 0, VK_WHOLE_SIZE, 0, &data);
-        if (result != VK_SUCCESS)
+        for (uint32_t i = 0; i < memProperties.memoryTypeCount; i++)
         {
-            std::cerr << "Failed to map Vulkan memory: " << result << std::endl;
-            return;
-        }
-        memcpy(data, buffer, width * height * 4);
-        vkUnmapMemory(Cherry::Application::GetDevice(), stagingBufferMemory);
-
-        VkImageCreateInfo imageCreateInfo = {};
-        imageCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
-        imageCreateInfo.imageType = VK_IMAGE_TYPE_2D;
-        imageCreateInfo.extent.width = width;
-        imageCreateInfo.extent.height = height;
-        imageCreateInfo.extent.depth = 1;
-        imageCreateInfo.mipLevels = 1;
-        imageCreateInfo.arrayLayers = 1;
-        imageCreateInfo.format = VK_FORMAT_B8G8R8A8_UNORM; // BGRA Format
-        imageCreateInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
-        imageCreateInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-        imageCreateInfo.usage = VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
-        imageCreateInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
-        imageCreateInfo.samples = VK_SAMPLE_COUNT_1_BIT;
-        imageCreateInfo.flags = 0;
-
-        VkImage image;
-        if (vkCreateImage(Cherry::Application::GetDevice(), &imageCreateInfo, nullptr, &image) != VK_SUCCESS)
-        {
-            std::cerr << "Failed to create Vulkan image." << std::endl;
-            return;
+            if ((memRequirements.memoryTypeBits & (1 << i)) &&
+                (memProperties.memoryTypes[i].propertyFlags & VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT))
+            {
+                memoryTypeIndex = i;
+                break;
+            }
         }
 
-        VkMemoryRequirements imageMemoryRequirements;
-        vkGetImageMemoryRequirements(Cherry::Application::GetDevice(), image, &imageMemoryRequirements);
+        allocInfo.memoryTypeIndex = memoryTypeIndex;
 
-        VkMemoryAllocateInfo imageAllocInfo = {};
-        imageAllocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-        imageAllocInfo.allocationSize = imageMemoryRequirements.size;
-        imageAllocInfo.memoryTypeIndex = FindMemoryType(imageMemoryRequirements.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+        vkAllocateMemory(device, &allocInfo, nullptr, &cefImageMemory);
+        vkBindImageMemory(device, cefImage, cefImageMemory, 0);
 
-        VkDeviceMemory imageMemory;
-        vkAllocateMemory(Cherry::Application::GetDevice(), &imageAllocInfo, nullptr, &imageMemory);
-        vkBindImageMemory(Cherry::Application::GetDevice(), image, imageMemory, 0);
+        VkCommandBuffer cmdBuffer = commandBuffer;
 
-        VkCommandBuffer commandBuffer = BeginSingleTimeCommands();
+        // Barrière pour transition de VK_IMAGE_LAYOUT_UNDEFINED vers VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL
+        VkImageMemoryBarrier barrier{};
+        barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+        barrier.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+        barrier.newLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+        barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+        barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+        barrier.image = cefImage;
+        barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+        barrier.subresourceRange.baseMipLevel = 0;
+        barrier.subresourceRange.levelCount = 1;
+        barrier.subresourceRange.baseArrayLayer = 0;
+        barrier.subresourceRange.layerCount = 1;
+        barrier.srcAccessMask = 0;
+        barrier.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
 
-        VkImageMemoryBarrier imageBarrier = {};
-        imageBarrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-        imageBarrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
-        imageBarrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
-        imageBarrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
-        imageBarrier.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+        vkCmdPipelineBarrier(cmdBuffer, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT, 0,
+                             0, nullptr, 0, nullptr, 1, &barrier);
 
-        imageBarrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-        imageBarrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-        imageBarrier.image = image;
-        imageBarrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-        imageBarrier.subresourceRange.baseMipLevel = 0;
-        imageBarrier.subresourceRange.levelCount = 1;
-        imageBarrier.subresourceRange.baseArrayLayer = 0;
-        imageBarrier.subresourceRange.layerCount = 1;
+        barrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+        barrier.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+        barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+        barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
 
-        vkCmdPipelineBarrier(commandBuffer,
-                             VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT,
-                             0, 0, nullptr, 0, nullptr, 1, &imageBarrier);
+        vkCmdPipelineBarrier(cmdBuffer, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, 0,
+                             0, nullptr, 0, nullptr, 1, &barrier);
 
-        VkBufferImageCopy region = {};
-        region.bufferOffset = 0;
-        region.bufferRowLength = 0;
-        region.bufferImageHeight = 0;
-        region.imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-        region.imageSubresource.mipLevel = 0;
-        region.imageSubresource.baseArrayLayer = 0;
-        region.imageSubresource.layerCount = 1;
-        region.imageOffset = {0, 0, 0};
-        region.imageExtent = {static_cast<uint32_t>(width), static_cast<uint32_t>(height), 1};
+        // Création de l'image view
+        VkImageViewCreateInfo viewInfo{};
+        viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+        viewInfo.image = cefImage;
+        viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+        viewInfo.format = VK_FORMAT_R8G8B8A8_UNORM;
+        viewInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+        viewInfo.subresourceRange.baseMipLevel = 0;
+        viewInfo.subresourceRange.levelCount = 1;
+        viewInfo.subresourceRange.baseArrayLayer = 0;
+        viewInfo.subresourceRange.layerCount = 1;
 
-        vkCmdCopyBufferToImage(commandBuffer, stagingBuffer, image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
+        vkCreateImageView(device, &viewInfo, nullptr, &cefImageView);
 
-        imageBarrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
-        imageBarrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
-        imageBarrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
-        imageBarrier.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+        // Création du sampler
+        VkSamplerCreateInfo samplerInfo{};
+        samplerInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
+        samplerInfo.magFilter = VK_FILTER_LINEAR;
+        samplerInfo.minFilter = VK_FILTER_LINEAR;
+        samplerInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+        samplerInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+        samplerInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+        samplerInfo.anisotropyEnable = VK_FALSE;
+        samplerInfo.maxAnisotropy = 1.0f;
+        samplerInfo.borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK;
+        samplerInfo.unnormalizedCoordinates = VK_FALSE;
+        samplerInfo.compareEnable = VK_FALSE;
+        samplerInfo.compareOp = VK_COMPARE_OP_ALWAYS;
+        samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
 
-        vkCmdPipelineBarrier(commandBuffer,
-                             VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
-                             0, 0, nullptr, 0, nullptr, 1, &imageBarrier);
+        vkCreateSampler(device, &samplerInfo, nullptr, &cefSampler);
 
-        EndSingleTimeCommands(commandBuffer);
+        // Associer la texture ImGui à l'image Vulkan
+        ImGui_ImplVulkan_AddTexture(cefSampler, cefImageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+        cefTextureId = (ImTextureID)cefImageView;
 
-        VkImageViewCreateInfo imageViewCreateInfo = {};
-        imageViewCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-        imageViewCreateInfo.image = image;
-        imageViewCreateInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
-        imageViewCreateInfo.format = VK_FORMAT_B8G8R8A8_UNORM;
-        imageViewCreateInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-        imageViewCreateInfo.subresourceRange.baseMipLevel = 0;
-        imageViewCreateInfo.subresourceRange.levelCount = 1;
-        imageViewCreateInfo.subresourceRange.baseArrayLayer = 0;
-        imageViewCreateInfo.subresourceRange.layerCount = 1;
-
-        VkImageView imageView;
-        vkCreateImageView(Cherry::Application::GetDevice(), &imageViewCreateInfo, nullptr, &imageView);
-
-        if (imageView == VK_NULL_HANDLE)
+        if (cefTextureId == nullptr || cefTextureId == (ImTextureID)VK_NULL_HANDLE)
         {
-            std::cerr << "Failed to create image view." << std::endl;
-            return;
+            std::cerr << "❌ Texture ID is null!" << std::endl;
         }
-
-        cefTextureId = (ImTextureID)imageView;
-
-        vkDestroyBuffer(Cherry::Application::GetDevice(), stagingBuffer, nullptr);
-        vkFreeMemory(Cherry::Application::GetDevice(), stagingBufferMemory, nullptr);
+        else
+        {
+            std::cout << "✅ Texture assigned successfully!" << std::endl;
+        }
     }
 
     void BrowserClient::resize(int w, int h)
@@ -245,26 +240,6 @@ namespace Cherry
 
     void ShowBrowserWindow(bool *p_open, ImTextureID tex_id)
     {
-        //// Menu
-        // if (ImGui::BeginMenuBar())
-        //{
-        //     if (ImGui::BeginMenu("Menu"))
-        //     {
-        //         //ShowExampleMenuFile();
-        //         ImGui::EndMenu();
-        //     }
-        //     if (ImGui::BeginMenu("Examples"))
-        //     {
-        //         ImGui::EndMenu();
-        //     }
-        //     if (ImGui::BeginMenu("Help"))
-        //     {
-        //         ImGui::EndMenu();
-        //     }
-        //     ImGui::EndMenuBar();
-        // }
-        // ImGui::Spacing();
-
         static char AddressURL[500] = "about:blank";
 
         ImGui::Text("Address:");
@@ -279,6 +254,8 @@ namespace Cherry
 
         if (tex_id != nullptr)
         {
+            std::cout << "NOT NULL" << std::endl;
+            std::cout << &tex_id << std::endl;
             ImTextureID my_tex_id = tex_id;
             float my_tex_w = 500.0f;
             float my_tex_h = 500.0f;
@@ -286,13 +263,23 @@ namespace Cherry
             ImVec2 curpos = ImGui::GetCursorPos();
             ImVec2 winpos = ImGui::GetWindowPos();
 
-            ImGui::ImageButton(my_tex_id, ImVec2(my_tex_w, my_tex_h), ImVec2(0, 0), ImVec2(1, 1), ImColor(255, 255, 255, 255), ImColor(255, 255, 255, 128));
+            if (tex_id != nullptr && tex_id != (ImTextureID)VK_NULL_HANDLE)
+            {
+                //ImGui::Image(tex_id, ImVec2(500, 500));
+            }
+            else
+            {
+                ImGui::Text("Texture is null");
+            }
+
+            /*ImGui::ImageButton(my_tex_id, ImVec2(my_tex_w, my_tex_h), ImVec2(0, 0), ImVec2(1, 1), ImColor(255, 255, 255, 255), ImColor(255, 255, 255, 128));
             if (ImGui::IsItemHovered())
             {
                 UpdateBrowserMouse(winpos, curpos);
                 // process mouse data
                 // cancel all mouse event
-            }
+            }*/
+            std::cout << "RENDERED" << std::endl;
         }
         else
         {
@@ -303,12 +290,12 @@ namespace Cherry
     void InitCEF(int width, int height)
     {
         CefWindowInfo window_info;
-        window_info.shared_texture_enabled = true;
-        window_info.external_begin_frame_enabled = true;
+        // window_info.shared_texture_enabled = true;
+        // window_info.external_begin_frame_enabled = true;
         window_info.windowless_rendering_enabled = true;
 
         CefBrowserSettings settings;
-        settings.windowless_frame_rate = 30;
+        settings.windowless_frame_rate = 60;
 
         CefRefPtr<CefRequestContext> requestContext = CefRequestContext::GetGlobalContext();
         CefRefPtr<BrowserClient> browserClient = new BrowserClient(width, height);
@@ -329,10 +316,6 @@ namespace Cherry
     void OnCEFFrame()
     {
         CefDoMessageLoopWork();
-        if (browser)
-        {
-            browser->GetHost()->SendExternalBeginFrame();
-        }
     }
 
     int ImGui_ImplSDL2_CefInit(int argc, char **argv)
@@ -341,11 +324,6 @@ namespace Cherry
 
         CefRefPtr<CefCommandLine> command_line = CefCommandLine::CreateCommandLine();
         command_line->InitFromArgv(argc, argv);
-        command_line->AppendSwitch("disable-gpu");
-        command_line->AppendSwitch("disable-gpu-compositing");
-        command_line->AppendSwitch("disable-software-rasterizer");
-        command_line->AppendSwitch("enable-begin-frame-scheduling");
-        command_line->AppendSwitch("disable-gpu-process-crash-limit");
 
         int result = CefExecuteProcess(main_args, nullptr, nullptr);
         if (result >= 0)
@@ -354,8 +332,8 @@ namespace Cherry
         }
 
         CefSettings settings;
-        settings.no_sandbox = true;
-        settings.multi_threaded_message_loop = false;
+        // settings.no_sandbox = true;
+        // settings.multi_threaded_message_loop = false;
         settings.windowless_rendering_enabled = true;
 
         CefRunMessageLoop();

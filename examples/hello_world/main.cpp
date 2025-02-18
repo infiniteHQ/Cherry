@@ -37,6 +37,12 @@ void Render()
   // This approach will create a component registered in the Cherry Render 
   // engine.
   CherryKit::ButtonText(CherryID("button.test"), "Test");
+  
+  if (Cherry::GetData(CherryID("button.test"), "isPressed") == "true")
+  {
+    std::cout << "Pressed !" << std::endl;
+  }
+
 }
 
 // This is the entry point of Cherry. We need to add it to add the main
@@ -102,10 +108,12 @@ int main(int argc, char *argv[])
     // In this example we retrieve our previous button object "button.test"
     // We want to check if the button is currently pressed.
    // std::cout << Cherry::GetData(CherryID("button.test"), "isPressed") << std::endl;
-    if (Cherry::GetData(CherryID("button.test"), "isPressed") == "true")
-    {
-      std::cout << "Pressed !" << std::endl;
-    }
+   
+  if (Cherry::GetData(CherryID("button.test"), "isPressed") == "true")
+  {
+    std::cout << "Pressed !" << std::endl;
+  }
+  
     /* Your program loop... */
   } 
 }

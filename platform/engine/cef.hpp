@@ -17,6 +17,7 @@
 static VkImage vulkanImage;
 static ImTextureID cefTextureId = nullptr;
 
+static VkSampler cefSampler = VK_NULL_HANDLE;
 static VkImage cefImage;
 static VkImageView cefImageView;
 static VkDeviceMemory cefImageMemory;
@@ -82,8 +83,6 @@ void OnAfterCreated(CefRefPtr<CefBrowser> browser) override
     CEF_REQUIRE_UI_THREAD();
     browser_id = browser->GetIdentifier();
     std::cout << "✅ OnAfterCreated: Browser ID " << browser_id << std::endl;
-
-    browser->GetHost()->Invalidate(PET_VIEW); // Force un rafraîchissement du rendu
 }
 
 
@@ -144,7 +143,6 @@ void OnAfterCreated(CefRefPtr<CefBrowser> browser) override
 
 		void OnPaint(CefRefPtr<CefBrowser> browser, PaintElementType type, const RectList &dirtyRects, const void *buffer, int width, int height) override
 		{
-			std::cout << "🖌️ OnPaint called! Size: " << width << "x" << height << std::endl;
 			if (type == PET_VIEW)
 			{
 				UpdateCefTexture(buffer, width, height);
@@ -153,10 +151,10 @@ void OnAfterCreated(CefRefPtr<CefBrowser> browser) override
 
 		void OnAcceleratedPaint(CefRefPtr<CefBrowser> browser, PaintElementType type, const RectList &dirtyRects, const CefAcceleratedPaintInfo &info) override
 		{
-			std::cout << "🖌️🖌️🖌️🖌️🖌️🖌️🖌️🖌️Buffer received from CEF: " << std::endl;
+			std::cout << "🖌️Buffer received from CEF: " << std::endl;
 			if (type == PET_VIEW)
 			{
-				// UpdateCefTexture(buffer, width, height);
+				UpdateCefTexture(info.shared_texture_handle, 500, 500);
 			}
 		}
 		void resize(int w, int h);

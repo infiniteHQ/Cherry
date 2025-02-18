@@ -2551,7 +2551,7 @@ std::string Application::CertifyWindowName(const std::string &name)
         {
             if (component->GetIdentifier() == id)
             {
-                component->GetData(topic);
+                return component->GetData(topic);
             }
         }
         return "undefined";

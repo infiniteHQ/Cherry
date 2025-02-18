@@ -7,8 +7,10 @@ if(NOT MSVC)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
 endif()
 
+if(CHERRY_CEF)
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     add_compile_options(/MT)
+endif()
 endif()
 
 find_package(Vulkan REQUIRED)
