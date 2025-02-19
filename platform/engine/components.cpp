@@ -1,4 +1,5 @@
 #include "components.hpp"
+#include "app.hpp"
 
 namespace Cherry
 {
@@ -35,11 +36,20 @@ namespace Cherry
 
     std::string Component::GetProperty(const std::string &key)
     {
+        // Search in context first
+        auto ctxIt = m_ContextProperties.find(key);
+        if (ctxIt != m_ContextProperties.end())
+        {
+            return ctxIt->second;
+        }
+
+        // Search in component secondly
         auto it = m_Properties.find(key);
         if (it != m_Properties.end())
         {
             return it->second;
         }
+
         return "undefined";
     }
 
@@ -47,6 +57,24 @@ namespace Cherry
     {
         m_IsPropsChanged = true;
         m_Properties.erase(key);
+    }
+
+    void Component::RefreshContextProperties()
+    {
+        m_ContextProperties.clear();
+
+        // Insert all one time props
+        for (const auto &pair : Application::Get().m_OnTimeProperties)
+        {
+            m_ContextProperties.emplace(pair);
+        }
+        Application::Get().m_OnTimeProperties.clear(); // One time properties consumed.
+
+        // Insert all permanent props
+        for (const auto &pair : Application::Get().m_PermanentProperties)
+        {
+            m_ContextProperties.emplace(pair);
+        }
     }
 
     void Component::SetIdentifier(Cherry::Identifier id)

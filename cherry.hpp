@@ -8,7 +8,9 @@
 #define IMGUI_DEFINE_MATH_OPERATORS
 #endif // IMGUI_DEFINE_MATH_OPERATORS
 
-// Backend includes
+///////////////////////////////////////////////////////////////
+/// Backends and Render engine                              ///
+///////////////////////////////////////////////////////////////
 #include "./platform/engine/ui/notifications/notifications.hpp"
 #include "./platform/engine/ui/ui.hpp"
 #include "./src/layer.hpp"
@@ -20,11 +22,17 @@
 #include "./platform/engine/app.hpp"
 #include "./platform/engine/cef.hpp"
 #include "./platform/engine/embed/assets/icons.h"
+///////////////////////////////////////////////////////////////
 
-#ifdef CHERRY_ALL
-#endif // CHERRY_ALL
 
+///////////////////////////////////////////////////////////////
+/// Kit : Components, All in one windows, theme, utils...   ///
+///////////////////////////////////////////////////////////////
+// Buttons
 #include "./kit/components/buttons/button_text/button_text.hpp"
+#include "./kit/components/buttons/button_text_dropdown/button_text_dropdown.hpp"
+// Titles
+#include "./kit/components/titles/title_h1/title_h1.hpp"
 
 using CherryID = Cherry::Identifier;
 namespace CherryKit = Cherry::Kit;

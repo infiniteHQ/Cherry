@@ -7,43 +7,6 @@
 // Authors : Infinite, Diego Moreno
 //
 
-// API
-// CherryKit::ButtonText(label)             -> The most simple approch to make a inline button with text
-// CherryKit::ButtonText(identifier, label) -> The most simple approch to make a component button with text
-
-// Datas
-////////////////////////////////////////////////////////////////////////////////////////////|
-//          Data name               |               Description of property                 |
-////////////////////////////////////////////////////////////////////////////////////////////|
-//   isPressed                      | Is the button pressed (constantly) ? Return "true"    |
-//                                  | or "false"                                            |
-//                                  |                                                       |
-//   isClicked                      | Is the button clicked ? Return "true" or "false"      |
-//                                  |                                                       |
-//   lastClicked                    | Last time the button was clicked ?                    |
-//                                  | Return the date formated in "DD-HH-MM-SS-MMM"         |
-//                                  |                                                       |
-////////////////////////////////////////////////////////////////////////////////////////////|
-
-// Properties
-////////////////////////////////////////////////////////////////////////////////////////////|
-//          Property name           |               Description of property                 |
-////////////////////////////////////////////////////////////////////////////////////////////|
-//   color_border                   | Color of the button border                            |
-//                                  |                                                       |
-//   color_border_hovered           | Color of the button border when hovered by mouse      |
-//                                  |                                                       |
-//   color_border_clicked           | Color of the button border when clicked               |
-//                                  |                                                       |
-//   color_bg                       | Color of the button backgound                         |
-//                                  |                                                       |
-//   color_bg_hovered               | Color of the button backgound when hovered by mouse   |
-//                                  |                                                       |
-//   color_bg_clicked               | Color of the button backgound when clicked            |
-//                                  |                                                       |
-////////////////////////////////////////////////////////////////////////////////////////////|
-
-
 #ifndef CHERRY_KIT_BUTTON_TEXT
 #define CHERRY_KIT_BUTTON_TEXT
 
@@ -68,6 +31,10 @@ namespace Cherry
                 SetProperty("color_bg_hovered", "#343434FF");
                 SetProperty("color_bg_clicked", "#444444FF");
 
+                // Sizes
+                SetProperty("size_x", "6");
+                SetProperty("size_y", "6");
+
                 // Informations
                 SetProperty("label", label);
 
@@ -78,7 +45,7 @@ namespace Cherry
 
             void Render() override
             {
-                const ImVec2 &size = ImVec2(0, 0);
+                const ImVec2 &size = ImVec2(std::stoi(GetProperty("size_x")), std::stoi(GetProperty("size_y")));
                 CherryGUI::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(6, 6));
 
                 CherryGUI::PushStyleColor(ImGuiCol_Border, HexToRGBA(GetProperty("color_border")));
@@ -86,7 +53,13 @@ namespace Cherry
                 CherryGUI::PushStyleColor(ImGuiCol_ButtonHovered, HexToRGBA(GetProperty("color_bg_hovered")));
                 CherryGUI::PushStyleColor(ImGuiCol_ButtonActive, HexToRGBA(GetProperty("color_bg_clicked")));
 
-                std::string Label = GetProperty("label") + "####" + GetIdentifier().string();
+                std::string identifier = GetIdentifier().string();
+                std::string Label = GetProperty("label");
+
+                if (!identifier.empty())
+                {
+                    Label += "####" + identifier;
+                }
 
                 if (CherryGUI::Button(Label.c_str(), size))
                 {
@@ -114,7 +87,6 @@ namespace Cherry
             }
         };
     }
-
 
     // End-User API
     namespace Kit

@@ -32,7 +32,7 @@
 
 #ifdef _WIN32
 #include <windows.h>
-#define NOMINMAX  // std::max
+#define NOMINMAX // std::max
 
 #include <direct.h>
 #else
@@ -1285,87 +1285,87 @@ namespace Cherry
     }
 
 #ifndef _WIN32
-std::string Application::CertifyWindowName(const std::string &name)
-{
-    int max_suffix = 0;
-    bool name_exists = false;
-
-    std::regex suffix_regex(R"(^(.*?)(?: <(\d+)>)?$)");
-    std::smatch match;
-
-    for (const auto &win : s_Instance->m_Windows)
+    std::string Application::CertifyWindowName(const std::string &name)
     {
-        std::string window_name = win->GetName();
+        int max_suffix = 0;
+        bool name_exists = false;
 
-        if (std::regex_match(window_name, match, suffix_regex))
+        std::regex suffix_regex(R"(^(.*?)(?: <(\d+)>)?$)");
+        std::smatch match;
+
+        for (const auto &win : s_Instance->m_Windows)
         {
-            std::string base_name = match[1].str();
-            std::string suffix_str = match[2].str();
+            std::string window_name = win->GetName();
 
-            if (base_name == name)
+            if (std::regex_match(window_name, match, suffix_regex))
             {
-                name_exists = true;
+                std::string base_name = match[1].str();
+                std::string suffix_str = match[2].str();
 
-                if (!suffix_str.empty())
+                if (base_name == name)
                 {
-                    int suffix_value = std::stoi(suffix_str);
-                    max_suffix = std::max(max_suffix, suffix_value);
+                    name_exists = true;
+
+                    if (!suffix_str.empty())
+                    {
+                        int suffix_value = std::stoi(suffix_str);
+                        max_suffix = std::max(max_suffix, suffix_value);
+                    }
                 }
             }
         }
-    }
 
-    if (name_exists)
-    {
-        std::stringstream new_name;
-        new_name << name << " <" << (max_suffix + 1) << ">";
-        return new_name.str();
-    }
+        if (name_exists)
+        {
+            std::stringstream new_name;
+            new_name << name << " <" << (max_suffix + 1) << ">";
+            return new_name.str();
+        }
 
-    return name;
-}
+        return name;
+    }
 #endif
 
 #ifdef _WIN32
-std::string Application::CertifyWindowName(const std::string &name)
-{
-    int max_suffix = 0;
-    bool name_exists = false;
-
-    std::regex suffix_regex(R"(^(.*?)(?: <(\d+)>)?$)");
-    std::smatch match;
-
-    for (const auto &win : s_Instance->m_Windows)
+    std::string Application::CertifyWindowName(const std::string &name)
     {
-        std::string window_name = win->GetName();
+        int max_suffix = 0;
+        bool name_exists = false;
 
-        if (std::regex_match(window_name, match, suffix_regex))
+        std::regex suffix_regex(R"(^(.*?)(?: <(\d+)>)?$)");
+        std::smatch match;
+
+        for (const auto &win : s_Instance->m_Windows)
         {
-            std::string base_name = match[1].str();
-            std::string suffix_str = match[2].str();
+            std::string window_name = win->GetName();
 
-            if (base_name == name)
+            if (std::regex_match(window_name, match, suffix_regex))
             {
-                name_exists = true;
+                std::string base_name = match[1].str();
+                std::string suffix_str = match[2].str();
 
-                if (!suffix_str.empty())
+                if (base_name == name)
                 {
-                    int suffix_value = std::stoi(suffix_str);
-                    max_suffix = (std::max)(max_suffix, suffix_value);
+                    name_exists = true;
+
+                    if (!suffix_str.empty())
+                    {
+                        int suffix_value = std::stoi(suffix_str);
+                        max_suffix = (std::max)(max_suffix, suffix_value);
+                    }
                 }
             }
         }
-    }
 
-    if (name_exists)
-    {
-        std::stringstream new_name;
-        new_name << name << " <" << (max_suffix + 1) << ">";
-        return new_name.str();
-    }
+        if (name_exists)
+        {
+            std::stringstream new_name;
+            new_name << name << " <" << (max_suffix + 1) << ">";
+            return new_name.str();
+        }
 
-    return name;
-}
+        return name;
+    }
 #endif
 
     void Application::CleanupEmptyWindows()
@@ -2320,6 +2320,31 @@ std::string Application::CertifyWindowName(const std::string &name)
         }
     }
 
+    void Application::PushPermanentProperty(const std::string &property, const std::string &value)
+    {
+        m_PermanentProperties.push_back({property, value});
+    }
+
+    void Application::PopPermanentProperty(int number_of_pops)
+    {
+        if (m_PermanentProperties.empty())
+            return;
+
+        int pops = (number_of_pops == 0) ? 1 : number_of_pops;
+
+        pops = std::min(pops, static_cast<int>(m_PermanentProperties.size()));
+
+        for (int i = 0; i < pops; ++i)
+        {
+            m_PermanentProperties.pop_back();
+        }
+    }
+
+    void Application::AddOneTimeProperty(const std::string &property, const std::string &value)
+    {
+        m_OnTimeProperties.push_back({property, value});
+    }
+
     std::string Application::GetLocale(const std::string &locale_type)
     {
         if (m_SelectedLocale.empty() || m_Locales.find(m_SelectedLocale) == m_Locales.end())
@@ -2536,14 +2561,14 @@ std::string Application::CertifyWindowName(const std::string &name)
         return Application::Get().GetLocale(topic);
     }
 
-	bool IsReady()
-	{
-		if(&Application::Get() == 0)
-		{
-			return false;
-		}
-		return true;
-	}
+    bool IsReady()
+    {
+        if (&Application::Get() == 0)
+        {
+            return false;
+        }
+        return true;
+    }
 
     std::string GetData(const Identifier &id, const std::string topic)
     {
@@ -2555,6 +2580,21 @@ std::string Application::CertifyWindowName(const std::string &name)
             }
         }
         return "undefined";
+    }
+
+    void PushPermanentProperty(const std::string &property, const std::string &value)
+    {
+        Application::Get().PushPermanentProperty(property, value);
+    }
+
+    void PopPermanentProperty(int number_of_pops)
+    {
+        Application::Get().PopPermanentProperty(number_of_pops);
+    }
+
+    void AddOneTimeProperty(const std::string &property, const std::string &value)
+    {
+        Application::Get().AddOneTimeProperty(property, value);
     }
 
     void AddNotification(const ImGuiToast &toast)

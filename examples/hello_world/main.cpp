@@ -25,23 +25,36 @@ void Render()
   // but not really outside, this is the most simple approach. This component
   // is anonymous, not object oriented and cannot be implemnted outside 
   // this simple call.
-  if(CherryKit::ButtonText("My first button"))
+
+  Cherry::AddOneTimeProperty("color_border", "#B1FF31FF");
+  if(CherryKit::ButtonTextDropdown("My first button"))
   {
     // When the button is clicked, we can add condition and handle it.
     std::cout << "\"My first button\" pressed !!!" << std::endl;
   }
+
+  if(CherryKit::ButtonTextDropdown("My second button"))
+  {
+    // When the button is clicked, we can add condition and handle it.
+    std::cout << "\"My second button\" pressed !!!" << std::endl;
+  }
+
+
+  CherryKit::TitleOne(CherryID("title"),"Test");
+
+
+  std::thread([&](){
+
+    // Cherry::SetComponentProperty(ID, key, val)
+    Cherry::Application::Get().GetComponent(CherryID("title"))->SetProperty("label", "OK"); 
+    
+     }).detach();
 
   // This is how we call registered component. This text button can be 
   // initialized with a "CherryID" that we can use to get data, update
   // properties and add a lot of logics here, and outside this function! 
   // This approach will create a component registered in the Cherry Render 
   // engine.
-  CherryKit::ButtonText(CherryID("button.test"), "Test");
-  
-  if (Cherry::GetData(CherryID("button.test"), "isPressed") == "true")
-  {
-    std::cout << "Pressed !" << std::endl;
-  }
 
 }
 
@@ -108,11 +121,7 @@ int main(int argc, char *argv[])
     // In this example we retrieve our previous button object "button.test"
     // We want to check if the button is currently pressed.
    // std::cout << Cherry::GetData(CherryID("button.test"), "isPressed") << std::endl;
-   
-  if (Cherry::GetData(CherryID("button.test"), "isPressed") == "true")
-  {
-    std::cout << "Pressed !" << std::endl;
-  }
+
   
     /* Your program loop... */
   } 

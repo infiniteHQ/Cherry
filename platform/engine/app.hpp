@@ -32,6 +32,7 @@
 
 #include "ui/ui.hpp"
 #include "imgui/ImGuiTheme.h"
+#include "imgui/wrappers.hpp"
 #include "vulkan/vulkan.h"
 
 void check_vk_result(VkResult err);
@@ -176,7 +177,6 @@ namespace Cherry
 		void SetWindowSaveDataFile(const std::string &path, const bool &relative = false);
 		void SynchronizeWindows();
 		std::vector<std::shared_ptr<AppWindow>> GetLastSaveInstanciableAppWindows();
-		std::string GetComponentData(const Identifier &id, const std::string &topic);
 		std::string PutWindow(std::shared_ptr<AppWindow> win);
 		void AddFont(const std::string &name, const std::string &ttf_file_path, const float &size = 20.0f);
 		void SetFavIconPath(const std::string &icon_path);
@@ -194,6 +194,7 @@ namespace Cherry
 
 		// Identified component
 		static std::shared_ptr<Component> GetComponent(const Identifier &identifier);
+		std::string GetComponentData(const Identifier &id, const std::string &topic);
 
 		template <typename T>
 		static std::shared_ptr<Component> CreateComponent(const T &component)
@@ -235,6 +236,13 @@ namespace Cherry
 		ApplicationSpecification m_DefaultSpecification;
 
 		std::vector<std::shared_ptr<Layer>> m_LayerStack;
+
+		std::vector<std::pair<std::string, std::string>> m_PermanentProperties; // Properties will be added in every component (until pop)
+		void PushPermanentProperty(const std::string &property, const std::string &value);
+		void PopPermanentProperty(int number_of_pops = 0);
+
+		std::vector<std::pair<std::string, std::string>> m_OnTimeProperties; // Properties will be added in the next component
+		void AddOneTimeProperty(const std::string &property, const std::string &value);
 
 		std::string m_RootPath;
 
@@ -308,6 +316,10 @@ namespace Cherry
 	// Data (theses functions can return JSON to string format or legacy string.)
 	std::string GetData(const Identifier &id, const std::string topic);
 	std::string GetWindowData(const std::string &id, const std::string topic);
+
+	void PushPermanentProperty(const std::string &property, const std::string &value);
+	void PopPermanentProperty(int number_of_pops = 0);
+	void AddOneTimeProperty(const std::string &property, const std::string &value);
 
 	bool IsReady();
 
