@@ -244,6 +244,11 @@ namespace Cherry
 		std::vector<std::pair<std::string, std::string>> m_OnTimeProperties; // Properties will be added in the next component
 		void AddOneTimeProperty(const std::string &property, const std::string &value);
 
+		std::vector<std::shared_ptr<Component>> m_ParentComponentsStack;
+		void PushParentComponent(const std::shared_ptr<Component>& component);
+		void PopParentComponent();
+		std::shared_ptr<Component> GetParent(int parent_number = 0);
+
 		std::string m_RootPath;
 
 		bool m_ClosePending = false;
@@ -320,6 +325,10 @@ namespace Cherry
 	void PushPermanentProperty(const std::string &property, const std::string &value);
 	void PopPermanentProperty(int number_of_pops = 0);
 	void AddOneTimeProperty(const std::string &property, const std::string &value);
+
+		void PushParentComponent(const std::shared_ptr<Component>& component);
+		void PopParentComponent();
+		std::shared_ptr<Component> GetParent(int parent_number = 0);
 
 	bool IsReady();
 

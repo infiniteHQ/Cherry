@@ -1,7 +1,7 @@
 #pragma once
 #include "../base.hpp"
 
-// This ImGui wrapper helps Cherry framework to easely add custom behaviors, 
+// This ImGui wrapper helps Cherry framework to easely add custom behaviors,
 // control and ui callbacks and other cool stuff for the end-user API.
 
 namespace Cherry
@@ -46,6 +46,32 @@ namespace Cherry
         bool IsMouseClicked(ImGuiMouseButton button, bool repeat = false); // did mouse button clicked? (went from !Down to Down). Same as GetMouseClickedCount() == 1.
         bool IsMouseReleased(ImGuiMouseButton button);                     // did mouse button released? (went from Down to !Down)
         bool IsMouseDoubleClicked(ImGuiMouseButton button);                // manually close the popup we have begin-ed into.
+
+        ImFont *GetFont();                                       // get current font
+        float GetFontSize();                                     // get current font size (= height in pixels) of current font with current scale applied
+        ImVec2 GetFontTexUvWhitePixel();                         // get UV coordinate for a while pixel, useful to draw custom shapes via the ImDrawList API
+        ImU32 GetColorU32(ImGuiCol idx, float alpha_mul = 1.0f); // retrieve given style color with style alpha applied and optional extra alpha multiplier, packed as a 32-bit value suitable for ImDrawList
+        ImU32 GetColorU32(const ImVec4 &col);                    // retrieve given color with style alpha applied, packed as a 32-bit value suitable for ImDrawList
+        ImU32 GetColorU32(ImU32 col);                            // retrieve given color with style alpha applied, packed as a 32-bit value suitable for ImDrawList
+        const ImVec4 &GetStyleColorVec4(ImGuiCol idx);           // retrieve style color as stored in ImGuiStyle structure. use to feed back into PushStyleColor(), otherwise use GetColorU32() to get style color with style alpha baked in.
+
+        void PushFont(ImFont *font); // use NULL as a shortcut to push default font
+        void PopFont();
+
+        // Widgets: Text
+        void TextUnformatted(const char *text, const char *text_end = NULL); // raw text without formatting. Roughly equivalent to Text("%s", text) but: A) doesn't require null terminated string if 'text_end' is specified, B) it's faster, no memory copy is done, no buffer size limits, recommended for long chunks of text.
+        void Text(const char *fmt, ...) IM_FMTARGS(1);                       // formatted text
+        void TextV(const char *fmt, va_list args) IM_FMTLIST(1);
+        void TextColored(const ImVec4 &col, const char *fmt, ...) IM_FMTARGS(2); // shortcut for PushStyleColor(ImGuiCol_Text, col); Text(fmt, ...); PopStyleColor();
+        void TextColoredV(const ImVec4 &col, const char *fmt, va_list args) IM_FMTLIST(2);
+        void TextDisabled(const char *fmt, ...) IM_FMTARGS(1); // shortcut for PushStyleColor(ImGuiCol_Text, style.Colors[ImGuiCol_TextDisabled]); Text(fmt, ...); PopStyleColor();
+        void TextDisabledV(const char *fmt, va_list args) IM_FMTLIST(1);
+        void TextWrapped(const char *fmt, ...) IM_FMTARGS(1); // shortcut for PushTextWrapPos(0.0f); Text(fmt, ...); PopTextWrapPos();. Note that this won't work on an auto-resizing window if there's no other widgets to extend the window width, yoy may need to set a size using SetNextWindowSize().
+        void TextWrappedV(const char *fmt, va_list args) IM_FMTLIST(1);
+        void LabelText(const char *label, const char *fmt, ...) IM_FMTARGS(2); // display text+label aligned the same way as value+label widgets
+        void LabelTextV(const char *label, const char *fmt, va_list args) IM_FMTLIST(2);
+        void BulletText(const char *fmt, ...) IM_FMTARGS(1); // shortcut for Bullet()+Text()
+        void BulletTextV(const char *fmt, va_list args) IM_FMTLIST(1);
 
     }
 }

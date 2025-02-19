@@ -41,15 +41,59 @@ void Render()
 
 
   CherryKit::TitleOne(CherryID("title"),"Test");
+  CherryKit::TitleFour(CherryID("titgle"),"Test");
+  CherryKit::TextSimple("Hello incredible world");
+  CherryKit::TextLeft("Hello incredible world");
+  CherryKit::TextRight("Hello incredible world");
 
 
-  std::thread([&](){
+  // Cherry?::AddPadding(7.0f);
+  ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 7.0f);
 
+
+  CherryKit::TextWrapped("Hello incredible worlello incredible worello incredible worello incredible worello incredible worello incredible worello incredible worello incredible word");
+
+  // Cherry?::AddPadding(7.0f);
+  ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 7.0f);
+
+  static int valeursolann = 5;
+  static std::string valeurphrase = "Le wagon";
+
+  static float x = 2.5f;
+  static float y = 2.5f;
+  static float z = 5.5f;
+  static float w = 5.5f;
+
+  static double doubleprecisionnumber = 5.5;
+
+  Cherry::AddOneTimeProperty("step", "8");
+  CherryKit::KeyValInteger(CherryID("Solann"),"Valeur Solann", &valeursolann);
+
+  CherryKit::TableSimple("Test", {
+    Cherry::Application::GetComponent(CherryID("Solann")),
+    CherryKit::KeyValComboString("11", {"Test 1", "Test2", "Test2kl"}, 0),
+    CherryKit::KeyValString("La phrase de Solann", &valeurphrase),
+    CherryKit::KeyValFloat("Float input", &x),
+    CherryKit::KeyValDouble("Double input", &doubleprecisionnumber),
+    CherryKit::KeyValVector1("11", &x),
+    CherryKit::KeyValVector2("22", &x, &y),
+    CherryKit::KeyValVector3("La phrase de Solann", &x, &y, &z),
+    CherryKit::KeyValVector4("La LMe super Vector4 olann", &x, &y, &z, &w)
+    });
+
+    // Cherry::CreateStaticRoutine
+    static std::once_flag flag;
+        std::call_once(flag, [&](){
+        std::thread([&]() {
+          while(true)
+          {
     // Cherry::SetComponentProperty(ID, key, val)
-    Cherry::Application::Get().GetComponent(CherryID("title"))->SetProperty("label", "OK"); 
+            Cherry::Application::Get().GetComponent(CherryID("title"))->SetProperty("label", "OK"); 
+            Cherry::Application::Get().GetComponent(CherryID("title"))->SetProperty("label", "Super !");
+          }
+        }).detach();
+    });
     
-     }).detach();
-
   // This is how we call registered component. This text button can be 
   // initialized with a "CherryID" that we can use to get data, update
   // properties and add a lot of logics here, and outside this function! 

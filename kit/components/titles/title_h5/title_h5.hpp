@@ -2,22 +2,22 @@
 #include "../../../../platform/engine/app.hpp"
 
 //
-// TitleOne
+// TitleFive
 // Summary : A big title.
 // Authors : Infinite, Diego Moreno
 //
 
-#ifndef CHERRY_KIT_TITLE_H1
-#define CHERRY_KIT_TITLE_H1
+#ifndef CHERRY_KIT_TITLE_H5
+#define CHERRY_KIT_TITLE_H5
 
 namespace Cherry
 {
     namespace Components
     {
-        class TitleOne : public Component
+        class TitleFive : public Component
         {
         public:
-            TitleOne(const Cherry::Identifier &id, const std::string &label)
+            TitleFive(const Cherry::Identifier &id, const std::string &label)
                 : Component(id)
             {
                 // Identifier
@@ -33,7 +33,7 @@ namespace Cherry
             void Render() override
             {
                 float oldsize = CherryGUI::GetFont()->Scale;
-                CherryGUI::GetFont()->Scale *= 2.10;
+                CherryGUI::GetFont()->Scale *= 1.30; // TODO : property
                 CherryGUI::PushFont(CherryGUI::GetFont());
 
                 CherryGUI::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(6, 6));
@@ -51,14 +51,14 @@ namespace Cherry
     // End-User API
     namespace Kit
     {
-        void TitleOne(const std::string &label)
+        void TitleFive(const std::string &label)
         {
             // Inline component
-            auto title = Application::CreateAnonymousComponent<Components::TitleOne>(Components::TitleOne(Cherry::Identifier(""), label));
+            auto title = Application::CreateAnonymousComponent<Components::TitleFive>(Components::TitleFive(Cherry::Identifier(""), label));
             title->Render();
         }
 
-        void TitleOne(const Cherry::Identifier &identifier, const std::string &label)
+        void TitleFive(const Cherry::Identifier &identifier, const std::string &label)
         {
             // Get the object if exist
             auto existing_title = Application::GetComponent(identifier);
@@ -69,7 +69,7 @@ namespace Cherry
             else
             {
                 // Create the object if not exist
-                auto new_title = Application::CreateComponent<Components::TitleOne>(Components::TitleOne(identifier, label));
+                auto new_title = Application::CreateComponent<Components::TitleFive>(Components::TitleFive(identifier, label));
                 new_title->Render();
             }
         }
@@ -77,4 +77,4 @@ namespace Cherry
 
 }
 
-#endif // CHERRY_KIT_TITLE_H1
+#endif // CHERRY_KIT_TITLE_H5

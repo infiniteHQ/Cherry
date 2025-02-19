@@ -2345,6 +2345,28 @@ namespace Cherry
         m_OnTimeProperties.push_back({property, value});
     }
 
+    void Application::PushParentComponent(const std::shared_ptr<Component> &component)
+    {
+        m_ParentComponentsStack.push_back(component);
+    }
+
+    void Application::PopParentComponent()
+    {
+        if (!m_ParentComponentsStack.empty())
+        {
+            m_ParentComponentsStack.pop_back();
+        }
+    }
+
+    std::shared_ptr<Component> Application::GetParent(int parent_number)
+    {
+        if (parent_number < 0 || parent_number >= static_cast<int>(m_ParentComponentsStack.size()))
+        {
+            return nullptr;
+        }
+        return m_ParentComponentsStack[m_ParentComponentsStack.size() - 1 - parent_number];
+    }
+
     std::string Application::GetLocale(const std::string &locale_type)
     {
         if (m_SelectedLocale.empty() || m_Locales.find(m_SelectedLocale) == m_Locales.end())
@@ -2595,6 +2617,21 @@ namespace Cherry
     void AddOneTimeProperty(const std::string &property, const std::string &value)
     {
         Application::Get().AddOneTimeProperty(property, value);
+    }
+
+    void PushParentComponent(const std::shared_ptr<Component> &component)
+    {
+        Application::Get().PushParentComponent(component);
+    }
+
+    void PopParentComponent()
+    {
+        Application::Get().PopParentComponent();
+    }
+
+    std::shared_ptr<Component> GetParent(int parent_number)
+    {
+       return Application::Get().GetParent(parent_number);
     }
 
     void AddNotification(const ImGuiToast &toast)
