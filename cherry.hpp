@@ -60,6 +60,8 @@
 #include "./kit/components/headers/header_image_text/header_image_text.hpp"
 #include "./kit/components/headers/header_image_text_button/header_image_text_button.hpp"
 #include "./kit/components/headers/header_text_button/header_text_button.hpp"
+// Combos
+#include "./kit/components/combos/combo_string/combo_string.hpp"
 
 using CherryID = Cherry::Identifier;
 namespace CherryKit = Cherry::Kit;

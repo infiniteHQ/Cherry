@@ -97,6 +97,8 @@ CherryKit::HeaderImageText("TEst", Cherry::GetPath("resources/base/w.png"),[](){
   CherryKit::TextSimple("Hello incredible world 2 ");
 });
 
+CherryKit::ComboString("Test", {"Suepr Nombre 1", "Test 2", "Test 3"});
+
     // Cherry::CreateStaticRoutine
     static std::once_flag flag;
         std::call_once(flag, [&](){
