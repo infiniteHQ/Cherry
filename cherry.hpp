@@ -55,6 +55,11 @@
 #include "./kit/components/keyval/keyval_vector2/keyval_vector2.hpp"
 #include "./kit/components/keyval/keyval_vector3/keyval_vector3.hpp"
 #include "./kit/components/keyval/keyval_vector4/keyval_vector4.hpp"
+// Headers
+#include "./kit/components/headers/header_text/header_text.hpp"
+#include "./kit/components/headers/header_image_text/header_image_text.hpp"
+#include "./kit/components/headers/header_image_text_button/header_image_text_button.hpp"
+#include "./kit/components/headers/header_text_button/header_text_button.hpp"
 
 using CherryID = Cherry::Identifier;
 namespace CherryKit = Cherry::Kit;

@@ -81,6 +81,22 @@ void Render()
     CherryKit::KeyValVector4("La LMe super Vector4 olann", &x, &y, &z, &w)
     });
 
+CherryKit::HeaderText("TEst", [](){
+  CherryKit::TextSimple("Hello incredible world");
+});
+
+CherryKit::HeaderTextButton("Qsdg", Cherry::GetPath("resources/base/y.png"),[](){
+  CherryKit::TextSimple("Hello incredible world 2 ");
+});
+
+CherryKit::HeaderImageTextButton("TEst", Cherry::GetPath("resources/base/w.png"),[](){
+  CherryKit::TextSimple("Hello incredible world 2 ");
+});
+
+CherryKit::HeaderImageText("TEst", Cherry::GetPath("resources/base/w.png"),[](){
+  CherryKit::TextSimple("Hello incredible world 2 ");
+});
+
     // Cherry::CreateStaticRoutine
     static std::once_flag flag;
         std::call_once(flag, [&](){

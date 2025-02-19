@@ -46,20 +46,15 @@ namespace Cherry
     // End-User API
     namespace Kit
     {
-        std::shared_ptr<Component> CreateTextSimple(const std::string &label)
-        {
-            // Create component without identifier
-            return Application::CreateAnonymousComponent<Components::TextSimple>(Components::TextSimple(Cherry::Identifier(""), label));
-        }
-
-        void TextSimple(const std::string &label)
+        std::shared_ptr<Component> TextSimple(const std::string &label)
         {
             // Inline component
             auto title = Application::CreateAnonymousComponent<Components::TextSimple>(Components::TextSimple(Cherry::Identifier(""), label));
             title->Render();
+            return title;
         }
 
-        void TextSimple(const Cherry::Identifier &identifier, const std::string &label)
+        std::shared_ptr<Component> TextSimple(const Cherry::Identifier &identifier, const std::string &label)
         {
             // Get the object if exist
             auto existing_title = Application::GetComponent(identifier);
@@ -72,7 +67,9 @@ namespace Cherry
                 // Create the object if not exist
                 auto new_title = Application::CreateComponent<Components::TextSimple>(Components::TextSimple(identifier, label));
                 new_title->Render();
+                return new_title;
             }
+            return existing_title;
         }
     }
 

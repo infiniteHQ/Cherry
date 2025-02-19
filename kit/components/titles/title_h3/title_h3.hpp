@@ -51,14 +51,15 @@ namespace Cherry
     // End-User API
     namespace Kit
     {
-        void TitleThree(const std::string &label)
+        std::shared_ptr<Component>  TitleThree(const std::string &label)
         {
             // Inline component
             auto title = Application::CreateAnonymousComponent<Components::TitleThree>(Components::TitleThree(Cherry::Identifier(""), label));
             title->Render();
+            return title;
         }
 
-        void TitleThree(const Cherry::Identifier &identifier, const std::string &label)
+        std::shared_ptr<Component>  TitleThree(const Cherry::Identifier &identifier, const std::string &label)
         {
             // Get the object if exist
             auto existing_title = Application::GetComponent(identifier);
@@ -71,7 +72,9 @@ namespace Cherry
                 // Create the object if not exist
                 auto new_title = Application::CreateComponent<Components::TitleThree>(Components::TitleThree(identifier, label));
                 new_title->Render();
+                return new_title;
             }
+            return existing_title;
         }
     }
 
