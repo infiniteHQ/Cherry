@@ -60,7 +60,7 @@ void Render()
   // Cherry?::AddPadding(7.0f);
   ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 7.0f);
 
-  static int valeursolann = 5;
+  static int valeurTEst = 5;
   static std::string valeurphrase = "Le wagon";
 
   static float x = 2.5f;
@@ -71,33 +71,33 @@ void Render()
   static double doubleprecisionnumber = 5.5;
 
   Cherry::AddOneTimeProperty("step", "8");
-  CherryKit::KeyValInteger(CherryID("Solann"),"Valeur Solann", &valeursolann);
+  CherryKit::KeyValInteger(CherryID("TEst"),"Valeur TEst", &valeurTEst);
 
   CherryKit::TableSimple("Test", {
-    Cherry::Application::GetComponent(CherryID("Solann")),
+    Cherry::Application::GetComponent(CherryID("TEst")),
     CherryKit::KeyValComboString("11", {"Test 1", "Test2", "Test2kl"}, 0),
-    CherryKit::KeyValString("La phrase de Solann", &valeurphrase),
+    CherryKit::KeyValString("La phrase de TEst", &valeurphrase),
     CherryKit::KeyValFloat("Float input", &x),
     CherryKit::KeyValDouble("Double input", &doubleprecisionnumber),
     CherryKit::KeyValVector1("11", &x),
     CherryKit::KeyValVector2("22", &x, &y),
-    CherryKit::KeyValVector3("La phrase de Solann", &x, &y, &z),
+    CherryKit::KeyValVector3("La phrase de TEst", &x, &y, &z),
     CherryKit::KeyValVector4("La LMe super Vector4 olann", &x, &y, &z, &w)
     });
 
-CherryKit::HeaderText("TEst", [](){
+CherryKit::HeaderText("456", [](){
   CherryKit::TextSimple("Hello incredible world");
 });
 
-CherryKit::HeaderTextButton("Qsdg", Cherry::GetPath("resources/base/y.png"),[](){
+CherryKit::HeaderTextButton("3123", Cherry::GetPath("resources/base/y.png"),[](){
   CherryKit::TextSimple("Hello incredible world 2 ");
 });
 
-CherryKit::HeaderImageTextButton("TEst", Cherry::GetPath("resources/base/w.png"),[](){
+CherryKit::HeaderImageTextButton("456", Cherry::GetPath("resources/base/w.png"),[](){
   CherryKit::TextSimple("Hello incredible world 2 ");
 });
 
-CherryKit::HeaderImageText("TEst", Cherry::GetPath("resources/base/w.png"),[](){
+CherryKit::HeaderImageText("0456", Cherry::GetPath("resources/base/w.png"),[](){
   CherryKit::TextSimple("Hello incredible world 2 ");
 });
 

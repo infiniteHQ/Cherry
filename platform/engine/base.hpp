@@ -5,6 +5,9 @@
 #include "image.hpp"
 
 #include <mutex>
+#include <atomic>
+#include <memory>
+#include <string>
 
 namespace Cherry
 {

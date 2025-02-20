@@ -12,6 +12,7 @@
 
 #include "identifier.hpp"
 
+
 namespace Cherry
 {
     class Component
@@ -32,7 +33,7 @@ namespace Cherry
         void        ClearData(const std::string &key);
 
         // Identifier
-        void        SetIdentifier(Identifier id);
+        void        SetIdentifier(const Identifier& id);
         Identifier  GetIdentifier() const;
         bool        NeedRefreshing();
 

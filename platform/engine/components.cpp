@@ -77,7 +77,7 @@ namespace Cherry
         }
     }
 
-    void Component::SetIdentifier(Cherry::Identifier id)
+    void Component::SetIdentifier(const Cherry::Identifier& id)
     {
         m_Identifier = id;
     }

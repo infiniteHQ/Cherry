@@ -220,8 +220,16 @@ namespace Cherry
 		template <typename T>
 		static std::shared_ptr<Component> CreateAnonymousComponent(const T &component)
 		{
-			std::shared_ptr<Component> component_ptr = std::make_shared<T>(component);
-			return component_ptr;
+			T component_copy = component;
+			
+			if (component_copy.GetIdentifier().string().empty() || component_copy.GetIdentifier().string() == "anonymous")
+			{
+				Identifier anonymous_id = component_copy.GetIdentifier();
+				anonymous_id.set(std::to_string(Identifier::get_unique_index()));
+				component_copy.SetIdentifier(anonymous_id);
+			}
+
+			return std::make_shared<T>(component_copy);
 		}
 
 		template <typename T>

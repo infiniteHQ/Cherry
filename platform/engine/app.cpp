@@ -1410,6 +1410,7 @@ namespace Cherry
         this->BoostrappWindow();
         while (m_Running)
         {
+            Identifier::reset_unique_index(); // Reset anonymous components indexes
             c_ValidDropZoneFounded = false;
 
             if (s_Instance->m_DefaultSpecification.WindowSaves)

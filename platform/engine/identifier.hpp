@@ -5,40 +5,21 @@
 #ifndef CHERRY_IDENTIFIER
 #define CHERRY_IDENTIFIER
 
-
 namespace Cherry
 {
-	static int index = 0;
+	static std::atomic<int> index{0};
+
 	class Component;
+
 	class Identifier
 	{
 	public:
 		Identifier() : m_IdentifierName(std::to_string(get_unique_index())) {}
-		explicit Identifier(const std::string &id)
+		explicit Identifier(const std::string &id) : m_IdentifierName(id) {}
+
+		explicit Identifier(std::vector<std::shared_ptr<Component>> *components_, const std::string &id) : m_IdentifierName(id)
 		{
-			if (id.empty())
-			{
-				m_IdentifierName = std::to_string(get_unique_index());
-			}
-			else
-			{
-				m_IdentifierName = id;
-			}
-		}
-
-		explicit Identifier(std::vector<std::shared_ptr<Cherry::Component>>* components_, const std::string &id)
-		{
-			if (id.empty())
-			{
-				m_IdentifierName = std::to_string(get_unique_index());
-			}
-			else
-			{
-				m_IdentifierName = id;
-			}
-
-
-			if(components_)
+			if (components_)
 			{
 				m_ComponentArrayPtr = components_;
 			}
@@ -48,7 +29,7 @@ namespace Cherry
 		{
 			std::lock_guard<std::mutex> lock(other.m_Mutex);
 			m_IdentifierName = other.m_IdentifierName;
-    		m_ComponentArrayPtr = other.m_ComponentArrayPtr;
+			m_ComponentArrayPtr = other.m_ComponentArrayPtr;
 		}
 
 		[[nodiscard]] std::string string() const
@@ -90,7 +71,6 @@ namespace Cherry
 		{
 			std::lock_guard<std::mutex> lock1(m_Mutex);
 			std::lock_guard<std::mutex> lock2(other.m_Mutex);
-
 			return Identifier(m_IdentifierName + "_AND_" + other.m_IdentifierName);
 		}
 
@@ -101,18 +81,26 @@ namespace Cherry
 			return m_IdentifierName == other.m_IdentifierName;
 		}
 
+		static int get_unique_index()
+		{
+			return index.fetch_add(1, std::memory_order_relaxed);
+		}
+
+		static void reset_unique_index()
+		{
+			std::cout << "RESET" << std::endl;
+			index.store(0, std::memory_order_relaxed);
+		}
+
 	private:
 		mutable std::mutex m_Mutex;
 		std::string m_IdentifierName;
 		std::string m_ComponentGroup;
 		std::vector<std::shared_ptr<Component>> *m_ComponentArrayPtr = nullptr;
 
-		int get_unique_index()
-		{
-			index = index++;
-			return index;
-		}
+		inline static std::atomic<int> index{0};
 	};
+
 }
 
 #endif // CHERRY_IDENTIFIER

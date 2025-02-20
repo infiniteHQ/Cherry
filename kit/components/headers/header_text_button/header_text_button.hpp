@@ -93,9 +93,9 @@ namespace Cherry
                 ImGui::SetCursorScreenPos(content_pos);
                 ImVec2 child_size = ImVec2(100, button_size.y);
 
-
+                std::string child_label = "###child" + identifier;
                 ImGui::PushStyleColor(ImGuiCol_ChildBg, Cherry::HexToImU32("#00000000"));
-                ImGui::BeginChild("##customContent", child_size, false, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
+                ImGui::BeginChild(child_label.c_str(), child_size, false, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
 
                 CherryGUI::PushStyleColor(ImGuiCol_Border, HexToRGBA(GetProperty("button_color_border")));
                 CherryGUI::PushStyleColor(ImGuiCol_Button, HexToRGBA(GetProperty("button_color_border")));
@@ -135,7 +135,7 @@ namespace Cherry
         bool HeaderTextButton(const std::string &label, const std::string &image_path, const std::function<void()> &render_content = []() {})
         {
             // Inline component
-            auto button = Application::CreateAnonymousComponent<Components::HeaderTextButton>(Components::HeaderTextButton(Cherry::Identifier("anonymous"), label, image_path, render_content));
+            auto button = Application::CreateAnonymousComponent<Components::HeaderTextButton>(Components::HeaderTextButton(Cherry::Identifier(""), label, image_path, render_content));
             button->Render();
             return button->GetData("isClicked") == "true" ? true : false;
         }

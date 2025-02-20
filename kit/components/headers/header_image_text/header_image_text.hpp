@@ -114,7 +114,7 @@ namespace Cherry
         bool HeaderImageText(const std::string &label, const std::string &image_path, const std::function<void()> &render_content = []() {})
         {
             // Inline component
-            auto button = Application::CreateAnonymousComponent<Components::HeaderImageText>(Components::HeaderImageText(Cherry::Identifier("anonymous"), label, image_path, render_content));
+            auto button = Application::CreateAnonymousComponent<Components::HeaderImageText>(Components::HeaderImageText(Cherry::Identifier(""), label, image_path, render_content));
             button->Render();
             return button->GetData("isClicked") == "true" ? true : false;
         }
