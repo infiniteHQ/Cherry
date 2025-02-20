@@ -8,7 +8,6 @@
 
 namespace Cherry
 {
-
 	static int index = 0;
 	class Component;
 	class Identifier
@@ -27,10 +26,29 @@ namespace Cherry
 			}
 		}
 
+		explicit Identifier(std::vector<std::shared_ptr<Cherry::Component>>* components_, const std::string &id)
+		{
+			if (id.empty())
+			{
+				m_IdentifierName = std::to_string(get_unique_index());
+			}
+			else
+			{
+				m_IdentifierName = id;
+			}
+
+
+			if(components_)
+			{
+				m_ComponentArrayPtr = components_;
+			}
+		}
+
 		Identifier(const Identifier &other)
 		{
 			std::lock_guard<std::mutex> lock(other.m_Mutex);
 			m_IdentifierName = other.m_IdentifierName;
+    		m_ComponentArrayPtr = other.m_ComponentArrayPtr;
 		}
 
 		[[nodiscard]] std::string string() const
@@ -87,7 +105,7 @@ namespace Cherry
 		mutable std::mutex m_Mutex;
 		std::string m_IdentifierName;
 		std::string m_ComponentGroup;
-		std::vector<std::shared_ptr<Component>> *m_ComponentArrayPtr;
+		std::vector<std::shared_ptr<Component>> *m_ComponentArrayPtr = nullptr;
 
 		int get_unique_index()
 		{

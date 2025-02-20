@@ -16,6 +16,10 @@
 // This is the single include, this file inclue all of the Cherry framework,
 // just include it, and start simply !
 #include "../../cherry.hpp"
+#include "../../platform/engine/components.hpp"
+#include "../../platform/engine/app.hpp"
+
+static std::vector<std::shared_ptr<Cherry::Component>> m_TestComponents;
 
 // The main Render function ! For this sample example, we will put all of our
 // components in it.
@@ -96,6 +100,10 @@ CherryKit::HeaderImageTextButton("TEst", Cherry::GetPath("resources/base/w.png")
 CherryKit::HeaderImageText("TEst", Cherry::GetPath("resources/base/w.png"),[](){
   CherryKit::TextSimple("Hello incredible world 2 ");
 });
+
+
+
+    CherryKit::ButtonTextDropdown(CherryID(&m_TestComponents, "super_button"),"My first button");
 
 CherryKit::ComboString("Test", {"Suepr Nombre 1", "Test 2", "Test 3"});
 

@@ -2294,8 +2294,6 @@ namespace Cherry
         layer->OnAttach();
     }
 
-
-
     std::string Application::GetComponentData(const Identifier &id, const std::string &topic)
     {
         for (auto &component : m_ApplicationComponents)
@@ -2450,13 +2448,27 @@ namespace Cherry
 
     std::shared_ptr<Component> Application::GetComponent(const Identifier &identifier)
     {
-        for (const auto &existing_component : Application::Get().m_ApplicationComponents)
+        if (identifier.component_array_ptr() != nullptr)
         {
-            if (existing_component->GetIdentifier() == identifier)
+            for (const auto &existing_component : *identifier.component_array_ptr())
             {
-                return existing_component;
+                if (existing_component->GetIdentifier() == identifier)
+                {
+                    return existing_component;
+                }
             }
         }
+        else
+        {
+            for (const auto &existing_component : Application::Get().m_ApplicationComponents)
+            {
+                if (existing_component->GetIdentifier() == identifier)
+                {
+                    return existing_component;
+                }
+            }
+        }
+
         return nullptr;
     }
 

@@ -227,17 +227,37 @@ namespace Cherry
 		template <typename T>
 		static std::shared_ptr<Component> CreateComponent(const T &component)
 		{
-			for (const auto &existing_component : Application::Get().m_ApplicationComponents)
-			{
-				if (existing_component->GetIdentifier() == component.GetIdentifier())
-				{
-					return existing_component;
-				}
-			}
+			Identifier component_id = component.GetIdentifier();
 
-			std::shared_ptr<Component> component_ptr = std::make_shared<T>(component);
-			Application::Get().m_ApplicationComponents.push_back(component_ptr);
-			return component_ptr;
+			if (component_id.component_array_ptr() != nullptr)
+			{
+				for (const auto &existing_component : *component_id.component_array_ptr())
+				{
+					if (existing_component->GetIdentifier() == component.GetIdentifier())
+					{
+						return existing_component;
+					}
+				}
+
+				std::shared_ptr<Component> component_ptr = std::make_shared<T>(component);
+				component_id.component_array_ptr()->push_back(component_ptr);
+				return component_ptr;
+			}
+			else
+			{
+				for (const auto &existing_component : Application::Get().m_ApplicationComponents)
+				{
+					if (existing_component->GetIdentifier() == component.GetIdentifier())
+					{
+						return existing_component;
+					}
+				}
+
+				std::shared_ptr<Component> component_ptr = std::make_shared<T>(component);
+				Application::Get().m_ApplicationComponents.push_back(component_ptr);
+				return component_ptr;
+			}
+			return nullptr;
 		}
 
 		void PushComponentGroup(const std::string &groupname);

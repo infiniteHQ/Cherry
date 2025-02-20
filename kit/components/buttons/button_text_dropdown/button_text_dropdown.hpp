@@ -147,7 +147,7 @@ namespace Cherry
         bool ButtonTextDropdown(const std::string &label)
         {
             // Inline component
-            auto button = Application::CreateAnonymousComponent<Components::ButtonTextDropdown>(Components::ButtonTextDropdown(Cherry::Identifier(""), label));
+            auto button = Application::CreateAnonymousComponent<Components::ButtonTextDropdown>(Components::ButtonTextDropdown(Cherry::Identifier(), label));
             button->RefreshContextProperties();
             button->Render();
             return button->GetData("isClicked") == "true" ? true : false;

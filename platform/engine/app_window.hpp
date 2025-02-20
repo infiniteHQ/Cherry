@@ -4,6 +4,7 @@
 #include "../../src/layer.hpp"
 #include "../../src/core/color.hpp"
 #include "image.hpp"
+#include "components.hpp"
 #include "base.hpp"
 
 #include <string>
@@ -103,30 +104,21 @@ namespace Cherry
         std::string m_Icon = "none";
 
         bool m_Visible = true;
-
         bool m_Closable = true;
         bool m_CloseSignal = true;
-
         bool m_SaveMode = false;
         bool m_Saved = false;
         bool m_UnsaveMarkerApplied = false;
-
         bool m_Opened = true;
         bool m_IsRendering = true;
-
         bool m_DisableDragging = false;
         bool m_DisableContextMenu = false;
-
         bool m_EnableMenuBar = false;
         bool m_EnableBottomBar = false;
-
         bool m_IsDragging;
         bool m_DockIsDraggingStarted;
-
         bool m_Pressed;
-
         bool m_DockingMode = false;
-
         float m_InternalPaddingY = 0;
         float m_InternalPaddingX = 0;
 
@@ -169,5 +161,27 @@ namespace Cherry
 
         // Default behaviors (docking behaviors, default themes, internal docking emplacements.)
         std::unordered_map<DefaultAppWindowBehaviors, std::string, EnumClassHash> m_DefaultBehaviors;
+    };
+
+    class AppWindowWrapper : public std::enable_shared_from_this<AppWindowWrapper>
+    {
+        public:
+        AppWindowWrapper();
+        AppWindowWrapper(const std::string &id, const std::string &name);
+        AppWindowWrapper(const std::string &id, const std::string &name, const std::string &icon);
+
+        std::shared_ptr<Cherry::AppWindow> &GetAppWindow();
+        static std::shared_ptr<AppWindowWrapper> Create(const std::string &name);
+        void SetupRenderCallback();
+        void Render();
+
+        // Internal & private managment of Components
+        std::vector<std::shared_ptr<Component>>* GetComponents()
+        {
+            return &m_PrivateComponents;
+        }
+
+        private:
+		std::vector<std::shared_ptr<Component>> m_PrivateComponents;
     };
 }
