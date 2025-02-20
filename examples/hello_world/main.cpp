@@ -108,7 +108,7 @@ CherryKit::HeaderImageText("0456", Cherry::GetPath("resources/base/w.png"),[](){
 CherryKit::ComboString("Test", {"Suepr Nombre 1", "Test 2", "Test 3"});
 
     // Cherry::CreateStaticRoutine
-    static std::once_flag flag;
+    /*static std::once_flag flag;
         std::call_once(flag, [&](){
         std::thread([&]() {
           while(true)
@@ -118,7 +118,7 @@ CherryKit::ComboString("Test", {"Suepr Nombre 1", "Test 2", "Test 3"});
             Cherry::Application::Get().GetComponent(CherryID("title"))->SetProperty("label", "Super !");
           }
         }).detach();
-    });
+    });*/
     
   // This is how we call registered component. This text button can be 
   // initialized with a "CherryID" that we can use to get data, update

@@ -88,7 +88,6 @@ namespace Cherry
 
 		static void reset_unique_index()
 		{
-			std::cout << "RESET" << std::endl;
 			index.store(0, std::memory_order_relaxed);
 		}
 

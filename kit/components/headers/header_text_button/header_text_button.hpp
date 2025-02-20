@@ -77,12 +77,16 @@ namespace Cherry
                 CherryGUI::PushStyleColor(ImGuiCol_ButtonActive, HexToRGBA(GetProperty("color_bg_clicked")));
 
                 bool pressed = ImGui::Button(Label.c_str(), ImVec2(700.0f, 0.0f));
+                
+                if(pressed)
+                {
+                    *p_open ^= 1;
+                }
 
                 ImGui::PopStyleColor(4);
 
                 ImVec2 arrow_pos = ImVec2(ImGui::GetItemRectMax().x - style.FramePadding.x - ImGui::GetFontSize(), ImGui::GetItemRectMin().y + style.FramePadding.y + 3.0f);
                 ImGui::RenderArrow(ImGui::GetWindowDrawList(), arrow_pos, ImGui::GetColorU32(ImGuiCol_Text), *p_open ? ImGuiDir_Down : ImGuiDir_Right);
-
 
                 ImVec2 button_size = ImGui::GetItemRectSize();
                 ImVec2 button_pos = ImGui::GetItemRectMin();
@@ -112,6 +116,14 @@ namespace Cherry
                 ImGui::EndGroup();
 
                 ImGui::PopStyleVar();
+
+                if (*p_open)
+                {
+                    if (m_RenderContent)
+                    {
+                        m_RenderContent();
+                    }
+                }
             }
 
         private:
@@ -135,7 +147,7 @@ namespace Cherry
         bool HeaderTextButton(const std::string &label, const std::string &image_path, const std::function<void()> &render_content = []() {})
         {
             // Inline component
-            auto button = Application::CreateAnonymousComponent<Components::HeaderTextButton>(Components::HeaderTextButton(Cherry::Identifier(""), label, image_path, render_content));
+            auto button = Application::CreateAnonymousComponent<Components::HeaderTextButton>(Components::HeaderTextButton(Cherry::Identifier("anonymous"), label, image_path, render_content));
             button->Render();
             return button->GetData("isClicked") == "true" ? true : false;
         }

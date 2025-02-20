@@ -77,9 +77,13 @@ namespace Cherry
                 CherryGUI::PushStyleColor(ImGuiCol_ButtonHovered, HexToRGBA(GetProperty("color_bg_hovered")));
                 CherryGUI::PushStyleColor(ImGuiCol_ButtonActive, HexToRGBA(GetProperty("color_bg_clicked")));
 
+                std::string button_label = Label + "_button";
+                bool pressed = ImGui::ImageSizeButtonWithText(Cherry::GetTexture(GetProperty("image_path")), 700.0f, button_label.c_str(), ImVec2(-FLT_MIN, 0.0f), ImVec2(0, 0), ImVec2(1, 1), -1, ImVec4(0, 0, 0, 0), ImVec4(1, 1, 1, 1));
 
-                std::cout << "Label :" << Label << std::endl;
-                bool pressed = ImGui::ImageSizeButtonWithText(Cherry::GetTexture(GetProperty("image_path")), 700.0f, Label.c_str(), ImVec2(-FLT_MIN, 0.0f), ImVec2(0, 0), ImVec2(1, 1), -1, ImVec4(0, 0, 0, 0), ImVec4(1, 1, 1, 1));
+                if(pressed)
+                {
+                    *p_open ^= 1;
+                }
 
                 ImGui::PopStyleColor(4);
 
@@ -94,7 +98,6 @@ namespace Cherry
 
                 ImGui::SetCursorScreenPos(content_pos);
                 ImVec2 child_size = ImVec2(100, button_size.y);
-
 
                 ImGui::PushStyleColor(ImGuiCol_ChildBg, Cherry::HexToImU32("#00000000"));
 
@@ -116,6 +119,14 @@ namespace Cherry
                 ImGui::EndGroup();
 
                 ImGui::PopStyleVar();
+
+                if (*p_open)
+                {
+                    if (m_RenderContent)
+                    {
+                        m_RenderContent();
+                    }
+                }
             }
 
         private:
