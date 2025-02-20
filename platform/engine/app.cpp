@@ -1,6 +1,7 @@
 #include "app.hpp"
 #include "app_window.hpp"
 #include "window.hpp"
+#include "components.hpp"
 
 #include "../../src/core/log.hpp"
 #include "../../lib/sdl2/include/SDL.h"
@@ -2198,6 +2199,48 @@ namespace Cherry
         this->m_SaveWindowData = true;
     }
 
+    void Application::AddDataToComponentGroup(const std::string &group_name, const std::string &key, const std::string &value)
+    {
+        // Search all components from group_name (in the CherryID)
+        // Obviously, this function serve only public components registered in runtime api array, not in privates components.
+        for (auto component : Application::Get().m_ApplicationComponents)
+        {
+            if (component->GetIdentifier().component_group() == group_name)
+            {
+                component->SetData(key, value);
+            }
+        }
+    }
+
+    void Application::PushComponentGroup(const std::string &groupname)
+    {
+        m_PushedComponentGroups.push_back(groupname);
+    }
+
+    void Application::PopComponentGroup(int pop_number)
+    {
+        if (m_PushedComponentGroups.empty())
+            return;
+
+        if (pop_number <= 0 || pop_number >= static_cast<int>(m_PushedComponentGroups.size()))
+        {
+            m_PushedComponentGroups.clear();
+        }
+        else
+        {
+            m_PushedComponentGroups.erase(m_PushedComponentGroups.end() - pop_number, m_PushedComponentGroups.end());
+        }
+    }
+
+    std::string Application::GetComponentGroup() const
+    {
+        if (m_PushedComponentGroups.empty())
+        {
+            return "";
+        }
+        return m_PushedComponentGroups.back();
+    }
+
     std::string Application::CookPath(const std::string input_path)
     {
         std::string output_path;
@@ -2250,6 +2293,8 @@ namespace Cherry
         m_LayerStack.emplace_back(layer);
         layer->OnAttach();
     }
+
+
 
     std::string Application::GetComponentData(const Identifier &id, const std::string &topic)
     {
@@ -2631,7 +2676,7 @@ namespace Cherry
 
     std::shared_ptr<Component> GetParent(int parent_number)
     {
-       return Application::Get().GetParent(parent_number);
+        return Application::Get().GetParent(parent_number);
     }
 
     void AddNotification(const ImGuiToast &toast)

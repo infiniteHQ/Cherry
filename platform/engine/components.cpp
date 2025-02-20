@@ -4,7 +4,7 @@
 namespace Cherry
 {
     Component::Component(const Cherry::Identifier &id) : m_Identifier(id) {};
-    Component::Component() : m_Identifier("anonymous") {};
+    Component::Component() {};
 
     std::string Component::SetData(const std::string &key, const std::string &val)
     {

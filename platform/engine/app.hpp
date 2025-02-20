@@ -2,7 +2,6 @@
 
 #include "../../src/layer.hpp"
 #include "../../src/core/color.hpp"
-
 #include "../../options.hpp"
 
 #include "cef.hpp"
@@ -35,6 +34,14 @@
 #include "imgui/wrappers.hpp"
 #include "vulkan/vulkan.h"
 
+#ifndef CHERRY_APP_H
+#define CHERRY_APP_H
+
+// Ajoute une déclaration anticipée
+namespace Cherry
+{
+	class Component; // Déclaration anticipée au lieu d'inclure component.hpp
+}
 void check_vk_result(VkResult err);
 
 static void AppPushTabStyle()
@@ -196,6 +203,27 @@ namespace Cherry
 		static std::shared_ptr<Component> GetComponent(const Identifier &identifier);
 		std::string GetComponentData(const Identifier &id, const std::string &topic);
 
+		void PushComponentArray(); // Add component array, create components will create in it
+		void PopComponentArray();  // REstore previous component array, if 0 it will be created in the application component array
+		// WARNING
+		// A component array is différent than a component group.
+		// Component group : Serve as "namespace" to separe component types or nature and add logic for a group
+		// Component array : Where components will be stored and managed by the runtime
+
+		template <typename T>
+		void PushLayer()
+		{
+			static_assert(std::is_base_of<Layer, T>::value, "Pushed type is not subclass of Layer!");
+			m_LayerStack.emplace_back(std::make_shared<T>())->OnAttach();
+		}
+
+		template <typename T>
+		static std::shared_ptr<Component> CreateAnonymousComponent(const T &component)
+		{
+			std::shared_ptr<Component> component_ptr = std::make_shared<T>(component);
+			return component_ptr;
+		}
+
 		template <typename T>
 		static std::shared_ptr<Component> CreateComponent(const T &component)
 		{
@@ -212,19 +240,24 @@ namespace Cherry
 			return component_ptr;
 		}
 
-		template <typename T>
-		static std::shared_ptr<Component> CreateAnonymousComponent(const T &component)
-		{
-			std::shared_ptr<Component> component_ptr = std::make_shared<T>(component);
-			return component_ptr;
-		}
+		void PushComponentGroup(const std::string &groupname);
+		void PopComponentGroup(int pop_number = 0);
+		std::string GetComponentGroup() const;
 
-		template <typename T>
-		void PushLayer()
-		{
-			static_assert(std::is_base_of<Layer, T>::value, "Pushed type is not subclass of Layer!");
-			m_LayerStack.emplace_back(std::make_shared<T>())->OnAttach();
-		}
+		// FIXME : Groups need to be on the CherryID, not on the pool.
+		// FIXME : Component Arrays need also to be on the CherryID, when we create the component we see if the CherryID have a group.
+		// FIXME : Add the Identifier class here, on the app.hpp
+		// std::vector<std::shared_ptr<ComponentGroup>> m_ComponentGroups;  // List of components in groups
+		//
+		std::vector<std::string> m_PushedComponentGroups; // List of groups
+
+		// Ordre de création dans un array :
+		//	-- Le CherryID a un array de composants spécifié ? Oui, alors je le crée dednas, non, je continue
+		//	-- Je crée le composant en faisant un GetComponentArray, il me donnera un array push si il y a eu un PushComponentArray sans pop,
+		//	   sinon il l créera dans le pool général.
+		void AddDataToComponentGroup(const std::string &group_name, const std::string &key, const std::string &value);
+
+		// Add common property/data to all group components
 
 		// Resources
 		// TODO: move out of application class since this can't be tied
@@ -245,7 +278,7 @@ namespace Cherry
 		void AddOneTimeProperty(const std::string &property, const std::string &value);
 
 		std::vector<std::shared_ptr<Component>> m_ParentComponentsStack;
-		void PushParentComponent(const std::shared_ptr<Component>& component);
+		void PushParentComponent(const std::shared_ptr<Component> &component);
 		void PopParentComponent();
 		std::shared_ptr<Component> GetParent(int parent_number = 0);
 
@@ -326,12 +359,14 @@ namespace Cherry
 	void PopPermanentProperty(int number_of_pops = 0);
 	void AddOneTimeProperty(const std::string &property, const std::string &value);
 
-		void PushParentComponent(const std::shared_ptr<Component>& component);
-		void PopParentComponent();
-		std::shared_ptr<Component> GetParent(int parent_number = 0);
+	void PushParentComponent(const std::shared_ptr<Component> &component);
+	void PopParentComponent();
+	std::shared_ptr<Component> GetParent(int parent_number = 0);
 
 	bool IsReady();
 
 	// Implemented by CLIENT
 	static Application *CreateApplication(int argc, char **argv);
 }
+
+#endif

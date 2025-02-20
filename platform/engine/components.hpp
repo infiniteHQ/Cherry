@@ -1,7 +1,5 @@
 #pragma once
 
-#include "base.hpp"
-
 #include "../../src/layer.hpp"
 #include "../../src/core/color.hpp"
 
@@ -11,6 +9,8 @@
 
 #ifndef CHERRY_COMPONENT_H
 #define CHERRY_COMPONENT_H
+
+#include "identifier.hpp"
 
 namespace Cherry
 {

@@ -1,5 +1,6 @@
 #pragma once
 #include "../../../../platform/engine/app.hpp"
+#include "../../../../platform/engine/components.hpp"
 
 //
 // KeyValString
