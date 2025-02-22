@@ -3,21 +3,21 @@
 #include "../../../../platform/engine/components.hpp"
 
 //
-// ComboImageText
+// ComboCustom
 // Authors : Infinite, Diego Moreno
 //
 
-#ifndef CHERRY_KIT__IMAGE_TEXT
-#define CHERRY_KIT__IMAGE_TEXT
+#ifndef CHERRY_KIT_COMBO_CUSTOM
+#define CHERRY_KIT_COMBO_CUSTOM
 
 namespace Cherry
 {
     namespace Components
     {
-        class ComboImageText : public Component
+        class ComboCustom : public Component
         {
         public:
-            ComboImageText(const Cherry::Identifier &id, const std::string &label, const std::vector<std::pair<std::string, std::string>> &list, int default_index)
+            ComboCustom(const Cherry::Identifier &id, const std::string &label, const std::vector<std::shared_ptr<Component>> &list, int default_index)
                 : Component(id), m_List(list)
             {
                 // Identifier
@@ -60,12 +60,7 @@ namespace Cherry
                 }
 
                 if (ImGui::BeginCombo(Label.c_str(), [&]()
-                                      {
-                    
-                ImTextureID texture = Application::Get().GetCurrentRenderedWindow()->get_texture(m_List[selected].second);
-                ImGui::Image(texture, ImVec2(15, 15));
-                ImGui::SameLine();
-                ImGui::Text(m_List[selected].first.c_str()); }))
+                                      { this->m_List[selected]->Render(); }))
                 {
                     for (int n = 0; n < m_List.size(); n++)
                     {
@@ -82,11 +77,7 @@ namespace Cherry
                         }
 
                         ImGui::SameLine();
-
-                        ImTextureID texture = Application::Get().GetCurrentRenderedWindow()->get_texture(m_List[n].second);
-                        ImGui::Image(texture, ImVec2(15, 15));
-                        ImGui::SameLine();
-                        ImGui::Text(m_List[n].first.c_str());
+                        m_List[n]->Render();
 
                         if (is_selected)
                             ImGui::SetItemDefaultFocus();
@@ -96,14 +87,14 @@ namespace Cherry
             }
 
         private:
-            std::vector<std::pair<std::string, std::string>> m_List;
+            std::vector<std::shared_ptr<Component>> m_List;
         };
     }
 
     // End-User API
     namespace Kit
     {
-        bool ComboImageText(const std::string &label, const std::vector<std::pair<std::string, std::string>> &list, int default_index = 0)
+        bool ComboCustom(const std::string &label, const std::vector<std::shared_ptr<Component>> &list, int default_index = 0)
         {
             // Inline component
             auto anonymous_id = Application::GetAnonymousID();
@@ -116,13 +107,13 @@ namespace Cherry
 
             else
             {
-                auto button = Application::CreateAnonymousComponent<Components::ComboImageText>(Components::ComboImageText(anonymous_id, label, list, default_index));
+                auto button = Application::CreateAnonymousComponent<Components::ComboCustom>(Components::ComboCustom(anonymous_id, label, list, default_index));
                 button->Render();
                 return button->GetData("isClicked") == "true" ? true : false;
             }
         }
 
-        bool ComboImageText(const Cherry::Identifier &identifier, const std::string &label, const std::vector<std::pair<std::string, std::string>> &list, int default_index = 0)
+        bool ComboCustom(const Cherry::Identifier &identifier, const std::string &label, const std::vector<std::shared_ptr<Component>> &list, int default_index = 0)
         {
             // Get the object if exist
             auto existing_button = Application::GetComponent(identifier);
@@ -134,7 +125,7 @@ namespace Cherry
             else
             {
                 // Create the object if not exist
-                auto new_button = Application::CreateComponent<Components::ComboImageText>(Components::ComboImageText(identifier, label, list, default_index));
+                auto new_button = Application::CreateComponent<Components::ComboCustom>(Components::ComboCustom(identifier, label, list, default_index));
                 new_button->Render();
                 return new_button->GetData("isClicked") == "true" ? true : false;
             }
@@ -142,4 +133,4 @@ namespace Cherry
     }
 }
 
-#endif // CHERRY_KIT__IMAGE_TEXT
+#endif // CHERRY_KIT_COMBO_CUSTOM

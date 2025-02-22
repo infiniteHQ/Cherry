@@ -72,6 +72,12 @@
 // Combos
 #include "./kit/components/combos/combo_text/combo_text.hpp"
 #include "./kit/components/combos/combo_image_text/combo_image_text.hpp"
+#include "./kit/components/combos/combo_custom/combo_custom.hpp"
+// Separators
+#include "./kit/components/separators/separator_text/separator_text.hpp"
+#include "./kit/components/separators/separator/separator.hpp"
+// Spaces
+#include "./kit/components/spaces/space/space.hpp"
 
 namespace CherryKit = Cherry::Kit;
 

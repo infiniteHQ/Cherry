@@ -53,13 +53,27 @@ void Render()
   CherryKit::TitleFour(CherryID("titgle"), "Test");
   CherryKit::TextSimple("Hello incredible world");
   CherryKit::TextLeft("Hello incredible world");
+  CherryKit::SeparatorText("Hello incredible world");
   CherryKit::TextRight("Hello incredible world");
+
+
+  CherryKit::Space(500.0f);
+
+  CherryKit::Separator();
   
   CherryKit::ComboText("11", {"Test 1", "Test2", "Test2kl"}, 0);
 
-  CherryKit::ComboImageText("11", 
+  CherryKit::ComboCustom("11", 
   {
     CherryKit::TextImage("Premier choix", Cherry::GetPath("resources/base/z.png"))
+  },
+  0);
+
+    CherryKit::ComboImageText("11", 
+  {
+    {"poremier", Cherry::GetPath("resources/base/z.png")},
+    {"dueixueme", Cherry::GetPath("resources/base/wz.png")},
+    {"troisieme", Cherry::GetPath("resources/base/x.png")}
   },
   0);
 
