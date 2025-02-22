@@ -61,7 +61,6 @@ namespace Cherry
                     Label += "####" + identifier;
                 }
 
-                std::cout << Label << std::endl;
                 ImGui::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, ImVec2(0.0f, 0.5f));
                 ImGuiStyle &style = ImGui::GetStyle();
                 float texture_size = ImGui::GetFontSize();

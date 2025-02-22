@@ -30,7 +30,14 @@
 ///////////////////////////////////////////////////////////////
 // Buttons
 #include "./kit/components/buttons/button_text/button_text.hpp"
+#include "./kit/components/buttons/button_image/button_image.hpp"
+#include "./kit/components/buttons/button_image_text/button_image_text.hpp"
+#include "./kit/components/buttons/button_text_image/button_text_image.hpp"
+#include "./kit/components/buttons/button_image_drowpdown/button_image_drowpdown.hpp"
+#include "./kit/components/buttons/button_image_text_drowpdown/button_image_text_drowpdown.hpp"
 #include "./kit/components/buttons/button_text_dropdown/button_text_dropdown.hpp"
+#include "./kit/components/buttons/button_image_text_image/button_image_text_image.hpp"
+#include "./kit/components/buttons/button_text_image_drowpdown/button_text_image_drowpdown.hpp"
 // Titles
 #include "./kit/components/titles/title_h1/title_h1.hpp"
 #include "./kit/components/titles/title_h2/title_h2.hpp"

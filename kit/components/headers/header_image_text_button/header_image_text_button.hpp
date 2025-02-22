@@ -77,7 +77,6 @@ namespace Cherry
 
                 std::string button_label = Label + "_button";
 
-                std::cout << Label << std::endl;
                 bool isOpened = GetData("isOpened") == "true";
 
                 if (ImGui::ImageSizeButtonWithText(Cherry::GetTexture(GetProperty("image_path")), 700.0f, button_label.c_str(), ImVec2(-FLT_MIN, 0.0f), ImVec2(0, 0), ImVec2(1, 1), -1, ImVec4(0, 0, 0, 0), ImVec4(1, 1, 1, 1)))

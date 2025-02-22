@@ -2,22 +2,22 @@
 #include "../../../../platform/engine/app.hpp"
 #include "../../../../platform/engine/components.hpp"
 //
-// ButtonTextDropdown
+// ButtonImageTextDropdown
 // Summary : A dropdown button with the possibility of adding a custom menu.
 // Authors : Infinite, Diego Moreno
 //
 
-#ifndef CHERRY_KIT_BUTTON_DROPDOWN_TEXT
-#define CHERRY_KIT_BUTTON_DROPDOWN_TEXT
+#ifndef CHERRY_KIT_BUTTON_IMAGE_TEXT_DROPDOWN
+#define CHERRY_KIT_BUTTON_IMAGE_TEXT_DROPDOWN
 
 namespace Cherry
 {
     namespace Components
     {
-        class ButtonTextDropdown : public Component
+        class ButtonImageTextDropdown : public Component
         {
         public:
-            ButtonTextDropdown(const Cherry::Identifier &id, const std::string &label)
+            ButtonImageTextDropdown(const Cherry::Identifier &id, const std::string &label, const std::string &image_path)
                 : Component(id)
             {
                 // Identifier
@@ -44,6 +44,7 @@ namespace Cherry
 
                 // Informations
                 SetProperty("label", label);
+                SetProperty("image_path", image_path);
 
                 // Data & User-level informations
                 SetData("lastClicked", "never");
@@ -64,6 +65,8 @@ namespace Cherry
                     texture = Application::Get().GetCurrentRenderedWindow()->get_texture(GetProperty("image_dropdown_down"));
                 }
 
+                ImTextureID image_texture = Application::Get().GetCurrentRenderedWindow()->get_texture(GetProperty("image_path"));
+
                 const ImVec2 &size = ImVec2(std::stoi(GetProperty("size_x")), std::stoi(GetProperty("size_y")));
                 CherryGUI::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(6, 6));
 
@@ -80,7 +83,7 @@ namespace Cherry
                     Label += "####" + identifier;
                 }
 
-                if (CherryGUI::RightImageButtonWithText(texture, Label.c_str(), size))
+                if (CherryGUI::ImageButtonWithTextWithIcon(image_texture, texture, Label.c_str(), size))
                 {
                     SetData("isClicked", "true");
                     SetData("isMenuActivated", "true");
@@ -144,16 +147,16 @@ namespace Cherry
     // End-User API
     namespace Kit
     {
-        bool ButtonTextDropdown(const std::string &label)
+        bool ButtonImageTextDropdown(const std::string &label, const std::string &image_path)
         {
             // Inline component
-            auto button = Application::CreateAnonymousComponent<Components::ButtonTextDropdown>(Components::ButtonTextDropdown(Cherry::Identifier(), label));
+            auto button = Application::CreateAnonymousComponent<Components::ButtonImageTextDropdown>(Components::ButtonImageTextDropdown(Cherry::Identifier(), label, image_path));
             button->RefreshContextProperties();
             button->Render();
             return button->GetData("isClicked") == "true" ? true : false;
         }
 
-        bool ButtonTextDropdown(const Cherry::Identifier &identifier, const std::string &label)
+        bool ButtonImageTextDropdown(const Cherry::Identifier &identifier, const std::string &label, const std::string &image_path)
         {
             // Get the object if exist
             auto existing_button = Application::GetComponent(identifier);
@@ -166,7 +169,7 @@ namespace Cherry
             else
             {
                 // Create the object if not exist
-                auto new_button = Application::CreateComponent<Components::ButtonTextDropdown>(Components::ButtonTextDropdown(identifier, label));
+                auto new_button = Application::CreateComponent<Components::ButtonImageTextDropdown>(Components::ButtonImageTextDropdown(identifier, label, image_path));
                 new_button->RefreshContextProperties();
                 new_button->Render();
                 return new_button->GetData("isClicked") == "true" ? true : false;
@@ -176,4 +179,4 @@ namespace Cherry
 
 }
 
-#endif // CHERRY_KIT_BUTTON_DROPDOWN_TEXT
+#endif // CHERRY_KIT_BUTTON_IMAGE_TEXT_DROPDOWN

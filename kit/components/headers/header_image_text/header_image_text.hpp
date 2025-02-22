@@ -63,7 +63,6 @@ namespace Cherry
                 {
                     Label += "####" + identifier;
                 }
-                std::cout << Label << std::endl;
 
                 ImGuiStyle &style = ImGui::GetStyle();
 
