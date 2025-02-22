@@ -54,6 +54,14 @@ void Render()
   CherryKit::TextSimple("Hello incredible world");
   CherryKit::TextLeft("Hello incredible world");
   CherryKit::TextRight("Hello incredible world");
+  
+  CherryKit::ComboText("11", {"Test 1", "Test2", "Test2kl"}, 0);
+
+  CherryKit::ComboImageText("11", 
+  {
+    CherryKit::TextImage("Premier choix", Cherry::GetPath("resources/base/z.png"))
+  },
+  0);
 
   // Cherry?::AddPadding(7.0f);
   ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 7.0f);

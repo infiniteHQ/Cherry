@@ -3,21 +3,21 @@
 #include "../../../../platform/engine/components.hpp"
 
 //
-// ComboString
+// ComboImageText
 // Authors : Infinite, Diego Moreno
 //
 
-#ifndef CHERRY_KIT_HEADER_IMAGE_STRING
-#define CHERRY_KIT_HEADER_IMAGE_STRING
+#ifndef CHERRY_KIT__IMAGE_TEXT
+#define CHERRY_KIT__IMAGE_TEXT
 
 namespace Cherry
 {
     namespace Components
     {
-        class ComboString : public Component
+        class ComboImageText : public Component
         {
         public:
-            ComboString(const Cherry::Identifier &id, const std::string &label, const std::vector<std::string> &list, int default_index)
+            ComboImageText(const Cherry::Identifier &id, const std::string &label, const std::vector<std::shared_ptr<Component>> &list, int default_index)
                 : Component(id), m_List(list)
             {
                 // Identifier
@@ -45,16 +45,12 @@ namespace Cherry
 
             void Render() override
             {
-                static ImGuiComboFlags flags = 0;
-
                 int selected = std::stoi(GetProperty("selected"));
                 int default_index = std::stoi(GetProperty("default_index"));
+                static ImGuiComboFlags flags = 0;
 
                 if (default_index < 0 || default_index >= m_List.size())
                     default_index = 0;
-
-                const char *combo_preview_value = m_List[selected].c_str();
-
                 std::string identifier = GetIdentifier().string();
                 std::string Label = GetProperty("label");
 
@@ -63,19 +59,23 @@ namespace Cherry
                     Label += "####" + identifier;
                 }
 
-                if (ImGui::BeginCombo(Label.c_str(), combo_preview_value, flags))
+                if (ImGui::BeginCombo(Label.c_str(), [&](){this->m_List[selected]->Render();}))
                 {
                     for (int n = 0; n < m_List.size(); n++)
                     {
                         const bool is_selected = (selected == n);
-                        if (ImGui::Selectable(m_List[n].c_str(), is_selected))
+
+                        if (ImGui::Selectable("", is_selected))
                         {
                             if (selected != n)
                             {
-                                SetProperty("selected", std::to_string(n));
-                                //UpdateLastChangedTime();
+                                selected = n;
+                                // UpdateLastChangedTime();
                             }
                         }
+
+                        ImGui::SameLine();
+                        m_List[n]->Render();
 
                         if (is_selected)
                             ImGui::SetItemDefaultFocus();
@@ -85,22 +85,33 @@ namespace Cherry
             }
 
         private:
-            std::vector<std::string> m_List;
+            std::vector<std::shared_ptr<Component>> m_List;
         };
     }
 
     // End-User API
     namespace Kit
     {
-        bool ComboString(const std::string &label, const std::vector<std::string> &list, int default_index = 0)
+        bool ComboImageText(const std::string &label, const std::vector<std::shared_ptr<Component>> &list, int default_index = 0)
         {
             // Inline component
-            auto button = Application::CreateAnonymousComponent<Components::ComboString>(Components::ComboString(Cherry::Identifier("anonymous"), label, list, default_index));
-            button->Render();
-            return button->GetData("isClicked") == "true" ? true : false;
+            auto anonymous_id = Application::GetAnonymousID();
+            auto existing = Application::GetAnonymousComponent(anonymous_id);
+            if (existing)
+            {
+                existing->Render();
+                return existing->GetData("isClicked") == "true" ? true : false;
+            }
+
+            else
+            {
+                auto button = Application::CreateAnonymousComponent<Components::ComboImageText>(Components::ComboImageText(anonymous_id, label, list, default_index));
+                button->Render();
+                return button->GetData("isClicked") == "true" ? true : false;
+            }
         }
 
-        bool ComboString(const Cherry::Identifier &identifier, const std::string &label, const std::vector<std::string> &list, int default_index = 0)
+        bool ComboImageText(const Cherry::Identifier &identifier, const std::string &label, const std::vector<std::shared_ptr<Component>> &list, int default_index = 0)
         {
             // Get the object if exist
             auto existing_button = Application::GetComponent(identifier);
@@ -112,7 +123,7 @@ namespace Cherry
             else
             {
                 // Create the object if not exist
-                auto new_button = Application::CreateComponent<Components::ComboString>(Components::ComboString(identifier, label, list, default_index));
+                auto new_button = Application::CreateComponent<Components::ComboImageText>(Components::ComboImageText(identifier, label, list, default_index));
                 new_button->Render();
                 return new_button->GetData("isClicked") == "true" ? true : false;
             }
@@ -120,4 +131,4 @@ namespace Cherry
     }
 }
 
-#endif // CHERRY_KIT_HEADER_IMAGE_STRING
+#endif // CHERRY_KIT__IMAGE_TEXT

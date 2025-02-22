@@ -41,8 +41,9 @@ namespace Cherry
         bool        NeedRefreshing();
 
 
-        virtual void Render() {};
+        void RenderWrapper();
 
+        virtual void Render() {};
     private:
         Identifier m_Identifier;
         bool m_IsPropsChanged = false;

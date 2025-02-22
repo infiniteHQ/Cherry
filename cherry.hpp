@@ -50,6 +50,7 @@
 #include "./kit/components/texts/text_left/text_left.hpp"
 #include "./kit/components/texts/text_right/text_right.hpp"
 #include "./kit/components/texts/text_wrapped/text_wrapped.hpp"
+#include "./kit/components/texts/text_image/text_image.hpp"
 // Table
 #include "./kit/components/tables/table_simple/table_simple.hpp"
 // Keyval
@@ -69,7 +70,8 @@
 #include "./kit/components/headers/header_image_text_button/header_image_text_button.hpp"
 #include "./kit/components/headers/header_text_button/header_text_button.hpp"
 // Combos
-#include "./kit/components/combos/combo_string/combo_string.hpp"
+#include "./kit/components/combos/combo_text/combo_text.hpp"
+#include "./kit/components/combos/combo_image_text/combo_image_text.hpp"
 
 namespace CherryKit = Cherry::Kit;
 

@@ -34,6 +34,13 @@ namespace Cherry
         return val;
     }
 
+    void Component::RenderWrapper()
+    {
+        // If render disable flag enabled, dont render and consume properties
+        //button->RefreshContextProperties();
+        //button->Render();
+    }
+
     std::string Component::GetProperty(const std::string &key)
     {
         // Search in context first
@@ -77,7 +84,7 @@ namespace Cherry
         }
     }
 
-    void Component::SetIdentifier(const Cherry::Identifier& id)
+    void Component::SetIdentifier(const Cherry::Identifier &id)
     {
         m_Identifier = id;
     }
