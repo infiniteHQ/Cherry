@@ -82,22 +82,22 @@ namespace Cherry
                                 case 0:
                                     texturePath = "resources/base/x.png";
                                     value = m_XValue;
-                                    id = Label + "###1";
+                                    id = Label + "###1" + identifier;
                                     break;
                                 case 1:
                                     texturePath = "resources/base/y.png";
                                     value = m_YValue;
-                                    id = Label + "###2";
+                                    id = Label + "###2" + identifier;
                                     break;
                                 case 2:
                                     texturePath = "resources/base/z.png";
                                     value = m_ZValue;
-                                    id = Label + "###3";
+                                    id = Label + "###3" + identifier;
                                     break;
                                 case 3:
                                     texturePath = "resources/base/w.png";
                                     value = m_WValue;
-                                    id = Label + "###4";
+                                    id = Label + "###4" + identifier;
                                     break;
                                 }
 

@@ -67,7 +67,7 @@ namespace Cherry
                             ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 1.0f);
                             ImGui::Image(Cherry::GetTexture(Cherry::GetPath("resources/base/x.png")), ImVec2(23, 23));
                             ImGui::SetCursorScreenPos(ImVec2(pos.x + colorBoxWidth + spacing, pos.y));
-                            ImGui::InputFloat((Label + "###X").c_str(), m_XValue);
+                            ImGui::InputFloat((Label + "###X" + identifier).c_str(), m_XValue);
 
                             ImGui::PopItemWidth();
                         }

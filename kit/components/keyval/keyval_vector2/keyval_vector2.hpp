@@ -78,13 +78,13 @@ namespace Cherry
                                 {
                                     texturePath = "resources/base/x.png";
                                     value = m_XValue;
-                                    id = Label + "###X";
+                                    id = Label + "###X" + identifier;
                                 }
                                 else
                                 {
                                     texturePath = "resources/base/y.png";
                                     value = m_YValue;
-                                    id = Label + "###Y";
+                                    id = Label + "###Y" + identifier;
                                 }
 
                                 ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 1.0f);
