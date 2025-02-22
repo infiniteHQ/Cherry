@@ -66,6 +66,9 @@ void Render()
   static float x = 2.5f;
   static float y = 2.5f;
   static float z = 5.5f;
+  static float wx = 2.5f;
+  static float wy = 2.5f;
+  static float wz = 5.5f;
   static float w = 5.5f;
 
   static double doubleprecisionnumber = 5.5;
@@ -82,7 +85,8 @@ void Render()
     CherryKit::KeyValVector1("11", &x),
     CherryKit::KeyValVector2("22", &x, &y),
     CherryKit::KeyValVector3("La phrase de TEst", &x, &y, &z),
-    CherryKit::KeyValVector4("La LMe super Vector4 olann", &x, &y, &z, &w)
+    CherryKit::KeyValVector4("La LMe super Vector4 olann", &x, &y, &z, &w),
+    CherryKit::KeyValVector3_5("La LMe super Vector4 olann", &x, &y, &z, &wx, &wy, &wz)
     });
 
 
@@ -143,8 +147,8 @@ Cherry::Application *Cherry::CreateApplication(int argc, char **argv)
   config.SetName("Hello Cherry");     // The name of the window
   config.SetMinimumWidth(250);        // The minimum width
   config.SetMinimumHeight(250);       // The minimum height
-  config.SetDefaultWidth(400);        // The default width
-  config.SetDefaultHeight(300);       // The default height
+  config.SetDefaultWidth(1920);        // The default width
+  config.SetDefaultHeight(1080);       // The default height
   config.SetGlobalScale(0.84f);       // The flobal scale of components and windows
   config.SetFontGlobalScale(0.84f);   // The flobal scale of fonts
   config.SetFavIconPath(Cherry::GetPath("resources/imgs/icon.png")); // Icon of the window. (for folder in [project]/assets)
