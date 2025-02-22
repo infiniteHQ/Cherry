@@ -220,7 +220,12 @@ namespace Cherry
 		
 		static Identifier GetAnonymousID()
 		{
-			return Identifier(std::to_string(Identifier::get_unique_index()));
+			return Identifier(Identifier::GetUniqueIndex());
+		}
+
+		static void ClearAnonymousComponents()
+		{
+			Application::Get().m_ApplicationAnonymousComponents.clear();
 		}
 
 		template <typename T>
@@ -231,7 +236,7 @@ namespace Cherry
 			if (component_copy.GetIdentifier().string().empty() || component_copy.GetIdentifier().string() == "anonymous")
 			{
 				Identifier anonymous_id = component_copy.GetIdentifier();
-				anonymous_id.set(std::to_string(Identifier::get_unique_index()));
+				anonymous_id.set(Identifier::GetUniqueIndex());
 				component_copy.SetIdentifier(anonymous_id);
 			}
 			

@@ -12,7 +12,7 @@ namespace Cherry
 	class Identifier
 	{
 	public:
-		Identifier() : m_IdentifierName(std::to_string(get_unique_index())) {}
+		Identifier() : m_IdentifierName(generate_id()) {}
 		explicit Identifier(const std::string &id) : m_IdentifierName(id) {}
 
 		explicit Identifier(std::vector<std::shared_ptr<Component>> *components_, const std::string &id) : m_IdentifierName(id)
@@ -36,16 +36,16 @@ namespace Cherry
 			return m_IdentifierName;
 		}
 
-		[[nodiscard]] std::string component_group() const
-		{
-			std::lock_guard<std::mutex> lock(m_Mutex);
-			return m_ComponentGroup;
-		}
-
 		[[nodiscard]] std::vector<std::shared_ptr<Component>> *component_array_ptr() const
 		{
 			std::lock_guard<std::mutex> lock(m_Mutex);
 			return m_ComponentArrayPtr;
+		}
+
+		[[nodiscard]] std::string component_group() const
+		{
+			std::lock_guard<std::mutex> lock(m_Mutex);
+			return m_ComponentGroup;
 		}
 
 		void set(const std::string &id)
@@ -60,14 +60,10 @@ namespace Cherry
 			{
 				std::scoped_lock lock(m_Mutex, other.m_Mutex);
 				m_IdentifierName = other.m_IdentifierName;
+				m_ComponentArrayPtr = other.m_ComponentArrayPtr;
+				incrementor_level = other.incrementor_level;
 			}
 			return *this;
-		}
-
-		Identifier operator&(const Identifier &other) const
-		{
-			std::scoped_lock lock(m_Mutex, other.m_Mutex);
-			return Identifier(m_IdentifierName + "_AND_" + other.m_IdentifierName);
 		}
 
 		bool operator==(const Identifier &other) const
@@ -76,25 +72,91 @@ namespace Cherry
 			return m_IdentifierName == other.m_IdentifierName;
 		}
 
-		static int get_unique_index()
+		static void UpgradeIncrementorLevel()
 		{
-			return anonymous_index.fetch_add(1, std::memory_order_relaxed);
+			std::lock_guard<std::mutex> lock(level_mutex);
+			incrementor_level++;
+			level_indices.emplace_back(0);
 		}
 
-		static void reset_unique_index()
+		static void DowngradeIncrementorLevel()
 		{
-			anonymous_index.store(0, std::memory_order_relaxed);
+			std::lock_guard<std::mutex> lock(level_mutex);
+			if (incrementor_level > 1)
+			{
+				incrementor_level--;
+			}
+		}
+
+		static std::string GetUniqueIndex()
+		{
+			int level = incrementor_level;
+			level--; // The incrementor start from one, memory start from zero, we need to decrement it to adapt the memory managment
+
+			std::lock_guard<std::mutex> lock(level_mutex);
+
+			if (level < level_indices.size())
+			{
+				level_indices[level]++;
+			}
+			else
+			{
+				while (level_indices.size() <= level)
+				{
+					level_indices.push_back(0);
+				}
+				level_indices[level] = 1;
+			}
+
+			return generate_id();
+		}
+
+		static void ResetUniqueIndex()
+		{
+			std::lock_guard<std::mutex> lock(level_mutex);
+			incrementor_level = 1;
+			level_indices = {0};
 		}
 
 	private:
 		mutable std::mutex m_Mutex;
 		std::string m_IdentifierName;
-		std::string m_ComponentGroup;
 		std::vector<std::shared_ptr<Component>> *m_ComponentArrayPtr = nullptr;
+		std::string m_ComponentGroup;
+		inline static std::mutex level_mutex;
+		inline static int incrementor_level = 1;
+		inline static std::vector<int> level_indices = {0};
 
-		inline static std::atomic<int> anonymous_index{0};
+		static std::string generate_id()
+		{
+			int level = incrementor_level;
+			std::string id;
+			for (size_t i = 0; i < level_indices.size(); ++i)
+			{
+				if (i >= level)
+					continue;
+
+				if (i % 2 == 0)
+					id += std::to_string(level_indices[i]);
+				else
+					id += convert_to_letters(level_indices[i]);
+			}
+			return id;
+		}
+
+		static std::string convert_to_letters(int index)
+		{
+			std::string result;
+			while (index >= 0)
+			{
+				result.insert(result.begin(), 'a' + (index % 26));
+				index = (index / 26) - 1;
+			}
+			return result;
+		}
 	};
-
 }
+
+using CherryID = Cherry::Identifier;
 
 #endif // CHERRY_IDENTIFIER

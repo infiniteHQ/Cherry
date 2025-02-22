@@ -85,6 +85,8 @@ void Render()
     CherryKit::KeyValVector4("La LMe super Vector4 olann", &x, &y, &z, &w)
     });
 
+
+// TODO : SOucis quand on deployey le header ça crée un nouveau composant anonyme et donc ça décale tout.
 CherryKit::HeaderText("456", [](){
   CherryKit::TextSimple("Hello incredible world");
 });

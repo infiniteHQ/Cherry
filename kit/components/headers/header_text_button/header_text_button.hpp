@@ -117,10 +117,13 @@ namespace Cherry
 
                 if (GetData("isOpened") == "true")
                 {
+    CherryID::UpgradeIncrementorLevel();
                     if (m_RenderContent)
                     {
                         m_RenderContent();
                     }
+
+    CherryID::DowngradeIncrementorLevel();
                 }
             }
 

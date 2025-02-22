@@ -63,7 +63,6 @@
 // Combos
 #include "./kit/components/combos/combo_string/combo_string.hpp"
 
-using CherryID = Cherry::Identifier;
 namespace CherryKit = Cherry::Kit;
 
 // AIO kits & components includes

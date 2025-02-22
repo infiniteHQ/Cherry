@@ -73,7 +73,7 @@ namespace Cherry
                 ImGui::BeginGroup();
 
                 bool isOpened = GetData("isOpened") == "true";
-                
+
                 if (ImGui::ImageSizeButtonWithText(Cherry::GetTexture(GetProperty("image_path")), 700.0f, Label.c_str(), ImVec2(-FLT_MIN, 0.0f), ImVec2(0, 0), ImVec2(1, 1), -1, ImVec4(0, 0, 0, 0), ImVec4(1, 1, 1, 1)))
                 {
                     SetData("isOpened", isOpened ? "false" : "true");
@@ -86,13 +86,14 @@ namespace Cherry
                 ImGui::PopStyleColor(4);
                 ImGui::PopStyleVar();
 
-
                 if (GetData("isOpened") == "true")
                 {
+                    CherryID::UpgradeIncrementorLevel();
                     if (m_RenderContent)
                     {
                         m_RenderContent();
                     }
+                    CherryID::DowngradeIncrementorLevel();
                 }
             }
 

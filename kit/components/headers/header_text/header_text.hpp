@@ -60,7 +60,6 @@ namespace Cherry
                     Label += "####" + identifier;
                 }
 
-                std::cout << Label << std::endl;
                 ImGuiStyle &style = ImGui::GetStyle();
 
                 float texture_size = ImGui::GetFontSize();
@@ -73,6 +72,7 @@ namespace Cherry
                 if (ImGui::Button(Label.c_str(), ImVec2(700.0f, 0.0f)))
                 {
                     SetData("isOpened", isOpened ? "false" : "true");
+                    SetData("isUpdated", "true");
                 }
 
                 ImVec2 arrow_pos = ImVec2(ImGui::GetItemRectMax().x - style.FramePadding.x - ImGui::GetFontSize(), ImGui::GetItemRectMin().y + style.FramePadding.y);
@@ -84,11 +84,15 @@ namespace Cherry
 
                 if (GetData("isOpened") == "true")
                 {
+                    CherryID::UpgradeIncrementorLevel();
                     if (m_RenderContent)
                     {
                         m_RenderContent();
                     }
+                    CherryID::DowngradeIncrementorLevel();
                 }
+
+                SetData("isUpdated", "false");
             }
 
         private:

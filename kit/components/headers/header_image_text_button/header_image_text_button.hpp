@@ -38,7 +38,6 @@ namespace Cherry
                 SetProperty("color_bg_hovered", "#343434FF");
                 SetProperty("color_bg_clicked", "#444444FF");
 
-
                 // Sizes
                 SetProperty("size_x", "6");
                 SetProperty("size_y", "6");
@@ -81,7 +80,7 @@ namespace Cherry
                 std::cout << Label << std::endl;
                 bool isOpened = GetData("isOpened") == "true";
 
-                if(ImGui::ImageSizeButtonWithText(Cherry::GetTexture(GetProperty("image_path")), 700.0f, button_label.c_str(), ImVec2(-FLT_MIN, 0.0f), ImVec2(0, 0), ImVec2(1, 1), -1, ImVec4(0, 0, 0, 0), ImVec4(1, 1, 1, 1)))
+                if (ImGui::ImageSizeButtonWithText(Cherry::GetTexture(GetProperty("image_path")), 700.0f, button_label.c_str(), ImVec2(-FLT_MIN, 0.0f), ImVec2(0, 0), ImVec2(1, 1), -1, ImVec4(0, 0, 0, 0), ImVec4(1, 1, 1, 1)))
                 {
                     SetData("isOpened", isOpened ? "false" : "true");
                 }
@@ -123,10 +122,12 @@ namespace Cherry
 
                 if (GetData("isOpened") == "true")
                 {
+                    CherryID::UpgradeIncrementorLevel();
                     if (m_RenderContent)
                     {
                         m_RenderContent();
                     }
+                    CherryID::DowngradeIncrementorLevel();
                 }
             }
 
