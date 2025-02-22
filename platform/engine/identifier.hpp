@@ -7,8 +7,6 @@
 
 namespace Cherry
 {
-	static std::atomic<int> index{0};
-
 	class Component;
 
 	class Identifier
@@ -60,8 +58,7 @@ namespace Cherry
 		{
 			if (this != &other)
 			{
-				std::lock_guard<std::mutex> lock1(m_Mutex);
-				std::lock_guard<std::mutex> lock2(other.m_Mutex);
+				std::scoped_lock lock(m_Mutex, other.m_Mutex);
 				m_IdentifierName = other.m_IdentifierName;
 			}
 			return *this;
@@ -69,26 +66,24 @@ namespace Cherry
 
 		Identifier operator&(const Identifier &other) const
 		{
-			std::lock_guard<std::mutex> lock1(m_Mutex);
-			std::lock_guard<std::mutex> lock2(other.m_Mutex);
+			std::scoped_lock lock(m_Mutex, other.m_Mutex);
 			return Identifier(m_IdentifierName + "_AND_" + other.m_IdentifierName);
 		}
 
 		bool operator==(const Identifier &other) const
 		{
-			std::lock_guard<std::mutex> lock1(m_Mutex);
-			std::lock_guard<std::mutex> lock2(other.m_Mutex);
+			std::scoped_lock lock(m_Mutex, other.m_Mutex);
 			return m_IdentifierName == other.m_IdentifierName;
 		}
 
 		static int get_unique_index()
 		{
-			return index.fetch_add(1, std::memory_order_relaxed);
+			return anonymous_index.fetch_add(1, std::memory_order_relaxed);
 		}
 
 		static void reset_unique_index()
 		{
-			index.store(0, std::memory_order_relaxed);
+			anonymous_index.store(0, std::memory_order_relaxed);
 		}
 
 	private:
@@ -97,7 +92,7 @@ namespace Cherry
 		std::string m_ComponentGroup;
 		std::vector<std::shared_ptr<Component>> *m_ComponentArrayPtr = nullptr;
 
-		inline static std::atomic<int> index{0};
+		inline static std::atomic<int> anonymous_index{0};
 	};
 
 }

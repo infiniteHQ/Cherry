@@ -63,8 +63,7 @@ namespace Cherry
                 {
                     Label += "####" + identifier;
                 }
-
-                bool *p_open = ImGui::GetStateStorage()->GetBoolRef(ImGui::GetID(Label.c_str()), false);
+                std::cout << Label << std::endl;
 
                 ImGuiStyle &style = ImGui::GetStyle();
 
@@ -72,19 +71,23 @@ namespace Cherry
                 float padding = style.ItemInnerSpacing.x;
 
                 ImGui::BeginGroup();
+
+                bool isOpened = GetData("isOpened") == "true";
+                
                 if (ImGui::ImageSizeButtonWithText(Cherry::GetTexture(GetProperty("image_path")), 700.0f, Label.c_str(), ImVec2(-FLT_MIN, 0.0f), ImVec2(0, 0), ImVec2(1, 1), -1, ImVec4(0, 0, 0, 0), ImVec4(1, 1, 1, 1)))
                 {
-                    *p_open ^= 1;
+                    SetData("isOpened", isOpened ? "false" : "true");
                 }
 
                 ImVec2 arrow_pos = ImVec2(ImGui::GetItemRectMax().x - style.FramePadding.x - ImGui::GetFontSize(), ImGui::GetItemRectMin().y + style.FramePadding.y + 3.0f);
-                ImGui::RenderArrow(ImGui::GetWindowDrawList(), arrow_pos, ImGui::GetColorU32(ImGuiCol_Text), *p_open ? ImGuiDir_Down : ImGuiDir_Right);
+                ImGui::RenderArrow(ImGui::GetWindowDrawList(), arrow_pos, ImGui::GetColorU32(ImGuiCol_Text), GetData("isOpened") == "true" ? ImGuiDir_Down : ImGuiDir_Right);
                 ImGui::EndGroup();
 
                 ImGui::PopStyleColor(4);
                 ImGui::PopStyleVar();
 
-                if (*p_open)
+
+                if (GetData("isOpened") == "true")
                 {
                     if (m_RenderContent)
                     {
@@ -114,9 +117,20 @@ namespace Cherry
         bool HeaderImageText(const std::string &label, const std::string &image_path, const std::function<void()> &render_content = []() {})
         {
             // Inline component
-            auto button = Application::CreateAnonymousComponent<Components::HeaderImageText>(Components::HeaderImageText(Cherry::Identifier("anonymous"), label, image_path, render_content));
-            button->Render();
-            return button->GetData("isClicked") == "true" ? true : false;
+            auto anonymous_id = Application::GetAnonymousID();
+            auto existing = Application::GetAnonymousComponent(anonymous_id);
+            if (existing)
+            {
+                existing->Render();
+                return existing->GetData("isClicked") == "true" ? true : false;
+            }
+            else
+            {
+                auto button = Application::CreateAnonymousComponent<Components::HeaderImageText>(Components::HeaderImageText(anonymous_id, label, image_path, render_content));
+                button->Render();
+                return button->GetData("isClicked") == "true" ? true : false;
+            }
+            return false;
         }
 
         bool HeaderImageText(const Cherry::Identifier &identifier, const std::string &label, const std::string &image_path, const std::function<void()> &render_content = []() {})

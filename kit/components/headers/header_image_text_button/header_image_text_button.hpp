@@ -64,7 +64,6 @@ namespace Cherry
                     Label += "####" + identifier;
                 }
                 ImGui::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, ImVec2(0.0f, 0.5f));
-                bool *p_open = ImGui::GetStateStorage()->GetBoolRef(ImGui::GetID(Label.c_str()), false);
 
                 ImGuiStyle &style = ImGui::GetStyle();
                 float texture_size = ImGui::GetFontSize();
@@ -78,17 +77,19 @@ namespace Cherry
                 CherryGUI::PushStyleColor(ImGuiCol_ButtonActive, HexToRGBA(GetProperty("color_bg_clicked")));
 
                 std::string button_label = Label + "_button";
-                bool pressed = ImGui::ImageSizeButtonWithText(Cherry::GetTexture(GetProperty("image_path")), 700.0f, button_label.c_str(), ImVec2(-FLT_MIN, 0.0f), ImVec2(0, 0), ImVec2(1, 1), -1, ImVec4(0, 0, 0, 0), ImVec4(1, 1, 1, 1));
 
-                if(pressed)
+                std::cout << Label << std::endl;
+                bool isOpened = GetData("isOpened") == "true";
+
+                if(ImGui::ImageSizeButtonWithText(Cherry::GetTexture(GetProperty("image_path")), 700.0f, button_label.c_str(), ImVec2(-FLT_MIN, 0.0f), ImVec2(0, 0), ImVec2(1, 1), -1, ImVec4(0, 0, 0, 0), ImVec4(1, 1, 1, 1)))
                 {
-                    *p_open ^= 1;
+                    SetData("isOpened", isOpened ? "false" : "true");
                 }
 
                 ImGui::PopStyleColor(4);
 
                 ImVec2 arrow_pos = ImVec2(ImGui::GetItemRectMax().x - style.FramePadding.x - ImGui::GetFontSize(), ImGui::GetItemRectMin().y + style.FramePadding.y + 3.0f);
-                ImGui::RenderArrow(ImGui::GetWindowDrawList(), arrow_pos, ImGui::GetColorU32(ImGuiCol_Text), *p_open ? ImGuiDir_Down : ImGuiDir_Right);
+                ImGui::RenderArrow(ImGui::GetWindowDrawList(), arrow_pos, ImGui::GetColorU32(ImGuiCol_Text), GetData("isOpened") == "true" ? ImGuiDir_Down : ImGuiDir_Right);
 
                 ImVec2 button_size = ImGui::GetItemRectSize();
                 ImVec2 button_pos = ImGui::GetItemRectMin();
@@ -120,7 +121,7 @@ namespace Cherry
 
                 ImGui::PopStyleVar();
 
-                if (*p_open)
+                if (GetData("isOpened") == "true")
                 {
                     if (m_RenderContent)
                     {
@@ -150,9 +151,20 @@ namespace Cherry
         bool HeaderImageTextButton(const std::string &label, const std::string &image_path, const std::function<void()> &render_content = []() {})
         {
             // Inline component
-            auto button = Application::CreateAnonymousComponent<Components::HeaderImageTextButton>(Components::HeaderImageTextButton(Cherry::Identifier("anonymous"), label, image_path, render_content));
-            button->Render();
-            return button->GetData("isClicked") == "true" ? true : false;
+            auto anonymous_id = Application::GetAnonymousID();
+            auto existing = Application::GetAnonymousComponent(anonymous_id);
+            if (existing)
+            {
+                existing->Render();
+                return existing->GetData("isClicked") == "true" ? true : false;
+            }
+            else
+            {
+                auto button = Application::CreateAnonymousComponent<Components::HeaderImageTextButton>(Components::HeaderImageTextButton(anonymous_id, label, image_path, render_content));
+                button->Render();
+                return button->GetData("isClicked") == "true" ? true : false;
+            }
+            return false;
         }
 
         bool HeaderImageTextButton(const Cherry::Identifier &identifier, const std::string &label, const std::string &image_path, const std::function<void()> &render_content = []() {})

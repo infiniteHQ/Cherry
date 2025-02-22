@@ -2447,6 +2447,32 @@ namespace Cherry
         return "locale_undefined";
     }
 
+    std::shared_ptr<Component> Application::GetAnonymousComponent(const Identifier &identifier)
+    {
+        if (identifier.component_array_ptr() != nullptr)
+        {
+            for (const auto &existing_component : *identifier.component_array_ptr())
+            {
+                if (existing_component->GetIdentifier() == identifier)
+                {
+                    return existing_component;
+                }
+            }
+        }
+        else
+        {
+            for (const auto &existing_component : Application::Get().m_ApplicationAnonymousComponents)
+            {
+                if (existing_component->GetIdentifier() == identifier)
+                {
+                    return existing_component;
+                }
+            }
+        }
+
+        return nullptr;
+    }
+
     std::shared_ptr<Component> Application::GetComponent(const Identifier &identifier)
     {
         if (identifier.component_array_ptr() != nullptr)

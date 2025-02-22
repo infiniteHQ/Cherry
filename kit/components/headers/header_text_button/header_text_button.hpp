@@ -37,7 +37,6 @@ namespace Cherry
                 SetProperty("color_bg_hovered", "#343434FF");
                 SetProperty("color_bg_clicked", "#444444FF");
 
-
                 // Sizes
                 SetProperty("size_x", "6");
                 SetProperty("size_y", "6");
@@ -49,8 +48,7 @@ namespace Cherry
                 SetProperty("label", label);
 
                 // Data & User-level informations
-                SetData("lastClicked", "never");
-                SetData("isClicked", "false");
+                SetData("isOpened", "false");
             }
 
             void Render() override
@@ -62,9 +60,9 @@ namespace Cherry
                 {
                     Label += "####" + identifier;
                 }
-                ImGui::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, ImVec2(0.0f, 0.5f));
-                bool *p_open = ImGui::GetStateStorage()->GetBoolRef(ImGui::GetID(Label.c_str()), false);
 
+                std::cout << Label << std::endl;
+                ImGui::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, ImVec2(0.0f, 0.5f));
                 ImGuiStyle &style = ImGui::GetStyle();
                 float texture_size = ImGui::GetFontSize();
                 float padding = style.ItemInnerSpacing.x;
@@ -76,17 +74,17 @@ namespace Cherry
                 CherryGUI::PushStyleColor(ImGuiCol_ButtonHovered, HexToRGBA(GetProperty("color_bg_hovered")));
                 CherryGUI::PushStyleColor(ImGuiCol_ButtonActive, HexToRGBA(GetProperty("color_bg_clicked")));
 
-                bool pressed = ImGui::Button(Label.c_str(), ImVec2(700.0f, 0.0f));
-                
-                if(pressed)
+                bool isOpened = GetData("isOpened") == "true";
+
+                if (ImGui::Button(Label.c_str(), ImVec2(700.0f, 0.0f)))
                 {
-                    *p_open ^= 1;
+                    SetData("isOpened", isOpened ? "false" : "true");
                 }
 
                 ImGui::PopStyleColor(4);
 
                 ImVec2 arrow_pos = ImVec2(ImGui::GetItemRectMax().x - style.FramePadding.x - ImGui::GetFontSize(), ImGui::GetItemRectMin().y + style.FramePadding.y + 3.0f);
-                ImGui::RenderArrow(ImGui::GetWindowDrawList(), arrow_pos, ImGui::GetColorU32(ImGuiCol_Text), *p_open ? ImGuiDir_Down : ImGuiDir_Right);
+                ImGui::RenderArrow(ImGui::GetWindowDrawList(), arrow_pos, ImGui::GetColorU32(ImGuiCol_Text), GetData("isOpened") == "true" ? ImGuiDir_Down : ImGuiDir_Right);
 
                 ImVec2 button_size = ImGui::GetItemRectSize();
                 ImVec2 button_pos = ImGui::GetItemRectMin();
@@ -117,7 +115,7 @@ namespace Cherry
 
                 ImGui::PopStyleVar();
 
-                if (*p_open)
+                if (GetData("isOpened") == "true")
                 {
                     if (m_RenderContent)
                     {
@@ -147,9 +145,20 @@ namespace Cherry
         bool HeaderTextButton(const std::string &label, const std::string &image_path, const std::function<void()> &render_content = []() {})
         {
             // Inline component
-            auto button = Application::CreateAnonymousComponent<Components::HeaderTextButton>(Components::HeaderTextButton(Cherry::Identifier("anonymous"), label, image_path, render_content));
-            button->Render();
-            return button->GetData("isClicked") == "true" ? true : false;
+            auto anonymous_id = Application::GetAnonymousID();
+            auto existing = Application::GetAnonymousComponent(anonymous_id);
+            if (existing)
+            {
+                existing->Render();
+                return existing->GetData("isClicked") == "true" ? true : false;
+            }
+            else
+            {
+                auto button = Application::CreateAnonymousComponent<Components::HeaderTextButton>(Components::HeaderTextButton(anonymous_id, label, image_path, render_content));
+                button->Render();
+                return button->GetData("isClicked") == "true" ? true : false;
+            }
+            return false;
         }
 
         bool HeaderTextButton(const Cherry::Identifier &identifier, const std::string &label, const std::string &image_path, const std::function<void()> &render_content = []() {})

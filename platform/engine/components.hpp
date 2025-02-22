@@ -12,7 +12,6 @@
 
 #include "identifier.hpp"
 
-
 namespace Cherry
 {
     class Component
@@ -30,6 +29,10 @@ namespace Cherry
         // Data
         std::string SetData(const std::string &key, const std::string &val);
         std::string GetData(const std::string &key);
+        // TODO GetJsonData(key)
+        // TODO GetIntData(key)
+        // TODO GetFloatData(key) 
+        // TODO etc....
         void        ClearData(const std::string &key);
 
         // Identifier

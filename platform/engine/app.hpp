@@ -200,6 +200,7 @@ namespace Cherry
 		void SetHttpCacheFolderName(const std::string &name);
 
 		// Identified component
+		static std::shared_ptr<Component> GetAnonymousComponent(const Identifier &identifier);
 		static std::shared_ptr<Component> GetComponent(const Identifier &identifier);
 		std::string GetComponentData(const Identifier &id, const std::string &topic);
 
@@ -216,20 +217,27 @@ namespace Cherry
 			static_assert(std::is_base_of<Layer, T>::value, "Pushed type is not subclass of Layer!");
 			m_LayerStack.emplace_back(std::make_shared<T>())->OnAttach();
 		}
+		
+		static Identifier GetAnonymousID()
+		{
+			return Identifier(std::to_string(Identifier::get_unique_index()));
+		}
 
 		template <typename T>
 		static std::shared_ptr<Component> CreateAnonymousComponent(const T &component)
 		{
 			T component_copy = component;
-			
+
 			if (component_copy.GetIdentifier().string().empty() || component_copy.GetIdentifier().string() == "anonymous")
 			{
 				Identifier anonymous_id = component_copy.GetIdentifier();
 				anonymous_id.set(std::to_string(Identifier::get_unique_index()));
 				component_copy.SetIdentifier(anonymous_id);
 			}
-
-			return std::make_shared<T>(component_copy);
+			
+			std::shared_ptr<Component> new_component = std::make_shared<T>(component_copy);
+			Application::Get().m_ApplicationAnonymousComponents.push_back(new_component);
+			return new_component;
 		}
 
 		template <typename T>
@@ -333,6 +341,7 @@ namespace Cherry
 		std::string m_FavIconPath;
 
 		std::vector<std::shared_ptr<Component>> m_ApplicationComponents;
+		std::vector<std::shared_ptr<Component>> m_ApplicationAnonymousComponents;
 
 		std::unordered_map<std::string, nlohmann::json> m_Locales;
 		std::string m_SelectedLocale;

@@ -94,18 +94,18 @@ CherryKit::HeaderTextButton("3123", Cherry::GetPath("resources/base/y.png"),[]()
 });
 
 CherryKit::HeaderImageTextButton("456", Cherry::GetPath("resources/base/w.png"),[](){
-  CherryKit::TextSimple("Hello incredible world 2 ");
+  CherryKit::TextSimple("Hello incredible world 3 ");
 });
 
 CherryKit::HeaderImageText("0456", Cherry::GetPath("resources/base/w.png"),[](){
-  CherryKit::TextSimple("Hello incredible world 2 ");
+  CherryKit::TextSimple("Hello incredible world 4 ");
 });
 
 
 
     CherryKit::ButtonTextDropdown(CherryID(&m_TestComponents, "super_button"),"My first button");
 
-CherryKit::ComboString("Test", {"Suepr Nombre 1", "Test 2", "Test 3"});
+//CherryKit::ComboString("Test", {"Suepr Nombre 1", "Test 2", "Test 3"});
 
     // Cherry::CreateStaticRoutine
     /*static std::once_flag flag;
@@ -125,7 +125,6 @@ CherryKit::ComboString("Test", {"Suepr Nombre 1", "Test 2", "Test 3"});
   // properties and add a lot of logics here, and outside this function! 
   // This approach will create a component registered in the Cherry Render 
   // engine.
-
 }
 
 // This is the entry point of Cherry. We need to add it to add the main
