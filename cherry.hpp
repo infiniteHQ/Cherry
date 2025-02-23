@@ -78,6 +78,8 @@
 #include "./kit/components/separators/separator/separator.hpp"
 // Spaces
 #include "./kit/components/spaces/space/space.hpp"
+// Nodes
+#include "./kit/components/nodes/node_area/node_area.hpp"
 
 namespace CherryKit = Cherry::Kit;
 

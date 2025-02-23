@@ -56,7 +56,7 @@ void Render()
   CherryKit::SeparatorText("Hello incredible world");
   CherryKit::TextRight("Hello incredible world");
 
-
+  CherryKit::NodeArea("test", 500, 500);
   CherryKit::Space(500.0f);
 
   CherryKit::Separator();
