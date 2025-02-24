@@ -102,6 +102,13 @@
 // Tooltips
 #include "./kit/components/tooltips/tooltip_text/tooltip_text.hpp"
 #include "./kit/components/tooltips/tooltip_image/tooltip_image.hpp"
+// Progresses
+#include "./kit/components/progress/progress_bar_percentage/progress_bar_percentage.hpp"
+#include "./kit/components/progress/progress_bar_percentage_int/progress_bar_percentage_int.hpp"
+#include "./kit/components/progress/progress_bar_percentage_float/progress_bar_percentage_float.hpp"
+// Progresses
+#include "./kit/components/plots/plot_line_float/plot_line_float.hpp"
+#include "./kit/components/plots/plot_historigram_float/plot_historigram_float.hpp"
 
 namespace CherryKit = Cherry::Kit;
 

@@ -29,19 +29,31 @@ void Render()
   // is anonymous, not object oriented and cannot be implemnted outside
   // this simple call.
 
-  Cherry::AddOneTimeProperty("color_border", "#B1FF31FF");
-  if (CherryKit::ButtonTextDropdown("My first button"))
-  {
-    // When the button is clicked, we can add condition and handle it.
-    std::cout << "\"My first button\" pressed !!!" << std::endl;
-  }
+  static std::string test = "ok";
+  static std::string testmu = "ok\nok\nok\nok\nok\nok\n";
+  static int inttest = 42;
+  static int inttest2 = 42;
+  static float floattest = 42.0;
+  static float floattest2 = 42.0;
+  static double doubletest = 42.0;
 
-  if (CherryKit::ButtonTextDropdown("My second button"))
-  {
-    // When the button is clicked, we can add condition and handle it.
-    std::cout << "\"My second button\" pressed !!!" << std::endl;
-  }
+  static std::vector<float> vectorfloat = {10.0f,10.0f,10.0f,10.0f,5.0f,10.0f,8.0f,10.0f,9.0f,10.0f,10.0f};
+  
+  static int dhow = 5;
+
+
+
+
+
   CherryKit::ButtonImage(Cherry::GetPath("resources/base/w.png"));
+
+
+
+
+
+
+
+
   CherryKit::ButtonImageText("test", Cherry::GetPath("resources/base/w.png"));
   CherryKit::ButtonTextImage("test", Cherry::GetPath("resources/base/w.png"));
   CherryKit::ButtonImageTextDropdown("test", Cherry::GetPath("resources/base/w.png"));
@@ -67,20 +79,30 @@ void Render()
 
   CherryKit::ImageLocal(Cherry::GetPath("resources/base/wx.png"));
   
-  static std::string test = "ok";
-  static std::string testmu = "ok\nok\nok\nok\nok\nok\n";
-  static int inttest = 42;
-  static float floattest = 42.0;
-  static double doubletest = 42.0;
   CherryKit::InputString("Test", &test);
   CherryKit::InputMultilineString("Test", &testmu);
-  CherryKit::InputInteger("Test", &inttest);
+  CherryKit::InputInteger("Value", &inttest);
+  CherryKit::InputInteger("Goal", &inttest2);
+  CherryKit::InputInteger("Show", &dhow);
   CherryKit::InputFloat("qsd", &floattest);
+  CherryKit::InputFloat("qsd", &floattest2);
   CherryKit::InputDouble("qsd", &doubletest);
 
+  CherryKit::PlotHistorigramFloat("Test", vectorfloat, dhow);
+  CherryKit::PlotHistorigramFloat("Test", vectorfloat, &dhow);
+  CherryKit::PlotHistorigramFloat("Test", vectorfloat);
+  CherryKit::PlotLineFloat("Test", vectorfloat, dhow);
+  CherryKit::PlotLineFloat("Test", vectorfloat, &dhow);
+
+
+  CherryKit::ProgressBarPercentage(&floattest);
+  CherryKit::ProgressBarPercentageInteger(&inttest, &inttest2);
+  CherryKit::ProgressBarPercentageFloat(&floattest, &floattest2);
+
+
   CherryKit::TooltipText("(?)", "Ceci est un test");
-CherryKit::Space(100.0f);
-  CherryKit::TooltipImage(Cherry::GetPath("resources/base/wx.png"), "Ceci est un deuxiemme");
+  CherryKit::Space(100.0f);
+  CherryKit::TooltipImage(Cherry::GetPath("resources/basplot_historigrame/wx.png"), "Ceci est un deuxiemme");
   CherryKit::TooltipText("(?)", "Ceci est un deuxiemme");
 
   CherryKit::TitleOne(test);
@@ -232,8 +254,8 @@ int main(int argc, char *argv[])
 {
   // Starting the UI app on a different thread (simple approach of managing backends and frontend)
   std::thread([&]()
-              { Cherry::Main(argc, argv); })
-      .detach();
+    { Cherry::Main(argc, argv); })
+  .detach();
 
   // Sample loop of a programm
   while (true)

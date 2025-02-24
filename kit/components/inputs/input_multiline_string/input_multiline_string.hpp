@@ -37,7 +37,7 @@ namespace Cherry
 
                 if (!identifier.empty())
                 {
-                    Label += Label + "####" + identifier;
+                    Label += "####" + identifier;
                 }
 
                 if (m_Value)
