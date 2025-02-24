@@ -56,10 +56,13 @@ void Render()
   CherryKit::SeparatorText("Hello incredible world");
   CherryKit::TextRight("Hello incredible world");
 
-  CherryKit::NodeArea("test", 500, 500);
-  CherryKit::Space(500.0f);
+  //CherryKit::NodeArea("test", 500, 500);
+  //CherryKit::Space(500.0f);
 
-  CherryKit::Separator();
+  CherryKit::CheckboxText("Test", NULL);
+
+  CherryKit::ImageLocal(Cherry::GetPath("resources/base/wx.png"));
+  CherryKit::ImageHttp("https://cdn.bsky.app/img/feed_thumbnail/plain/did:plc:nhnjuwzn5bujjjfw4lqr4yml/bafkreihqdbpmdp22nddvgo7nnxfrupkl57s4ssalzykqp7joizifktmf3a@jpeg");
   
   CherryKit::ComboText("11", {"Test 1", "Test2", "Test2kl"}, 0);
 
@@ -181,8 +184,7 @@ Cherry::Application *Cherry::CreateApplication(int argc, char **argv)
   // We previously choose for a SimpleRender, we need to attach a render
   // fonction to the "MainRenderCallback". We put here the previous "Render"
   // function we made with all of our UI components !
-  app->SetMainRenderCallback([]()
-                             { Render(); });
+  app->SetMainRenderCallback([](){ Render(); });
 
   return app;
 }

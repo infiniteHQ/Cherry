@@ -80,6 +80,11 @@
 #include "./kit/components/spaces/space/space.hpp"
 // Nodes
 #include "./kit/components/nodes/node_area/node_area.hpp"
+// Checkboxes
+#include "./kit/components/checkboxes/checkbox_text/checkbox_text.hpp"
+// Images
+#include "./kit/components/images/image_local/image_local.hpp"
+#include "./kit/components/images/image_http/image_http.hpp"
 
 namespace CherryKit = Cherry::Kit;
 
