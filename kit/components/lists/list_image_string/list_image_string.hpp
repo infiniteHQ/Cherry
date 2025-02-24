@@ -3,21 +3,21 @@
 #include "../../../../platform/engine/components.hpp"
 
 //
-// ListString
+// ListImageString
 // Authors : Infinite, Diego Moreno
 //
 
-#ifndef CHERRY_KIT_LIST_STRING
-#define CHERRY_KIT_LIST_STRING
+#ifndef CHERRY_KIT_LIST_IMAGE_STRING
+#define CHERRY_KIT_LIST_IMAGE_STRING
 
 namespace Cherry
 {
     namespace Components
     {
-        class ListString : public Component
+        class ListImageString : public Component
         {
         public:
-            ListString(const Cherry::Identifier &id, const std::string& label, const std::vector<std::string> &values, int default_selected)
+            ListImageString(const Cherry::Identifier &id, const std::string &label, const std::vector<std::pair<std::string, std::string>> &values, int default_selected)
                 : Component(id), m_Values(values)
             {
                 // Identifier
@@ -45,11 +45,18 @@ namespace Cherry
                     for (int n = 0; n < m_Values.size(); n++)
                     {
                         const bool is_selected = (current_selected == n);
-                        if (ImGui::Selectable(m_Values[n].c_str(), is_selected))
+                        if (ImGui::Selectable(std::string("####" + identifier + std::to_string(n)).c_str(), is_selected))
                         {
                             current_selected = n;
                             SetProperty("current_selected", std::to_string(current_selected));
                         }
+
+                        ImGui::SameLine();
+
+                        ImTextureID texture = Application::Get().GetCurrentRenderedWindow()->get_texture(m_Values[n].second);
+                        ImGui::Image(texture, ImVec2(15, 15));
+                        ImGui::SameLine();
+                        ImGui::Text(m_Values[n].first.c_str());
 
                         // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
                         if (is_selected)
@@ -60,23 +67,23 @@ namespace Cherry
             }
 
         private:
-            std::vector<std::string> m_Values;
+            std::vector<std::pair<std::string, std::string>> m_Values;
         };
     }
 
     // End-User API
     namespace Kit
     {
-        std::shared_ptr<Component> ListString(const std::string &label, const std::vector<std::string> &values, int default_selected = 0)
+        std::shared_ptr<Component> ListImageString(const std::string &label, const std::vector<std::pair<std::string, std::string>> &values, int default_selected = 0)
         {
             // Inline component
-            auto keyval = Application::CreateAnonymousComponent<Components::ListString>(Components::ListString(Cherry::Identifier(""), label, values, default_selected));
+            auto keyval = Application::CreateAnonymousComponent<Components::ListImageString>(Components::ListImageString(Cherry::Identifier(""), label, values, default_selected));
             keyval->RefreshContextProperties();
             keyval->Render();
             return keyval;
         }
 
-        std::shared_ptr<Component> ListString(const Cherry::Identifier &identifier, const std::string& label, const std::vector<std::string> &values, int default_selected = 0)
+        std::shared_ptr<Component> ListImageString(const Cherry::Identifier &identifier, const std::string &label, const std::vector<std::pair<std::string, std::string>> &values, int default_selected = 0)
         {
             // Get the object if exist
             auto existing_keyval = Application::GetComponent(identifier);
@@ -88,7 +95,7 @@ namespace Cherry
             else
             {
                 // Create the object if not exist
-                auto new_keyval = Application::CreateComponent<Components::ListString>(Components::ListString(identifier, label, values, default_selected));
+                auto new_keyval = Application::CreateComponent<Components::ListImageString>(Components::ListImageString(identifier, label, values, default_selected));
                 new_keyval->RefreshContextProperties();
                 new_keyval->Render();
                 return new_keyval;
@@ -99,4 +106,4 @@ namespace Cherry
 
 }
 
-#endif // CHERRY_KIT_LIST_STRING
+#endif // CHERRY_KIT_LIST_IMAGE_STRING

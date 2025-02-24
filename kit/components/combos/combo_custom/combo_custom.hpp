@@ -56,7 +56,7 @@ namespace Cherry
 
                 if (!identifier.empty())
                 {
-                    Label += "####" + identifier;
+                    Label += Label + "####" + identifier;
                 }
 
                 if (ImGui::BeginCombo(Label.c_str(), [&]()

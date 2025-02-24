@@ -94,6 +94,10 @@
 #include "./kit/components/bullets/bullet_text/bullet_text.hpp"
 #include "./kit/components/bullets/bullet_button/bullet_button.hpp"
 #include "./kit/components/bullets/bullet_multitext/bullet_multitext.hpp"
+// Bullets
+#include "./kit/components/lists/list_string/list_string.hpp"
+#include "./kit/components/lists/list_image_string/list_image_string.hpp"
+#include "./kit/components/lists/list_custom/list_custom.hpp"
 
 namespace CherryKit = Cherry::Kit;
 

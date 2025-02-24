@@ -81,6 +81,19 @@ void Render()
   CherryKit::TitleOne(std::to_string(floattest));
   CherryKit::TitleOne(std::to_string(doubletest));
 
+  CherryKit::ListString("Test list", {"In", "test", "lfqsd"});
+  CherryKit::ListImageString("Test list", 
+  {
+    {"poremier", Cherry::GetPath("resources/base/z.png")},
+    {"dueixueme", Cherry::GetPath("resources/base/wz.png")},
+    {"troisieme", Cherry::GetPath("resources/base/x.png")}
+  });
+
+  CherryKit::ListCustom("Test list", 
+  {
+    CherryKit::TextImage("Premier choix", Cherry::GetPath("resources/base/wz.png")),
+    CherryKit::TextImage("Sec choix", Cherry::GetPath("resources/base/wz.png"))
+  });
 
   CherryKit::ComboText("11", {"Test 1", "Test2", "Test2kl"}, 0);
 
