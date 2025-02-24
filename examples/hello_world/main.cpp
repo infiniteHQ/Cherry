@@ -61,9 +61,27 @@ void Render()
 
   CherryKit::CheckboxText("Test", NULL);
 
+  CherryKit::BulletText("Test");
+  CherryKit::BulletButton("Test");
+  CherryKit::BulletMultiText({"Test", "Testqsd", "Testqsd", "Test"});
+
   CherryKit::ImageLocal(Cherry::GetPath("resources/base/wx.png"));
-  CherryKit::ImageHttp("https://cdn.bsky.app/img/feed_thumbnail/plain/did:plc:nhnjuwzn5bujjjfw4lqr4yml/bafkreihqdbpmdp22nddvgo7nnxfrupkl57s4ssalzykqp7joizifktmf3a@jpeg");
   
+  static std::string test = "ok";
+  static int inttest = 42;
+  static float floattest = 42.0;
+  static double doubletest = 42.0;
+  CherryKit::InputString("Test", &test);
+  CherryKit::InputInteger("Test", &inttest);
+  CherryKit::InputFloat("qsd", &floattest);
+  CherryKit::InputDouble("qsd", &doubletest);
+
+  CherryKit::TitleOne(test);
+  CherryKit::TitleOne(std::to_string(inttest));
+  CherryKit::TitleOne(std::to_string(floattest));
+  CherryKit::TitleOne(std::to_string(doubletest));
+
+
   CherryKit::ComboText("11", {"Test 1", "Test2", "Test2kl"}, 0);
 
   CherryKit::ComboCustom("11", 

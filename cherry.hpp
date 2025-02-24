@@ -85,6 +85,15 @@
 // Images
 #include "./kit/components/images/image_local/image_local.hpp"
 #include "./kit/components/images/image_http/image_http.hpp"
+// Inputs
+#include "./kit/components/inputs/input_string/input_string.hpp"
+#include "./kit/components/inputs/input_int/input_int.hpp"
+#include "./kit/components/inputs/input_float/input_float.hpp"
+#include "./kit/components/inputs/input_double/input_double.hpp"
+// Bullets
+#include "./kit/components/bullets/bullet_text/bullet_text.hpp"
+#include "./kit/components/bullets/bullet_button/bullet_button.hpp"
+#include "./kit/components/bullets/bullet_multitext/bullet_multitext.hpp"
 
 namespace CherryKit = Cherry::Kit;
 
