@@ -68,13 +68,20 @@ void Render()
   CherryKit::ImageLocal(Cherry::GetPath("resources/base/wx.png"));
   
   static std::string test = "ok";
+  static std::string testmu = "ok\nok\nok\nok\nok\nok\n";
   static int inttest = 42;
   static float floattest = 42.0;
   static double doubletest = 42.0;
   CherryKit::InputString("Test", &test);
+  CherryKit::InputMultilineString("Test", &testmu);
   CherryKit::InputInteger("Test", &inttest);
   CherryKit::InputFloat("qsd", &floattest);
   CherryKit::InputDouble("qsd", &doubletest);
+
+  CherryKit::TooltipText("(?)", "Ceci est un test");
+CherryKit::Space(100.0f);
+  CherryKit::TooltipImage(Cherry::GetPath("resources/base/wx.png"), "Ceci est un deuxiemme");
+  CherryKit::TooltipText("(?)", "Ceci est un deuxiemme");
 
   CherryKit::TitleOne(test);
   CherryKit::TitleOne(std::to_string(inttest));

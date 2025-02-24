@@ -87,6 +87,7 @@
 #include "./kit/components/images/image_http/image_http.hpp"
 // Inputs
 #include "./kit/components/inputs/input_string/input_string.hpp"
+#include "./kit/components/inputs/input_multiline_string/input_multiline_string.hpp"
 #include "./kit/components/inputs/input_int/input_int.hpp"
 #include "./kit/components/inputs/input_float/input_float.hpp"
 #include "./kit/components/inputs/input_double/input_double.hpp"
@@ -98,6 +99,9 @@
 #include "./kit/components/lists/list_string/list_string.hpp"
 #include "./kit/components/lists/list_image_string/list_image_string.hpp"
 #include "./kit/components/lists/list_custom/list_custom.hpp"
+// Tooltips
+#include "./kit/components/tooltips/tooltip_text/tooltip_text.hpp"
+#include "./kit/components/tooltips/tooltip_image/tooltip_image.hpp"
 
 namespace CherryKit = Cherry::Kit;
 
