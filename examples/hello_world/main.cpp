@@ -60,7 +60,7 @@ int main(int argc, char *argv[]) // Entry point of the executable
 
   while (true) // Optionnal, but this is an exemple of cherry signals implementation
   {
-    if (!Cherry::IsRunning()) // The ui is running and will not stop? 
+    if (!Cherry::IsRunning()) // The ui is not running and will stop? 
     return 0;
 
     if (!Cherry::IsReady())  // The ui is ready? (all criticals backend and components are loaded?)

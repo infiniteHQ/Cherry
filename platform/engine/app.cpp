@@ -148,6 +148,19 @@ namespace Cherry
             m_MainRenderCallback = specification.MainRenderCallback;
         }
 
+        if(specification.RenderMode == WindowRenderingMethod::DockingWindows || specification.RenderMode == WindowRenderingMethod::SimpleWindow)
+        {
+            if(m_AppWindows.empty())
+            {
+                std::shared_ptr<AppWindow> app_window = std::make_shared<AppWindow>("Cherry Error", "Cherry Error");
+                app_window->SetRenderCallback([](){
+                    ImGui::TextColored(Cherry::HexToRGBA("#FF2222FF"),"ERROR: You selected the Docking render mode, but you did not specify any app windows. Please create and add an app window.");
+                });
+
+                Cherry::AddAppWindow(app_window);
+            }
+        }
+
         Init();
     }
 
