@@ -1,15 +1,15 @@
 @echo off
-setlocal
-if not exist build (
-    mkdir build
-)
+setlocal enabledelayedexpansion
 
+mkdir build
 cd build
 
-cmake -G "MinGW Makefiles" ..
+cmake -G "Visual Studio 17" -A x64 ..
 
 for /f %%i in ('powershell -command "(Get-WmiObject -Class Win32_Processor).NumberOfLogicalProcessors"') do set THREADS=%%i
 
-mingw32-make -j%THREADS%
+cmake --build . --config Release -- /m:%THREADS%
+
+xcopy /E /Y "Release\*" "..\"
 
 endlocal

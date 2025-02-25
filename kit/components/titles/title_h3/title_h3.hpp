@@ -34,7 +34,7 @@ namespace Cherry
             void Render() override
             {
                 float oldsize = CherryGUI::GetFont()->Scale;
-                CherryGUI::GetFont()->Scale *= 1.0; // TODO : property
+                CherryGUI::GetFont()->Scale *= 1.70; // TODO : property
                 CherryGUI::PushFont(CherryGUI::GetFont());
 
                 CherryGUI::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(6, 6));

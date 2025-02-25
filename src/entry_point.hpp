@@ -38,6 +38,11 @@ namespace Cherry {
 		return 0;
 	}
 
+	static bool IsRunning()
+	{
+		return g_ApplicationRunning;
+	}
+
 }
 
 #if defined(WL_PLATFORM_WINDOWS) && !defined(WL_HEADLESS) && defined(WL_DIST)

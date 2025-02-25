@@ -141,10 +141,12 @@ namespace Cherry
         : m_DefaultSpecification(specification)
     {
         s_Instance = this;
-
-        std::string executablePath;
-
         m_RootPath = Application::CookPath("");
+
+        if(specification.MainRenderCallback)
+        {
+            m_MainRenderCallback = specification.MainRenderCallback;
+        }
 
         Init();
     }
@@ -2698,7 +2700,7 @@ namespace Cherry
         Application::Get().PopPermanentProperty(number_of_pops);
     }
 
-    void AddOneTimeProperty(const std::string &property, const std::string &value)
+    void SetNextComponentProperty(const std::string &property, const std::string &value)
     {
         Application::Get().AddOneTimeProperty(property, value);
     }

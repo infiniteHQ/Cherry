@@ -1,283 +1,69 @@
-//
-//
-//    Welcome in Cherry,
-//    In this example, we will see a really simple example to do your first build.
-//    🍒 Cherry is a complete & modern UI/UX framework for low level native apps.
-//    Minimal, but complete & advanced. Including backends, a render engine & ui
-//    components(ImGui/Vulkan/SDL)
-//
-//    What we want to do for this hello world ?
-//    For this example, we will do a really simple window with components in it.
-//    With a simple render function.
-//
-//
-
-// This is the single include, this file inclue all of the Cherry framework,
-// just include it, and start simply !
 #include "../../cherry.hpp"
-#include "../../platform/engine/components.hpp"
-#include "../../platform/engine/app.hpp"
 
-static std::vector<std::shared_ptr<Cherry::Component>> m_TestComponents;
-
-// The main Render function ! For this sample example, we will put all of our
-// components in it.
 void Render()
 {
-  // This is how we call simple inline component. We can handle it here
-  // but not really outside, this is the most simple approach. This component
-  // is anonymous, not object oriented and cannot be implemnted outside
-  // this simple call.
-
-  static std::string test = "ok";
-  static std::string testmu = "ok\nok\nok\nok\nok\nok\n";
-  static int inttest = 42;
-  static int inttest2 = 42;
-  static float floattest = 42.0;
-  static float floattest2 = 42.0;
-  static double doubletest = 42.0;
-
-  static std::vector<float> vectorfloat = {10.0f,10.0f,10.0f,10.0f,5.0f,10.0f,8.0f,10.0f,9.0f,10.0f,10.0f};
+  CherryKit::ImageLocal(Cherry::GetPath("resources/imgs/banner.png"), ImGui::GetWindowSize().x, ImGui::GetWindowSize().x / 4.0f);
+  Cherry::SetNextComponentProperty("color_text", "#454545B2");
+  CherryKit::TextWrapped("Cherry is a complete & modern UI/UX framework for low level native apps. Minimal, but complete & advanced. Including backends, a render engine & ui components(ImGui/Vulkan/SDL) ");
   
-  static int dhow = 5;
+  CherryKit::TitleThree("Features");
 
+  CherryKit::HeaderText("Components & Kits", CherryLambda(
+    CherryKit::BulletText("Many single components ready to use with data managment");
+    CherryKit::BulletText("Many all in one windows, ready to use and manage");
+    CherryKit::BulletText("ImGui abstractions for simplicity");
+    CherryKit::BulletText("SDL abstractions for inputs & user managment");
+    CherryKit::BulletText("Short inlines components");
+  ));
 
+  CherryKit::HeaderText("Render engine", CherryLambda(
+    CherryKit::BulletText("Data handler for windows & components");
+    CherryKit::BulletText("Localization & Traduction managment");
+    CherryKit::BulletText("Themes manager, Dark & Ligth themes");
+    CherryKit::BulletText("Fonts manager");
+    CherryKit::BulletText("Images & textures manager");
+    CherryKit::BulletText("Menubar & Bottombar simple callbacks");
+    CherryKit::BulletText("Custom window close behaviors");
+    CherryKit::BulletText("Advanced Docking (WIP)");
+    CherryKit::BulletText("Toasts, Notifications & pop-ups");
+    CherryKit::BulletText("Behaviros callbacks (closing, moving, etc...)");
+    CherryKit::BulletText("Windows customisations (size, colors, properties & styles)");
+  ));
 
-
-
-  CherryKit::ButtonImage(Cherry::GetPath("resources/base/w.png"));
-
-
-
-
-
-
-
-
-  CherryKit::ButtonImageText("test", Cherry::GetPath("resources/base/w.png"));
-  CherryKit::ButtonTextImage("test", Cherry::GetPath("resources/base/w.png"));
-  CherryKit::ButtonImageTextDropdown("test", Cherry::GetPath("resources/base/w.png"));
-  CherryKit::ButtonTextImageDropdown("ButtonTextImageDropdown", Cherry::GetPath("resources/base/w.png"));
-  CherryKit::ButtonImageDropdown(Cherry::GetPath("resources/base/w.png"));
-  CherryKit::ButtonImageTextImage("test", Cherry::GetPath("resources/base/wx.png"), Cherry::GetPath("resources/base/wz.png"));
-
-  CherryKit::TitleOne(CherryID("title"), "Test");
-  CherryKit::TitleFour(CherryID("titgle"), "Test");
-  CherryKit::TextSimple("Hello incredible world");
-  CherryKit::TextLeft("Hello incredible world");
-  CherryKit::SeparatorText("Hello incredible world");
-  CherryKit::TextRight("Hello incredible world");
-
-  //CherryKit::NodeArea("test", 500, 500);
-  //CherryKit::Space(500.0f);
-
-  CherryKit::CheckboxText("Test", NULL);
-
-  CherryKit::BulletText("Test");
-  CherryKit::BulletButton("Test");
-  CherryKit::BulletMultiText({"Test", "Testqsd", "Testqsd", "Test"});
-
-  CherryKit::ImageLocal(Cherry::GetPath("resources/base/wx.png"));
-  
-  CherryKit::InputString("Test", &test);
-  CherryKit::InputMultilineString("Test", &testmu);
-  CherryKit::InputInteger("Value", &inttest);
-  CherryKit::InputInteger("Goal", &inttest2);
-  CherryKit::InputInteger("Show", &dhow);
-  CherryKit::InputFloat("qsd", &floattest);
-  CherryKit::InputFloat("qsd", &floattest2);
-  CherryKit::InputDouble("qsd", &doubletest);
-
-  CherryKit::PlotHistorigramFloat("Test", vectorfloat, dhow);
-  CherryKit::PlotHistorigramFloat("Test", vectorfloat, &dhow);
-  CherryKit::PlotHistorigramFloat("Test", vectorfloat);
-  CherryKit::PlotLineFloat("Test", vectorfloat, dhow);
-  CherryKit::PlotLineFloat("Test", vectorfloat, &dhow);
-
-
-  CherryKit::ProgressBarPercentage(&floattest);
-  CherryKit::ProgressBarPercentageInteger(&inttest, &inttest2);
-  CherryKit::ProgressBarPercentageFloat(&floattest, &floattest2);
-
-
-  CherryKit::TooltipText("(?)", "Ceci est un test");
-  CherryKit::Space(100.0f);
-  CherryKit::TooltipImage(Cherry::GetPath("resources/basplot_historigrame/wx.png"), "Ceci est un deuxiemme");
-  CherryKit::TooltipText("(?)", "Ceci est un deuxiemme");
-
-  CherryKit::TitleOne(test);
-  CherryKit::TitleOne(std::to_string(inttest));
-  CherryKit::TitleOne(std::to_string(floattest));
-  CherryKit::TitleOne(std::to_string(doubletest));
-
-  CherryKit::ListString("Test list", {"In", "test", "lfqsd"});
-  CherryKit::ListImageString("Test list", 
-  {
-    {"poremier", Cherry::GetPath("resources/base/z.png")},
-    {"dueixueme", Cherry::GetPath("resources/base/wz.png")},
-    {"troisieme", Cherry::GetPath("resources/base/x.png")}
-  });
-
-  CherryKit::ListCustom("Test list", 
-  {
-    CherryKit::TextImage("Premier choix", Cherry::GetPath("resources/base/wz.png")),
-    CherryKit::TextImage("Sec choix", Cherry::GetPath("resources/base/wz.png"))
-  });
-
-  CherryKit::ComboText("11", {"Test 1", "Test2", "Test2kl"}, 0);
-
-  CherryKit::ComboCustom("11", 
-  {
-    CherryKit::TextImage("Premier choix", Cherry::GetPath("resources/base/z.png"))
-  },
-  0);
-
-    CherryKit::ComboImageText("11", 
-  {
-    {"poremier", Cherry::GetPath("resources/base/z.png")},
-    {"dueixueme", Cherry::GetPath("resources/base/wz.png")},
-    {"troisieme", Cherry::GetPath("resources/base/x.png")}
-  },
-  0);
-
-  // Cherry?::AddPadding(7.0f);
-  ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 7.0f);
-
-  CherryKit::TextWrapped("Hello incredible worlello incredible worello incredible worello incredible worello incredible worello incredible worello incredible worello incredible word");
-
-  // Cherry?::AddPadding(7.0f);
-  ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 7.0f);
-
-  static int valeurTEst = 5;
-  static std::string valeurphrase = "Le wagon";
-
-  static float x = 2.5f;
-  static float y = 2.5f;
-  static float z = 5.5f;
-  static float wx = 2.5f;
-  static float wy = 2.5f;
-  static float wz = 5.5f;
-  static float w = 5.5f;
-
-  static double doubleprecisionnumber = 5.5;
-
-  Cherry::AddOneTimeProperty("step", "8");
-  CherryKit::KeyValInteger(CherryID("TEst"), "Valeur TEst", &valeurTEst);
-
-  CherryKit::TableSimple("Test", {Cherry::Application::GetComponent(CherryID("TEst")),
-                                  CherryKit::KeyValComboString("11", {"Test 1", "Test2", "Test2kl"}, 0),
-                                  CherryKit::KeyValString("La phrase de TEst", &valeurphrase),
-                                  CherryKit::KeyValFloat("Float input", &x),
-                                  CherryKit::KeyValDouble("Double input", &doubleprecisionnumber),
-                                  CherryKit::KeyValVector1("11", &x),
-                                  CherryKit::KeyValVector2("22", &x, &y),
-                                  CherryKit::KeyValVector3("La phrase de TEst", &x, &y, &z),
-                                  CherryKit::KeyValVector4("La LMe super Vector4 olann", &x, &y, &z, &w),
-                                  CherryKit::KeyValVector3_5("La LMe super Vector4 olann", &x, &y, &z, &wx, &wy, &wz)});
-
-  // TODO : SOucis quand on deployey le header ça crée un nouveau composant anonyme et donc ça décale tout.
-  CherryKit::HeaderText("456", []()
-                        { CherryKit::TextSimple("Hello incredible world"); });
-
-  CherryKit::HeaderTextButton("3123", Cherry::GetPath("resources/base/y.png"), []()
-                              { CherryKit::TextSimple("Hello incredible world 2 "); });
-
-  CherryKit::HeaderImageTextButton("456", Cherry::GetPath("resources/base/w.png"), []()
-                                   { CherryKit::TextSimple("Hello incredible world 3 "); });
-
-  CherryKit::HeaderImageText("0456", Cherry::GetPath("resources/base/w.png"), []()
-                             { CherryKit::TextSimple("Hello incredible world 4 "); });
-
-  CherryKit::ButtonTextDropdown(CherryID(&m_TestComponents, "super_button"), "My first button");
-
-  // CherryKit::ComboString("Test", {"Suepr Nombre 1", "Test 2", "Test 3"});
-
-  // Cherry::CreateStaticRoutine
-  /*static std::once_flag flag;
-      std::call_once(flag, [&](){
-      std::thread([&]() {
-        while(true)
-        {
-  // Cherry::SetComponentProperty(ID, key, val)
-          Cherry::Application::Get().GetComponent(CherryID("title"))->SetProperty("label", "OK");
-          Cherry::Application::Get().GetComponent(CherryID("title"))->SetProperty("label", "Super !");
-        }
-      }).detach();
-  });*/
-
-  // This is how we call registered component. This text button can be
-  // initialized with a "CherryID" that we can use to get data, update
-  // properties and add a lot of logics here, and outside this function!
-  // This approach will create a component registered in the Cherry Render
-  // engine.
+  CherryKit::HeaderText("Backends", CherryLambda(
+    CherryKit::BulletText("Multi context with contexts cohesion & communication (ImGui/SDL/Vulkan)");
+    CherryKit::BulletText("Complete image load & show, cache & optimization");
+    CherryKit::BulletText("Window builder");
+  ));
 }
 
-// This is the entry point of Cherry. We need to add it to add the main
-// configurations, default parameters dans all the modes we want
-// in our application. We will do here the minimal example. But we can
-// bootstrapp more advanced features in this application, like multicontextes,
-// docking window, load-from-save, etc !!
 Cherry::Application *Cherry::CreateApplication(int argc, char **argv)
 {
-  // Firstly, let's create a specification configuration, then, we can
-  // configure the general behaviors, names of window,
-  // sizes, scales, default themes, fonts, locales etc...
   Cherry::ApplicationSpecification config;
   config.SetName("Hello Cherry");                                    // The name of the window
-  config.SetMinimumWidth(250);                                       // The minimum width
-  config.SetMinimumHeight(250);                                      // The minimum height
-  config.SetDefaultWidth(1920);                                      // The default width
-  config.SetDefaultHeight(1080);                                     // The default height
+  config.SetMinimumWidth(100);                                       // The minimum width
+  config.SetMinimumHeight(100);                                      // The minimum height
+  config.SetDefaultWidth(800);                                       // The default width
+  config.SetDefaultHeight(500);                                      // The default height
   config.SetGlobalScale(0.84f);                                      // The flobal scale of components and windows
   config.SetFontGlobalScale(0.84f);                                  // The flobal scale of fonts
   config.SetFavIconPath(Cherry::GetPath("resources/imgs/icon.png")); // Icon of the window. (for folder in [project]/assets)
+  config.SetRenderMode(WindowRenderingMethod::SimpleRender);         // Render mode
+  config.SetMainRenderCallback(Render);                              // Simple render function (calling our "void Render()" function)
 
-  // Render mode
-  // We can specify here the main behavior of the UI app (we can chose
-  // for docking, simple render of subwindow approach)
-  // Here, we need a simple render, so let's select SimpleRender.
-  config.SetRenderMode(WindowRenderingMethod::SimpleRender);
-
-  // Now, let's create the UI app, and attach the specification.
-  Cherry::Application *app = new Cherry::Application(config);
-
-  // We previously choose for a SimpleRender, we need to attach a render
-  // fonction to the "MainRenderCallback". We put here the previous "Render"
-  // function we made with all of our UI components !
-  app->SetMainRenderCallback([](){ Render(); });
-
-  return app;
+  return new Cherry::Application(config);;
 }
 
-// Main function of our executable
-int main(int argc, char *argv[])
+int main(int argc, char *argv[]) // Entry point of the executable
 {
-  // Starting the UI app on a different thread (simple approach of managing backends and frontend)
-  std::thread([&]()
-    { Cherry::Main(argc, argv); })
-  .detach();
+  std::thread([&](){ Cherry::Main(argc, argv); }).detach(); // Independant UI thread
 
-  // Sample loop of a programm
-  while (true)
+  while (true) // Optionnal, but this is an exemple of cherry signals implementation
   {
-    // If the UI app turn g_ApplicationRunning off, it's seem the user closed it.
-    // So, when the UI is off, we want to close the main program correctly
-    if (!g_ApplicationRunning)
-    {
-      return 0;
-    }
+    if (!Cherry::IsRunning()) // The ui is running and will not stop? 
+    return 0;
 
-    // If Cherry not loaded all UI components and resources, we don't want
-    // to access to empty or null components
-    if (!Cherry::IsReady())
-    {
-      continue;
-    }
-
-    // In this example we retrieve our previous button object "button.test"
-    // We want to check if the button is currently pressed.
-    // std::cout << Cherry::GetData(CherryID("button.test"), "isPressed") << std::endl;
-
-    /* Your program loop... */
+    if (!Cherry::IsReady())  // The ui is ready? (all criticals backend and components are loaded?)
+    continue;
   }
 }

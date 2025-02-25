@@ -22,6 +22,7 @@
 #include "./platform/engine/app.hpp"
 #include "./platform/engine/cef.hpp"
 #include "./platform/engine/embed/assets/icons.h"
+#include "./platform/engine/components.hpp"
 ///////////////////////////////////////////////////////////////
 
 

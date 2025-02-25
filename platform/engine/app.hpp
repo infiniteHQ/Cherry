@@ -37,6 +37,8 @@
 #ifndef CHERRY_APP_H
 #define CHERRY_APP_H
 
+#define CherryLambda(code) [](){code}
+
 // Ajoute une déclaration anticipée
 namespace Cherry
 {
@@ -399,7 +401,7 @@ namespace Cherry
 
 	void PushPermanentProperty(const std::string &property, const std::string &value);
 	void PopPermanentProperty(int number_of_pops = 0);
-	void AddOneTimeProperty(const std::string &property, const std::string &value);
+	void SetNextComponentProperty(const std::string &property, const std::string &value);
 
 	void PushParentComponent(const std::shared_ptr<Component> &component);
 	void PopParentComponent();

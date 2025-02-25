@@ -17,7 +17,7 @@ namespace Cherry
         class ImageLocal : public Component
         {
         public:
-            ImageLocal(const Cherry::Identifier &id, const std::string &image_path)
+            ImageLocal(const Cherry::Identifier &id, const std::string &image_path, float x_size, float y_size)
                 : Component(id)
             {
                 // Identifier
@@ -32,8 +32,8 @@ namespace Cherry
                 SetProperty("color_bg_clicked", "#444444FF");
 
                 // Sizes
-                SetProperty("size_x", "50.0");
-                SetProperty("size_y", "50.0");
+                SetProperty("size_x", std::to_string(x_size));
+                SetProperty("size_y", std::to_string(y_size));
 
                 // Informations
                 SetProperty("image_path", image_path);
@@ -52,7 +52,7 @@ namespace Cherry
     // End-User API
     namespace Kit
     {
-        bool ImageLocal(const std::string &image_path)
+        bool ImageLocal(const std::string &image_path, float x_size = 50.0f, float y_size = 50.0f)
         {
             // Inline component
             auto anonymous_id = Application::GetAnonymousID();
@@ -64,14 +64,14 @@ namespace Cherry
             }
             else
             {
-                auto button = Application::CreateAnonymousComponent<Components::ImageLocal>(Components::ImageLocal(anonymous_id, image_path));
+                auto button = Application::CreateAnonymousComponent<Components::ImageLocal>(Components::ImageLocal(anonymous_id, image_path, x_size, y_size));
                 button->Render();
                 return button->GetData("isClicked") == "true" ? true : false;
             }
             return false;
         }
 
-        bool ImageLocal(const Cherry::Identifier &identifier, const std::string &image_path)
+        bool ImageLocal(const Cherry::Identifier &identifier, const std::string &image_path, float x_size = 50.0f, float y_size = 50.0f)
         {
             // Get the object if exist
             auto existing_button = Application::GetComponent(identifier);
@@ -83,7 +83,7 @@ namespace Cherry
             else
             {
                 // Create the object if not exist
-                auto new_button = Application::CreateComponent<Components::ImageLocal>(Components::ImageLocal(identifier, image_path));
+                auto new_button = Application::CreateComponent<Components::ImageLocal>(Components::ImageLocal(identifier, image_path, x_size, y_size));
                 new_button->Render();
                 return new_button->GetData("isClicked") == "true" ? true : false;
             }

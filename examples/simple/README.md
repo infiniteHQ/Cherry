@@ -1,1 +1,0 @@
-Cherry is a new library, examples are still in progress and can have bugs or incomplete features implementations... Stay tuned !

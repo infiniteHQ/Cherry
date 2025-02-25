@@ -115,40 +115,38 @@ namespace Cherry
     struct ApplicationSpecification
     {
         std::string Name = "Cherry App";
+        std::string IconPath;
+        std::string FavIconPath;
+        std::string LastFavIconPath;
+        std::string UniqueAppWindowName;
+        std::string DefaultWindowName;
+
         uint32_t Width = 1850;
         uint32_t Height = 1000;
         uint32_t MinWidth = 100;
         uint32_t MinHeight = 100;
 
-        std::string IconPath;
-        std::string FavIconPath;
-        std::string LastFavIconPath;
-
-        std::string DefaultWindowName;
         float GlobalScale = 0.84f;
         float FontGlobalScale = 0.83f;
 
-        WindowThemeColor ColorTheme;
-
+        bool CenterWindow = false; // Window will be created in the center of primary monitor
+        bool DisableTitle = false;
+        bool DisableTitleBar = false;
+        bool DisableResize = false;
         bool WindowResizeable = true;
         bool WindowOnlyClosable = false;
         bool WindowSaves = false;
         bool DisableWindowManagerTitleBar = false;
-        WindowRenderingMethod RenderMode;
-        std::string UniqueAppWindowName;
-
         bool UsingCloseCallback = false;
-        std::function<void()> CloseCallback;
-        std::function<void()> MenubarCallback;
         bool CustomTitlebar = false;
 
-        // Window will be created in the center
-        // of primary monitor
-        bool CenterWindow = false;
+        std::function<void()> MenubarCallback;
+        std::function<void()> FramebarCallback;
+        std::function<void()> MainRenderCallback;
+        std::function<void()> CloseCallback;
 
-        bool DisableTitle = false;
-        bool DisableTitleBar = false;
-        bool DisableResize = false;
+        WindowThemeColor ColorTheme;
+        WindowRenderingMethod RenderMode;
 
     public:
         void UseCustomTitleBar()
@@ -159,6 +157,31 @@ namespace Cherry
         void SetRenderMode(WindowRenderingMethod method)
         {
             RenderMode = method;
+        }
+
+        void SetCloseCallback(const std::function<void()> &closeCallback)
+        {
+            CloseCallback = closeCallback;
+        }
+
+        void SetMenubarCallback(const std::function<void()> &menubarCallback)
+        {
+            MenubarCallback = menubarCallback;
+        }
+
+        void SetFramebarCallback(const std::function<void()> &framebarCallback)
+        {
+            FramebarCallback = framebarCallback;
+        }
+
+        void SetCloseCallback(const std::function<bool()> &closeCallback)
+        {
+            CloseCallback = closeCallback;
+        }
+
+        void SetMainRenderCallback(const std::function<void()> &mainRenderCallback)
+        {
+            MainRenderCallback = mainRenderCallback;
         }
 
         void UseWindowSaves()
