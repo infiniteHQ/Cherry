@@ -52,7 +52,7 @@ namespace Cherry
 
     void AppWindow::SetDeleteCallback(const std::function<void()> &callback)
     {
-        if(callback)
+        if (callback)
         {
             m_DeleteCallback = callback;
         }
@@ -112,16 +112,15 @@ namespace Cherry
             return;
         }
 
-                std::shared_ptr<Window> wind;
+        std::shared_ptr<Window> wind;
 
-                for (auto &win : Application::Get().m_Windows)
-                {
-                    if (win->GetName() == winname)
-                    {
-                        wind = win;
-                    }
-                }
-
+        for (auto &win : Application::Get().m_Windows)
+        {
+            if (win->GetName() == winname)
+            {
+                wind = win;
+            }
+        }
 
         if (!ImGui::DockBuilderGetNode(m_DockSpaceID))
         {
@@ -359,7 +358,7 @@ namespace Cherry
         ImGui::GetCurrentWindow()->DragDisabled = this->m_DisableDragging;
         ImGui::GetCurrentWindow()->ContextMenuDisabled = this->m_DisableContextMenu;
 
-        if(m_HaveParentAppWindow)
+        if (m_HaveParentAppWindow)
         {
             ImGui::GetCurrentWindow()->CustomThresholdY = 5.0f;
         }
@@ -784,5 +783,56 @@ namespace Cherry
             }
         }
         m_HaveParentAppWindow = true;
+    }
+
+    AppWindowWrapper::AppWindowWrapper()
+    {
+        m_AppWindow = std::make_shared<Cherry::AppWindow>("undefined_window", "undefined_window");
+    }
+
+    AppWindowWrapper::AppWindowWrapper(const std::string &name)
+    {
+        m_AppWindow = std::make_shared<Cherry::AppWindow>(name, name);
+    }
+
+    AppWindowWrapper::AppWindowWrapper(const std::string &name, const std::function<void()> callback)
+    {
+        m_AppWindow = std::make_shared<Cherry::AppWindow>(name, name);
+        this->SetRender(callback);
+    }
+
+    std::shared_ptr<Cherry::AppWindow> &AppWindowWrapper::GetAppWindow()
+    {
+        return m_AppWindow;
+    }
+
+    std::shared_ptr<AppWindowWrapper> AppWindowWrapper::Create(const std::string &name, const std::function<void()> callback)
+    {
+        auto instance = std::shared_ptr<AppWindowWrapper>(new AppWindowWrapper(name, callback));
+        instance->SetupRenderCallback();
+        return instance;
+    }
+
+    void AppWindowWrapper::SetRender(const std::function<void()> &callback)
+    {
+        m_RenderCallback = callback;
+    }
+
+    void AppWindowWrapper::SetupRenderCallback()
+    {
+        auto self = shared_from_this();
+        this->m_AppWindow->SetRenderCallback([self]()
+                                             {
+            if (self) {
+                self->Render();
+            } });
+    }
+
+    void AppWindowWrapper::Render()
+    {
+        if (m_RenderCallback)
+        {
+            m_RenderCallback();
+        }
     }
 }

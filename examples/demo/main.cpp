@@ -50,7 +50,9 @@ Cherry::Application *Cherry::CreateApplication(int argc, char **argv)
   config.SetFavIconPath(Cherry::GetPath("resources/imgs/icon.png")); // Icon of the window. (for folder in [project]/assets)
   config.SetRenderMode(WindowRenderingMethod::DockingWindows);       // Render mode
 
-  return new Cherry::Application(config);;
+  Cherry::AddAppWindow(CherryKit::WindowSimple("Test window", Render));
+
+  return new Cherry::Application(config);
 }
 
 int main(int argc, char *argv[]) // Entry point of the executable

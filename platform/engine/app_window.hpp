@@ -88,19 +88,15 @@ namespace Cherry
 
     public:
         ImGuiID m_DockID;
-        ReattachRequest m_AttachRequest;
+        ImGuiID m_DockSpaceID;
+        ImGuiID m_ParentDockSpaceID;
+        
         std::string m_WinParent;
-
-        // Main informations
         std::string m_DockParent = "unknow";
         std::string m_DockPlace = "unknow";
         std::string m_Name = "unknow";
         std::string m_IdName = "unknow";
         std::string m_ID = "unknow";
-        // ImGuiWindow *m_ImGuiWindow;
-        ImGuiID m_DockSpaceID;
-        ImGuiID m_ParentDockSpaceID;
-
         std::string m_Icon = "none";
 
         bool m_Visible = true;
@@ -119,35 +115,35 @@ namespace Cherry
         bool m_DockIsDraggingStarted;
         bool m_Pressed;
         bool m_DockingMode = false;
+        bool m_WindowRebuilded = false;
+        bool m_WindowJustRebuilded = false;
+        bool m_HaveParentAppWindow = false;
+
         float m_InternalPaddingY = 0;
         float m_InternalPaddingX = 0;
 
         std::function<void()> m_CloseCallback;
         std::function<void()> m_TabMenuCallback;
         std::function<void()> m_DeleteCallback;
-
-        //
-        bool m_WindowRebuilded = false;
-        bool m_WindowJustRebuilded = false;
-
-        bool m_HaveParentAppWindow = false;
-        std::shared_ptr<AppWindow> m_ParentAppWindow;
-
-        AppWindowTypes m_AppWindowType = AppWindowTypes::StaticWindow;
-        // Notifications
-        // Number of unread notifs
-
-        // Default behavior
-
-        // Renders functions
         std::function<void()> m_Render;
         std::function<void()> m_MenubarRight;
         std::function<void()> m_MenubarLeft;
         std::function<void()> m_BottombarRight;
         std::function<void()> m_BottombarLeft;
-
         std::function<void()> m_CloseEvent;
+
+        std::shared_ptr<AppWindow> m_ParentAppWindow;
         std::vector<std::shared_ptr<AppWindow>> m_SubAppWindows;
+
+        AppWindowTypes m_AppWindowType = AppWindowTypes::StaticWindow;
+        ReattachRequest m_AttachRequest;
+
+        // Notifications
+        // Number of unread notifs
+        // ImGuiWindow *m_ImGuiWindow;
+        // Default behavior
+
+        // Renders functions
 
     private:
         // Simple storage (only Key/Value), can be replicated in saves
@@ -163,15 +159,17 @@ namespace Cherry
         std::unordered_map<DefaultAppWindowBehaviors, std::string, EnumClassHash> m_DefaultBehaviors;
     };
 
-    class AppWindowWrapper : public std::enable_shared_from_this<AppWindowWrapper>
+    class AppWindowWrapper : 
+    public std::enable_shared_from_this<AppWindowWrapper>
     {
         public:
         AppWindowWrapper();
-        AppWindowWrapper(const std::string &id, const std::string &name);
-        AppWindowWrapper(const std::string &id, const std::string &name, const std::string &icon);
+        AppWindowWrapper(const std::string &name);
+        AppWindowWrapper(const std::string &name, const std::function<void()> callback = [](){});
 
         std::shared_ptr<Cherry::AppWindow> &GetAppWindow();
-        static std::shared_ptr<AppWindowWrapper> Create(const std::string &name);
+        static std::shared_ptr<AppWindowWrapper> Create(const std::string &name, const std::function<void()> callback = [](){});
+        void SetRender(const std::function<void()>& callback);
         void SetupRenderCallback();
         void Render();
 
@@ -182,6 +180,8 @@ namespace Cherry
         }
 
         private:
+        std::function<void()> m_RenderCallback;
 		std::vector<std::shared_ptr<Component>> m_PrivateComponents;
+        std::shared_ptr<Cherry::AppWindow> m_AppWindow;
     };
 }

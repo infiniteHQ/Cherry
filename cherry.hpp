@@ -110,6 +110,10 @@
 // Progresses
 #include "./kit/components/plots/plot_line_float/plot_line_float.hpp"
 #include "./kit/components/plots/plot_historigram_float/plot_historigram_float.hpp"
+///////////////////////////////////////////////////////////////
+/// AIO : Windows, Ready-builtin windows                    ///
+///////////////////////////////////////////////////////////////
+#include "./kit/aio/bases/windows/window_simple/window_simple.hpp"
 
 namespace CherryKit = Cherry::Kit;
 

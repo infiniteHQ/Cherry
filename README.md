@@ -19,9 +19,36 @@
 ### Summary
 *Cherry is a modern, minimalist yet comprehensive UI/UX framework for low-level native applications. It provides a complete solution, including backend support, a rendering engine, and UI components. Cherry is built using technologies like ImGui, Vulkan, and SDL, offering developers advanced tools to create efficient and high-performance interfaces.*
 
+### What you can do ?
+<table>
+  <tr>
+    <td>
+      <img src="./.github/imgs/possibilities/1.png" alt="Cherry 1" width="150">
+      <img src="./.github/imgs/possibilities/2.png" alt="Cherry 1" width="150">
+      <img src="./.github/imgs/possibilities/4.png" alt="Cherry 1" width="150">
+      <img src="./.github/imgs/possibilities/3.png" alt="Cherry 1" width="150">
+      <img src="./.github/imgs/possibilities/5.png" alt="Cherry 1" width="150">
+      <img src="./.github/imgs/possibilities/6.png" alt="Cherry 1" width="150">
+      <img src="./.github/imgs/possibilities/7.png" alt="Cherry 1" width="150">
+    </td>
+  </tr>
+</table>
 
-> [!NOTE]  
-> This framework is new and still under active development, so some bugs may occur, and content is subject to change. We are also working to improve the overall stability of Cherry, particularly with regard to memory safety and the rendering stack, as well as the graphical libraries used. Thank you for your understanding! Stay tuned :)
+### Compatibility ?
+<table>
+  <tr>
+    <td>
+      <img src="./.github/imgs/compat/1.png" alt="Cherry 1" width="90">
+      <img src="./.github/imgs/compat/2.png" alt="Cherry 1" width="90">
+      <img src="./.github/imgs/compat/3.png" alt="Cherry 1" width="90">
+      <img src="./.github/imgs/compat/4.png" alt="Cherry 1" width="90">
+      <img src="./.github/imgs/compat/5.png" alt="Cherry 1" width="90">
+      <img src="./.github/imgs/compat/6.png" alt="Cherry 1" width="90">
+    </td>
+  </tr>
+</table>
+
+### Documentation
 
 ## Examples & Preview
   
@@ -64,8 +91,6 @@
   </tr>
 </table>
 
-
-
 ## Features
 
 > **Components & Kits**
@@ -99,6 +124,10 @@
 > - 🏗️ More components with more properties & customizations
 > - 🏗️ Internet images loading & cache managment
 
+
+> [!NOTE]  
+> This framework is new and still under active development, so some bugs may occur, and content is subject to change. We are also working to improve the overall stability of Cherry, particularly with regard to memory safety and the rendering stack, as well as the graphical libraries used. Thank you for your understanding! Stay tuned :)
+
 ## Getting started
 > [!WARNING]  
 > The only dependance you need to compile Cherry is the VulkanSDK installed & ready. Please refer to the https://www.lunarg.com/vulkan-sdk/ website to see how install Vulkan on your system (compatible on Linux & Windows).
@@ -124,7 +153,7 @@
 > ```
 
 ### About tech
-How Cherry works ?
+*The core of Cherry is made with C and C++, but you can easely integrate the framework in many stacks configurations with many other languages or techs.*
 <div style="display: flex; align-items: center;">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="./.github/imgs/Graph.png">
@@ -135,10 +164,6 @@ How Cherry works ?
 At the low level, we have all the backends, including Vulkan and SDL contexts, handling input management, event dispatching, and Vulkan-accessible resources such as the swapchain, framebuffers, etc. At the upper level, we have the Cherry render engine, whose role is to manage, create, and delete OS windows, while providing user-level windows within these OS windows. Additionally, we ensure seamless coordination for an optimal user experience.
 
 Within these user-side windows, we include all components and widgets, along with a robust system for complete user data management. The entire stack is highly optimized to ensure the best performance and maximum stability.
-
-
-## Documentation
-The documentation is in progress...
 
 ## Special thanks
 - For all contributors of SDL2

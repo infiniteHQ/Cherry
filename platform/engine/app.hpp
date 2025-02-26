@@ -87,6 +87,7 @@ namespace Cherry
 		static int &GetMinImageCount();
 		static std::shared_ptr<Cherry::Window> &GetCurrentRenderedWindow();
 		static std::shared_ptr<Cherry::WindowDragDropState> &GetCurrentDragDropState();
+		static std::vector<std::shared_ptr<Cherry::AppWindow>> &GetTempAppWindows();
 		static bool &GetDockIsDragging();
 		static std::string &GetLastWindowPressed();
 		static bool &GetValidDropZoneFounded();
@@ -186,10 +187,12 @@ namespace Cherry
 		void SetWindowSaveDataFile(const std::string &path, const bool &relative = false);
 		void SynchronizeWindows();
 		std::vector<std::shared_ptr<AppWindow>> GetLastSaveInstanciableAppWindows();
-		std::string PutWindow(std::shared_ptr<AppWindow> win);
+		std::string PutWindow(const std::shared_ptr<AppWindow>& win);
 		void AddFont(const std::string &name, const std::string &ttf_file_path, const float &size = 20.0f);
 		void SetFavIconPath(const std::string &icon_path);
 		void DeleteAppWindow(const std::shared_ptr<AppWindow> &win);
+		void EnableNoAppWindowSafety();
+		void DisableNoAppWindowSafety();
 
 		// Locales & Traductions
 		void AddLocale(const std::string &locale_name, const std::string &data_path);
@@ -338,6 +341,8 @@ namespace Cherry
 		bool m_IsDataInitialized = false;
 		nlohmann::json m_PreviousSaveData;
 
+		bool m_NoAppWindowSafetyEnabled = false;
+		bool m_NoAppWindowSafetyJustEnabled = false;
 		bool m_Running = false;
 		bool m_Dragging = false;
 		std::vector<std::shared_ptr<Window>> m_Windows;

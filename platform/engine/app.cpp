@@ -85,6 +85,7 @@ static VkDebugReportCallbackEXT g_DebugReport = VK_NULL_HANDLE;
 static VkPipelineCache g_PipelineCache = VK_NULL_HANDLE;
 static std::unordered_map<std::string, ImFont *> s_Fonts;
 static VkDescriptorPool g_DescriptorPool = VK_NULL_HANDLE;
+static std::vector<std::shared_ptr<Cherry::AppWindow>> g_TempAppWindows; // To be able to create app window before create applications
 
 static bool g_LogicalDeviceInitialized = false;
 static int g_MinImageCount = 0;
@@ -143,21 +144,22 @@ namespace Cherry
         s_Instance = this;
         m_RootPath = Application::CookPath("");
 
-        if(specification.MainRenderCallback)
+        if (specification.MainRenderCallback)
         {
             m_MainRenderCallback = specification.MainRenderCallback;
         }
 
-        if(specification.RenderMode == WindowRenderingMethod::DockingWindows || specification.RenderMode == WindowRenderingMethod::SimpleWindow)
+        if (specification.RenderMode == WindowRenderingMethod::DockingWindows || specification.RenderMode == WindowRenderingMethod::SimpleWindow)
         {
-            if(m_AppWindows.empty())
+            for (auto preinit_app_windows : Application::GetTempAppWindows())
             {
-                std::shared_ptr<AppWindow> app_window = std::make_shared<AppWindow>("Cherry Error", "Cherry Error");
-                app_window->SetRenderCallback([](){
-                    ImGui::TextColored(Cherry::HexToRGBA("#FF2222FF"),"ERROR: You selected the Docking render mode, but you did not specify any app windows. Please create and add an app window.");
-                });
+                this->PutWindow(preinit_app_windows);
+            }
+            Application::GetTempAppWindows().clear();
 
-                Cherry::AddAppWindow(app_window);
+            if (m_AppWindows.empty())
+            {
+                EnableNoAppWindowSafety();
             }
         }
 
@@ -467,6 +469,11 @@ namespace Cherry
     std::string &Application::GetLastWindowPressed()
     {
         return LastWindowPressed;
+    }
+
+    std::vector<std::shared_ptr<Cherry::AppWindow>> &Application::GetTempAppWindows()
+    {
+        return g_TempAppWindows;
     }
 
     std::vector<std::pair<std::string, std::pair<std::string, float>>> &Application::GetCustomFonts()
@@ -2322,9 +2329,28 @@ namespace Cherry
         return "none";
     }
 
-    std::string Application::PutWindow(std::shared_ptr<AppWindow> win)
+    std::string Application::PutWindow(const std::shared_ptr<AppWindow> &win)
     {
-        m_AppWindows.push_back(win);
+        if (Cherry::IsReady())
+        {
+            m_AppWindows.push_back(win);
+            
+            if(m_NoAppWindowSafetyEnabled == true)
+            {
+                if(m_NoAppWindowSafetyJustEnabled)
+                {
+                    m_NoAppWindowSafetyJustEnabled = false;
+                }
+                else
+                {
+                    DisableNoAppWindowSafety();
+                }
+            }
+        }
+        else
+        {
+            Application::GetTempAppWindows().push_back(win);
+        }
 
         return "id";
     }
@@ -2523,7 +2549,10 @@ namespace Cherry
 
     void AddAppWindow(const std::shared_ptr<AppWindow> &win)
     {
-        Application::Get().PutWindow(win);
+        if (win)
+        {
+            Application::Get().PutWindow(win);
+        }
     }
 
     std::shared_ptr<AppWindow> GetAppWindowByName(const std::string &win_name)
@@ -2554,9 +2583,32 @@ namespace Cherry
     {
         if (win)
         {
+            if (m_AppWindows.size() == 1)
+            {
+                std::cout << "EnableNoAppWindowSafety triggered" << std::endl;
+                EnableNoAppWindowSafety();
+            }
+
             win->SetParentWindow("__blank");
             m_AppWindows.erase(std::remove(m_AppWindows.begin(), m_AppWindows.end(), win), m_AppWindows.end());
         }
+    }
+
+    void Application::EnableNoAppWindowSafety()
+    {
+        m_NoAppWindowSafetyEnabled = true;
+        m_NoAppWindowSafetyJustEnabled = true;
+        std::shared_ptr<AppWindow> app_window = std::make_shared<AppWindow>("no_windows", "Cherry Error");
+        app_window->SetRenderCallback([]()
+                                      { ImGui::TextColored(Cherry::HexToRGBA("#FF2222FF"), "ERROR: You selected the Docking render mode, but you did not specify any app windows. Please create and add an app window."); });
+
+        Cherry::AddAppWindow(app_window);
+    }
+
+    void Application::DisableNoAppWindowSafety()
+    {
+        Cherry::DeleteAppWindow(Cherry::GetAppWindowByName("no_windows"));
+        m_NoAppWindowSafetyEnabled = false;
     }
 
     void DeleteAppWindow(const std::shared_ptr<AppWindow> &win)
