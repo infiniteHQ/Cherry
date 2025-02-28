@@ -38,11 +38,11 @@
 #define CHERRY_APP_H
 
 #define CherryLambda(code) [](){code}
+#define CherryInline "__inline"
 
-// Ajoute une déclaration anticipée
 namespace Cherry
 {
-	class Component; // Déclaration anticipée au lieu d'inclure component.hpp
+	class Component;
 }
 void check_vk_result(VkResult err);
 

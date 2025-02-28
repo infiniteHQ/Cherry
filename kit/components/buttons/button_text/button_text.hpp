@@ -102,6 +102,13 @@ namespace Cherry
 
         bool ButtonText(const Cherry::Identifier &identifier, const std::string &label)
         {
+            if(identifier.string() == "__inline")
+            {
+                auto new_button = Application::CreateComponent<Components::ButtonText>(Components::ButtonText(identifier, label));
+                new_button->Render();
+                return new_button->GetData("isClicked") == "true" ? true : false;
+            }
+            
             // Get the object if exist
             auto existing_button = Application::GetComponent(identifier);
             if (existing_button)

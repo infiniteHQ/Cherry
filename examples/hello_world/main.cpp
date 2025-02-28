@@ -1,5 +1,15 @@
 #include "../../cherry.hpp"
 
+void Test()
+{
+
+  ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 15.0f);
+  ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 15.0f);
+
+CherryKit::TitleOne(CherryID(CherryInline), "Big Super Title");
+
+  
+}
 void Render()
 {
   CherryKit::ImageLocal(Cherry::GetPath("resources/imgs/banner.png"), ImGui::GetWindowSize().x, ImGui::GetWindowSize().x / 4.0f);
@@ -45,11 +55,11 @@ Cherry::Application *Cherry::CreateApplication(int argc, char **argv)
   config.SetMinimumHeight(100);                                      // The minimum height
   config.SetDefaultWidth(800);                                       // The default width
   config.SetDefaultHeight(500);                                      // The default height
-  config.SetGlobalScale(0.84f);                                      // The flobal scale of components and windows
-  config.SetFontGlobalScale(0.84f);                                  // The flobal scale of fonts
+  config.SetGlobalScale(1.0f);                                      // The flobal scale of components and windows
+  config.SetFontGlobalScale(1.0f);                                  // The flobal scale of fonts
   config.SetFavIconPath(Cherry::GetPath("resources/imgs/icon.png")); // Icon of the window. (for folder in [project]/assets)
   config.SetRenderMode(WindowRenderingMethod::SimpleRender);         // Render mode
-  config.SetMainRenderCallback(Render);                              // Simple render function (calling our "void Render()" function)
+  config.SetMainRenderCallback(Test);                              // Simple render function (calling our "void Render()" function)
 
   return new Cherry::Application(config);;
 }

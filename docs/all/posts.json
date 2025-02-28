@@ -1,0 +1,105 @@
+{
+    "contents": [
+        {
+            "name": "introduction",
+            "slug": "Introduction",
+            "title": "Introduction",
+            "sumary": "Introduction to the Cherry UI/UX Framework",
+            "pages": [
+                {
+                    "name": "introduction",
+                    "link": "introduction.md",
+                    "description": "",
+                    "logo": "",
+                    "slug": "Get started on Cherry",
+                    "subpages": [
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "components_references",
+            "slug": "Components References",
+            "title": "Components References",
+            "sumary": "This is the reference of cherry",
+            "pages": [
+                {
+                    "name": "buttons",
+                    "link": "buttons.md",
+                    "description": "",
+                    "logo": "",
+                    "slug": "Buttons",
+                    "subpages": [
+                        {
+                            "name": "api_reference",
+                            "slug": "Create a project",
+                            "description": "",
+                            "logo": "",
+                            "link": "create_a_project.md"
+                        }
+                    ]
+                },     
+                {
+                    "name": "titles",
+                    "link": "titles.md",
+                    "description": "",
+                    "logo": "",
+                    "slug": "Titles",
+                    "subpages": [
+                        {
+                            "name": "titles_titleh1",
+                            "slug": "Title H1",
+                            "description": "",
+                            "logo": "",
+                            "link": "titles_titleh1.md"
+                        },
+                        {
+                            "name": "titles_titleh2",
+                            "slug": "Title H2",
+                            "description": "",
+                            "logo": "",
+                            "link": "titles_titleh2.md"
+                        },
+                        {
+                            "name": "titles_titleh3",
+                            "slug": "Title H3",
+                            "description": "",
+                            "logo": "",
+                            "link": "titles_titleh3.md"
+                        },
+                        {
+                            "name": "titles_titleh4",
+                            "slug": "Title H4",
+                            "description": "",
+                            "logo": "",
+                            "link": "titles_titleh4.md"
+                        },
+                        {
+                            "name": "titles_titleh5",
+                            "slug": "Title H5",
+                            "description": "",
+                            "logo": "",
+                            "link": "titles_titleh5.md"
+                        },
+                        {
+                            "name": "titles_titleh6",
+                            "slug": "Title H6",
+                            "description": "",
+                            "logo": "",
+                            "link": "titles_titleh6.md"
+                        }
+                    ]
+                },
+                {
+                    "name": "concepts",
+                    "slug": "Concepts",
+                    "description": "",
+                    "logo": "",
+                    "link": "concepts.md",
+                    "subpages": [
+                    ]
+                }
+            ]
+        }
+    ]
+}
