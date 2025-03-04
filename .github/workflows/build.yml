@@ -31,7 +31,7 @@ jobs:
         git submodule update --init --recursive
 
         # Configure and build
-        cd "examples/simple"
+        cd "examples/demo"
         sudo bash build.sh
 
     # Steps for Windows
@@ -45,5 +45,5 @@ jobs:
         git submodule update --init --recursive
 
         # Configure and build
-        cd "examples/simple"
+        cd "examples/demo"
         ./build.bat
