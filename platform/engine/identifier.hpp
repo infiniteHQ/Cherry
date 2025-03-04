@@ -118,6 +118,11 @@ namespace Cherry
 			level_indices = {0};
 		}
 
+		static std::shared_ptr<Component> GetComponent()
+		{
+			return nullptr; // TODO
+		}
+
 	private:
 		mutable std::mutex m_Mutex;
 		std::string m_IdentifierName;
