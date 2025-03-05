@@ -38,7 +38,7 @@
 #define CHERRY_APP_H
 
 #define CherryLambda(code) [](){code}
-#define CherryInline "__inline"
+#define CherryInline CherryID("__inline")
 
 namespace Cherry
 {

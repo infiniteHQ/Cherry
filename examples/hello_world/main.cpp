@@ -2,14 +2,12 @@
 
 void Test()
 {
-
   ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 15.0f);
   ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 15.0f);
 
-CherryKit::TitleOne(CherryID(CherryInline), "Big Super Title");
-
-  
+  CherryKit::TitleTwo(CherryInline, "Super Title");
 }
+
 void Render()
 {
   CherryKit::ImageLocal(Cherry::GetPath("resources/imgs/banner.png"), ImGui::GetWindowSize().x, ImGui::GetWindowSize().x / 4.0f);
@@ -60,6 +58,9 @@ Cherry::Application *Cherry::CreateApplication(int argc, char **argv)
   config.SetFavIconPath(Cherry::GetPath("resources/imgs/icon.png")); // Icon of the window. (for folder in [project]/assets)
   config.SetRenderMode(WindowRenderingMethod::SimpleRender);         // Render mode
   config.SetMainRenderCallback(Test);                              // Simple render function (calling our "void Render()" function)
+
+config.ColorTheme.SetColor(ImGuiCol_ChildBg,"#0384fcFF");
+config.ColorTheme.SetColor(ImGuiCol_WindowBg,"#0384fcFF");
 
   return new Cherry::Application(config);;
 }

@@ -24,8 +24,8 @@ namespace Cherry
                 // Identifier
                 SetIdentifier(id);
 
-                // Colors
-                SetProperty("color_text", "#454545B2");
+                // Colors                
+                SetProperty("color_text", "#FFFFFFFF"); // TODO get the default theme
 
                 // Informations
                 SetProperty("label", label);
@@ -39,7 +39,7 @@ namespace Cherry
 
                 CherryGUI::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(6, 6));
 
-                CherryGUI::Text(GetProperty("label").c_str());
+                CherryGUI::TextColored(HexToRGBA(GetProperty("color_text")),GetProperty("label").c_str());
 
                 CherryGUI::PopStyleVar();
 
@@ -52,16 +52,31 @@ namespace Cherry
     // End-User API
     namespace Kit
     {
-        std::shared_ptr<Component>  TitleTwo(const std::string &label)
+        std::shared_ptr<Component> TitleTwo(const std::string &label)
         {
-            // Inline component
+            auto anonymous_id = Application::GetAnonymousID();
+            auto existing = Application::GetAnonymousComponent(anonymous_id);
+            if (existing)
+            {
+                existing->Render();
+                return existing;
+            }
+            else
+            {
             auto title = Application::CreateAnonymousComponent<Components::TitleTwo>(Components::TitleTwo(Cherry::Identifier(""), label));
-            title->Render();
-            return title;
+                title->Render();
+                return title;
+            }
         }
-
-        std::shared_ptr<Component>  TitleTwo(const Cherry::Identifier &identifier, const std::string &label)
+        std::shared_ptr<Component> TitleTwo(const Cherry::Identifier &identifier, const std::string &label)
         {
+            if(identifier.string() == "__inline")
+            {
+                auto new_title = Application::CreateAnonymousComponent<Components::TitleTwo>(Components::TitleTwo(identifier, label));
+                new_title->Render();
+                return new_title;
+            }
+
             // Get the object if exist
             auto existing_title = Application::GetComponent(identifier);
             if (existing_title)

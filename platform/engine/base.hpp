@@ -145,10 +145,10 @@ namespace Cherry
         std::function<void()> MainRenderCallback;
         std::function<void()> CloseCallback;
 
-        WindowThemeColor ColorTheme;
         WindowRenderingMethod RenderMode;
 
     public:
+        WindowThemeColor ColorTheme;
         void UseCustomTitleBar()
         {
             CustomTitlebar = true;
