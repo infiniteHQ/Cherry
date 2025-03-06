@@ -25,7 +25,7 @@ namespace Cherry
                 SetIdentifier(id);
 
                 // Colors
-                SetProperty("color_text", "#454545B2");
+                SetProperty("color_text", "#FFFFFFFF"); // TODO get the default theme
 
                 // Informations
                 SetProperty("label", label);
@@ -39,7 +39,7 @@ namespace Cherry
 
                 CherryGUI::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(6, 6));
 
-                CherryGUI::Text(GetProperty("label").c_str());
+                CherryGUI::TextColored(HexToRGBA(GetProperty("color_text")),GetProperty("label").c_str());
 
                 CherryGUI::PopStyleVar();
 
@@ -54,14 +54,30 @@ namespace Cherry
     {
         std::shared_ptr<Component> TitleSix(const std::string &label)
         {
-            // Inline component
-            auto title = Application::CreateAnonymousComponent<Components::TitleSix>(Components::TitleSix(Cherry::Identifier(""), label));
-            title->Render();
-            return title;
+            auto anonymous_id = Application::GetAnonymousID();
+            auto existing = Application::GetAnonymousComponent(anonymous_id);
+            if (existing)
+            {
+                existing->Render();
+                return existing;
+            }
+            else
+            {
+                auto title = Application::CreateAnonymousComponent<Components::TitleSix>(Components::TitleSix(Cherry::Identifier(""), label));
+                title->Render();
+                return title;
+            }
         }
 
         std::shared_ptr<Component> TitleSix(const Cherry::Identifier &identifier, const std::string &label)
         {
+            if (identifier.string() == "__inline")
+            {
+                auto new_title = Application::CreateAnonymousComponent<Components::TitleSix>(Components::TitleSix(identifier, label));
+                new_title->Render();
+                return new_title;
+            }
+
             // Get the object if exist
             auto existing_title = Application::GetComponent(identifier);
             if (existing_title)

@@ -5,7 +5,7 @@ The `TitleTwo` component displays a large Super Title with a clean and readable 
 ```cpp
 CherryKit::TitleTwo("Super Title");
 ```
-> `TitleTwo` will show a big Super Title.  
+> `TitleTwo` will show a Super Title.  
 
 ### Preview
 <img src="https://static.infinite.si/cherrydocs/1.3/all/imgs/components_references/buttons_button_h2.png" alt="Cherry 1" width="350">

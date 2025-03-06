@@ -5,7 +5,7 @@ The `TitleThree` component displays a large Big Title with a clean and readable 
 ```cpp
 CherryKit::TitleThree("Big Title");
 ```
-> `TitleThree` will show a big Big Title.  
+> `TitleThree` will show a Big Title.  
 
 ### Preview
 <img src="https://static.infinite.si/cherrydocs/1.3/all/imgs/components_references/buttons_button_h3.png" alt="Cherry 1" width="350">

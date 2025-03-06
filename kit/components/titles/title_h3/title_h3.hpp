@@ -25,7 +25,7 @@ namespace Cherry
                 SetIdentifier(id);
 
                 // Colors
-                SetProperty("color_text", "#454545B2");
+                SetProperty("color_text", "#FFFFFFFF"); // TODO get the default theme
 
                 // Informations
                 SetProperty("label", label);
@@ -39,7 +39,7 @@ namespace Cherry
 
                 CherryGUI::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(6, 6));
 
-                CherryGUI::Text(GetProperty("label").c_str());
+                CherryGUI::TextColored(HexToRGBA(GetProperty("color_text")),GetProperty("label").c_str());
 
                 CherryGUI::PopStyleVar();
 

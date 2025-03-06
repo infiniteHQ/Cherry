@@ -37,8 +37,9 @@
 #ifndef CHERRY_APP_H
 #define CHERRY_APP_H
 
-#define CherryLambda(code) [](){code}
+#define CherryLambda(code) []() { code }
 #define CherryInline CherryID("__inline")
+#define CherryPath(path) Cherry::GetPath(path)
 
 namespace Cherry
 {
@@ -187,7 +188,7 @@ namespace Cherry
 		void SetWindowSaveDataFile(const std::string &path, const bool &relative = false);
 		void SynchronizeWindows();
 		std::vector<std::shared_ptr<AppWindow>> GetLastSaveInstanciableAppWindows();
-		std::string PutWindow(const std::shared_ptr<AppWindow>& win);
+		std::string PutWindow(const std::shared_ptr<AppWindow> &win);
 		void AddFont(const std::string &name, const std::string &ttf_file_path, const float &size = 20.0f);
 		void SetFavIconPath(const std::string &icon_path);
 		void DeleteAppWindow(const std::shared_ptr<AppWindow> &win);
@@ -207,6 +208,7 @@ namespace Cherry
 		// Identified component
 		static std::shared_ptr<Component> GetAnonymousComponent(const Identifier &identifier);
 		static std::shared_ptr<Component> GetComponent(const Identifier &identifier);
+
 		std::string GetComponentData(const Identifier &id, const std::string &topic);
 
 		void PushComponentArray(); // Add component array, create components will create in it
@@ -222,10 +224,17 @@ namespace Cherry
 			static_assert(std::is_base_of<Layer, T>::value, "Pushed type is not subclass of Layer!");
 			m_LayerStack.emplace_back(std::make_shared<T>())->OnAttach();
 		}
-		
+
 		static Identifier GetAnonymousID()
 		{
 			return Identifier(Identifier::GetUniqueIndex());
+		}
+
+		static Identifier GetAnonymousID(const std::string &label)
+		{
+			std::size_t label_hash = std::hash<std::string>{}(label);
+
+			return Identifier(std::to_string(label_hash));
 		}
 
 		static void ClearAnonymousComponents()
@@ -244,7 +253,7 @@ namespace Cherry
 				anonymous_id.set(Identifier::GetUniqueIndex());
 				component_copy.SetIdentifier(anonymous_id);
 			}
-			
+
 			std::shared_ptr<Component> new_component = std::make_shared<T>(component_copy);
 			Application::Get().m_ApplicationAnonymousComponents.push_back(new_component);
 			return new_component;
@@ -313,6 +322,8 @@ namespace Cherry
 		std::function<void()> m_MainRenderCallback;
 		std::function<void()> m_CloseCallback;
 		ApplicationSpecification m_DefaultSpecification;
+
+		std::shared_ptr<Component> m_FocusedDebugComponent;
 
 		std::vector<std::shared_ptr<Layer>> m_LayerStack;
 

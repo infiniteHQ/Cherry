@@ -139,6 +139,7 @@ namespace Cherry
         bool DisableWindowManagerTitleBar = false;
         bool UsingCloseCallback = false;
         bool CustomTitlebar = false;
+        bool DebugMode = false;
 
         std::function<void()> MenubarCallback;
         std::function<void()> FramebarCallback;
@@ -157,6 +158,16 @@ namespace Cherry
         void SetRenderMode(WindowRenderingMethod method)
         {
             RenderMode = method;
+        }
+
+        void SetDebugMode(bool enabled)
+        {
+            DebugMode = enabled;
+        }
+
+        void EnableDebugMode()
+        {
+            DebugMode = true;
         }
 
         void SetCloseCallback(const std::function<void()> &closeCallback)

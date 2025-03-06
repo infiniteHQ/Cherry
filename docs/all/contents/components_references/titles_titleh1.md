@@ -5,7 +5,7 @@ The `TitleOne` component displays a large Big Super Title with a clean and reada
 ```cpp
 CherryKit::TitleOne("Big Super Title");
 ```
-> `TitleOne` will show a big Big Super Title.  
+> `TitleOne` will show a Big Super Title.  
 
 ### Preview
 <img src="https://static.infinite.si/cherrydocs/1.3/all/imgs/components_references/buttons_button_h1.png" alt="Cherry 1" width="350">

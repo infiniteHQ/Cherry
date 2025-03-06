@@ -12,8 +12,7 @@
                     "description": "",
                     "logo": "",
                     "slug": "Get started on Cherry",
-                    "subpages": [
-                    ]
+                    "subpages": []
                 }
             ]
         },
@@ -31,14 +30,21 @@
                     "slug": "Buttons",
                     "subpages": [
                         {
-                            "name": "api_reference",
-                            "slug": "Create a project",
+                            "name": "button_buttontext",
+                            "slug": "Text Button",
                             "description": "",
                             "logo": "",
-                            "link": "create_a_project.md"
+                            "link": "button_buttontext.md"
+                        },
+                        {
+                            "name": "button_buttontextimage",
+                            "slug": "Text Image Button",
+                            "description": "",
+                            "logo": "",
+                            "link": "button_buttontextimage.md"
                         }
                     ]
-                },     
+                },
                 {
                     "name": "titles",
                     "link": "titles.md",
@@ -88,15 +94,6 @@
                             "logo": "",
                             "link": "titles_titleh6.md"
                         }
-                    ]
-                },
-                {
-                    "name": "concepts",
-                    "slug": "Concepts",
-                    "description": "",
-                    "logo": "",
-                    "link": "concepts.md",
-                    "subpages": [
                     ]
                 }
             ]
