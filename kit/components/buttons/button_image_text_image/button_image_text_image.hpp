@@ -24,18 +24,26 @@ namespace Cherry
                 SetIdentifier(id);
 
                 // Colors
-                SetProperty("color_border", "#454545B2");
-                SetProperty("color_border_hovered", "#454545B2");
-                SetProperty("color_border_clicked", "#454545B2");
+                SetProperty("color_border", "#454545FF");
+                SetProperty("color_border_hovered", "#555555FF");
+                SetProperty("color_border_pressed", "#757575FF");
                 SetProperty("color_bg", "#242424FF");
                 SetProperty("color_bg_hovered", "#343434FF");
-                SetProperty("color_bg_clicked", "#444444FF");
+                SetProperty("color_bg_pressed", "#444444FF");
+                SetProperty("color_text", "#BCBCBCFF");
+                SetProperty("color_text_hovered", "#FFFFFFFF");
+                SetProperty("color_text_pressed", "#FFFFFFFF");
 
                 // Sizes
-                SetProperty("size_x", "20");
-                SetProperty("size_y", "20");
-                SetProperty("padding_x", "2");
-                SetProperty("padding_y", "2");
+                SetProperty("size_x", "0");
+                SetProperty("size_y", "0");
+                SetProperty("padding_x", "6");
+                SetProperty("padding_y", "6");
+                SetProperty("scale", "0"); // Instead of using sizes manually, we can use scale.
+
+                // Params
+                SetProperty("disabled", "false");
+                SetProperty("disable_time", "false");
 
                 // Informations
                 SetProperty("label", label);
@@ -43,8 +51,15 @@ namespace Cherry
                 SetProperty("second_image_path", second_image_path);
 
                 // Data & User-level informations
-                SetData("lastClicked", "never");
                 SetData("isClicked", "false");
+                SetData("isPressed", "false");
+                SetData("isHovered", "false");
+                SetData("isActivated", "false");
+                // SetData("isMenuActivated", "false");
+                SetData("lastClicked", "never");
+                SetData("lastPressed", "never");
+                SetData("lastHovered", "never");
+                SetData("lastActivated", "never");
             }
 
             void Render() override
@@ -59,6 +74,50 @@ namespace Cherry
 
                 std::string identifier = GetIdentifier().string();
                 std::string Label = GetProperty("label");
+                int style_props_opt = 0;
+
+                if (GetData("isHovered") == "true")
+                {
+                    if (GetProperty("disable_time") == "false")
+                        SetData("lastHovered", GetCurrentTime());
+                    ImGui::PushStyleColor(ImGuiCol_Border, HexToRGBA(GetProperty("color_border_hovered")));
+                    ImGui::PushStyleColor(ImGuiCol_Button, HexToRGBA(GetProperty("color_bg_hovered")));
+                    ImGui::PushStyleColor(ImGuiCol_Text, HexToRGBA(GetProperty("color_text_hovered")));
+                    style_props_opt += 3;
+                }
+
+                if (GetData("isClicked") == "true")
+                {
+                    if (GetProperty("disable_time") == "false")
+                        SetData("lastClicked", GetCurrentTime());
+
+                    ImGui::PushStyleColor(ImGuiCol_Border, HexToRGBA(GetProperty("color_border_pressed")));
+                    ImGui::PushStyleColor(ImGuiCol_Button, HexToRGBA(GetProperty("color_bg_pressed")));
+                    ImGui::PushStyleColor(ImGuiCol_Text, HexToRGBA(GetProperty("color_text_pressed")));
+                    style_props_opt += 3;
+                }
+
+                if (GetData("isActivated") == "true")
+                {
+                    if (GetProperty("disable_time") == "false")
+                        SetData("lastActivated", GetCurrentTime());
+                }
+
+                if (GetProperty("isPressed") == "true")
+                {
+                    if (GetProperty("disable_time") == "false")
+                        SetData("lastPressed", GetCurrentTime());
+
+                    ImGui::PushStyleColor(ImGuiCol_Border, HexToRGBA(GetProperty("color_border_pressed")));
+                    ImGui::PushStyleColor(ImGuiCol_Button, HexToRGBA(GetProperty("color_bg_pressed")));
+                    ImGui::PushStyleColor(ImGuiCol_Text, HexToRGBA(GetProperty("color_text_pressed")));
+                    style_props_opt += 3;
+                }
+
+                SetData("isHovered", "false");
+                SetData("isClicked", "false");
+                SetData("isPressed", "false");
+                SetData("isActivated", "false");
 
                 if (!identifier.empty())
                 {
@@ -67,29 +126,48 @@ namespace Cherry
 
                 ImTextureID texture = Application::Get().GetCurrentRenderedWindow()->get_texture(GetProperty("image_path"));
                 ImTextureID second_texture = Application::Get().GetCurrentRenderedWindow()->get_texture(GetProperty("second_image_path"));
-                if (ImGui::ImageButtonWithTextWithIcon(texture, second_texture, Label.c_str(), size))
+                bool isClicked = ImGui::ImageButtonWithTextWithIcon(texture, second_texture, Label.c_str(), size, size);
+
+                if (ImGui::IsItemHovered())
+                {
+                    SetData("isHovered", "true");
+                }
+
+                if (ImGui::IsItemActivated())
+                {
+                    SetData("isActivated", "true");
+                }
+
+                if (ImGui::IsItemActive())
+                {
+                    SetData("isPressed", "true");
+                }
+
+                if (isClicked)
                 {
                     SetData("isClicked", "true");
-                    UpdateLastClickTime();
+                    SetData("isMenuActivated", "true");
                 }
                 else
                 {
                     SetData("isClicked", "false");
                 }
 
+
+
                 CherryGUI::PopStyleColor(4);
                 CherryGUI::PopStyleVar();
             }
 
         private:
-            void UpdateLastClickTime()
+            std::string GetCurrentTime()
             {
                 std::string m_LastClickTime;
                 auto now = std::chrono::system_clock::now();
                 std::time_t now_c = std::chrono::system_clock::to_time_t(now);
                 m_LastClickTime = std::ctime(&now_c);
                 m_LastClickTime.erase(m_LastClickTime.length() - 1);
-                SetData("lastClicked", m_LastClickTime);
+                return m_LastClickTime;
             }
         };
     }

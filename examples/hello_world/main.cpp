@@ -4,8 +4,7 @@ void Test()
 {
   ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 15.0f);
   ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 15.0f);
-
-  CherryKit::ButtonTextImage(CherryID("Test"), "Text Image Button", CherryPath("resources/imgs/image.png"));
+  CherryKit::ButtonImageTextImage("Text Image Button", CherryPath("resources/imgs/image.png"), CherryPath("resources/imgs/image.png"));
 }
 
 Cherry::Application *Cherry::CreateApplication(int argc, char **argv)
@@ -26,7 +25,6 @@ Cherry::Application *Cherry::CreateApplication(int argc, char **argv)
   config.ColorTheme.SetColor(ImGuiCol_WindowBg, "#0384fcFF");
 
   return new Cherry::Application(config);
-  ;
 }
 
 int main(int argc, char *argv[]) // Entry point of the executable

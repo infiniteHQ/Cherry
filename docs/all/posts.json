@@ -42,6 +42,13 @@
                             "description": "",
                             "logo": "",
                             "link": "button_buttontextimage.md"
+                        },
+                        {
+                            "name": "button_buttontextimagedropdown",
+                            "slug": "Text Image Dropdown Button",
+                            "description": "",
+                            "logo": "",
+                            "link": "button_buttontextimagedropdown.md"
                         }
                     ]
                 },
