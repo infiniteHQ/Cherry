@@ -15,12 +15,13 @@
 // CEF GLoba Variable
 // create browser-window
 static VkImage vulkanImage;
-static ImTextureID cefTextureId = nullptr;
 
-static VkSampler cefSampler = VK_NULL_HANDLE;
-static VkImage cefImage;
-static VkImageView cefImageView;
-static VkDeviceMemory cefImageMemory;
+static ImTextureID cefTextureId = nullptr;
+static VkDeviceMemory textureMemory;
+static VkImage textureImage;
+static VkImageView textureImageView;
+static VkSampler textureSampler;
+
 static ImVec2 g_windowPos, g_cursorPos;
 
 namespace Cherry
@@ -143,6 +144,7 @@ void OnAfterCreated(CefRefPtr<CefBrowser> browser) override
 
 		void OnPaint(CefRefPtr<CefBrowser> browser, PaintElementType type, const RectList &dirtyRects, const void *buffer, int width, int height) override
 		{
+			std::cout << "OnPaint Buffer received from CEF: "<< buffer << std::endl;
 			if (type == PET_VIEW)
 			{
 				UpdateCefTexture(buffer, width, height);
@@ -151,7 +153,7 @@ void OnAfterCreated(CefRefPtr<CefBrowser> browser) override
 
 		void OnAcceleratedPaint(CefRefPtr<CefBrowser> browser, PaintElementType type, const RectList &dirtyRects, const CefAcceleratedPaintInfo &info) override
 		{
-			std::cout << "🖌️Buffer received from CEF: " << std::endl;
+			std::cout << "OnAcceleratedPaint Buffer received from CEF: "<< info.shared_texture_handle << std::endl;
 			if (type == PET_VIEW)
 			{
 				UpdateCefTexture(info.shared_texture_handle, 500, 500);
