@@ -7,5 +7,5 @@
 //#define CHERRY_DISABLE_NOTIFICATIONS // Disable notifications
 
 // OBSOLETE : 
-//#define CHERRY_CEF // Enable all the net code (needs curl) (feats: Http fetchs)
+#define CHERRY_CEF // Enable all the net code (needs curl) (feats: Http fetchs)
 //#define CHERRY_NET // Enable all the net code (needs curl) (feats: Http fetchs)

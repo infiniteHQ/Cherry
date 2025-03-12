@@ -39,7 +39,7 @@ namespace Cherry
 	void VulkanCopyBufferToImage(VkCommandBuffer commandBuffer, VkBuffer buffer, VkImage image, uint32_t width, uint32_t height);
 	void VulkanSubmitCommandBuffer(VkCommandBuffer commandBuffer, VkQueue queue);
 	ImTextureID ImGui_ImplSDL2_GetCefTexture();
-	int ImGui_ImplSDL2_CefInit(int argc, char **argv);
+    int ImGui_ImplSDL2_CefInit(int argc, char **argv);
 
 	// for manual render handler
 	class BrowserClient : public CefClient,
@@ -156,7 +156,7 @@ void OnAfterCreated(CefRefPtr<CefBrowser> browser) override
 			std::cout << "OnAcceleratedPaint Buffer received from CEF: "<< info.shared_texture_handle << std::endl;
 			if (type == PET_VIEW)
 			{
-				UpdateCefTexture(info.shared_texture_handle, 500, 500);
+			//	UpdateCefTexture(info.shared_texture_handle, 500, 500);
 			}
 		}
 		void resize(int w, int h);

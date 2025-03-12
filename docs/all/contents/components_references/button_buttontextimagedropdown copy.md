@@ -1,40 +1,69 @@
 ### Description  
-The `ButtonImageTextImage` component displays a very simple button with text and images before and after the text (png/jpg), this button can called as an object, a immediate mode element or a anonymous object.
+The `ButtonTextImageDropdown` component displays a very simple button with text and image (png/jpg), this button can called as an object, a immediate mode element or a anonymous object.
 
 ### Usage  
 ```cpp
-  CherryKit::ButtonImageTextImage("Text Image Button", CherryPath("resources/imgs/image.png"), CherryPath("resources/imgs/image.png"));
+  CherryKit::ButtonTextImageDropdown("Text Image Button", CherryPath("resources/imgs/image.png"),[](){
+    CherryKit::SeparatorText("Example menu 1");
+    CherryKit::ButtonText("Example Button");
+    CherryKit::SeparatorText("Example menu 2");
+    CherryKit::TextSimple("Super example in this menu");
+    // All menu items & code.
+  });
 ```
-> `ButtonImageTextImage` will show a Text Image Button with a dropdown menu.  
+> `ButtonTextImageDropdown` will show a Text Image Button with a dropdown menu.  
 
 ### Preview
-<img src="https://static.infinite.si/cherrydocs/1.3/all/imgs/components_references/button_buttonimagetextimage.png" alt="Cherry 1" width="350">
+In idle mode
+<img src="https://static.infinite.si/cherrydocs/1.3/all/imgs/components_references/button_buttontextimagedropdown.png" alt="Cherry 1" width="350">
+
+With menu opened
+<img src="https://static.infinite.si/cherrydocs/1.3/all/imgs/components_references/button_buttontextimagedropdown2.png" alt="Cherry 1" width="350">
+
 
 ### Examples 
 #### Create text Image button (as object)
 ```cpp
-  CherryKit::ButtonImageTextImage(CherryID("custom_id"), "Text Image Button", CherryPath("resources/imgs/image.png"), CherryPath("resources/imgs/image.png"));
+  CherryKit::ButtonTextImageDropdown(CherryID("custom_id"), "Text Image Button", CherryPath("resources/imgs/image.png"),[](){
+    CherryKit::SeparatorText("Example menu 1");
+    CherryKit::ButtonText("Example Button");
+    CherryKit::SeparatorText("Example menu 2");
+    CherryKit::TextSimple("Super example in this menu");
+    // All menu items & code.
+  });
 ```
-> `ButtonImageTextImage` with a `CherryID` will create an object that you can interact with across different points or frames of your application.
+> `ButtonTextImageDropdown` with a `CherryID` will create an object that you can interact with across different points or frames of your application.
 
 ---
 
 #### Create a immediate mode text Image button
 ```cpp
-  CherryKit::ButtonImageTextImage(CherryInline, "Text Image Button", CherryPath("resources/imgs/image.png"), CherryPath("resources/imgs/image.png"));
+  CherryKit::ButtonTextImageDropdown(CherryInline, "Text Image Button", CherryPath("resources/imgs/image.png"),[](){
+    CherryKit::SeparatorText("Example menu 1");
+    CherryKit::ButtonText("Example Button");
+    CherryKit::SeparatorText("Example menu 2");
+    CherryKit::TextSimple("Super example in this menu");
+    // All menu items & code.
+  });
 ```
-> `ButtonImageTextImage` with a `CherryID` set to `CherryInline` will create a non-static component (not a object). The component will operate in immediate mode, meaning it will be updated every frame.
+> `ButtonTextImageDropdown` with a `CherryID` set to `CherryInline` will create a non-static component (not a object). The component will operate in immediate mode, meaning it will be updated every frame.
 
 ---
 #### Create a anonymous mode text Image button
 ```cpp
-  CherryKit::ButtonImageTextImage("Text Image Button", CherryPath("resources/imgs/image.png"), CherryPath("resources/imgs/image.png"));
+  CherryKit::ButtonTextImageDropdown("Text Image Button", CherryPath("resources/imgs/image.png"),[](){
+    CherryKit::SeparatorText("Example menu 1");
+    CherryKit::ButtonText("Example Button");
+    CherryKit::SeparatorText("Example menu 2");
+    CherryKit::TextSimple("Super example in this menu");
+    // All menu items & code.
+  });
 ```
-> `ButtonImageTextImage` will create an anonymous object. This object will behave like any other object but without an identifier, making it a mix between object mode and immediate mode. It is optimized for performance while retaining the advantages and flexibility of a regular object.
+> `ButtonTextImageDropdown` will create an anonymous object. This object will behave like any other object but without an identifier, making it a mix between object mode and immediate mode. It is optimized for performance while retaining the advantages and flexibility of a regular object.
 
 ---
 ### Properties  
-Below are all the properties you can set for `ButtonImageTextImage`.  
+Below are all the properties you can set for `ButtonTextImageDropdown`.  
 For more details, see **[How to add properties]()**.  
 | **Property Name** | **Example Value**  | **Description**                   |
 |------------------|------------------|-----------------------------------|
@@ -56,7 +85,6 @@ For more details, see **[How to add properties]()**.
 | `disable_time`       | `"false"`      | Whether the button has a timed disable feature. |
 | `label`       | `"Text Image Button"`      | The text displayed on the button. |
 | `image_path`       | `"/path/to/.png"`      | Path to the image, ATTENTION : Require an absolute path (CherryPath(relative path) is a good approach) |
-| `second_image_path`       | `"/path/to/.png"`      | Path to the second image after the text, ATTENTION : Require an absolute path (CherryPath(relative path) is a good approach) |
 ---
 
 ### Data  
@@ -69,6 +97,7 @@ For more details, see **[How to manage data]()**.
 | `isPressed`       | `"true"`      | Indicates if the button is currently pressed. |
 | `isHovered`       | `"true"`      | Indicates if the button is being hovered over. |
 | `isActivated`       | `"true"`      | Indicates if the button is activated. |
+| `isMenuActivated`       | `"true"`      | Indicates if the dropdown menu is activated. |
 | `lastClicked`       | `"Thu Mar  6 14:46:44 2025"`      | The last time the button was clicked. |
 | `lastPressed`       | `"Thu Mar  6 14:46:44 2025"`      | The last time the button was pressed. |
 | `lastHovered`       | `"Thu Mar  6 14:46:44 2025"`      | The last time the button was hovered over. |
@@ -76,4 +105,5 @@ For more details, see **[How to manage data]()**.
 
 ---
 
-💡 *This documentation provides a structured overview of `ButtonImageTextImage`, making it easy to understand and use efficiently.*  
+
+💡 *This documentation provides a structured overview of `ButtonTextImageDropdown`, making it easy to understand and use efficiently.*  

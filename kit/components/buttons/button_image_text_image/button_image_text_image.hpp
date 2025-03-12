@@ -55,7 +55,6 @@ namespace Cherry
                 SetData("isPressed", "false");
                 SetData("isHovered", "false");
                 SetData("isActivated", "false");
-                // SetData("isMenuActivated", "false");
                 SetData("lastClicked", "never");
                 SetData("lastPressed", "never");
                 SetData("lastHovered", "never");
@@ -153,8 +152,7 @@ namespace Cherry
                     SetData("isClicked", "false");
                 }
 
-
-
+                CherryGUI::PopStyleColor(style_props_opt);
                 CherryGUI::PopStyleColor(4);
                 CherryGUI::PopStyleVar();
             }
@@ -175,30 +173,46 @@ namespace Cherry
     // End-User API
     namespace Kit
     {
-        bool ButtonImageTextImage(const std::string &label, const std::string &image_path, const std::string &second_image_path)
+        std::shared_ptr<Component> ButtonImageTextImage(const std::string &label, const std::string &image_path, const std::string &second_image_path)
         {
-            // Inline component
-            auto button = Application::CreateAnonymousComponent<Components::ButtonImageTextImage>(Components::ButtonImageTextImage(Cherry::Identifier("anonymous"), label, image_path, second_image_path));
-            button->Render();
-            return button->GetData("isClicked") == "true" ? true : false;
-        }
-
-        bool ButtonImageTextImage(const Cherry::Identifier &identifier, const std::string &label, const std::string &image_path, const std::string &second_image_path)
-        {
-            // Get the object if exist
-            auto existing_button = Application::GetComponent(identifier);
-            if (existing_button)
+            auto anonymous_id = Application::GetAnonymousID();
+            auto existing = Application::GetAnonymousComponent(anonymous_id);
+            if (existing)
             {
-                existing_button->Render();
-                return existing_button->GetData("isClicked") == "true" ? true : false;
+                existing->Render();
+                return existing;
+            }
+            else
+            {
+                auto title = Application::CreateAnonymousComponent<Components::ButtonImageTextImage>(Components::ButtonImageTextImage(Cherry::Identifier(""), label, image_path, second_image_path));
+                title->Render();
+                return title;
+            }
+                }
+
+        std::shared_ptr<Component> ButtonImageTextImage(const Cherry::Identifier &identifier, const std::string &label, const std::string &image_path, const std::string &second_image_path)
+        {
+            if (identifier.string() == "__inline")
+            {
+                auto new_title = Application::CreateAnonymousComponent<Components::ButtonImageTextImage>(Components::ButtonImageTextImage(identifier, label, image_path, second_image_path));
+                new_title->Render();
+                return new_title;
+            }
+
+            // Get the object if exist
+            auto existing_title = Application::GetComponent(identifier);
+            if (existing_title)
+            {
+                existing_title->Render();
             }
             else
             {
                 // Create the object if not exist
-                auto new_button = Application::CreateComponent<Components::ButtonImageTextImage>(Components::ButtonImageTextImage(identifier, label, image_path, second_image_path));
-                new_button->Render();
-                return new_button->GetData("isClicked") == "true" ? true : false;
+                auto new_title = Application::CreateComponent<Components::ButtonImageTextImage>(Components::ButtonImageTextImage(identifier, label, image_path, second_image_path));
+                new_title->Render();
+                return new_title;
             }
+            return existing_title;
         }
     }
 

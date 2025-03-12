@@ -203,6 +203,7 @@ namespace Cherry
                     CherryGUI::OpenPopup(context_menu_label.c_str());
                 }
 
+                CherryGUI::PopStyleColor(style_props_opt);
                 CherryGUI::PopStyleColor(4);
                 CherryGUI::PopStyleVar();
             }

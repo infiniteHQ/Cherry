@@ -1,42 +1,82 @@
+#define SDL_MAIN_HANDLED
+#define CHERRY_V1
 #include "../../cherry.hpp"
 
-void Test()
+#include <thread>
+#include <memory>
+
+class Layer : public Cherry::Layer
 {
-  ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 15.0f);
-  ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 15.0f);
-  CherryKit::ButtonImageTextImage("Text Image Button", CherryPath("resources/imgs/image.png"), CherryPath("resources/imgs/image.png"));
-}
+public:
+  Layer() {};
+};
 
 Cherry::Application *Cherry::CreateApplication(int argc, char **argv)
 {
-  Cherry::ApplicationSpecification config;
-  config.SetName("Hello Cherry");                                    // The name of the window
-  config.SetMinimumWidth(100);                                       // The minimum width
-  config.SetMinimumHeight(100);                                      // The minimum height
-  config.SetDefaultWidth(800);                                       // The default width
-  config.SetDefaultHeight(500);                                      // The default height
-  config.SetGlobalScale(1.0f);                                       // The flobal scale of components and windows
-  config.SetFontGlobalScale(1.0f);                                   // The flobal scale of fonts
-  config.SetFavIconPath(Cherry::GetPath("resources/imgs/icon.png")); // Icon of the window. (for folder in [project]/assets)
-  config.SetRenderMode(WindowRenderingMethod::SimpleRender);         // Render mode
-  config.SetMainRenderCallback(Test);                                // Simple render function (calling our "void Render()" function)
-  config.EnableDebugMode();
-  config.ColorTheme.SetColor(ImGuiCol_ChildBg, "#0384fcFF");
-  config.ColorTheme.SetColor(ImGuiCol_WindowBg, "#0384fcFF");
+  Cherry::ApplicationSpecification spec;
+  std::shared_ptr<Layer> layer = std::make_shared<Layer>();
 
-  return new Cherry::Application(config);
+  std::string name = "UIKit example";
+  spec.Name = name;
+  spec.DefaultWindowName = name;
+  spec.MinHeight = 500;
+  spec.GlobalScale = 0.84f;
+  spec.FontGlobalScale = 0.84f;
+  spec.MinWidth = 500;
+  spec.CustomTitlebar = true;
+  spec.DisableWindowManagerTitleBar = true;
+  spec.RenderMode = WindowRenderingMethod::SimpleRender;
+
+  spec.UniqueAppWindowName = "?loc:loc.window_names.demo";
+  spec.DisableTitle = true;
+  spec.WindowSaves = true;
+  spec.IconPath = Cherry::GetPath("ressources/imgs/icon.png");
+  spec.FavIconPath = Cherry::GetPath("ressources/imgs/icon.png");
+
+  Cherry::Application *app = new Cherry::Application(spec);
+  app->SetWindowSaveDataFile("savedatda.json", true);
+  // app->SetFavIconPath(Cherry::GetPath("ressources/imgs/favicon.png"));
+  app->AddFont("Consola", Cherry::GetPath("ressources/fonts/consola.ttf"), 17.0f);
+
+  app->AddLocale("fr", Cherry::GetPath("ressources/locales/fr.json"));
+  app->AddLocale("fr", Cherry::GetPath("ressources/locales/fr.json"));
+  app->AddLocale("en", Cherry::GetPath("ressources/locales/en.json"));
+  app->AddLocale("es", Cherry::GetPath("ressources/locales/es.json")); // With not suffisent locales to show the "default" behavior
+  app->SetDefaultLocale("en");                                         // The "default" behavior
+  app->SetLocale("fr");
+
+  app->PushLayer(layer);
+
+  app->SetMainRenderCallback([](){
+    ImGui::Text("gs");
+  });
+  
+  if (ImGui_ImplSDL2_CefInit(argc, argv) < 0)
+  {
+    std::cerr << "Failed to initialize ImGui SDL2 CEF integration." << std::endl;
+    return nullptr;
+  }
+std::cout << "Inited" << std::endl;
+  InitCEF(500, 500);
+std::cout << "Cef" << std::endl;
+
+
+  return app;
 }
 
-int main(int argc, char *argv[]) // Entry point of the executable
+int main(int argc, char *argv[])
 {
-  std::thread([&](){ Cherry::Main(argc, argv); }).detach(); // Independant UI thread
+  std::thread mainthread;
+  std::thread Thread([&]()
+                     { Cherry::Main(argc, argv); });
+  mainthread.swap(Thread);
 
-  while (true) // Optionnal, but this is an exemple of cherry signals implementation
+  while (g_ApplicationRunning)
   {
-    if (!Cherry::IsRunning()) // The ui is not running and will stop?
-      return 0;
-
-    if (!Cherry::IsReady()) // The ui is ready? (all criticals backend and components are loaded?)
-      continue;
+    /* Your program loop... */
   }
+
+  mainthread.join();
+
+  return 0;
 }

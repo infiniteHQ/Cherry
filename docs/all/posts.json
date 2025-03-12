@@ -37,11 +37,32 @@
                             "link": "button_buttontext.md"
                         },
                         {
+                            "name": "button_buttonimage",
+                            "slug": "Image Button",
+                            "description": "",
+                            "logo": "",
+                            "link": "button_buttonimage.md"
+                        },
+                        {
                             "name": "button_buttontextimage",
                             "slug": "Text Image Button",
                             "description": "",
                             "logo": "",
                             "link": "button_buttontextimage.md"
+                        },
+                        {
+                            "name": "button_buttonimagetextimage",
+                            "slug": "Image Text Image Button",
+                            "description": "",
+                            "logo": "",
+                            "link": "button_buttonimagetextimage.md"
+                        },                        
+                        {
+                            "name": "button_textdropdown",
+                            "slug": "Text Dropdown Button",
+                            "description": "",
+                            "logo": "",
+                            "link": "button_textdropdown.md"
                         },
                         {
                             "name": "button_buttontextimagedropdown",

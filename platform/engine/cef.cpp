@@ -386,6 +386,7 @@ namespace Cherry
         CefDoMessageLoopWork();
     }
 
+
     int ImGui_ImplSDL2_CefInit(int argc, char **argv)
     {
         CefMainArgs main_args;
@@ -398,6 +399,7 @@ namespace Cherry
         {
             return result;
         }
+
 
         CefSettings settings;
         // settings.no_sandbox = true;

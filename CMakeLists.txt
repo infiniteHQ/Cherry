@@ -4,7 +4,7 @@ project(libcherry)
 set(CMAKE_CXX_STANDARD 20)
 
 if(NOT MSVC)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -O3")
 endif()
 
 if(CHERRY_CEF)
@@ -76,6 +76,29 @@ set(CEF_EXTRA_LIBRARIES
     "${CEF_RELEASE_DIR}/libGLESv2.dll"
     "${CEF_RELEASE_DIR}/vk_swiftshader.dll"
     "${CEF_RELEASE_DIR}/vulkan-1.dll"
+)
+target_link_libraries(cherry PUBLIC libcef_dll_wrapper)
+
+file(GLOB CEF_RESOURCES
+    "${CEF_RELEASE_DIR}/icudtl.dat"
+    "${CEF_RELEASE_DIR}/*.pak"
+    "${CEF_RELEASE_DIR}/*.bin"
+    "${CEF_RELEASE_DIR}/*.json"
+)
+file(COPY ${CEF_RESOURCES} DESTINATION "${CMAKE_BINARY_DIR}/Resources")
+else()
+target_include_directories(cherry PUBLIC ${CEF_ROOT})
+target_compile_definitions(cherry PUBLIC CHERRY_CEF)
+
+set(CEF_RELEASE_DIR "${CMAKE_BINARY_DIR}/Release")
+set(CEF_LIBRARIES "${CEF_RELEASE_DIR}/libcef.so")
+target_link_libraries(cherry PUBLIC ${CEF_LIBRARIES})
+
+set(CEF_EXTRA_LIBRARIES
+    "${CEF_RELEASE_DIR}/libEGL.so"
+    "${CEF_RELEASE_DIR}/libGLESv2.so"
+    "${CEF_RELEASE_DIR}/libvk_swiftshader.so"
+    "${CEF_RELEASE_DIR}/libvulkan.so.1"
 )
 target_link_libraries(cherry PUBLIC libcef_dll_wrapper)
 
