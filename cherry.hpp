@@ -1,3 +1,4 @@
+#pragma once
 #ifndef CHERRY_H
 #define CHERRY_H
 #define SDL_MAIN_HANDLED
@@ -7,6 +8,7 @@
 #ifndef IMGUI_DEFINE_MATH_OPERATORS
 #define IMGUI_DEFINE_MATH_OPERATORS
 #endif // IMGUI_DEFINE_MATH_OPERATORS
+
 
 ///////////////////////////////////////////////////////////////
 /// Backends and Render engine                              ///
@@ -58,6 +60,7 @@
 #include "./kit/components/keyval/keyval_double/keyval_double.hpp"
 #include "./kit/components/keyval/keyval_float/keyval_float.hpp"
 #include "./kit/components/keyval/keyval_int/keyval_int.hpp"
+#include "./kit/components/keyval/keyval_bool/keyval_bool.hpp"
 #include "./kit/components/keyval/keyval_string/keyval_string.hpp"
 #include "./kit/components/keyval/keyval_combo_string/keyval_combo_string.hpp"
 #include "./kit/components/keyval/keyval_vector1/keyval_vector1.hpp"
