@@ -1980,7 +1980,7 @@ namespace Cherry
     // End-User API
     namespace Kit
     {
-        bool NodeArea(const std::string &label, int width, int heigh = 0)
+        inline bool NodeArea(const std::string &label, int width, int heigh = 0)
         {
             // Inline component
             auto anonymous_id = Application::GetAnonymousID();
@@ -1999,7 +1999,7 @@ namespace Cherry
             }
         }
 
-        bool NodeArea(const Cherry::Identifier &identifier, const std::string &label, int width, int heigh = 0)
+        inline bool NodeArea(const Cherry::Identifier &identifier, const std::string &label, int width, int heigh = 0)
         {
             // Get the object if exist
             auto existing_button = Application::GetComponent(identifier);

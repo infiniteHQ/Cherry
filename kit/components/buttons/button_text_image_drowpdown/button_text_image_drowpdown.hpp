@@ -226,7 +226,7 @@ namespace Cherry
     // End-User API
     namespace Kit
     {
-        std::shared_ptr<Component> ButtonTextImageDropdown(const std::string &label, const std::string &image_path, const std::function<void()> &dropdown_callback = []() {})
+        inline std::shared_ptr<Component> ButtonTextImageDropdown(const std::string &label, const std::string &image_path, const std::function<void()> &dropdown_callback = []() {})
         {
             auto anonymous_id = Application::GetAnonymousID(label);
             auto existing = Application::GetAnonymousComponent(anonymous_id);
@@ -237,35 +237,35 @@ namespace Cherry
             }
             else
             {
-                auto title = Application::CreateAnonymousComponent<Components::ButtonTextImageDropdown>(Components::ButtonTextImageDropdown(anonymous_id, label, image_path, dropdown_callback));
-                title->Render();
-                return title;
+                auto button = Application::CreateAnonymousComponent<Components::ButtonTextImageDropdown>(Components::ButtonTextImageDropdown(anonymous_id, label, image_path, dropdown_callback));
+                button->Render();
+                return button;
             }
         }
 
-        std::shared_ptr<Component> ButtonTextImageDropdown(const Cherry::Identifier &identifier, const std::string &label, const std::string &image_path, const std::function<void()> &dropdown_callback = []() {})
+        inline std::shared_ptr<Component> ButtonTextImageDropdown(const Cherry::Identifier &identifier, const std::string &label, const std::string &image_path, const std::function<void()> &dropdown_callback = []() {})
         {
             if (identifier.string() == "__inline")
             {
-                auto new_title = Application::CreateAnonymousComponent<Components::ButtonTextImageDropdown>(Components::ButtonTextImageDropdown(identifier, label, image_path, dropdown_callback));
-                new_title->Render();
-                return new_title;
+                auto new_button = Application::CreateAnonymousComponent<Components::ButtonTextImageDropdown>(Components::ButtonTextImageDropdown(identifier, label, image_path, dropdown_callback));
+                new_button->Render();
+                return new_button;
             }
 
             // Get the object if exist
-            auto existing_title = Application::GetComponent(identifier);
-            if (existing_title)
+            auto existing_button = Application::GetComponent(identifier);
+            if (existing_button)
             {
-                existing_title->Render();
+                existing_button->Render();
             }
             else
             {
                 // Create the object if not exist
-                auto new_title = Application::CreateComponent<Components::ButtonTextImageDropdown>(Components::ButtonTextImageDropdown(identifier, label, image_path, dropdown_callback));
-                new_title->Render();
-                return new_title;
+                auto new_button = Application::CreateComponent<Components::ButtonTextImageDropdown>(Components::ButtonTextImageDropdown(identifier, label, image_path, dropdown_callback));
+                new_button->Render();
+                return new_button;
             }
-            return existing_title;
+            return existing_button;
         }
     }
 

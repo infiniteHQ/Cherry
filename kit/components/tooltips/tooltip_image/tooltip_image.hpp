@@ -56,7 +56,7 @@ namespace Cherry
     // End-User API
     namespace Kit
     {
-        bool TooltipImage(const std::string &image_path, const std::string &description)
+        inline bool TooltipImage(const std::string &image_path, const std::string &description)
         {
             // Inline component
             auto anonymous_id = Application::GetAnonymousID();
@@ -75,7 +75,7 @@ namespace Cherry
             return false;
         }
 
-        bool TooltipImage(const Cherry::Identifier &identifier, const std::string &image_path, const std::string &description)
+        inline bool TooltipImage(const Cherry::Identifier &identifier, const std::string &image_path, const std::string &description)
         {
             // Get the object if exist
             auto existing_button = Application::GetComponent(identifier);

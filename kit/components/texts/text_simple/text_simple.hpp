@@ -4,7 +4,7 @@
 
 //
 // TextSimple
-// Summary : A big title.
+// Summary : A big text.
 // Authors : Infinite, Diego Moreno
 //
 
@@ -47,30 +47,30 @@ namespace Cherry
     // End-User API
     namespace Kit
     {
-        std::shared_ptr<Component> TextSimple(const std::string &label)
+        inline std::shared_ptr<Component> TextSimple(const std::string &label)
         {
             // Inline component
-            auto title = Application::CreateAnonymousComponent<Components::TextSimple>(Components::TextSimple(Cherry::Identifier(""), label));
-            title->Render();
-            return title;
+            auto text = Application::CreateAnonymousComponent<Components::TextSimple>(Components::TextSimple(Cherry::Identifier(""), label));
+            text->Render();
+            return text;
         }
 
-        std::shared_ptr<Component> TextSimple(const Cherry::Identifier &identifier, const std::string &label)
+        inline std::shared_ptr<Component> TextSimple(const Cherry::Identifier &identifier, const std::string &label)
         {
             // Get the object if exist
-            auto existing_title = Application::GetComponent(identifier);
-            if (existing_title)
+            auto existing_text = Application::GetComponent(identifier);
+            if (existing_text)
             {
-                existing_title->Render();
+                existing_text->Render();
             }
             else
             {
                 // Create the object if not exist
-                auto new_title = Application::CreateComponent<Components::TextSimple>(Components::TextSimple(identifier, label));
-                new_title->Render();
-                return new_title;
+                auto new_text = Application::CreateComponent<Components::TextSimple>(Components::TextSimple(identifier, label));
+                new_text->Render();
+                return new_text;
             }
-            return existing_title;
+            return existing_text;
         }
     }
 

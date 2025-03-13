@@ -111,7 +111,7 @@ namespace Cherry
     // End-User API
     namespace Kit
     {
-        bool TableSimple(const std::string &label, const std::vector<std::shared_ptr<Component>> &rows = {}, ImGuiTableFlags flags = 0)
+        inline bool TableSimple(const std::string &label, const std::vector<std::shared_ptr<Component>> &rows = {}, ImGuiTableFlags flags = 0)
         {
             // Inline component
             auto table = Application::CreateAnonymousComponent<Components::TableSimple>(Components::TableSimple(Cherry::Identifier(""), label, rows, flags));
@@ -124,7 +124,7 @@ namespace Cherry
             return table->GetData("isClicked") == "true" ? true : false;
         }
 
-        bool TableSimple(const Cherry::Identifier &identifier, const std::string &label, const std::vector<std::shared_ptr<Component>> &rows = {}, ImGuiTableFlags flags = 0)
+        inline bool TableSimple(const Cherry::Identifier &identifier, const std::string &label, const std::vector<std::shared_ptr<Component>> &rows = {}, ImGuiTableFlags flags = 0)
         {
             // Get the object if exist
             auto existing_table = Application::GetComponent(identifier);

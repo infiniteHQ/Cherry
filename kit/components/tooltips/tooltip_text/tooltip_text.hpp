@@ -54,7 +54,7 @@ namespace Cherry
     // End-User API
     namespace Kit
     {
-        bool TooltipText(const std::string &label, const std::string &description)
+        inline bool TooltipText(const std::string &label, const std::string &description)
         {
             // Inline component
             auto anonymous_id = Application::GetAnonymousID();
@@ -73,7 +73,7 @@ namespace Cherry
             return false;
         }
 
-        bool TooltipText(const Cherry::Identifier &identifier, const std::string &label, const std::string &description)
+        inline bool TooltipText(const Cherry::Identifier &identifier, const std::string &label, const std::string &description)
         {
             // Get the object if exist
             auto existing_button = Application::GetComponent(identifier);

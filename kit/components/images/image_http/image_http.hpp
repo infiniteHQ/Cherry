@@ -89,7 +89,7 @@ namespace Cherry
     // End-User API
     namespace Kit
     {
-        bool ImageHttp(const std::string &image_http_path)
+        inline bool ImageHttp(const std::string &image_http_path)
         {
             // Inline component
             auto anonymous_id = Application::GetAnonymousID();
@@ -108,7 +108,7 @@ namespace Cherry
             return false;
         }
 
-        bool ImageHttp(const Cherry::Identifier &identifier, const std::string &image_http_path)
+        inline bool ImageHttp(const Cherry::Identifier &identifier, const std::string &image_http_path)
         {
             // Get the object if exist
             auto existing_button = Application::GetComponent(identifier);

@@ -171,7 +171,7 @@ namespace Cherry
     // End-User API
     namespace Kit
     {
-        std::shared_ptr<Component> ButtonImage(const std::string &image_path)
+        inline std::shared_ptr<Component> ButtonImage(const std::string &image_path)
         {
             auto anonymous_id = Application::GetAnonymousID();
             auto existing = Application::GetAnonymousComponent(anonymous_id);
@@ -182,35 +182,35 @@ namespace Cherry
             }
             else
             {
-                auto title = Application::CreateAnonymousComponent<Components::ButtonImage>(Components::ButtonImage(Cherry::Identifier(""), image_path));
-                title->Render();
-                return title;
+                auto button = Application::CreateAnonymousComponent<Components::ButtonImage>(Components::ButtonImage(Cherry::Identifier(""), image_path));
+                button->Render();
+                return button;
             }
         }
 
-        std::shared_ptr<Component> ButtonImage(const Cherry::Identifier &identifier, const std::string &image_path)
+        inline std::shared_ptr<Component> ButtonImage(const Cherry::Identifier &identifier, const std::string &image_path)
         {
             if (identifier.string() == "__inline")
             {
-                auto new_title = Application::CreateAnonymousComponent<Components::ButtonImage>(Components::ButtonImage(identifier, image_path));
-                new_title->Render();
-                return new_title;
+                auto new_button = Application::CreateAnonymousComponent<Components::ButtonImage>(Components::ButtonImage(identifier, image_path));
+                new_button->Render();
+                return new_button;
             }
 
             // Get the object if exist
-            auto existing_title = Application::GetComponent(identifier);
-            if (existing_title)
+            auto existing_button = Application::GetComponent(identifier);
+            if (existing_button)
             {
-                existing_title->Render();
+                existing_button->Render();
             }
             else
             {
                 // Create the object if not exist
-                auto new_title = Application::CreateComponent<Components::ButtonImage>(Components::ButtonImage(identifier, image_path));
-                new_title->Render();
-                return new_title;
+                auto new_button = Application::CreateComponent<Components::ButtonImage>(Components::ButtonImage(identifier, image_path));
+                new_button->Render();
+                return new_button;
             }
-            return existing_title;
+            return existing_button;
         }
     }
 

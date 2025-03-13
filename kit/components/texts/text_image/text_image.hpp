@@ -46,30 +46,30 @@ namespace Cherry
     // End-User API
     namespace Kit
     {
-        std::shared_ptr<Component> TextImage(const std::string &label, const std::string &image_path)
+        inline std::shared_ptr<Component> TextImage(const std::string &label, const std::string &image_path)
         {
             // Inline component
-            auto title = Application::CreateAnonymousComponent<Components::TextImage>(Components::TextImage(Cherry::Identifier(""), label, image_path));
-            title->Render();
-            return title;
+            auto text = Application::CreateAnonymousComponent<Components::TextImage>(Components::TextImage(Cherry::Identifier(""), label, image_path));
+            text->Render();
+            return text;
         }
 
-        std::shared_ptr<Component> TextImage(const Cherry::Identifier &identifier, const std::string &label, const std::string &image_path)
+        inline std::shared_ptr<Component> TextImage(const Cherry::Identifier &identifier, const std::string &label, const std::string &image_path)
         {
             // Get the object if exist
-            auto existing_title = Application::GetComponent(identifier);
-            if (existing_title)
+            auto existing_text = Application::GetComponent(identifier);
+            if (existing_text)
             {
-                existing_title->Render();
+                existing_text->Render();
             }
             else
             {
                 // Create the object if not exist
-                auto new_title = Application::CreateComponent<Components::TextImage>(Components::TextImage(identifier, label, image_path));
-                new_title->Render();
-                return new_title;
+                auto new_text = Application::CreateComponent<Components::TextImage>(Components::TextImage(identifier, label, image_path));
+                new_text->Render();
+                return new_text;
             }
-            return existing_title;
+            return existing_text;
         }
     }
 

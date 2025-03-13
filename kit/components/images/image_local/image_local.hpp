@@ -52,7 +52,7 @@ namespace Cherry
     // End-User API
     namespace Kit
     {
-        bool ImageLocal(const std::string &image_path, float x_size = 50.0f, float y_size = 50.0f)
+        inline bool ImageLocal(const std::string &image_path, float x_size = 50.0f, float y_size = 50.0f)
         {
             // Inline component
             auto anonymous_id = Application::GetAnonymousID();
@@ -71,7 +71,7 @@ namespace Cherry
             return false;
         }
 
-        bool ImageLocal(const Cherry::Identifier &identifier, const std::string &image_path, float x_size = 50.0f, float y_size = 50.0f)
+        inline bool ImageLocal(const Cherry::Identifier &identifier, const std::string &image_path, float x_size = 50.0f, float y_size = 50.0f)
         {
             // Get the object if exist
             auto existing_button = Application::GetComponent(identifier);

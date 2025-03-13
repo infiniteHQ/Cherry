@@ -19,7 +19,7 @@ namespace Cherry
     // End-User API
     namespace Kit
     {
-        std::shared_ptr<AppWindow> WindowSimple(const std::string &label, const std::function<void()>& callback)
+        inline std::shared_ptr<AppWindow> WindowSimple(const std::string &label, const std::function<void()>& callback)
         {
             auto appwin =WindowComponents::WindowSimple::Create(label, callback)->GetAppWindow();
             appwin->SetClosable(true);

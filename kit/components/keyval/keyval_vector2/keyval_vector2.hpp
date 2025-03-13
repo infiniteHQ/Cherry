@@ -117,7 +117,7 @@ namespace Cherry
     // End-User API
     namespace Kit
     {
-        std::shared_ptr<Component> KeyValVector2(const std::string &label, float *x_value, float *y_value)
+        inline std::shared_ptr<Component> KeyValVector2(const std::string &label, float *x_value, float *y_value)
         {
             // Inline component
             auto keyval = Application::CreateAnonymousComponent<Components::KeyValVector2>(Components::KeyValVector2(Cherry::Identifier(""), label, x_value, y_value));
@@ -126,7 +126,7 @@ namespace Cherry
             return keyval;
         }
 
-        std::shared_ptr<Component> KeyValVector2(const Cherry::Identifier &identifier, const std::string &label, float *x_value, float *y_value)
+        inline std::shared_ptr<Component> KeyValVector2(const Cherry::Identifier &identifier, const std::string &label, float *x_value, float *y_value)
         {
             // Get the object if exist
             auto existing_keyval = Application::GetComponent(identifier);

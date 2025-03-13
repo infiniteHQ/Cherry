@@ -63,7 +63,7 @@ namespace Cherry
     // End-User API
     namespace Kit
     {
-        std::shared_ptr<Component> InputMultilineString(const std::string &label, std::string *value)
+        inline std::shared_ptr<Component> InputMultilineString(const std::string &label, std::string *value)
         {
             // Inline component
             auto keyval = Application::CreateAnonymousComponent<Components::InputMultilineString>(Components::InputMultilineString(Cherry::Identifier(""), label, value));
@@ -72,7 +72,7 @@ namespace Cherry
             return keyval;
         }
 
-        std::shared_ptr<Component> InputMultilineString(const Cherry::Identifier &identifier, const std::string &label, std::string *value)
+        inline std::shared_ptr<Component> InputMultilineString(const Cherry::Identifier &identifier, const std::string &label, std::string *value)
         {
             // Get the object if exist
             auto existing_keyval = Application::GetComponent(identifier);

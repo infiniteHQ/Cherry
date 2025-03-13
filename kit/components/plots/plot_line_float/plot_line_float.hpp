@@ -80,7 +80,7 @@ namespace Cherry
     // End-User API
     namespace Kit
     {
-        bool PlotLineFloat(const std::string &label, const std::vector<float> &float_table, int number_showed = -1)
+        inline bool PlotLineFloat(const std::string &label, const std::vector<float> &float_table, int number_showed = -1)
         {
             // Inline component
             auto anonymous_id = Application::GetAnonymousID();
@@ -99,7 +99,7 @@ namespace Cherry
             return false;
         }
 
-        bool PlotLineFloat(const Cherry::Identifier &identifier, const std::string &label, const std::vector<float> &float_table, int number_showed = -1)
+        inline bool PlotLineFloat(const Cherry::Identifier &identifier, const std::string &label, const std::vector<float> &float_table, int number_showed = -1)
         {
             // Get the object if exist
             auto existing_button = Application::GetComponent(identifier);
@@ -117,7 +117,7 @@ namespace Cherry
             }
         }
 
-        bool PlotLineFloat(const std::string &label, const std::vector<float> &float_table, int *number_showed)
+        inline bool PlotLineFloat(const std::string &label, const std::vector<float> &float_table, int *number_showed)
         {
             // Inline component
             auto anonymous_id = Application::GetAnonymousID();
@@ -136,7 +136,7 @@ namespace Cherry
             return false;
         }
 
-        bool PlotLineFloat(const Cherry::Identifier &identifier, const std::string &label, const std::vector<float> &float_table, int *number_showed)
+        inline bool PlotLineFloat(const Cherry::Identifier &identifier, const std::string &label, const std::vector<float> &float_table, int *number_showed)
         {
             // Get the object if exist
             auto existing_button = Application::GetComponent(identifier);

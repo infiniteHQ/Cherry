@@ -43,7 +43,7 @@ namespace Cherry
     // End-User API
     namespace Kit
     {
-        std::shared_ptr<Component> Space(const float &spacing)
+        inline std::shared_ptr<Component> Space(const float &spacing)
         {
             // Inline component
             auto title = Application::CreateAnonymousComponent<Components::Space>(Components::Space(Cherry::Identifier("anonymous"), spacing));
@@ -51,7 +51,7 @@ namespace Cherry
             return title;
         }
 
-        std::shared_ptr<Component> Space(const Cherry::Identifier &identifier, const float &spacing)
+        inline std::shared_ptr<Component> Space(const Cherry::Identifier &identifier, const float &spacing)
         {
             // Get the object if exist
             auto existing_title = Application::GetComponent(identifier);

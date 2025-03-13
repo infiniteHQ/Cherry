@@ -40,7 +40,7 @@ namespace Cherry
     // End-User API
     namespace Kit
     {
-        bool ProgressBarPercentageInteger(int* number, int*goal)
+        inline bool ProgressBarPercentageInteger(int* number, int*goal)
         {
             // Inline component
             auto anonymous_id = Application::GetAnonymousID();
@@ -59,7 +59,7 @@ namespace Cherry
             return false;
         }
 
-        bool ProgressBarPercentageInteger(const Cherry::Identifier &identifier, int* number, int*goal)
+        inline bool ProgressBarPercentageInteger(const Cherry::Identifier &identifier, int* number, int*goal)
         {
             // Get the object if exist
             auto existing_button = Application::GetComponent(identifier);

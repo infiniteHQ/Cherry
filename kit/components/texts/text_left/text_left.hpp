@@ -4,7 +4,7 @@
 
 //
 // TextLeft
-// Summary : A big title.
+// Summary : A big text.
 // Authors : Infinite, Diego Moreno
 //
 
@@ -42,26 +42,26 @@ namespace Cherry
     // End-User API
     namespace Kit
     {
-        void TextLeft(const std::string &label)
+        inline void TextLeft(const std::string &label)
         {
             // Inline component
-            auto title = Application::CreateAnonymousComponent<Components::TextLeft>(Components::TextLeft(Cherry::Identifier(""), label));
-            title->Render();
+            auto text = Application::CreateAnonymousComponent<Components::TextLeft>(Components::TextLeft(Cherry::Identifier(""), label));
+            text->Render();
         }
 
-        void TextLeft(const Cherry::Identifier &identifier, const std::string &label)
+        inline void TextLeft(const Cherry::Identifier &identifier, const std::string &label)
         {
             // Get the object if exist
-            auto existing_title = Application::GetComponent(identifier);
-            if (existing_title)
+            auto existing_text = Application::GetComponent(identifier);
+            if (existing_text)
             {
-                existing_title->Render();
+                existing_text->Render();
             }
             else
             {
                 // Create the object if not exist
-                auto new_title = Application::CreateComponent<Components::TextLeft>(Components::TextLeft(identifier, label));
-                new_title->Render();
+                auto new_text = Application::CreateComponent<Components::TextLeft>(Components::TextLeft(identifier, label));
+                new_text->Render();
             }
         }
     }

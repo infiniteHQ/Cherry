@@ -3,21 +3,21 @@
 #include "../../../../platform/engine/components.hpp"
 
 //
-// KeyValString
+// KeyValBool
 // Authors : Infinite, Diego Moreno
 //
 
-#ifndef CHERRY_KIT_KEYVAL_STRING
-#define CHERRY_KIT_KEYVAL_STRING
+#ifndef CHERRY_KIT_KEYVAL_BOOL
+#define CHERRY_KIT_KEYVAL_BOOL
 
 namespace Cherry
 {
     namespace Components
     {
-        class KeyValString : public Component
+        class KeyValBool : public Component
         {
         public:
-            KeyValString(const Cherry::Identifier &id, const std::string &label, std::string *value)
+            KeyValBool(const Cherry::Identifier &id, const std::string &label, bool* value)
                 : Component(id), m_Value(value)
             {
                 // Identifier
@@ -58,12 +58,7 @@ namespace Cherry
                         if (m_Value)
                         {
                             ImGui::SetNextItemWidth(-FLT_MIN);
-
-                            char buffer[256];
-                            std::strncpy(buffer, m_Value->c_str(), sizeof(buffer));
-
-                            ImGui::InputText(Label.c_str(), buffer, sizeof(buffer));
-                            *m_Value = std::string(buffer);
+                            ImGui::Checkbox(Label.c_str(), m_Value);
                         }
                         else
                         {
@@ -74,23 +69,23 @@ namespace Cherry
             }
 
         private:
-            std::string *m_Value;
+            bool *m_Value;
         };
     }
 
     // End-User API
     namespace Kit
     {
-        inline std::shared_ptr<Component> KeyValString(const std::string &label, std::string *value)
+        inline std::shared_ptr<Component> KeyValBool(const std::string &label, bool* value)
         {
             // Inline component
-            auto keyval = Application::CreateAnonymousComponent<Components::KeyValString>(Components::KeyValString(Cherry::Identifier(""), label, value));
+            auto keyval = Application::CreateAnonymousComponent<Components::KeyValBool>(Components::KeyValBool(Cherry::Identifier(""), label, value));
             keyval->RefreshContextProperties();
             keyval->Render();
             return keyval;
         }
 
-        inline std::shared_ptr<Component> KeyValString(const Cherry::Identifier &identifier, const std::string &label, std::string *value)
+        inline std::shared_ptr<Component> KeyValBool(const Cherry::Identifier &identifier, const std::string &label, bool* value)
         {
             // Get the object if exist
             auto existing_keyval = Application::GetComponent(identifier);
@@ -102,7 +97,7 @@ namespace Cherry
             else
             {
                 // Create the object if not exist
-                auto new_keyval = Application::CreateComponent<Components::KeyValString>(Components::KeyValString(identifier, label, value));
+                auto new_keyval = Application::CreateComponent<Components::KeyValBool>(Components::KeyValBool(identifier, label, value));
                 new_keyval->RefreshContextProperties();
                 new_keyval->Render();
                 return new_keyval;
@@ -113,4 +108,4 @@ namespace Cherry
 
 }
 
-#endif // CHERRY_KIT_KEYVAL_STRING
+#endif // CHERRY_KIT_KEYVAL_BOOL

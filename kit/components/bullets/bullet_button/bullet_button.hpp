@@ -41,30 +41,30 @@ namespace Cherry
     // End-User API
     namespace Kit
     {
-        std::shared_ptr<Component> BulletButton(const std::string &label)
+        inline std::shared_ptr<Component> BulletButton(const std::string &label)
         {
             // Inline component
-            auto title = Application::CreateAnonymousComponent<Components::BulletButton>(Components::BulletButton(Cherry::Identifier(""), label));
-            title->Render();
-            return title;
+            auto bullet = Application::CreateAnonymousComponent<Components::BulletButton>(Components::BulletButton(Cherry::Identifier(""), label));
+            bullet->Render();
+            return bullet;
         }
 
-        std::shared_ptr<Component> BulletButton(const Cherry::Identifier &identifier, const std::string &label)
+        inline std::shared_ptr<Component> BulletButton(const Cherry::Identifier &identifier, const std::string &label)
         {
             // Get the object if exist
-            auto existing_title = Application::GetComponent(identifier);
-            if (existing_title)
+            auto existing_bullet = Application::GetComponent(identifier);
+            if (existing_bullet)
             {
-                existing_title->Render();
+                existing_bullet->Render();
             }
             else
             {
                 // Create the object if not exist
-                auto new_title = Application::CreateComponent<Components::BulletButton>(Components::BulletButton(identifier, label));
-                new_title->Render();
-                return new_title;
+                auto new_bullet = Application::CreateComponent<Components::BulletButton>(Components::BulletButton(identifier, label));
+                new_bullet->Render();
+                return new_bullet;
             }
-            return existing_title;
+            return existing_bullet;
         }
     }
 

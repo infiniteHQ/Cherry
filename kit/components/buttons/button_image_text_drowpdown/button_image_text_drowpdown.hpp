@@ -147,7 +147,7 @@ namespace Cherry
     // End-User API
     namespace Kit
     {
-        bool ButtonImageTextDropdown(const std::string &label, const std::string &image_path)
+        inline bool ButtonImageTextDropdown(const std::string &label, const std::string &image_path)
         {
             // Inline component
             auto button = Application::CreateAnonymousComponent<Components::ButtonImageTextDropdown>(Components::ButtonImageTextDropdown(Cherry::Identifier(), label, image_path));
@@ -156,7 +156,7 @@ namespace Cherry
             return button->GetData("isClicked") == "true" ? true : false;
         }
 
-        bool ButtonImageTextDropdown(const Cherry::Identifier &identifier, const std::string &label, const std::string &image_path)
+        inline bool ButtonImageTextDropdown(const Cherry::Identifier &identifier, const std::string &label, const std::string &image_path)
         {
             // Get the object if exist
             auto existing_button = Application::GetComponent(identifier);

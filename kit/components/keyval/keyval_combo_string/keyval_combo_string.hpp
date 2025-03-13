@@ -17,7 +17,7 @@ namespace Cherry
         class KeyValComboString : public Component
         {
         public:
-            KeyValComboString(const Cherry::Identifier &id, const std::string &label, const std::vector<std::string> &list, int default_selected_index = 0)
+            KeyValComboString(const Cherry::Identifier &id, const std::string &label, std::vector<std::string>* list, int default_selected_index = 0)
                 : Component(id), m_List(list)
             {
                 // Identifier
@@ -59,14 +59,14 @@ namespace Cherry
 
                         ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, IM_COL32(100, 100, 100, 40));
 
-                        if (!m_List.empty())
+                        if (!m_List->empty())
                         {
                             static ImGuiComboFlags flags = 0;
 
                             int default_index = std::stoi(GetProperty("default_index"));
                             int selected = std::stoi(GetProperty("selected_index"));
 
-                            if (default_index < 0 || default_index >= m_List.size())
+                            if (default_index < 0 || default_index >= m_List->size())
                                 default_index = 0;
 
                             std::string identifier = GetIdentifier().string();
@@ -77,13 +77,13 @@ namespace Cherry
                                 Label += Label + identifier;
                             }
 
-                            const char *combo_preview_value = m_List[selected].c_str();
+                            const char *combo_preview_value = (*m_List)[selected].c_str();
                             if (ImGui::BeginCombo(Label.c_str(), combo_preview_value, flags))
                             {
-                                for (int n = 0; n < m_List.size(); n++)
+                                for (int n = 0; n < m_List->size(); n++)
                                 {
                                     const bool is_selected = (selected == n);
-                                    if (ImGui::Selectable(m_List[n].c_str(), is_selected))
+                                    if (ImGui::Selectable((*m_List)[n].c_str(), is_selected))
                                     {
                                         if (selected != n)
                                         {
@@ -108,14 +108,14 @@ namespace Cherry
             }
 
         private:
-            std::vector<std::string> m_List;
+            std::vector<std::string>* m_List;
         };
     }
 
     // End-User API
     namespace Kit
     {
-        std::shared_ptr<Component> KeyValComboString(const std::string &label, const std::vector<std::string> &list, int default_selected_index = 0)
+        inline std::shared_ptr<Component> KeyValComboString(const std::string &label, std::vector<std::string>* list, int default_selected_index = 0)
         {
             // Inline component
             auto keyval = Application::CreateAnonymousComponent<Components::KeyValComboString>(Components::KeyValComboString(Cherry::Identifier(""), label, list, default_selected_index));
@@ -124,7 +124,7 @@ namespace Cherry
             return keyval;
         }
 
-        std::shared_ptr<Component> KeyValComboString(const Cherry::Identifier &identifier, const std::string &label, const std::vector<std::string> &list, int default_selected_index = 0)
+        inline std::shared_ptr<Component> KeyValComboString(const Cherry::Identifier &identifier, const std::string &label, std::vector<std::string>* list, int default_selected_index = 0)
         {
             // Get the object if exist
             auto existing_keyval = Application::GetComponent(identifier);

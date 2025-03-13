@@ -37,7 +37,7 @@ namespace Cherry
     // End-User API
     namespace Kit
     {
-        std::shared_ptr<Component> Separator()
+        inline std::shared_ptr<Component> Separator()
         {
             // Inline component
             auto title = Application::CreateAnonymousComponent<Components::Separator>(Components::Separator(Cherry::Identifier("anonymous")));
@@ -45,7 +45,7 @@ namespace Cherry
             return title;
         }
 
-        std::shared_ptr<Component> Separator(const Cherry::Identifier &identifier)
+        inline std::shared_ptr<Component> Separator(const Cherry::Identifier &identifier)
         {
             // Get the object if exist
             auto existing_title = Application::GetComponent(identifier);

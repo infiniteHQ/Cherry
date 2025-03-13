@@ -94,7 +94,7 @@ namespace Cherry
     // End-User API
     namespace Kit
     {
-        bool ComboCustom(const std::string &label, const std::vector<std::shared_ptr<Component>> &list, int default_index = 0)
+        inline bool ComboCustom(const std::string &label, const std::vector<std::shared_ptr<Component>> &list, int default_index = 0)
         {
             // Inline component
             auto anonymous_id = Application::GetAnonymousID();
@@ -113,7 +113,7 @@ namespace Cherry
             }
         }
 
-        bool ComboCustom(const Cherry::Identifier &identifier, const std::string &label, const std::vector<std::shared_ptr<Component>> &list, int default_index = 0)
+        inline bool ComboCustom(const Cherry::Identifier &identifier, const std::string &label, const std::vector<std::shared_ptr<Component>> &list, int default_index = 0)
         {
             // Get the object if exist
             auto existing_button = Application::GetComponent(identifier);

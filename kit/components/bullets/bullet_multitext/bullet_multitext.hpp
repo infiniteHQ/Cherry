@@ -49,30 +49,30 @@ namespace Cherry
     // End-User API
     namespace Kit
     {
-        std::shared_ptr<Component> BulletMultiText(const std::vector<std::string> &labels)
+        inline std::shared_ptr<Component> BulletMultiText(const std::vector<std::string> &labels)
         {
             // Inline component
-            auto title = Application::CreateAnonymousComponent<Components::BulletMultiText>(Components::BulletMultiText(Cherry::Identifier(""), labels));
-            title->Render();
-            return title;
+            auto bullet = Application::CreateAnonymousComponent<Components::BulletMultiText>(Components::BulletMultiText(Cherry::Identifier(""), labels));
+            bullet->Render();
+            return bullet;
         }
 
-        std::shared_ptr<Component> BulletMultiText(const Cherry::Identifier &identifier, const std::vector<std::string> &labels)
+        inline std::shared_ptr<Component> BulletMultiText(const Cherry::Identifier &identifier, const std::vector<std::string> &labels)
         {
             // Get the object if exist
-            auto existing_title = Application::GetComponent(identifier);
-            if (existing_title)
+            auto existing_bullet = Application::GetComponent(identifier);
+            if (existing_bullet)
             {
-                existing_title->Render();
+                existing_bullet->Render();
             }
             else
             {
                 // Create the object if not exist
-                auto new_title = Application::CreateComponent<Components::BulletMultiText>(Components::BulletMultiText(identifier, labels));
-                new_title->Render();
-                return new_title;
+                auto new_bullet = Application::CreateComponent<Components::BulletMultiText>(Components::BulletMultiText(identifier, labels));
+                new_bullet->Render();
+                return new_bullet;
             }
-            return existing_title;
+            return existing_bullet;
         }
     }
 

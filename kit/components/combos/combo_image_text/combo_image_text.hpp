@@ -103,7 +103,7 @@ namespace Cherry
     // End-User API
     namespace Kit
     {
-        bool ComboImageText(const std::string &label, const std::vector<std::pair<std::string, std::string>> &list, int default_index = 0)
+        inline bool ComboImageText(const std::string &label, const std::vector<std::pair<std::string, std::string>> &list, int default_index = 0)
         {
             // Inline component
             auto anonymous_id = Application::GetAnonymousID();
@@ -122,7 +122,7 @@ namespace Cherry
             }
         }
 
-        bool ComboImageText(const Cherry::Identifier &identifier, const std::string &label, const std::vector<std::pair<std::string, std::string>> &list, int default_index = 0)
+        inline bool ComboImageText(const Cherry::Identifier &identifier, const std::string &label, const std::vector<std::pair<std::string, std::string>> &list, int default_index = 0)
         {
             // Get the object if exist
             auto existing_button = Application::GetComponent(identifier);

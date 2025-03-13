@@ -80,7 +80,7 @@ namespace Cherry
     // End-User API
     namespace Kit
     {
-        bool CheckboxText(const std::string &label, bool *checked)
+        inline bool CheckboxText(const std::string &label, bool *checked)
         {
             // Inline component
             auto anonymous_id = Application::GetAnonymousID();
@@ -99,7 +99,7 @@ namespace Cherry
             return false;
         }
 
-        bool CheckboxText(const Cherry::Identifier &identifier, const std::string &label, bool *checked)
+        inline bool CheckboxText(const Cherry::Identifier &identifier, const std::string &label, bool *checked)
         {
             // Get the object if exist
             auto existing_button = Application::GetComponent(identifier);

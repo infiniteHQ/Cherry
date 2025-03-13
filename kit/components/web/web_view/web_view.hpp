@@ -41,7 +41,7 @@ namespace Cherry
     // End-User API
     namespace Kit
     {
-        std::shared_ptr<Component> WebView(const std::string &url)
+        inline std::shared_ptr<Component> WebView(const std::string &url)
         {
             auto anonymous_id = Application::GetAnonymousID(url);
             auto existing = Application::GetAnonymousComponent(anonymous_id);
@@ -58,7 +58,7 @@ namespace Cherry
             }
         }
 
-        std::shared_ptr<Component> WebView(const Cherry::Identifier &identifier, const std::string &url)
+        inline std::shared_ptr<Component> WebView(const Cherry::Identifier &identifier, const std::string &url)
         {
             if (identifier.string() == "__inline")
             {

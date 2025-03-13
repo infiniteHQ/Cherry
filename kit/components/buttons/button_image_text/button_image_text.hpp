@@ -95,30 +95,46 @@ namespace Cherry
     // End-User API
     namespace Kit
     {
-        bool ButtonImageText(const std::string &label, const std::string &image_path)
+        inline std::shared_ptr<Component> ButtonImageText(const std::string &label, const std::string &image_path)
         {
-            // Inline component
-            auto button = Application::CreateAnonymousComponent<Components::ButtonImageText>(Components::ButtonImageText(Cherry::Identifier("anonymous"), label, image_path));
-            button->Render();
-            return button->GetData("isClicked") == "true" ? true : false;
+            auto anonymous_id = Application::GetAnonymousID(label);
+            auto existing = Application::GetAnonymousComponent(anonymous_id);
+            if (existing)
+            {
+                existing->Render();
+                return existing;
+            }
+            else
+            {
+                auto button = Application::CreateAnonymousComponent<Components::ButtonImageText>(Components::ButtonImageText(Cherry::Identifier(""), label, image_path));
+                button->Render();
+                return button;
+            }
         }
 
-        bool ButtonImageText(const Cherry::Identifier &identifier, const std::string &label, const std::string &image_path)
+        inline std::shared_ptr<Component> ButtonImageText(const Cherry::Identifier &identifier, const std::string &label, const std::string &image_path)
         {
+            if (identifier.string() == "__inline")
+            {
+                auto new_button =  std::make_shared<Components::ButtonImageText>(Components::ButtonImageText(identifier, label, image_path));
+                new_button->Render();
+                return new_button;
+            }
+
             // Get the object if exist
             auto existing_button = Application::GetComponent(identifier);
             if (existing_button)
             {
                 existing_button->Render();
-                return existing_button->GetData("isClicked") == "true" ? true : false;
             }
             else
             {
                 // Create the object if not exist
                 auto new_button = Application::CreateComponent<Components::ButtonImageText>(Components::ButtonImageText(identifier, label, image_path));
                 new_button->Render();
-                return new_button->GetData("isClicked") == "true" ? true : false;
+                return new_button;
             }
+            return existing_button;
         }
     }
 

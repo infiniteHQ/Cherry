@@ -40,7 +40,7 @@ namespace Cherry
     // End-User API
     namespace Kit
     {
-        bool ProgressBarPercentageFloat(float* number, float*goal)
+        inline bool ProgressBarPercentageFloat(float* number, float*goal)
         {
             // Inline component
             auto anonymous_id = Application::GetAnonymousID();
@@ -59,7 +59,7 @@ namespace Cherry
             return false;
         }
 
-        bool ProgressBarPercentageFloat(const Cherry::Identifier &identifier, float* number, float*goal)
+        inline bool ProgressBarPercentageFloat(const Cherry::Identifier &identifier, float* number, float*goal)
         {
             // Get the object if exist
             auto existing_button = Application::GetComponent(identifier);

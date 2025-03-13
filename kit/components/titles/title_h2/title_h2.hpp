@@ -52,7 +52,7 @@ namespace Cherry
     // End-User API
     namespace Kit
     {
-        std::shared_ptr<Component> TitleTwo(const std::string &label)
+        inline std::shared_ptr<Component> TitleTwo(const std::string &label)
         {
             auto anonymous_id = Application::GetAnonymousID();
             auto existing = Application::GetAnonymousComponent(anonymous_id);
@@ -68,7 +68,7 @@ namespace Cherry
                 return title;
             }
         }
-        std::shared_ptr<Component> TitleTwo(const Cherry::Identifier &identifier, const std::string &label)
+        inline std::shared_ptr<Component> TitleTwo(const Cherry::Identifier &identifier, const std::string &label)
         {
             if(identifier.string() == "__inline")
             {

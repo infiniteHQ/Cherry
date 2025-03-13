@@ -62,7 +62,7 @@ namespace Cherry
     // End-User API
     namespace Kit
     {
-        std::shared_ptr<Component> SeparatorText(const std::string &label)
+        inline std::shared_ptr<Component> SeparatorText(const std::string &label)
         {
             // Inline component
             auto title = Application::CreateAnonymousComponent<Components::SeparatorText>(Components::SeparatorText(Cherry::Identifier(""), label));
@@ -70,7 +70,7 @@ namespace Cherry
             return title;
         }
 
-        std::shared_ptr<Component> SeparatorText(const Cherry::Identifier &identifier, const std::string &label)
+        inline std::shared_ptr<Component> SeparatorText(const Cherry::Identifier &identifier, const std::string &label)
         {
             // Get the object if exist
             auto existing_title = Application::GetComponent(identifier);

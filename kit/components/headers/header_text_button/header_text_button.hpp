@@ -144,7 +144,7 @@ namespace Cherry
     // End-User API
     namespace Kit
     {
-        bool HeaderTextButton(const std::string &label, const std::string &image_path, const std::function<void()> &render_content = []() {})
+        inline bool HeaderTextButton(const std::string &label, const std::string &image_path, const std::function<void()> &render_content = []() {})
         {
             // Inline component
             auto anonymous_id = Application::GetAnonymousID();
@@ -163,7 +163,7 @@ namespace Cherry
             return false;
         }
 
-        bool HeaderTextButton(const Cherry::Identifier &identifier, const std::string &label, const std::string &image_path, const std::function<void()> &render_content = []() {})
+        inline bool HeaderTextButton(const Cherry::Identifier &identifier, const std::string &label, const std::string &image_path, const std::function<void()> &render_content = []() {})
         {
             // Get the object if exist
             auto existing_button = Application::GetComponent(identifier);

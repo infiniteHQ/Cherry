@@ -67,7 +67,7 @@ namespace Cherry
     // End-User API
     namespace Kit
     {
-        std::shared_ptr<Component> ListString(const std::string &label, const std::vector<std::string> &values, int default_selected = 0)
+        inline std::shared_ptr<Component> ListString(const std::string &label, const std::vector<std::string> &values, int default_selected = 0)
         {
             // Inline component
             auto keyval = Application::CreateAnonymousComponent<Components::ListString>(Components::ListString(Cherry::Identifier(""), label, values, default_selected));
@@ -76,7 +76,7 @@ namespace Cherry
             return keyval;
         }
 
-        std::shared_ptr<Component> ListString(const Cherry::Identifier &identifier, const std::string& label, const std::vector<std::string> &values, int default_selected = 0)
+        inline std::shared_ptr<Component> ListString(const Cherry::Identifier &identifier, const std::string& label, const std::vector<std::string> &values, int default_selected = 0)
         {
             // Get the object if exist
             auto existing_keyval = Application::GetComponent(identifier);
