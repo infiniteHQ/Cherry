@@ -72,6 +72,13 @@ namespace Cherry
 
         inline std::shared_ptr<Component> SeparatorText(const Cherry::Identifier &identifier, const std::string &label)
         {
+            if (identifier.string() == "__inline")
+            {
+                auto new_title = Application::CreateAnonymousComponent<Components::SeparatorText>(Components::SeparatorText(identifier, label));
+                new_title->Render();
+                return new_title;
+            }
+
             // Get the object if exist
             auto existing_title = Application::GetComponent(identifier);
             if (existing_title)

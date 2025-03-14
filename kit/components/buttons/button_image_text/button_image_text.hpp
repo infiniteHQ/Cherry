@@ -116,7 +116,7 @@ namespace Cherry
         {
             if (identifier.string() == "__inline")
             {
-                auto new_button =  std::make_shared<Components::ButtonImageText>(Components::ButtonImageText(identifier, label, image_path));
+                auto new_button = std::make_shared<Components::ButtonImageText>(Components::ButtonImageText(identifier, label, image_path));
                 new_button->Render();
                 return new_button;
             }

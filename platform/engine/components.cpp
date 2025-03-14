@@ -37,20 +37,30 @@ namespace Cherry
     void Component::RenderWrapper()
     {
         // If render disable flag enabled, dont render and consume properties
-        //button->RefreshContextProperties();
-        //button->Render();
+        // button->RefreshContextProperties();
+        // button->Render();
     }
 
     std::string Component::GetProperty(const std::string &key)
     {
-        // Search in context first
+        // Search in one time context first
+        auto onetimeMap = Application::Get().GetOneTimeProperties();
+        auto onetimeIt = onetimeMap.find(key);
+        if (onetimeIt != onetimeMap.end())
+        {
+            // "Consume" and remove the entry from the onetime properties
+            Application::Get().RemoveOneTimeProperty(key); // Assuming there's a method to remove a property.
+            return onetimeIt->second;
+        }
+
+        // Search in context
         auto ctxIt = m_ContextProperties.find(key);
         if (ctxIt != m_ContextProperties.end())
         {
             return ctxIt->second;
         }
 
-        // Search in component secondly
+        // Search in component
         auto it = m_Properties.find(key);
         if (it != m_Properties.end())
         {
@@ -89,7 +99,7 @@ namespace Cherry
         m_Identifier = id;
     }
 
-    Identifier Component::GetIdentifier() const
+    const Identifier &Component::GetIdentifier() const
     {
         return m_Identifier;
     }

@@ -75,6 +75,8 @@ static bool c_MasterSwapChainRebuild = false;
 static std::shared_ptr<Cherry::WindowDragDropState> c_CurrentDragDropState;
 static std::shared_ptr<Cherry::Window> c_CurrentRenderedWindow;
 
+static std::string g_ExecutablePath;
+
 static VkAllocationCallbacks *g_Allocator = NULL;
 static VkInstance g_Instance = VK_NULL_HANDLE;
 static VkPhysicalDevice g_PhysicalDevice = VK_NULL_HANDLE;
@@ -434,6 +436,15 @@ namespace Cherry
     VkDebugReportCallbackEXT &Application::GetVkDebugReportCallbackEXT()
     {
         return g_DebugReport;
+    }
+
+    void Application::SetExecutablePath()
+    {
+        g_ExecutablePath = "test";
+    }
+    std::string &Application::GetExecutablePath()
+    {
+        return g_ExecutablePath;
     }
 
     VkPipelineCache &Application::GetVkPipelineCache()
@@ -1435,6 +1446,16 @@ namespace Cherry
             Identifier::ResetUniqueIndex(); // Reset anonymous components indexes
             c_ValidDropZoneFounded = false;
 
+            if(m_NoAppWindowSafetyEnabled)
+            {
+                std::cout << m_AppWindows.size() << std::endl;
+                if(m_AppWindows.size() > 1)
+                {
+                    DisableNoAppWindowSafety();
+                }
+            }
+                    
+
             if (s_Instance->m_DefaultSpecification.WindowSaves)
             {
                 if (!m_IsDataInitialized)
@@ -2090,7 +2111,7 @@ namespace Cherry
 
         // Render notifications
         ImGui::RenderNotifications();
-        
+
         ImGuiIO &io = ImGui::GetIO();
         ImGuiStyle &style = ImGui::GetStyle();
         float minWinSizeX = style.WindowMinSize.x;
@@ -2264,51 +2285,36 @@ namespace Cherry
         return m_PushedComponentGroups.back();
     }
 
-    std::string Application::CookPath(const std::string input_path)
+    std::string Application::CookPath(std::string_view input_path)
     {
-        std::string output_path;
-        std::string root_path;
-
+        static const std::string root_path = []()
+        {
+            std::string path;
 #ifdef _WIN32
-        char result[MAX_PATH];
-        if (GetModuleFileNameA(NULL, result, MAX_PATH) != 0)
-        {
-            root_path = result;
-        }
-        else
-        {
-            std::cerr << "Failed while getting the root path" << std::endl;
-        }
+            char result[MAX_PATH];
+            if (GetModuleFileNameA(NULL, result, MAX_PATH))
+                path = std::filesystem::path(result).parent_path().string();
+            else
+                std::cerr << "Failed to get root path" << std::endl;
 #else
-        static std::mutex path_mutex;
-        char result[PATH_MAX];
-        {
-            std::lock_guard<std::mutex> lock(path_mutex);
-            ssize_t count = readlink("/proc/self/exe", result, PATH_MAX);
+            char result[PATH_MAX];
+            ssize_t count = readlink("/proc/self/exe", result, sizeof(result) - 1);
             if (count != -1)
             {
                 result[count] = '\0';
-                root_path = result;
+                path = std::filesystem::path(result).parent_path().string();
             }
             else
             {
-                std::cerr << "Failed while getting the root path" << std::endl;
+                std::cerr << "Failed to get root path" << std::endl;
             }
-        }
 #endif
+            return path;
+        }();
 
-        root_path = std::filesystem::path(root_path).parent_path().string();
-
-        if (!input_path.empty() && input_path.front() == '/')
-        {
-            output_path = input_path;
-        }
-        else
-        {
-            output_path = root_path + "/" + input_path;
-        }
-
-        return output_path;
+        return (input_path.empty() || input_path[0] == '/')
+                   ? std::string(input_path)
+                   : root_path + "/" + std::string(input_path);
     }
 
     void Application::PushLayer(const std::shared_ptr<Layer> &layer)
@@ -2334,10 +2340,10 @@ namespace Cherry
         if (Cherry::IsReady())
         {
             m_AppWindows.push_back(win);
-            
-            if(m_NoAppWindowSafetyEnabled == true)
+
+            if (m_NoAppWindowSafetyEnabled == true)
             {
-                if(m_NoAppWindowSafetyJustEnabled)
+                if (m_NoAppWindowSafetyJustEnabled)
                 {
                     m_NoAppWindowSafetyJustEnabled = false;
                 }
@@ -2425,9 +2431,24 @@ namespace Cherry
         }
     }
 
+    void Application::ClearOneTimeProperties()
+    {
+        m_OnTimeProperties.clear();
+    }
+
+    void Application::RemoveOneTimeProperty(const std::string &key)
+    {
+        m_OnTimeProperties.erase(key);
+    }
+
+    const std::unordered_map<std::string, std::string> &Application::GetOneTimeProperties()
+    {
+        return m_OnTimeProperties;
+    }
+
     void Application::AddOneTimeProperty(const std::string &property, const std::string &value)
     {
-        m_OnTimeProperties.push_back({property, value});
+        m_OnTimeProperties[property] = value;
     }
 
     void Application::PushParentComponent(const std::shared_ptr<Component> &component)
@@ -2585,7 +2606,6 @@ namespace Cherry
         {
             if (m_AppWindows.size() == 1)
             {
-                std::cout << "EnableNoAppWindowSafety triggered" << std::endl;
                 EnableNoAppWindowSafety();
             }
 

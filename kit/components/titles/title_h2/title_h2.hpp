@@ -24,7 +24,7 @@ namespace Cherry
                 // Identifier
                 SetIdentifier(id);
 
-                // Colors                
+                // Colors
                 SetProperty("color_text", "#FFFFFFFF"); // TODO get the default theme
 
                 // Informations
@@ -39,7 +39,7 @@ namespace Cherry
 
                 CherryGUI::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(6, 6));
 
-                CherryGUI::TextColored(HexToRGBA(GetProperty("color_text")),GetProperty("label").c_str());
+                CherryGUI::TextColored(HexToRGBA(GetProperty("color_text")), GetProperty("label").c_str());
 
                 CherryGUI::PopStyleVar();
 
@@ -52,25 +52,30 @@ namespace Cherry
     // End-User API
     namespace Kit
     {
+
         inline std::shared_ptr<Component> TitleTwo(const std::string &label)
         {
-            auto anonymous_id = Application::GetAnonymousID();
-            auto existing = Application::GetAnonymousComponent(anonymous_id);
-            if (existing)
+            static std::unordered_map<std::size_t, std::weak_ptr<Component>> component_cache;
+
+            std::size_t label_hash = std::hash<std::string>{}(label);
+
+            if (auto existing = component_cache[label_hash].lock())
             {
                 existing->Render();
                 return existing;
             }
-            else
-            {
-            auto title = Application::CreateAnonymousComponent<Components::TitleTwo>(Components::TitleTwo(Cherry::Identifier(""), label));
-                title->Render();
-                return title;
-            }
+
+            auto title = Application::CreateAnonymousComponent<Components::TitleTwo>(
+                Components::TitleTwo(Cherry::Identifier(std::to_string(label_hash)), label));
+
+            component_cache[label_hash] = title;
+            title->Render();
+            return title;
         }
+
         inline std::shared_ptr<Component> TitleTwo(const Cherry::Identifier &identifier, const std::string &label)
         {
-            if(identifier.string() == "__inline")
+            if (identifier.string() == "__inline")
             {
                 auto new_title = Application::CreateAnonymousComponent<Components::TitleTwo>(Components::TitleTwo(identifier, label));
                 new_title->Render();

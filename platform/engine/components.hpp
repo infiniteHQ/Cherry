@@ -37,7 +37,7 @@ namespace Cherry
 
         // Identifier
         void        SetIdentifier(const Identifier& id);
-        Identifier  GetIdentifier() const;
+        const Identifier& GetIdentifier() const;
         bool        NeedRefreshing();
 
 

@@ -117,9 +117,11 @@ namespace Cherry
 		// Utils
 		static void FlushCommandBuffer(VkCommandBuffer commandBuffer);
 		static void SubmitResourceFree(std::function<void()> &&func, const std::string &winname);
-		static std::string CookPath(const std::string input_path);
+		static std::string CookPath(std::string_view input_path);
 		static void PushRedockEvent(const std::shared_ptr<Cherry::WindowDragDropState> &state);
 		static std::vector<uint8_t> LoadPngHexa(const std::string &path);
+		static void SetExecutablePath();
+		static std::string &GetExecutablePath();
 
 		// Set callbacks
 		void SetCloseCallback(const std::function<void()> &closeCallback) { m_CloseCallback = closeCallback; }
@@ -331,8 +333,12 @@ namespace Cherry
 		void PushPermanentProperty(const std::string &property, const std::string &value);
 		void PopPermanentProperty(int number_of_pops = 0);
 
-		std::vector<std::pair<std::string, std::string>> m_OnTimeProperties; // Properties will be added in the next component
+		std::unordered_map<std::string, std::string> m_OnTimeProperties; // Properties will be added in the next component
 		void AddOneTimeProperty(const std::string &property, const std::string &value);
+		const std::unordered_map<std::string, std::string>& GetOneTimeProperties();
+		void RemoveOneTimeProperty(const std::string& key);
+		void ClearOneTimeProperties();
+
 
 		std::vector<std::shared_ptr<Component>> m_ParentComponentsStack;
 		void PushParentComponent(const std::shared_ptr<Component> &component);

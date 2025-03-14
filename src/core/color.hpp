@@ -2,54 +2,48 @@
 
 #include "../layer.hpp"
 
-#include <string>
-#include <sstream>
-
 namespace Cherry
 {
-    static ImVec4 HexToRGBA(const std::string &hex)
+    static ImVec4 HexToRGBA(std::string hex)
     {
-        unsigned int hexValue;
-        std::stringstream ss;
-        ss << std::hex << hex.substr(1);
-        ss >> hexValue;
+        if (hex.size() == 7)
+            hex += "FF";
 
-        float r = ((hexValue >> 24) & 0xFF) / 255.0f;
-        float g = ((hexValue >> 16) & 0xFF) / 255.0f;
-        float b = ((hexValue >> 8) & 0xFF) / 255.0f;
-        float a = (hexValue & 0xFF) / 255.0f;
+        uint32_t hexValue = std::stoul(hex.substr(1), nullptr, 16);
 
-        return ImVec4(r, g, b, a);
+        constexpr float inv255 = 1.0f / 255.0f;
+        return ImVec4(
+            ((hexValue >> 24) & 0xFF) * inv255, // R
+            ((hexValue >> 16) & 0xFF) * inv255, // G
+            ((hexValue >> 8) & 0xFF) * inv255,  // B
+            ((hexValue >> 0) & 0xFF) * inv255   // A
+        );
     }
 
-    static ImU32 HexToImU32(const std::string &hex)
+    static ImU32 HexToImU32(std::string hex)
     {
-        unsigned int hexValue;
-        std::stringstream ss;
-        ss << std::hex << hex.substr(1);
-        ss >> hexValue;
+        if (hex.size() == 7)
+            hex += "FF";
 
-        unsigned int r = (hexValue >> 24) & 0xFF;
-        unsigned int g = (hexValue >> 16) & 0xFF;
-        unsigned int b = (hexValue >> 8) & 0xFF;
-        unsigned int a = hexValue & 0xFF;
+        uint32_t hexValue = std::stoul(hex.substr(1), nullptr, 16);
 
-        return IM_COL32(r, g, b, a);
+        return IM_COL32(
+            (hexValue >> 24) & 0xFF, // R
+            (hexValue >> 16) & 0xFF, // G
+            (hexValue >> 8) & 0xFF,  // B
+            (hexValue >> 0) & 0xFF   // A
+        );
     }
 
     static std::string ImU32ToHex(ImU32 color)
     {
-        unsigned int r = (color >> IM_COL32_R_SHIFT) & 0xFF;
-        unsigned int g = (color >> IM_COL32_G_SHIFT) & 0xFF;
-        unsigned int b = (color >> IM_COL32_B_SHIFT) & 0xFF;
-        unsigned int a = (color >> IM_COL32_A_SHIFT) & 0xFF;
-
-        std::stringstream ss;
-        ss << "#" << std::hex << std::setw(2) << std::setfill('0') << r
-           << std::setw(2) << std::setfill('0') << g
-           << std::setw(2) << std::setfill('0') << b
-           << std::setw(2) << std::setfill('0') << a;
-
-        return ss.str();
+        std::array<char, 10> hexStr;
+        std::snprintf(hexStr.data(), hexStr.size(), "#%02X%02X%02X%02X",
+                      (color >> IM_COL32_R_SHIFT) & 0xFF, // R
+                      (color >> IM_COL32_G_SHIFT) & 0xFF, // G
+                      (color >> IM_COL32_B_SHIFT) & 0xFF, // B
+                      (color >> IM_COL32_A_SHIFT) & 0xFF  // A
+        );
+        return std::string(hexStr.data());
     }
 }
