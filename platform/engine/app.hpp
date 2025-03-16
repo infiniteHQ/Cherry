@@ -63,6 +63,11 @@ namespace Cherry
 {
 	class Window;
 
+	enum class ProcessCallback
+	{
+		ON_INITIALIZATION_FINISHED
+	};
+
 	struct ParentWindow
 	{
 		std::vector<std::shared_ptr<Layer>> m_LayerStack;
@@ -122,6 +127,9 @@ namespace Cherry
 		static std::vector<uint8_t> LoadPngHexa(const std::string &path);
 		static void SetExecutablePath();
 		static std::string &GetExecutablePath();
+    	static SDL_Window *GetWindowHandle(const std::string &winname);
+		static void AddProcessCallback(ProcessCallback process, const std::function<void()> callback);
+		static void ExecuteProcessCallbacks(ProcessCallback process);
 
 		// Set callbacks
 		void SetCloseCallback(const std::function<void()> &closeCallback) { m_CloseCallback = closeCallback; }
@@ -377,6 +385,7 @@ namespace Cherry
 		std::string m_DefaultLocale;
 
 		std::string m_HttpCacheFolderName = "http_cache";
+
 
 	private:
 		void Init();

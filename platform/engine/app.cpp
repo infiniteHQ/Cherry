@@ -96,6 +96,8 @@ static std::string LastWindowPressed = "";
 static int RedockCount = 0;
 static bool DragRendered = false;
 static std::shared_ptr<Cherry::RedockRequest> LatestRequest;
+static std::vector<std::pair<Cherry::ProcessCallback, std::function<void()>>> g_ProcessCallbacks;
+
 
 // Per-frame-in-flight
 
@@ -541,9 +543,29 @@ namespace Cherry
     {
         c_CurrentDragDropState->LastDraggingPlace = place;
     }
+
     std::unordered_map<std::string, ImFont *> &Application::GetFontList()
     {
         return s_Fonts;
+    }
+
+    void Application::AddProcessCallback(ProcessCallback process, const std::function<void()> callback)
+    {
+        g_ProcessCallbacks.push_back({process, callback});
+    }
+
+    void Application::ExecuteProcessCallbacks(ProcessCallback process)
+    {
+        for(auto callback : g_ProcessCallbacks)
+        {
+            if(callback.first == process)
+            {
+                if(callback.second)
+                {
+                    callback.second();
+                }
+            }
+        }
     }
 
     void Application::PushRedockEvent(const std::shared_ptr<Cherry::WindowDragDropState> &state)
@@ -579,6 +601,8 @@ namespace Cherry
             printf("Error: %s\n", SDL_GetError());
             return;
         }
+
+        ExecuteProcessCallbacks(ProcessCallback::ON_INITIALIZATION_FINISHED);
     }
 
     std::string Application::GetHttpCacheFolderName()
@@ -1802,7 +1826,7 @@ namespace Cherry
         return s_Fonts.at(name);
     }
 
-    SDL_Window *GetWindowHandle(const std::string &winname)
+    SDL_Window *Application::GetWindowHandle(const std::string &winname)
     {
         for (auto win : app->m_Windows)
         {
