@@ -7,8 +7,8 @@
 // Authors : Infinite, Diego Moreno
 //
 
-#ifndef CHERRY_KIT_BUTTON_TEXT
-#define CHERRY_KIT_BUTTON_TEXT
+#ifndef CHERRY_KIT_BUTTON_UNDERLINE
+#define CHERRY_KIT_BUTTON_UNDERLINE
 
 namespace Cherry
 {
@@ -24,22 +24,18 @@ namespace Cherry
                 SetIdentifier(id);
 
                 // Colors
-                SetProperty("color_border", "#454545FF");
-                SetProperty("color_border_hovered", "#555555FF");
-                SetProperty("color_border_pressed", "#757575FF");
-                SetProperty("color_bg", "#242424FF");
-                SetProperty("color_bg_hovered", "#343434FF");
-                SetProperty("color_bg_pressed", "#444444FF");
+                SetProperty("color_underline", "#242424FF");
+                SetProperty("color_underline_hovered", "#343434FF");
+                SetProperty("color_underline_pressed", "#444444FF");
                 SetProperty("color_text", "#BCBCBCFF");
                 SetProperty("color_text_hovered", "#FFFFFFFF");
                 SetProperty("color_text_pressed", "#FFFFFFFF");
 
                 // Sizes
-                SetProperty("size_x", "0");
+                SetProperty("margin_y", "2");
                 SetProperty("size_y", "0");
-                SetProperty("padding_x", "6");
-                SetProperty("padding_y", "6");
-                SetProperty("scale", "0"); // Instead of using sizes manually, we can use scale.
+                SetProperty("size_x", "0");
+
 
                 // Params
                 SetProperty("disabled", "false");
@@ -61,38 +57,36 @@ namespace Cherry
 
             void Render() override
             {
+                std::cout << "fg" << std::endl;
                 bool pressed = false;
                 int i = 0;
 
-                //ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, options.y_margin));
-                ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, options.y_margin));
+                std::cout << "fgd" << std::endl;
+                ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, std::stof(GetProperty("margin_y"))));
+                ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, std::stof(GetProperty("margin_y"))));
 
-                ImVec4 text_idle = HexToRGBA(options.hex_text_idle.c_str());
-                ImVec4 text_hovered = HexToRGBA(options.hex_text_hovered.c_str());
-                ImVec4 text_clicked = HexToRGBA(options.hex_text_clicked.c_str());
-                ImVec4 underline_idle = HexToRGBA(options.hex_underline_idle.c_str());
-                ImVec4 underline_hovered = HexToRGBA(options.hex_underline_hovered.c_str());
-                ImVec4 underline_clicked = HexToRGBA(options.hex_underline_clicked.c_str());
+                std::cout << "fgg" << std::endl;
+                ImGui::PushStyleColor(ImGuiCol_Button, HexToRGBA(GetProperty("#00000000")));
+                ImGui::PushStyleColor(ImGuiCol_ButtonHovered, HexToRGBA(GetProperty("00000000")));
+                ImGui::PushStyleColor(ImGuiCol_ButtonActive, HexToRGBA(GetProperty("00000000")));
+                ImGui::PushStyleColor(ImGuiCol_Border, HexToRGBA(GetProperty("color_text")));
+                ImGui::PushStyleColor(ImGuiCol_Text, HexToRGBA(GetProperty("color_text")));
 
-                ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
-                ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0, 0, 0, 0));
-                ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0, 0, 0, 0));
-                ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0, 0, 0, 0));
-                ImGui::PushStyleColor(ImGuiCol_Text, text_idle);
-
-                if (ImGui::Button(GetProperty("label").c_str(), options.size))
+                std::cout << "fg2" << std::endl;
+                if (ImGui::Button(GetProperty("label").c_str(),  ImVec2(std::stoi(GetProperty("size_x")), std::stoi(GetProperty("size_y")))))
                 {
                     pressed = true;
                 }
+                std::cout << "fg3" << std::endl;
 
                 if (ImGui::IsItemHovered())
                 {
-                    ImGui::PushStyleColor(ImGuiCol_Text, text_hovered);
+                    ImGui::PushStyleColor(ImGuiCol_Text, HexToRGBA(GetProperty("color_text")));
                     i++;
                 }
                 if (ImGui::IsItemActive())
                 {
-                    ImGui::PushStyleColor(ImGuiCol_Text, text_clicked);
+                    ImGui::PushStyleColor(ImGuiCol_Text, HexToRGBA(GetProperty("color_text")));
                     i++;
                 }
 
@@ -101,13 +95,14 @@ namespace Cherry
                     ImVec2 pos = ImGui::GetItemRectMin();
                     ImVec2 rect_size = ImGui::GetItemRectSize();
                     ImDrawList *draw_list = ImGui::GetWindowDrawList();
-                    ImVec4 underline_color = ImGui::IsItemActive() ? underline_clicked : underline_hovered;
+                    ImVec4 underline_color = ImGui::IsItemActive() ? HexToRGBA(GetProperty("color_text")) : HexToRGBA(GetProperty("color_text"));
                     draw_list->AddLine(ImVec2(pos.x, pos.y + rect_size.y), ImVec2(pos.x + rect_size.x, pos.y + rect_size.y), ImColor(underline_color));
                 }
 
                 ImGui::PopStyleVar(2);
                 ImGui::PopStyleColor(5);
                 ImGui::PopStyleColor(i);
+                std::cout << "fg" << std::endl;
             }
 
         private:
@@ -171,4 +166,4 @@ namespace Cherry
 
 }
 
-#endif // CHERRY_KIT_BUTTON_TEXT
+#endif // CHERRY_KIT_BUTTON_UNDERLINE

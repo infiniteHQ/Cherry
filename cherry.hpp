@@ -27,7 +27,6 @@
 #include "./platform/engine/components.hpp"
 ///////////////////////////////////////////////////////////////
 
-
 ///////////////////////////////////////////////////////////////
 /// Kit : Components, All in one windows, theme, utils...   ///
 ///////////////////////////////////////////////////////////////
@@ -41,6 +40,7 @@
 #include "./kit/components/buttons/button_text_dropdown/button_text_dropdown.hpp"
 #include "./kit/components/buttons/button_image_text_image/button_image_text_image.hpp"
 #include "./kit/components/buttons/button_text_image_drowpdown/button_text_image_drowpdown.hpp"
+#include "./kit/components/buttons/button_text_underline/button_text_underline.hpp"
 // Titles
 #include "./kit/components/titles/title_h1/title_h1.hpp"
 #include "./kit/components/titles/title_h2/title_h2.hpp"

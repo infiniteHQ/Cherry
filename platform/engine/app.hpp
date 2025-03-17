@@ -419,6 +419,10 @@ namespace Cherry
 	// Notification
 	void AddNotification(const ImGuiToast &toast);
 
+	// Font 
+	void PushFont(const std::string& font_name);
+	void PopFont();
+
 	// Runtime
 	std::string GetPath(const std::string &path);
 	std::string GetLocale(const std::string &topic);

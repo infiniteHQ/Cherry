@@ -1818,13 +1818,16 @@ namespace Cherry
         }
     }
 
-    ImFont *Application::GetFont(const std::string &name)
+ImFont *Application::GetFont(const std::string &name)
+{
+    auto it = s_Fonts.find(name);
+    if (it != s_Fonts.end())
     {
-        // if (!s_Fonts.contains(name))
-        //		return nullptr;
-
-        return s_Fonts.at(name);
+        return it->second;
     }
+    
+    return nullptr;
+}
 
     SDL_Window *Application::GetWindowHandle(const std::string &winname)
     {
@@ -2832,5 +2835,24 @@ namespace Cherry
     void AddNotification(const ImGuiToast &toast)
     {
         ImGui::InsertNotification(toast);
+    }
+    
+	void PushFont(const std::string& font_name)
+    {
+        auto font = Cherry::Application::GetFont(font_name);
+
+        if(font)
+        {
+            ImGui::PushFont(font);
+        }
+        else
+        {
+            ImGui::PushFont(ImGui::GetFont());
+        }
+    }
+
+	void PopFont()
+    {
+        ImGui::PopFont();
     }
 }
