@@ -3,7 +3,7 @@
 #include "../../../../platform/engine/components.hpp"
 
 //
-// ButtonTextUnderline
+// GridSimple
 // Authors : Infinite, Diego Moreno
 //
 
@@ -14,45 +14,13 @@ namespace Cherry
 {
     namespace Components
     {
-        class ButtonTextUnderline : public Component
+        class GridSimple : public Component
         {
         public:
-            ButtonTextUnderline(const Cherry::Identifier &id, const std::string &label)
-                : Component(id)
+            GridSimple(const Cherry::Identifier &id, const std::vector<std::function<void()>> &elements)
+                : Component(id), m_Elements(elements)
             {
-                // Identifier
-                SetIdentifier(id);
 
-                // Colors
-                SetProperty("color_underline", "#242424FF");
-                SetProperty("color_underline_hovered", "#343434FF");
-                SetProperty("color_underline_pressed", "#444444FF");
-                SetProperty("color_text", "#BCBCBCFF");
-                SetProperty("color_text_hovered", "#FFFFFFFF");
-                SetProperty("color_text_pressed", "#FFFFFFFF");
-
-                // Sizes
-                SetProperty("margin_y", "2");
-                SetProperty("size_y", "0");
-                SetProperty("size_x", "0");
-
-
-                // Params
-                SetProperty("disabled", "false");
-                SetProperty("disable_time", "false");
-
-                // Informations
-                SetProperty("label", label);
-
-                // Data & User-level informations
-                SetData("isClicked", "false");
-                SetData("isPressed", "false");
-                SetData("isHovered", "false");
-                SetData("isActivated", "false");
-                SetData("lastClicked", "never");
-                SetData("lastPressed", "never");
-                SetData("lastHovered", "never");
-                SetData("lastActivated", "never");
             }
 
             void Render() override
@@ -100,6 +68,7 @@ namespace Cherry
             }
 
         private:
+            std::vector<std::function<void()>> m_Elements;
             std::string GetCurrentTime()
             {
                 std::string m_LastClickTime;
@@ -115,31 +84,18 @@ namespace Cherry
     // End-User API
     namespace Kit
     {
-        inline std::shared_ptr<Component> ButtonTextUnderline(const std::string &label)
+        inline std::shared_ptr<Component> GridSimple(const std::vector<std::function<void()>> &elements)
         {
-            static std::unordered_map<std::size_t, std::weak_ptr<Component>> component_cache;
-
-            std::size_t label_hash = std::hash<std::string>{}(label);
-
-            if (auto existing = component_cache[label_hash].lock())
-            {
-                existing->Render();
-                return existing;
-            }
-
-            auto title = Application::CreateAnonymousComponent<Components::ButtonTextUnderline>(
-                Components::ButtonTextUnderline(Cherry::Identifier(std::to_string(label_hash)), label));
-
-            component_cache[label_hash] = title;
+           auto title = Application::CreateAnonymousComponent<Components::GridSimple>(Components::GridSimple(Cherry::Identifier(""), elements));
             title->Render();
             return title;
         }
 
-        inline std::shared_ptr<Component> ButtonTextUnderline(const Cherry::Identifier &identifier, const std::string &label)
+        inline std::shared_ptr<Component> GridSimple(const Cherry::Identifier &identifier, const std::vector<std::function<void()>> &elements)
         {
             if (identifier.string() == "__inline")
             {
-                auto new_button = std::make_shared<Components::ButtonTextUnderline>(Components::ButtonTextUnderline(identifier, label));
+                auto new_button = std::make_shared<Components::GridSimple>(Components::GridSimple(identifier, elements));
                 new_button->Render();
                 return new_button;
             }
@@ -153,7 +109,7 @@ namespace Cherry
             else
             {
                 // Create the object if not exist
-                auto new_button = Application::CreateComponent<Components::ButtonTextUnderline>(Components::ButtonTextUnderline(identifier, label));
+                auto new_button = Application::CreateComponent<Components::GridSimple>(Components::GridSimple(identifier, elements));
                 new_button->Render();
                 return new_button;
             }

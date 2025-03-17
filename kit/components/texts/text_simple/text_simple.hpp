@@ -25,7 +25,7 @@ namespace Cherry
                 SetIdentifier(id);
 
                 // Colors
-                SetProperty("color_text", "#454545B2");
+                SetProperty("color_text", "#FFFFFFFF");
 
                 // Informations
                 SetProperty("label", label);
@@ -38,7 +38,7 @@ namespace Cherry
                 auto parent = Cherry::GetParent();
                 if(parent)
                 {
-                    CherryGUI::Text(parent->GetProperty("label").c_str());
+                    CherryGUI::TextColored(HexToRGBA(GetProperty("color_text")),parent->GetProperty("label").c_str());
                 }
             }
         };

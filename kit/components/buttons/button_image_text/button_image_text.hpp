@@ -34,8 +34,8 @@ namespace Cherry
                 // Sizes
                 SetProperty("size_x", "20");
                 SetProperty("size_y", "20");
-                SetProperty("padding_x", "2");
-                SetProperty("padding_y", "2");
+                SetProperty("padding_x", "6");
+                SetProperty("padding_y", "6");
 
                 // Informations
                 SetProperty("label", label);
@@ -52,7 +52,7 @@ namespace Cherry
                 CherryGUI::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(std::stoi(GetProperty("padding_x")), std::stoi(GetProperty("padding_y"))));
 
                 CherryGUI::PushStyleColor(ImGuiCol_Border, HexToRGBA(GetProperty("color_border")));
-                CherryGUI::PushStyleColor(ImGuiCol_Button, HexToRGBA(GetProperty("color_border")));
+                CherryGUI::PushStyleColor(ImGuiCol_Button, HexToRGBA(GetProperty("color_bg")));
                 CherryGUI::PushStyleColor(ImGuiCol_ButtonHovered, HexToRGBA(GetProperty("color_bg_hovered")));
                 CherryGUI::PushStyleColor(ImGuiCol_ButtonActive, HexToRGBA(GetProperty("color_bg_clicked")));
 
