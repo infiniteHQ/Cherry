@@ -113,10 +113,15 @@
 // Progresses
 #include "./kit/components/plots/plot_line_float/plot_line_float.hpp"
 #include "./kit/components/plots/plot_historigram_float/plot_historigram_float.hpp"
+// Grid
+#include "./kit/components/grid/grid_simple/grid_simple.hpp"
+// Widgets
+#include "./kit/components/widgets/widget_folder/widget_folder.hpp"
 // Web
 #ifdef CHERRY_CEF
 #include "./kit/components/web/web_view/web_view.hpp"
 #endif 
+
 ///////////////////////////////////////////////////////////////
 /// AIO : Windows, Ready-builtin windows                    ///
 ///////////////////////////////////////////////////////////////
