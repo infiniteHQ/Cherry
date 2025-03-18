@@ -3,21 +3,21 @@
 #include "../../../../platform/engine/components.hpp"
 
 //
-// WidgetFolder
+// WidgetSmallFolder
 // Authors : Infinite, Diego Moreno
 //
 
-#ifndef CHERRY_KIT_WIDGET_FOLDER
-#define CHERRY_KIT_WIDGET_FOLDER
+#ifndef CHERRY_KIT_WIDGET_SMALL_FOLDER
+#define CHERRY_KIT_WIDGET_SMALL_FOLDER
 
 namespace Cherry
 {
     namespace Components
     {
-        class WidgetFolder : public Component
+        class WidgetSmallFolder : public Component
         {
         public:
-            WidgetFolder(const Cherry::Identifier &id, const std::string &color = "#CC9900", const float &size_x = 150.0f, const float &size_y = 150.0f)
+            WidgetSmallFolder(const Cherry::Identifier &id, const std::string &color = "#CC9900", const float &size_x = 40.0f, const float &size_y = 40.0f)
                 : Component(id)
             {
                 // Identifier
@@ -66,15 +66,6 @@ namespace Cherry
 
                 drawList->AddRectFilled(bodyTopLeft, bodyBottomRight, color, borderRadius);
 
-                float lineOffset = size.y * 0.05f;
-                for (int i = 1; i <= 3; i++)
-                {
-                    float yPos = bodyBottomRight.y - (lineOffset * i);
-                    drawList->AddLine(ImVec2(bodyTopLeft.x + size.x * 0.01f, yPos),
-                                      ImVec2(bodyBottomRight.x - size.x * 0.01f, yPos),
-                                      shadowColor, 2.0f);
-                }
-
                 if (ImGui::IsItemHovered())
                 {
                     ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
@@ -86,19 +77,19 @@ namespace Cherry
     // End-User API
     namespace Kit
     {
-        inline std::shared_ptr<Component> WidgetFolder(const std::string &color = "#CC9900", const float &size_x = 150.0f, const float &size_y = 150.0f)
+        inline std::shared_ptr<Component> WidgetSmallFolder(const std::string &color = "#CC9900", const float &size_x = 40.0f, const float &size_y = 40.0f)
         {
             // Inline component
-            auto title = Application::CreateAnonymousComponent<Components::WidgetFolder>(Components::WidgetFolder(Cherry::Identifier(""), color, size_x, size_y));
+            auto title = Application::CreateAnonymousComponent<Components::WidgetSmallFolder>(Components::WidgetSmallFolder(Cherry::Identifier(""), color, size_x, size_y));
             title->Render();
             return title;
         }
 
-        inline std::shared_ptr<Component> WidgetFolder(const Cherry::Identifier &identifier, const std::string &color = "#CC9900", const float &size_x = 150.0f, const float &size_y = 150.0f)
+        inline std::shared_ptr<Component> WidgetSmallFolder(const Cherry::Identifier &identifier, const std::string &color = "#CC9900", const float &size_x = 40.0f, const float &size_y = 40.0f)
         {
             if (identifier.string() == "__inline")
             {
-                auto new_title = Application::CreateAnonymousComponent<Components::WidgetFolder>(Components::WidgetFolder(identifier, color, size_x, size_y));
+                auto new_title = Application::CreateAnonymousComponent<Components::WidgetSmallFolder>(Components::WidgetSmallFolder(identifier, color, size_x, size_y));
                 new_title->Render();
                 return new_title;
             }
@@ -112,7 +103,7 @@ namespace Cherry
             else
             {
                 // Create the object if not exist
-                auto new_title = Application::CreateComponent<Components::WidgetFolder>(Components::WidgetFolder(identifier, color, size_x, size_y));
+                auto new_title = Application::CreateComponent<Components::WidgetSmallFolder>(Components::WidgetSmallFolder(identifier, color, size_x, size_y));
                 new_title->Render();
                 return new_title;
             }
@@ -122,4 +113,4 @@ namespace Cherry
 
 }
 
-#endif // CHERRY_KIT_WIDGET_FOLDER
+#endif // CHERRY_KIT_WIDGET_SMALL_FOLDER

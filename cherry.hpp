@@ -117,6 +117,7 @@
 #include "./kit/components/grid/grid_simple/grid_simple.hpp"
 // Widgets
 #include "./kit/components/widgets/widget_folder/widget_folder.hpp"
+#include "./kit/components/widgets/widget_small_folder/widget_small_folder.hpp"
 // Web
 #ifdef CHERRY_CEF
 #include "./kit/components/web/web_view/web_view.hpp"
