@@ -212,6 +212,7 @@ namespace Cherry
 
             ImGui::TextUnformatted(buffer.data());
         }
+        
         void TextColored(const ImVec4 &col, const char *fmt, ...)
         {
             va_list args;

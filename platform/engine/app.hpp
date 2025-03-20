@@ -37,9 +37,15 @@
 #ifndef CHERRY_APP_H
 #define CHERRY_APP_H
 
+// Code utils macros
 #define CherryLambda(code) []() { code }
-#define CherryInline CherryID("__inline")
+
+// Cherry utils macros
 #define CherryPath(path) Cherry::GetPath(path)
+
+// Cherry Identifier macros
+#define CherryInline CherryID("__inline")
+#define CherryCreateOnly CherryID("__create")
 
 namespace Cherry
 {

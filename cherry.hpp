@@ -52,6 +52,7 @@
 #include "./kit/components/texts/text_simple/text_simple.hpp"
 #include "./kit/components/texts/text_left/text_left.hpp"
 #include "./kit/components/texts/text_right/text_right.hpp"
+#include "./kit/components/texts/text_center/text_center.hpp"
 #include "./kit/components/texts/text_wrapped/text_wrapped.hpp"
 #include "./kit/components/texts/text_image/text_image.hpp"
 // Table
@@ -89,6 +90,7 @@
 // Images
 #include "./kit/components/images/image_local/image_local.hpp"
 #include "./kit/components/images/image_http/image_http.hpp"
+#include "./kit/components/images/image_local_centered/image_local_centered.hpp"
 // Inputs
 #include "./kit/components/inputs/input_string/input_string.hpp"
 #include "./kit/components/inputs/input_multiline_string/input_multiline_string.hpp"
@@ -118,6 +120,8 @@
 // Widgets
 #include "./kit/components/widgets/widget_folder/widget_folder.hpp"
 #include "./kit/components/widgets/widget_small_folder/widget_small_folder.hpp"
+// Blocks
+#include "./kit/components/blocks/block_vertical_custom/block_vertical_custom.hpp"
 // Web
 #ifdef CHERRY_CEF
 #include "./kit/components/web/web_view/web_view.hpp"
