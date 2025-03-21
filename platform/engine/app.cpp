@@ -1472,7 +1472,7 @@ namespace Cherry
 
             if(m_NoAppWindowSafetyEnabled)
             {
-                std::cout << m_AppWindows.size() << std::endl;
+                std::cout << "m_AppWindows size " << m_AppWindows.size() << std::endl;
                 if(m_AppWindows.size() > 1)
                 {
                     DisableNoAppWindowSafety();
@@ -2367,18 +2367,6 @@ ImFont *Application::GetFont(const std::string &name)
         if (Cherry::IsReady())
         {
             m_AppWindows.push_back(win);
-
-            if (m_NoAppWindowSafetyEnabled == true)
-            {
-                if (m_NoAppWindowSafetyJustEnabled)
-                {
-                    m_NoAppWindowSafetyJustEnabled = false;
-                }
-                else
-                {
-                    DisableNoAppWindowSafety();
-                }
-            }
         }
         else
         {
@@ -2644,17 +2632,19 @@ ImFont *Application::GetFont(const std::string &name)
     void Application::EnableNoAppWindowSafety()
     {
         m_NoAppWindowSafetyEnabled = true;
-        m_NoAppWindowSafetyJustEnabled = true;
-        std::shared_ptr<AppWindow> app_window = std::make_shared<AppWindow>("no_windows", "Cherry Error");
-        app_window->SetRenderCallback([]()
-                                      { ImGui::TextColored(Cherry::HexToRGBA("#FF2222FF"), "ERROR: You selected the Docking render mode, but you did not specify any app windows. Please create and add an app window."); });
+        std::shared_ptr<AppWindow> app_window = std::make_shared<AppWindow>("cherryinternal_no_windows", "cherryinternal_no_windows");
+        app_window->SetRenderCallback([this]()
+        { 
+            m_NoAppWindowSafetyEnabled = true;            
+            ImGui::TextColored(Cherry::HexToRGBA("#FF2222FF"), "ERROR: You selected the Docking render mode, but you did not specify any app windows. Please create and add an app window. (Cherry::AddAppWindow(std::shared_ptr<AppWindow>))"); 
+        });
 
         Cherry::AddAppWindow(app_window);
     }
 
     void Application::DisableNoAppWindowSafety()
     {
-        Cherry::DeleteAppWindow(Cherry::GetAppWindowByName("no_windows"));
+        Cherry::DeleteAppWindow(Cherry::GetAppWindowByName("cherryinternal_no_windows"));
         m_NoAppWindowSafetyEnabled = false;
     }
 

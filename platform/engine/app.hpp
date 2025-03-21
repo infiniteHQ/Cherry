@@ -38,19 +38,20 @@
 #define CHERRY_APP_H
 
 // Code utils macros
-#define CherryLambda(code) []() { code }
+#define CherryLambda(code) [=]() { code }
 
 // Cherry utils macros
 #define CherryPath(path) Cherry::GetPath(path)
 
 // Cherry Identifier macros
-#define CherryInline CherryID("__inline")
-#define CherryCreateOnly CherryID("__create")
+#define CherryInline CherryID(Cherry::Identifier::GetUniqueIndex(), Cherry::IdentifierProperty::Inline)
+#define CherryCreateOnly CherryID(Cherry::Identifier::GetUniqueIndex(), Cherry::IdentifierProperty::CreateOnly)
 
 namespace Cherry
 {
 	class Component;
 }
+
 void check_vk_result(VkResult err);
 
 static void AppPushTabStyle()
@@ -60,6 +61,7 @@ static void AppPushTabStyle()
 	ImGui::PushStyleVar(ImGuiStyleVar_TabRounding, 3.0f);
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(15.0f, 6.0f));
 }
+
 static void AppPopTabStyle()
 {
 	ImGui::PopStyleVar(3);
@@ -373,7 +375,6 @@ namespace Cherry
 		nlohmann::json m_PreviousSaveData;
 
 		bool m_NoAppWindowSafetyEnabled = false;
-		bool m_NoAppWindowSafetyJustEnabled = false;
 		bool m_Running = false;
 		bool m_Dragging = false;
 		std::vector<std::shared_ptr<Window>> m_Windows;

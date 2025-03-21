@@ -2,9 +2,11 @@
 #include "app.hpp"
 #include "window.hpp"
 
-namespace Cherry {
+namespace Cherry
+{
 
-	namespace Utils {
+	namespace Utils
+	{
 
 		static uint32_t GetVulkanMemoryType(VkMemoryPropertyFlags properties, uint32_t type_bits)
 		{
@@ -15,7 +17,7 @@ namespace Cherry {
 				if ((prop.memoryTypes[i].propertyFlags & properties) == properties && type_bits & (1 << i))
 					return i;
 			}
-			
+
 			return 0xffffffff;
 		}
 
@@ -23,33 +25,37 @@ namespace Cherry {
 		{
 			switch (format)
 			{
-				case ImageFormat::RGBA:    return 4;
-				case ImageFormat::RGBA32F: return 16;
+			case ImageFormat::RGBA:
+				return 4;
+			case ImageFormat::RGBA32F:
+				return 16;
 			}
 			return 0;
 		}
-		
+
 		static VkFormat UIKitFormatToVulkanFormat(ImageFormat format)
 		{
 			switch (format)
 			{
-				case ImageFormat::RGBA:    return VK_FORMAT_R8G8B8A8_UNORM;
-				case ImageFormat::RGBA32F: return VK_FORMAT_R32G32B32A32_SFLOAT;
+			case ImageFormat::RGBA:
+				return VK_FORMAT_R8G8B8A8_UNORM;
+			case ImageFormat::RGBA32F:
+				return VK_FORMAT_R32G32B32A32_SFLOAT;
 			}
 			return (VkFormat)0;
 		}
 
 	}
 
-	Image::Image(std::string_view path, const std::string& winname)
+	Image::Image(std::string_view path, const std::string &winname)
 		: m_Filepath(path), m_Winname(winname)
 	{
 		int width, height, channels;
-		uint8_t* data = nullptr;
+		uint8_t *data = nullptr;
 
 		if (stbi_is_hdr(m_Filepath.c_str()))
 		{
-			data = (uint8_t*)stbi_loadf(m_Filepath.c_str(), &width, &height, &channels, 4);
+			data = (uint8_t *)stbi_loadf(m_Filepath.c_str(), &width, &height, &channels, 4);
 			m_Format = ImageFormat::RGBA32F;
 		}
 		else
@@ -60,16 +66,16 @@ namespace Cherry {
 
 		m_Width = width;
 		m_Height = height;
-		
+
 		AllocateMemory(m_Width * m_Height * Utils::BytesPerPixel(m_Format));
 		SetData(data);
 		stbi_image_free(data);
 	}
 
-	Image::Image(uint32_t width, uint32_t height, ImageFormat format, const std::string& winname, const void* data)
+	Image::Image(uint32_t width, uint32_t height, ImageFormat format, const std::string &winname, const void *data)
 		: m_Width(width), m_Height(height), m_Format(format), m_Winname(winname)
 	{
-		
+
 		AllocateMemory(m_Width * m_Height * Utils::BytesPerPixel(m_Format));
 		if (data)
 			SetData(data, m_Winname);
@@ -85,7 +91,7 @@ namespace Cherry {
 		VkDevice device = Application::GetDevice();
 
 		VkResult err;
-		
+
 		VkFormat vulkanFormat = Utils::UIKitFormatToVulkanFormat(m_Format);
 
 		// Create the Image
@@ -155,18 +161,22 @@ namespace Cherry {
 
 	void Image::Release()
 	{
-		Application::SubmitResourceFree([sampler = m_Sampler, imageView = m_ImageView, image = m_Image,
-			memory = m_Memory, stagingBuffer = m_StagingBuffer, stagingBufferMemory = m_StagingBufferMemory, winname = m_Winname]()
-		{
-			VkDevice device = Application::GetDevice();
+		std::string winnameCopy = m_Winname;
+		Application::SubmitResourceFree(
+			[sampler = m_Sampler, imageView = m_ImageView, image = m_Image,
+			 memory = m_Memory, stagingBuffer = m_StagingBuffer,
+			 stagingBufferMemory = m_StagingBufferMemory, winnameCopy]()
+			{
+				VkDevice device = Application::GetDevice();
 
-			vkDestroySampler(device, sampler, nullptr);
-			vkDestroyImageView(device, imageView, nullptr);
-			vkDestroyImage(device, image, nullptr);
-			vkFreeMemory(device, memory, nullptr);
-			vkDestroyBuffer(device, stagingBuffer, nullptr);
-			vkFreeMemory(device, stagingBufferMemory, nullptr);
-		}, m_Winname);
+				vkDestroySampler(device, sampler, nullptr);
+				vkDestroyImageView(device, imageView, nullptr);
+				vkDestroyImage(device, image, nullptr);
+				vkFreeMemory(device, memory, nullptr);
+				vkDestroyBuffer(device, stagingBuffer, nullptr);
+				vkFreeMemory(device, stagingBufferMemory, nullptr);
+			},
+			winnameCopy);
 
 		m_Sampler = nullptr;
 		m_ImageView = nullptr;
@@ -176,7 +186,7 @@ namespace Cherry {
 		m_StagingBufferMemory = nullptr;
 	}
 
-	void Image::SetData(const void* data)
+	void Image::SetData(const void *data)
 	{
 		VkDevice device = Application::GetDevice();
 
@@ -207,13 +217,12 @@ namespace Cherry {
 				err = vkBindBufferMemory(device, m_StagingBuffer, m_StagingBufferMemory, 0);
 				check_vk_result(err);
 			}
-
 		}
 
 		// Upload to Buffer
 		{
-			char* map = NULL;
-			err = vkMapMemory(device, m_StagingBufferMemory, 0, m_AlignedSize, 0, (void**)(&map));
+			char *map = NULL;
+			err = vkMapMemory(device, m_StagingBufferMemory, 0, m_AlignedSize, 0, (void **)(&map));
 			check_vk_result(err);
 			memcpy(map, data, upload_size);
 			VkMappedMemoryRange range[1] = {};
@@ -228,49 +237,49 @@ namespace Cherry {
 		// Copy to Image
 		{
 			VkCommandBuffer command_buffer = Application::GetCommandBuffer(true, Cherry::GetWindowByName(m_Winname));
-			if(command_buffer)
+			if (command_buffer)
 			{
-			VkImageMemoryBarrier copy_barrier = {};
-			copy_barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-			copy_barrier.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
-			copy_barrier.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-			copy_barrier.newLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
-			copy_barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-			copy_barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-			copy_barrier.image = m_Image;
-			copy_barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-			copy_barrier.subresourceRange.levelCount = 1;
-			copy_barrier.subresourceRange.layerCount = 1;
-			vkCmdPipelineBarrier(command_buffer, VK_PIPELINE_STAGE_HOST_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT, 0, 0, NULL, 0, NULL, 1, &copy_barrier);
+				VkImageMemoryBarrier copy_barrier = {};
+				copy_barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+				copy_barrier.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+				copy_barrier.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+				copy_barrier.newLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+				copy_barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+				copy_barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+				copy_barrier.image = m_Image;
+				copy_barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+				copy_barrier.subresourceRange.levelCount = 1;
+				copy_barrier.subresourceRange.layerCount = 1;
+				vkCmdPipelineBarrier(command_buffer, VK_PIPELINE_STAGE_HOST_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT, 0, 0, NULL, 0, NULL, 1, &copy_barrier);
 
-			VkBufferImageCopy region = {};
-			region.imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-			region.imageSubresource.layerCount = 1;
-			region.imageExtent.width = m_Width;
-			region.imageExtent.height = m_Height;
-			region.imageExtent.depth = 1;
-			vkCmdCopyBufferToImage(command_buffer, m_StagingBuffer, m_Image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
+				VkBufferImageCopy region = {};
+				region.imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+				region.imageSubresource.layerCount = 1;
+				region.imageExtent.width = m_Width;
+				region.imageExtent.height = m_Height;
+				region.imageExtent.depth = 1;
+				vkCmdCopyBufferToImage(command_buffer, m_StagingBuffer, m_Image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
 
-			VkImageMemoryBarrier use_barrier = {};
-			use_barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-			use_barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
-			use_barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
-			use_barrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
-			use_barrier.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-			use_barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-			use_barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-			use_barrier.image = m_Image;
-			use_barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-			use_barrier.subresourceRange.levelCount = 1;
-			use_barrier.subresourceRange.layerCount = 1;
-			vkCmdPipelineBarrier(command_buffer, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, 0, 0, NULL, 0, NULL, 1, &use_barrier);
+				VkImageMemoryBarrier use_barrier = {};
+				use_barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+				use_barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+				use_barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+				use_barrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+				use_barrier.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+				use_barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+				use_barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+				use_barrier.image = m_Image;
+				use_barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+				use_barrier.subresourceRange.levelCount = 1;
+				use_barrier.subresourceRange.layerCount = 1;
+				vkCmdPipelineBarrier(command_buffer, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, 0, 0, NULL, 0, NULL, 1, &use_barrier);
 
-			Application::FlushCommandBuffer(command_buffer);
+				Application::FlushCommandBuffer(command_buffer);
 			}
 		}
 	}
 
-	void Image::SetData(const void* data, const std::string& winname)
+	void Image::SetData(const void *data, const std::string &winname)
 	{
 		VkDevice device = Application::GetDevice();
 		size_t upload_size = m_Width * m_Height * Utils::BytesPerPixel(m_Format);
@@ -304,8 +313,8 @@ namespace Cherry {
 
 		// Upload to Buffer
 		{
-			char* map = NULL;
-			err = vkMapMemory(device, m_StagingBufferMemory, 0, m_AlignedSize, 0, (void**)(&map));
+			char *map = NULL;
+			err = vkMapMemory(device, m_StagingBufferMemory, 0, m_AlignedSize, 0, (void **)(&map));
 			check_vk_result(err);
 			memcpy(map, data, upload_size);
 			VkMappedMemoryRange range[1] = {};
@@ -360,7 +369,6 @@ namespace Cherry {
 		}
 	}
 
-
 	void Image::Resize(uint32_t width, uint32_t height)
 	{
 		if (m_Image && m_Width == width && m_Height == height)
@@ -375,13 +383,13 @@ namespace Cherry {
 		AllocateMemory(m_Width * m_Height * Utils::BytesPerPixel(m_Format));
 	}
 
-	void* Image::Decode(const void* buffer, uint64_t length, uint32_t& outWidth, uint32_t& outHeight)
+	void *Image::Decode(const void *buffer, uint64_t length, uint32_t &outWidth, uint32_t &outHeight)
 	{
 		int width, height, channels;
-		uint8_t* data = nullptr;
+		uint8_t *data = nullptr;
 		uint64_t size = 0;
 
-		data = stbi_load_from_memory((const stbi_uc*)buffer, length, &width, &height, &channels, 4);
+		data = stbi_load_from_memory((const stbi_uc *)buffer, length, &width, &height, &channels, 4);
 		size = width * height * 4;
 
 		outWidth = width;

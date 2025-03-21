@@ -81,33 +81,63 @@ namespace Cherry
     {
         inline std::shared_ptr<Component> BlockVerticalCustom(const std::vector<std::function<void()>> &renderCallbacks)
         {
-            // Inline component
-            auto title = Application::CreateAnonymousComponent<Components::BlockVerticalCustom>(Components::BlockVerticalCustom(Cherry::Identifier(""), renderCallbacks));
-            title->Render();
-            return title;
+            auto anonymous_id = Application::GetAnonymousID();
+            auto existing = Application::GetAnonymousComponent(anonymous_id);
+            if (existing)
+            {
+                existing->Render();
+                return existing;
+            }
+            else
+            {
+                auto button = Application::CreateAnonymousComponent<Components::BlockVerticalCustom>(Components::BlockVerticalCustom(anonymous_id, renderCallbacks));
+                button->Render();
+                return button;
+            }
         }
 
         inline std::shared_ptr<Component> BlockVerticalCustom(const float& width = 260.0f, const float& height = 110.0f, const std::vector<std::function<void()>> &renderCallbacks = {})
         {
-            // Inline component
-            auto title = Application::CreateAnonymousComponent<Components::BlockVerticalCustom>(Components::BlockVerticalCustom(Cherry::Identifier(""), renderCallbacks, width, height));
-            title->Render();
-            return title;
+            auto anonymous_id = Application::GetAnonymousID();
+            auto existing = Application::GetAnonymousComponent(anonymous_id);
+            if (existing)
+            {
+                existing->Render();
+                return existing;
+            }
+            else
+            {
+                auto button = Application::CreateAnonymousComponent<Components::BlockVerticalCustom>(Components::BlockVerticalCustom(anonymous_id, renderCallbacks, width, height));
+                button->Render();
+                return button;
+            }
         }
 
         inline std::shared_ptr<Component> BlockVerticalCustom(const Cherry::Identifier &identifier, const std::vector<std::function<void()>> &renderCallbacks)
         {
-            if (identifier.string() == "__inline")
+            switch(identifier.property())
             {
-                auto new_title = Application::CreateAnonymousComponent<Components::BlockVerticalCustom>(Components::BlockVerticalCustom(identifier, renderCallbacks));
-                new_title->Render();
-                return new_title;
-            }            
-            
-            if (identifier.string() == "__create")
-            {
-                auto new_title = Application::CreateAnonymousComponent<Components::BlockVerticalCustom>(Components::BlockVerticalCustom(identifier, renderCallbacks));
-                return new_title;
+                case IdentifierProperty::Inline : 
+                {
+                    auto new_title = Application::CreateAnonymousComponent<Components::BlockVerticalCustom>(Components::BlockVerticalCustom(identifier, renderCallbacks));
+                    new_title->Render();
+                    return new_title;
+                    break;
+                }
+                case IdentifierProperty::CreateOnly : 
+                {
+                    auto new_title = Application::CreateAnonymousComponent<Components::BlockVerticalCustom>(Components::BlockVerticalCustom(identifier, renderCallbacks));
+                    return new_title;
+                    break;
+                }
+                case IdentifierProperty::None : 
+                {
+                    break;
+                }
+                default:
+                {
+                    break;
+                }
             }
 
             // Get the object if exist
@@ -129,17 +159,29 @@ namespace Cherry
 
         inline std::shared_ptr<Component> BlockVerticalCustom(const Cherry::Identifier &identifier, const float& width = 260.0f, const float& height = 110.0f, const std::vector<std::function<void()>> &renderCallbacks = {})
         {
-            if (identifier.string() == "__inline")
+            switch(identifier.property())
             {
-                auto new_title = Application::CreateAnonymousComponent<Components::BlockVerticalCustom>(Components::BlockVerticalCustom(identifier, renderCallbacks, width, height));
-                new_title->Render();
-                return new_title;
-            }
-            
-            if (identifier.string() == "__create")
-            {
-                auto new_title = Application::CreateAnonymousComponent<Components::BlockVerticalCustom>(Components::BlockVerticalCustom(identifier, renderCallbacks, width, height));
-                return new_title;
+                case IdentifierProperty::Inline : 
+                {
+                    auto new_title = Application::CreateAnonymousComponent<Components::BlockVerticalCustom>(Components::BlockVerticalCustom(identifier, renderCallbacks, width, height));
+                    new_title->Render();
+                    return new_title;
+                    break;
+                }
+                case IdentifierProperty::CreateOnly : 
+                {
+                    auto new_title = Application::CreateAnonymousComponent<Components::BlockVerticalCustom>(Components::BlockVerticalCustom(identifier, renderCallbacks, width, height));
+                    return new_title;
+                    break;
+                }
+                case IdentifierProperty::None : 
+                {
+                    break;
+                }
+                default:
+                {
+                    break;
+                }
             }
 
             // Get the object if exist
