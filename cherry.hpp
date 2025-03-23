@@ -1,9 +1,18 @@
 #pragma once
+
+#include "options.hpp"
+
+#if CHERRY_ENABLE_NET
+  #define _CHERRY_ENABLE_NET
+#endif
+
+#if CHERRY_ENABLE_CEF
+  #define _CHERRY_ENABLE_CEF
+#endif
+
 #ifndef CHERRY_H
 #define CHERRY_H
 #define SDL_MAIN_HANDLED
-
-#include "./options.hpp"
 
 #ifndef IMGUI_DEFINE_MATH_OPERATORS
 #define IMGUI_DEFINE_MATH_OPERATORS

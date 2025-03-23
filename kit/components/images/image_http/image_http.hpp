@@ -14,7 +14,7 @@ namespace Cherry
 {
     namespace Components
     {
-#ifdef CHERRY_NET
+#ifdef CHERRY_ENABLE_NET
         class ImageHttp : public Component
         {
         public:
@@ -48,7 +48,7 @@ namespace Cherry
                 ImGui::Image(Cherry::GetTexture(Cherry::GetHttpPath(GetProperty("image_http_path"))), ImVec2(std::stof(GetProperty("size_x")), std::stof(GetProperty("size_y"))));
             }
         };
-#else  // CHERRY_NET
+#else  // CHERRY_ENABLE_NET
         class ImageHttp : public Component
         {
         public:
@@ -79,10 +79,10 @@ namespace Cherry
 
             void Render() override
             {
-                ImGui::TextColored(Cherry::HexToRGBA("#FF3333FF"),"ERROR: Cannot display http(s) image without define CHERRY_NET");
+                ImGui::TextColored(Cherry::HexToRGBA("#FF3333FF"),"ERROR: Cannot display http(s) image without define CHERRY_ENABLE_NET");
             }
         };
-#endif // CHERRY_NET
+#endif // CHERRY_ENABLE_NET
 
     }
 

@@ -34,6 +34,8 @@
 #include "imgui/wrappers.hpp"
 #include "vulkan/vulkan.h"
 
+extern bool g_ApplicationRunning;
+
 #ifndef CHERRY_APP_H
 #define CHERRY_APP_H
 
@@ -433,9 +435,9 @@ namespace Cherry
 	// Runtime
 	std::string GetPath(const std::string &path);
 	std::string GetLocale(const std::string &topic);
-#ifdef CHERRY_NET
+#ifdef CHERRY_ENABLE_NET
 	std::string GetHttpPath(const std::string &url);
-#endif // CHERRY_NET
+#endif // CHERRY_ENABLE_NET
 
 	// Data (theses functions can return JSON to string format or legacy string.)
 	std::string GetData(const Identifier &id, const std::string topic);

@@ -23,7 +23,7 @@
 #include <string>
 #include <algorithm>
 
-#ifdef CHERRY_NET
+#ifdef CHERRY_ENABLE_NET
 #include <string>
 #include <filesystem>
 #include <fstream>
@@ -40,7 +40,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #endif // _WIN32
-#endif // CHERRY_NET
+#endif // CHERRY_ENABLE_NET
 
 // Emedded font
 #include "imgui/Roboto-Regular.embed"
@@ -51,7 +51,7 @@
 
 namespace fs = std::filesystem;
 
-extern bool g_ApplicationRunning = false;
+bool g_ApplicationRunning = true;
 
 // [Win32] Our example includes a copy of glfw3.lib pre-compiled with VS2010 to maximize ease of testing and compatibility with old VS compilers.
 // To link with VS2010-era libraries, VS2015+ requires linking with legacy_stdio_definitions.lib, which we do using this pragma.
@@ -2681,7 +2681,7 @@ ImFont *Application::GetFont(const std::string &name)
 #endif
     }
 
-#ifdef CHERRY_NET
+#ifdef CHERRY_ENABLE_NET
     size_t WriteCallback(void *contents, size_t size, size_t nmemb, void *userp)
     {
         std::ofstream *ofs = static_cast<std::ofstream *>(userp);
@@ -2764,7 +2764,7 @@ ImFont *Application::GetFont(const std::string &name)
         return file_path;
     }
 
-#endif // CHERRY_NET
+#endif // CHERRY_ENABLE_NET
 
     std::string GetLocale(const std::string &topic)
     {

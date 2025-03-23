@@ -9,7 +9,7 @@ namespace Cherry {
     extern Cherry::Application* CreateApplication(int argc, char** argv);
 }
 
-inline bool g_ApplicationRunning = true;
+//inline bool g_ApplicationRunning = true;
 namespace Cherry {
 
 	// For multiple app usage
