@@ -50,7 +50,7 @@ namespace Cherry
 
             void Render() override
             {
-                ImGui::Checkbox(GetProperty("label").c_str(), m_Checked);
+                CherryGUI::Checkbox(GetProperty("label").c_str(), m_Checked);
 
                 if (m_Checked)
                 {

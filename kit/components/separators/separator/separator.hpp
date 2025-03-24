@@ -29,7 +29,7 @@ namespace Cherry
 
             void Render() override
             {
-                ImGui::Separator();
+                CherryGUI::Separator();
             }
         };
     }

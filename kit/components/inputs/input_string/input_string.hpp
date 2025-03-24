@@ -45,12 +45,12 @@ namespace Cherry
                     char buffer[256];
                     std::strncpy(buffer, m_Value->c_str(), sizeof(buffer));
 
-                    ImGui::InputText(Label.c_str(), buffer, sizeof(buffer));
+                    CherryGUI::InputText(Label.c_str(), buffer, sizeof(buffer));
                     *m_Value = std::string(buffer);
                 }
                 else
                 {
-                    ImGui::Text("INVALID VALUE");
+                    CherryGUI::Text("INVALID VALUE");
                 }
             }
 

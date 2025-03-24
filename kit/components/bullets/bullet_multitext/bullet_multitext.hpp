@@ -41,7 +41,7 @@ namespace Cherry
 
             void Render() override
             {
-                ImGui::BulletText(GetProperty("label").c_str());
+                CherryGUI::BulletText(GetProperty("label").c_str());
             }
         };
     }

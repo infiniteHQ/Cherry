@@ -62,13 +62,13 @@ namespace Cherry
                 {
                     Label += "####" + identifier;
                 }
-                ImGui::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, ImVec2(0.0f, 0.5f));
+                CherryGUI::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, ImVec2(0.0f, 0.5f));
 
-                ImGuiStyle &style = ImGui::GetStyle();
-                float texture_size = ImGui::GetFontSize();
+                ImGuiStyle &style = CherryGUI::GetStyle();
+                float texture_size = CherryGUI::GetFontSize();
                 float padding = style.ItemInnerSpacing.x;
 
-                ImGui::BeginGroup();
+                CherryGUI::BeginGroup();
 
                 CherryGUI::PushStyleColor(ImGuiCol_Border, HexToRGBA(GetProperty("color_border")));
                 CherryGUI::PushStyleColor(ImGuiCol_Button, HexToRGBA(GetProperty("color_border")));
@@ -79,45 +79,45 @@ namespace Cherry
 
                 bool isOpened = GetData("isOpened") == "true";
 
-                if (ImGui::ImageSizeButtonWithText(Cherry::GetTexture(GetProperty("image_path")), 700.0f, button_label.c_str(), ImVec2(-FLT_MIN, 0.0f), ImVec2(0, 0), ImVec2(1, 1), -1, ImVec4(0, 0, 0, 0), ImVec4(1, 1, 1, 1)))
+                if (CherryGUI::ImageSizeButtonWithText(Cherry::GetTexture(GetProperty("image_path")), 700.0f, button_label.c_str(), ImVec2(-FLT_MIN, 0.0f), ImVec2(0, 0), ImVec2(1, 1), -1, ImVec4(0, 0, 0, 0), ImVec4(1, 1, 1, 1)))
                 {
                     SetData("isOpened", isOpened ? "false" : "true");
                 }
 
-                ImGui::PopStyleColor(4);
+                CherryGUI::PopStyleColor(4);
 
-                ImVec2 arrow_pos = ImVec2(ImGui::GetItemRectMax().x - style.FramePadding.x - ImGui::GetFontSize(), ImGui::GetItemRectMin().y + style.FramePadding.y + 3.0f);
-                ImGui::RenderArrow(ImGui::GetWindowDrawList(), arrow_pos, ImGui::GetColorU32(ImGuiCol_Text), GetData("isOpened") == "true" ? ImGuiDir_Down : ImGuiDir_Right);
+                ImVec2 arrow_pos = ImVec2(CherryGUI::GetItemRectMax().x - style.FramePadding.x - CherryGUI::GetFontSize(), CherryGUI::GetItemRectMin().y + style.FramePadding.y + 3.0f);
+                CherryGUI::RenderArrow(CherryGUI::GetWindowDrawList(), arrow_pos, CherryGUI::GetColorU32(ImGuiCol_Text), GetData("isOpened") == "true" ? ImGuiDir_Down : ImGuiDir_Right);
 
-                ImVec2 button_size = ImGui::GetItemRectSize();
-                ImVec2 button_pos = ImGui::GetItemRectMin();
+                ImVec2 button_size = CherryGUI::GetItemRectSize();
+                ImVec2 button_pos = CherryGUI::GetItemRectMin();
                 ImVec2 content_pos;
                 content_pos.x = button_pos.x + button_size.x - texture_size - 100;
                 content_pos.y = button_pos.y;
 
-                ImGui::SetCursorScreenPos(content_pos);
+                CherryGUI::SetCursorScreenPos(content_pos);
                 ImVec2 child_size = ImVec2(100, button_size.y);
 
-                ImGui::PushStyleColor(ImGuiCol_ChildBg, Cherry::HexToImU32("#00000000"));
+                CherryGUI::PushStyleColor(ImGuiCol_ChildBg, Cherry::HexToImU32("#00000000"));
 
                 std::string child_label = "###child" + identifier;
-                ImGui::BeginChild(child_label.c_str(), child_size, false, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
+                CherryGUI::BeginChild(child_label.c_str(), child_size, false, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
 
                 CherryGUI::PushStyleColor(ImGuiCol_Border, HexToRGBA(GetProperty("button_color_border")));
                 CherryGUI::PushStyleColor(ImGuiCol_Button, HexToRGBA(GetProperty("button_color_border")));
                 CherryGUI::PushStyleColor(ImGuiCol_ButtonHovered, HexToRGBA(GetProperty("button_color_bg_hovered")));
                 CherryGUI::PushStyleColor(ImGuiCol_ButtonActive, HexToRGBA(GetProperty("button_color_bg_clicked")));
 
-                ImGui::Button("Testqsd");
+                CherryGUI::Button("Testqsd");
 
-                ImGui::PopStyleColor(4);
+                CherryGUI::PopStyleColor(4);
 
-                ImGui::EndChild();
-                ImGui::PopStyleColor();
+                CherryGUI::EndChild();
+                CherryGUI::PopStyleColor();
 
-                ImGui::EndGroup();
+                CherryGUI::EndGroup();
 
-                ImGui::PopStyleVar();
+                CherryGUI::PopStyleVar();
 
                 if (GetData("isOpened") == "true")
                 {

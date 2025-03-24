@@ -44,7 +44,7 @@ namespace Cherry
 
             void Render() override
             {
-                ImGui::Image(Cherry::GetTexture(GetProperty("image_path")), ImVec2(std::stof(GetProperty("size_x")), std::stof(GetProperty("size_y"))));
+                CherryGUI::Image(Cherry::GetTexture(GetProperty("image_path")), ImVec2(std::stof(GetProperty("size_x")), std::stof(GetProperty("size_y"))));
             }
         };
     }

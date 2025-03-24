@@ -27,7 +27,7 @@ namespace Cherry
             void Render() override
             {            
                 float fraction = static_cast<float>(*m_Number) / static_cast<float>(*m_Goal);
-                ImGui::ProgressBar(fraction, ImVec2(-1.0f, 0.0f));
+                CherryGUI::ProgressBar(fraction, ImVec2(-1.0f, 0.0f));
             }
 
         private:

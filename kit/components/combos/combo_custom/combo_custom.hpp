@@ -59,14 +59,14 @@ namespace Cherry
                     Label += Label + "####" + identifier;
                 }
 
-                if (ImGui::BeginCombo(Label.c_str(), [&]()
+                if (CherryGUI::BeginCombo(Label.c_str(), [&]()
                                       { this->m_List[selected]->Render(); }))
                 {
                     for (int n = 0; n < m_List.size(); n++)
                     {
                         const bool is_selected = (selected == n);
 
-                        if (ImGui::Selectable(std::string("####" + identifier + std::to_string(n)).c_str(), is_selected))
+                        if (CherryGUI::Selectable(std::string("####" + identifier + std::to_string(n)).c_str(), is_selected))
                         {
                             if (selected != n)
                             {
@@ -76,13 +76,13 @@ namespace Cherry
                             }
                         }
 
-                        ImGui::SameLine();
+                        CherryGUI::SameLine();
                         m_List[n]->Render();
 
                         if (is_selected)
-                            ImGui::SetItemDefaultFocus();
+                            CherryGUI::SetItemDefaultFocus();
                     }
-                    ImGui::EndCombo();
+                    CherryGUI::EndCombo();
                 }
             }
 

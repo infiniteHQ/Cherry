@@ -43,31 +43,51 @@ namespace Cherry
 
     std::string Component::GetProperty(const std::string &key)
     {
-        // Search in one time context first
+        if (!m_IsPropsChanged)
+        {
+            auto cacheIt = m_CachedProperties.find(key);
+            if (cacheIt != m_CachedProperties.end())
+            {
+                return cacheIt->second;
+            }
+        }
+
+        std::string value;
+
         auto onetimeMap = Application::Get().GetOneTimeProperties();
         auto onetimeIt = onetimeMap.find(key);
         if (onetimeIt != onetimeMap.end())
         {
-            // "Consume" and remove the entry from the onetime properties
-            Application::Get().RemoveOneTimeProperty(key); // Assuming there's a method to remove a property.
-            return onetimeIt->second;
+            value = onetimeIt->second;
+            Application::Get().RemoveOneTimeProperty(key);
         }
-
-        // Search in context
-        auto ctxIt = m_ContextProperties.find(key);
-        if (ctxIt != m_ContextProperties.end())
+        else
         {
-            return ctxIt->second;
+            auto ctxIt = m_ContextProperties.find(key);
+            if (ctxIt != m_ContextProperties.end())
+            {
+                value = ctxIt->second;
+            }
+            else
+            {
+                auto it = m_Properties.find(key);
+                if (it != m_Properties.end())
+                {
+                    value = it->second;
+                }
+                else
+                {
+                    value = "undefined";
+                }
+            }
         }
 
-        // Search in component
-        auto it = m_Properties.find(key);
-        if (it != m_Properties.end())
+        if (!m_IsPropsChanged)
         {
-            return it->second;
+            m_CachedProperties[key] = value;
         }
 
-        return "undefined";
+        return value;
     }
 
     void Component::ClearProperty(const std::string &key)
@@ -108,4 +128,10 @@ namespace Cherry
     {
         return m_IsPropsChanged;
     }
+
+    void Component::Refreshed()
+    {
+        m_IsPropsChanged = false;
+    }
+
 }

@@ -41,11 +41,11 @@ namespace Cherry
                 {
                     if (std::stoi(parent->GetData("renderedColumn")) == 0)
                     {
-                        ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, IM_COL32(100, 100, 100, 40));
-                        ImGui::AlignTextToFramePadding();
-                        ImGui::Indent(10.0f);
-                        ImGui::TextWrapped(GetProperty("label").c_str());
-                        ImGui::Unindent(10.0f);
+                        CherryGUI::TableSetBgColor(ImGuiTableBgTarget_CellBg, IM_COL32(100, 100, 100, 40));
+                        CherryGUI::AlignTextToFramePadding();
+                        CherryGUI::Indent(10.0f);
+                        CherryGUI::TextWrapped(GetProperty("label").c_str());
+                        CherryGUI::Unindent(10.0f);
                     }
                     else if (std::stoi(parent->GetData("renderedColumn")) == 1)
                     {
@@ -57,7 +57,7 @@ namespace Cherry
                             Label += Label + identifier;
                         }
 
-                        ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, IM_COL32(100, 100, 100, 40));
+                        CherryGUI::TableSetBgColor(ImGuiTableBgTarget_CellBg, IM_COL32(100, 100, 100, 40));
 
                         if (!m_List->empty())
                         {
@@ -78,12 +78,12 @@ namespace Cherry
                             }
 
                             const char *combo_preview_value = (*m_List)[selected].c_str();
-                            if (ImGui::BeginCombo(Label.c_str(), combo_preview_value, flags))
+                            if (CherryGUI::BeginCombo(Label.c_str(), combo_preview_value, flags))
                             {
                                 for (int n = 0; n < m_List->size(); n++)
                                 {
                                     const bool is_selected = (selected == n);
-                                    if (ImGui::Selectable((*m_List)[n].c_str(), is_selected))
+                                    if (CherryGUI::Selectable((*m_List)[n].c_str(), is_selected))
                                     {
                                         if (selected != n)
                                         {
@@ -94,14 +94,14 @@ namespace Cherry
                                     }
 
                                     if (is_selected)
-                                        ImGui::SetItemDefaultFocus();
+                                        CherryGUI::SetItemDefaultFocus();
                                 }
-                                ImGui::EndCombo();
+                                CherryGUI::EndCombo();
                             }
                         }
                         else
                         {
-                            ImGui::Text("INVALID/EMPTY VALUE");
+                            CherryGUI::Text("INVALID/EMPTY VALUE");
                         }
                     }
                 }

@@ -65,7 +65,7 @@ namespace Cherry
                 }
 
                 ImTextureID texture = Application::Get().GetCurrentRenderedWindow()->get_texture(GetProperty("image_path"));
-                if (ImGui::ImageButtonWithText(texture, Label.c_str(), size))
+                if (CherryGUI::ImageButtonWithText(texture, Label.c_str(), size))
                 {
                     SetData("isClicked", "true");
                     UpdateLastClickTime();

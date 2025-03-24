@@ -59,19 +59,19 @@ namespace Cherry
                     Label += Label + "####" + identifier;
                 }
 
-                if (ImGui::BeginCombo(Label.c_str(), [&]()
+                if (CherryGUI::BeginCombo(Label.c_str(), [&]()
                                       {
                     
                 ImTextureID texture = Application::Get().GetCurrentRenderedWindow()->get_texture(m_List[selected].second);
-                ImGui::Image(texture, ImVec2(15, 15));
-                ImGui::SameLine();
-                ImGui::Text(m_List[selected].first.c_str()); }))
+                CherryGUI::Image(texture, ImVec2(15, 15));
+                CherryGUI::SameLine();
+                CherryGUI::Text(m_List[selected].first.c_str()); }))
                 {
                     for (int n = 0; n < m_List.size(); n++)
                     {
                         const bool is_selected = (selected == n);
 
-                        if (ImGui::Selectable(std::string("####" + identifier + std::to_string(n)).c_str(), is_selected))
+                        if (CherryGUI::Selectable(std::string("####" + identifier + std::to_string(n)).c_str(), is_selected))
                         {
                             if (selected != n)
                             {
@@ -81,17 +81,17 @@ namespace Cherry
                             }
                         }
 
-                        ImGui::SameLine();
+                        CherryGUI::SameLine();
 
                         ImTextureID texture = Application::Get().GetCurrentRenderedWindow()->get_texture(m_List[n].second);
-                        ImGui::Image(texture, ImVec2(15, 15));
-                        ImGui::SameLine();
-                        ImGui::Text(m_List[n].first.c_str());
+                        CherryGUI::Image(texture, ImVec2(15, 15));
+                        CherryGUI::SameLine();
+                        CherryGUI::Text(m_List[n].first.c_str());
 
                         if (is_selected)
-                            ImGui::SetItemDefaultFocus();
+                            CherryGUI::SetItemDefaultFocus();
                     }
-                    ImGui::EndCombo();
+                    CherryGUI::EndCombo();
                 }
             }
 

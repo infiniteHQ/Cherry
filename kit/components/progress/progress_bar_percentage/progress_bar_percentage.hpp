@@ -27,7 +27,7 @@ namespace Cherry
             void Render() override
             {
                 float fraction = (*m_Percentage) / 100.0f;
-                ImGui::ProgressBar(fraction, ImVec2(-1.0f, 0.0f));
+                CherryGUI::ProgressBar(fraction, ImVec2(-1.0f, 0.0f));
             }
 
         private:

@@ -34,12 +34,12 @@ namespace Cherry
             void Render() override
             {
                 std::string text = GetProperty("label").c_str();
-                float windowWidth = ImGui::GetWindowSize().x;
-                float textWidth = ImGui::CalcTextSize(text.c_str()).x;
+                float windowWidth = CherryGUI::GetWindowSize().x;
+                float textWidth = CherryGUI::CalcTextSize(text.c_str()).x;
 
-                ImGui::SetCursorPosX(windowWidth - textWidth);
+                CherryGUI::SetCursorPosX(windowWidth - textWidth);
 
-                ImGui::TextWrapped(text.c_str());
+                CherryGUI::TextWrapped(text.c_str());
             }
         };
     }

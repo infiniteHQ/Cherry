@@ -39,15 +39,15 @@ namespace Cherry
             void Render() override
             {
                 ImTextureID texture = Application::Get().GetCurrentRenderedWindow()->get_texture(GetProperty("image_path"));
-                ImGui::Image(texture, ImVec2(15, 15));
+                CherryGUI::Image(texture, ImVec2(15, 15));
 
-                if (ImGui::IsItemHovered())
+                if (CherryGUI::IsItemHovered())
                 {
-                    ImGui::BeginTooltip();
-                    ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
-                    ImGui::TextUnformatted(GetProperty("description").c_str());
-                    ImGui::PopTextWrapPos();
-                    ImGui::EndTooltip();
+                    CherryGUI::BeginTooltip();
+                    CherryGUI::PushTextWrapPos(CherryGUI::GetFontSize() * 35.0f);
+                    CherryGUI::TextUnformatted(GetProperty("description").c_str());
+                    CherryGUI::PopTextWrapPos();
+                    CherryGUI::EndTooltip();
                 }
             }
         };

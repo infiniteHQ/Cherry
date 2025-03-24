@@ -37,11 +37,11 @@ namespace Cherry
                 {
                     if (std::stoi(parent->GetData("renderedColumn")) == 0)
                     {
-                        ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, IM_COL32(100, 100, 100, 40));
-                        ImGui::AlignTextToFramePadding();
-                        ImGui::Indent(10.0f);
-                        ImGui::TextWrapped(GetProperty("label").c_str());
-                        ImGui::Unindent(10.0f);
+                        CherryGUI::TableSetBgColor(ImGuiTableBgTarget_CellBg, IM_COL32(100, 100, 100, 40));
+                        CherryGUI::AlignTextToFramePadding();
+                        CherryGUI::Indent(10.0f);
+                        CherryGUI::TextWrapped(GetProperty("label").c_str());
+                        CherryGUI::Unindent(10.0f);
                     }
                     else if (std::stoi(parent->GetData("renderedColumn")) == 1)
                     {
@@ -53,7 +53,7 @@ namespace Cherry
                             Label += Label + identifier;
                         }
 
-                        ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, IM_COL32(100, 100, 100, 40));
+                        CherryGUI::TableSetBgColor(ImGuiTableBgTarget_CellBg, IM_COL32(100, 100, 100, 40));
 
                         if (m_XValue)
                         {
@@ -61,19 +61,19 @@ namespace Cherry
                             float colorBoxWidth = 20.0f;
                             float spacing = 5.0f;
 
-                            ImGui::PushItemWidth(inputWidth);
+                            CherryGUI::PushItemWidth(inputWidth);
 
-                            ImVec2 pos = ImGui::GetCursorScreenPos();
-                            ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 1.0f);
-                            ImGui::Image(Cherry::GetTexture(Cherry::GetPath("resources/base/x.png")), ImVec2(23, 23));
-                            ImGui::SetCursorScreenPos(ImVec2(pos.x + colorBoxWidth + spacing, pos.y));
-                            ImGui::InputFloat((Label + "###X" + identifier).c_str(), m_XValue);
+                            ImVec2 pos = CherryGUI::GetCursorScreenPos();
+                            CherryGUI::SetCursorPosY(CherryGUI::GetCursorPosY() + 1.0f);
+                            CherryGUI::Image(Cherry::GetTexture(Cherry::GetPath("resources/base/x.png")), ImVec2(23, 23));
+                            CherryGUI::SetCursorScreenPos(ImVec2(pos.x + colorBoxWidth + spacing, pos.y));
+                            CherryGUI::InputFloat((Label + "###X" + identifier).c_str(), m_XValue);
 
-                            ImGui::PopItemWidth();
+                            CherryGUI::PopItemWidth();
                         }
                         else
                         {
-                            ImGui::Text("INVALID VALUE");
+                            CherryGUI::Text("INVALID VALUE");
                         }
                     }
                 }

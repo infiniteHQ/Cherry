@@ -49,7 +49,7 @@ namespace Cherry
 
             void Render() override
             {
-                ImGui::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, ImVec2(0.0f, 0.5f));
+                CherryGUI::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, ImVec2(0.0f, 0.5f));
 
                 CherryGUI::PushStyleColor(ImGuiCol_Border, HexToRGBA(GetProperty("color_border")));
                 CherryGUI::PushStyleColor(ImGuiCol_Button, HexToRGBA(GetProperty("color_border")));
@@ -64,26 +64,26 @@ namespace Cherry
                     Label += "####" + identifier;
                 }
 
-                ImGuiStyle &style = ImGui::GetStyle();
+                ImGuiStyle &style = CherryGUI::GetStyle();
 
-                float texture_size = ImGui::GetFontSize();
+                float texture_size = CherryGUI::GetFontSize();
                 float padding = style.ItemInnerSpacing.x;
 
-                ImGui::BeginGroup();
+                CherryGUI::BeginGroup();
 
                 bool isOpened = GetData("isOpened") == "true";
 
-                if (ImGui::ImageSizeButtonWithText(Cherry::GetTexture(GetProperty("image_path")), 700.0f, Label.c_str(), ImVec2(-FLT_MIN, 0.0f), ImVec2(0, 0), ImVec2(1, 1), -1, ImVec4(0, 0, 0, 0), ImVec4(1, 1, 1, 1)))
+                if (CherryGUI::ImageSizeButtonWithText(Cherry::GetTexture(GetProperty("image_path")), 700.0f, Label.c_str(), ImVec2(-FLT_MIN, 0.0f), ImVec2(0, 0), ImVec2(1, 1), -1, ImVec4(0, 0, 0, 0), ImVec4(1, 1, 1, 1)))
                 {
                     SetData("isOpened", isOpened ? "false" : "true");
                 }
 
-                ImVec2 arrow_pos = ImVec2(ImGui::GetItemRectMax().x - style.FramePadding.x - ImGui::GetFontSize(), ImGui::GetItemRectMin().y + style.FramePadding.y + 3.0f);
-                ImGui::RenderArrow(ImGui::GetWindowDrawList(), arrow_pos, ImGui::GetColorU32(ImGuiCol_Text), GetData("isOpened") == "true" ? ImGuiDir_Down : ImGuiDir_Right);
-                ImGui::EndGroup();
+                ImVec2 arrow_pos = ImVec2(CherryGUI::GetItemRectMax().x - style.FramePadding.x - CherryGUI::GetFontSize(), CherryGUI::GetItemRectMin().y + style.FramePadding.y + 3.0f);
+                CherryGUI::RenderArrow(CherryGUI::GetWindowDrawList(), arrow_pos, CherryGUI::GetColorU32(ImGuiCol_Text), GetData("isOpened") == "true" ? ImGuiDir_Down : ImGuiDir_Right);
+                CherryGUI::EndGroup();
 
-                ImGui::PopStyleColor(4);
-                ImGui::PopStyleVar();
+                CherryGUI::PopStyleColor(4);
+                CherryGUI::PopStyleVar();
 
                 if (GetData("isOpened") == "true")
                 {

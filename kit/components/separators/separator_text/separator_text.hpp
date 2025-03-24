@@ -39,22 +39,22 @@ namespace Cherry
 
                 ImVec4 grayColor = ImVec4(0.4f, 0.4f, 0.4f, 1.0f);
                 ImVec4 graySeparatorColor = ImVec4(0.4f, 0.4f, 0.4f, 0.5f);
-                ImGui::GetFont()->Scale *= text_scale;
-                ImGui::PushFont(ImGui::GetFont());
+                CherryGUI::GetFont()->Scale *= text_scale;
+                CherryGUI::PushFont(CherryGUI::GetFont());
 
-                ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5.0f);
+                CherryGUI::SetCursorPosY(CherryGUI::GetCursorPosY() + 5.0f);
 
-                ImGui::PushStyleColor(ImGuiCol_Text, grayColor);
-                ImGui::Text(label.c_str());
-                ImGui::PopStyleColor();
+                CherryGUI::PushStyleColor(ImGuiCol_Text, grayColor);
+                CherryGUI::Text(label.c_str());
+                CherryGUI::PopStyleColor();
 
-                ImGui::PushStyleColor(ImGuiCol_Separator, graySeparatorColor);
-                ImGui::Separator();
-                ImGui::PopStyleColor();
+                CherryGUI::PushStyleColor(ImGuiCol_Separator, graySeparatorColor);
+                CherryGUI::Separator();
+                CherryGUI::PopStyleColor();
 
-                ImGui::GetFont()->Scale = ctx_text_scale;
-                ImGui::PopFont();
-                ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2.0f);
+                CherryGUI::GetFont()->Scale = ctx_text_scale;
+                CherryGUI::PopFont();
+                CherryGUI::SetCursorPosY(CherryGUI::GetCursorPosY() + 2.0f);
             }
         };
     }

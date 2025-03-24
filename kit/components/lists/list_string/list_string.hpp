@@ -40,12 +40,12 @@ namespace Cherry
 
                 int current_selected = std::stoi(GetProperty("current_selected"));
 
-                if (ImGui::BeginListBox(Label.c_str()))
+                if (CherryGUI::BeginListBox(Label.c_str()))
                 {
                     for (int n = 0; n < m_Values.size(); n++)
                     {
                         const bool is_selected = (current_selected == n);
-                        if (ImGui::Selectable(m_Values[n].c_str(), is_selected))
+                        if (CherryGUI::Selectable(m_Values[n].c_str(), is_selected))
                         {
                             current_selected = n;
                             SetProperty("current_selected", std::to_string(current_selected));
@@ -53,9 +53,9 @@ namespace Cherry
 
                         // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
                         if (is_selected)
-                            ImGui::SetItemDefaultFocus();
+                            CherryGUI::SetItemDefaultFocus();
                     }
-                    ImGui::EndListBox();
+                    CherryGUI::EndListBox();
                 }
             }
 

@@ -30,12 +30,12 @@ namespace Cherry
 
             void Render() override
             {
-                ImGui::BeginDisabled();
-                ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(1.0f, 1.0f, 1.0f, 0.0f));
-                ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(1.0f, 1.0f, 1.0f, 0.0f));
-                ImGui::Button("", ImVec2(0, std::stof(GetProperty("spacing"))));
-                ImGui::PopStyleColor(2);
-                ImGui::EndDisabled();
+                CherryGUI::BeginDisabled();
+                CherryGUI::PushStyleColor(ImGuiCol_Border, ImVec4(1.0f, 1.0f, 1.0f, 0.0f));
+                CherryGUI::PushStyleColor(ImGuiCol_Button, ImVec4(1.0f, 1.0f, 1.0f, 0.0f));
+                CherryGUI::Button("", ImVec2(0, std::stof(GetProperty("spacing"))));
+                CherryGUI::PopStyleColor(2);
+                CherryGUI::EndDisabled();
             }
         };
     }

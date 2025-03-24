@@ -33,28 +33,28 @@ namespace Cherry
 
             void Render() override
             {
-                ImVec2 text_size = ImGui::CalcTextSize(GetProperty("label").c_str());
+                ImVec2 text_size = CherryGUI::CalcTextSize(GetProperty("label").c_str());
 
-                ImVec2 child_size = ImGui::GetWindowSize();
+                ImVec2 child_size = CherryGUI::GetWindowSize();
                 float posX = (child_size.x - text_size.x) * 0.5f;
 
                 posX = posX > 0 ? posX : 0;
 
-                ImGui::SetCursorPosX(posX);
+                CherryGUI::SetCursorPosX(posX);
 
                 CherryGUI::TextColored(HexToRGBA(GetProperty("color_text")), GetProperty("label").c_str());
 
                 auto parent = Cherry::GetParent();
                 if (parent)
                 {
-                    ImVec2 text_size = ImGui::CalcTextSize(GetProperty("label").c_str());
+                    ImVec2 text_size = CherryGUI::CalcTextSize(GetProperty("label").c_str());
 
-                    ImVec2 child_size = ImGui::GetWindowSize();
+                    ImVec2 child_size = CherryGUI::GetWindowSize();
                     float posX = (child_size.x - text_size.x) * 0.5f;
 
                     posX = posX > 0 ? posX : 0;
 
-                    ImGui::SetCursorPosX(posX);
+                    CherryGUI::SetCursorPosX(posX);
 
                     CherryGUI::TextColored(HexToRGBA(GetProperty("color_text")), GetProperty("label").c_str());
                 }

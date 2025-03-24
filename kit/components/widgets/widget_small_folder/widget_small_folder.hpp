@@ -31,22 +31,22 @@ namespace Cherry
 
             void Render() override
             {
-                ImVec2 pos = ImGui::GetCursorScreenPos();
+                ImVec2 pos = CherryGUI::GetCursorScreenPos();
 
                 ImVec2 size = ImVec2(std::stof(GetProperty("size_x")), std::stof(GetProperty("size_y")));
                 ImU32 color = HexToImU32(GetProperty("color_folder"));
 
-                ImVec4 colVec = ImGui::ColorConvertU32ToFloat4(color);
-                ImU32 flapColor = ImGui::ColorConvertFloat4ToU32(ImVec4(colVec.x * 0.8f, colVec.y * 0.8f, colVec.z * 0.8f, colVec.w));
-                ImU32 shadowColor = ImGui::ColorConvertFloat4ToU32(ImVec4(colVec.x * 0.7f, colVec.y * 0.7f, colVec.z * 0.7f, colVec.w * 0.2f));
+                ImVec4 colVec = CherryGUI::ColorConvertU32ToFloat4(color);
+                ImU32 flapColor = CherryGUI::ColorConvertFloat4ToU32(ImVec4(colVec.x * 0.8f, colVec.y * 0.8f, colVec.z * 0.8f, colVec.w));
+                ImU32 shadowColor = CherryGUI::ColorConvertFloat4ToU32(ImVec4(colVec.x * 0.7f, colVec.y * 0.7f, colVec.z * 0.7f, colVec.w * 0.2f));
 
-                ImGui::InvisibleButton(GetIdentifier().string().c_str(), size);
-                if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
+                CherryGUI::InvisibleButton(GetIdentifier().string().c_str(), size);
+                if (CherryGUI::IsItemHovered() && CherryGUI::IsMouseDoubleClicked(ImGuiMouseButton_Left))
                 {
                     // ChangeDirectory(path);
                 }
 
-                ImDrawList *drawList = ImGui::GetWindowDrawList();
+                ImDrawList *drawList = CherryGUI::GetWindowDrawList();
 
                 float flapHeight = size.y * 0.20f;
                 float flapWidth = size.x * 0.4f;
@@ -66,9 +66,9 @@ namespace Cherry
 
                 drawList->AddRectFilled(bodyTopLeft, bodyBottomRight, color, borderRadius);
 
-                if (ImGui::IsItemHovered())
+                if (CherryGUI::IsItemHovered())
                 {
-                    ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+                    CherryGUI::SetMouseCursor(ImGuiMouseCursor_Hand);
                 }
             }
         };

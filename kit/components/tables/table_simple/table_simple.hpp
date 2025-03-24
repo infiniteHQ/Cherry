@@ -47,7 +47,7 @@ namespace Cherry
             {
                 ImGuiTableFlags flags = ImGuiTableFlags_SizingStretchSame | m_OtherFlags;
 
-                // ImGuiStyle style = ImGui::GetStyle();
+                // ImGuiStyle style = CherryGUI::GetStyle();
                 // m_HeaderCellPaddingX = style.CellPadding.x;
                 // m_HeaderCellPaddingY = style.CellPadding.y;
                 // m_RowsCellPaddingX = style.CellPadding.x;
@@ -61,44 +61,44 @@ namespace Cherry
                     Label += "####" + identifier;
                 }
 
-                if (ImGui::BeginTable(Label.c_str(), std::stoi(GetProperty("columns_number")), flags))
+                if (CherryGUI::BeginTable(Label.c_str(), std::stoi(GetProperty("columns_number")), flags))
                 {
-                    ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, ImVec2(std::stof(GetProperty("cell_padding_x_header")), std::stof(GetProperty("cell_padding_y_header"))));
+                    CherryGUI::PushStyleVar(ImGuiStyleVar_CellPadding, ImVec2(std::stof(GetProperty("cell_padding_x_header")), std::stof(GetProperty("cell_padding_y_header"))));
 
                     for (int i = 0; i < std::stoi(GetProperty("columns_number")); ++i)
                     {
                         if (i == std::stoi(GetProperty("columns_number")) - 1)
                         {
                             std::string column_name_prop = "columns_name_" + std::to_string(i);
-                            ImGui::TableSetupColumn(GetProperty(column_name_prop).c_str(), ImGuiTableColumnFlags_NoResize);
+                            CherryGUI::TableSetupColumn(GetProperty(column_name_prop).c_str(), ImGuiTableColumnFlags_NoResize);
                         }
                         else
                         {
                             std::string column_name_prop = "columns_name_" + std::to_string(i);
-                            ImGui::TableSetupColumn(GetProperty(column_name_prop).c_str());
+                            CherryGUI::TableSetupColumn(GetProperty(column_name_prop).c_str());
                         }
                     }
 
                     if (GetProperty("header_visible") == "true")
                     {
-                        ImGui::TableHeadersRow();
+                        CherryGUI::TableHeadersRow();
                     }
 
-                    ImGui::PopStyleVar();
+                    CherryGUI::PopStyleVar();
 
-                    ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, ImVec2(std::stof(GetProperty("cell_padding_x_row")), std::stof(GetProperty("cell_padding_y_row"))));
+                    CherryGUI::PushStyleVar(ImGuiStyleVar_CellPadding, ImVec2(std::stof(GetProperty("cell_padding_x_row")), std::stof(GetProperty("cell_padding_y_row"))));
                     for (auto row : m_Rows)
                     {
-                        ImGui::TableNextRow();
+                        CherryGUI::TableNextRow();
                         for (int column = 0; column < std::stoi(GetProperty("columns_number")); column++)
                         {
-                            ImGui::TableSetColumnIndex(column);
+                            CherryGUI::TableSetColumnIndex(column);
                             SetData("renderedColumn", std::to_string(column));
                             row->Render();
                         }
                     }
-                    ImGui::PopStyleVar();
-                    ImGui::EndTable();
+                    CherryGUI::PopStyleVar();
+                    CherryGUI::EndTable();
                 }
             }
 

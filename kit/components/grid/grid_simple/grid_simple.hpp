@@ -36,7 +36,7 @@ namespace Cherry
                 float block_size = std::stof(GetProperty("blockSize"));
                 float min_block_size = std::stof(GetProperty("minBlockSize"));
 
-                ImVec2 avail = ImGui::GetContentRegionAvail();
+                ImVec2 avail = CherryGUI::GetContentRegionAvail();
                 int columns = std::max(1, (int)(avail.x / block_size));
                 float actual_block_size = std::max(min_block_size, avail.x / columns);
 
@@ -49,22 +49,22 @@ namespace Cherry
                         if (element)
                         {
                             if (index > 0 && index % columns == 0)
-                                ImGui::NewLine();
+                                CherryGUI::NewLine();
 
-                            ImGui::BeginGroup();
+                            CherryGUI::BeginGroup();
 
                             std::string id = GetIdentifier().string() + std::to_string(index);
-                            ImGui::PushID(id.c_str());
-                            ImGui::SetNextItemWidth(actual_block_size);
+                            CherryGUI::PushID(id.c_str());
+                            CherryGUI::SetNextItemWidth(actual_block_size);
 
                             element();
 
-                            ImGui::PopID();
-                            ImGui::EndGroup();
+                            CherryGUI::PopID();
+                            CherryGUI::EndGroup();
 
                             if (index < m_Elements.size() - 1)
                             {
-                               ImGui::SameLine();
+                               CherryGUI::SameLine();
                             }
                             index++;
                         }
@@ -77,21 +77,21 @@ namespace Cherry
                         if (component)
                         {
                             if (index > 0 && index % columns == 0)
-                                ImGui::NewLine();
+                                CherryGUI::NewLine();
 
-                            ImGui::BeginGroup();
+                            CherryGUI::BeginGroup();
                             std::string id = GetIdentifier().string() + std::to_string(index);
-                            ImGui::PushID(id.c_str());
-                            ImGui::SetNextItemWidth(actual_block_size);
+                            CherryGUI::PushID(id.c_str());
+                            CherryGUI::SetNextItemWidth(actual_block_size);
 
                             component->Render();
 
-                            ImGui::PopID();
-                            ImGui::EndGroup();
+                            CherryGUI::PopID();
+                            CherryGUI::EndGroup();
                             
                             if (index < m_Components.size() - 1)
                             {
-                                ImGui::SameLine();
+                                CherryGUI::SameLine();
                             }
                             index++;
                         }

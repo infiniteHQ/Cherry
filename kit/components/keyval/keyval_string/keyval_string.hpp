@@ -37,11 +37,11 @@ namespace Cherry
                 {
                     if (std::stoi(parent->GetData("renderedColumn")) == 0)
                     {
-                        ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, IM_COL32(100, 100, 100, 40));
-                        ImGui::AlignTextToFramePadding();
-                        ImGui::Indent(10.0f);
-                        ImGui::TextWrapped(GetProperty("label").c_str());
-                        ImGui::Unindent(10.0f);
+                        CherryGUI::TableSetBgColor(ImGuiTableBgTarget_CellBg, IM_COL32(100, 100, 100, 40));
+                        CherryGUI::AlignTextToFramePadding();
+                        CherryGUI::Indent(10.0f);
+                        CherryGUI::TextWrapped(GetProperty("label").c_str());
+                        CherryGUI::Unindent(10.0f);
                     }
                     else if (std::stoi(parent->GetData("renderedColumn")) == 1)
                     {
@@ -53,21 +53,21 @@ namespace Cherry
                             Label += Label + identifier;
                         }
 
-                        ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, IM_COL32(100, 100, 100, 40));
+                        CherryGUI::TableSetBgColor(ImGuiTableBgTarget_CellBg, IM_COL32(100, 100, 100, 40));
 
                         if (m_Value)
                         {
-                            ImGui::SetNextItemWidth(-FLT_MIN);
+                            CherryGUI::SetNextItemWidth(-FLT_MIN);
 
                             char buffer[256];
                             std::strncpy(buffer, m_Value->c_str(), sizeof(buffer));
 
-                            ImGui::InputText(Label.c_str(), buffer, sizeof(buffer));
+                            CherryGUI::InputText(Label.c_str(), buffer, sizeof(buffer));
                             *m_Value = std::string(buffer);
                         }
                         else
                         {
-                            ImGui::Text("INVALID VALUE");
+                            CherryGUI::Text("INVALID VALUE");
                         }
                     }
                 }

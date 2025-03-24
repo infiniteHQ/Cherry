@@ -17,19 +17,18 @@ namespace Cherry
         class BlockVerticalCustom : public Component
         {
         public:
-            BlockVerticalCustom(const Cherry::Identifier &id, const std::vector<std::function<void()>> &renderCallbacks, const float &width = 260.0f, const float &height = 110.0f)
-                : Component(id), m_RenderCallbacks(renderCallbacks)
+            BlockVerticalCustom(const Cherry::Identifier &id, const std::vector<std::function<void()>> &renderCallbacks, const float &width = 260.0f, const float &height = 110.0f, const std::function<void()> &onClickedCallback = []() {}) : Component(id), m_RenderCallbacks(renderCallbacks), m_OnClickedCallback(onClickedCallback)
             {
                 // Identifier
                 SetIdentifier(id);
 
                 // Colors
-                SetProperty("block_color", "#88FF88");
-                SetProperty("block_color_hovered", "#FF8888");
-                SetProperty("block_color_pressed", "#8888FF");
-                SetProperty("block_border_color", "#22FF22");
-                SetProperty("block_border_color_hovered", "#FF2222");
-                SetProperty("block_border_color_pressed", "#2222FF");
+                SetProperty("block_color", "#252525");
+                SetProperty("block_color_hovered", "#454545");
+                SetProperty("block_color_pressed", "#555555");
+                SetProperty("block_border_color", "#353535");
+                SetProperty("block_border_color_hovered", "#353535");
+                SetProperty("block_border_color_pressed", "#555555");
                 SetProperty("block_border_radius", std::to_string(0.0f));
                 SetProperty("block_border_size", std::to_string(1.0f));
                 SetProperty("size_x", std::to_string(width));
@@ -48,61 +47,80 @@ namespace Cherry
 
             void Render() override
             {
-                ImVec2 pos = ImGui::GetCursorScreenPos();
-                ImVec2 size = ImVec2(std::stof(GetProperty("size_x")), std::stof(GetProperty("size_y")));
+                static ImVec2 cachedSize;
+                static ImU32 background_color;
+                static ImU32 background_color_hovered;
+                static ImU32 background_color_pressed;
+                static ImU32 border_color;
+                static ImU32 border_color_hovered;
+                static ImU32 border_color_pressed;
+                static float border_size;
+                static float cached_radius;
+                static bool disabletime;
 
-                ImU32 backgroundColor = HexToImU32(GetProperty("block_color"));
-                ImU32 backgroundColorHovered = HexToImU32(GetProperty("block_color_hovered"));
-                ImU32 backgroundColorPressed = HexToImU32(GetProperty("block_color_pressed"));
+                if (NeedRefreshing())
+                {
+                    cachedSize = ImVec2(std::stof(GetProperty("size_x")), std::stof(GetProperty("size_y")));
 
-                ImU32 borderColor = HexToImU32(GetProperty("block_border_color"));
-                ImU32 borderColorHovered = HexToImU32(GetProperty("block_border_color_hovered"));
-                ImU32 borderColorPressed = HexToImU32(GetProperty("block_border_color_pressed"));
+                    background_color = HexToImU32(GetProperty("block_color"));
+                    background_color_hovered = HexToImU32(GetProperty("block_color_hovered"));
+                    background_color_pressed = HexToImU32(GetProperty("block_color_pressed"));
 
-                float borderSize = std::stof(GetProperty("block_border_size"));
-                float radius = std::stof(GetProperty("block_border_radius"));
+                    border_color = HexToImU32(GetProperty("block_border_color"));
+                    border_color_hovered = HexToImU32(GetProperty("block_border_color_hovered"));
+                    border_color_pressed = HexToImU32(GetProperty("block_border_color_pressed"));
 
-                ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, radius);
-                ImGui::PushStyleColor(ImGuiCol_ChildBg, backgroundColor);
+                    border_size = std::stof(GetProperty("block_border_size"));
+                    cached_radius = std::stof(GetProperty("block_border_radius"));
+                    disabletime = GetProperty("disable_time") == "false";
+
+                    Refreshed();
+                }
+
+                ImVec2 pos = CherryGUI::GetCursorScreenPos();
+
+                CherryGUI::PushStyleVar(ImGuiStyleVar_ChildRounding, cached_radius);
+                CherryGUI::PushStyleColor(ImGuiCol_ChildBg, background_color);
 
                 int style_props_opt = 0;
 
-                if (GetData("isHovered") == "true")
+                bool isHovered = GetData("isHovered") == "true";
+                bool isClicked = GetData("isClicked") == "true";
+                bool isActivated = GetData("isActivated") == "true";
+                bool isPressed = GetData("isPressed") == "true";
+
+                if (isHovered)
                 {
-                    if (GetProperty("disable_time") == "false")
+                    if (disabletime)
                         SetData("lastHovered", GetCurrentTime());
-                    ImGui::PushStyleColor(ImGuiCol_ChildBg, backgroundColorHovered);
-                    borderColor = borderColorHovered;
+                    CherryGUI::PushStyleColor(ImGuiCol_ChildBg, background_color_hovered);
+                    border_color = border_color_hovered;
                     style_props_opt++;
                 }
 
-                if (GetData("isClicked") == "true")
+                if (isClicked)
                 {
-                    if (GetProperty("disable_time") == "false")
+                    if (disabletime)
                         SetData("lastClicked", GetCurrentTime());
-                    std::cout << GetData("lastClicked") << std::endl;
-
-                    ImGui::PushStyleColor(ImGuiCol_ChildBg, backgroundColorPressed);
-                    borderColor = borderColorPressed;
+                    CherryGUI::PushStyleColor(ImGuiCol_ChildBg, background_color_pressed);
+                    border_color = border_color_pressed;
                     style_props_opt++;
                 }
 
-                if (GetData("isActivated") == "true")
+                if (isActivated)
                 {
-                    if (GetProperty("disable_time") == "false")
+                    if (disabletime)
                         SetData("lastActivated", GetCurrentTime());
-                        
-                    ImGui::PushStyleColor(ImGuiCol_ChildBg, backgroundColorPressed);
-                    borderColor = borderColorPressed;
+                    CherryGUI::PushStyleColor(ImGuiCol_ChildBg, background_color_pressed);
+                    border_color = border_color_pressed;
                 }
 
-                if (GetProperty("isPressed") == "true")
+                if (isPressed)
                 {
-                    if (GetProperty("disable_time") == "false")
+                    if (disabletime)
                         SetData("lastPressed", GetCurrentTime());
-
-                    ImGui::PushStyleColor(ImGuiCol_ChildBg, backgroundColorPressed);
-                    borderColor = borderColorPressed;
+                    CherryGUI::PushStyleColor(ImGuiCol_ChildBg, background_color_pressed);
+                    border_color = border_color_pressed;
                     style_props_opt++;
                 }
 
@@ -111,54 +129,59 @@ namespace Cherry
                 SetData("isPressed", "false");
                 SetData("isActivated", "false");
 
-                if (ImGui::BeginChild("RenderCallbacks", size, false, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse))
+                if (CherryGUI::BeginChild("RenderCallbacks", cachedSize, false, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse))
                 {
-                    ImGui::InvisibleButton(GetIdentifier().string().c_str(), size);
+                    CherryGUI::InvisibleButton(GetIdentifier().string().c_str(), cachedSize);
 
-                    if (ImGui::IsWindowHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem) && ImGui::IsMouseClicked(ImGuiMouseButton_Left))
+                    if (CherryGUI::IsWindowHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem) && CherryGUI::IsMouseClicked(ImGuiMouseButton_Left))
                     {
                         SetData("isClicked", "true");
+                        if (m_OnClickedCallback)
+                        {
+                            m_OnClickedCallback();
+                        }
                     }
 
-                    if (ImGui::IsWindowHovered(ImGuiHoveredFlags_AllowWhenBlockedByPopup | ImGuiHoveredFlags_AllowWhenBlockedByActiveItem))
+                    if (CherryGUI::IsWindowHovered(ImGuiHoveredFlags_AllowWhenBlockedByPopup | ImGuiHoveredFlags_AllowWhenBlockedByActiveItem))
                     {
-                        ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+                        CherryGUI::SetMouseCursor(ImGuiMouseCursor_Hand);
                         SetData("isHovered", "true");
                     }
 
-                    if (ImGui::IsItemActivated())
+                    if (CherryGUI::IsItemActivated())
                     {
                         SetData("isActivated", "true");
                     }
 
-                    if (ImGui::IsItemActive())
+                    if (CherryGUI::IsItemActive())
                     {
                         SetData("isPressed", "true");
                     }
 
-                    ImGui::SetCursorScreenPos(pos);
-                    ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 0.0f);
-                    ImGui::PushStyleColor(ImGuiCol_ChildBg, IM_COL32(0, 0, 0, 0));
+                    CherryGUI::SetCursorScreenPos(pos);
+                    CherryGUI::PushStyleVar(ImGuiStyleVar_ChildRounding, 0.0f);
+                    CherryGUI::PushStyleColor(ImGuiCol_ChildBg, IM_COL32(0, 0, 0, 0));
 
                     for (auto &callback : m_RenderCallbacks)
                     {
                         callback();
                     }
 
-                    ImGui::PopStyleColor();
-                    ImGui::PopStyleVar();
+                    CherryGUI::PopStyleColor();
+                    CherryGUI::PopStyleVar();
                 }
-                ImGui::EndChild();
+                CherryGUI::EndChild();
 
-                ImGui::PopStyleVar();
-                ImGui::PopStyleColor();
-                ImGui::PopStyleColor(style_props_opt);
+                CherryGUI::PopStyleVar();
+                CherryGUI::PopStyleColor();
+                CherryGUI::PopStyleColor(style_props_opt);
 
-                ImDrawList *drawList = ImGui::GetWindowDrawList();
-                drawList->AddRect(pos, ImVec2(pos.x + size.x, pos.y + size.y), borderColor, radius, 0, borderSize);
+                ImDrawList *drawList = CherryGUI::GetWindowDrawList();
+                drawList->AddRect(pos, ImVec2(pos.x + cachedSize.x, pos.y + cachedSize.y), border_color, cached_radius, 0, border_size);
             }
 
         private:
+            std::function<void()> m_OnClickedCallback;
             std::vector<std::function<void()>> m_RenderCallbacks;
             std::string GetCurrentTime()
             {
@@ -192,7 +215,7 @@ namespace Cherry
             }
         }
 
-        inline std::shared_ptr<Component> BlockVerticalCustom(const float &width = 260.0f, const float &height = 110.0f, const std::vector<std::function<void()>> &renderCallbacks = {})
+        inline std::shared_ptr<Component> BlockVerticalCustom(const float &width = 260.0f, const float &height = 110.0f, const std::vector<std::function<void()>> &renderCallbacks = {}, const std::function<void()> &onClickedCallback = []() {})
         {
             auto anonymous_id = Application::GetAnonymousID();
             auto existing = Application::GetAnonymousComponent(anonymous_id);
@@ -203,7 +226,7 @@ namespace Cherry
             }
             else
             {
-                auto button = Application::CreateAnonymousComponent<Components::BlockVerticalCustom>(Components::BlockVerticalCustom(anonymous_id, renderCallbacks, width, height));
+                auto button = Application::CreateAnonymousComponent<Components::BlockVerticalCustom>(Components::BlockVerticalCustom(anonymous_id, renderCallbacks, width, height, onClickedCallback));
                 button->Render();
                 return button;
             }
@@ -252,20 +275,20 @@ namespace Cherry
             return existing_title;
         }
 
-        inline std::shared_ptr<Component> BlockVerticalCustom(const Cherry::Identifier &identifier, const float &width = 260.0f, const float &height = 110.0f, const std::vector<std::function<void()>> &renderCallbacks = {})
+        inline std::shared_ptr<Component> BlockVerticalCustom(const Cherry::Identifier &identifier, const float &width = 260.0f, const float &height = 110.0f, const std::vector<std::function<void()>> &renderCallbacks = {}, const std::function<void()> &onClickedCallback = []() {})
         {
             switch (identifier.property())
             {
             case IdentifierProperty::Inline:
             {
-                auto new_title = Application::CreateAnonymousComponent<Components::BlockVerticalCustom>(Components::BlockVerticalCustom(identifier, renderCallbacks, width, height));
+                auto new_title = Application::CreateAnonymousComponent<Components::BlockVerticalCustom>(Components::BlockVerticalCustom(identifier, renderCallbacks, width, height, onClickedCallback));
                 new_title->Render();
                 return new_title;
                 break;
             }
             case IdentifierProperty::CreateOnly:
             {
-                auto new_title = Application::CreateAnonymousComponent<Components::BlockVerticalCustom>(Components::BlockVerticalCustom(identifier, renderCallbacks, width, height));
+                auto new_title = Application::CreateAnonymousComponent<Components::BlockVerticalCustom>(Components::BlockVerticalCustom(identifier, renderCallbacks, width, height, onClickedCallback));
                 return new_title;
                 break;
             }

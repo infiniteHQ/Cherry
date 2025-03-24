@@ -40,29 +40,29 @@ namespace Cherry
 
                 int current_selected = std::stoi(GetProperty("current_selected"));
 
-                if (ImGui::BeginListBox(Label.c_str()))
+                if (CherryGUI::BeginListBox(Label.c_str()))
                 {
                     for (int n = 0; n < m_Values.size(); n++)
                     {
                         const bool is_selected = (current_selected == n);
-                        if (ImGui::Selectable(std::string("####" + identifier + std::to_string(n)).c_str(), is_selected))
+                        if (CherryGUI::Selectable(std::string("####" + identifier + std::to_string(n)).c_str(), is_selected))
                         {
                             current_selected = n;
                             SetProperty("current_selected", std::to_string(current_selected));
                         }
 
-                        ImGui::SameLine();
+                        CherryGUI::SameLine();
 
                         ImTextureID texture = Application::Get().GetCurrentRenderedWindow()->get_texture(m_Values[n].second);
-                        ImGui::Image(texture, ImVec2(15, 15));
-                        ImGui::SameLine();
-                        ImGui::Text(m_Values[n].first.c_str());
+                        CherryGUI::Image(texture, ImVec2(15, 15));
+                        CherryGUI::SameLine();
+                        CherryGUI::Text(m_Values[n].first.c_str());
 
                         // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
                         if (is_selected)
-                            ImGui::SetItemDefaultFocus();
+                            CherryGUI::SetItemDefaultFocus();
                     }
-                    ImGui::EndListBox();
+                    CherryGUI::EndListBox();
                 }
             }
 

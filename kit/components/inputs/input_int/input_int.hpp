@@ -43,11 +43,11 @@ namespace Cherry
 
                 if (m_Value)
                 {
-                    ImGui::InputInt(Label.c_str(), m_Value, std::stoi(GetProperty("step")), std::stoi(GetProperty("step_fast")));
+                    CherryGUI::InputInt(Label.c_str(), m_Value, std::stoi(GetProperty("step")), std::stoi(GetProperty("step_fast")));
                 }
                 else
                 {
-                    ImGui::Text("INVALID VALUE");
+                    CherryGUI::Text("INVALID VALUE");
                 }
             }
 

@@ -45,7 +45,7 @@ namespace Cherry
 
             void Render() override
             {
-                ImGui::Image(Cherry::GetTexture(Cherry::GetHttpPath(GetProperty("image_http_path"))), ImVec2(std::stof(GetProperty("size_x")), std::stof(GetProperty("size_y"))));
+                CherryGUI::Image(Cherry::GetTexture(Cherry::GetHttpPath(GetProperty("image_http_path"))), ImVec2(std::stof(GetProperty("size_x")), std::stof(GetProperty("size_y"))));
             }
         };
 #else  // CHERRY_ENABLE_NET
@@ -79,7 +79,7 @@ namespace Cherry
 
             void Render() override
             {
-                ImGui::TextColored(Cherry::HexToRGBA("#FF3333FF"),"ERROR: Cannot display http(s) image without define CHERRY_ENABLE_NET");
+                CherryGUI::TextColored(Cherry::HexToRGBA("#FF3333FF"),"ERROR: Cannot display http(s) image without define CHERRY_ENABLE_NET");
             }
         };
 #endif // CHERRY_ENABLE_NET

@@ -38,14 +38,14 @@ namespace Cherry
 
             void Render() override
             {
-                ImGui::TextDisabled(GetProperty("label").c_str());
-                if (ImGui::IsItemHovered())
+                CherryGUI::TextDisabled(GetProperty("label").c_str());
+                if (CherryGUI::IsItemHovered())
                 {
-                    ImGui::BeginTooltip();
-                    ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
-                    ImGui::TextUnformatted(GetProperty("description").c_str());
-                    ImGui::PopTextWrapPos();
-                    ImGui::EndTooltip();
+                    CherryGUI::BeginTooltip();
+                    CherryGUI::PushTextWrapPos(CherryGUI::GetFontSize() * 35.0f);
+                    CherryGUI::TextUnformatted(GetProperty("description").c_str());
+                    CherryGUI::PopTextWrapPos();
+                    CherryGUI::EndTooltip();
                 }
             }
         };

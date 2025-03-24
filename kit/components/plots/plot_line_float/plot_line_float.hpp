@@ -66,7 +66,7 @@ namespace Cherry
                 if (!m_FloatTable.empty() && size > 0)
                 {
                     const float *dataStart = m_FloatTable.data() + (totalSize - size);
-                    ImGui::PlotLines(Label.c_str(), dataStart, size);
+                    CherryGUI::PlotLines(Label.c_str(), dataStart, size);
                 }
             }
 

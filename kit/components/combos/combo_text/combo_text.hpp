@@ -63,12 +63,12 @@ namespace Cherry
                     Label += "####" + identifier;
                 }
 
-                if (ImGui::BeginCombo(Label.c_str(), combo_preview_value, flags))
+                if (CherryGUI::BeginCombo(Label.c_str(), combo_preview_value, flags))
                 {
                     for (int n = 0; n < (*m_List).size(); n++)
                     {
                         const bool is_selected = (selected == n);
-                            if (ImGui::Selectable((*m_List)[n].c_str(), is_selected))
+                            if (CherryGUI::Selectable((*m_List)[n].c_str(), is_selected))
                         {
                             if (selected != n)
                             {
@@ -78,9 +78,9 @@ namespace Cherry
                         }
 
                         if (is_selected)
-                            ImGui::SetItemDefaultFocus();
+                            CherryGUI::SetItemDefaultFocus();
                     }
-                    ImGui::EndCombo();
+                    CherryGUI::EndCombo();
                 }
             }
 

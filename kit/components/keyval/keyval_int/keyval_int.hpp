@@ -41,11 +41,11 @@ namespace Cherry
                 {
                     if (std::stoi(parent->GetData("renderedColumn")) == 0)
                     {
-                        ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, IM_COL32(100, 100, 100, 40));
-                        ImGui::AlignTextToFramePadding();
-                        ImGui::Indent(10.0f);
-                        ImGui::TextWrapped(GetProperty("label").c_str());
-                        ImGui::Unindent(10.0f);
+                        CherryGUI::TableSetBgColor(ImGuiTableBgTarget_CellBg, IM_COL32(100, 100, 100, 40));
+                        CherryGUI::AlignTextToFramePadding();
+                        CherryGUI::Indent(10.0f);
+                        CherryGUI::TextWrapped(GetProperty("label").c_str());
+                        CherryGUI::Unindent(10.0f);
                     }
                     else if (std::stoi(parent->GetData("renderedColumn")) == 1)
                     {
@@ -57,16 +57,16 @@ namespace Cherry
                             Label += Label + identifier;
                         }
 
-                        ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, IM_COL32(100, 100, 100, 40));
+                        CherryGUI::TableSetBgColor(ImGuiTableBgTarget_CellBg, IM_COL32(100, 100, 100, 40));
 
                         if (m_Value)
                         {
-                            ImGui::SetNextItemWidth(-FLT_MIN);
-                            ImGui::InputInt(Label.c_str(), m_Value, std::stoi(GetProperty("step")), std::stoi(GetProperty("step_fast")));
+                            CherryGUI::SetNextItemWidth(-FLT_MIN);
+                            CherryGUI::InputInt(Label.c_str(), m_Value, std::stoi(GetProperty("step")), std::stoi(GetProperty("step_fast")));
                         }
                         else
                         {
-                            ImGui::Text("INVALID VALUE");
+                            CherryGUI::Text("INVALID VALUE");
                         }
                     }
                 }

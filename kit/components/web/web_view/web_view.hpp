@@ -33,7 +33,7 @@ namespace Cherry
             {
                 const ImVec2 &size = ImVec2(500, 500);
 
-                ImGui::Text(GetProperty("url").c_str());
+                CherryGUI::Text(GetProperty("url").c_str());
             }
         };
     }

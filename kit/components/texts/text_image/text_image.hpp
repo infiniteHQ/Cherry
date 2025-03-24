@@ -36,9 +36,9 @@ namespace Cherry
                 std::string text = GetProperty("label").c_str();
 
                 ImTextureID texture = Application::Get().GetCurrentRenderedWindow()->get_texture(GetProperty("image_path"));
-                ImGui::Image(texture, ImVec2(15, 15));
-                ImGui::SameLine();
-                ImGui::Text(text.c_str());
+                CherryGUI::Image(texture, ImVec2(15, 15));
+                CherryGUI::SameLine();
+                CherryGUI::Text(text.c_str());
             }
         };
     }

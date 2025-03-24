@@ -131,10 +131,20 @@
 #include "./kit/components/widgets/widget_small_folder/widget_small_folder.hpp"
 // Blocks
 #include "./kit/components/blocks/block_vertical_custom/block_vertical_custom.hpp"
+// Banner
+#include "./kit/components/banners/banner_image_context/banner_image_context.hpp"
 // Web
 #ifdef CHERRY_CEF
 #include "./kit/components/web/web_view/web_view.hpp"
 #endif 
+
+///////////////////////////////////////////////////////////////
+/// Style : Components, All in one windows, theme, utils...   ///
+///////////////////////////////////////////////////////////////
+// Buttons
+#include "./kit/utils/behavior/margin/margin.hpp"
+#include "./kit/utils/behavior/font/font.hpp"
+
 
 ///////////////////////////////////////////////////////////////
 /// AIO : Windows, Ready-builtin windows                    ///
@@ -142,7 +152,10 @@
 #include "./kit/aio/bases/windows/window_simple/window_simple.hpp"
 
 namespace CherryKit = Cherry::Kit;
+namespace CherryStyle = Cherry::Style;
 
 // AIO kits & components includes
+
+
 
 #endif // CHERRY_H

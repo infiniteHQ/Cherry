@@ -3,23 +3,14 @@ project(libcherry)
 
 set(CMAKE_CXX_STANDARD 20)
 
-if (DEBUG_MODE)
-    message(STATUS "Debug mode enabled: Adding debug symbols and no optimizations.")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0") 
-else()
-    message(STATUS "Release mode enabled: Applying maximum optimization for smallest executable.")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Os -flto -ffunction-sections -fdata-sections") 
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--gc-sections") 
-endif()
-
 if(NOT MSVC)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -O3")
 endif()
 
 if(CHERRY_CEF)
-    if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-        add_compile_options(/MT)
-    endif()
+if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+    add_compile_options(/MT)
+endif()
 endif()
 
 find_package(Vulkan REQUIRED)
@@ -34,7 +25,7 @@ if(CHERRY_CEF)
     add_subdirectory(lib/cef-project)
 endif()
 
-if(CHERRY_ENABLE_NET)
+if(CHERRY_NET)
     if (NOT TARGET restclient-cpp)
         add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/lib/restcpp restcpp_build)
     endif()
@@ -47,12 +38,7 @@ file(GLOB_RECURSE CHERRY_SRC CONFIGURE_DEPENDS
     "${PROJECT_SOURCE_DIR}/kit/*.h" "${PROJECT_SOURCE_DIR}/kit/*.hpp" "${PROJECT_SOURCE_DIR}/kit/*.cpp"
 )
 
-if(CHERRY_SHARED)
-    add_library(cherry SHARED ${CHERRY_SRC})
-else()
-    add_library(cherry STATIC ${CHERRY_SRC})
-endif()
-
+add_library(cherry SHARED ${CHERRY_SRC})
 
 set_target_properties(cherry PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
@@ -68,8 +54,8 @@ target_include_directories(cherry PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src")
 target_include_directories(cherry PUBLIC "${PROJECT_SOURCE_DIR}/lib/stb_image")
 target_include_directories(cherry PUBLIC "${PROJECT_SOURCE_DIR}/lib/spdlog/include")
 
-if(CHERRY_ENABLE_NET)
-    target_compile_definitions(cherry PUBLIC CHERRY_ENABLE_NET)
+if(CHERRY_NET)
+    target_compile_definitions(cherry PUBLIC CHERRY_NET)
     target_link_libraries(cherry PUBLIC restclient-cpp)
 endif()
 

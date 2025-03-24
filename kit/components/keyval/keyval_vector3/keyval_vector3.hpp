@@ -37,11 +37,11 @@ namespace Cherry
                 {
                     if (std::stoi(parent->GetData("renderedColumn")) == 0)
                     {
-                        ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, IM_COL32(100, 100, 100, 40));
-                        ImGui::AlignTextToFramePadding();
-                        ImGui::Indent(10.0f);
-                        ImGui::TextWrapped(GetProperty("label").c_str());
-                        ImGui::Unindent(10.0f);
+                        CherryGUI::TableSetBgColor(ImGuiTableBgTarget_CellBg, IM_COL32(100, 100, 100, 40));
+                        CherryGUI::AlignTextToFramePadding();
+                        CherryGUI::Indent(10.0f);
+                        CherryGUI::TextWrapped(GetProperty("label").c_str());
+                        CherryGUI::Unindent(10.0f);
                     }
                     else if (std::stoi(parent->GetData("renderedColumn")) == 1)
                     {
@@ -53,7 +53,7 @@ namespace Cherry
                             Label += Label + identifier;
                         }
 
-                        ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, IM_COL32(100, 100, 100, 40));
+                        CherryGUI::TableSetBgColor(ImGuiTableBgTarget_CellBg, IM_COL32(100, 100, 100, 40));
 
                         if (m_XValue && m_YValue && m_ZValue)
                         {
@@ -62,16 +62,16 @@ namespace Cherry
                             float colorBoxWidth = 20.0f;
                             float spacing = 5.0f;
                             float elementWidth = colorBoxWidth + spacing + inputWidth;
-                            float availableWidth = ImGui::GetContentRegionAvail().x;
+                            float availableWidth = CherryGUI::GetContentRegionAvail().x;
 
                             int elementsPerRow = (availableWidth >= 3 * elementWidth) ? 3 : (availableWidth >= 2 * elementWidth) ? 2
                                                                                                                                  : 1;
 
-                            ImGui::PushItemWidth(inputWidth);
+                            CherryGUI::PushItemWidth(inputWidth);
 
                             for (int i = 0; i < 3; ++i)
                             {
-                                ImVec2 pos = ImGui::GetCursorScreenPos();
+                                ImVec2 pos = CherryGUI::GetCursorScreenPos();
                                 const char *texturePath;
                                 float *value;
                                 std::string id;
@@ -95,22 +95,22 @@ namespace Cherry
                                     break;
                                 }
 
-                                ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 1.0f);
-                                ImGui::Image(Cherry::GetTexture(Cherry::GetPath(texturePath)), ImVec2(23, 23));
-                                ImGui::SetCursorScreenPos(ImVec2(pos.x + colorBoxWidth + spacing, pos.y));
-                                ImGui::InputFloat(id.c_str(), value);
+                                CherryGUI::SetCursorPosY(CherryGUI::GetCursorPosY() + 1.0f);
+                                CherryGUI::Image(Cherry::GetTexture(Cherry::GetPath(texturePath)), ImVec2(23, 23));
+                                CherryGUI::SetCursorScreenPos(ImVec2(pos.x + colorBoxWidth + spacing, pos.y));
+                                CherryGUI::InputFloat(id.c_str(), value);
 
                                 if ((i + 1) % elementsPerRow != 0 && i < 2)
                                 {
-                                    ImGui::SameLine();
+                                    CherryGUI::SameLine();
                                 }
                             }
 
-                            ImGui::PopItemWidth();
+                            CherryGUI::PopItemWidth();
                         }
                         else
                         {
-                            ImGui::Text("INVALID VALUE");
+                            CherryGUI::Text("INVALID VALUE");
                         }
                     }
                 }

@@ -34,7 +34,7 @@ namespace Cherry
             void Render() override
             {
                 std::string text = GetProperty("label").c_str();
-                ImGui::TextWrapped(text.c_str());
+                CherryGUI::TextWrapped(text.c_str());
             }
         };
     }

@@ -60,43 +60,43 @@ namespace Cherry
                 bool pressed = false;
                 int i = 0;
 
-                ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, std::stof(GetProperty("margin_y"))));
-                ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, std::stof(GetProperty("margin_y"))));
+                CherryGUI::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, std::stof(GetProperty("margin_y"))));
+                CherryGUI::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, std::stof(GetProperty("margin_y"))));
 
-                ImGui::PushStyleColor(ImGuiCol_Button, HexToRGBA("#00000000"));
-                ImGui::PushStyleColor(ImGuiCol_ButtonHovered, HexToRGBA("#00000000"));
-                ImGui::PushStyleColor(ImGuiCol_ButtonActive, HexToRGBA("#00000000"));
-                ImGui::PushStyleColor(ImGuiCol_Border, HexToRGBA("#00000000"));
-                ImGui::PushStyleColor(ImGuiCol_Text, HexToRGBA(GetProperty("color_text")));
+                CherryGUI::PushStyleColor(ImGuiCol_Button, HexToRGBA("#00000000"));
+                CherryGUI::PushStyleColor(ImGuiCol_ButtonHovered, HexToRGBA("#00000000"));
+                CherryGUI::PushStyleColor(ImGuiCol_ButtonActive, HexToRGBA("#00000000"));
+                CherryGUI::PushStyleColor(ImGuiCol_Border, HexToRGBA("#00000000"));
+                CherryGUI::PushStyleColor(ImGuiCol_Text, HexToRGBA(GetProperty("color_text")));
 
-                if (ImGui::Button(GetProperty("label").c_str(),  ImVec2(std::stoi(GetProperty("size_x")), std::stoi(GetProperty("size_y")))))
+                if (CherryGUI::Button(GetProperty("label").c_str(),  ImVec2(std::stoi(GetProperty("size_x")), std::stoi(GetProperty("size_y")))))
                 {
                     pressed = true;
                 }
 
-                if (ImGui::IsItemHovered())
+                if (CherryGUI::IsItemHovered())
                 {
-                    ImGui::PushStyleColor(ImGuiCol_Text, HexToRGBA(GetProperty("color_text")));
+                    CherryGUI::PushStyleColor(ImGuiCol_Text, HexToRGBA(GetProperty("color_text")));
                     i++;
                 }
-                if (ImGui::IsItemActive())
+                if (CherryGUI::IsItemActive())
                 {
-                    ImGui::PushStyleColor(ImGuiCol_Text, HexToRGBA(GetProperty("color_text")));
+                    CherryGUI::PushStyleColor(ImGuiCol_Text, HexToRGBA(GetProperty("color_text")));
                     i++;
                 }
 
-                if (ImGui::IsItemHovered())
+                if (CherryGUI::IsItemHovered())
                 {
-                    ImVec2 pos = ImGui::GetItemRectMin();
-                    ImVec2 rect_size = ImGui::GetItemRectSize();
-                    ImDrawList *draw_list = ImGui::GetWindowDrawList();
-                    ImVec4 underline_color = ImGui::IsItemActive() ? HexToRGBA(GetProperty("color_text")) : HexToRGBA(GetProperty("color_text"));
+                    ImVec2 pos = CherryGUI::GetItemRectMin();
+                    ImVec2 rect_size = CherryGUI::GetItemRectSize();
+                    ImDrawList *draw_list = CherryGUI::GetWindowDrawList();
+                    ImVec4 underline_color = CherryGUI::IsItemActive() ? HexToRGBA(GetProperty("color_text")) : HexToRGBA(GetProperty("color_text"));
                     draw_list->AddLine(ImVec2(pos.x, pos.y + rect_size.y), ImVec2(pos.x + rect_size.x, pos.y + rect_size.y), ImColor(underline_color));
                 }
 
-                ImGui::PopStyleVar(2);
-                ImGui::PopStyleColor(5);
-                ImGui::PopStyleColor(i);
+                CherryGUI::PopStyleVar(2);
+                CherryGUI::PopStyleColor(5);
+                CherryGUI::PopStyleColor(i);
             }
 
         private:

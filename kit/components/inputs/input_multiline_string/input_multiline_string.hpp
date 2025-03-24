@@ -46,12 +46,12 @@ namespace Cherry
                     std::strncpy(buffer, m_Value->c_str(), sizeof(buffer));
 
                     // TODO remplace 16 by the number of lines we want to show
-                    ImGui::InputTextMultiline(Label.c_str(), buffer, sizeof(buffer), ImVec2(-FLT_MIN, ImGui::GetTextLineHeight() * 16));
+                    CherryGUI::InputTextMultiline(Label.c_str(), buffer, sizeof(buffer), ImVec2(-FLT_MIN, CherryGUI::GetTextLineHeight() * 16));
                     *m_Value = std::string(buffer);
                 }
                 else
                 {
-                    ImGui::Text("INVALID VALUE");
+                    CherryGUI::Text("INVALID VALUE");
                 }
             }
 

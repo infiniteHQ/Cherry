@@ -44,13 +44,13 @@ namespace Cherry
 
             void Render() override
             {
-                ImVec2 child_avail = ImGui::GetContentRegionAvail();
+                ImVec2 child_avail = CherryGUI::GetContentRegionAvail();
                 float posX = (child_avail.x - std::stof(GetProperty("size_x"))) * 0.5f;
 
                 if (posX > 0)
-                    ImGui::SetCursorPosX(posX);
+                    CherryGUI::SetCursorPosX(posX);
 
-                ImGui::Image(Cherry::GetTexture(GetProperty("image_path")), ImVec2(std::stof(GetProperty("size_x")), std::stof(GetProperty("size_y"))));
+                CherryGUI::Image(Cherry::GetTexture(GetProperty("image_path")), ImVec2(std::stof(GetProperty("size_x")), std::stof(GetProperty("size_y"))));
             }
         };
     }

@@ -79,9 +79,9 @@ namespace Cherry
                 {
                     if (GetProperty("disable_time") == "false")
                         SetData("lastHovered", GetCurrentTime());
-                    ImGui::PushStyleColor(ImGuiCol_Border, HexToRGBA(GetProperty("color_border_hovered")));
-                    ImGui::PushStyleColor(ImGuiCol_Button, HexToRGBA(GetProperty("color_bg_hovered")));
-                    ImGui::PushStyleColor(ImGuiCol_Text, HexToRGBA(GetProperty("color_text_hovered")));
+                    CherryGUI::PushStyleColor(ImGuiCol_Border, HexToRGBA(GetProperty("color_border_hovered")));
+                    CherryGUI::PushStyleColor(ImGuiCol_Button, HexToRGBA(GetProperty("color_bg_hovered")));
+                    CherryGUI::PushStyleColor(ImGuiCol_Text, HexToRGBA(GetProperty("color_text_hovered")));
                     style_props_opt += 3;
                 }
 
@@ -90,9 +90,9 @@ namespace Cherry
                     if (GetProperty("disable_time") == "false")
                         SetData("lastClicked", GetCurrentTime());
 
-                    ImGui::PushStyleColor(ImGuiCol_Border, HexToRGBA(GetProperty("color_border_pressed")));
-                    ImGui::PushStyleColor(ImGuiCol_Button, HexToRGBA(GetProperty("color_bg_pressed")));
-                    ImGui::PushStyleColor(ImGuiCol_Text, HexToRGBA(GetProperty("color_text_pressed")));
+                    CherryGUI::PushStyleColor(ImGuiCol_Border, HexToRGBA(GetProperty("color_border_pressed")));
+                    CherryGUI::PushStyleColor(ImGuiCol_Button, HexToRGBA(GetProperty("color_bg_pressed")));
+                    CherryGUI::PushStyleColor(ImGuiCol_Text, HexToRGBA(GetProperty("color_text_pressed")));
                     style_props_opt += 3;
                 }
 
@@ -107,9 +107,9 @@ namespace Cherry
                     if (GetProperty("disable_time") == "false")
                         SetData("lastPressed", GetCurrentTime());
 
-                    ImGui::PushStyleColor(ImGuiCol_Border, HexToRGBA(GetProperty("color_border_pressed")));
-                    ImGui::PushStyleColor(ImGuiCol_Button, HexToRGBA(GetProperty("color_bg_pressed")));
-                    ImGui::PushStyleColor(ImGuiCol_Text, HexToRGBA(GetProperty("color_text_pressed")));
+                    CherryGUI::PushStyleColor(ImGuiCol_Border, HexToRGBA(GetProperty("color_border_pressed")));
+                    CherryGUI::PushStyleColor(ImGuiCol_Button, HexToRGBA(GetProperty("color_bg_pressed")));
+                    CherryGUI::PushStyleColor(ImGuiCol_Text, HexToRGBA(GetProperty("color_text_pressed")));
                     style_props_opt += 3;
                 }
 
@@ -125,19 +125,19 @@ namespace Cherry
 
                 ImTextureID texture = Application::Get().GetCurrentRenderedWindow()->get_texture(GetProperty("image_path"));
                 ImTextureID second_texture = Application::Get().GetCurrentRenderedWindow()->get_texture(GetProperty("second_image_path"));
-                bool isClicked = ImGui::ImageButtonWithTextWithIcon(texture, second_texture, Label.c_str(), size, size);
+                bool isClicked = CherryGUI::ImageButtonWithTextWithIcon(texture, second_texture, Label.c_str(), size, size);
 
-                if (ImGui::IsItemHovered())
+                if (CherryGUI::IsItemHovered())
                 {
                     SetData("isHovered", "true");
                 }
 
-                if (ImGui::IsItemActivated())
+                if (CherryGUI::IsItemActivated())
                 {
                     SetData("isActivated", "true");
                 }
 
-                if (ImGui::IsItemActive())
+                if (CherryGUI::IsItemActive())
                 {
                     SetData("isPressed", "true");
                 }
