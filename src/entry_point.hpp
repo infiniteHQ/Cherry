@@ -18,7 +18,19 @@ namespace Cherry {
 		while (g_ApplicationRunning)
 		{
 			Cherry::Application* app = create_app(argc, argv);
-			app->Run();
+			switch(app->m_DefaultSpecification.RuntimeMode)
+			{
+				case Runtime::SingleThread : 
+				{
+					app->SingleThreadRuntime();
+					break;
+				}
+				default:
+				{
+					app->SingleThreadRuntime();
+					break;
+				}
+			}
 			delete app;
 		}
 
@@ -31,7 +43,19 @@ namespace Cherry {
 		while (g_ApplicationRunning)
 		{
 			Cherry::Application* app = Cherry::CreateApplication(argc, argv);
-			app->Run();
+			switch(app->m_DefaultSpecification.RuntimeMode)
+			{
+				case Runtime::SingleThread : 
+				{
+					app->SingleThreadRuntime();
+					break;
+				}
+				default:
+				{
+					app->SingleThreadRuntime();
+					break;
+				}
+			}
 			delete app;
 		}
 

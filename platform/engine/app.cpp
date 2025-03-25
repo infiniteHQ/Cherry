@@ -98,7 +98,6 @@ static bool DragRendered = false;
 static std::shared_ptr<Cherry::RedockRequest> LatestRequest;
 static std::vector<std::pair<Cherry::ProcessCallback, std::function<void()>>> g_ProcessCallbacks;
 
-
 // Per-frame-in-flight
 
 // Unlike g_MainWindowData.FrameIndex, this is not the the swapchain image index
@@ -556,11 +555,11 @@ namespace Cherry
 
     void Application::ExecuteProcessCallbacks(ProcessCallback process)
     {
-        for(auto callback : g_ProcessCallbacks)
+        for (auto callback : g_ProcessCallbacks)
         {
-            if(callback.first == process)
+            if (callback.first == process)
             {
-                if(callback.second)
+                if (callback.second)
                 {
                     callback.second();
                 }
@@ -1461,24 +1460,272 @@ namespace Cherry
         //
     }
 
-    void Application::Run()
+    void Application::MultiThreadWindowRuntime()
     {
+        const std::chrono::milliseconds frameDuration(1000 / s_Instance->m_DefaultSpecification.MaxFps);
+
+        int frameCount = 0;
+        auto startTime = std::chrono::steady_clock::now();
+        auto frameStart = std::chrono::steady_clock::now();
+
         m_Running = true;
         this->BoostrappWindow();
         while (m_Running)
         {
+            frameStart = std::chrono::steady_clock::now();
+            frameCount++;
+
+            auto now = std::chrono::steady_clock::now();
+            auto elapsed = std::chrono::duration_cast<std::chrono::seconds>(now - startTime).count();
+            if (elapsed >= 1)
+            {
+                frameCount = 0;
+                startTime = std::chrono::steady_clock::now();
+            }
+
+            auto frameTime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - frameStart);
+            if (frameTime < frameDuration)
+            {
+                std::this_thread::sleep_for(frameDuration - frameTime);
+            }
+
             Identifier::ResetUniqueIndex(); // Reset anonymous components indexes
             c_ValidDropZoneFounded = false;
 
-            if(m_NoAppWindowSafetyEnabled)
+            if (m_NoAppWindowSafetyEnabled)
             {
                 std::cout << "m_AppWindows size " << m_AppWindows.size() << std::endl;
-                if(m_AppWindows.size() > 1)
+                if (m_AppWindows.size() > 1)
                 {
                     DisableNoAppWindowSafety();
                 }
             }
-                    
+
+            if (s_Instance->m_DefaultSpecification.WindowSaves)
+            {
+                if (!m_IsDataInitialized)
+                {
+                    s_Instance->InitializeWindowStates();
+                }
+
+                if (!s_Instance->m_IsDataSaved)
+                {
+                    s_Instance->SaveData();
+                }
+
+                s_Instance->ApplyDockingFromSave();
+            }
+            else
+            {
+                s_Instance->ApplyDockingFromDefault();
+            }
+
+            if (c_CurrentDragDropState)
+            {
+                if (c_CurrentDragDropState->CreateNewWindow)
+                {
+                    s_Instance->CurrentDockRequestOnNewWindow();
+                }
+            }
+
+            for (auto &window : m_Windows)
+            {
+                if (window->m_Specifications.FavIconPath != window->m_Specifications.LastFavIconPath)
+                {
+                    window->SetFavIcon(window->m_Specifications.FavIconPath);
+                    window->m_Specifications.LastFavIconPath = window->m_Specifications.FavIconPath;
+                }
+
+                c_CurrentRenderedWindow = window;
+                if (window->drag_dropstate->DockIsDragging)
+                {
+                    c_DockIsDragging = true;
+                }
+            }
+
+            for (auto &layer : m_LayerStack)
+            {
+                layer->OnUpdate(m_TimeStep);
+            }
+
+            SDL_Event event;
+            while (SDL_PollEvent(&event))
+            {
+                SDL_Window *focusedWindow = SDL_GetMouseFocus();
+                Uint32 focusedWindowID = focusedWindow ? SDL_GetWindowID(focusedWindow) : 0;
+
+#ifdef CHERRY_CEF
+                OnCEFFrame();
+#endif // CHERRY_CEF
+
+                bool eventHandled = false;
+
+                for (auto &window : m_Windows)
+                {
+                    c_CurrentRenderedWindow = window;
+                    Uint32 windowID = SDL_GetWindowID(window->GetWindowHandle());
+
+                    if (focusedWindowID != 0 && windowID != focusedWindowID)
+                    {
+                        continue;
+                    }
+
+                    ImGui::SetCurrentContext(window->m_ImGuiContext);
+                    ImGui_ImplSDL2_ProcessEvent(&event);
+
+                    if (event.type == SDL_QUIT)
+                    {
+                        m_Running = false;
+                        eventHandled = true;
+                        break;
+                    }
+
+                    if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE && event.window.windowID == windowID)
+                    {
+                        if (window->m_Specifications.UsingCloseCallback)
+                        {
+                            if (window->m_Specifications.CloseCallback)
+                            {
+                                window->m_Specifications.CloseCallback();
+                            }
+                            m_ClosePending = false;
+                        }
+                        else
+                        {
+                            if (Application::Get().m_CloseCallback)
+                            {
+                                Application::Get().m_CloseCallback();
+                            }
+                            else
+                            {
+                                Application::Get().Close();
+                            }
+                        }
+                    }
+                }
+
+                if (eventHandled)
+                {
+                    break;
+                }
+            }
+
+            bool AppWindowRedocked = false;
+            if (s_Instance->m_DefaultSpecification.RenderMode == WindowRenderingMethod::DockingWindows || Application::GetCurrentRenderedWindow()->m_Specifications.RenderMode == WindowRenderingMethod::TabWidows)
+            {
+                for (auto &req : m_RedockRequests)
+                {
+                    if (req->m_IsObsolete)
+                    {
+                        continue;
+                    }
+
+                    for (auto &app_win : m_AppWindows)
+                    {
+                        if (req->m_ParentAppWindowHost == app_win->m_IdName)
+                        {
+                            bool parentFound = false;
+                            for (auto &win : m_Windows)
+                            {
+                                if (win->GetName() == req->m_ParentWindow)
+                                {
+                                    app_win->SetParentWindow(win->GetName());
+
+                                    parentFound = true;
+                                }
+                            }
+
+                            if (!parentFound)
+                            {
+                                app_win->SetParentWindow("unknow");
+                            }
+
+                            AppWindowRedocked = true;
+                        }
+                    }
+                }
+            }
+
+            if (s_Instance->m_DefaultSpecification.RenderMode == WindowRenderingMethod::DockingWindows || Application::GetCurrentRenderedWindow()->m_Specifications.RenderMode == WindowRenderingMethod::TabWidows)
+            {
+                for (auto &appwin : s_Instance->m_AppWindows)
+                {
+                    if (!AppWindowRedocked)
+                    {
+                        if (!appwin->m_AttachRequest.m_IsFinished)
+                        {
+                            std::string win = Application::Get().SpawnWindow(appwin->m_AttachRequest.m_Specification);
+                            appwin->SetParentWindow(win);
+                            appwin->m_AttachRequest.m_IsFinished = true;
+                        }
+                    }
+                }
+            }
+
+            DragRendered = false;
+
+            PresentAllWindows();
+
+            float time = GetTime();
+            m_FrameTime = time - m_LastFrameTime;
+            m_TimeStep = glm::min<float>(m_FrameTime, 0.0333f);
+            m_LastFrameTime = time;
+
+            c_MasterSwapChainRebuild = false;
+            c_DockIsDragging = false;
+
+            // Erase empty main windows
+            CleanupEmptyWindows();
+
+            for (auto &appwin : s_Instance->m_AppWindows)
+            {
+                appwin->m_WindowJustRebuilded = false;
+            }
+
+            AppWindowRedocked = false;
+        }
+    }
+
+    void Application::SingleThreadRuntime()
+    {
+        const std::chrono::milliseconds frameDuration(1000 / s_Instance->m_DefaultSpecification.MaxFps);
+
+        int frameCount = 0;
+        auto startTime = std::chrono::steady_clock::now();
+        auto frameStart = std::chrono::steady_clock::now();
+
+        m_Running = true;
+        this->BoostrappWindow();
+        while (m_Running)
+        {
+            frameStart = std::chrono::steady_clock::now();
+            frameCount++;
+
+            auto now = std::chrono::steady_clock::now();
+            auto elapsed = std::chrono::duration_cast<std::chrono::seconds>(now - startTime).count();
+            if (elapsed >= 1)
+            {
+                frameCount = 0;
+                startTime = std::chrono::steady_clock::now();
+            }
+
+            auto frameTime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - frameStart);
+            if (frameTime < frameDuration)
+            {
+                std::this_thread::sleep_for(frameDuration - frameTime);
+            }
+
+            Identifier::ResetUniqueIndex(); // Reset anonymous components indexes
+            c_ValidDropZoneFounded = false;
+
+            if (m_NoAppWindowSafetyEnabled)
+            {
+                std::cout << "m_AppWindows size " << m_AppWindows.size() << std::endl;
+                if (m_AppWindows.size() > 1)
+                {
+                    DisableNoAppWindowSafety();
+                }
+            }
 
             if (s_Instance->m_DefaultSpecification.WindowSaves)
             {
@@ -1818,16 +2065,16 @@ namespace Cherry
         }
     }
 
-ImFont *Application::GetFont(const std::string &name)
-{
-    auto it = s_Fonts.find(name);
-    if (it != s_Fonts.end())
+    ImFont *Application::GetFont(const std::string &name)
     {
-        return it->second;
+        auto it = s_Fonts.find(name);
+        if (it != s_Fonts.end())
+        {
+            return it->second;
+        }
+
+        return nullptr;
     }
-    
-    return nullptr;
-}
 
     SDL_Window *Application::GetWindowHandle(const std::string &winname)
     {
@@ -2634,10 +2881,9 @@ ImFont *Application::GetFont(const std::string &name)
         m_NoAppWindowSafetyEnabled = true;
         std::shared_ptr<AppWindow> app_window = std::make_shared<AppWindow>("cherryinternal_no_windows", "cherryinternal_no_windows");
         app_window->SetRenderCallback([this]()
-        { 
+                                      { 
             m_NoAppWindowSafetyEnabled = true;            
-            ImGui::TextColored(Cherry::HexToRGBA("#FF2222FF"), "ERROR: You selected the Docking render mode, but you did not specify any app windows. Please create and add an app window. (Cherry::AddAppWindow(std::shared_ptr<AppWindow>))"); 
-        });
+            ImGui::TextColored(Cherry::HexToRGBA("#FF2222FF"), "ERROR: You selected the Docking render mode, but you did not specify any app windows. Please create and add an app window. (Cherry::AddAppWindow(std::shared_ptr<AppWindow>))"); });
 
         Cherry::AddAppWindow(app_window);
     }
@@ -2826,12 +3072,12 @@ ImFont *Application::GetFont(const std::string &name)
     {
         ImGui::InsertNotification(toast);
     }
-    
-	void PushFont(const std::string& font_name)
+
+    void PushFont(const std::string &font_name)
     {
         auto font = Cherry::Application::GetFont(font_name);
 
-        if(font)
+        if (font)
         {
             ImGui::PushFont(font);
         }
@@ -2841,7 +3087,7 @@ ImFont *Application::GetFont(const std::string &name)
         }
     }
 
-	void PopFont()
+    void PopFont()
     {
         ImGui::PopFont();
     }

@@ -281,14 +281,14 @@ namespace Cherry
             {
             case IdentifierProperty::Inline:
             {
-                auto new_title = Application::CreateAnonymousComponent<Components::BlockVerticalCustom>(Components::BlockVerticalCustom(identifier, renderCallbacks, width, height, onClickedCallback));
+                auto new_title = Application::CreateAnonymousComponent<Components::BlockVerticalCustom>(Components::BlockVerticalCustom(Identifier(Identifier::GetUniqueIndex()), renderCallbacks, width, height, onClickedCallback));
                 new_title->Render();
                 return new_title;
                 break;
             }
             case IdentifierProperty::CreateOnly:
             {
-                auto new_title = Application::CreateAnonymousComponent<Components::BlockVerticalCustom>(Components::BlockVerticalCustom(identifier, renderCallbacks, width, height, onClickedCallback));
+                auto new_title = Application::CreateAnonymousComponent<Components::BlockVerticalCustom>(Components::BlockVerticalCustom(Identifier(Identifier::GetUniqueIndex()), renderCallbacks, width, height, onClickedCallback));
                 return new_title;
                 break;
             }

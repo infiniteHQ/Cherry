@@ -18,6 +18,20 @@ namespace Cherry
         Unique
     };
 
+    enum class Optimization
+    {
+        StopModeOptimization, // An innactive window will be stopped (warning: dont choose stop mode on important passive windows)
+        LowModeOptimization, // An innactive window will be in low mode (less fps, better performances)
+        NoOptimization, // Zero mesures of optimization in the render engine
+    };
+
+    enum class Runtime
+    {
+        MultiThreadAppWindows, // One thread per app window (not impl yet)
+        MultiThreadWindows, // One thread per window
+        SingleThread, // One thread per window
+    };
+
     enum class WindowRenderingMethod
     {
         DockingWindows, // Unlimited windows with docking
@@ -125,6 +139,8 @@ namespace Cherry
         uint32_t Height = 1000;
         uint32_t MinWidth = 100;
         uint32_t MinHeight = 100;
+        uint32_t MaxFps = 60;
+        uint32_t MaxFpsLowMode = 15;
 
         float GlobalScale = 0.84f;
         float FontGlobalScale = 0.83f;
@@ -147,6 +163,8 @@ namespace Cherry
         std::function<void()> CloseCallback;
 
         WindowRenderingMethod RenderMode;
+        Runtime RuntimeMode = Runtime::SingleThread;
+        Optimization OptimizationMode = Optimization::NoOptimization;
 
     public:
         WindowThemeColor ColorTheme;

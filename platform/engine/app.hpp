@@ -36,6 +36,8 @@
 
 extern bool g_ApplicationRunning;
 
+static int current_fps;
+
 #ifndef CHERRY_APP_H
 #define CHERRY_APP_H
 
@@ -192,7 +194,9 @@ namespace Cherry
 		bool IsMaximized(const std::shared_ptr<Window> &win) const;
 
 		void BoostrappWindow();
-		void Run();
+
+		void SingleThreadRuntime(); // Run in single thread mode. (Better for third party thread safety)
+		void MultiThreadWindowRuntime(); // EXPERIMENTAL : Run in mutliple thread mode. (Worse for third party thread safety but more performant.)
 
 		void PushLayer(const std::shared_ptr<Layer> &layer);
 		void NewWinInstance(const std::string &name);

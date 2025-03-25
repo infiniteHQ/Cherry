@@ -64,7 +64,7 @@ namespace Cherry
 
                             if (index < m_Elements.size() - 1)
                             {
-                               CherryGUI::SameLine();
+                                CherryGUI::SameLine();
                             }
                             index++;
                         }
@@ -88,7 +88,7 @@ namespace Cherry
 
                             CherryGUI::PopID();
                             CherryGUI::EndGroup();
-                            
+
                             if (index < m_Components.size() - 1)
                             {
                                 CherryGUI::SameLine();
@@ -108,7 +108,7 @@ namespace Cherry
     // End-User API
     namespace Kit
     {
-        inline std::shared_ptr<Component> GridSimple(const std::vector<std::function<void()>> &elements, const float &blockSize = 250.0f, const float &minBlockSize = 250.0f)
+        inline std::shared_ptr<Component> GridSimple(const float &blockSize = 250.0f, const float &minBlockSize = 250.0f, const std::vector<std::shared_ptr<Cherry::Component>> &elements = {})
         {
             auto anonymous_id = Application::GetAnonymousID();
             auto existing = Application::GetAnonymousComponent(anonymous_id);
@@ -125,87 +125,29 @@ namespace Cherry
             }
         }
 
-        inline std::shared_ptr<Component> GridSimple(const Cherry::Identifier &identifier, const std::vector<std::function<void()>> &elements, const float &blockSize = 250.0f, const float &minBlockSize = 250.0f)
+        inline std::shared_ptr<Component> GridSimple(const Cherry::Identifier &identifier, const float &blockSize = 250.0f, const float &minBlockSize = 250.0f, const std::vector<std::shared_ptr<Cherry::Component>> &elements = {})
         {
-            switch(identifier.property())
+            switch (identifier.property())
             {
-                case IdentifierProperty::Inline : 
-                {
-                    auto new_title = Application::CreateAnonymousComponent<Components::GridSimple>(Components::GridSimple(identifier, elements, blockSize, minBlockSize));
-                    new_title->Render();
-                    return new_title;
-                    break;
-                }
-                case IdentifierProperty::CreateOnly : 
-                {
-                    break;
-                }
-                case IdentifierProperty::None : 
-                {
-                    break;
-                }
-                default:
-                {
-                    break;
-                }
+            case IdentifierProperty::Inline:
+            {
+                auto new_title = Application::CreateAnonymousComponent<Components::GridSimple>(Components::GridSimple(identifier, elements, blockSize, minBlockSize));
+                new_title->Render();
+                return new_title;
+                break;
             }
-
-            // Get the object if exist
-            auto existing_button = Application::GetComponent(identifier);
-            if (existing_button)
+            case IdentifierProperty::CreateOnly:
             {
-                existing_button->Render();
+                break;
             }
-            else
+            case IdentifierProperty::None:
             {
-                // Create the object if not exist
-                auto new_button = Application::CreateComponent<Components::GridSimple>(Components::GridSimple(identifier, elements, blockSize, minBlockSize));
-                new_button->Render();
-                return new_button;
+                break;
             }
-            return existing_button;
-        }
-
-        inline std::shared_ptr<Component> GridSimple(const std::vector<std::shared_ptr<Cherry::Component>> &elements, const float &blockSize = 250.0f, const float &minBlockSize = 250.0f)
-        {
-            auto anonymous_id = Application::GetAnonymousID();
-            auto existing = Application::GetAnonymousComponent(anonymous_id);
-            if (existing)
+            default:
             {
-                existing->Render();
-                return existing;
+                break;
             }
-            else
-            {
-                auto button = Application::CreateAnonymousComponent<Components::GridSimple>(Components::GridSimple(anonymous_id, elements, blockSize, minBlockSize));
-                button->Render();
-                return button;
-            }
-        }
-
-        inline std::shared_ptr<Component> GridSimple(const Cherry::Identifier &identifier, const std::vector<std::shared_ptr<Cherry::Component>> &elements, const float &blockSize = 250.0f, const float &minBlockSize = 250.0f)
-        {
-            switch(identifier.property())
-            {
-                case IdentifierProperty::Inline : 
-                {
-                    auto new_title = Application::CreateAnonymousComponent<Components::GridSimple>(Components::GridSimple(identifier, elements, blockSize, minBlockSize));
-                    new_title->Render();
-                    return new_title;
-                    break;
-                }
-                case IdentifierProperty::CreateOnly : 
-                {
-                    break;
-                }
-                case IdentifierProperty::None : 
-                {
-                    break;
-                }
-                default:
-                {
-                    break;
-                }
             }
 
             // Get the object if exist

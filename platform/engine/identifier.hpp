@@ -2,6 +2,7 @@
 
 #include "base.hpp"
 #include <mutex>
+#include <random>
 
 #ifndef CHERRY_IDENTIFIER
 #define CHERRY_IDENTIFIER
@@ -20,7 +21,7 @@ namespace Cherry
     class Identifier
     {
     public:
-        Identifier() : m_IdentifierName(generate_id()), m_ComponentArrayPtr(nullptr), m_IdentifierProperty(IdentifierProperty::None)
+        Identifier() : m_IdentifierName(GetUniqueIndex()), m_ComponentArrayPtr(nullptr), m_IdentifierProperty(IdentifierProperty::None)
         {
             if (m_IdentifierName.empty())
             {
@@ -82,6 +83,12 @@ namespace Cherry
             return generate_id();
         }
 
+        static std::string GetRandomIndex()
+        {
+            std::lock_guard<std::mutex> lock(mutex_);
+            return generate_random_id();
+        }
+
         static void ResetUniqueIndex()
         {
             std::lock_guard<std::mutex> lock(mutex_);
@@ -104,6 +111,15 @@ namespace Cherry
         static inline int incrementor_level = 1;
         static inline std::vector<int> level_indices = {0};
         static inline std::mutex mutex_;
+
+        static std::string generate_random_id()
+        {
+            static std::random_device rd;
+            static std::mt19937 generator(rd());
+            static std::uniform_int_distribution<uint64_t> distribution(1, UINT64_MAX);
+
+            return "RAND_" + std::to_string(distribution(generator));
+        }
 
         static std::string generate_id()
         {
