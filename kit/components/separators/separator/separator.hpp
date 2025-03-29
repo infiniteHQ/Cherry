@@ -24,12 +24,14 @@ namespace Cherry
                 SetIdentifier(id);
 
                 // Colors
-                SetProperty("color", "#454545B2");
+                SetProperty("color", "#424242");
             }
 
             void Render() override
             {
+                CherryGUI::PushStyleColor(ImGuiCol_Separator, Cherry::HexToRGBA(GetProperty("color")));
                 CherryGUI::Separator();
+                CherryGUI::PopStyleColor();
             }
         };
     }

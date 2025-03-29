@@ -47,17 +47,6 @@ namespace Cherry
 
             void Render() override
             {
-                static ImVec2 cachedSize;
-                static ImU32 background_color;
-                static ImU32 background_color_hovered;
-                static ImU32 background_color_pressed;
-                static ImU32 border_color;
-                static ImU32 border_color_hovered;
-                static ImU32 border_color_pressed;
-                static float border_size;
-                static float cached_radius;
-                static bool disabletime;
-
                 if (NeedRefreshing())
                 {
                     cachedSize = ImVec2(std::stof(GetProperty("size_x")), std::stof(GetProperty("size_y")));
@@ -180,6 +169,18 @@ namespace Cherry
                 drawList->AddRect(pos, ImVec2(pos.x + cachedSize.x, pos.y + cachedSize.y), border_color, cached_radius, 0, border_size);
             }
 
+        protected:
+            ImVec2 cachedSize;
+            ImU32 background_color;
+            ImU32 background_color_hovered;
+            ImU32 background_color_pressed;
+            ImU32 border_color;
+            ImU32 border_color_hovered;
+            ImU32 border_color_pressed;
+            float border_size;
+            float cached_radius;
+            bool disabletime;
+
         private:
             std::function<void()> m_OnClickedCallback;
             std::vector<std::function<void()>> m_RenderCallbacks;
@@ -215,7 +216,7 @@ namespace Cherry
             }
         }
 
-        inline std::shared_ptr<Component> BlockVerticalCustom(const float &width = 260.0f, const float &height = 110.0f, const std::vector<std::function<void()>> &renderCallbacks = {}, const std::function<void()> &onClickedCallback = []() {})
+        inline std::shared_ptr<Component> BlockVerticalCustom(const std::function<void()> &onClickedCallback = []() {}, const float &width = 260.0f, const float &height = 110.0f, const std::vector<std::function<void()>> &renderCallbacks = {})
         {
             auto anonymous_id = Application::GetAnonymousID();
             auto existing = Application::GetAnonymousComponent(anonymous_id);
@@ -245,8 +246,17 @@ namespace Cherry
             }
             case IdentifierProperty::CreateOnly:
             {
-                auto new_title = Application::CreateAnonymousComponent<Components::BlockVerticalCustom>(Components::BlockVerticalCustom(identifier, renderCallbacks));
-                return new_title;
+                auto anonymous_id = Application::GetAnonymousID();
+                auto existing = Application::GetAnonymousComponent(anonymous_id);
+                if (existing)
+                {
+                    return existing;
+                }
+                else
+                {
+                    auto button = Application::CreateAnonymousComponent<Components::BlockVerticalCustom>(Components::BlockVerticalCustom(anonymous_id, renderCallbacks));
+                    return button;
+                }
                 break;
             }
             case IdentifierProperty::None:
@@ -275,7 +285,7 @@ namespace Cherry
             return existing_title;
         }
 
-        inline std::shared_ptr<Component> BlockVerticalCustom(const Cherry::Identifier &identifier, const float &width = 260.0f, const float &height = 110.0f, const std::vector<std::function<void()>> &renderCallbacks = {}, const std::function<void()> &onClickedCallback = []() {})
+        inline std::shared_ptr<Component> BlockVerticalCustom(const Cherry::Identifier &identifier, const std::function<void()> &onClickedCallback = []() {}, const float &width = 260.0f, const float &height = 110.0f, const std::vector<std::function<void()>> &renderCallbacks = {})
         {
             switch (identifier.property())
             {
@@ -288,8 +298,17 @@ namespace Cherry
             }
             case IdentifierProperty::CreateOnly:
             {
-                auto new_title = Application::CreateAnonymousComponent<Components::BlockVerticalCustom>(Components::BlockVerticalCustom(Identifier(Identifier::GetUniqueIndex()), renderCallbacks, width, height, onClickedCallback));
-                return new_title;
+                auto anonymous_id = Application::GetAnonymousID();
+                auto existing = Application::GetAnonymousComponent(anonymous_id);
+                if (existing)
+                {
+                    return existing;
+                }
+                else
+                {
+                    auto button = Application::CreateAnonymousComponent<Components::BlockVerticalCustom>(Components::BlockVerticalCustom(anonymous_id, renderCallbacks, width, height, onClickedCallback));
+                    return button;
+                }
                 break;
             }
             case IdentifierProperty::None:
@@ -317,6 +336,17 @@ namespace Cherry
             }
             return existing_title;
         }
+
+        inline std::shared_ptr<Component> BlockVerticalCustom(const Cherry::Identifier &identifier, const float &width = 260.0f, const float &height = 110.0f, const std::vector<std::function<void()>> &renderCallbacks = {})
+        {
+            return BlockVerticalCustom(identifier, []() {}, width, height, renderCallbacks);
+        }
+
+        inline std::shared_ptr<Component> BlockVerticalCustom(const float &width = 260.0f, const float &height = 110.0f, const std::vector<std::function<void()>> &renderCallbacks = {})
+        {
+            return BlockVerticalCustom([]() {}, width, height, renderCallbacks);
+        }
+
     }
 
 }

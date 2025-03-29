@@ -17,7 +17,7 @@ namespace Cherry
         class BannerImageContext : public Component
         {
         public:
-            BannerImageContext(const Cherry::Identifier &id, const std::vector<std::function<void()>> &renderCallbacks, const float &width = 260.0f, const float &height = 110.0f, const std::function<void()> &onClickedCallback = []() {}) : Component(id), m_RenderCallbacks(renderCallbacks), m_OnClickedCallback(onClickedCallback)
+            BannerImageContext(const Cherry::Identifier &id, const std::string &image_path, const std::string &title, const std::string &description, const float &width = 260.0f, const float &height = 110.0f, const std::function<void()> &onClickedCallback = []() {}) : Component(id), m_OnClickedCallback(onClickedCallback)
             {
                 // Identifier
                 SetIdentifier(id);
@@ -33,6 +33,9 @@ namespace Cherry
                 SetProperty("block_border_size", std::to_string(1.0f));
                 SetProperty("size_x", std::to_string(width));
                 SetProperty("size_y", std::to_string(height));
+                SetProperty("image_path", image_path);
+                SetProperty("title", title);
+                SetProperty("description", description);
 
                 // Data & User-level informations
                 SetData("isClicked", "false");
@@ -47,12 +50,14 @@ namespace Cherry
 
             void Render() override
             {
-                ImVec2 squareSize(std::stof(GetProperty("size_x")), std::stof(GetProperty("size_x")));
+                ImVec2 squareSize(std::stof(GetProperty("size_x")), std::stof(GetProperty("size_y")));
 
-                const char *originalText = "Title";
-                const std::string envproject = "Title";
-                const std::string desc = "Description";
+                std::string title = GetProperty("title");
+                const char *originalText = title.c_str();
+                std::string description = GetProperty("description");
                 char truncatedText[32];
+
+                std::string image = GetProperty("image_path");
 
                 if (strlen(originalText) > 24)
                 {
@@ -84,13 +89,13 @@ namespace Cherry
 
                 ImDrawList *drawList = CherryGUI::GetWindowDrawList();
 
-                if (!envproject.empty() && std::filesystem::exists(envproject))
+                if (!image.empty() && std::filesystem::exists(image))
                 {
-                    drawList->AddImage(Cherry::GetTexture(envproject), cursorPos, ImVec2(cursorPos.x + squareSize.x, cursorPos.y + squareSize.y));
+                    drawList->AddImage(Cherry::GetTexture(image), cursorPos, ImVec2(cursorPos.x + squareSize.x, cursorPos.y + squareSize.y));
                 }
                 else
                 {
-                    drawList->AddImage(Cherry::GetTexture(envproject), cursorPos, ImVec2(cursorPos.x + squareSize.x, cursorPos.y + squareSize.y));
+                    drawList->AddImage(Cherry::GetTexture(image), cursorPos, ImVec2(cursorPos.x + squareSize.x, cursorPos.y + squareSize.y));
                 }
 
                 {
@@ -104,21 +109,15 @@ namespace Cherry
 
                     ImVec2 textPos = ImVec2(cursorPos.x + textPadding.x, cursorPos.y + squareSize.y - blurHeight + textPadding.y);
 
-                    CherryGUI::PushFont(CherryGUI::GetIO().Fonts->Fonts[1]); // Assuming font[1] is a larger font. Adjust index as needed.
-
-                    drawList->AddText(textPos, IM_COL32(255, 255, 255, 255), envproject.c_str());
-
-                    CherryGUI::PopFont();
+                    drawList->AddText(textPos, IM_COL32(255, 255, 255, 255), title.c_str());
                 }
 
                 ImVec2 textPos = ImVec2(cursorPos.x, cursorPos.y + squareSize.y + 5);
-                std::string fullText = desc;
                 float maxWidth = squareSize.x;
 
                 std::string line;
-                Cherry::PushFont("dv-b");
                 float lineWidth = 0.0f;
-                for (char ch : fullText)
+                for (char ch : description)
                 {
                     ImVec2 charSize = CherryGUI::CalcTextSize(std::string(1, ch).c_str());
                     if (lineWidth + charSize.x > maxWidth && !line.empty())
@@ -136,7 +135,6 @@ namespace Cherry
                 {
                     drawList->AddText(textPos, Cherry::HexToImU32("#999999ff"), line.c_str());
                 }
-                Cherry::PopFont();
 
                 ImU32 textColor = IM_COL32(255, 255, 255, 255);
                 ImU32 highlightColor = IM_COL32(255, 255, 0, 255);
@@ -147,18 +145,10 @@ namespace Cherry
                     CherryGUI::SetMouseCursor(ImGuiMouseCursor_Hand);
                     drawList->AddRect(cursorPos, ImVec2(cursorPos.x + squareSize.x, cursorPos.y + squareSize.y), IM_COL32(135, 135, 135, 255), 0.0f, 0, 2.0f);
                 }
-
-                /*if (!disable_stack)
-                {
-                    float windowVisibleX2 = CherryGUI::GetWindowPos().x + CherryGUI::GetWindowContentRegionMax().x;
-                    if (cursorPos.x + totalSize.x < windowVisibleX2)
-                        CherryGUI::SameLine();
-                }*/
             }
 
         private:
             std::function<void()> m_OnClickedCallback;
-            std::vector<std::function<void()>> m_RenderCallbacks;
             std::string GetCurrentTime()
             {
                 std::string m_LastClickTime;
@@ -174,7 +164,7 @@ namespace Cherry
     // End-User API
     namespace Kit
     {
-        inline std::shared_ptr<Component> BannerImageContext(const std::vector<std::function<void()>> &renderCallbacks)
+        inline std::shared_ptr<Component> BannerImageContext(const std::string& image_path = "", const std::string& title = "",  const std::string& description = "")
         {
             auto anonymous_id = Application::GetAnonymousID();
             auto existing = Application::GetAnonymousComponent(anonymous_id);
@@ -185,13 +175,13 @@ namespace Cherry
             }
             else
             {
-                auto button = Application::CreateAnonymousComponent<Components::BannerImageContext>(Components::BannerImageContext(anonymous_id, renderCallbacks));
+                auto button = Application::CreateAnonymousComponent<Components::BannerImageContext>(Components::BannerImageContext(anonymous_id, image_path, title, description));
                 button->Render();
                 return button;
             }
         }
 
-        inline std::shared_ptr<Component> BannerImageContext(const float &width = 260.0f, const float &height = 110.0f, const std::vector<std::function<void()>> &renderCallbacks = {}, const std::function<void()> &onClickedCallback = []() {})
+        inline std::shared_ptr<Component> BannerImageContext(const float &width = 260.0f, const float &height = 110.0f, const std::string& image_path = "", const std::string& title = "",  const std::string& description = "", const std::function<void()> &onClickedCallback = []() {})
         {
             auto anonymous_id = Application::GetAnonymousID();
             auto existing = Application::GetAnonymousComponent(anonymous_id);
@@ -202,26 +192,26 @@ namespace Cherry
             }
             else
             {
-                auto button = Application::CreateAnonymousComponent<Components::BannerImageContext>(Components::BannerImageContext(anonymous_id, renderCallbacks, width, height, onClickedCallback));
+                auto button = Application::CreateAnonymousComponent<Components::BannerImageContext>(Components::BannerImageContext(anonymous_id, image_path, title, description, width, height, onClickedCallback));
                 button->Render();
                 return button;
             }
         }
 
-        inline std::shared_ptr<Component> BannerImageContext(const Cherry::Identifier &identifier, const std::vector<std::function<void()>> &renderCallbacks)
+        inline std::shared_ptr<Component> BannerImageContext(const Cherry::Identifier &identifier,  const std::string& image_path = "",  const std::string& title = "",  const std::string& description = "")
         {
             switch (identifier.property())
             {
             case IdentifierProperty::Inline:
             {
-                auto new_title = Application::CreateAnonymousComponent<Components::BannerImageContext>(Components::BannerImageContext(identifier, renderCallbacks));
+                auto new_title = Application::CreateAnonymousComponent<Components::BannerImageContext>(Components::BannerImageContext(identifier, image_path, title, description));
                 new_title->Render();
                 return new_title;
                 break;
             }
             case IdentifierProperty::CreateOnly:
             {
-                auto new_title = Application::CreateAnonymousComponent<Components::BannerImageContext>(Components::BannerImageContext(identifier, renderCallbacks));
+                auto new_title = Application::CreateAnonymousComponent<Components::BannerImageContext>(Components::BannerImageContext(identifier, image_path, title, description));
                 return new_title;
                 break;
             }
@@ -244,27 +234,27 @@ namespace Cherry
             else
             {
                 // Create the object if not exist
-                auto new_title = Application::CreateComponent<Components::BannerImageContext>(Components::BannerImageContext(identifier, renderCallbacks));
+                auto new_title = Application::CreateComponent<Components::BannerImageContext>(Components::BannerImageContext(identifier, image_path, title, description));
                 new_title->Render();
                 return new_title;
             }
             return existing_title;
         }
 
-        inline std::shared_ptr<Component> BannerImageContext(const Cherry::Identifier &identifier, const float &width = 260.0f, const float &height = 110.0f, const std::vector<std::function<void()>> &renderCallbacks = {}, const std::function<void()> &onClickedCallback = []() {})
+        inline std::shared_ptr<Component> BannerImageContext(const Cherry::Identifier &identifier, const float &width = 260.0f, const float &height = 110.0f, const std::string& image_path = "", const std::string& title = "",  const std::string& description = "", const std::function<void()> &onClickedCallback = []() {})
         {
             switch (identifier.property())
             {
             case IdentifierProperty::Inline:
             {
-                auto new_title = Application::CreateAnonymousComponent<Components::BannerImageContext>(Components::BannerImageContext(identifier, renderCallbacks, width, height, onClickedCallback));
+                auto new_title = Application::CreateAnonymousComponent<Components::BannerImageContext>(Components::BannerImageContext(identifier, image_path, title, description, width, height, onClickedCallback));
                 new_title->Render();
                 return new_title;
                 break;
             }
             case IdentifierProperty::CreateOnly:
             {
-                auto new_title = Application::CreateAnonymousComponent<Components::BannerImageContext>(Components::BannerImageContext(identifier, renderCallbacks, width, height, onClickedCallback));
+                auto new_title = Application::CreateAnonymousComponent<Components::BannerImageContext>(Components::BannerImageContext(identifier, image_path, title, description, width, height, onClickedCallback));
                 return new_title;
                 break;
             }
@@ -274,6 +264,8 @@ namespace Cherry
             }
             default:
             {
+                auto new_title = Application::CreateAnonymousComponent<Components::BannerImageContext>(Components::BannerImageContext(identifier, image_path, title, description, width, height, onClickedCallback));
+                return new_title;
                 break;
             }
             }
@@ -287,7 +279,7 @@ namespace Cherry
             else
             {
                 // Create the object if not exist
-                auto new_title = Application::CreateComponent<Components::BannerImageContext>(Components::BannerImageContext(identifier, renderCallbacks, width, height));
+                auto new_title = Application::CreateComponent<Components::BannerImageContext>(Components::BannerImageContext(identifier, image_path, title, description, width, height));
                 new_title->Render();
                 return new_title;
             }

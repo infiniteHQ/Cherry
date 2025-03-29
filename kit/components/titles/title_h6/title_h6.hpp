@@ -26,44 +26,39 @@ namespace Cherry
 
                 // Colors
                 SetProperty("color_text", "#FFFFFFFF"); // TODO get the default theme
-                SetProperty("font_scale", "1.1"); // TODO get the default theme
+                SetProperty("font_scale", "1.1");       // TODO get the default theme
 
                 // Informations
                 SetProperty("label", label);
             }
 
-void Render() override
-{
-    // Cache des propriétés statiques
-    static ImVec4 cached_text_color;
-    static std::string cached_label;
-    static float font_scale;
+            void Render() override
+            {
+                if (NeedRefreshing())
+                {
+                    cached_text_color = HexToRGBA(GetProperty("color_text"));
+                    cached_label = GetProperty("label");
+                    font_scale = std::stof(GetProperty("font_scale"));
 
-    // Rafraîchir uniquement si nécessaire
-    if (NeedRefreshing())
-    {
-        cached_text_color = HexToRGBA(GetProperty("color_text"));
-        cached_label = GetProperty("label");
-        font_scale = std::stof(GetProperty("font_scale")); // Valeur par défaut 1.10
+                    Refreshed();
+                }
 
-        Refreshed(); // Marquer comme rafraîchi
-    }
+                float old_font_size = CherryGUI::GetFont()->Scale;
+                CherryGUI::GetFont()->Scale *= font_scale;
+                CherryGUI::PushFont(CherryGUI::GetFont());
 
-    // Sauvegarde de la taille actuelle de la police
-    float old_font_size = CherryGUI::GetFont()->Scale;
-    CherryGUI::GetFont()->Scale *= font_scale;
-    CherryGUI::PushFont(CherryGUI::GetFont());
+                CherryGUI::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(6, 6));
+                CherryGUI::TextColored(cached_text_color, cached_label.c_str());
+                CherryGUI::PopStyleVar();
 
-    // Style du texte
-    CherryGUI::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(6, 6));
-    CherryGUI::TextColored(cached_text_color, cached_label.c_str());
-    CherryGUI::PopStyleVar();
+                CherryGUI::GetFont()->Scale = old_font_size;
+                CherryGUI::PopFont();
+            }
 
-    // Rétablissement de la police d'origine
-    CherryGUI::GetFont()->Scale = old_font_size;
-    CherryGUI::PopFont();
-}
-
+        private:
+            ImVec4 cached_text_color;
+            std::string cached_label;
+            float font_scale;
         };
     }
 
@@ -89,7 +84,6 @@ void Render() override
             title->Render();
             return title;
         }
-
 
         inline std::shared_ptr<Component> TitleSix(const Cherry::Identifier &identifier, const std::string &label)
         {

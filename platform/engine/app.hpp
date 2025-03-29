@@ -41,6 +41,9 @@ static int current_fps;
 #ifndef CHERRY_APP_H
 #define CHERRY_APP_H
 
+// Next component property 
+#define CherryNextProp(key, value) Cherry::SetNextComponentProperty(key, value)
+
 // Code utils macros
 #define CherryLambda(code) [=]() { code }
 
@@ -48,6 +51,7 @@ static int current_fps;
 #define CherryPath(path) Cherry::GetPath(path)
 
 // Cherry Identifier macros
+#define CherryIDAno(identifier_property) CherryID(Cherry::Identifier::GetUniqueIndex(), identifier_property)
 #define CherryInline CherryID(Cherry::Identifier::GetUniqueIndex(), Cherry::IdentifierProperty::Inline)
 #define CherryCreateOnly CherryID(Cherry::Identifier::GetUniqueIndex(), Cherry::IdentifierProperty::CreateOnly)
 
