@@ -20,77 +20,38 @@
 ### Summary
 *Cherry is a modern, minimalist yet comprehensive UI/UX framework for low-level native applications. It provides a complete solution, including backend support, a rendering engine, and UI components. Cherry is built using technologies like ImGui, Vulkan, and SDL, offering developers advanced tools to create efficient and high-performance interfaces.*
 
-### What you can do ?
-<table>
-  <tr>
-    <td>
-      <img src="./.github/imgs/possibilities/1.png" alt="Cherry 1" width="150">
-      <img src="./.github/imgs/possibilities/2.png" alt="Cherry 1" width="150">
-      <img src="./.github/imgs/possibilities/4.png" alt="Cherry 1" width="150">
-      <img src="./.github/imgs/possibilities/3.png" alt="Cherry 1" width="150">
-      <img src="./.github/imgs/possibilities/5.png" alt="Cherry 1" width="150">
-      <img src="./.github/imgs/possibilities/6.png" alt="Cherry 1" width="150">
-      <img src="./.github/imgs/possibilities/7.png" alt="Cherry 1" width="150">
-    </td>
-  </tr>
-</table>
+*A presentation video will be apear here*
 
-### Compatibility ?
-<table>
-  <tr>
-    <td>
-      <img src="./.github/imgs/compat/1.png" alt="Cherry 1" width="90">
-      <img src="./.github/imgs/compat/2.png" alt="Cherry 1" width="90">
-      <img src="./.github/imgs/compat/3.png" alt="Cherry 1" width="90">
-      <img src="./.github/imgs/compat/4.png" alt="Cherry 1" width="90">
-      <img src="./.github/imgs/compat/5.png" alt="Cherry 1" width="90">
-      <img src="./.github/imgs/compat/6.png" alt="Cherry 1" width="90">
-    </td>
-  </tr>
-</table>
+## What you can do ?
 
-### Documentation
+|                         | Status       |
+|--------------------------------|-------------|
+| **Desktop Applications**       | ✅ Ready    |
+| **Debug Tools & Utilities**    | ✅ Ready    |
+| **Web Tech-Based Apps**        | 🧪 Experimental |
+| **Embedded Systems & UIs**     | ⏳ Planned  |
+| **Web Apps**                   | ⏳ Planned  |
+| **Mobile Apps**                | ⏳ Planned  |
+| **UI in Games & Renders**      | ⏳ Planned  |
 
-## Examples & Preview
-  
-> [!NOTE]  
-> These examples are real-world examples of the use of Cherry. More examples will be uploaded.
-<table>
-  <tr>
-    <td align="center">
-      <img src="./.github/imgs/Cherry1.png" alt="Cherry 1" width="250">
-      <p>Simple window with sidebar</p>
-    </td>
-    <td align="center">
-      <img src="./.github/imgs/Cherry2.png" alt="Cherry 2" width="250">
-      <p>Toast notification</p>
-    </td>
-    <td align="center">
-      <img src="./.github/imgs/Cherry3.png" alt="Cherry 3" width="250">
-      <p>Rich menubar</p>
-    </td>
-  </tr>
-  <tr>
-    <td align="center">
-      <img src="./.github/imgs/Cherry4.png" alt="Cherry 4" width="250">
-      <p>Project selector with custom widgets</p>
-    </td>
-    <td align="center">
-      <img src="./.github/imgs/Cherry5.png" alt="Cherry 5" width="250">
-      <p>Item selection & navigation</p>
-    </td>
-    <td align="center">
-      <img src="./.github/imgs/Cherry6.png" alt="Cherry 6" width="250">
-      <p>Rich windows & Docking</p>
-    </td>
-  </tr>
-  <tr>
-    <td align="center">
-      <img src="./.github/imgs/Cherry7.png" alt="Cherry 7" width="250">
-      <p>Multi-windows on single app</p>
-    </td>
-  </tr>
-</table>
+##### Legend  
+✅ : *Ready*  
+🧪 : *Experimental*  
+⏳ : *Planned*  
+
+## Compatibility
+
+| Technology | Windows | Linux | macOS | iOS | Android | Web |
+|-----------|---------|-------|-------|-----|---------|-----|
+| **Vulkan**  | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| **OpenGL**  | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| **WebGL**   | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
+
+##### Legend  
+✅ *: Fully compatible*    
+🟧 *: Not fully tested, partially incompatible*   
+❌ *: Not planned, incompatible*  
+
 
 ## Features
 
@@ -153,18 +114,46 @@
 > bash build.sh
 > ```
 
-### About tech
-*The core of Cherry is made with C and C++, but you can easely integrate the framework in many stacks configurations with many other languages or techs.*
-<div style="display: flex; align-items: center;">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="./.github/imgs/Graph.png">
-    <img width="500" src="./.github/imgs/Graph.png" alt="Stack Image">
-  </picture>
-</div>
-
-At the low level, we have all the backends, including Vulkan and SDL contexts, handling input management, event dispatching, and Vulkan-accessible resources such as the swapchain, framebuffers, etc. At the upper level, we have the Cherry render engine, whose role is to manage, create, and delete OS windows, while providing user-level windows within these OS windows. Additionally, we ensure seamless coordination for an optimal user experience.
-
-Within these user-side windows, we include all components and widgets, along with a robust system for complete user data management. The entire stack is highly optimized to ensure the best performance and maximum stability.
+## Examples & Preview
+  
+> [!NOTE]  
+> These examples are real-world examples of the use of Cherry. More examples will be uploaded.
+<table>
+  <tr>
+    <td align="center">
+      <img src="./.github/imgs/Cherry1.png" alt="Cherry 1" width="250">
+      <p>Simple window with sidebar</p>
+    </td>
+    <td align="center">
+      <img src="./.github/imgs/Cherry2.png" alt="Cherry 2" width="250">
+      <p>Toast notification</p>
+    </td>
+    <td align="center">
+      <img src="./.github/imgs/Cherry3.png" alt="Cherry 3" width="250">
+      <p>Rich menubar</p>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="./.github/imgs/Cherry4.png" alt="Cherry 4" width="250">
+      <p>Project selector with custom widgets</p>
+    </td>
+    <td align="center">
+      <img src="./.github/imgs/Cherry5.png" alt="Cherry 5" width="250">
+      <p>Item selection & navigation</p>
+    </td>
+    <td align="center">
+      <img src="./.github/imgs/Cherry6.png" alt="Cherry 6" width="250">
+      <p>Rich windows & Docking</p>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="./.github/imgs/Cherry7.png" alt="Cherry 7" width="250">
+      <p>Multi-windows on single app</p>
+    </td>
+  </tr>
+</table>
 
 ## Special thanks
 - For all contributors of SDL2
