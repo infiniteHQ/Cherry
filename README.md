@@ -22,35 +22,64 @@
 
 *A presentation video will be apear here*
 
-## What you can do ?
+## What you can do ?  
 
-|                         | Status       |
-|--------------------------------|-------------|
-| **Desktop Applications**       | ✅ Ready    |
-| **Debug Tools & Utilities**    | ✅ Ready    |
-| **Web Tech-Based Apps**        | 🧪 Experimental |
-| **Embedded Systems & UIs**     | ⏳ Planned  |
-| **Web Apps**                   | ⏳ Planned  |
-| **Mobile Apps**                | ⏳ Planned  |
-| **UI in Games & Renders**      | ⏳ Planned  |
+![✅ Ready](https://img.shields.io/badge/Desktop%20Applications-Ready-green)
+![✅ Ready](https://img.shields.io/badge/Debug%20Tools%20%26%20Utilities-Ready-green)
+![🧪 Experimental](https://img.shields.io/badge/Web%20Tech--Based%20Apps-Experimental-yellow)
+![⏳ Planned](https://img.shields.io/badge/Embedded%20Systems%20%26%20UIs-Planned-lightgrey)
+![⏳ Planned](https://img.shields.io/badge/Web%20Apps-Planned-lightgrey)
+![⏳ Planned](https://img.shields.io/badge/Mobile%20Apps-Planned-lightgrey)
+![⏳ Planned](https://img.shields.io/badge/UI%20in%20Games%20%26%20Renders-Planned-lightgrey)
 
-##### Legend  
-✅ : *Ready*  
-🧪 : *Experimental*  
-⏳ : *Planned*  
 
-## Compatibility
+<h2>Compatibility</h2>
 
-| Technology | Windows | Linux | macOS | iOS | Android | Web |
-|-----------|---------|-------|-------|-----|---------|-----|
-| **Vulkan**  | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
-| **OpenGL**  | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| **WebGL**   | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
+<table style="width:100%;">
+  <tr>
+    <th>Technology</th>
+    <th>Windows</th>
+    <th>Linux</th>
+    <th>macOS</th>
+    <th>iOS</th>
+    <th>Android</th>
+    <th>Web</th>
+  </tr>
+  <tr>
+    <td><strong>Vulkan</strong></td>
+    <td>✅</td>
+    <td>✅</td>
+    <td>🟧</td>
+    <td>❌</td>
+    <td>❌</td>
+    <td>❌</td>
+  </tr>
+  <tr>
+    <td><strong>OpenGL</strong></td>
+    <td>❌</td>
+    <td>❌</td>
+    <td>❌</td>
+    <td>❌</td>
+    <td>❌</td>
+    <td>❌</td>
+  </tr>
+  <tr>
+    <td><strong>WebGL</strong></td>
+    <td>❌</td>
+    <td>❌</td>
+    <td>❌</td>
+    <td>❌</td>
+    <td>❌</td>
+    <td>❌</td>
+  </tr>
+</table>
 
-##### Legend  
-✅ *: Fully compatible*    
-🟧 *: Not fully tested, partially incompatible*   
-❌ *: Not planned, incompatible*  
+<p style="font-size: 12px;">
+✅ <em>: Fully compatible</em><br>
+🟧 <em>: Not fully tested, partially incompatible but planned</em><br>
+❌ <em>: Not planned, incompatible (for the moment...)</em>
+</p>
+
 
 
 ## Features
@@ -96,23 +125,28 @@
 
 
 > 🪟 On **Microsoft Windows**
-> ```
+> ``` powershell
 > git clone https://github.com/infiniteHQ/Cherry
 > cd Cherry
+> git checkout 1.2
 > git submodule update --init --recursive
-> cd example/demo
+> cd examples/demo
 > build.bat
+> .\build\bin\demo.exe
 > ```
-
 
 > 🐧 On **Linux** based distributions
-> ```
+> ``` bash
 > git clone https://github.com/infiniteHQ/Cherry
 > cd Cherry
+> git checkout 1.2 # Latest release
 > git submodule update --init --recursive
-> cd example/demo
+> cd examples/demo
 > bash build.sh
+> ./build/bin/demo
 > ```
+
+*Congratulations! If everything is working well, you can now start in the Cherry environment. Please follow our documentation (WIP). If you encounter any issues, feel free to ask your question or reach out to us on Discord!*
 
 ## Examples & Preview
   
