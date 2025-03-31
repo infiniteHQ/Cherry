@@ -67,22 +67,17 @@ namespace Cherry
     {
         inline std::shared_ptr<Component> TitleSix(const std::string &label)
         {
-            static std::unordered_map<std::size_t, std::weak_ptr<Component>> component_cache;
-
-            std::size_t label_hash = std::hash<std::string>{}(label);
-
-            if (auto existing = component_cache[label_hash].lock())
+            auto anonymous_id = Application::GenerateUniqueID(label);
+            auto existing = Application::GetAnonymousComponent(anonymous_id);
+            if (existing)
             {
                 existing->Render();
                 return existing;
             }
 
-            auto title = Application::CreateAnonymousComponent<Components::TitleSix>(
-                Components::TitleSix(Cherry::Identifier(std::to_string(label_hash)), label));
-
-            component_cache[label_hash] = title;
-            title->Render();
-            return title;
+            auto button = Application::CreateAnonymousComponent<Components::TitleSix>(Components::TitleSix(anonymous_id, label));
+                button->Render();
+            return button;
         }
 
         inline std::shared_ptr<Component> TitleSix(const Cherry::Identifier &identifier, const std::string &label)

@@ -109,8 +109,8 @@ namespace Cherry
     namespace Kit
     {
         inline std::shared_ptr<Component> GridSimple(const float &blockSize = 250.0f, const float &minBlockSize = 250.0f, const std::vector<std::shared_ptr<Cherry::Component>> &elements = {})
-        {
-            auto anonymous_id = Application::GetAnonymousID();
+        {        
+            auto anonymous_id = Application::GenerateUniqueID(blockSize, minBlockSize, elements);
             auto existing = Application::GetAnonymousComponent(anonymous_id);
             if (existing)
             {

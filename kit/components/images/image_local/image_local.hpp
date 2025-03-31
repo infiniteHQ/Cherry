@@ -52,23 +52,19 @@ namespace Cherry
     // End-User API
     namespace Kit
     {
-        inline bool ImageLocal(const std::string &image_path, float x_size = 50.0f, float y_size = 50.0f)
+        inline std::shared_ptr<Component> ImageLocal(const std::string &image_path, float x_size = 50.0f, float y_size = 50.0f)
         {
-            // Inline component
-            auto anonymous_id = Application::GetAnonymousID();
+            auto anonymous_id = Application::GenerateUniqueID(image_path, x_size, y_size);
             auto existing = Application::GetAnonymousComponent(anonymous_id);
             if (existing)
             {
                 existing->Render();
-                return existing->GetData("isClicked") == "true" ? true : false;
+                return existing;
             }
-            else
-            {
-                auto button = Application::CreateAnonymousComponent<Components::ImageLocal>(Components::ImageLocal(anonymous_id, image_path, x_size, y_size));
-                button->Render();
-                return button->GetData("isClicked") == "true" ? true : false;
-            }
-            return false;
+
+            auto button = Application::CreateAnonymousComponent<Components::ImageLocal>(Components::ImageLocal(anonymous_id, image_path, x_size, y_size));
+            button->Render();
+            return button;
         }
 
         inline bool ImageLocal(const Cherry::Identifier &identifier, const std::string &image_path, float x_size = 50.0f, float y_size = 50.0f)

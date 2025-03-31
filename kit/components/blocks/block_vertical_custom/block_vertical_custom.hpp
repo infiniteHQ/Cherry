@@ -246,7 +246,7 @@ namespace Cherry
             }
             case IdentifierProperty::CreateOnly:
             {
-                auto anonymous_id = Application::GetAnonymousID();
+                auto anonymous_id = Application::GenerateUniqueID(renderCallbacks);
                 auto existing = Application::GetAnonymousComponent(anonymous_id);
                 if (existing)
                 {
@@ -298,7 +298,7 @@ namespace Cherry
             }
             case IdentifierProperty::CreateOnly:
             {
-                auto anonymous_id = Application::GetAnonymousID();
+                auto anonymous_id = Application::GenerateUniqueID(onClickedCallback, width, height, renderCallbacks);
                 auto existing = Application::GetAnonymousComponent(anonymous_id);
                 if (existing)
                 {

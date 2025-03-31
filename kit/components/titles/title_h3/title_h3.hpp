@@ -39,7 +39,7 @@ namespace Cherry
 
                 CherryGUI::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(6, 6));
 
-                CherryGUI::TextColored(HexToRGBA(GetProperty("color_text")),GetProperty("label").c_str());
+                CherryGUI::TextColored(HexToRGBA(GetProperty("color_text")), GetProperty("label").c_str());
 
                 CherryGUI::PopStyleVar();
 
@@ -54,27 +54,22 @@ namespace Cherry
     {
         inline std::shared_ptr<Component> TitleThree(const std::string &label)
         {
-            static std::unordered_map<std::size_t, std::weak_ptr<Component>> component_cache;
-
-            std::size_t label_hash = std::hash<std::string>{}(label);
-
-            if (auto existing = component_cache[label_hash].lock())
+            auto anonymous_id = Application::GenerateUniqueID(label);
+            auto existing = Application::GetAnonymousComponent(anonymous_id);
+            if (existing)
             {
                 existing->Render();
                 return existing;
             }
 
-            auto title = Application::CreateAnonymousComponent<Components::TitleThree>(
-                Components::TitleThree(Cherry::Identifier(std::to_string(label_hash)), label));
-
-            component_cache[label_hash] = title;
-            title->Render();
-            return title;
+            auto button = Application::CreateAnonymousComponent<Components::TitleThree>(Components::TitleThree(anonymous_id, label));
+            button->Render();
+            return button;
         }
 
         inline std::shared_ptr<Component> TitleThree(const Cherry::Identifier &identifier, const std::string &label)
         {
-            if(identifier.string() == "__inline")
+            if (identifier.string() == "__inline")
             {
                 auto new_title = Application::CreateAnonymousComponent<Components::TitleThree>(Components::TitleThree(identifier, label));
                 new_title->Render();

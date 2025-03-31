@@ -164,7 +164,7 @@ namespace Cherry
     // End-User API
     namespace Kit
     {
-        inline std::shared_ptr<Component> BannerImageContext(const std::string& image_path = "", const std::string& title = "",  const std::string& description = "")
+        inline std::shared_ptr<Component> BannerImageContext(const std::string &image_path = "", const std::string &title = "", const std::string &description = "")
         {
             auto anonymous_id = Application::GetAnonymousID();
             auto existing = Application::GetAnonymousComponent(anonymous_id);
@@ -181,7 +181,7 @@ namespace Cherry
             }
         }
 
-        inline std::shared_ptr<Component> BannerImageContext(const float &width = 260.0f, const float &height = 110.0f, const std::string& image_path = "", const std::string& title = "",  const std::string& description = "", const std::function<void()> &onClickedCallback = []() {})
+        inline std::shared_ptr<Component> BannerImageContext(const float &width = 260.0f, const float &height = 110.0f, const std::string &image_path = "", const std::string &title = "", const std::string &description = "", const std::function<void()> &onClickedCallback = []() {})
         {
             auto anonymous_id = Application::GetAnonymousID();
             auto existing = Application::GetAnonymousComponent(anonymous_id);
@@ -198,7 +198,7 @@ namespace Cherry
             }
         }
 
-        inline std::shared_ptr<Component> BannerImageContext(const Cherry::Identifier &identifier,  const std::string& image_path = "",  const std::string& title = "",  const std::string& description = "")
+        inline std::shared_ptr<Component> BannerImageContext(const Cherry::Identifier &identifier, const std::string &image_path = "", const std::string &title = "", const std::string &description = "")
         {
             switch (identifier.property())
             {
@@ -211,8 +211,17 @@ namespace Cherry
             }
             case IdentifierProperty::CreateOnly:
             {
-                auto new_title = Application::CreateAnonymousComponent<Components::BannerImageContext>(Components::BannerImageContext(identifier, image_path, title, description));
-                return new_title;
+                auto anonymous_id = Application::GenerateUniqueID(image_path, title, description);
+                auto existing = Application::GetAnonymousComponent(anonymous_id);
+                if (existing)
+                {
+                    return existing;
+                }
+                else
+                {
+                    auto button = Application::CreateAnonymousComponent<Components::BannerImageContext>(Components::BannerImageContext(anonymous_id, image_path, title, description));
+                    return button;
+                }
                 break;
             }
             case IdentifierProperty::None:
@@ -241,21 +250,32 @@ namespace Cherry
             return existing_title;
         }
 
-        inline std::shared_ptr<Component> BannerImageContext(const Cherry::Identifier &identifier, const float &width = 260.0f, const float &height = 110.0f, const std::string& image_path = "", const std::string& title = "",  const std::string& description = "", const std::function<void()> &onClickedCallback = []() {})
+        inline std::shared_ptr<Component> BannerImageContext(const Cherry::Identifier &identifier, const float &width = 260.0f, const float &height = 110.0f, const std::string &image_path = "", const std::string &title = "", const std::string &description = "", const std::function<void()> &onClickedCallback = []() {})
         {
             switch (identifier.property())
             {
             case IdentifierProperty::Inline:
             {
-                auto new_title = Application::CreateAnonymousComponent<Components::BannerImageContext>(Components::BannerImageContext(identifier, image_path, title, description, width, height, onClickedCallback));
-                new_title->Render();
-                return new_title;
+                auto anonymous_id = Application::GenerateUniqueID(width, height, image_path, title, description, onClickedCallback);
+                auto button = Application::CreateAnonymousComponent<Components::BannerImageContext>(Components::BannerImageContext(anonymous_id, image_path, title, description, width, height, onClickedCallback));
+                button->Render();
+                return button;
+
                 break;
             }
             case IdentifierProperty::CreateOnly:
             {
-                auto new_title = Application::CreateAnonymousComponent<Components::BannerImageContext>(Components::BannerImageContext(identifier, image_path, title, description, width, height, onClickedCallback));
-                return new_title;
+                auto anonymous_id = Application::GenerateUniqueID(width, height, image_path, title, description, onClickedCallback);
+                auto existing = Application::GetAnonymousComponent(anonymous_id);
+                if (existing)
+                {
+                    return existing;
+                }
+                else
+                {
+                    auto button = Application::CreateAnonymousComponent<Components::BannerImageContext>(Components::BannerImageContext(anonymous_id, image_path, title, description, width, height, onClickedCallback));
+                    return button;
+                }
                 break;
             }
             case IdentifierProperty::None:

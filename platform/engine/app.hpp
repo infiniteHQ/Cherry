@@ -41,7 +41,7 @@ static int current_fps;
 #ifndef CHERRY_APP_H
 #define CHERRY_APP_H
 
-// Next component property 
+// Next component property
 #define CherryNextProp(key, value) Cherry::SetNextComponentProperty(key, value)
 
 // Code utils macros
@@ -51,7 +51,6 @@ static int current_fps;
 #define CherryPath(path) Cherry::GetPath(path)
 
 // Cherry Identifier macros
-#define CherryIDAno(identifier_property) CherryID(Cherry::Identifier::GetUniqueIndex(), identifier_property)
 #define CherryInline CherryID(Cherry::Identifier::GetUniqueIndex(), Cherry::IdentifierProperty::Inline)
 #define CherryCreateOnly CherryID(Cherry::Identifier::GetUniqueIndex(), Cherry::IdentifierProperty::CreateOnly)
 
@@ -73,6 +72,18 @@ static void AppPushTabStyle()
 static void AppPopTabStyle()
 {
 	ImGui::PopStyleVar(3);
+}
+
+namespace std
+{
+	template <>
+	struct hash<Cherry::Identifier>
+	{
+		size_t operator()(const Cherry::Identifier &identifier) const
+		{
+			return std::hash<std::string>{}(identifier.string());
+		}
+	};
 }
 
 namespace Cherry
@@ -143,7 +154,7 @@ namespace Cherry
 		static std::vector<uint8_t> LoadPngHexa(const std::string &path);
 		static void SetExecutablePath();
 		static std::string &GetExecutablePath();
-    	static SDL_Window *GetWindowHandle(const std::string &winname);
+		static SDL_Window *GetWindowHandle(const std::string &winname);
 		static void AddProcessCallback(ProcessCallback process, const std::function<void()> callback);
 		static void ExecuteProcessCallbacks(ProcessCallback process);
 
@@ -199,7 +210,7 @@ namespace Cherry
 
 		void BoostrappWindow();
 
-		void SingleThreadRuntime(); // Run in single thread mode. (Better for third party thread safety)
+		void SingleThreadRuntime();		 // Run in single thread mode. (Better for third party thread safety)
 		void MultiThreadWindowRuntime(); // EXPERIMENTAL : Run in mutliple thread mode. (Worse for third party thread safety but more performant.)
 
 		void PushLayer(const std::shared_ptr<Layer> &layer);
@@ -257,6 +268,23 @@ namespace Cherry
 		{
 			return Identifier(Identifier::GetUniqueIndex());
 		}
+
+template <typename... Args>
+static Identifier GenerateUniqueID(const Args &...args)
+{
+    std::size_t seed = 0;
+    (HashCombine(seed, &args), ...);
+
+    return Identifier(std::to_string(seed));
+}
+
+static void HashCombine(std::size_t &seed, const void *ptr)
+{
+    std::hash<const void *> hasher;
+    seed ^= hasher(ptr) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+}
+
+
 
 		static Identifier GetAnonymousID(const std::string &label)
 		{
@@ -361,10 +389,9 @@ namespace Cherry
 
 		std::unordered_map<std::string, std::string> m_OnTimeProperties; // Properties will be added in the next component
 		void AddOneTimeProperty(const std::string &property, const std::string &value);
-		const std::unordered_map<std::string, std::string>& GetOneTimeProperties();
-		void RemoveOneTimeProperty(const std::string& key);
+		const std::unordered_map<std::string, std::string> &GetOneTimeProperties();
+		void RemoveOneTimeProperty(const std::string &key);
 		void ClearOneTimeProperties();
-
 
 		std::vector<std::shared_ptr<Component>> m_ParentComponentsStack;
 		void PushParentComponent(const std::shared_ptr<Component> &component);
@@ -403,7 +430,6 @@ namespace Cherry
 
 		std::string m_HttpCacheFolderName = "http_cache";
 
-
 	private:
 		void Init();
 		void Shutdown();
@@ -436,8 +462,8 @@ namespace Cherry
 	// Notification
 	void AddNotification(const ImGuiToast &toast);
 
-	// Font 
-	void PushFont(const std::string& font_name);
+	// Font
+	void PushFont(const std::string &font_name);
 	void PopFont();
 
 	// Runtime

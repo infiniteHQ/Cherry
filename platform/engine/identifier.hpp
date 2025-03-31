@@ -82,7 +82,7 @@ namespace Cherry
             ++level_indices[level];
             return generate_id();
         }
-
+        
         static std::string GetRandomIndex()
         {
             std::lock_guard<std::mutex> lock(mutex_);
