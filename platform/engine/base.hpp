@@ -148,6 +148,7 @@ namespace Cherry
         bool CenterWindow = false; // Window will be created in the center of primary monitor
         bool DisableTitle = false;
         bool DisableTitleBar = false;
+        bool UseAudioService = false;
         bool DisableResize = false;
         bool WindowResizeable = true;
         bool WindowOnlyClosable = false;
@@ -211,6 +212,11 @@ namespace Cherry
         void SetMainRenderCallback(const std::function<void()> &mainRenderCallback)
         {
             MainRenderCallback = mainRenderCallback;
+        }
+
+        void UseAudio()
+        {
+            UseAudioService = true;
         }
 
         void UseWindowSaves()

@@ -594,6 +594,15 @@ namespace Cherry
         // Intialize logging
         Log::Init();
 
+
+#ifdef CHERRY_ENABLE_AUDIO
+        // Init audio service if needed
+        if (app->m_DefaultSpecification.UseAudioService)
+        {
+            StartAudioService();
+        }
+#endif
+
         // Setup SDL
         if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_GAMECONTROLLER) != 0)
         {
@@ -636,6 +645,14 @@ namespace Cherry
             layer->OnDetach();
 
         m_LayerStack.clear();
+
+#ifdef CHERRY_ENABLE_AUDIO
+        // Stop audio service if needed
+        if (app->m_DefaultSpecification.UseAudioService)
+        {
+            StopAudioService();
+        }
+#endif
 
         VkResult err;
         for (auto &window : m_Windows)
@@ -2528,6 +2545,85 @@ namespace Cherry
                 component->SetData(key, value);
             }
         }
+    }
+
+// Audio service if CHERRY_ENABLE_AUDIO
+#ifdef CHERRY_ENABLE_AUDIO
+    void Application::StartAudioService()
+    {
+        ma_result result;
+
+        result = ma_engine_init(NULL, &this->m_AudioEngine);
+        if (result != MA_SUCCESS)
+        {
+            std::cout << "Error: Failed to start audio service" << std::endl;
+        }
+    }
+
+    void Application::StopAudioService()
+    {
+        ma_engine_uninit(&this->m_AudioEngine);
+    }
+
+    void Application::PlaySound(const std::string &wav_file_path)
+    {
+        ma_engine_play_sound(&this->m_AudioEngine, wav_file_path.c_str(), NULL);
+    }
+#else
+    void Application::StartAudioService()
+    {
+        //
+    }
+
+    void Application::StopAudioService()
+    {
+        //
+    }
+
+    void Application::PlaySound(const std::string &wav_file_path)
+    {
+        std::cout << "To use audio, please enable CHERRY_ENABLE_AUDIO (to 1) on options.hpp of the Cherry framework" << std::endl;
+    }
+#endif
+
+    bool Application::IsKeyPressed(CherryKey key)
+    {
+        const Uint8 *state = SDL_GetKeyboardState(NULL);
+        auto it = keyMap.find(key);
+        if (it != keyMap.end())
+        {
+            return state[it->second];
+        }
+        return false;
+    }
+
+    void Application::PushCurrentComponent(const std::shared_ptr<Component> &component)
+    {
+        m_PushedCurrentComponent.push_back(component);
+    }
+
+    void Application::PopCurrentComponent(int pop_number)
+    {
+        if (m_PushedCurrentComponent.empty())
+            return;
+
+        if (pop_number <= 0 || pop_number >= static_cast<int>(m_PushedCurrentComponent.size()))
+        {
+            m_PushedCurrentComponent.clear();
+        }
+        else
+        {
+            m_PushedCurrentComponent.erase(m_PushedCurrentComponent.end() - pop_number, m_PushedCurrentComponent.end());
+        }
+    }
+
+    std::shared_ptr<Component> Application::GetCurrentComponent() const
+    {
+        if (m_PushedCurrentComponent.empty())
+        {
+            return nullptr;
+        }
+        return m_PushedCurrentComponent.back();
     }
 
     void Application::PushComponentGroup(const std::string &groupname)

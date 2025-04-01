@@ -38,7 +38,8 @@ namespace Cherry
     {
         // If render disable flag enabled, dont render and consume properties
         // button->RefreshContextProperties();
-        // button->Render();
+
+        this->Render();
     }
 
     std::string Component::GetProperty(const std::string &key)

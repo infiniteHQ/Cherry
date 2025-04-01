@@ -6,6 +6,11 @@
   #define _CHERRY_ENABLE_NET
 #endif
 
+#if CHERRY_ENABLE_AUDIO
+  #define _CHERRY_ENABLE_AUDIO
+#endif
+  #define _CHERRY_ENABLE_AUDIO
+
 #if CHERRY_ENABLE_CEF
   #define _CHERRY_ENABLE_CEF
 #endif
@@ -133,6 +138,8 @@
 #include "./kit/components/blocks/block_vertical_custom/block_vertical_custom.hpp"
 // Banner
 #include "./kit/components/banners/banner_image_context/banner_image_context.hpp"
+// Modals
+#include "./kit/components/modals/modal_title/modal_title.hpp"
 // Web
 #ifdef CHERRY_CEF
 #include "./kit/components/web/web_view/web_view.hpp"
@@ -141,8 +148,9 @@
 ///////////////////////////////////////////////////////////////
 /// Style : Components, All in one windows, theme, utils...   ///
 ///////////////////////////////////////////////////////////////
-// Buttons
+// Margin style
 #include "./kit/utils/behavior/margin/margin.hpp"
+// Font style
 #include "./kit/utils/behavior/font/font.hpp"
 
 
@@ -153,6 +161,7 @@
 
 namespace CherryKit = Cherry::Kit;
 namespace CherryStyle = Cherry::Style;
+// namespace CherryLogic = Cherry::Logic // CherryLogic::PlaySound, IsKeyPressed, etc...
 
 // AIO kits & components includes
 

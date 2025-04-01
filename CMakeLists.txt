@@ -25,10 +25,14 @@ if(CHERRY_CEF)
     add_subdirectory(lib/cef-project)
 endif()
 
-if(CHERRY_NET)
+if(CHERRY_ENABLE_NET)
     if (NOT TARGET restclient-cpp)
         add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/lib/restcpp restcpp_build)
     endif()
+endif()
+
+if(CHERRY_ENABLE_AUDIO)
+        add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/lib/miniaudio miniaudio_build)
 endif()
 
 file(GLOB_RECURSE CHERRY_SRC CONFIGURE_DEPENDS
@@ -54,8 +58,13 @@ target_include_directories(cherry PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src")
 target_include_directories(cherry PUBLIC "${PROJECT_SOURCE_DIR}/lib/stb_image")
 target_include_directories(cherry PUBLIC "${PROJECT_SOURCE_DIR}/lib/spdlog/include")
 
-if(CHERRY_NET)
-    target_compile_definitions(cherry PUBLIC CHERRY_NET)
+if(CHERRY_ENABLE_AUDIO)
+    target_compile_definitions(cherry PUBLIC CHERRY_ENABLE_AUDIO)
+    target_link_libraries(cherry PUBLIC miniaudio)
+endif()
+
+if(CHERRY_ENABLE_NET)
+    target_compile_definitions(cherry PUBLIC CHERRY_ENABLE_NET)
     target_link_libraries(cherry PUBLIC restclient-cpp)
 endif()
 

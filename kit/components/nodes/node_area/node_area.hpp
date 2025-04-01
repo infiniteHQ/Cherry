@@ -951,7 +951,7 @@ namespace Cherry
         class NodeArea : public Component
         {
         public:
-            NodeArea(const Cherry::Identifier &id, const std::string &label, int width, int heigh)
+            NodeArea(const Cherry::Identifier &id, const std::string &label, int width, int height)
                 : Component(id)
             {
                 // Identifier
@@ -967,7 +967,7 @@ namespace Cherry
 
                 // Images
                 SetProperty("width", std::to_string(width));
-                SetProperty("heigh", std::to_string(heigh));
+                SetProperty("height", std::to_string(height));
 
                 // Informations
                 SetProperty("label", label);
@@ -1980,7 +1980,7 @@ namespace Cherry
     // End-User API
     namespace Kit
     {
-        inline bool NodeArea(const std::string &label, int width, int heigh = 0)
+        inline bool NodeArea(const std::string &label, int width, int height)
         {
             // Inline component
             auto anonymous_id = Application::GetAnonymousID();
@@ -1993,13 +1993,13 @@ namespace Cherry
 
             else
             {
-                auto button = Application::CreateAnonymousComponent<Components::NodeArea>(Components::NodeArea(anonymous_id, label, width, heigh));
+                auto button = Application::CreateAnonymousComponent<Components::NodeArea>(Components::NodeArea(anonymous_id, label, width, height));
                 button->Render();
                 return button->GetData("isClicked") == "true" ? true : false;
             }
         }
 
-        inline bool NodeArea(const Cherry::Identifier &identifier, const std::string &label, int width, int heigh = 0)
+        inline bool NodeArea(const Cherry::Identifier &identifier, const std::string &label, int width, int height)
         {
             // Get the object if exist
             auto existing_button = Application::GetComponent(identifier);
@@ -2011,7 +2011,7 @@ namespace Cherry
             else
             {
                 // Create the object if not exist
-                auto new_button = Application::CreateComponent<Components::NodeArea>(Components::NodeArea(identifier, label, width, heigh));
+                auto new_button = Application::CreateComponent<Components::NodeArea>(Components::NodeArea(identifier, label, width, height));
                 new_button->Render();
                 return new_button->GetData("isClicked") == "true" ? true : false;
             }

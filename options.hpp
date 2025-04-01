@@ -7,6 +7,7 @@
 
 // Optionnal features (1 == Enabled / 0 == Disabled)
 #define CHERRY_ENABLE_NET 1
+#define CHERRY_ENABLE_AUDIO 1
 #define CHERRY_ENABLE_CEF 0
 
 // Optionnal optimization and features remover (1 == Removed / 0 == Used)

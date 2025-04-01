@@ -91,8 +91,7 @@ namespace Cherry
                 {
                     if (GetProperty("disable_time") == "false")
                     SetData("lastClicked", GetCurrentTime());
-                    std::cout << GetData("lastClicked") << std::endl;
-
+                    
                     CherryGUI::PushStyleColor(ImGuiCol_Border, HexToRGBA(GetProperty("color_border_pressed")));
                     CherryGUI::PushStyleColor(ImGuiCol_Button, HexToRGBA(GetProperty("color_bg_pressed")));
                     CherryGUI::PushStyleColor(ImGuiCol_Text, HexToRGBA(GetProperty("color_text_pressed")));

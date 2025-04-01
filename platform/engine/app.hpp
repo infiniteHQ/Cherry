@@ -12,6 +12,10 @@
 #include "components.hpp"
 #include "ui/notifications/notifications.hpp"
 
+// Libs
+#include "../../lib/sdl2/include/SDL_scancode.h"
+#include "../../lib/miniaudio/miniaudio.h"
+
 #include <string>
 #include <vector>
 #include <queue>
@@ -49,6 +53,8 @@ static int current_fps;
 
 // Cherry utils macros
 #define CherryPath(path) Cherry::GetPath(path)
+
+#define CherryApp Cherry::Application::Get()
 
 // Cherry Identifier macros
 #define CherryInline CherryID(Cherry::Identifier::GetUniqueIndex(), Cherry::IdentifierProperty::Inline)
@@ -94,6 +100,44 @@ namespace Cherry
 	{
 		ON_INITIALIZATION_FINISHED
 	};
+
+	enum class CherryKey
+	{
+    	A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z,
+    	NUM_0, NUM_1, NUM_2, NUM_3, NUM_4, NUM_5, NUM_6, NUM_7, NUM_8, NUM_9,
+    	ESCAPE, SPACE, ENTER, BACKSPACE, TAB, SHIFT, CTRL, ALT,
+    	LEFT, RIGHT, UP, DOWN,
+    	F1, F2, F3, F4, F5, F6, F7, F8, F9, F10, F11, F12
+	};
+
+   	static std::unordered_map<CherryKey, SDL_Scancode> keyMap = {
+        {CherryKey::A, SDL_SCANCODE_A}, {CherryKey::B, SDL_SCANCODE_B}, {CherryKey::C, SDL_SCANCODE_C},
+        {CherryKey::D, SDL_SCANCODE_D}, {CherryKey::E, SDL_SCANCODE_E}, {CherryKey::F, SDL_SCANCODE_F},
+        {CherryKey::G, SDL_SCANCODE_G}, {CherryKey::H, SDL_SCANCODE_H}, {CherryKey::I, SDL_SCANCODE_I},
+        {CherryKey::J, SDL_SCANCODE_J}, {CherryKey::K, SDL_SCANCODE_K}, {CherryKey::L, SDL_SCANCODE_L},
+        {CherryKey::M, SDL_SCANCODE_M}, {CherryKey::N, SDL_SCANCODE_N}, {CherryKey::O, SDL_SCANCODE_O},
+        {CherryKey::P, SDL_SCANCODE_P}, {CherryKey::Q, SDL_SCANCODE_Q}, {CherryKey::R, SDL_SCANCODE_R},
+        {CherryKey::S, SDL_SCANCODE_S}, {CherryKey::T, SDL_SCANCODE_T}, {CherryKey::U, SDL_SCANCODE_U},
+        {CherryKey::V, SDL_SCANCODE_V}, {CherryKey::W, SDL_SCANCODE_W}, {CherryKey::X, SDL_SCANCODE_X},
+        {CherryKey::Y, SDL_SCANCODE_Y}, {CherryKey::Z, SDL_SCANCODE_Z},
+        {CherryKey::NUM_0, SDL_SCANCODE_0}, {CherryKey::NUM_1, SDL_SCANCODE_1},
+        {CherryKey::NUM_2, SDL_SCANCODE_2}, {CherryKey::NUM_3, SDL_SCANCODE_3},
+        {CherryKey::NUM_4, SDL_SCANCODE_4}, {CherryKey::NUM_5, SDL_SCANCODE_5},
+        {CherryKey::NUM_6, SDL_SCANCODE_6}, {CherryKey::NUM_7, SDL_SCANCODE_7},
+        {CherryKey::NUM_8, SDL_SCANCODE_8}, {CherryKey::NUM_9, SDL_SCANCODE_9},
+        {CherryKey::ESCAPE, SDL_SCANCODE_ESCAPE}, {CherryKey::SPACE, SDL_SCANCODE_SPACE},
+        {CherryKey::ENTER, SDL_SCANCODE_RETURN}, {CherryKey::BACKSPACE, SDL_SCANCODE_BACKSPACE},
+        {CherryKey::TAB, SDL_SCANCODE_TAB}, {CherryKey::SHIFT, SDL_SCANCODE_LSHIFT},
+        {CherryKey::CTRL, SDL_SCANCODE_LCTRL}, {CherryKey::ALT, SDL_SCANCODE_LALT},
+        {CherryKey::LEFT, SDL_SCANCODE_LEFT}, {CherryKey::RIGHT, SDL_SCANCODE_RIGHT},
+        {CherryKey::UP, SDL_SCANCODE_UP}, {CherryKey::DOWN, SDL_SCANCODE_DOWN},
+        {CherryKey::F1, SDL_SCANCODE_F1}, {CherryKey::F2, SDL_SCANCODE_F2},
+        {CherryKey::F3, SDL_SCANCODE_F3}, {CherryKey::F4, SDL_SCANCODE_F4},
+        {CherryKey::F5, SDL_SCANCODE_F5}, {CherryKey::F6, SDL_SCANCODE_F6},
+        {CherryKey::F7, SDL_SCANCODE_F7}, {CherryKey::F8, SDL_SCANCODE_F8},
+        {CherryKey::F9, SDL_SCANCODE_F9}, {CherryKey::F10, SDL_SCANCODE_F10},
+        {CherryKey::F11, SDL_SCANCODE_F11}, {CherryKey::F12, SDL_SCANCODE_F12}
+    };
 
 	struct ParentWindow
 	{
@@ -191,6 +235,11 @@ namespace Cherry
 		void HandleLayerStackUpdate(Window *window);
 		void PrepareViewport(Window *window);
 
+		// Audio service if CHERRY_ENABLE_AUDIO
+		void StartAudioService();
+		void StopAudioService();
+		void PlaySound(const std::string& wav_file_path);
+
 		static void FramePresent(ImGui_ImplVulkanH_Window *wd, Cherry::Window *win);
 		static void FrameRender(ImGui_ImplVulkanH_Window *wd, Cherry::Window *win, ImDrawData *draw_data);
 
@@ -202,6 +251,8 @@ namespace Cherry
 		static void CleanupVulkan();
 		static void CleanupVulkan(Cherry::Window *win);
 		static void SetupVulkan(const char **extensions, uint32_t extensions_count);
+
+		bool IsKeyPressed(CherryKey key);
 
 		Window *GetWindowByHandle(SDL_Window *window_handle);
 		std::string GetRootPath() { return m_RootPath; }
@@ -269,22 +320,20 @@ namespace Cherry
 			return Identifier(Identifier::GetUniqueIndex());
 		}
 
-template <typename... Args>
-static Identifier GenerateUniqueID(const Args &...args)
-{
-    std::size_t seed = 0;
-    (HashCombine(seed, &args), ...);
+		template <typename... Args>
+		static Identifier GenerateUniqueID(const Args &...args)
+		{
+			std::size_t seed = 0;
+			(HashCombine(seed, &args), ...);
 
-    return Identifier(std::to_string(seed));
-}
+			return Identifier(std::to_string(seed));
+		}
 
-static void HashCombine(std::size_t &seed, const void *ptr)
-{
-    std::hash<const void *> hasher;
-    seed ^= hasher(ptr) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
-}
-
-
+		static void HashCombine(std::size_t &seed, const void *ptr)
+		{
+			std::hash<const void *> hasher;
+			seed ^= hasher(ptr) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+		}
 
 		static Identifier GetAnonymousID(const std::string &label)
 		{
@@ -355,13 +404,18 @@ static void HashCombine(std::size_t &seed, const void *ptr)
 		void PopComponentGroup(int pop_number = 0);
 		std::string GetComponentGroup() const;
 
+		void PushCurrentComponent(const std::shared_ptr<Component> &component);
+		void PopCurrentComponent(int pop_number = 0);
+		std::shared_ptr<Component> GetCurrentComponent() const;
+
 		// FIXME : Groups need to be on the CherryID, not on the pool.
 		// FIXME : Component Arrays need also to be on the CherryID, when we create the component we see if the CherryID have a group.
 		// FIXME : Add the Identifier class here, on the app.hpp
 		// std::vector<std::shared_ptr<ComponentGroup>> m_ComponentGroups;  // List of components in groups
 		//
 		std::vector<std::string> m_PushedComponentGroups; // List of groups
-
+		std::vector<std::shared_ptr<Component>> m_PushedCurrentComponent; // List of groups
+		
 		// Ordre de création dans un array :
 		//	-- Le CherryID a un array de composants spécifié ? Oui, alors je le crée dednas, non, je continue
 		//	-- Je crée le composant en faisant un GetComponentArray, il me donnera un array push si il y a eu un PushComponentArray sans pop,
@@ -382,6 +436,10 @@ static void HashCombine(std::size_t &seed, const void *ptr)
 		std::shared_ptr<Component> m_FocusedDebugComponent;
 
 		std::vector<std::shared_ptr<Layer>> m_LayerStack;
+
+		#ifdef CHERRY_ENABLE_AUDIO
+		ma_engine m_AudioEngine;
+		#endif
 
 		std::vector<std::pair<std::string, std::string>> m_PermanentProperties; // Properties will be added in every component (until pop)
 		void PushPermanentProperty(const std::string &property, const std::string &value);

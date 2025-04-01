@@ -40,7 +40,7 @@ namespace Cherry
                     cached_label = GetProperty("label");
                     font_scale = std::stof(GetProperty("font_scale"));
 
-                    Refreshed();
+                    ///Refreshed();
                 }
 
                 float old_font_size = CherryGUI::GetFont()->Scale;
