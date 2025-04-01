@@ -51,7 +51,7 @@
 
 namespace fs = std::filesystem;
 
-bool g_ApplicationRunning = true;
+extern bool g_ApplicationRunning = false;
 
 // [Win32] Our example includes a copy of glfw3.lib pre-compiled with VS2010 to maximize ease of testing and compatibility with old VS compilers.
 // To link with VS2010-era libraries, VS2015+ requires linking with legacy_stdio_definitions.lib, which we do using this pragma.
@@ -2780,8 +2780,12 @@ namespace Cherry
             return;
 
         int pops = (number_of_pops == 0) ? 1 : number_of_pops;
-
-        pops = std::min(pops, static_cast<int>(m_PermanentProperties.size()));
+        
+        if (pops > static_cast<int>(m_PermanentProperties.size()))
+        {
+            pops = static_cast<int>(m_PermanentProperties.size());
+        }
+        
 
         for (int i = 0; i < pops; ++i)
         {

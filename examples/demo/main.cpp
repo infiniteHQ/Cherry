@@ -35,7 +35,6 @@ int main(int argc, char *argv[]) // Entry point of the executable
 
     if (!Cherry::IsReady())  // The ui is ready? (all criticals backend and components are loaded?)
     continue;
-
-    sleep(10);
+    
   }
 }

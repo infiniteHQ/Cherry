@@ -38,8 +38,6 @@
 #include "imgui/wrappers.hpp"
 #include "vulkan/vulkan.h"
 
-extern bool g_ApplicationRunning;
-
 static int current_fps;
 
 #ifndef CHERRY_APP_H

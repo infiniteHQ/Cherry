@@ -11,8 +11,8 @@
 #ifndef APP_HEADLESS_HPP
 #define APP_HEADLESS_HPP
 
-namespace Cherry {
-
+namespace Cherry
+{
 	struct ApplicationSpecification
 	{
 		std::string Name = "Devtools";

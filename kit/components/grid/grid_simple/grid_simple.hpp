@@ -37,8 +37,9 @@ namespace Cherry
                 float min_block_size = std::stof(GetProperty("minBlockSize"));
 
                 ImVec2 avail = CherryGUI::GetContentRegionAvail();
-                int columns = std::max(1, (int)(avail.x / block_size));
-                float actual_block_size = std::max(min_block_size, avail.x / columns);
+                int columns = (std::max)(1, static_cast<int>(avail.x / block_size));
+                float actual_block_size = (std::max)(min_block_size, avail.x / columns);
+                
 
                 int index = 0;
 

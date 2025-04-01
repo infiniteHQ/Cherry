@@ -2,19 +2,6 @@
 
 #include "options.hpp"
 
-#if CHERRY_ENABLE_NET
-  #define _CHERRY_ENABLE_NET
-#endif
-
-#if CHERRY_ENABLE_AUDIO
-  #define _CHERRY_ENABLE_AUDIO
-#endif
-  #define _CHERRY_ENABLE_AUDIO
-
-#if CHERRY_ENABLE_CEF
-  #define _CHERRY_ENABLE_CEF
-#endif
-
 #ifndef CHERRY_H
 #define CHERRY_H
 #define SDL_MAIN_HANDLED

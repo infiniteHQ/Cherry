@@ -1609,6 +1609,7 @@ namespace Cherry
 
         bool TextButtonWithImageWithIcon(ImTextureID texIdFirst, ImTextureID texIdSecond, const char *label, const ImVec2 &imageSizeFirst, const ImVec2 &imageSizeSecond, const ImVec2 &uv0, const ImVec2 &uv1, int frame_padding, const ImVec4 &bg_col, const ImVec4 &tint_col)
         {
+            return false;
             //return ImGui::TextButtonWithImageWithIcon(texIdFirst, texIdSecond, label, imageSizeFirst, imageSizeSecond, uv0, uv1, frame_padding, bg_col, tint_col);
         }
 

@@ -7,14 +7,15 @@
 
 extern bool g_ApplicationRunning;
 
-static Cherry::Application* s_Instance = nullptr;
+static Cherry::Application *s_Instance = nullptr;
 
 #ifndef APP_HEADLESS_HPP
 #define APP_HEADLESS_HPP
 
-namespace Cherry {
+namespace Cherry
+{
 
-	Application::Application(const ApplicationSpecification& specification)
+	Application::Application(const ApplicationSpecification &specification)
 		: m_Specification(specification)
 	{
 		s_Instance = this;
@@ -29,7 +30,7 @@ namespace Cherry {
 		s_Instance = nullptr;
 	}
 
-	Application& Application::Get()
+	Application &Application::Get()
 	{
 		return *s_Instance;
 	}
@@ -42,7 +43,7 @@ namespace Cherry {
 
 	void Application::Shutdown()
 	{
-		for (auto& layer : m_LayerStack)
+		for (auto &layer : m_LayerStack)
 			layer->OnDetach();
 
 		m_LayerStack.clear();
@@ -52,24 +53,23 @@ namespace Cherry {
 		Log::Shutdown();
 	}
 
-static void PushStyle()
-{
-ImGuiStyle& style = ImGui::GetStyle();
-ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5.0f);
-ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 1.0f);
-ImGui::PushStyleVar(ImGuiStyleVar_IndentSpacing, 11.0f);
-ImGui::PushStyleVar(ImGuiStyleVar_ScrollbarSize, 11.0f);
-ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(10.0f, 10.0f));
-ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(15.0f, 6.0f));
-ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(9.0f, 3.0f));
-ImGui::PushStyleVar(ImGuiStyleVar_TabRounding, 7.0f);
+	static void PushStyle()
+	{
+		ImGuiStyle &style = ImGui::GetStyle();
+		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5.0f);
+		ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 1.0f);
+		ImGui::PushStyleVar(ImGuiStyleVar_IndentSpacing, 11.0f);
+		ImGui::PushStyleVar(ImGuiStyleVar_ScrollbarSize, 11.0f);
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(10.0f, 10.0f));
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(15.0f, 6.0f));
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(9.0f, 3.0f));
+		ImGui::PushStyleVar(ImGuiStyleVar_TabRounding, 7.0f);
+	}
 
-}
-
-static void PopStyle()
-{
-ImGui::PopStyleVar(8);
-}
+	static void PopStyle()
+	{
+		ImGui::PopStyleVar(8);
+	}
 
 	void Application::Run()
 	{
@@ -78,8 +78,8 @@ ImGui::PopStyleVar(8);
 		// Main loop
 		while (m_Running)
 		{
-		PushStyle();
-			for (auto& layer : m_LayerStack)
+			PushStyle();
+			for (auto &layer : m_LayerStack)
 				layer->OnUpdate(m_TimeStep);
 
 			if (m_Specification.SleepDuration > 0.0f)
@@ -89,9 +89,8 @@ ImGui::PopStyleVar(8);
 			m_FrameTime = time - m_LastFrameTime;
 			m_TimeStep = glm::min<float>(m_FrameTime, 0.0333f);
 			m_LastFrameTime = time;
-		PopStyle();
+			PopStyle();
 		}
-
 	}
 
 	void Application::Close()
