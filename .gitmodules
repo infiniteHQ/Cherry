@@ -28,3 +28,6 @@
 [submodule "lib/cef-project"]
 	path = lib/cef-project
 	url = https://github.com/infiniteHQ/cef-project
+[submodule "lib/miniaudio"]
+	path = lib/miniaudio
+	url = https://github.com/mackron/miniaudio
