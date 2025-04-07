@@ -21,6 +21,16 @@ add_subdirectory(lib/spdlog)
 add_subdirectory(lib/stb-image)
 add_subdirectory(lib/sdl2)
 
+if(CHERRY_ENABLE_WEBVIEW)
+
+include(FetchContent)
+FetchContent_Declare(
+    webview
+    GIT_REPOSITORY https://github.com/webview/webview
+    GIT_TAG 0.12.0)
+FetchContent_MakeAvailable(webview)
+endif()
+
 if(CHERRY_CEF)
     add_subdirectory(lib/cef-project)
 endif()
@@ -52,6 +62,11 @@ target_link_libraries(cherry PRIVATE imgui)
 target_link_libraries(cherry PRIVATE glm)
 target_link_libraries(cherry PRIVATE stbimage)
 target_link_libraries(cherry PRIVATE spdlog)
+if(CHERRY_ENABLE_WEBVIEW)
+target_include_directories(cherry PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/lib/webview/_deps/microsoft_web_webview2-src/build/native/include")
+target_link_libraries(cherry PRIVATE webview::core)
+endif()
+
 
 target_include_directories(cherry PUBLIC "${Vulkan_INCLUDE_DIRS}")
 target_include_directories(cherry PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src")

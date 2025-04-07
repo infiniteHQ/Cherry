@@ -594,7 +594,6 @@ namespace Cherry
         // Intialize logging
         Log::Init();
 
-
 #ifdef CHERRY_ENABLE_AUDIO
         // Init audio service if needed
         if (app->m_DefaultSpecification.UseAudioService)
@@ -652,6 +651,10 @@ namespace Cherry
         {
             StopAudioService();
         }
+#endif
+
+#ifdef CHERRY_ENABLE_CEF
+        // ShutdownCEF();
 #endif
 
         VkResult err;
@@ -1572,7 +1575,8 @@ namespace Cherry
                 Uint32 focusedWindowID = focusedWindow ? SDL_GetWindowID(focusedWindow) : 0;
 
 #ifdef CHERRY_CEF
-                OnCEFFrame();
+                // OnCEFFrame();
+                // ProcessSDLEvent(event); // Ajoute cette ligne pour gérer les inputs CEF
 #endif // CHERRY_CEF
 
                 bool eventHandled = false;
@@ -1798,7 +1802,14 @@ namespace Cherry
                 Uint32 focusedWindowID = focusedWindow ? SDL_GetWindowID(focusedWindow) : 0;
 
 #ifdef CHERRY_CEF
-                OnCEFFrame();
+                for (auto browser : registered_browsers)
+                {
+                    browser->OnCEFFrame();
+
+                    // TODO : if active
+                    //browser->ProcessSDLEvent(event); // Ajoute cette ligne pour gérer les inputs CEF
+                }
+
 #endif // CHERRY_CEF
 
                 bool eventHandled = false;
@@ -2780,12 +2791,11 @@ namespace Cherry
             return;
 
         int pops = (number_of_pops == 0) ? 1 : number_of_pops;
-        
+
         if (pops > static_cast<int>(m_PermanentProperties.size()))
         {
             pops = static_cast<int>(m_PermanentProperties.size());
         }
-        
 
         for (int i = 0; i < pops; ++i)
         {

@@ -14,32 +14,11 @@
 
 // CEF GLoba Variable
 // create browser-window
-static VkImage vulkanImage;
-
-static ImTextureID cefTextureId = nullptr;
-static VkDeviceMemory textureMemory;
-static VkImage textureImage;
-static VkImageView textureImageView;
-static VkSampler textureSampler;
-
-static ImVec2 g_windowPos, g_cursorPos;
 
 namespace Cherry
 {
 
-	void CreateCefImage(int width, int height);
-	void UpdateCefTexture(const void *buffer, int width, int height);
-	void UpdateBrowserMouse(ImVec2 windowPos, ImVec2 cursorPos);
-	uint32_t FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
-	void CreateVulkanImage(VkDevice device, uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling,
-						   VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage &image, VkDeviceMemory &imageMemory);
-	void CreateVulkanImageView(VkDevice device, VkImage image, VkFormat format, VkImageView &imageView);
-	void VulkanCreateBuffer(VkDevice device, VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer &buffer, VkDeviceMemory &bufferMemory);
-	void VulkanTransitionImageLayout(VkCommandBuffer commandBuffer, VkImage image, VkImageLayout oldLayout, VkImageLayout newLayout);
-	void VulkanCopyBufferToImage(VkCommandBuffer commandBuffer, VkBuffer buffer, VkImage image, uint32_t width, uint32_t height);
-	void VulkanSubmitCommandBuffer(VkCommandBuffer commandBuffer, VkQueue queue);
-	ImTextureID ImGui_ImplSDL2_GetCefTexture();
-    int ImGui_ImplSDL2_CefInit(int argc, char **argv);
+	int ImGui_ImplSDL2_CefInit(int argc, char **argv);
 
 	// for manual render handler
 	class BrowserClient : public CefClient,
@@ -79,13 +58,12 @@ namespace Cherry
 			}
 		}
 
-void OnAfterCreated(CefRefPtr<CefBrowser> browser) override
-{
-    CEF_REQUIRE_UI_THREAD();
-    browser_id = browser->GetIdentifier();
-    std::cout << "✅ OnAfterCreated: Browser ID " << browser_id << std::endl;
-}
-
+		void OnAfterCreated(CefRefPtr<CefBrowser> browser) override
+		{
+			CEF_REQUIRE_UI_THREAD();
+			browser_id = browser->GetIdentifier();
+			std::cout << "✅ OnAfterCreated: Browser ID " << browser_id << std::endl;
+		}
 
 		bool DoClose(CefRefPtr<CefBrowser> browser) override
 		{
@@ -142,25 +120,32 @@ void OnAfterCreated(CefRefPtr<CefBrowser> browser) override
 
 		void GetViewRect(CefRefPtr<CefBrowser> browser, CefRect &rect);
 
-		void OnPaint(CefRefPtr<CefBrowser> browser, PaintElementType type, const RectList &dirtyRects, const void *buffer, int width, int height) override
+		void OnPaint(CefRefPtr<CefBrowser> browser,
+					 CefRenderHandler::PaintElementType type,
+					 const CefRenderHandler::RectList &dirtyRects,
+					 const void *buffer,
+					 int width,
+					 int height);
+
+		/*void OnPaint(CefRefPtr<CefBrowser> browser, PaintElementType type, const RectList &dirtyRects, const void *buffer, int width, int height) override
 		{
 			std::cout << "OnPaint Buffer received from CEF: "<< buffer << std::endl;
-			if (type == PET_VIEW)
-			{
-				UpdateCefTexture(buffer, width, height);
-			}
-		}
+
+		}*/
 
 		void OnAcceleratedPaint(CefRefPtr<CefBrowser> browser, PaintElementType type, const RectList &dirtyRects, const CefAcceleratedPaintInfo &info) override
 		{
-			std::cout << "OnAcceleratedPaint Buffer received from CEF: "<< info.shared_texture_handle << std::endl;
+			std::cout << "OnAcceleratedPaint Buffer received from CEF: " << info.shared_texture_handle << std::endl;
 			if (type == PET_VIEW)
 			{
-			//	UpdateCefTexture(info.shared_texture_handle, 500, 500);
+				//	UpdateCefTexture(info.shared_texture_handle, 500, 500);
 			}
 		}
 		void resize(int w, int h);
 		void render();
+
+		std::mutex cefTextureMutex;
+		std::atomic<bool> runningCEF = true;
 
 	private:
 		int browser_id;
@@ -168,6 +153,70 @@ void OnAfterCreated(CefRefPtr<CefBrowser> browser) override
 		bool loaded = false;
 
 		IMPLEMENT_REFCOUNTING(BrowserClient);
+	};
+
+	class MyCefApp : public CefApp, public CefRenderProcessHandler
+	{
+	public:
+		CefRefPtr<CefRenderProcessHandler> GetRenderProcessHandler() override
+		{
+			return this;
+		}
+
+		IMPLEMENT_REFCOUNTING(MyCefApp);
+	};
+
+	class CherryBrowser
+	{
+	public:
+		CherryBrowser(const std::string &id, int width, int height, const std::string& url) : m_Id(id), m_Width(width), m_Height(height), m_Url(url)
+		{
+			InitCEF();
+		};
+
+		std::chrono::steady_clock::time_point lastWakeTime;
+
+		void WakeUp();
+		bool IsReady() const;
+		void RunCEFLoop();
+		void ChangeBrowserURL(char *URL);
+		void ShowBrowserWindow(bool *p_open, ImTextureID tex_id);
+		void InitCEF();
+		void OnCEFFrame();
+		void ProcessSDLEvent(const SDL_Event &event);
+		ImTextureID GetCefTexture();
+		void ShutdownCEF();
+		void CreateCefImage(int width, int height);
+		void UpdateCefTexture(const void *buffer, int width, int height);
+		void UpdateBrowserMouse(ImVec2 windowPos, ImVec2 cursorPos);
+		void CreateVulkanImage(VkDevice device, uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling,
+							   VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage &image, VkDeviceMemory &imageMemory);
+		void CreateVulkanImageView(VkDevice device, VkImage image, VkFormat format, VkImageView &imageView);
+		void VulkanCreateBuffer(VkDevice device, VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer &buffer, VkDeviceMemory &bufferMemory);
+		void VulkanTransitionImageLayout(VkCommandBuffer commandBuffer, VkImage image, VkImageLayout oldLayout, VkImageLayout newLayout);
+		void VulkanCopyBufferToImage(VkCommandBuffer commandBuffer, VkBuffer buffer, VkImage image, uint32_t width, uint32_t height);
+		void VulkanSubmitCommandBuffer(VkCommandBuffer commandBuffer, VkQueue queue);
+		int GetCefModifiersFromImGui(const ImGuiIO &io);
+		void ForwardImGuiInputsToCEF(CefRefPtr<CefBrowser> browser, const ImGuiIO &io, int browserWidth, int browserHeight);
+		int currentTextureWidth = 0;
+		int currentTextureHeight = 0;
+		
+		int m_Width;
+		int m_Height;
+		bool m_ShowWindow;
+		bool m_NeedResize = false;
+		std::string m_Url;
+		std::string m_Id;
+		CefRefPtr<CefBrowser> m_Browser;
+		CefRefPtr<BrowserClient> m_BrowserClient;
+		VkImage vulkanImage;
+		ImTextureID cefTextureId = nullptr;
+		std::thread cefThread;
+		VkDeviceMemory textureMemory;
+		VkImage textureImage;
+		VkImageView textureImageView;
+		VkSampler textureSampler;
+		ImVec2 g_windowPos, g_cursorPos;
 	};
 
 	/*CefBrowserHost::MouseButtonType translateMouseButton(SDL_MouseButtonEvent const &e)
@@ -191,11 +240,9 @@ void OnAfterCreated(CefRefPtr<CefBrowser> browser) override
 		}
 		return result;
 	}*/
-
-	void ChangeBrowserURL(char *URL);
-	void ShowBrowserWindow(bool *p_open, ImTextureID tex_id);
-	void InitCEF(int width, int height);
-	void OnCEFFrame();
+	extern std::vector<std::shared_ptr<CherryBrowser>> registered_browsers;
+	void BrowserView(const std::string &id, int width, int height, const std::string& url = "");
+	int HandleCEF();
 
 }
 
