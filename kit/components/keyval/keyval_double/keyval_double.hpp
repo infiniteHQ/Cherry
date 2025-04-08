@@ -83,10 +83,20 @@ namespace Cherry
         inline std::shared_ptr<Component> KeyValDouble(const std::string &label, double *value)
         {
             // Inline component
-            auto keyval = Application::CreateAnonymousComponent<Components::KeyValDouble>(Components::KeyValDouble(Cherry::Identifier(""), label, value));
-            keyval->RefreshContextProperties();
-            keyval->Render();
-            return keyval;
+            auto anonymous_id = Application::GenerateUniqueID(label, value);
+            auto existing = Application::GetAnonymousComponent(anonymous_id);
+            if (existing)
+            {
+                existing->Render();
+                return existing;
+            }
+            else
+            {
+
+                auto button = Application::CreateAnonymousComponent<Components::KeyValDouble>(Components::KeyValDouble(anonymous_id, label, value));
+                button->Render();
+                return button;
+            }
         }
 
         inline std::shared_ptr<Component> KeyValDouble(const Cherry::Identifier &identifier, const std::string &label, double *value)

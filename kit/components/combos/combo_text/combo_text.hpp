@@ -103,7 +103,7 @@ namespace Cherry
             }
             else
             {
-                auto title = Application::CreateAnonymousComponent<Components::ComboText>(Components::ComboText(Cherry::Identifier(""), label, list, default_index));
+                auto title = Application::CreateAnonymousComponent<Components::ComboText>(Components::ComboText(anonymous_id, label, list, default_index));
                 title->Render();
                 return title;
             }

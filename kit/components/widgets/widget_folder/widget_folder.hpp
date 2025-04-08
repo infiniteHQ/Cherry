@@ -89,9 +89,19 @@ namespace Cherry
         inline std::shared_ptr<Component> WidgetFolder(const std::string &color = "#CC9900", const float &size_x = 150.0f, const float &size_y = 150.0f)
         {
             // Inline component
-            auto title = Application::CreateAnonymousComponent<Components::WidgetFolder>(Components::WidgetFolder(Cherry::Identifier(""), color, size_x, size_y));
-            title->Render();
-            return title;
+            auto anonymous_id = Application::GenerateUniqueID(color, size_x, size_y);
+            auto existing = Application::GetAnonymousComponent(anonymous_id);
+            if (existing)
+            {
+                existing->Render();
+                return existing;
+            }
+            else
+            {
+                auto button = Application::CreateAnonymousComponent<Components::WidgetFolder>(Components::WidgetFolder(anonymous_id, color, size_x, size_y));
+                button->Render();
+                return button;
+            }
         }
 
         inline std::shared_ptr<Component> WidgetFolder(const Cherry::Identifier &identifier, const std::string &color = "#CC9900", const float &size_x = 150.0f, const float &size_y = 150.0f)

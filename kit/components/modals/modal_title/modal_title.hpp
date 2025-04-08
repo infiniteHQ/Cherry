@@ -107,6 +107,7 @@ namespace Cherry
                 return existing;
             }
 
+            std::cout << "CRE" << std::endl;
             auto button = Application::CreateAnonymousComponent<Components::ModalSimple>(Components::ModalSimple(anonymous_id, title, activated, render_callback));
             CherryApp.PushCurrentComponent(button);
             button->RenderWrapper();

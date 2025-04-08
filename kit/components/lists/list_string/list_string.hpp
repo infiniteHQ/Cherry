@@ -70,10 +70,20 @@ namespace Cherry
         inline std::shared_ptr<Component> ListString(const std::string &label, const std::vector<std::string> &values, int default_selected = 0)
         {
             // Inline component
-            auto keyval = Application::CreateAnonymousComponent<Components::ListString>(Components::ListString(Cherry::Identifier(""), label, values, default_selected));
-            keyval->RefreshContextProperties();
-            keyval->Render();
-            return keyval;
+            auto anonymous_id = Application::GenerateUniqueID(label, values, default_selected);
+            auto existing = Application::GetAnonymousComponent(anonymous_id);
+            if (existing)
+            {
+                existing->Render();
+                return existing;
+            }
+            else
+            {
+
+                auto button = Application::CreateAnonymousComponent<Components::ListString>(Components::ListString(anonymous_id, label, values, default_selected));
+                button->Render();
+                return button;
+            }
         }
 
         inline std::shared_ptr<Component> ListString(const Cherry::Identifier &identifier, const std::string& label, const std::vector<std::string> &values, int default_selected = 0)

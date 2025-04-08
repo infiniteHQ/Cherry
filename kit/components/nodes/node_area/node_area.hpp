@@ -1980,7 +1980,7 @@ namespace Cherry
     // End-User API
     namespace Kit
     {
-        inline bool NodeArea(const std::string &label, int width, int height)
+        inline std::shared_ptr<Component> NodeArea(const std::string &label, int width, int height, const std::vector<std::shared_ptr<Component>>& node_array)
         {
             // Inline component
             auto anonymous_id = Application::GetAnonymousID();
@@ -1988,32 +1988,32 @@ namespace Cherry
             if (existing)
             {
                 existing->Render();
-                return existing->GetData("isClicked") == "true" ? true : false;
+                return existing;
             }
 
             else
             {
                 auto button = Application::CreateAnonymousComponent<Components::NodeArea>(Components::NodeArea(anonymous_id, label, width, height));
                 button->Render();
-                return button->GetData("isClicked") == "true" ? true : false;
+                return button;
             }
         }
 
-        inline bool NodeArea(const Cherry::Identifier &identifier, const std::string &label, int width, int height)
+        inline std::shared_ptr<Component> NodeArea(const Cherry::Identifier &identifier, const std::string &label, int width, int height)
         {
             // Get the object if exist
             auto existing_button = Application::GetComponent(identifier);
             if (existing_button)
             {
                 existing_button->Render();
-                return existing_button->GetData("isClicked") == "true" ? true : false;
+                return existing_button;
             }
             else
             {
                 // Create the object if not exist
                 auto new_button = Application::CreateComponent<Components::NodeArea>(Components::NodeArea(identifier, label, width, height));
                 new_button->Render();
-                return new_button->GetData("isClicked") == "true" ? true : false;
+                return new_button;
             }
         }
     }

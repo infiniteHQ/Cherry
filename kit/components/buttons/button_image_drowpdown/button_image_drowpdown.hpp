@@ -237,7 +237,7 @@ namespace Cherry
             }
             else
             {
-                auto button = Application::CreateAnonymousComponent<Components::ButtonImageDropdown>(Components::ButtonImageDropdown(Cherry::Identifier(""), image_path, dropdown_callback));
+                auto button = Application::CreateAnonymousComponent<Components::ButtonImageDropdown>(Components::ButtonImageDropdown(anonymous_id, image_path, dropdown_callback));
                 button->Render();
                 return button;
             }

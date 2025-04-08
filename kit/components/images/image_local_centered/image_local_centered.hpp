@@ -61,7 +61,7 @@ namespace Cherry
         inline bool ImageLocalCentered(const std::string &image_path, float x_size = 50.0f, float y_size = 50.0f)
         {
             // Inline component
-            auto anonymous_id = Application::GetAnonymousID();
+            auto anonymous_id = Application::GenerateUniqueID(image_path, x_size, y_size);
             auto existing = Application::GetAnonymousComponent(anonymous_id);
             if (existing)
             {

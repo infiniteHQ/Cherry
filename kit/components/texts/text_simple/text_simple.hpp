@@ -50,9 +50,20 @@ namespace Cherry
         inline std::shared_ptr<Component> TextSimple(const std::string &label)
         {
             // Inline component
-            auto text = Application::CreateAnonymousComponent<Components::TextSimple>(Components::TextSimple(Cherry::Identifier(""), label));
-            text->Render();
-            return text;
+            auto anonymous_id = Application::GenerateUniqueID(label);
+            auto existing = Application::GetAnonymousComponent(anonymous_id);
+            if (existing)
+            {
+                existing->Render();
+                return existing;
+            }
+            else
+            {
+
+                auto button = Application::CreateAnonymousComponent<Components::TextSimple>(Components::TextSimple(anonymous_id, label));
+                button->Render();
+                return button;
+            }
         }
 
         inline std::shared_ptr<Component> TextSimple(const Cherry::Identifier &identifier, const std::string &label)

@@ -118,10 +118,20 @@ namespace Cherry
         inline std::shared_ptr<Component> KeyValComboString(const std::string &label, std::vector<std::string>* list, int default_selected_index = 0)
         {
             // Inline component
-            auto keyval = Application::CreateAnonymousComponent<Components::KeyValComboString>(Components::KeyValComboString(Cherry::Identifier(""), label, list, default_selected_index));
-            keyval->RefreshContextProperties();
-            keyval->Render();
-            return keyval;
+            auto anonymous_id = Application::GenerateUniqueID(label, list, default_selected_index);
+            auto existing = Application::GetAnonymousComponent(anonymous_id);
+            if (existing)
+            {
+                existing->Render();
+                return existing;
+            }
+            else
+            {
+
+                auto button = Application::CreateAnonymousComponent<Components::KeyValComboString>(Components::KeyValComboString(anonymous_id, label, list, default_selected_index));
+                button->Render();
+                return button;
+            }
         }
 
         inline std::shared_ptr<Component> KeyValComboString(const Cherry::Identifier &identifier, const std::string &label, std::vector<std::string>* list, int default_selected_index = 0)

@@ -52,7 +52,7 @@ namespace Cherry
             }
             else
             {
-                auto title = Application::CreateAnonymousComponent<Components::WebView>(Components::WebView(Cherry::Identifier(""), url));
+                auto title = Application::CreateAnonymousComponent<Components::WebView>(Components::WebView(anonymous_id, url));
                 title->Render();
                 return title;
             }

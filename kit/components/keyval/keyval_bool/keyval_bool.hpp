@@ -79,10 +79,20 @@ namespace Cherry
         inline std::shared_ptr<Component> KeyValBool(const std::string &label, bool* value)
         {
             // Inline component
-            auto keyval = Application::CreateAnonymousComponent<Components::KeyValBool>(Components::KeyValBool(Cherry::Identifier(""), label, value));
-            keyval->RefreshContextProperties();
-            keyval->Render();
-            return keyval;
+            auto anonymous_id = Application::GenerateUniqueID(label, value);
+            auto existing = Application::GetAnonymousComponent(anonymous_id);
+            if (existing)
+            {
+                existing->Render();
+                return existing;
+            }
+            else
+            {
+
+                auto button = Application::CreateAnonymousComponent<Components::KeyValBool>(Components::KeyValBool(anonymous_id, label, value));
+                button->Render();
+                return button;
+            }
         }
 
         inline std::shared_ptr<Component> KeyValBool(const Cherry::Identifier &identifier, const std::string &label, bool* value)

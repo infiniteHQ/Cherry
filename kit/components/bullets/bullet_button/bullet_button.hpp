@@ -44,9 +44,19 @@ namespace Cherry
         inline std::shared_ptr<Component> BulletButton(const std::string &label)
         {
             // Inline component
-            auto bullet = Application::CreateAnonymousComponent<Components::BulletButton>(Components::BulletButton(Cherry::Identifier(""), label));
-            bullet->Render();
-            return bullet;
+            auto anonymous_id = Application::GenerateUniqueID(label);
+            auto existing = Application::GetAnonymousComponent(anonymous_id);
+            if (existing)
+            {
+                existing->Render();
+                return existing;
+            }
+            else
+            {
+                auto button = Application::CreateAnonymousComponent<Components::BulletButton>(Components::BulletButton(anonymous_id, label));
+                button->Render();
+                return button;
+            }
         }
 
         inline std::shared_ptr<Component> BulletButton(const Cherry::Identifier &identifier, const std::string &label)

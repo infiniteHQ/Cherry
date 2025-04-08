@@ -111,20 +111,39 @@ namespace Cherry
     // End-User API
     namespace Kit
     {
-        inline bool TableSimple(const std::string &label, const std::vector<std::shared_ptr<Component>> &rows = {}, ImGuiTableFlags flags = 0)
+        inline std::shared_ptr<Component> TableSimple(const std::string &label, const std::vector<std::shared_ptr<Component>> &rows = {}, ImGuiTableFlags flags = 0)
         {
             // Inline component
-            auto table = Application::CreateAnonymousComponent<Components::TableSimple>(Components::TableSimple(Cherry::Identifier(""), label, rows, flags));
+            /*auto table = Application::CreateAnonymousComponent<Components::TableSimple>(Components::TableSimple(anonymous_id, label, rows, flags));
 
             Cherry::PushParentComponent(table); // Can be a parent of other component, so we declare it
             table->RefreshContextProperties();
             table->Render();
             Cherry::PopParentComponent();
 
-            return table->GetData("isClicked") == "true" ? true : false;
+            return table->GetData("isClicked") == "true" ? true : false;*/
+
+            auto anonymous_id = Application::GenerateUniqueID(label, rows, flags);
+            auto existing = Application::GetAnonymousComponent(anonymous_id);
+            if (existing)
+            {
+                Cherry::PushParentComponent(existing); // Can be a parent of other component, so we declare it
+                existing->RefreshContextProperties();
+                existing->Render();
+                return existing;
+            }
+            else
+            {
+
+                auto button = Application::CreateAnonymousComponent<Components::TableSimple>(Components::TableSimple(anonymous_id, label, rows, flags));
+                Cherry::PushParentComponent(button); // Can be a parent of other component, so we declare it
+                button->RefreshContextProperties();
+                button->Render();
+                return button;
+            }
         }
 
-        inline bool TableSimple(const Cherry::Identifier &identifier, const std::string &label, const std::vector<std::shared_ptr<Component>> &rows = {}, ImGuiTableFlags flags = 0)
+        inline std::shared_ptr<Component> TableSimple(const Cherry::Identifier &identifier, const std::string &label, const std::vector<std::shared_ptr<Component>> &rows = {}, ImGuiTableFlags flags = 0)
         {
             // Get the object if exist
             auto existing_table = Application::GetComponent(identifier);
@@ -134,7 +153,7 @@ namespace Cherry
                 existing_table->RefreshContextProperties();
                 existing_table->Render();
                 Cherry::PopParentComponent();
-                return existing_table->GetData("isClicked") == "true" ? true : false;
+                return existing_table;
             }
             else
             {
@@ -145,7 +164,7 @@ namespace Cherry
                 new_table->RefreshContextProperties();
                 new_table->Render();
                 Cherry::PopParentComponent();
-                return new_table->GetData("isClicked") == "true" ? true : false;
+                return new_table;
             }
         }
     }

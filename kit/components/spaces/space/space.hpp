@@ -46,9 +46,20 @@ namespace Cherry
         inline std::shared_ptr<Component> Space(const float &spacing)
         {
             // Inline component
-            auto title = Application::CreateAnonymousComponent<Components::Space>(Components::Space(Cherry::Identifier("anonymous"), spacing));
-            title->Render();
-            return title;
+            auto anonymous_id = Application::GenerateUniqueID(spacing);
+            auto existing = Application::GetAnonymousComponent(anonymous_id);
+            if (existing)
+            {
+                existing->Render();
+                return existing;
+            }
+            else
+            {
+
+                auto button = Application::CreateAnonymousComponent<Components::Space>(Components::Space(anonymous_id, spacing));
+                button->Render();
+                return button;
+            }
         }
 
         inline std::shared_ptr<Component> Space(const Cherry::Identifier &identifier, const float &spacing)

@@ -40,6 +40,9 @@ namespace Cherry
         const Identifier &GetIdentifier() const;
         bool NeedRefreshing();
 
+        const std::string &GetType() const;
+        void SetType(const std::string& type);
+
         void Refreshed();
         void RenderWrapper();
 
@@ -48,6 +51,7 @@ namespace Cherry
     private:
         Identifier m_Identifier;
         bool m_IsPropsChanged = false;
+        std::string m_ComponentType = "undefined"; // Optionnal, some parent components can ask for a specific type (like NodeArea and Nodes), this type member can help to introduce a type safe component management 
         std::unordered_map<std::string, std::string> m_ContextProperties; // Cpy of props registered in the cherry context (from permanent or ontime), first choice
         std::unordered_map<std::string, std::string> m_Properties;        // Cpy of props registered in the component, second choice
         std::unordered_map<std::string, std::string> m_ContextData;

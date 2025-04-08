@@ -49,9 +49,20 @@ namespace Cherry
         inline std::shared_ptr<Component> TextImage(const std::string &label, const std::string &image_path)
         {
             // Inline component
-            auto text = Application::CreateAnonymousComponent<Components::TextImage>(Components::TextImage(Cherry::Identifier(""), label, image_path));
-            text->Render();
-            return text;
+            auto anonymous_id = Application::GenerateUniqueID(label, image_path);
+            auto existing = Application::GetAnonymousComponent(anonymous_id);
+            if (existing)
+            {
+                existing->Render();
+                return existing;
+            }
+            else
+            {
+
+                auto button = Application::CreateAnonymousComponent<Components::TextImage>(Components::TextImage(anonymous_id, label, image_path));
+                button->Render();
+                return button;
+            }
         }
 
         inline std::shared_ptr<Component> TextImage(const Cherry::Identifier &identifier, const std::string &label, const std::string &image_path)

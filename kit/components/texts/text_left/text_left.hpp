@@ -42,14 +42,26 @@ namespace Cherry
     // End-User API
     namespace Kit
     {
-        inline void TextLeft(const std::string &label)
+        inline std::shared_ptr<Component> TextLeft(const std::string &label)
         {
             // Inline component
-            auto text = Application::CreateAnonymousComponent<Components::TextLeft>(Components::TextLeft(Cherry::Identifier(""), label));
-            text->Render();
+            auto anonymous_id = Application::GenerateUniqueID(label);
+            auto existing = Application::GetAnonymousComponent(anonymous_id);
+            if (existing)
+            {
+                existing->Render();
+                return existing;
+            }
+            else
+            {
+
+                auto button = Application::CreateAnonymousComponent<Components::TextLeft>(Components::TextLeft(anonymous_id, label));
+                button->Render();
+                return button;
+            }
         }
 
-        inline void TextLeft(const Cherry::Identifier &identifier, const std::string &label)
+        inline std::shared_ptr<Component> TextLeft(const Cherry::Identifier &identifier, const std::string &label)
         {
             // Get the object if exist
             auto existing_text = Application::GetComponent(identifier);

@@ -90,10 +90,20 @@ namespace Cherry
         inline std::shared_ptr<Component> KeyValVector1(const std::string &label, float *x_value)
         {
             // Inline component
-            auto title = Application::CreateAnonymousComponent<Components::KeyValVector1>(Components::KeyValVector1(Cherry::Identifier(""), label, x_value));
-            title->RefreshContextProperties();
-            title->Render();
-            return title;
+            auto anonymous_id = Application::GenerateUniqueID(label, x_value);
+            auto existing = Application::GetAnonymousComponent(anonymous_id);
+            if (existing)
+            {
+                existing->Render();
+                return existing;
+            }
+            else
+            {
+
+                auto button = Application::CreateAnonymousComponent<Components::KeyValVector1>(Components::KeyValVector1(anonymous_id, label, x_value));
+                button->Render();
+                return button;
+            }
         }
 
         inline std::shared_ptr<Component> KeyValVector1(const Cherry::Identifier &identifier, const std::string &label, float *x_value)

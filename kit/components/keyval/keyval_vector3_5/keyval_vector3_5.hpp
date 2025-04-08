@@ -153,10 +153,20 @@ namespace Cherry
         inline std::shared_ptr<Component> KeyValVector3_5(const std::string &label, float *x_value, float *y_value, float *z_value, float *xw_value, float *yw_value, float *zw_value)
         {
             // Inline component
-            auto keyval = Application::CreateAnonymousComponent<Components::KeyValVector3_5>(Components::KeyValVector3_5(Cherry::Identifier(""), label, x_value, y_value, z_value, xw_value, yw_value, zw_value));
-            keyval->RefreshContextProperties();
-            keyval->Render();
-            return keyval;
+            auto anonymous_id = Application::GenerateUniqueID(label, x_value, y_value, z_value, xw_value, yw_value, zw_value);
+            auto existing = Application::GetAnonymousComponent(anonymous_id);
+            if (existing)
+            {
+                existing->Render();
+                return existing;
+            }
+            else
+            {
+
+                auto button = Application::CreateAnonymousComponent<Components::KeyValVector3_5>(Components::KeyValVector3_5(anonymous_id, label, x_value, y_value, z_value, xw_value, yw_value, zw_value));
+                button->Render();
+                return button;
+            }
         }
 
         inline std::shared_ptr<Component> KeyValVector3_5(const Cherry::Identifier &identifier, const std::string &label, float *x_value, float *y_value, float *z_value, float *xw_value, float *yw_value, float *zw_value)

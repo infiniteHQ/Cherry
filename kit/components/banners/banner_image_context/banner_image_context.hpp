@@ -198,20 +198,20 @@ namespace Cherry
             }
         }
 
-        inline std::shared_ptr<Component> BannerImageContext(const Cherry::Identifier &identifier, const std::string &image_path = "", const std::string &title = "", const std::string &description = "")
+        inline std::shared_ptr<Component> BannerImageContext(Cherry::IdentifierProperty prop, const std::string &image_path = "", const std::string &title = "", const std::string &description = "")
         {
-            switch (identifier.property())
+                auto anonymous_id = Application::GenerateUniqueID(image_path, title, description);
+            switch (prop)
             {
             case IdentifierProperty::Inline:
             {
-                auto new_title = Application::CreateAnonymousComponent<Components::BannerImageContext>(Components::BannerImageContext(identifier, image_path, title, description));
+                /*auto new_title = Application::CreateAnonymousComponent<Components::BannerImageContext>(Components::BannerImageContext(identifier, image_path, title, description));
                 new_title->Render();
                 return new_title;
-                break;
+                break;*/
             }
             case IdentifierProperty::CreateOnly:
             {
-                auto anonymous_id = Application::GenerateUniqueID(image_path, title, description);
                 auto existing = Application::GetAnonymousComponent(anonymous_id);
                 if (existing)
                 {
@@ -234,6 +234,24 @@ namespace Cherry
             }
             }
 
+            // Get the object if exist
+            auto existing_title = Application::GetComponent(anonymous_id);
+            if (existing_title)
+            {
+                existing_title->Render();
+            }
+            else
+            {
+                // Create the object if not exist
+                auto new_title = Application::CreateComponent<Components::BannerImageContext>(Components::BannerImageContext(anonymous_id, image_path, title, description));
+                new_title->Render();
+                return new_title;
+            }
+            return existing_title;
+        }
+
+        inline std::shared_ptr<Component> BannerImageContext(const Cherry::Identifier &identifier, const std::string &image_path = "", const std::string &title = "", const std::string &description = "")
+        {
             // Get the object if exist
             auto existing_title = Application::GetComponent(identifier);
             if (existing_title)

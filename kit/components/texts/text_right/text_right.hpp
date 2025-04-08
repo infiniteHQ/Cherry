@@ -50,9 +50,20 @@ namespace Cherry
         inline std::shared_ptr<Component> TextRight(const std::string &label)
         {
             // Inline component
-            auto text = Application::CreateAnonymousComponent<Components::TextRight>(Components::TextRight(Cherry::Identifier(""), label));
-            text->Render();
-            return text;
+            auto anonymous_id = Application::GenerateUniqueID(label);
+            auto existing = Application::GetAnonymousComponent(anonymous_id);
+            if (existing)
+            {
+                existing->Render();
+                return existing;
+            }
+            else
+            {
+
+                auto button = Application::CreateAnonymousComponent<Components::TextRight>(Components::TextRight(anonymous_id, label));
+                button->Render();
+                return button;
+            }
         }
 
         inline std::shared_ptr<Component> TextRight(const Cherry::Identifier &identifier, const std::string &label)

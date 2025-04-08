@@ -106,7 +106,7 @@ namespace Cherry
             }
             else
             {
-                auto button = Application::CreateAnonymousComponent<Components::ButtonImageText>(Components::ButtonImageText(Cherry::Identifier(""), label, image_path));
+                auto button = Application::CreateAnonymousComponent<Components::ButtonImageText>(Components::ButtonImageText(anonymous_id, label, image_path));
                 button->Render();
                 return button;
             }

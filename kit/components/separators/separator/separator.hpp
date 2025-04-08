@@ -42,9 +42,19 @@ namespace Cherry
         inline std::shared_ptr<Component> Separator()
         {
             // Inline component
-            auto title = Application::CreateAnonymousComponent<Components::Separator>(Components::Separator(Cherry::Identifier("anonymous")));
-            title->Render();
-            return title;
+            auto anonymous_id = Application::GenerateUniqueID("separator");
+            auto existing = Application::GetAnonymousComponent(anonymous_id);
+            if (existing)
+            {
+                existing->Render();
+                return existing;
+            }
+            else
+            {
+                auto button = Application::CreateAnonymousComponent<Components::Separator>(Components::Separator(anonymous_id));
+                button->Render();
+                return button;
+            }
         }
 
         inline std::shared_ptr<Component> Separator(const Cherry::Identifier &identifier)

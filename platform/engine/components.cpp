@@ -115,6 +115,16 @@ namespace Cherry
         }
     }
 
+    const std::string &Component::GetType() const
+    {
+        return m_ComponentType;
+    }
+
+    void Component::SetType(const std::string &type)
+    {
+        m_ComponentType = type;
+    }
+
     void Component::SetIdentifier(const Cherry::Identifier &id)
     {
         m_Identifier = id;

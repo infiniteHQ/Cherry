@@ -285,13 +285,118 @@ namespace Cherry
             return existing_title;
         }
 
+         inline std::shared_ptr<Component> BlockVerticalCustom(Cherry::IdentifierProperty prop, const std::vector<std::function<void()>> &renderCallbacks)
+        {
+                auto anonymous_id = Application::GenerateUniqueID(renderCallbacks);
+            switch (prop)
+            {
+            case IdentifierProperty::Inline:
+            {
+                auto new_title = Application::CreateAnonymousComponent<Components::BlockVerticalCustom>(Components::BlockVerticalCustom(anonymous_id, renderCallbacks));
+                new_title->Render();
+                return new_title;
+                break;
+            }
+            case IdentifierProperty::CreateOnly:
+            {
+                auto existing = Application::GetAnonymousComponent(anonymous_id);
+                if (existing)
+                {
+                    return existing;
+                }
+                else
+                {
+                    auto button = Application::CreateAnonymousComponent<Components::BlockVerticalCustom>(Components::BlockVerticalCustom(anonymous_id, renderCallbacks));
+                    return button;
+                }
+                break;
+            }
+            case IdentifierProperty::None:
+            {
+                break;
+            }
+            default:
+            {
+                break;
+            }
+            }
+
+            // Get the object if exist
+            auto existing_title = Application::GetComponent(anonymous_id);
+            if (existing_title)
+            {
+                existing_title->Render();
+            }
+            else
+            {
+                // Create the object if not exist
+                auto new_title = Application::CreateComponent<Components::BlockVerticalCustom>(Components::BlockVerticalCustom(anonymous_id, renderCallbacks));
+                new_title->Render();
+                return new_title;
+            }
+            return existing_title;
+        }
+
+         inline std::shared_ptr<Component> BlockVerticalCustom(Cherry::IdentifierProperty prop, const std::function<void()> &onClickedCallback = []() {}, const float &width = 260.0f, const float &height = 110.0f, const std::vector<std::function<void()>> &renderCallbacks = {})
+        {
+                auto anonymous_id = Application::GenerateUniqueID(onClickedCallback, width, height, renderCallbacks);
+            switch (prop)
+            {
+            case IdentifierProperty::Inline:
+            {
+                auto new_title = Application::CreateAnonymousComponent<Components::BlockVerticalCustom>(Components::BlockVerticalCustom(anonymous_id, renderCallbacks, width, height, onClickedCallback));
+                new_title->Render();
+                return new_title;
+                break;
+            }
+            case IdentifierProperty::CreateOnly:
+            {
+                auto existing = Application::GetAnonymousComponent(anonymous_id);
+                if (existing)
+                {
+                    return existing;
+                }
+                else
+                {
+                    auto button = Application::CreateAnonymousComponent<Components::BlockVerticalCustom>(Components::BlockVerticalCustom(anonymous_id, renderCallbacks, width, height, onClickedCallback));
+                    return button;
+                }
+                break;
+            }
+            case IdentifierProperty::None:
+            {
+                break;
+            }
+            default:
+            {
+                break;
+            }
+            }
+
+            // Get the object if exist
+            auto existing_title = Application::GetComponent(anonymous_id);
+            if (existing_title)
+            {
+                existing_title->Render();
+            }
+            else
+            {
+                // Create the object if not exist
+                auto new_title = Application::CreateComponent<Components::BlockVerticalCustom>(Components::BlockVerticalCustom(anonymous_id, renderCallbacks, width, height));
+                new_title->Render();
+                return new_title;
+            }
+            return existing_title;
+        }
+
+
         inline std::shared_ptr<Component> BlockVerticalCustom(const Cherry::Identifier &identifier, const std::function<void()> &onClickedCallback = []() {}, const float &width = 260.0f, const float &height = 110.0f, const std::vector<std::function<void()>> &renderCallbacks = {})
         {
             switch (identifier.property())
             {
             case IdentifierProperty::Inline:
             {
-                auto new_title = Application::CreateAnonymousComponent<Components::BlockVerticalCustom>(Components::BlockVerticalCustom(Identifier(Identifier::GetUniqueIndex()), renderCallbacks, width, height, onClickedCallback));
+                auto new_title = Application::CreateAnonymousComponent<Components::BlockVerticalCustom>(Components::BlockVerticalCustom(identifier, renderCallbacks, width, height, onClickedCallback));
                 new_title->Render();
                 return new_title;
                 break;

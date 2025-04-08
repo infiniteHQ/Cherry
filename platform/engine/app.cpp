@@ -1514,7 +1514,6 @@ namespace Cherry
 
             if (m_NoAppWindowSafetyEnabled)
             {
-                std::cout << "m_AppWindows size " << m_AppWindows.size() << std::endl;
                 if (m_AppWindows.size() > 1)
                 {
                     DisableNoAppWindowSafety();
@@ -1741,7 +1740,6 @@ namespace Cherry
 
             if (m_NoAppWindowSafetyEnabled)
             {
-                std::cout << "m_AppWindows size " << m_AppWindows.size() << std::endl;
                 if (m_AppWindows.size() > 1)
                 {
                     DisableNoAppWindowSafety();

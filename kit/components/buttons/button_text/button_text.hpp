@@ -170,7 +170,7 @@ namespace Cherry
     {
         inline std::shared_ptr<Component> ButtonText(const std::string &label)
         {
-            auto anonymous_id = Application::GetAnonymousID(label);
+            auto anonymous_id = Application::GenerateUniqueID(label);
             auto existing = Application::GetAnonymousComponent(anonymous_id);
             if (existing)
             {
@@ -179,7 +179,7 @@ namespace Cherry
             }
             else
             {
-                auto button = Application::CreateAnonymousComponent<Components::ButtonText>(Components::ButtonText(Cherry::Identifier(""), label));
+                auto button = Application::CreateAnonymousComponent<Components::ButtonText>(Components::ButtonText(anonymous_id, label));
                 button->Render();
                 return button;
             }
