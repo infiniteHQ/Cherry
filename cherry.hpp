@@ -85,7 +85,8 @@
 // Spaces
 #include "./kit/components/spaces/space/space.hpp"
 // Nodes
-#include "./kit/components/nodes/node_area/node_area.hpp"
+#include "./kit/components/nodes/node_areas/node_area_open/node_area_open.hpp"
+#include "./kit/components/nodes/node_areas/node_area_maker/node_area_maker.hpp"
 // Checkboxes
 #include "./kit/components/checkboxes/checkbox_text/checkbox_text.hpp"
 // Images

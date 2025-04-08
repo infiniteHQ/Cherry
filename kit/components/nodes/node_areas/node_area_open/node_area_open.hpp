@@ -4,15 +4,15 @@
 #define IMGUI_DEFINE_MATH_OPERATORS
 #endif // IMGUI_DEFINE_MATH_OPERATORS
 
-#include "../../../../platform/engine/app.hpp"
-#include "../../../../platform/engine/components.hpp"
+#include "../../../../../platform/engine/app.hpp"
+#include "../../../../../platform/engine/components.hpp"
 
-#include "../../../../lib/imgui/imgui.h"
-#include "../../../../lib/imgui/imgui_internal.h"
-#include "../../../../lib/imgui/misc/nodes/imgui_node_editor.h"
-#include "../../../../lib/imgui/misc/nodes/imgui_node_editor_internal.h"
-#include "../../../../platform/engine/ui/nodes/utils/widgets.h"
-#include "../../../../platform/engine/ui/nodes/utils/builders.h"
+#include "../../../../../lib/imgui/imgui.h"
+#include "../../../../../lib/imgui/imgui_internal.h"
+#include "../../../../../lib/imgui/misc/nodes/imgui_node_editor.h"
+#include "../../../../../lib/imgui/misc/nodes/imgui_node_editor_internal.h"
+#include "../../../../../platform/engine/ui/nodes/utils/widgets.h"
+#include "../../../../../platform/engine/ui/nodes/utils/builders.h"
 
 #include <string>
 #include <vector>
@@ -21,7 +21,7 @@
 #include <utility>
 
 //
-// NodeArea
+// NodeAreaOpen
 // Authors : Infinite, Diego Moreno
 //
 
@@ -948,10 +948,19 @@ namespace Cherry
 {
     namespace Components
     {
-        class NodeArea : public Component
+        // A NodeAreaOpen is a flexible and modular area with minimal built-in functionality.
+        // It’s perfect for anyone who wants to create their own mechanics for managing nodes,
+        // displaying them, handling connections, and interactions.
+        //
+        // If you want a more "ready-to-use" solution with a node builder, linker, and position manager,
+        // please check out "Cherry::NodeAreaMaker".
+        //
+        // In NodeAreaOpen, you need to specify: the array of compatible nodes and the array of existing nodes.
+
+        class NodeAreaOpen : public Component
         {
         public:
-            NodeArea(const Cherry::Identifier &id, const std::string &label, int width, int height)
+            NodeAreaOpen(const Cherry::Identifier &id, const std::string &label, int width, int height)
                 : Component(id)
             {
                 // Identifier
@@ -981,11 +990,12 @@ namespace Cherry
 
                 ed::Config config;
 
-                config.SettingsFile = "Blueprints.json";
+                // config.SettingsFile = "Blueprints.json";
 
                 config.UserPointer = m_NodeEngine.get();
+                config.SaveSettings = nullptr;
 
-                config.LoadNodeSettings = [](ed::NodeId nodeId, char *data, void *userPointer) -> size_t
+                /*config.LoadNodeSettings = [](ed::NodeId nodeId, char *data, void *userPointer) -> size_t
                 {
                     auto self = static_cast<Example *>(userPointer);
 
@@ -996,9 +1006,9 @@ namespace Cherry
                     if (data != nullptr)
                         memcpy(data, node->State.data(), node->State.size());
                     return node->State.size();
-                };
+                };*/
 
-                config.SaveNodeSettings = [](ed::NodeId nodeId, const char *data, size_t size, ed::SaveReasonFlags reason, void *userPointer) -> bool
+                /*config.SaveNodeSettings = [](ed::NodeId nodeId, const char *data, size_t size, ed::SaveReasonFlags reason, void *userPointer) -> bool
                 {
                     auto self = static_cast<Example *>(userPointer);
 
@@ -1011,17 +1021,21 @@ namespace Cherry
                     self->TouchNode(nodeId);
 
                     return true;
-                };
+                };*/
 
                 m_NodeEngine->m_Editor = ed::CreateEditor(&config);
-                ed::SetCurrentEditor(m_NodeEngine->m_Editor);
 
+                ed::SetCurrentEditor(m_NodeEngine->m_Editor);
                 this->BuildNodes();
             }
 
             void BuildNodes()
             {
                 Node *node;
+                // Get all nodes from component array and spawn.
+                // Register these nodes into a special array on this node area with all area properties (connections, emplacements, etc...)
+                // Can Dump this register
+
                 node = m_NodeEngine->SpawnInputActionNode();
                 ed::SetNodePosition(node->ID, ImVec2(-252, 220));
                 node = m_NodeEngine->SpawnBranchNode();
@@ -1075,6 +1089,8 @@ namespace Cherry
                 m_NodeEngine->m_SaveIcon = Cherry::GetTexture(Cherry::GetPath("resources/base/x.png"));
                 m_NodeEngine->m_RestoreIcon = Cherry::GetTexture(Cherry::GetPath("resources/base/x.png"));
 
+                NodeEditor::GetStyle().Colors[NodeEditor::StyleColor::StyleColor_Bg] = Cherry::HexToRGBA("#252525");
+
                 m_NodeEngine->UpdateTouch();
 
                 auto &io = CherryGUI::GetIO();
@@ -1084,7 +1100,6 @@ namespace Cherry
                 ed::SetCurrentEditor(m_NodeEngine->m_Editor);
 
                 // auto& style = CherryGUI::GetStyle();
-
 #if 0
         {
             for (auto x = -io.DisplaySize.y; x < io.DisplaySize.x; x += 10.0f)
@@ -1118,8 +1133,8 @@ namespace Cherry
 
                     util::BlueprintNodeBuilder builder(
                         m_NodeEngine->m_HeaderBackground,
-                        Application::Get().GetCurrentRenderedWindow()->get("/home/diego/data/BlueprintBackground.png")->GetWidth(),
-                        Application::Get().GetCurrentRenderedWindow()->get("/home/diego/data/BlueprintBackground.png")->GetHeight());
+                        Cherry::GetTextureSize(Cherry::GetPath("resources/base/blueprintbackground.png")).x,
+                        Cherry::GetTextureSize(Cherry::GetPath("resources/base/blueprintbackground.png")).y);
 
                     for (auto &node : m_NodeEngine->m_Nodes)
                     {
@@ -1980,7 +1995,7 @@ namespace Cherry
     // End-User API
     namespace Kit
     {
-        inline std::shared_ptr<Component> NodeArea(const std::string &label, int width, int height, const std::vector<std::shared_ptr<Component>>& node_array)
+        inline std::shared_ptr<Component> NodeAreaOpen(const std::string &label, int width, int height, const std::vector<std::shared_ptr<Component>> &node_array = {})
         {
             // Inline component
             auto anonymous_id = Application::GetAnonymousID();
@@ -1993,13 +2008,13 @@ namespace Cherry
 
             else
             {
-                auto button = Application::CreateAnonymousComponent<Components::NodeArea>(Components::NodeArea(anonymous_id, label, width, height));
+                auto button = Application::CreateAnonymousComponent<Components::NodeAreaOpen>(Components::NodeAreaOpen(anonymous_id, label, width, height));
                 button->Render();
                 return button;
             }
         }
 
-        inline std::shared_ptr<Component> NodeArea(const Cherry::Identifier &identifier, const std::string &label, int width, int height)
+        inline std::shared_ptr<Component> NodeAreaOpen(const Cherry::Identifier &identifier, const std::string &label, int width, int height)
         {
             // Get the object if exist
             auto existing_button = Application::GetComponent(identifier);
@@ -2011,7 +2026,7 @@ namespace Cherry
             else
             {
                 // Create the object if not exist
-                auto new_button = Application::CreateComponent<Components::NodeArea>(Components::NodeArea(identifier, label, width, height));
+                auto new_button = Application::CreateComponent<Components::NodeAreaOpen>(Components::NodeAreaOpen(identifier, label, width, height));
                 new_button->Render();
                 return new_button;
             }
