@@ -30,7 +30,7 @@
 #define NOTIFY_PADDING_X 20.f		   // Bottom-left X padding
 #define NOTIFY_PADDING_Y 20.f		   // Bottom-left Y padding
 #define NOTIFY_PADDING_MESSAGE_Y 10.f  // Padding Y between each message
-#define NOTIFY_FADE_IN_OUT_TIME 150	   // Fade in and out duration
+#define NOTIFY_FADE_IN_OUT_TIME 300	   // Fade in and out duration
 #define NOTIFY_DEFAULT_DISMISS 3000	   // Auto dismiss after X ms (default, applied only of no data provided in constructors)
 #define NOTIFY_OPACITY 0.8f			   // 0-1 Toast opacity
 #define NOTIFY_USE_SEPARATOR true	   // If true, a separator will be rendered between the title and the content
@@ -391,7 +391,7 @@ public:
 	 * @param type The type of the toast.
 	 * @param dismissTime The time in milliseconds after which the toast should be dismissed. Default is NOTIFY_DEFAULT_DISMISS.
 	 */
-	ImGuiToast(ImGuiToastType type, int dismissTime = NOTIFY_DEFAULT_DISMISS, std::function<void()> actionBtnCallback = nullptr, std::function<bool()> btnCallback = nullptr, const ImTextureID &logo = nullptr)
+	ImGuiToast(ImGuiToastType type, int dismissTime = NOTIFY_DEFAULT_DISMISS, std::function<void()> actionBtnCallback = nullptr, std::function<bool()> btnCallback = nullptr, std::function<void()> renderCallback = nullptr, const ImTextureID &logo = nullptr)
 	{
 		IM_ASSERT(type < ImGuiToastType::COUNT);
 
@@ -399,6 +399,7 @@ public:
 		this->dismissTime = dismissTime;
 		this->buttonRenderCallback = btnCallback;
 		this->actionButtonRenderCallback = actionBtnCallback;
+		this->renderCallback = renderCallback;
 		this->customLogo = logo;
 
 		this->creationTime = std::chrono::system_clock::now();
@@ -453,6 +454,7 @@ public:
 public:
 	std::function<bool()> buttonRenderCallback = nullptr;
 	std::function<void()> actionButtonRenderCallback = nullptr;
+	std::function<void()> renderCallback = nullptr;
 	std::function<void()> logoRenderCallback = nullptr;
 	ImTextureID customLogo = nullptr;
 };
@@ -549,9 +551,9 @@ namespace ImGui
 			ImGui::GetFont()->Scale *= 0.80f;
 			ImGui::PushFont(ImGui::GetFont());
 
-			//ImGui::PushStyleColor(ImGuiCol_WindowBg, Cherry::HexToRGBA("#232323FF"));
-			//ImGui::PushStyleColor(ImGuiCol_Border, Cherry::HexToRGBA("#FFFFFFFF"));
-			//ImGui::PushStyleColor(ImGuiCol_Separator, Cherry::HexToRGBA("#434343FF"));
+			ImGui::PushStyleColor(ImGuiCol_WindowBg, Cherry::HexToRGBA("#232323FF"));
+			ImGui::PushStyleColor(ImGuiCol_Border, Cherry::HexToRGBA("#FFFFFFFF"));
+			ImGui::PushStyleColor(ImGuiCol_Separator, Cherry::HexToRGBA("#434343FF"));
 
 			Begin(windowName, nullptr, currentToast->getWindowFlags());
 
@@ -645,7 +647,7 @@ namespace ImGui
 				// In case ANYTHING was rendered in the top, we want to add a small padding so the text (or icon) looks centered vertically
 				if (wasTitleRendered && !NOTIFY_NULL_OR_EMPTY(content))
 				{
-					SetCursorPosY(GetCursorPosY() + 5.f); // Must be a better way to do this!!!!
+					SetCursorPosY(GetCursorPosY() + 25.f); // Must be a better way to do this!!!!
 				}
 
 				// If a content is set
@@ -659,6 +661,11 @@ namespace ImGui
 					}
 
 					Text("%s", content); // Render content text
+				}
+
+				if(currentToast->renderCallback)
+				{
+					currentToast->renderCallback();
 				}
 
 				// If the button is pressed, we want to execute the lambda function
@@ -686,7 +693,7 @@ namespace ImGui
 
 			// End
 			End();
-			//ImGui::PopStyleColor(3);
+			ImGui::PopStyleColor(3);
 
 			ImGui::GetFont()->Scale = oldsize;
 			ImGui::PopFont();

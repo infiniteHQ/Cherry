@@ -131,8 +131,12 @@
 // Web
 #ifdef CHERRY_CEF
 #include "./kit/components/web/web_view/web_view.hpp"
-#endif 
-
+#endif
+// Notifications
+#include "./kit/components/notifications/notification_simple/notification_simple.hpp"
+#include "./kit/components/notifications/notification_custom/notification_custom.hpp"
+#include "./kit/components/notifications/notification_button/notification_button.hpp"
+ 
 ///////////////////////////////////////////////////////////////
 /// Style : Components, All in one windows, theme, utils...   ///
 ///////////////////////////////////////////////////////////////

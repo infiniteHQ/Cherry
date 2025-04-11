@@ -1,19 +1,37 @@
 #ifndef CHERRY_CONFIG_HPP
 #define CHERRY_CONFIG_HPP
 
-// Render backend (only one !)
-#define CHERRY_USE_VULKAN
-//#define CHERRY_USE_OPENGL // Not Implemented yet
+//──────────────────────────────────────────────────────────
+// Render API (only one !)
+//──────────────────────────────────────────────────────────
+  #define CHERRY_USE_VULKAN     // Use Vulkan as renderer
+//#define CHERRY_USE_OPENGL     // Use OpenGL as renderer // WARNING : Not Implemented yet
+//──────────────────────────────────────────────────────────
 
+
+
+
+//──────────────────────────────────────────────────────────
 // Optionnal features (1 == Enabled / 0 == Disabled)
-#define CHERRY_ENABLE_NET
-//#define CHERRY_ENABLE_AUDIO
-//#define CHERRY_ENABLE_WEBVIEW
-//#define CHERRY_ENABLE_CEF
-//#define CHERRY_CEF
+//──────────────────────────────────────────────────────────
+  #define CHERRY_ENABLE_NET     // Enable all net code with restcpp (http images)
+//#define CHERRY_ENABLE_AUDIO   // Enable audio engine and allow to play mp3 & wav sounds effects / musics
+//#define CHERRY_ENABLE_WEBVIEW // Enable webviews with CEF (Chrome Embedded Framework)
+//#define CHERRY_ENABLE_CEF     // OBSOLETE
+//#define CHERRY_CEF            // OBSOLETE
+//──────────────────────────────────────────────────────────
 
 
-// Optionnal optimization and features remover (1 == Removed / 0 == Used)
-//#define CHERRY_DISABLE_WORKSPACE_SAVES
+
+
+//──────────────────────────────────────────────────────────
+// Removable features (1 == Removed / 0 == Used)
+//──────────────────────────────────────────────────────────
+//#define CHERRY_DISABLE_NODES              // Disable nodal system (blueprint) // WARNING : Not Implemented yet
+//#define CHERRY_DISABLE_NOTIFICATIONS      // Disable notification system // WARNING : Not Implemented yet
+//#define CHERRY_DISABLE_WORKSPACE_SAVES    // Disable workspace recording (to save states and window status) // WARNING : Not Implemented yet
+//──────────────────────────────────────────────────────────
+
+
 
 #endif // CHERRY_CONFIG_HPP
