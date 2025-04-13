@@ -94,7 +94,7 @@ namespace Cherry
                         Cherry::GetTexture(path));
                         
                         toast.setTitle(GetProperty("title").c_str());
-                        toast.setContent(GetProperty("description").c_str());
+                        toast.setContent("");
                         toast.setOnButtonPress([](){});
 
                         toast.setButtonLabel("OK");

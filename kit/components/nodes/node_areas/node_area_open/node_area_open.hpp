@@ -13,6 +13,7 @@
 #include "../../../../../lib/imgui/misc/nodes/imgui_node_editor_internal.h"
 #include "../../../../../platform/engine/ui/nodes/utils/widgets.h"
 #include "../../../../../platform/engine/ui/nodes/utils/builders.h"
+#include "../../../../../platform/engine/ui/nodes/api/node_api.hpp"
 
 #include <string>
 #include <vector>
@@ -125,10 +126,15 @@ struct Node
     std::string State;
     std::string SavedState;
 
-    Node(int id, const char *name, ImColor color = ImColor(255, 255, 255)) : ID(id), Name(name), Color(color), Type(NodeType::Blueprint), Size(0, 0)
+    std::string InstanceID;
+    std::string TypeID;
+
+    Node(int id, const char *name, ImColor color = ImColor(255, 255, 255))
+        : ID(id), Name(name), Color(color), Type(NodeType::Blueprint), Size(0, 0)
     {
     }
 };
+
 
 struct Link
 {
@@ -167,6 +173,9 @@ static bool Splitter(bool split_vertically, float thickness, float *size1, float
 struct Example
 {
     ed::EditorContext *m_Editor = nullptr;
+
+            Cherry::NodeSystem::NodeContext* m_NodeContext;
+            Cherry::NodeSystem::NodeGraph* m_NodeGraph;
 
     int GetNextId()
     {
@@ -294,6 +303,168 @@ struct Example
             output.Kind = PinKind::Output;
         }
     }
+
+    void RefreshNodeGraph()
+    {
+        if (!m_NodeGraph || !m_NodeContext)
+            return;
+
+        // Clear current UI nodes
+        m_Nodes.clear();
+
+        // Recreate all nodes
+        for (const auto& inst : m_NodeGraph->m_InstanciatedNodes)
+        {
+            Cherry::NodeSystem::NodeSchema* schema = m_NodeContext->GetSchema(inst.TypeID);
+            if (!schema)
+                continue;
+
+            Node* node = SpawnNode(schema);
+            if (!node)
+                continue;
+                
+            node->InstanceID = inst.InstanceID;
+            ed::SetNodePosition(node->ID, ImVec2(inst.Position.x, inst.Position.y));
+        }
+    }
+
+    void RefreshNodeGraphLinks()
+    {
+        if (!m_NodeGraph || !m_NodeContext)
+            return;
+
+        // Recreate all links
+        for (const auto& conn : m_NodeGraph->m_Connections)
+        {
+            auto* nodeA = FindNodeByInstanceID(conn.NodeInstanceIDA);
+            auto* nodeB = FindNodeByInstanceID(conn.NodeInstanceIDB);
+            if (!nodeA || !nodeB)
+                continue;
+
+            auto* pinA = FindPinByName(nodeA->Outputs, conn.PinIDA);
+            auto* pinB = FindPinByName(nodeB->Inputs, conn.PinIDB);
+            if (!pinA || !pinB)
+                continue;
+
+            m_Links.emplace_back(Link(GetNextId(), pinA->ID, pinB->ID));
+        }
+    }
+
+    void SaveNodeGraph()
+    {
+        if (!m_NodeGraph)
+            return;
+
+        m_NodeGraph->m_InstanciatedNodes.clear();
+        m_NodeGraph->m_Connections.clear();
+
+        for (const auto& node : m_Nodes)
+        {
+            Cherry::NodeSystem::NodeInstance instance;
+            instance.InstanceID = node.InstanceID;
+            instance.TypeID = node.TypeID;
+            ImVec2 pos = ed::GetNodePosition(node.ID);
+            instance.Position = { pos.x, pos.y };
+            m_NodeGraph->AddNodeInstance(instance);
+        }
+
+        for (const auto& link : m_Links)
+        {
+            auto* pinA = FindPinByID(link.StartPinID);
+            auto* pinB = FindPinByID(link.EndPinID);
+            if (!pinA || !pinB)
+                continue;
+
+            auto* nodeA = FindNodeByPinID(pinA->ID);
+            auto* nodeB = FindNodeByPinID(pinB->ID);
+            if (!nodeA || !nodeB)
+                continue;
+
+            Cherry::NodeSystem::NodeConnection conn;
+            conn.NodeInstanceIDA = nodeA->InstanceID;
+            conn.PinIDA = pinA->Name;
+            conn.NodeInstanceIDB = nodeB->InstanceID;
+            conn.PinIDB = pinB->Name;
+
+            m_NodeGraph->AddConnection(conn);
+        }
+    }
+
+
+    Node* SpawnNode(Cherry::NodeSystem::NodeSchema* schema)
+    {
+        if (!schema)
+        {
+            std::cout << "Not valid schema" << std::endl;
+            return nullptr;
+        }
+
+        m_Nodes.emplace_back(GetNextId(), schema->GetLabel().c_str(), ImColor(255, 128, 128));
+        auto& newNode = m_Nodes.back();
+
+        newNode.TypeID = schema->m_ID;
+        newNode.InstanceID = GenerateUniqueInstanceID();
+
+        for (const auto& in_pin : schema->m_InputPins)
+        {
+            newNode.Inputs.emplace_back(GetNextId(), in_pin.Name.c_str(), PinType::Float);
+        }
+
+        for (const auto& out_pin : schema->m_OutputPins)
+        {
+            newNode.Outputs.emplace_back(GetNextId(), out_pin.Name.c_str(), PinType::Float);
+        }
+
+        BuildNode(&newNode);
+
+        return &newNode;
+    }
+
+    Node* FindNodeByInstanceID(const std::string& id)
+    {
+        for (auto& n : m_Nodes)
+            if (n.InstanceID == id) return &n;
+        return nullptr;
+    }
+
+Pin* FindPinByID(ed::PinId pinID)
+{
+    int id = static_cast<int>(pinID.Get());
+    for (auto& n : m_Nodes)
+    {
+        for (auto& p : n.Inputs)
+            if (p.ID == ed::PinId(pinID)) return &p;
+        for (auto& p : n.Outputs)
+            if (p.ID == ed::PinId(pinID)) return &p;
+    }
+    return nullptr;
+}
+
+Node* FindNodeByPinID(ed::PinId pinID)
+{
+    int id = static_cast<int>(pinID.Get());
+    for (auto& n : m_Nodes)
+    {
+        for (auto& p : n.Inputs)
+            if (p.ID == ed::PinId(pinID)) return &n;
+        for (auto& p : n.Outputs)
+            if (p.ID == ed::PinId(pinID)) return &n;
+    }
+    return nullptr;
+}
+    Pin* FindPinByName(std::vector<Pin>& pins, const std::string& name)
+    {
+        for (auto& p : pins)
+            if (p.Name == name) return &p;
+        return nullptr;
+    }
+
+    std::string GenerateUniqueInstanceID()
+    {
+        return "inst_" + std::to_string(++m_InstanceCounter);
+    }
+
+    int m_InstanceCounter = 0;
 
     Node *SpawnInputActionNode()
     {
@@ -960,7 +1131,7 @@ namespace Cherry
         class NodeAreaOpen : public Component
         {
         public:
-            NodeAreaOpen(const Cherry::Identifier &id, const std::string &label, int width, int height)
+            NodeAreaOpen(const Cherry::Identifier &id, const std::string &label, int width, int height, Cherry::NodeSystem::NodeContext* node_ctx, Cherry::NodeSystem::NodeGraph* graph)
                 : Component(id)
             {
                 // Identifier
@@ -987,6 +1158,8 @@ namespace Cherry
 
                 // Init
                 m_NodeEngine = std::make_shared<Example>();
+                m_NodeEngine->m_NodeGraph = graph;
+                m_NodeEngine->m_NodeContext = node_ctx;
 
                 ed::Config config;
 
@@ -1029,58 +1202,26 @@ namespace Cherry
                 this->BuildNodes();
             }
 
+
+            // Save node area state to node graph
+            /*void SaveNodeGraph()
+            {
+                auto graph = m_NodeGraph;
+
+            }
+
+             // Refresh node area from node graph
+            void RefreshNodeGraph()
+            {
+                auto graph = m_NodeGraph;
+
+            }*/
+
             void BuildNodes()
             {
-                Node *node;
-                // Get all nodes from component array and spawn.
-                // Register these nodes into a special array on this node area with all area properties (connections, emplacements, etc...)
-                // Can Dump this register
-
-                node = m_NodeEngine->SpawnInputActionNode();
-                ed::SetNodePosition(node->ID, ImVec2(-252, 220));
-                node = m_NodeEngine->SpawnBranchNode();
-                ed::SetNodePosition(node->ID, ImVec2(-300, 351));
-                node = m_NodeEngine->SpawnDoNNode();
-                ed::SetNodePosition(node->ID, ImVec2(-238, 504));
-                node = m_NodeEngine->SpawnOutputActionNode();
-                ed::SetNodePosition(node->ID, ImVec2(71, 80));
-                node = m_NodeEngine->SpawnSetTimerNode();
-                ed::SetNodePosition(node->ID, ImVec2(168, 316));
-
-                node = m_NodeEngine->SpawnTreeSequenceNode();
-                ed::SetNodePosition(node->ID, ImVec2(1028, 329));
-                node = m_NodeEngine->SpawnTreeTaskNode();
-                ed::SetNodePosition(node->ID, ImVec2(1204, 458));
-                node = m_NodeEngine->SpawnTreeTask2Node();
-                ed::SetNodePosition(node->ID, ImVec2(868, 538));
-
-                node = m_NodeEngine->SpawnComment();
-                ed::SetNodePosition(node->ID, ImVec2(112, 576));
-                ed::SetGroupSize(node->ID, ImVec2(384, 154));
-                node = m_NodeEngine->SpawnComment();
-                ed::SetNodePosition(node->ID, ImVec2(800, 224));
-                ed::SetGroupSize(node->ID, ImVec2(640, 400));
-
-                node = m_NodeEngine->SpawnLessNode();
-                ed::SetNodePosition(node->ID, ImVec2(366, 652));
-                node = m_NodeEngine->SpawnWeirdNode();
-                ed::SetNodePosition(node->ID, ImVec2(144, 652));
-                node = m_NodeEngine->SpawnMessageNode();
-                ed::SetNodePosition(node->ID, ImVec2(-348, 698));
-                node = m_NodeEngine->SpawnPrintStringNode();
-                ed::SetNodePosition(node->ID, ImVec2(-69, 652));
-
-                node = m_NodeEngine->SpawnHoudiniTransformNode();
-                ed::SetNodePosition(node->ID, ImVec2(500, -70));
-                node = m_NodeEngine->SpawnHoudiniGroupNode();
-                ed::SetNodePosition(node->ID, ImVec2(500, 42));
-
+                m_NodeEngine->RefreshNodeGraph();
                 m_NodeEngine->BuildNodes();
-
-                m_NodeEngine->m_Links.push_back(Link(m_NodeEngine->GetNextLinkId(), m_NodeEngine->m_Nodes[5].Outputs[0].ID, m_NodeEngine->m_Nodes[6].Inputs[0].ID));
-                m_NodeEngine->m_Links.push_back(Link(m_NodeEngine->GetNextLinkId(), m_NodeEngine->m_Nodes[5].Outputs[0].ID, m_NodeEngine->m_Nodes[7].Inputs[0].ID));
-
-                m_NodeEngine->m_Links.push_back(Link(m_NodeEngine->GetNextLinkId(), m_NodeEngine->m_Nodes[14].Outputs[0].ID, m_NodeEngine->m_Nodes[15].Inputs[0].ID));
+                m_NodeEngine->RefreshNodeGraphLinks();
             }
 
             void Render() override
@@ -1995,7 +2136,7 @@ namespace Cherry
     // End-User API
     namespace Kit
     {
-        inline std::shared_ptr<Component> NodeAreaOpen(const std::string &label, int width, int height, const std::vector<std::shared_ptr<Component>> &node_array = {})
+        inline std::shared_ptr<Component> NodeAreaOpen(const std::string &label, int width, int height, Cherry::NodeSystem::NodeContext* node_ctx, Cherry::NodeSystem::NodeGraph* graph)
         {
             // Inline component
             auto anonymous_id = Application::GetAnonymousID();
@@ -2008,13 +2149,13 @@ namespace Cherry
 
             else
             {
-                auto button = Application::CreateAnonymousComponent<Components::NodeAreaOpen>(Components::NodeAreaOpen(anonymous_id, label, width, height));
+                auto button = Application::CreateAnonymousComponent<Components::NodeAreaOpen>(Components::NodeAreaOpen(anonymous_id, label, width, height, node_ctx, graph));
                 button->Render();
                 return button;
             }
         }
 
-        inline std::shared_ptr<Component> NodeAreaOpen(const Cherry::Identifier &identifier, const std::string &label, int width, int height)
+        inline std::shared_ptr<Component> NodeAreaOpen(const Cherry::Identifier &identifier, const std::string &label, int width, int height, Cherry::NodeSystem::NodeContext* node_ctx, Cherry::NodeSystem::NodeGraph* graph)
         {
             // Get the object if exist
             auto existing_button = Application::GetComponent(identifier);
@@ -2026,7 +2167,7 @@ namespace Cherry
             else
             {
                 // Create the object if not exist
-                auto new_button = Application::CreateComponent<Components::NodeAreaOpen>(Components::NodeAreaOpen(identifier, label, width, height));
+                auto new_button = Application::CreateComponent<Components::NodeAreaOpen>(Components::NodeAreaOpen(identifier, label, width, height, node_ctx, graph));
                 new_button->Render();
                 return new_button;
             }

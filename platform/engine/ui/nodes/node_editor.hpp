@@ -1,6 +1,7 @@
 #define IMGUI_DEFINE_MATH_OPERATORS
 #include "./utils/builders.h"
 #include "./utils/widgets.h"
+#include "./api/node_api.hpp"
 #include "../../app.hpp"
 #include <string>
 #include <vector>

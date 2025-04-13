@@ -1,5 +1,4 @@
-#ifndef CHERRY_CONFIG_HPP
-#define CHERRY_CONFIG_HPP
+#pragma once
 
 //──────────────────────────────────────────────────────────
 // Render API (only one !)
@@ -31,7 +30,3 @@
 //#define CHERRY_DISABLE_NOTIFICATIONS      // Disable notification system // WARNING : Not Implemented yet
 //#define CHERRY_DISABLE_WORKSPACE_SAVES    // Disable workspace recording (to save states and window status) // WARNING : Not Implemented yet
 //──────────────────────────────────────────────────────────
-
-
-
-#endif // CHERRY_CONFIG_HPP

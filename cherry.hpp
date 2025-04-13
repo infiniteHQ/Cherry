@@ -6,6 +6,13 @@
 #define CHERRY_H
 #define SDL_MAIN_HANDLED
 
+#ifdef CHERRY_USER_CONFIG
+#include CHERRY_USER_CONFIG
+#endif
+#if !defined(CHERRY_DISABLE_INCLUDE_CONFIG_H) || defined(CHERRY_INCLUDE_CONFIG_H)
+#include "options.hpp"
+#endif
+
 #ifndef IMGUI_DEFINE_MATH_OPERATORS
 #define IMGUI_DEFINE_MATH_OPERATORS
 #endif // IMGUI_DEFINE_MATH_OPERATORS
