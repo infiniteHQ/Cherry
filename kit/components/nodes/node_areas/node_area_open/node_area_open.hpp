@@ -399,7 +399,7 @@ struct Example
             return nullptr;
         }
 
-        m_Nodes.emplace_back(GetNextId(), schema->GetLabel().c_str(), ImColor(255, 128, 128));
+        m_Nodes.emplace_back(GetNextId(), schema->GetLabel().c_str(), Cherry::HexToImColor("#B1FF31"));
         auto& newNode = m_Nodes.back();
 
         newNode.TypeID = schema->m_ID;

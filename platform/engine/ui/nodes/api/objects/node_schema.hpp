@@ -14,6 +14,14 @@ namespace Cherry
             RoundPin,
             TrianglePin,
         };
+                
+        enum class NodeSchemaStatus
+        {
+            Active,
+            Disabled,
+            Depreciated,
+            Obsolete,
+        };
 
         struct NodePin
         {
@@ -65,22 +73,35 @@ namespace Cherry
                 return "";
             }
 
-            std::string GetLabel()
-            {
-                return m_Label;
-            }
+            std::string GetHexHeaderColor() const { return m_HexHeaderColor; }
+            std::string GetHexBorderColor() const { return m_HexBorderColor; }
+            std::string GetHexBackgroundColor() const { return m_HexBackgroundColor; }
+            std::string GetLabel() const { return m_Label; }
+            std::string GetLabelHexColor() const { return m_LabelHexColor; }
+            std::string GetDescriptionHexColor() const { return m_DescriptionHexColor; }
+            std::string GetLogoPath() const { return m_LogoPath; }
 
-            std::string GetHexHeaderColor()
-            {
-                return m_HexHeaderColor;
-            }
+            void SetHexHeaderColor(const std::string &color) { m_HexHeaderColor = color; }
+            void SetHexBorderColor(const std::string &color) { m_HexBorderColor = color; }
+            void SetHexBackgroundColor(const std::string &color) { m_HexBackgroundColor = color; }
+            void SetLabel(const std::string &label) { m_Label = label; }
+            void SetLabelHexColor(const std::string &color) { m_LabelHexColor = color; }
+            void SetDescriptionHexColor(const std::string &color) { m_DescriptionHexColor = color; }
+            void SetLogoPath(const std::string &path) { m_LogoPath = path; }
 
             std::vector<NodePin> m_InputPins;
             std::vector<NodePin> m_OutputPins;
             std::unordered_map<std::string, std::string> m_Content;
-            std::string m_Label;
-            std::string m_HexHeaderColor;
             std::string m_ID; // nodeid@contextid
+
+            std::string m_HexHeaderColor;
+            std::string m_HexBorderColor;
+            std::string m_HexBackgroundColor;
+            std::string m_Label;
+            std::string m_LabelHexColor;
+            std::string m_DescriptionHexColor;
+            std::string m_LogoPath;
+            NodeSchemaStatus m_NodeStatus;
         };
     }
 }

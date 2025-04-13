@@ -35,6 +35,23 @@ namespace Cherry
         );
     }
 
+    static ImColor HexToImColor(std::string hex)
+    {
+        if (hex.size() == 7)
+            hex += "FF";
+
+        uint32_t hexValue = std::stoul(hex.substr(1), nullptr, 16);
+
+        constexpr float inv255 = 1.0f / 255.0f;
+        return ImColor(
+            ((hexValue >> 24) & 0xFF) * inv255, // R
+            ((hexValue >> 16) & 0xFF) * inv255, // G
+            ((hexValue >> 8) & 0xFF) * inv255,  // B
+            ((hexValue >> 0) & 0xFF) * inv255   // A
+        );
+    }
+
+    
     static std::string ImU32ToHex(ImU32 color)
     {
         std::array<char, 10> hexStr;
