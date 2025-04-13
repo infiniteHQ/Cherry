@@ -7,14 +7,6 @@ namespace Cherry
 {
     namespace NodeSystem
     {
-
-        enum class PinFormat
-        {
-            SquarePin,
-            RoundPin,
-            TrianglePin,
-        };
-                
         enum class NodeSchemaStatus
         {
             Active,
@@ -23,13 +15,20 @@ namespace Cherry
             Obsolete,
         };
 
+        enum class NodeType
+        {
+            Blueprint,
+            Simple,
+            Tree,
+            Comment,
+            Houdini
+        };
+
         struct NodePin
         {
-            PinFormat Format;
             std::string Name;
-            std::string Color; // Hex (#FFFFFF)
+            std::string ColorVariuant; // Hex (#FFFFFF)
             std::string TypeName;
-            std::string TypeID; // pinid@nodeid@contextid
         };
 
         class NodeSchema
@@ -38,25 +37,19 @@ namespace Cherry
             NodeSchema() = default;
             NodeSchema(const std::string &id) : m_ID(id) {}
 
-            void AddInputPin(const std::string &name, const std::string &typeName, const std::string &color = "#FFFFFF", PinFormat format = PinFormat::SquarePin)
+            void AddInputPin(const std::string &name, const std::string &pinTypeID)
             {
                 NodePin pin;
                 pin.Name = name;
-                pin.TypeName = typeName;
-                pin.Color = color;
-                pin.Format = format;
-                // TypeID is assigned later by context using node id
+                pin.TypeName = pinTypeID;
                 m_InputPins.push_back(pin);
             }
 
-            void AddOutputPin(const std::string &name, const std::string &typeName, const std::string &color = "#FFFFFF", PinFormat format = PinFormat::SquarePin)
+            void AddOutputPin(const std::string &name, const std::string &pinTypeID)
             {
                 NodePin pin;
                 pin.Name = name;
-                pin.TypeName = typeName;
-                pin.Color = color;
-                pin.Format = format;
-                // TypeID is assigned later by context using node id
+                pin.TypeName = pinTypeID;
                 m_OutputPins.push_back(pin);
             }
 
@@ -80,6 +73,7 @@ namespace Cherry
             std::string GetLabelHexColor() const { return m_LabelHexColor; }
             std::string GetDescriptionHexColor() const { return m_DescriptionHexColor; }
             std::string GetLogoPath() const { return m_LogoPath; }
+            NodeType GetType() const { return m_NodeType; }
 
             void SetHexHeaderColor(const std::string &color) { m_HexHeaderColor = color; }
             void SetHexBorderColor(const std::string &color) { m_HexBorderColor = color; }
@@ -88,13 +82,14 @@ namespace Cherry
             void SetLabelHexColor(const std::string &color) { m_LabelHexColor = color; }
             void SetDescriptionHexColor(const std::string &color) { m_DescriptionHexColor = color; }
             void SetLogoPath(const std::string &path) { m_LogoPath = path; }
+            void SetType(NodeType type) { m_NodeType = type; }
 
             std::vector<NodePin> m_InputPins;
             std::vector<NodePin> m_OutputPins;
             std::unordered_map<std::string, std::string> m_Content;
             std::string m_ID; // nodeid@contextid
 
-            std::string m_HexHeaderColor;
+            std::string m_HexHeaderColor = "#B1FF31";
             std::string m_HexBorderColor;
             std::string m_HexBackgroundColor;
             std::string m_Label;
@@ -102,6 +97,7 @@ namespace Cherry
             std::string m_DescriptionHexColor;
             std::string m_LogoPath;
             NodeSchemaStatus m_NodeStatus;
+            NodeType m_NodeType = NodeType::Simple;
         };
     }
 }

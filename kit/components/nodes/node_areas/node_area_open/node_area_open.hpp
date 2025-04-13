@@ -105,10 +105,16 @@ struct Pin
     ed::PinId ID;
     ::Node *Node;
     std::string Name;
-    PinType Type;
+    //PinType Type;
     PinKind Kind;
 
-    Pin(int id, const char *name, PinType type) : ID(id), Node(nullptr), Name(name), Type(type), Kind(PinKind::Input)
+    Cherry::NodeSystem::PinFormat Format;
+
+    /*Pin(int id, const char *name, PinType type) : ID(id), Node(nullptr), Name(name), Type(type), Kind(PinKind::Input)
+    {
+    }*/
+
+    Pin(int id, const char *name, const Cherry::NodeSystem::PinFormat &format) : ID(id), Node(nullptr), Name(name), Format(format), Kind(PinKind::Input)
     {
     }
 };
@@ -134,7 +140,6 @@ struct Node
     {
     }
 };
-
 
 struct Link
 {
@@ -174,8 +179,8 @@ struct Example
 {
     ed::EditorContext *m_Editor = nullptr;
 
-            Cherry::NodeSystem::NodeContext* m_NodeContext;
-            Cherry::NodeSystem::NodeGraph* m_NodeGraph;
+    Cherry::NodeSystem::NodeContext *m_NodeContext;
+    Cherry::NodeSystem::NodeGraph *m_NodeGraph;
 
     int GetNextId()
     {
@@ -267,7 +272,7 @@ struct Example
 
     bool CanCreateLink(Pin *a, Pin *b)
     {
-        if (!a || !b || a == b || a->Kind == b->Kind || a->Type != b->Type || a->Node == b->Node)
+        if (!a || !b || a == b || a->Kind == b->Kind || a->Format.m_TypeID != b->Format.m_TypeID || a->Node == b->Node)
             return false;
 
         return true;
@@ -313,16 +318,16 @@ struct Example
         m_Nodes.clear();
 
         // Recreate all nodes
-        for (const auto& inst : m_NodeGraph->m_InstanciatedNodes)
+        for (const auto &inst : m_NodeGraph->m_InstanciatedNodes)
         {
-            Cherry::NodeSystem::NodeSchema* schema = m_NodeContext->GetSchema(inst.TypeID);
+            Cherry::NodeSystem::NodeSchema *schema = m_NodeContext->GetSchema(inst.TypeID);
             if (!schema)
                 continue;
 
-            Node* node = SpawnNode(schema);
+            Node *node = SpawnNode(schema);
             if (!node)
                 continue;
-                
+
             node->InstanceID = inst.InstanceID;
             ed::SetNodePosition(node->ID, ImVec2(inst.Position.x, inst.Position.y));
         }
@@ -334,15 +339,15 @@ struct Example
             return;
 
         // Recreate all links
-        for (const auto& conn : m_NodeGraph->m_Connections)
+        for (const auto &conn : m_NodeGraph->m_Connections)
         {
-            auto* nodeA = FindNodeByInstanceID(conn.NodeInstanceIDA);
-            auto* nodeB = FindNodeByInstanceID(conn.NodeInstanceIDB);
+            auto *nodeA = FindNodeByInstanceID(conn.NodeInstanceIDA);
+            auto *nodeB = FindNodeByInstanceID(conn.NodeInstanceIDB);
             if (!nodeA || !nodeB)
                 continue;
 
-            auto* pinA = FindPinByName(nodeA->Outputs, conn.PinIDA);
-            auto* pinB = FindPinByName(nodeB->Inputs, conn.PinIDB);
+            auto *pinA = FindPinByName(nodeA->Outputs, conn.PinIDA);
+            auto *pinB = FindPinByName(nodeB->Inputs, conn.PinIDB);
             if (!pinA || !pinB)
                 continue;
 
@@ -358,25 +363,25 @@ struct Example
         m_NodeGraph->m_InstanciatedNodes.clear();
         m_NodeGraph->m_Connections.clear();
 
-        for (const auto& node : m_Nodes)
+        for (const auto &node : m_Nodes)
         {
             Cherry::NodeSystem::NodeInstance instance;
             instance.InstanceID = node.InstanceID;
             instance.TypeID = node.TypeID;
             ImVec2 pos = ed::GetNodePosition(node.ID);
-            instance.Position = { pos.x, pos.y };
+            instance.Position = {pos.x, pos.y};
             m_NodeGraph->AddNodeInstance(instance);
         }
 
-        for (const auto& link : m_Links)
+        for (const auto &link : m_Links)
         {
-            auto* pinA = FindPinByID(link.StartPinID);
-            auto* pinB = FindPinByID(link.EndPinID);
+            auto *pinA = FindPinByID(link.StartPinID);
+            auto *pinB = FindPinByID(link.EndPinID);
             if (!pinA || !pinB)
                 continue;
 
-            auto* nodeA = FindNodeByPinID(pinA->ID);
-            auto* nodeB = FindNodeByPinID(pinB->ID);
+            auto *nodeA = FindNodeByPinID(pinA->ID);
+            auto *nodeB = FindNodeByPinID(pinB->ID);
             if (!nodeA || !nodeB)
                 continue;
 
@@ -390,29 +395,53 @@ struct Example
         }
     }
 
-
-    Node* SpawnNode(Cherry::NodeSystem::NodeSchema* schema)
+    Node *SpawnNode(Cherry::NodeSystem::NodeSchema *schema)
     {
+        if (!m_NodeGraph || !m_NodeContext)
+            return nullptr;
+
         if (!schema)
         {
             std::cout << "Not valid schema" << std::endl;
             return nullptr;
         }
 
-        m_Nodes.emplace_back(GetNextId(), schema->GetLabel().c_str(), Cherry::HexToImColor("#B1FF31"));
-        auto& newNode = m_Nodes.back();
+
+        m_Nodes.emplace_back(GetNextId(), schema->GetLabel().c_str(), Cherry::HexToImColor(schema->GetHexHeaderColor()));
+        auto &newNode = m_Nodes.back();
 
         newNode.TypeID = schema->m_ID;
         newNode.InstanceID = GenerateUniqueInstanceID();
 
-        for (const auto& in_pin : schema->m_InputPins)
+        switch (schema->GetType())
         {
-            newNode.Inputs.emplace_back(GetNextId(), in_pin.Name.c_str(), PinType::Float);
+        case Cherry::NodeSystem::NodeType::Simple :
+            newNode.Type = NodeType::Simple;
+            break;
+        case Cherry::NodeSystem::NodeType::Blueprint :
+            newNode.Type = NodeType::Blueprint;
+            break;
+        case Cherry::NodeSystem::NodeType::Houdini :
+            newNode.Type = NodeType::Houdini;
+            break;
+        case Cherry::NodeSystem::NodeType::Comment :
+            newNode.Type = NodeType::Comment;
+            break;
+        case Cherry::NodeSystem::NodeType::Tree :
+            newNode.Type = NodeType::Tree;
+            break;
+        default:
+            return nullptr;
         }
 
-        for (const auto& out_pin : schema->m_OutputPins)
+        for (const auto &in_pin : schema->m_InputPins)
         {
-            newNode.Outputs.emplace_back(GetNextId(), out_pin.Name.c_str(), PinType::Float);
+            newNode.Inputs.emplace_back(GetNextId(), in_pin.Name.c_str(), m_NodeContext->GetPinFormat(in_pin.TypeName).value());
+        }
+
+        for (const auto &out_pin : schema->m_OutputPins)
+        {
+            newNode.Outputs.emplace_back(GetNextId(), out_pin.Name.c_str(), m_NodeContext->GetPinFormat(out_pin.TypeName).value());
         }
 
         BuildNode(&newNode);
@@ -420,42 +449,48 @@ struct Example
         return &newNode;
     }
 
-    Node* FindNodeByInstanceID(const std::string& id)
+    Node *FindNodeByInstanceID(const std::string &id)
     {
-        for (auto& n : m_Nodes)
-            if (n.InstanceID == id) return &n;
+        for (auto &n : m_Nodes)
+            if (n.InstanceID == id)
+                return &n;
         return nullptr;
     }
 
-Pin* FindPinByID(ed::PinId pinID)
-{
-    int id = static_cast<int>(pinID.Get());
-    for (auto& n : m_Nodes)
+    Pin *FindPinByID(ed::PinId pinID)
     {
-        for (auto& p : n.Inputs)
-            if (p.ID == ed::PinId(pinID)) return &p;
-        for (auto& p : n.Outputs)
-            if (p.ID == ed::PinId(pinID)) return &p;
+        int id = static_cast<int>(pinID.Get());
+        for (auto &n : m_Nodes)
+        {
+            for (auto &p : n.Inputs)
+                if (p.ID == ed::PinId(pinID))
+                    return &p;
+            for (auto &p : n.Outputs)
+                if (p.ID == ed::PinId(pinID))
+                    return &p;
+        }
+        return nullptr;
     }
-    return nullptr;
-}
 
-Node* FindNodeByPinID(ed::PinId pinID)
-{
-    int id = static_cast<int>(pinID.Get());
-    for (auto& n : m_Nodes)
+    Node *FindNodeByPinID(ed::PinId pinID)
     {
-        for (auto& p : n.Inputs)
-            if (p.ID == ed::PinId(pinID)) return &n;
-        for (auto& p : n.Outputs)
-            if (p.ID == ed::PinId(pinID)) return &n;
+        int id = static_cast<int>(pinID.Get());
+        for (auto &n : m_Nodes)
+        {
+            for (auto &p : n.Inputs)
+                if (p.ID == ed::PinId(pinID))
+                    return &n;
+            for (auto &p : n.Outputs)
+                if (p.ID == ed::PinId(pinID))
+                    return &n;
+        }
+        return nullptr;
     }
-    return nullptr;
-}
-    Pin* FindPinByName(std::vector<Pin>& pins, const std::string& name)
+    Pin *FindPinByName(std::vector<Pin> &pins, const std::string &name)
     {
-        for (auto& p : pins)
-            if (p.Name == name) return &p;
+        for (auto &p : pins)
+            if (p.Name == name)
+                return &p;
         return nullptr;
     }
 
@@ -466,7 +501,7 @@ Node* FindNodeByPinID(ed::PinId pinID)
 
     int m_InstanceCounter = 0;
 
-    Node *SpawnInputActionNode()
+    /*Node *SpawnInputActionNode()
     {
         m_Nodes.emplace_back(GetNextId(), "InputAction Fire", ImColor(255, 128, 128));
         m_Nodes.back().Outputs.emplace_back(GetNextId(), "", PinType::Delegate);
@@ -667,7 +702,7 @@ Node* FindNodeByPinID(ed::PinId pinID)
         BuildNode(&m_Nodes.back());
 
         return &m_Nodes.back();
-    }
+    }*/
 
     void BuildNodes()
     {
@@ -802,7 +837,33 @@ Node* FindNodeByPinID(ed::PinId pinID)
     void DrawPinIcon(const Pin &pin, bool connected, int alpha)
     {
         IconType iconType;
-        ImColor color = GetIconColor(pin.Type);
+        ImColor color = Cherry::HexToImColor(pin.Format.m_Color);
+
+        switch (pin.Format.m_Shape)
+        {
+        case Cherry::NodeSystem::PinShape::Circle:
+            iconType = IconType::Circle;
+            break;
+        case Cherry::NodeSystem::PinShape::Diamond:
+            iconType = IconType::Diamond;
+            break;
+        case Cherry::NodeSystem::PinShape::Flow:
+            iconType = IconType::Flow;
+            break;
+        case Cherry::NodeSystem::PinShape::Grid:
+            iconType = IconType::Grid;
+            break;
+        case Cherry::NodeSystem::PinShape::RoundSquare:
+            iconType = IconType::RoundSquare;
+            break;
+        case Cherry::NodeSystem::PinShape::Square:
+            iconType = IconType::Square;
+            break;
+        default:
+            return;
+        }
+
+        /*ImColor color = GetIconColor(pin.Type);
         color.Value.w = alpha / 255.0f;
         switch (pin.Type)
         {
@@ -832,7 +893,7 @@ Node* FindNodeByPinID(ed::PinId pinID)
             break;
         default:
             return;
-        }
+        }*/
 
         ax::Widgets::Icon(ImVec2(static_cast<float>(m_PinIconSize), static_cast<float>(m_PinIconSize)), iconType, connected, color, ImColor(32, 32, 32, alpha));
     };
@@ -1131,7 +1192,7 @@ namespace Cherry
         class NodeAreaOpen : public Component
         {
         public:
-            NodeAreaOpen(const Cherry::Identifier &id, const std::string &label, int width, int height, Cherry::NodeSystem::NodeContext* node_ctx, Cherry::NodeSystem::NodeGraph* graph)
+            NodeAreaOpen(const Cherry::Identifier &id, const std::string &label, int width, int height, Cherry::NodeSystem::NodeContext *node_ctx, Cherry::NodeSystem::NodeGraph *graph)
                 : Component(id)
             {
                 // Identifier
@@ -1201,7 +1262,6 @@ namespace Cherry
                 ed::SetCurrentEditor(m_NodeEngine->m_Editor);
                 this->BuildNodes();
             }
-
 
             // Save node area state to node graph
             /*void SaveNodeGraph()
@@ -1286,7 +1346,7 @@ namespace Cherry
 
                         bool hasOutputDelegates = false;
                         for (auto &output : node.Outputs)
-                            if (output.Type == PinType::Delegate)
+                            if (output.Format.m_TypeID == "delegate")
                                 hasOutputDelegates = true;
 
                         builder.Begin(node.ID);
@@ -1304,7 +1364,7 @@ namespace Cherry
                                 CherryGUI::Spring(1, 0);
                                 for (auto &output : node.Outputs)
                                 {
-                                    if (output.Type != PinType::Delegate)
+                                    if (output.Format.m_TypeID != "delegate")
                                         continue;
 
                                     auto alpha = CherryGUI::GetStyle().Alpha;
@@ -1354,11 +1414,12 @@ namespace Cherry
                                 CherryGUI::TextUnformatted(input.Name.c_str());
                                 CherryGUI::Spring(0);
                             }
-                            if (input.Type == PinType::Bool)
+                            // TODO : Input content
+                            /*if (input.Type == PinType::Bool)
                             {
                                 CherryGUI::Button("Hello");
                                 CherryGUI::Spring(0);
-                            }
+                            }*/
                             CherryGUI::PopStyleVar();
                             builder.EndInput();
                         }
@@ -1374,7 +1435,7 @@ namespace Cherry
 
                         for (auto &output : node.Outputs)
                         {
-                            if (!isSimple && output.Type == PinType::Delegate)
+                            if (!isSimple && output.Format.m_TypeID == "delegate")
                                 continue;
 
                             auto alpha = CherryGUI::GetStyle().Alpha;
@@ -1383,7 +1444,9 @@ namespace Cherry
 
                             CherryGUI::PushStyleVar(ImGuiStyleVar_Alpha, alpha);
                             builder.Output(output.ID);
-                            if (output.Type == PinType::String)
+
+                            // TODO : Contents & Render callabcks
+                            /*if (output.Type == PinType::String)
                             {
                                 static char buffer[128] = "Edit Me\nMultiline!";
                                 static bool wasActive = false;
@@ -1402,7 +1465,7 @@ namespace Cherry
                                     wasActive = false;
                                 }
                                 CherryGUI::Spring(0);
-                            }
+                            }*/
                             if (!output.Name.empty())
                             {
                                 CherryGUI::Spring(0);
@@ -1820,6 +1883,7 @@ namespace Cherry
                                 auto rectMax = CherryGUI::GetCursorScreenPos() + size + padding;
 
                                 auto drawList = CherryGUI::GetWindowDrawList();
+                                // TODO : "+" or "x" icons
                                 drawList->AddRectFilled(rectMin, rectMax, color, size.y * 0.15f);
                                 CherryGUI::TextUnformatted(label);
                             };
@@ -1854,7 +1918,7 @@ namespace Cherry
                                     //     showLabel("x Cannot connect to self", ImColor(45, 32, 32, 180));
                                     //     ed::RejectNewItem(ImColor(255, 0, 0), 1.0f);
                                     // }
-                                    else if (endPin->Type != startPin->Type)
+                                    else if (endPin->Format.m_TypeID != startPin->Format.m_TypeID)
                                     {
                                         showLabel("x Incompatible Pin Type", ImColor(45, 32, 32, 180));
                                         ed::RejectNewItem(ImColor(255, 128, 128), 1.0f);
@@ -1865,7 +1929,7 @@ namespace Cherry
                                         if (ed::AcceptNewItem(ImColor(128, 255, 128), 4.0f))
                                         {
                                             m_NodeEngine->m_Links.emplace_back(Link(m_NodeEngine->GetNextId(), startPinId, endPinId));
-                                            m_NodeEngine->m_Links.back().Color = m_NodeEngine->GetIconColor(startPin->Type);
+                                            m_NodeEngine->m_Links.back().Color = Cherry::HexToImColor(startPin->Format.m_Color);
                                         }
                                     }
                                 }
@@ -2014,7 +2078,8 @@ namespace Cherry
                     // drawList->AddCircleFilled(CherryGUI::GetMousePosOnOpeningCurrentPopup(), 10.0f, 0xFFFF00FF);
 
                     Node *node = nullptr;
-                    if (CherryGUI::MenuItem("Input Action"))
+                    // TODO : Node maker (only on node_area_maker)
+                    /*if (CherryGUI::MenuItem("Input Action"))
                         node = m_NodeEngine->SpawnInputActionNode();
                     if (CherryGUI::MenuItem("Output Action"))
                         node = m_NodeEngine->SpawnOutputActionNode();
@@ -2049,7 +2114,7 @@ namespace Cherry
                     if (CherryGUI::MenuItem("Transform"))
                         node = m_NodeEngine->SpawnHoudiniTransformNode();
                     if (CherryGUI::MenuItem("Group"))
-                        node = m_NodeEngine->SpawnHoudiniGroupNode();
+                        node = m_NodeEngine->SpawnHoudiniGroupNode();*/
 
                     if (node)
                     {
@@ -2072,7 +2137,7 @@ namespace Cherry
                                         std::swap(startPin, endPin);
 
                                     m_NodeEngine->m_Links.emplace_back(Link(m_NodeEngine->GetNextId(), startPin->ID, endPin->ID));
-                                    m_NodeEngine->m_Links.back().Color = m_NodeEngine->GetIconColor(startPin->Type);
+                                    m_NodeEngine->m_Links.back().Color = Cherry::HexToImColor(startPin->Format.m_Color);
 
                                     break;
                                 }
@@ -2136,7 +2201,7 @@ namespace Cherry
     // End-User API
     namespace Kit
     {
-        inline std::shared_ptr<Component> NodeAreaOpen(const std::string &label, int width, int height, Cherry::NodeSystem::NodeContext* node_ctx, Cherry::NodeSystem::NodeGraph* graph)
+        inline std::shared_ptr<Component> NodeAreaOpen(const std::string &label, int width, int height, Cherry::NodeSystem::NodeContext *node_ctx, Cherry::NodeSystem::NodeGraph *graph)
         {
             // Inline component
             auto anonymous_id = Application::GetAnonymousID();
@@ -2155,7 +2220,7 @@ namespace Cherry
             }
         }
 
-        inline std::shared_ptr<Component> NodeAreaOpen(const Cherry::Identifier &identifier, const std::string &label, int width, int height, Cherry::NodeSystem::NodeContext* node_ctx, Cherry::NodeSystem::NodeGraph* graph)
+        inline std::shared_ptr<Component> NodeAreaOpen(const Cherry::Identifier &identifier, const std::string &label, int width, int height, Cherry::NodeSystem::NodeContext *node_ctx, Cherry::NodeSystem::NodeGraph *graph)
         {
             // Get the object if exist
             auto existing_button = Application::GetComponent(identifier);
