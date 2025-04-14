@@ -3,6 +3,7 @@
 #include <string>
 
 #include "vulkan/vulkan.h"
+#include "../../lib/json/single_include/nlohmann/json.hpp"
 #include "../../lib/imgui/imgui.h"
 #include "../../lib/imgui/imgui_internal.h"
 #include "../../lib/imgui/backends/imgui_impl_vulkan.h"

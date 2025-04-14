@@ -36,6 +36,7 @@ namespace Cherry
             }
 
             std::string m_TypeID; // Must be unique on the NodeContext
+            bool m_Delegate = false;
             std::string m_TypeDescription;
             std::string m_TypeName;
             std::string m_Color;
