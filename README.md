@@ -9,16 +9,6 @@
   </h1>
 </a>
 
-<p align="center" style="gap: 0; margin-bottom:1%;">
-  <img src="./.github/imgs/tile1.png" width="45%" style="margin-right:1%;">
-  <img src="./.github/imgs/tile3.png" width="45%">
-</p>
-<p align="center" style="gap: 0;">
-  <a href="https://cherry.infinite.si">
-    <img src="./.github/imgs/tile2.png" width="45%" style="margin-right:1%;">
-  </a>
-  <img src="./.github/imgs/tile4.png" width="45%">
-</p>
 
 
 <div align="center">
