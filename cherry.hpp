@@ -36,7 +36,7 @@
 ///////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////
-/// Kit : Components, All in one windows, theme, utils...   ///
+/// Kit : 80+ Components, All in one windows, theme, utils...   ///
 ///////////////////////////////////////////////////////////////
 // Buttons
 #include "./kit/components/buttons/button_text/button_text.hpp"
@@ -143,9 +143,11 @@
 #include "./kit/components/notifications/notification_simple/notification_simple.hpp"
 #include "./kit/components/notifications/notification_custom/notification_custom.hpp"
 #include "./kit/components/notifications/notification_button/notification_button.hpp"
+// Text
+#include "./kit/components/text/text_area/text_area.hpp"
  
 ///////////////////////////////////////////////////////////////
-/// Style : Components, All in one windows, theme, utils...   ///
+/// Style : +5 Style effects , All in one windows, theme, utils...   ///
 ///////////////////////////////////////////////////////////////
 // Margin style
 #include "./kit/utils/behavior/margin/margin.hpp"

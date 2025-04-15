@@ -9,6 +9,18 @@
   </h1>
 </a>
 
+<p align="center" style="gap: 0; margin-bottom:1%;">
+  <img src="./.github/imgs/tile1.png" width="45%" style="margin-right:1%;">
+  <img src="./.github/imgs/tile3.png" width="45%">
+</p>
+<p align="center" style="gap: 0;">
+  <a href="https://cherry.infinite.si">
+    <img src="./.github/imgs/tile2.png" width="45%" style="margin-right:1%;">
+  </a>
+  <img src="./.github/imgs/tile4.png" width="45%">
+</p>
+
+
 <div align="center">
 <a title="Code Quality" href="https://www.codefactor.io/repository/github/infinitehq/uikit"><img alt="Code Quality" src="https://img.shields.io/codefactor/grade/github/infinitehq/uikit?longCache=true&style=for-the-badge&label=Code%20Quality&logoColor=fff&logo=CodeFactor&branch=master"></a>
   <a title="Discord Server" href="https://discord.gg/H2wptkecUg"><img alt="Discord Server" src="https://img.shields.io/discord/1095333825762046194?label=Discord&logo=Discord&logoColor=fff&style=for-the-badge"></a>
@@ -24,13 +36,13 @@
 
 ## What you can do ?  
 
-![✅ Ready](https://img.shields.io/badge/Desktop%20Applications-Ready-green)
-![✅ Ready](https://img.shields.io/badge/Debug%20Tools%20%26%20Utilities-Ready-green)
-![🧪 Experimental](https://img.shields.io/badge/Web%20Tech--Based%20Apps-Experimental-yellow)
-![⏳ Planned](https://img.shields.io/badge/Embedded%20Systems%20%26%20UIs-Planned-lightgrey)
-![⏳ Planned](https://img.shields.io/badge/Web%20Apps-Planned-lightgrey)
-![⏳ Planned](https://img.shields.io/badge/Mobile%20Apps-Planned-lightgrey)
-![⏳ Planned](https://img.shields.io/badge/UI%20in%20Games%20%26%20Renders-Planned-lightgrey)
+![✅ Ready](https://img.shields.io/badge/Desktop%20Applications-Ready-green?longCache=true&style=for-the-badge)
+![✅ Ready](https://img.shields.io/badge/Debug%20Tools%20%26%20Utilities-Ready-green?longCache=true&style=for-the-badge)
+![🧪 Experimental](https://img.shields.io/badge/Web%20Tech--Based%20Apps-Experimental-yellow?longCache=true&style=for-the-badge)
+![⏳ Planned](https://img.shields.io/badge/Embedded%20Systems%20%26%20UIs-Planned-lightgrey?longCache=true&style=for-the-badge)
+![⏳ Planned](https://img.shields.io/badge/Web%20Apps-Planned-lightgrey?longCache=true&style=for-the-badge)
+![⏳ Planned](https://img.shields.io/badge/Mobile%20Apps-Planned-lightgrey?longCache=true&style=for-the-badge)
+![⏳ Planned](https://img.shields.io/badge/UI%20in%20Games%20%26%20Renders-Planned-lightgrey?longCache=true&style=for-the-badge)
 
 
 <h2>Compatibility</h2>
@@ -84,15 +96,15 @@
 
 ## Features
 
-> **Components & Kits**
-> - 🧰 Many single components ready to use with data managment
-> - 📦 Many all in one windows, ready to use and manage
-> - 📦 ImGui abstractions for simplicity
-> - 📦 SDL abstractions for inputs & user managment
-> - 📦 Short inlines components
+> ***(Top level)* Components, UI, Interfaces & Kits**
+> - 🧰 **+ 80 Components**, easy and ready to use
+> - 🧰 **+ 20 Style effects and utils**, like color, sizes, padding, layout managment
+> - 📦 **Many examples** and ready to use windows
+> - 📦 **Many logics and interaction** utils like input detection, key managment, double click, Ctrl+C etc...
 
-> **Render engine**
+> ***(API)* Render engine**
 > - 📈 Data handler for windows & components
+> - 🔊 Sound engine
 > - 💬 Localization & Traduction managment
 > - 🎨 Themes manager, Dark & Ligth themes
 > - ❓ Fonts manager
