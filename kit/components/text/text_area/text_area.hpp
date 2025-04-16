@@ -34,11 +34,11 @@ namespace Cherry
                     return;
                 }
 
+                Cherry::PushFont("FiraCode");
+
                 m_TextEditor.render();
 
-                ImVec2 area_size(*m_Width, *m_Height);
-
-
+                Cherry::PopFont();
             }
 
             private: 

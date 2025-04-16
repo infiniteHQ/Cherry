@@ -9,8 +9,6 @@
   </h1>
 </a>
 
-
-
 <div align="center">
 <a title="Code Quality" href="https://www.codefactor.io/repository/github/infinitehq/uikit"><img alt="Code Quality" src="https://img.shields.io/codefactor/grade/github/infinitehq/uikit?longCache=true&style=for-the-badge&label=Code%20Quality&logoColor=fff&logo=CodeFactor&branch=master"></a>
   <a title="Discord Server" href="https://discord.gg/H2wptkecUg"><img alt="Discord Server" src="https://img.shields.io/discord/1095333825762046194?label=Discord&logo=Discord&logoColor=fff&style=for-the-badge"></a>
@@ -18,6 +16,19 @@
 </div>
 
 > *Important: Cherry is part of [Infinite](https://infinite.si/)'s initiative to create free, independent, and ethical technology and computing. Cherry is a library powering many parts of this project, but maintaining libraries like Cherry is a time-consuming and costly process. If you appreciate Cherry, you can support us [on our funding page](https://fund.infinite.si/) if you can.*
+
+<p align="center" style="gap: 0; margin-bottom: 6px;">
+  <img src="./.github/imgs/tile1.png" width="49%" style="margin-right:1%;">
+  <img src="./.github/imgs/tile3.png" width="49%">
+</p>
+<p align="center" style="gap: 0;">
+  <a href="https://cherry.infinite.si">
+    <img src="./.github/imgs/tile2.png" width="49%" style="margin-right:1%;">
+  </a>
+  <img src="./.github/imgs/tile4.png" width="49%">
+</p>
+
+
 
 ### Summary
 *Cherry is a modern, minimalist yet comprehensive UI/UX framework for low-level native applications. It provides a complete solution, including backend support, a rendering engine, and UI components. Cherry is built using technologies like ImGui, Vulkan, and SDL, offering developers advanced tools to create efficient and high-performance interfaces.*
@@ -33,54 +44,6 @@
 ![⏳ Planned](https://img.shields.io/badge/Web%20Apps-Planned-lightgrey?longCache=true&style=for-the-badge)
 ![⏳ Planned](https://img.shields.io/badge/Mobile%20Apps-Planned-lightgrey?longCache=true&style=for-the-badge)
 ![⏳ Planned](https://img.shields.io/badge/UI%20in%20Games%20%26%20Renders-Planned-lightgrey?longCache=true&style=for-the-badge)
-
-
-<h2>Compatibility</h2>
-
-<table style="width:100%;">
-  <tr>
-    <th>Technology</th>
-    <th>Windows</th>
-    <th>Linux</th>
-    <th>macOS</th>
-    <th>iOS</th>
-    <th>Android</th>
-    <th>Web</th>
-  </tr>
-  <tr>
-    <td><strong>Vulkan</strong></td>
-    <td>✅</td>
-    <td>✅</td>
-    <td>🟧</td>
-    <td>❌</td>
-    <td>❌</td>
-    <td>❌</td>
-  </tr>
-  <tr>
-    <td><strong>OpenGL</strong></td>
-    <td>❌</td>
-    <td>❌</td>
-    <td>❌</td>
-    <td>❌</td>
-    <td>❌</td>
-    <td>❌</td>
-  </tr>
-  <tr>
-    <td><strong>WebGL</strong></td>
-    <td>❌</td>
-    <td>❌</td>
-    <td>❌</td>
-    <td>❌</td>
-    <td>❌</td>
-    <td>❌</td>
-  </tr>
-</table>
-
-<p style="font-size: 12px;">
-✅ <em>: Fully compatible</em><br>
-🟧 <em>: Not fully tested, partially incompatible but planned</em><br>
-❌ <em>: Not planned, incompatible (for the moment...)</em>
-</p>
 
 
 
@@ -149,6 +112,55 @@
 > ```
 
 *Congratulations! If everything is working well, you can now start in the Cherry environment. Please follow our documentation (WIP). If you encounter any issues, feel free to ask your question or reach out to us on Discord!*
+
+
+<h2>Compatibility</h2>
+
+<table style="width:100%;">
+  <tr>
+    <th>Technology</th>
+    <th>Windows</th>
+    <th>Linux</th>
+    <th>macOS</th>
+    <th>iOS</th>
+    <th>Android</th>
+    <th>Web</th>
+  </tr>
+  <tr>
+    <td><strong>Vulkan</strong></td>
+    <td>✅</td>
+    <td>✅</td>
+    <td>🟧</td>
+    <td>❌</td>
+    <td>❌</td>
+    <td>❌</td>
+  </tr>
+  <tr>
+    <td><strong>OpenGL</strong></td>
+    <td>❌</td>
+    <td>❌</td>
+    <td>❌</td>
+    <td>❌</td>
+    <td>❌</td>
+    <td>❌</td>
+  </tr>
+  <tr>
+    <td><strong>WebGL</strong></td>
+    <td>❌</td>
+    <td>❌</td>
+    <td>❌</td>
+    <td>❌</td>
+    <td>❌</td>
+    <td>❌</td>
+  </tr>
+</table>
+
+<p style="font-size: 12px;">
+✅ <em>: Fully compatible</em><br>
+🟧 <em>: Not fully tested, partially incompatible but planned</em><br>
+❌ <em>: Not planned, incompatible (for the moment...)</em>
+</p>
+
 
 ## Examples & Preview
   
