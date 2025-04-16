@@ -22,7 +22,7 @@
   <img src="./.github/imgs/tile3.png" width="49%">
 </p>
 <p align="center" style="gap: 0;">
-  <a href="https://cherry.infinite.si">
+  <a target="_blank" href="https://cherry.infinite.si">
     <img src="./.github/imgs/tile2.png" width="49%" style="margin-right:1%;">
   </a>
   <img src="./.github/imgs/tile4.png" width="49%">
