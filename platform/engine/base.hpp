@@ -149,6 +149,8 @@ namespace Cherry
         bool DisableTitle = false;
         bool DisableTitleBar = false;
         bool UseAudioService = false;
+        bool DisableLogo = false;
+        bool DisableMenubar = false;
         bool DisableResize = false;
         bool WindowResizeable = true;
         bool WindowOnlyClosable = false;

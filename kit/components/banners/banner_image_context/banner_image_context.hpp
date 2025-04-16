@@ -268,9 +268,11 @@ namespace Cherry
             return existing_title;
         }
 
-        inline std::shared_ptr<Component> BannerImageContext(const Cherry::Identifier &identifier, const float &width = 260.0f, const float &height = 110.0f, const std::string &image_path = "", const std::string &title = "", const std::string &description = "", const std::function<void()> &onClickedCallback = []() {})
-        {
-            switch (identifier.property())
+        inline std::shared_ptr<Component> BannerImageContext(Cherry::IdentifierProperty prop, const float &width = 260.0f, const float &height = 110.0f, const std::string &image_path = "", const std::string &title = "", const std::string &description = "", const std::function<void()> &onClickedCallback = []() {})
+        {               
+             auto anonymous_id = Application::GenerateUniqueID(image_path, title, description);
+
+            switch (prop)
             {
             case IdentifierProperty::Inline:
             {
@@ -302,14 +304,14 @@ namespace Cherry
             }
             default:
             {
-                auto new_title = Application::CreateAnonymousComponent<Components::BannerImageContext>(Components::BannerImageContext(identifier, image_path, title, description, width, height, onClickedCallback));
+                auto new_title = Application::CreateAnonymousComponent<Components::BannerImageContext>(Components::BannerImageContext(anonymous_id, image_path, title, description, width, height, onClickedCallback));
                 return new_title;
                 break;
             }
             }
 
             // Get the object if exist
-            auto existing_title = Application::GetComponent(identifier);
+            auto existing_title = Application::GetComponent(anonymous_id);
             if (existing_title)
             {
                 existing_title->Render();
@@ -317,7 +319,7 @@ namespace Cherry
             else
             {
                 // Create the object if not exist
-                auto new_title = Application::CreateComponent<Components::BannerImageContext>(Components::BannerImageContext(identifier, image_path, title, description, width, height));
+                auto new_title = Application::CreateComponent<Components::BannerImageContext>(Components::BannerImageContext(anonymous_id, image_path, title, description));
                 new_title->Render();
                 return new_title;
             }

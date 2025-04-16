@@ -34,8 +34,8 @@ namespace Cherry
                 // Sizes
                 SetProperty("size_x", "20");
                 SetProperty("size_y", "20");
-                SetProperty("padding_x", "6");
-                SetProperty("padding_y", "6");
+                SetProperty("padding_x", "4");
+                SetProperty("padding_y", "4");
 
                 // Informations
                 SetProperty("label", label);

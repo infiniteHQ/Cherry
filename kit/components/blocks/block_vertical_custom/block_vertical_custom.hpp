@@ -201,7 +201,7 @@ namespace Cherry
     {
         inline std::shared_ptr<Component> BlockVerticalCustom(const std::vector<std::function<void()>> &renderCallbacks)
         {
-            auto anonymous_id = Application::GetAnonymousID();
+            auto anonymous_id = Application::GenerateUniqueID(renderCallbacks);
             auto existing = Application::GetAnonymousComponent(anonymous_id);
             if (existing)
             {
@@ -218,7 +218,7 @@ namespace Cherry
 
         inline std::shared_ptr<Component> BlockVerticalCustom(const std::function<void()> &onClickedCallback = []() {}, const float &width = 260.0f, const float &height = 110.0f, const std::vector<std::function<void()>> &renderCallbacks = {})
         {
-            auto anonymous_id = Application::GetAnonymousID();
+            auto anonymous_id = Application::GenerateUniqueID(onClickedCallback, width, height, renderCallbacks);
             auto existing = Application::GetAnonymousComponent(anonymous_id);
             if (existing)
             {
@@ -337,9 +337,9 @@ namespace Cherry
             return existing_title;
         }
 
-        inline std::shared_ptr<Component> BlockVerticalCustom(Cherry::IdentifierProperty prop, const std::function<void()> &onClickedCallback = []() {}, const float &width = 260.0f, const float &height = 110.0f, const std::vector<std::function<void()>> &renderCallbacks = {})
+        inline std::shared_ptr<Component> BlockVerticalCustom(Cherry::IdentifierProperty prop, const std::function<void()> &onClickedCallback = []() {}, const float &width = 260.0f, const float &height = 110.0f, const std::vector<std::function<void()>> &renderCallbacks = {}, int i = 0)
         {
-            auto anonymous_id = Application::GenerateUniqueID(onClickedCallback, width, height, renderCallbacks);
+            auto anonymous_id = Application::GenerateUniqueID(onClickedCallback, width, height, renderCallbacks, i);
             switch (prop)
             {
             case IdentifierProperty::Inline:

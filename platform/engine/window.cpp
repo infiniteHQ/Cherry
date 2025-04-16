@@ -572,6 +572,7 @@ namespace Cherry
         // DEBUG TITLEBAR BOUNDS
         // fgDrawList->AddRect(titlebarMin, titlebarMax, UI::Colors::Theme::invalidPrefab);
         // Logo
+        if(!m_Specifications.DisableLogo)
         {
             const int logoWidth = 48;  // Largeur du logo
             const int logoHeight = 48; // Hauteur du logo
