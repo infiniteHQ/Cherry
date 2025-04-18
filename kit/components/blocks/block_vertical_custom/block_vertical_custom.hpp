@@ -216,9 +216,9 @@ namespace Cherry
             }
         }
 
-        inline std::shared_ptr<Component> BlockVerticalCustom(const std::function<void()> &onClickedCallback = []() {}, const float &width = 260.0f, const float &height = 110.0f, const std::vector<std::function<void()>> &renderCallbacks = {})
+        inline std::shared_ptr<Component> BlockVerticalCustom(const std::function<void()> &onClickedCallback = []() {}, const float &width = 260.0f, const float &height = 110.0f, const std::vector<std::function<void()>> &renderCallbacks = {}, int i = 0)
         {
-            auto anonymous_id = Application::GenerateUniqueID(onClickedCallback, width, height, renderCallbacks);
+            auto anonymous_id = Application::GenerateUniqueID(onClickedCallback, width, height, renderCallbacks, i);
             auto existing = Application::GetAnonymousComponent(anonymous_id);
             if (existing)
             {
@@ -446,9 +446,9 @@ namespace Cherry
             return BlockVerticalCustom(identifier, []() {}, width, height, renderCallbacks);
         }
 
-        inline std::shared_ptr<Component> BlockVerticalCustom(const float &width = 260.0f, const float &height = 110.0f, const std::vector<std::function<void()>> &renderCallbacks = {})
+        inline std::shared_ptr<Component> BlockVerticalCustom(const float &width = 260.0f, const float &height = 110.0f, const std::vector<std::function<void()>> &renderCallbacks = {}, int i = 0)
         {
-            return BlockVerticalCustom([]() {}, width, height, renderCallbacks);
+            return BlockVerticalCustom([]() {}, width, height, renderCallbacks, i);
         }
 
     }

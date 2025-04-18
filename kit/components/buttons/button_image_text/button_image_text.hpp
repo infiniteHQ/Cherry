@@ -32,10 +32,10 @@ namespace Cherry
                 SetProperty("color_bg_clicked", "#444444FF");
 
                 // Sizes
-                SetProperty("size_x", "20");
-                SetProperty("size_y", "20");
-                SetProperty("padding_x", "4");
-                SetProperty("padding_y", "4");
+                SetProperty("size_x", "15");
+                SetProperty("size_y", "15");
+                SetProperty("padding_x", "10");
+                SetProperty("padding_y", "6");
 
                 // Informations
                 SetProperty("label", label);

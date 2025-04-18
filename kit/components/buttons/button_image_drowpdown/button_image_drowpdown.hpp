@@ -34,20 +34,24 @@ namespace Cherry
                 SetProperty("color_text_hovered", "#FFFFFFFF");
                 SetProperty("color_text_pressed", "#FFFFFFFF");
 
+                // Icons paths
+                SetProperty("image_dropdown_up", Cherry::GetPath("resources/base/up.png"));
+                SetProperty("image_dropdown_down", Cherry::GetPath("resources/base/down.png"));
+
                 // Layout
                 SetProperty("dropdown_place", "right");
 
                 // Sizes
-                SetProperty("size_x", "0");
-                SetProperty("size_y", "0");
-                SetProperty("padding_x", "6");
+                SetProperty("size_x", "15");
+                SetProperty("size_y", "15");
+                SetProperty("padding_x", "10");
                 SetProperty("padding_y", "6");
                 SetProperty("scale", "0"); // Instead of using sizes manually, we can use scale.
 
                 // Params
                 SetProperty("disabled", "false");
                 SetProperty("disable_time", "false");
-                
+
                 // Informations
                 SetProperty("label", "");
                 SetProperty("image_path", image_path);
@@ -78,7 +82,7 @@ namespace Cherry
 
                 ImTextureID image_texture = Application::Get().GetCurrentRenderedWindow()->get_texture(GetProperty("image_path"));
 
-          const ImVec2 &size = ImVec2(std::stoi(GetProperty("size_x")), std::stoi(GetProperty("size_y")));
+                const ImVec2 &size = ImVec2(std::stoi(GetProperty("size_x")), std::stoi(GetProperty("size_y")));
                 CherryGUI::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(std::stoi(GetProperty("padding_x")), std::stoi(GetProperty("padding_y"))));
 
                 CherryGUI::PushStyleColor(ImGuiCol_Border, HexToRGBA(GetProperty("color_border")));
@@ -87,7 +91,7 @@ namespace Cherry
                 CherryGUI::PushStyleColor(ImGuiCol_ButtonActive, HexToRGBA(GetProperty("color_bg_pressed")));
                 CherryGUI::PushStyleColor(ImGuiCol_Text, HexToRGBA(GetProperty("color_text")));
 
-                        std::string identifier = GetIdentifier().string();
+                std::string identifier = GetIdentifier().string();
                 std::string Label = GetProperty("label");
 
                 if (!identifier.empty())
@@ -95,13 +99,12 @@ namespace Cherry
                     Label += "####" + identifier;
                 }
 
-
                 int style_props_opt = 0;
 
                 if (GetData("isHovered") == "true")
                 {
                     if (GetProperty("disable_time") == "false")
-                    SetData("lastHovered", GetCurrentTime());
+                        SetData("lastHovered", GetCurrentTime());
                     CherryGUI::PushStyleColor(ImGuiCol_Border, HexToRGBA(GetProperty("color_border_hovered")));
                     CherryGUI::PushStyleColor(ImGuiCol_Button, HexToRGBA(GetProperty("color_bg_hovered")));
                     CherryGUI::PushStyleColor(ImGuiCol_Text, HexToRGBA(GetProperty("color_text_hovered")));
@@ -111,8 +114,7 @@ namespace Cherry
                 if (GetData("isClicked") == "true")
                 {
                     if (GetProperty("disable_time") == "false")
-                    SetData("lastClicked", GetCurrentTime());
-                    std::cout << GetData("lastClicked") << std::endl;
+                        SetData("lastClicked", GetCurrentTime());
 
                     CherryGUI::PushStyleColor(ImGuiCol_Border, HexToRGBA(GetProperty("color_border_pressed")));
                     CherryGUI::PushStyleColor(ImGuiCol_Button, HexToRGBA(GetProperty("color_bg_pressed")));
@@ -123,20 +125,20 @@ namespace Cherry
                 if (GetData("isActivated") == "true")
                 {
                     if (GetProperty("disable_time") == "false")
-                    SetData("lastActivated", GetCurrentTime());
+                        SetData("lastActivated", GetCurrentTime());
                 }
 
                 if (GetProperty("isPressed") == "true")
                 {
                     if (GetProperty("disable_time") == "false")
-                    SetData("lastPressed", GetCurrentTime());
+                        SetData("lastPressed", GetCurrentTime());
 
                     CherryGUI::PushStyleColor(ImGuiCol_Border, HexToRGBA(GetProperty("color_border_pressed")));
                     CherryGUI::PushStyleColor(ImGuiCol_Button, HexToRGBA(GetProperty("color_bg_pressed")));
                     CherryGUI::PushStyleColor(ImGuiCol_Text, HexToRGBA(GetProperty("color_text_pressed")));
                     style_props_opt += 3;
                 }
-            
+
                 SetData("isHovered", "false");
                 SetData("isClicked", "false");
                 SetData("isPressed", "false");
@@ -169,6 +171,12 @@ namespace Cherry
                     SetData("isClicked", "true");
                 }
 
+
+                if (GetData("isMenuActivated") == "true")
+                {
+                    CherryGUI::OpenPopup("TabContextMenu");
+                }
+                
                 if (GetData("isMenuActivated") == "true")
                 {
                     if (CherryGUI::BeginPopupContextItem("TabContextMenu"))
@@ -192,11 +200,6 @@ namespace Cherry
                     }
                 }
 
-                if (GetData("isMenuActivated") == "true")
-                {
-                    CherryGUI::OpenPopup("TabContextMenu");
-                }
-
                 if (CherryGUI::IsMouseClicked(ImGuiMouseButton_Left))
                 {
                     SetData("isMenuActivated", "false");
@@ -208,9 +211,8 @@ namespace Cherry
             }
 
         private:
-
             std::function<void()> m_DropdownCallback;
-            
+
             std::string GetCurrentTime()
             {
                 std::string m_LastClickTime;
@@ -241,7 +243,7 @@ namespace Cherry
                 button->Render();
                 return button;
             }
-             }
+        }
 
         inline std::shared_ptr<Component> ButtonImageDropdown(const Cherry::Identifier &identifier, const std::string &image_path, const std::function<void()> &dropdown_callback = []() {})
         {

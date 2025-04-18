@@ -33,7 +33,7 @@ namespace Cherry
 
             void Render() override
             {
-                CherryGUI::Text(GetProperty("label").c_str());
+                CherryGUI::TextColored(HexToRGBA(GetProperty("color_text")),GetProperty("label").c_str());
 
                 auto parent = Cherry::GetParent();
                 if(parent)
