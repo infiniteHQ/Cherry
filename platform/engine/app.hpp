@@ -1,5 +1,12 @@
 #pragma once
 
+/*
+TODO :
+
+Cherry::GetLastRenderedComponent();
+
+ */
+
 #include "../../options.hpp"
 #include "../../src/core/color.hpp"
 #include "../../src/layer.hpp"
