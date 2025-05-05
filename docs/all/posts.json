@@ -143,8 +143,8 @@
                     "subpages": []
                 },
                 {
-                    "name": "window_appwindow",
-                    "link": "window_appwindow.md",
+                    "name": "locales_traductions",
+                    "link": "locales_traductions.md",
                     "description": "",
                     "logo": "",
                     "slug": "Locales & Traductions",
@@ -818,11 +818,11 @@
                             "link": "separators_separator.md"
                         },
                         {
-                            "name": "separators_separator",
+                            "name": "separators_separator_text",
                             "slug": "SeparatorText",
                             "description": "",
                             "logo": "",
-                            "link": "separators_separator.md"
+                            "link": "separators_separator_text.md"
                         }
                     ]
                 },
@@ -871,6 +871,13 @@
                             "description": "",
                             "logo": "",
                             "link": "tables_table_simple.md"
+                        },
+                        {
+                            "name": "tables_table_custom",
+                            "slug": "TableSimple",
+                            "description": "",
+                            "logo": "",
+                            "link": "tables_table_custom.md"
                         }
                     ]
                 },
@@ -1068,8 +1075,8 @@
             "sumary": "This is the reference of cherry",
             "pages": [
                 {
-                    "name": "theme",
-                    "link": "theme.md",
+                    "name": "margin_padding",
+                    "link": "margin_padding.md",
                     "description": "",
                     "logo": "",
                     "slug": "Margin & Padding",
