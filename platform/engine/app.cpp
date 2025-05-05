@@ -2704,6 +2704,7 @@ namespace Cherry {
         return component->GetData(topic);
       }
     }
+    std::cout << "No components for \"" << id.string() << "\"" << std::endl;
     return "undefined";
   }
 

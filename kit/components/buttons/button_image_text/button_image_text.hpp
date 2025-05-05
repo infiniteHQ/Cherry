@@ -30,6 +30,8 @@ namespace Cherry {
         // Sizes
         SetProperty("size_x", "15");
         SetProperty("size_y", "15");
+        SetProperty("size_image_x", "15");
+        SetProperty("size_image_y", "15");
         SetProperty("padding_x", "10");
         SetProperty("padding_y", "6");
 
@@ -60,7 +62,11 @@ namespace Cherry {
         }
 
         ImTextureID texture = Application::Get().GetCurrentRenderedWindow()->get_texture(GetProperty("image_path"));
-        if (CherryGUI::ImageButtonWithText(texture, Label.c_str(), size)) {
+        CherryGUI::SetNextItemWidth(std::stof(GetProperty("size_x")));
+        if (CherryGUI::ImageButtonWithText(
+                texture,
+                Label.c_str(),
+                ImVec2(std::stof(GetProperty("size_image_x")), std::stof(GetProperty("size_image_y"))))) {
           SetData("isClicked", "true");
           UpdateLastClickTime();
         } else {

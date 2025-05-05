@@ -11,7 +11,175 @@
                     "link": "introduction.md",
                     "description": "",
                     "logo": "",
-                    "slug": "Get started on Cherry",
+                    "slug": "Introduction",
+                    "subpages": []
+                },
+                {
+                    "name": "get_started",
+                    "link": "get_started.md",
+                    "description": "",
+                    "logo": "",
+                    "slug": "Get started",
+                    "subpages": []
+                },
+                {
+                    "name": "install_building",
+                    "link": "install_building.md",
+                    "description": "",
+                    "logo": "",
+                    "slug": "Install & build",
+                    "subpages": []
+                },
+                {
+                    "name": "create_first_app",
+                    "link": "create_first_app.md",
+                    "description": "",
+                    "logo": "",
+                    "slug": "Create your first app",
+                    "subpages": []
+                },
+                {
+                    "name": "index",
+                    "link": "index.md",
+                    "description": "",
+                    "logo": "",
+                    "slug": "Index",
+                    "subpages": []
+                }
+            ]
+        },
+        {
+            "name": "api",
+            "slug": "API",
+            "title": "API",
+            "sumary": "Introduction to the Cherry UI/UX Framework API",
+            "pages": [
+                {
+                    "name": "theme",
+                    "link": "theme.md",
+                    "description": "",
+                    "logo": "",
+                    "slug": "Theme & Design",
+                    "subpages": []
+                },
+                {
+                    "name": "components",
+                    "link": "components.md",
+                    "description": "",
+                    "logo": "",
+                    "slug": "Manage Components",
+                    "subpages": []
+                },
+                {
+                    "name": "fonts",
+                    "link": "fonts.md",
+                    "description": "",
+                    "logo": "",
+                    "slug": "Fonts",
+                    "subpages": []
+                },
+                {
+                    "name": "sound",
+                    "link": "sound.md",
+                    "description": "",
+                    "logo": "",
+                    "slug": "Sounds",
+                    "subpages": []
+                },
+                {
+                    "name": "path_assets",
+                    "link": "path_assets.md",
+                    "description": "",
+                    "logo": "",
+                    "slug": "Path & Assets",
+                    "subpages": []
+                },
+                {
+                    "name": "callbacks",
+                    "link": "callbacks.md",
+                    "description": "",
+                    "logo": "",
+                    "slug": "Render Callbacks",
+                    "subpages": []
+                },
+                {
+                    "name": "window_appwindow",
+                    "link": "window_appwindow.md",
+                    "description": "",
+                    "logo": "",
+                    "slug": "Windows & AppWindows",
+                    "subpages": []
+                },
+                {
+                    "name": "docking",
+                    "link": "docking.md",
+                    "description": "",
+                    "logo": "",
+                    "slug": "Docking",
+                    "subpages": []
+                },
+                {
+                    "name": "user_inputs",
+                    "link": "user_inputs.md",
+                    "description": "",
+                    "logo": "",
+                    "slug": "User inputs",
+                    "subpages": []
+                },
+                {
+                    "name": "saves",
+                    "link": "saves.md",
+                    "description": "",
+                    "logo": "",
+                    "slug": "Saves & States",
+                    "subpages": []
+                },
+                {
+                    "name": "texture_sprites",
+                    "link": "texture_sprites.md",
+                    "description": "",
+                    "logo": "",
+                    "slug": "Textures & Sprites",
+                    "subpages": []
+                },
+                {
+                    "name": "window_appwindow",
+                    "link": "window_appwindow.md",
+                    "description": "",
+                    "logo": "",
+                    "slug": "Locales & Traductions",
+                    "subpages": []
+                },
+                {
+                    "name": "net",
+                    "link": "net.md",
+                    "description": "",
+                    "logo": "",
+                    "slug": "Net features",
+                    "subpages": []
+                },
+                {
+                    "name": "id",
+                    "link": "id.md",
+                    "description": "",
+                    "logo": "",
+                    "slug": "Identifiers & ID Patterns",
+                    "subpages": []
+                },
+                {
+                    "name": "graphics",
+                    "link": "graphics.md",
+                    "description": "",
+                    "logo": "",
+                    "slug": "Graphics API (Vulkan)",
+                    "subpages": []
+                },
+                {
+                    "name": "app_instances",
+                    "link": "app_instances.md",
+                    "description": "",
+                    "logo": "",
+                    "slug": "App instances",
                     "subpages": []
                 }
             ]
@@ -23,6 +191,89 @@
             "sumary": "This is the reference of cherry",
             "pages": [
                 {
+                    "name": "banners",
+                    "link": "banners.md",
+                    "description": "",
+                    "logo": "",
+                    "slug": "Banners",
+                    "subpages": [
+                        {
+                            "name": "banners_error",
+                            "slug": "BannerError",
+                            "description": "",
+                            "logo": "",
+                            "link": "banners_error.md"
+                        },
+                        {
+                            "name": "banners_image_context",
+                            "slug": "BannerImageContext",
+                            "description": "",
+                            "logo": "",
+                            "link": "banners_image_context.md"
+                        },
+                        {
+                            "name": "banners_info",
+                            "slug": "BannerInfo",
+                            "description": "",
+                            "logo": "",
+                            "link": "banners_info.md"
+                        }
+                    ]
+                },
+                {
+                    "name": "blocks",
+                    "link": "blocks.md",
+                    "description": "",
+                    "logo": "",
+                    "slug": "Blocks",
+                    "subpages": [
+                        {
+                            "name": "block_horizontal_custom",
+                            "slug": "BlockHorizontalCustom",
+                            "description": "",
+                            "logo": "",
+                            "link": "block_horizontal_custom.md"
+                        },
+                        {
+                            "name": "block_vertical_custom",
+                            "slug": "BlockVerticalCustom",
+                            "description": "",
+                            "logo": "",
+                            "link": "block_vertical_custom.md"
+                        }
+                    ]
+                },
+                {
+                    "name": "bullets",
+                    "link": "bullets.md",
+                    "description": "",
+                    "logo": "",
+                    "slug": "Bullets",
+                    "subpages": [
+                        {
+                            "name": "bullets_button",
+                            "slug": "BulletButton",
+                            "description": "",
+                            "logo": "",
+                            "link": "bullets_button.md"
+                        },
+                        {
+                            "name": "bullets_multitext",
+                            "slug": "BulletMultiText",
+                            "description": "",
+                            "logo": "",
+                            "link": "bullets_multitext.md"
+                        },
+                        {
+                            "name": "bullets_text",
+                            "slug": "BulletText",
+                            "description": "",
+                            "logo": "",
+                            "link": "bullets_text.md"
+                        }
+                    ]
+                },
+                {
                     "name": "buttons",
                     "link": "buttons.md",
                     "description": "",
@@ -30,46 +281,647 @@
                     "slug": "Buttons",
                     "subpages": [
                         {
-                            "name": "button_buttontext",
-                            "slug": "Text Button",
-                            "description": "",
-                            "logo": "",
-                            "link": "button_buttontext.md"
-                        },
-                        {
                             "name": "button_buttonimage",
-                            "slug": "Image Button",
+                            "slug": "ButtonImage",
                             "description": "",
                             "logo": "",
                             "link": "button_buttonimage.md"
                         },
                         {
-                            "name": "button_buttontextimage",
-                            "slug": "Text Image Button",
+                            "name": "button_buttonimagedropdown",
+                            "slug": "ButtonImageDropdown",
                             "description": "",
                             "logo": "",
-                            "link": "button_buttontextimage.md"
+                            "link": "button_buttonimagedropdown.md"
                         },
                         {
+                            "name": "button_buttonimagetext",
+                            "slug": "ButtonImageText",
+                            "description": "",
+                            "logo": "",
+                            "link": "button_buttonimagetext.md"
+                        },    
+                        {
+                            "name": "button_buttonimagedropdown",
+                            "slug": "ButtonImageTextDropdown",
+                            "description": "",
+                            "logo": "",
+                            "link": "button_buttonimagedropdown.md"
+                        },    
+                        {
                             "name": "button_buttonimagetextimage",
-                            "slug": "Image Text Image Button",
+                            "slug": "ButtonImageTextImage",
                             "description": "",
                             "logo": "",
                             "link": "button_buttonimagetextimage.md"
-                        },                        
+                        },    
+                        {
+                            "name": "button_buttontext",
+                            "slug": "ButtonText",
+                            "description": "",
+                            "logo": "",
+                            "link": "button_buttontext.md"
+                        },             
                         {
                             "name": "button_textdropdown",
-                            "slug": "Text Dropdown Button",
+                            "slug": "ButtonTextDropdown ",
                             "description": "",
                             "logo": "",
                             "link": "button_textdropdown.md"
-                        },
+                        },     
+                        {
+                            "name": "button_buttontextimage",
+                            "slug": "ButtonTextImage",
+                            "description": "",
+                            "logo": "",
+                            "link": "button_buttontextimage.md"
+                        },  
                         {
                             "name": "button_buttontextimagedropdown",
-                            "slug": "Text Image Dropdown Button",
+                            "slug": "ButtonTextImageDropdown",
                             "description": "",
                             "logo": "",
                             "link": "button_buttontextimagedropdown.md"
+                        },
+                        {
+                            "name": "button_textunderline",
+                            "slug": "ButtonTextUnderline",
+                            "description": "",
+                            "logo": "",
+                            "link": "button_textunderline.md"
+                        }
+                    ]
+                },
+                {
+                    "name": "checkboxes",
+                    "link": "checkboxes.md",
+                    "description": "",
+                    "logo": "",
+                    "slug": "Checkboxes",
+                    "subpages": [
+                        {
+                            "name": "checkboxes_checkboxtext",
+                            "slug": "CheckboxText",
+                            "description": "",
+                            "logo": "",
+                            "link": "checkboxes_checkboxtext.md"
+                        }
+                    ]
+                },
+                {
+                    "name": "combos",
+                    "link": "combos.md",
+                    "description": "",
+                    "logo": "",
+                    "slug": "Combos",
+                    "subpages": [
+                        {
+                            "name": "combos_combo_custom",
+                            "slug": "ComboCustom",
+                            "description": "",
+                            "logo": "",
+                            "link": "combos_combo_custom.md"
+                        },
+                        {
+                            "name": "combos_combo_image_text",
+                            "slug": "ComboImageText",
+                            "description": "",
+                            "logo": "",
+                            "link": "combos_combo_image_text.md"
+                        },
+                        {
+                            "name": "combos_combo_text",
+                            "slug": "ComboText",
+                            "description": "",
+                            "logo": "",
+                            "link": "combos_combo_text.md"
+                        }
+                    ]
+                },
+                {
+                    "name": "gifs",
+                    "link": "gifs.md",
+                    "description": "",
+                    "logo": "",
+                    "slug": "Gifs",
+                    "subpages": [
+                        {
+                            "name": "gif_gifsimple",
+                            "slug": "GifSimple",
+                            "description": "",
+                            "logo": "",
+                            "link": "gif_gifsimple.md"
+                        }
+                    ]
+                },
+                {
+                    "name": "grids",
+                    "link": "grids.md",
+                    "description": "",
+                    "logo": "",
+                    "slug": "Grids",
+                    "subpages": [
+                        {
+                            "name": "grids_gridsimple",
+                            "slug": "GridSimple",
+                            "description": "",
+                            "logo": "",
+                            "link": "grids_gridsimple.md"
+                        }
+                    ]
+                },
+                {
+                    "name": "headers",
+                    "link": "headers.md",
+                    "description": "",
+                    "logo": "",
+                    "slug": "Headers",
+                    "subpages": [
+                        {
+                            "name": "headers_header_image_text",
+                            "slug": "HeaderImageText",
+                            "description": "",
+                            "logo": "",
+                            "link": "headers_header_image_text.md"
+                        },
+                        {
+                            "name": "headers_header_image_text_button",
+                            "slug": "HeaderImageTextButton",
+                            "description": "",
+                            "logo": "",
+                            "link": "headers_header_image_text_button.md"
+                        },
+                        {
+                            "name": "headers_header_text",
+                            "slug": "HeaderText",
+                            "description": "",
+                            "logo": "",
+                            "link": "headers_header_text.md"
+                        },
+                        {
+                            "name": "headers_header_text_button",
+                            "slug": "HeaderTextButton",
+                            "description": "",
+                            "logo": "",
+                            "link": "headers_header_text_button.md"
+                        }
+                    ]
+                },
+                {
+                    "name": "images",
+                    "link": "images.md",
+                    "description": "",
+                    "logo": "",
+                    "slug": "Images",
+                    "subpages": [
+                        {
+                            "name": "images_image_http",
+                            "slug": "ImageHttp",
+                            "description": "",
+                            "logo": "",
+                            "link": "images_image_http.md"
+                        },
+                        {
+                            "name": "images_image_local",
+                            "slug": "ImageLocal",
+                            "description": "",
+                            "logo": "",
+                            "link": "images_image_local.md"
+                        },
+                        {
+                            "name": "images_image_local_centered",
+                            "slug": "ImageLocalCentered",
+                            "description": "",
+                            "logo": "",
+                            "link": "images_image_local_centered.md"
+                        }
+                    ]
+                },
+                {
+                    "name": "inputs",
+                    "link": "inputs.md",
+                    "description": "",
+                    "logo": "",
+                    "slug": "Inputs",
+                    "subpages": [
+                        {
+                            "name": "inputs_input_double",
+                            "slug": "InputDouble",
+                            "description": "",
+                            "logo": "",
+                            "link": "inputs_input_double.md"
+                        },
+                        {
+                            "name": "inputs_input_float",
+                            "slug": "InputFloat",
+                            "description": "",
+                            "logo": "",
+                            "link": "inputs_input_float.md"
+                        },
+                        {
+                            "name": "inputs_input_int",
+                            "slug": "InputInt",
+                            "description": "",
+                            "logo": "",
+                            "link": "inputs_input_int.md"
+                        },
+                        {
+                            "name": "inputs_input_mutliline_string",
+                            "slug": "InputMultilineString",
+                            "description": "",
+                            "logo": "",
+                            "link": "inputs_input_mutliline_string.md"
+                        },
+                        {
+                            "name": "inputs_input_string",
+                            "slug": "InputString",
+                            "description": "",
+                            "logo": "",
+                            "link": "inputs_input_string.md"
+                        }
+                    ]
+                },
+                {
+                    "name": "keyvals",
+                    "link": "keyvals.md",
+                    "description": "",
+                    "logo": "",
+                    "slug": "Keyvals",
+                    "subpages": [
+                        {
+                            "name": "keyvals_keyval_bool",
+                            "slug": "KeyvalBool",
+                            "description": "",
+                            "logo": "",
+                            "link": "keyvals_keyval_bool.md"
+                        },
+                        {
+                            "name": "keyvals_keyval_combo_string",
+                            "slug": "KeyvalComboString",
+                            "description": "",
+                            "logo": "",
+                            "link": "keyvals_keyval_combo_string.md"
+                        },
+                        {
+                            "name": "keyvals_keyval_double",
+                            "slug": "KeyvalDouble",
+                            "description": "",
+                            "logo": "",
+                            "link": "keyvals_keyval_double.md"
+                        },
+                        {
+                            "name": "keyvals_keyval_float",
+                            "slug": "KeyvalFloat",
+                            "description": "",
+                            "logo": "",
+                            "link": "keyvals_keyval_float.md"
+                        },
+                        {
+                            "name": "keyvals_keyval_int",
+                            "slug": "KeyvalInt",
+                            "description": "",
+                            "logo": "",
+                            "link": "keyvals_keyval_int.md"
+                        },
+                        {
+                            "name": "keyvals_keyval_string",
+                            "slug": "KeyvalString",
+                            "description": "",
+                            "logo": "",
+                            "link": "keyvals_keyval_string.md"
+                        },
+                        {
+                            "name": "keyvals_keyval_vector1",
+                            "slug": "KeyvalVector1",
+                            "description": "",
+                            "logo": "",
+                            "link": "keyvals_keyval_vector1.md"
+                        },
+                        {
+                            "name": "keyvals_keyval_vector2",
+                            "slug": "KeyvalVector2",
+                            "description": "",
+                            "logo": "",
+                            "link": "keyvals_keyval_vector2.md"
+                        },
+                        {
+                            "name": "keyvals_keyval_vector3",
+                            "slug": "KeyvalVector3",
+                            "description": "",
+                            "logo": "",
+                            "link": "keyvals_keyval_vector3.md"
+                        },
+                        {
+                            "name": "keyvals_keyval_vector3_5",
+                            "slug": "KeyvalVector3_5",
+                            "description": "",
+                            "logo": "",
+                            "link": "keyvals_keyval_vector3_5.md"
+                        },
+                        {
+                            "name": "keyvals_keyval_vector4",
+                            "slug": "KeyvalVector4",
+                            "description": "",
+                            "logo": "",
+                            "link": "keyvals_keyval_vector4.md"
+                        }
+                       
+                    ]
+                },
+                {
+                    "name": "lists",
+                    "link": "lists.md",
+                    "description": "",
+                    "logo": "",
+                    "slug": "Lists",
+                    "subpages": [
+                        {
+                            "name": "lists_list_custom",
+                            "slug": "ListCustom",
+                            "description": "",
+                            "logo": "",
+                            "link": "lists_list_custom.md"
+                        },
+                        {
+                            "name": "lists_list_image_string",
+                            "slug": "ListImageString",
+                            "description": "",
+                            "logo": "",
+                            "link": "lists_list_image_string.md"
+                        },
+                        {
+                            "name": "lists_list_string",
+                            "slug": "ListString",
+                            "description": "",
+                            "logo": "",
+                            "link": "lists_list_string.md"
+                        }
+                    ]
+                },
+                {
+                    "name": "modals",
+                    "link": "modals.md",
+                    "description": "",
+                    "logo": "",
+                    "slug": "Modals",
+                    "subpages": [
+                        {
+                            "name": "modals_modal_simple",
+                            "slug": "ModalSimple",
+                            "description": "",
+                            "logo": "",
+                            "link": "modals_modal_simple.md"
+                        }
+                    ]
+                },
+                {
+                    "name": "nodes",
+                    "link": "nodes.md",
+                    "description": "",
+                    "logo": "",
+                    "slug": "Nodes",
+                    "subpages": [
+                        {
+                            "name": "nodes_node_areamaker",
+                            "slug": "NodeAreaMaker",
+                            "description": "",
+                            "logo": "",
+                            "link": "nodes_node_areamaker.md"
+                        },
+                        {
+                            "name": "nodes_node_areaopen",
+                            "slug": "NodeAreaOpen",
+                            "description": "",
+                            "logo": "",
+                            "link": "nodes_node_areaopen.md"
+                        }
+                    ]
+                },
+                {
+                    "name": "nodes",
+                    "link": "nodes.md",
+                    "description": "",
+                    "logo": "",
+                    "slug": "Nodes",
+                    "subpages": [
+                        {
+                            "name": "nodes_node_areamaker",
+                            "slug": "NodeAreaMaker",
+                            "description": "",
+                            "logo": "",
+                            "link": "nodes_node_areamaker.md"
+                        },
+                        {
+                            "name": "nodes_node_areaopen",
+                            "slug": "NodeAreaOpen",
+                            "description": "",
+                            "logo": "",
+                            "link": "nodes_node_areaopen.md"
+                        }
+                    ]
+                },
+                {
+                    "name": "notifications",
+                    "link": "notifications.md",
+                    "description": "",
+                    "logo": "",
+                    "slug": "Notifications",
+                    "subpages": [
+                        {
+                            "name": "notifications_notification_button",
+                            "slug": "NotificationButton",
+                            "description": "",
+                            "logo": "",
+                            "link": "notifications_notification_button.md"
+                        },
+                        {
+                            "name": "notifications_notification_custom",
+                            "slug": "NotificationCustom",
+                            "description": "",
+                            "logo": "",
+                            "link": "notifications_notification_custom.md"
+                        },
+                        {
+                            "name": "notifications_notification_simple",
+                            "slug": "NotificationSimple",
+                            "description": "",
+                            "logo": "",
+                            "link": "notifications_notification_simple.md"
+                        }
+                    ]
+                },
+                {
+                    "name": "plots",
+                    "link": "plots.md",
+                    "description": "",
+                    "logo": "",
+                    "slug": "Plots",
+                    "subpages": [
+                        {
+                            "name": "plots_plot_historigram_float",
+                            "slug": "PlotHistorigramFloat",
+                            "description": "",
+                            "logo": "",
+                            "link": "plots_plot_historigram_float.md"
+                        },
+                        {
+                            "name": "plots_plot_line_float",
+                            "slug": "PlotLineFloat",
+                            "description": "",
+                            "logo": "",
+                            "link": "plots_plot_line_float.md"
+                        }
+                    ]
+                },
+                {
+                    "name": "progress",
+                    "link": "progress.md",
+                    "description": "",
+                    "logo": "",
+                    "slug": "Progress",
+                    "subpages": [
+                        {
+                            "name": "progress_progress_bar_percentage",
+                            "slug": "ProgressBarPercentage",
+                            "description": "",
+                            "logo": "",
+                            "link": "progress_progress_bar_percentage.md"
+                        },
+                        {
+                            "name": "progress_progress_bar_percentage_float",
+                            "slug": "ProgressBarPercentageFloat",
+                            "description": "",
+                            "logo": "",
+                            "link": "progress_progress_bar_percentage_float.md"
+                        },
+                        {
+                            "name": "progress_progress_bar_percentage_int",
+                            "slug": "ProgressBarPercentageInt",
+                            "description": "",
+                            "logo": "",
+                            "link": "progress_progress_bar_percentage_int.md"
+                        }
+                    ]
+                },
+                {
+                    "name": "separators",
+                    "link": "separators.md",
+                    "description": "",
+                    "logo": "",
+                    "slug": "Separators",
+                    "subpages": [
+                        {
+                            "name": "separators_separator",
+                            "slug": "Separator",
+                            "description": "",
+                            "logo": "",
+                            "link": "separators_separator.md"
+                        },
+                        {
+                            "name": "separators_separator",
+                            "slug": "SeparatorText",
+                            "description": "",
+                            "logo": "",
+                            "link": "separators_separator.md"
+                        }
+                    ]
+                },
+                {
+                    "name": "spaces",
+                    "link": "spaces.md",
+                    "description": "",
+                    "logo": "",
+                    "slug": "Spaces",
+                    "subpages": [
+                        {
+                            "name": "spaces_space",
+                            "slug": "Space",
+                            "description": "",
+                            "logo": "",
+                            "link": "spaces_space.md"
+                        }
+                    ]
+                },
+                {
+                    "name": "spinners",
+                    "link": "spinners.md",
+                    "description": "",
+                    "logo": "",
+                    "slug": "Spinners",
+                    "subpages": [
+                        {
+                            "name": "spinners_spinner_round",
+                            "slug": "SpinnerRound",
+                            "description": "",
+                            "logo": "",
+                            "link": "spinners_spinner_round.md"
+                        }
+                    ]
+                },
+                {
+                    "name": "tables",
+                    "link": "tables.md",
+                    "description": "",
+                    "logo": "",
+                    "slug": "Tables",
+                    "subpages": [
+                        {
+                            "name": "tables_table_simple",
+                            "slug": "TableSimple",
+                            "description": "",
+                            "logo": "",
+                            "link": "tables_table_simple.md"
+                        }
+                    ]
+                },
+                {
+                    "name": "texts",
+                    "link": "texts.md",
+                    "description": "",
+                    "logo": "",
+                    "slug": "Texts",
+                    "subpages": [
+                        {
+                            "name": "texts_text_center",
+                            "slug": "TextCenter",
+                            "description": "",
+                            "logo": "",
+                            "link": "texts_text_center.md"
+                        },
+                        {
+                            "name": "texts_text_image",
+                            "slug": "TextImage",
+                            "description": "",
+                            "logo": "",
+                            "link": "texts_text_image.md"
+                        },
+                        {
+                            "name": "texts_text_left",
+                            "slug": "TextLeft",
+                            "description": "",
+                            "logo": "",
+                            "link": "texts_text_left.md"
+                        },
+                        {
+                            "name": "texts_text_right",
+                            "slug": "TextRight",
+                            "description": "",
+                            "logo": "",
+                            "link": "texts_text_right.md"
+                        },
+                        {
+                            "name": "texts_text_simple",
+                            "slug": "TextSimple",
+                            "description": "",
+                            "logo": "",
+                            "link": "texts_text_simple.md"
+                        },
+                        {
+                            "name": "texts_text_wrapped",
+                            "slug": "TextWrapped",
+                            "description": "",
+                            "logo": "",
+                            "link": "texts_text_wrapped.md"
                         }
                     ]
                 },
@@ -82,47 +934,146 @@
                     "subpages": [
                         {
                             "name": "titles_titleh1",
-                            "slug": "Title H1",
+                            "slug": "TitleOne",
                             "description": "",
                             "logo": "",
                             "link": "titles_titleh1.md"
                         },
                         {
                             "name": "titles_titleh2",
-                            "slug": "Title H2",
+                            "slug": "TitleTwo",
                             "description": "",
                             "logo": "",
                             "link": "titles_titleh2.md"
                         },
                         {
                             "name": "titles_titleh3",
-                            "slug": "Title H3",
+                            "slug": "TitleThree",
                             "description": "",
                             "logo": "",
                             "link": "titles_titleh3.md"
                         },
                         {
                             "name": "titles_titleh4",
-                            "slug": "Title H4",
+                            "slug": "TitleFour",
                             "description": "",
                             "logo": "",
                             "link": "titles_titleh4.md"
                         },
                         {
                             "name": "titles_titleh5",
-                            "slug": "Title H5",
+                            "slug": "TitleFive",
                             "description": "",
                             "logo": "",
                             "link": "titles_titleh5.md"
                         },
                         {
                             "name": "titles_titleh6",
-                            "slug": "Title H6",
+                            "slug": "TitleSix",
                             "description": "",
                             "logo": "",
                             "link": "titles_titleh6.md"
                         }
                     ]
+                },                
+                {
+                    "name": "tooltips",
+                    "link": "tooltips.md",
+                    "description": "",
+                    "logo": "",
+                    "slug": "Tooltips",
+                    "subpages": [
+                        {
+                            "name": "tooltips_tooltip_image",
+                            "slug": "TooltipImage",
+                            "description": "",
+                            "logo": "",
+                            "link": "tooltips_image.md"
+                        },
+                        {
+                            "name": "tooltips_image_custom",
+                            "slug": "TooltipImageCustom",
+                            "description": "",
+                            "logo": "",
+                            "link": "tooltips_image_custom.md"
+                        },
+                        {
+                            "name": "tooltips_tooltip_text",
+                            "slug": "TooltipText",
+                            "description": "",
+                            "logo": "",
+                            "link": "tooltips_tooltip_text.md"
+                        },
+                        {
+                            "name": "tooltips_tooltip_text_custom",
+                            "slug": "TooltipTextCustom",
+                            "description": "",
+                            "logo": "",
+                            "link": "tooltips_tooltip_text_custom.md"
+                        }
+                    ]
+                },            
+                {
+                    "name": "web",
+                    "link": "web.md",
+                    "description": "",
+                    "logo": "",
+                    "slug": "Web",
+                    "subpages": [
+                        {
+                            "name": "web_webview",
+                            "slug": "WebView",
+                            "description": "",
+                            "logo": "",
+                            "link": "web_webview.md"
+                        }
+                    ]
+                },                
+                {
+                    "name": "widgets",
+                    "link": "widgets.md",
+                    "description": "",
+                    "logo": "",
+                    "slug": "Widgets",
+                    "subpages": [
+                        {
+                            "name": "widgets_widget_folder",
+                            "slug": "WidgetFolder",
+                            "description": "",
+                            "logo": "",
+                            "link": "widgets_widget_folder.md"
+                        },
+                        {
+                            "name": "widgets_widget_small_folder",
+                            "slug": "WidgetSmallFolder",
+                            "description": "",
+                            "logo": "",
+                            "link": "widgets_widget_small_folder.md"
+                        },
+                        {
+                            "name": "widgets_widget_tiny_folder",
+                            "slug": "WidgetTinyFolder",
+                            "description": "",
+                            "logo": "",
+                            "link": "widgets_widget_tiny_folder.md"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "style_reference",
+            "slug": "Style References",
+            "title": "Style References",
+            "sumary": "This is the reference of cherry",
+            "pages": [
+                {
+                    "name": "theme",
+                    "link": "theme.md",
+                    "description": "",
+                    "logo": "",
+                    "slug": "Margin & Padding",
+                    "subpages": []
                 }
             ]
         }

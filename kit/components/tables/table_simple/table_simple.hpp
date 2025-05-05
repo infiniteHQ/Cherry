@@ -38,6 +38,7 @@ namespace Cherry {
         SetProperty("columns_number", "2");
         SetProperty("columns_name_0", "First");
         SetProperty("columns_name_1", "Second");  // Only default values, you can use any number of columns you want, juste
+        SetProperty("columns_name_2", "Second");  // Only default values, you can use any number of columns you want, juste
                                                   // name columns_name_n (n = number)
 
         // Label
@@ -87,11 +88,13 @@ namespace Cherry {
               ImGuiStyleVar_CellPadding,
               ImVec2(std::stof(GetProperty("cell_padding_x_row")), std::stof(GetProperty("cell_padding_y_row"))));
           for (auto row : m_Rows) {
-            CherryGUI::TableNextRow();
-            for (int column = 0; column < std::stoi(GetProperty("columns_number")); column++) {
-              CherryGUI::TableSetColumnIndex(column);
-              SetData("renderedColumn", std::to_string(column));
-              row->Render();
+            if (row) {
+              CherryGUI::TableNextRow();
+              for (int column = 0; column < std::stoi(GetProperty("columns_number")); column++) {
+                CherryGUI::TableSetColumnIndex(column);
+                SetData("renderedColumn", std::to_string(column));
+                row->Render();
+              }
             }
           }
           CherryGUI::PopStyleVar();

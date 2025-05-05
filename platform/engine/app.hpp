@@ -3,7 +3,16 @@
 /*
 TODO :
 
+// COMPONENTS LOGICS
 Cherry::GetLastRenderedComponent();
+
+// THEME (with all generic properties (h1col, h2col, bg1, bg2, bg3, borders, etc...)) Colors + Styles effects !!
+Cherry::SetThemeProperty();
+Cherry::GetThemeProperty();
+Cherry::PushTheme(); // Push a theme on a specified area.
+Cherry::PopTheme();
+Cherry::AddTheme();
+Cherry::SetTheme();
 
  */
 
@@ -45,6 +54,8 @@ Cherry::GetLastRenderedComponent();
 #include "vulkan/vulkan.h"
 
 static int current_fps;
+
+#define CHERRY_VERSION "1.3 WIP"
 
 #ifndef CHERRY_APP_H
 #define CHERRY_APP_H

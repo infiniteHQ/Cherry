@@ -69,7 +69,7 @@ namespace Cherry {
             const bool is_selected = (selected == n);
             if (CherryGUI::Selectable((*m_List)[n].c_str(), is_selected)) {
               if (selected != n) {
-                SetProperty("selectedString", std::to_string(n));
+                SetProperty("selected", std::to_string(n));
                 // UpdateLastChangedTime();
               }
             }
