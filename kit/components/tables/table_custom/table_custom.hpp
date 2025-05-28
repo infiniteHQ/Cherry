@@ -36,7 +36,7 @@ namespace Cherry {
         SetProperty("selectable", "true");
 
         // Style
-        SetProperty("color_border", "#FF0000");
+        SetProperty("color_border", "#232323");
 
         // Columns
         SetProperty("columns_number", "2");

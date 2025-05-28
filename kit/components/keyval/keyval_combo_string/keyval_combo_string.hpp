@@ -127,15 +127,14 @@ namespace Cherry {
       // Get the object if exist
       auto existing_keyval = Application::GetComponent(identifier);
       if (existing_keyval) {
-        existing_keyval->RefreshContextProperties();
         existing_keyval->Render();
+        return existing_keyval;
       } else {
         // Create the object if not exist
         auto new_keyval = Application::CreateComponent<Components::KeyValComboString>(
             Components::KeyValComboString(identifier, label, list, default_selected_index));
-        new_keyval->RefreshContextProperties();
         new_keyval->Render();
-        return existing_keyval;
+        return new_keyval;
       }
       return existing_keyval;
     }

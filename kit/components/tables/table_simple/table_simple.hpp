@@ -37,8 +37,7 @@ namespace Cherry {
         // Columns
         SetProperty("columns_number", "2");
         SetProperty("columns_name_0", "First");
-        SetProperty("columns_name_1", "Second");  // Only default values, you can use any number of columns you want, juste
-        SetProperty("columns_name_2", "Second");  // Only default values, you can use any number of columns you want, juste
+        SetProperty("columns_name_1", "Second");  // Only default values, you can use any number of columns you want, just
                                                   // name columns_name_n (n = number)
 
         // Label
@@ -131,14 +130,16 @@ namespace Cherry {
         Cherry::PushParentComponent(existing);  // Can be a parent of other component, so we declare it
         existing->RefreshContextProperties();
         existing->Render();
+        Cherry::PopParentComponent();
         return existing;
       } else {
-        auto button = Application::CreateAnonymousComponent<Components::TableSimple>(
-            Components::TableSimple(anonymous_id, label, rows, flags));
-        Cherry::PushParentComponent(button);  // Can be a parent of other component, so we declare it
-        button->RefreshContextProperties();
-        button->Render();
-        return button;
+        auto new_table =
+            Application::CreateComponent<Components::TableSimple>(Components::TableSimple(anonymous_id, label, rows, flags));
+        Cherry::PushParentComponent(new_table);  // Can be a parent of other component, so we declare it
+        new_table->RefreshContextProperties();
+        new_table->Render();
+        Cherry::PopParentComponent();
+        return new_table;
       }
     }
 
