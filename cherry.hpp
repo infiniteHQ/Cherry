@@ -68,6 +68,7 @@
 // Keyval
 #include "./kit/components/keyval/keyval_bool/keyval_bool.hpp"
 #include "./kit/components/keyval/keyval_combo_string/keyval_combo_string.hpp"
+#include "./kit/components/keyval/keyval_custom/keyval_custom.hpp"
 #include "./kit/components/keyval/keyval_double/keyval_double.hpp"
 #include "./kit/components/keyval/keyval_float/keyval_float.hpp"
 #include "./kit/components/keyval/keyval_int/keyval_int.hpp"

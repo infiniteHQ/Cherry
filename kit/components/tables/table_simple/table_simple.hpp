@@ -33,6 +33,7 @@ namespace Cherry {
 
         // Visibility
         SetProperty("header_visible", "true");
+        SetProperty("header_text_visible", "true");
 
         // Columns
         SetProperty("columns_number", "2");
@@ -70,10 +71,15 @@ namespace Cherry {
           for (int i = 0; i < std::stoi(GetProperty("columns_number")); ++i) {
             if (i == std::stoi(GetProperty("columns_number")) - 1) {
               std::string column_name_prop = "columns_name_" + std::to_string(i);
-              CherryGUI::TableSetupColumn(GetProperty(column_name_prop).c_str(), ImGuiTableColumnFlags_NoResize);
+              std::string final_name =
+                  GetProperty("header_text_visible") == "true" ? "" : "###" + GetProperty(column_name_prop);
+
+              CherryGUI::TableSetupColumn(final_name.c_str(), ImGuiTableColumnFlags_NoResize);
             } else {
               std::string column_name_prop = "columns_name_" + std::to_string(i);
-              CherryGUI::TableSetupColumn(GetProperty(column_name_prop).c_str());
+              std::string final_name =
+                  GetProperty("header_text_visible") == "true" ? "" : "###" + GetProperty(column_name_prop);
+              CherryGUI::TableSetupColumn(final_name.c_str());
             }
           }
 
