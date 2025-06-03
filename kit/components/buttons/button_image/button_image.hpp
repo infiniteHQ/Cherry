@@ -22,9 +22,11 @@ namespace Cherry {
         SetProperty("color_border", "#454545B2");
         SetProperty("color_border_hovered", "#454545B2");
         SetProperty("color_border_clicked", "#454545B2");
+        SetProperty("color_border_pressed", "#454545B2");
         SetProperty("color_bg", "#242424FF");
         SetProperty("color_bg_hovered", "#343434FF");
         SetProperty("color_bg_clicked", "#444444FF");
+        SetProperty("color_bg_pressed", "#444444FF");
         SetProperty("color_text", "#BCBCBCFF");
         SetProperty("color_text_hovered", "#FFFFFFFF");
         SetProperty("color_text_pressed", "#FFFFFFFF");
@@ -77,6 +79,7 @@ namespace Cherry {
         if (GetData("isHovered") == "true") {
           if (GetProperty("disable_time") == "false")
             SetData("lastHovered", GetCurrentTime());
+
           CherryGUI::PushStyleColor(ImGuiCol_Border, HexToRGBA(GetProperty("color_border_hovered")));
           CherryGUI::PushStyleColor(ImGuiCol_Button, HexToRGBA(GetProperty("color_bg_hovered")));
           CherryGUI::PushStyleColor(ImGuiCol_Text, HexToRGBA(GetProperty("color_text_hovered")));
