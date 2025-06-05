@@ -1209,7 +1209,6 @@ namespace Cherry {
 
       ImGui_ImplVulkanH_Window *wd = &window->m_WinData;
       ImGuiIO &io = ImGui::GetIO();
-
       ImGui::Render();
       ImDrawData *main_draw_data = ImGui::GetDrawData();
       const bool main_is_minimized = (main_draw_data->DisplaySize.x <= 0.0f || main_draw_data->DisplaySize.y <= 0.0f);

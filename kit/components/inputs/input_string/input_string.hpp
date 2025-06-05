@@ -41,11 +41,11 @@ namespace Cherry {
           char buffer[256];
           std::strncpy(buffer, m_Value->c_str(), sizeof(buffer));
 
-          ImGui::PushStyleVar(
+          CherryGUI::PushStyleVar(
               ImGuiStyleVar_FramePadding, ImVec2(std::stof(GetProperty("padding_x")), std::stof(GetProperty("padding_y"))));
 
           CherryGUI::InputText(Label.c_str(), buffer, sizeof(buffer));
-          ImGui::PopStyleVar();
+          CherryGUI::PopStyleVar();
           *m_Value = std::string(buffer);
         } else {
           CherryGUI::Text("INVALID VALUE");

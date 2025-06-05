@@ -49,7 +49,7 @@ namespace Cherry {
 
         int selected = std::stoi(GetProperty("selected"));
         int default_index = std::stoi(GetProperty("default_index"));
-        ImGui::PushStyleVar(
+        CherryGUI::PushStyleVar(
             ImGuiStyleVar_FramePadding, ImVec2(std::stoi(GetProperty("x_padding")), std::stoi(GetProperty("y_padding"))));
 
         if (default_index < 0 || default_index >= m_List->size())
@@ -79,7 +79,7 @@ namespace Cherry {
           }
           CherryGUI::EndCombo();
         }
-        ImGui::PopStyleVar();
+        CherryGUI::PopStyleVar();
       }
 
      private:
