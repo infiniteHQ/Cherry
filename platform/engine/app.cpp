@@ -25,14 +25,12 @@
 #include <thread>  // thread
 
 #ifdef CHERRY_ENABLE_NET
-#include <curl/curl.h>
 
 #include <filesystem>
 #include <fstream>
 #include <string>
 
-#include "../../lib/restcpp/include/restclient-cpp/connection.h"
-#include "../../lib/restcpp/include/restclient-cpp/restclient.h"
+#include "../../lib/httpcl/httpcl.h"
 
 #ifdef _WIN32
 #include <windows.h>
@@ -2665,21 +2663,44 @@ namespace Cherry {
       return file_path;
     }
 
-    RestClient::Response r = RestClient::get(url);
+    naettInit(NULL);
 
-    if (r.code != 200) {
-      std::cerr << "HTTP request failed: " << r.code << " - " << r.body << std::endl;
+    naettReq *req = naettRequest(url.c_str(), naettMethod("GET"), naettHeader("accept", "*/*"));
+    naettRes *res = naettMake(req);
+
+    while (!naettComplete(res)) {
+      usleep(100 * 1000);  // 100 ms
+    }
+
+    int status = naettGetStatus(res);
+    if (status != 200) {
+      std::cerr << "HTTP request failed: " << status << " - ";
+      int len = 0;
+      const void *err_body = naettGetBody(res, &len);
+      if (err_body)
+        std::cerr.write(static_cast<const char *>(err_body), len);
+      std::cerr << std::endl;
+      naettClose(res);
+      naettFree(req);
       return "";
     }
+
+    int bodyLength = 0;
+    const void *body = naettGetBody(res, &bodyLength);
 
     std::ofstream ofs(file_path, std::ios::binary);
     if (!ofs.is_open()) {
       std::cerr << "Failed to open file for writing: " << file_path << std::endl;
+      naettClose(res);
+      naettFree(req);
       return "";
     }
 
-    ofs << r.body;
+    ofs.write(static_cast<const char *>(body), bodyLength);
     ofs.close();
+
+    naettClose(res);
+    naettFree(req);
 
     return file_path;
   }

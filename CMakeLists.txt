@@ -3,7 +3,7 @@ project(libcherry)
 
 set(CMAKE_CXX_STANDARD 20)
 
-if(NOT MSVC AND CMAKE_BUILD_TYPE STREQUAL "Release")
+if(NOT MSVC)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -O3")
 endif()
 
@@ -27,9 +27,7 @@ if(CHERRY_CEF)
 endif()
 
 if(CHERRY_ENABLE_NET)
-    if (NOT TARGET restclient-cpp)
-        add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/lib/restcpp restcpp_build)
-    endif()
+add_subdirectory(lib/httpcl)
 endif()
 
 if(CHERRY_ENABLE_AUDIO)
@@ -70,7 +68,7 @@ endif()
 
 if(CHERRY_ENABLE_NET)
     target_compile_definitions(cherry PUBLIC CHERRY_ENABLE_NET)
-    target_link_libraries(cherry PUBLIC restclient-cpp)
+    target_link_libraries(cherry PUBLIC httpcl)
 endif()
 
 if(CHERRY_CEF)
