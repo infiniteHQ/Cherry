@@ -31,3 +31,6 @@
 [submodule "lib/miniaudio"]
 	path = lib/miniaudio
 	url = https://github.com/mackron/miniaudio
+[submodule "lib/httpcl"]
+	path = lib/httpcl
+	url = https://github.com/infiniteHQ/httpcl.git
