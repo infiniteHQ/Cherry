@@ -7,6 +7,11 @@ if(NOT MSVC)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -O3")
 endif()
 
+if (MSVC)
+    add_compile_options(/utf-8)
+endif()
+
+
 if(CHERRY_CEF)
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     add_compile_options(/MT)
@@ -69,7 +74,12 @@ endif()
 if(CHERRY_ENABLE_NET)
     target_compile_definitions(cherry PUBLIC CHERRY_ENABLE_NET)
     target_link_libraries(cherry PUBLIC httpcl)
+
+    if(WIN32)
+        target_link_libraries(cherry PUBLIC winhttp)
+    endif()
 endif()
+
 
 if(CHERRY_CEF)
   

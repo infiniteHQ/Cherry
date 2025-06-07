@@ -16,6 +16,15 @@ namespace Cherry {
     void PushStyleColor(ImGuiCol idx, ImU32 col);
     void PopStyleColor(int count = 1);
 
+         bool          BeginMenuBar();                                                     // append to menu-bar of current window (requires ImGuiWindowFlags_MenuBar flag set on parent window).
+     bool          BeginMenuBar(float offsetY);                                                     // append to menu-bar of current window (requires ImGuiWindowFlags_MenuBar flag set on parent window).
+     bool          BeginBottomBar();                                                     // append to menu-bar of current window (requires ImGuiWindowFlags_MenuBar flag set on parent window).
+
+     void          EndMenuBar(); 
+     void          EndBottomBar();                                                      // only call EndMenuBar() if BeginMenuBar() returns true!
+     bool          BeginMainMenuBar();                                                 // create and append to a full screen menu-bar.
+     void          EndMainMenuBar();     
+
     // Legacy ImGui ui elements
     bool Button(const char *label, const ImVec2 &size = ImVec2(0, 0));  // button
     bool ImageSizeButtonWithText(
@@ -102,6 +111,10 @@ namespace Cherry {
         int frame_padding = -1,
         const ImVec4 &bg_col = ImVec4(0, 0, 0, 0),
         const ImVec4 &tint_col = ImVec4(1, 1, 1, 1));
+
+    bool          BeginMenu(const char* label, bool enabled = true);                  // create a sub-menu entry. only call EndMenu() if this returns true!
+     bool          BeginMenuImage(const char* label, ImTextureID* texture, bool enabled = true);                  // create a sub-menu entry. only call EndMenu() if this returns true!
+     void          EndMenu();      
 
     // Legacy menu items
     bool MenuItem(

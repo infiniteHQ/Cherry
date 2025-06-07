@@ -26,6 +26,54 @@ namespace Cherry {
       ImGui::PopStyleColor(count);
     }
 
+    
+    bool          BeginMenu(const char* label, bool enabled)
+    {
+      return ImGui::BeginMenu(label, enabled);
+    }
+
+    bool          BeginMenuImage(const char* label, ImTextureID* texture, bool enabled)
+     {
+      return ImGui::BeginMenuImage(label, texture, enabled);
+
+     }
+     
+     void          EndMenu()
+     {
+      ImGui::EndMenu();
+     } 
+
+     
+
+         bool          BeginMenuBar()
+                     {
+     return ImGui::BeginMenuBar();
+
+                     }                                    // append to menu-bar of current window (requires ImGuiWindowFlags_MenuBar flag set on parent window).
+     bool          BeginMenuBar(float offsetY)
+     {
+     return ImGui::BeginMenuBar(offsetY);
+    }                                                     // append to menu-bar of current window (requires ImGuiWindowFlags_MenuBar flag set on parent window).
+     bool          BeginBottomBar()
+     {
+     return ImGui::BeginBottomBar();
+    }                                                 // append to menu-bar of current window (requires ImGuiWindowFlags_MenuBar flag set on parent window).
+
+     void          EndMenuBar(){
+
+     }
+     void          EndBottomBar(){
+
+     }                                                    // only call EndMenuBar() if BeginMenuBar() returns true!
+     bool          BeginMainMenuBar()
+     {
+     return ImGui::BeginMainMenuBar();
+
+     }                                           // create and append to a full screen menu-bar.
+     void          EndMainMenuBar(){
+      ImGui::EndMainMenuBar();
+     }
+
     bool ImageButtonWithTextWithIcon(
         ImTextureID texIdFirst,
         ImTextureID texIdSecond,

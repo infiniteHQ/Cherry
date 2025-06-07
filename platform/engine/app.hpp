@@ -641,7 +641,7 @@ namespace Cherry {
   bool IsReady();
 
   // Implemented by CLIENT
-  static Application *CreateApplication(int argc, char **argv);
+  Application *CreateApplication(int argc, char **argv);
 }  // namespace Cherry
 
 #endif

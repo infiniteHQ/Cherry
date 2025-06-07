@@ -2663,13 +2663,24 @@ namespace Cherry {
       return file_path;
     }
 
-    naettInit(NULL);
+    naettReq* req = nullptr;
 
-    naettReq *req = naettRequest(url.c_str(), naettMethod("GET"), naettHeader("accept", "*/*"));
-    naettRes *res = naettMake(req);
+    const char* URL = url.c_str();
+req = naettRequest_va(
+    URL,
+    2,
+    naettMethod("GET"),
+    naettHeader("accept", "*/*")
+);
 
+    naettRes* res = naettMake(req);
+    
     while (!naettComplete(res)) {
-      usleep(100 * 1000);  // 100 ms
+#ifdef _WIN32
+    Sleep(100);
+#else
+    usleep(100 * 1000);
+#endif
     }
 
     int status = naettGetStatus(res);
