@@ -744,6 +744,11 @@ namespace Cherry {
         const void *p_max,
         const char *format,
         float power);
+
+        
+     bool          BeginChildFrame(ImGuiID id, const ImVec2& size, ImGuiWindowFlags flags = 0); // helper to create a child window / scrolling region that looks like a normal widget frame
+     void          EndChildFrame();                                                    // always call EndChildFrame() regardless of BeginChildFrame() return values (which indicates a collapsed/clipped window)
+
     bool ColorEdit3(const char *label, float col[3], ImGuiColorEditFlags flags = 0);
     bool ColorEdit4(const char *label, float col[4], ImGuiColorEditFlags flags = 0);
     bool ColorPicker3(const char *label, float col[3], ImGuiColorEditFlags flags = 0);

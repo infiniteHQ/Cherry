@@ -44,6 +44,15 @@ namespace Cherry {
      } 
 
      
+     bool          BeginChildFrame(ImGuiID id, const ImVec2& size, ImGuiWindowFlags flags){
+      return ImGui::BeginChildFrame(id, size, flags);
+     } // helper to create a child window / scrolling region that looks like a normal widget frame
+     void          EndChildFrame()
+     {
+      ImGui::EndChildFrame();
+     }
+
+     
 
          bool          BeginMenuBar()
                      {
