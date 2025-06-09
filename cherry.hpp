@@ -9,13 +9,14 @@
 #ifdef CHERRY_USER_CONFIG
 #include CHERRY_USER_CONFIG
 #endif
-#if !defined(CHERRY_DISABLE_INCLUDE_CONFIG_H) || defined(CHERRY_INCLUDE_CONFIG_H)
+#if !defined(CHERRY_DISABLE_INCLUDE_CONFIG_H) ||                               \
+    defined(CHERRY_INCLUDE_CONFIG_H)
 #include "options.hpp"
 #endif
 
 #ifndef IMGUI_DEFINE_MATH_OPERATORS
 #define IMGUI_DEFINE_MATH_OPERATORS
-#endif  // IMGUI_DEFINE_MATH_OPERATORS
+#endif // IMGUI_DEFINE_MATH_OPERATORS
 
 ///////////////////////////////////////////////////////////////
 /// Backends and Render engine                              ///
@@ -162,10 +163,19 @@
 ///////////////////////////////////////////////////////////////
 #include "./kit/aio/bases/windows/window_simple/window_simple.hpp"
 
+///////////////////////////////////////////////////////////////
+/// Themes                                                  ///
+///////////////////////////////////////////////////////////////
+#include "./kit/themes/dark_vortex/dark_vortex.hpp"
+
 namespace CherryKit = Cherry::Kit;
 namespace CherryStyle = Cherry::Style;
-// namespace CherryLogic = Cherry::Logic // CherryLogic::PlaySound, IsKeyPressed, etc...
+namespace CherryThemes = Cherry::Themes;
+using CherryApplication = Cherry::Application;
+
+// namespace CherryLogic = Cherry::Logic // CherryLogic::PlaySound,
+// IsKeyPressed, etc...
 
 // AIO kits & components includes
 
-#endif  // CHERRY_H
+#endif // CHERRY_H
