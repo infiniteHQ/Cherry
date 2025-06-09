@@ -1028,15 +1028,143 @@ ImVec2 Window::get_texture_size(const std::string &path) {
   return ImVec2(0, 0);
 }
 
-void Window::PushTheme(const std::vector<WindowThemeColorObject> &theme) {
-  for (auto &theme_directive : theme) {
-    ImGui::PushStyleColor(theme_directive.m_Entry, theme_directive.m_Value);
-  }
+void Window::LoadTheme() {
+  CherryGUI::PushStyleColor(ImGuiCol_Header,
+                            ImGui::ColorConvertU32ToFloat4(
+                                IM_COL32(47, 47, 47, 255))); // color_header
+  CherryGUI::PushStyleColor(ImGuiCol_HeaderHovered,
+                            ImGui::ColorConvertU32ToFloat4(IM_COL32(
+                                47, 47, 47, 255))); // color_header_hovered
+  CherryGUI::PushStyleColor(ImGuiCol_HeaderActive,
+                            ImGui::ColorConvertU32ToFloat4(IM_COL32(
+                                47, 47, 47, 255))); // color_header_active
+
+  CherryGUI::PushStyleColor(ImGuiCol_Button,
+                            ImGui::ColorConvertU32ToFloat4(
+                                IM_COL32(56, 56, 56, 200))); // color_button
+  CherryGUI::PushStyleColor(ImGuiCol_ButtonHovered,
+                            ImGui::ColorConvertU32ToFloat4(IM_COL32(
+                                70, 70, 70, 255))); // color_button_hovered
+  CherryGUI::PushStyleColor(ImGuiCol_ButtonActive,
+                            ImGui::ColorConvertU32ToFloat4(IM_COL32(
+                                56, 56, 56, 150))); // color_button_active
+
+  CherryGUI::PushStyleColor(ImGuiCol_FrameBg,
+                            ImGui::ColorConvertU32ToFloat4(
+                                IM_COL32(15, 15, 15, 255))); // color_framebg
+  CherryGUI::PushStyleColor(ImGuiCol_FrameBgHovered,
+                            ImGui::ColorConvertU32ToFloat4(IM_COL32(
+                                15, 15, 15, 255))); // color_framebg_hovered
+  CherryGUI::PushStyleColor(ImGuiCol_FrameBgActive,
+                            ImGui::ColorConvertU32ToFloat4(IM_COL32(
+                                15, 15, 15, 255))); // color_framebg_active
+
+  CherryGUI::PushStyleColor(
+      ImGuiCol_Tab,
+      ImGui::ColorConvertU32ToFloat4(IM_COL32(21, 21, 21, 255))); // color_tab
+  CherryGUI::PushStyleColor(
+      ImGuiCol_TabHovered, ImGui::ColorConvertU32ToFloat4(
+                               IM_COL32(36, 36, 36, 100))); // color_tab_hovered
+  CherryGUI::PushStyleColor(ImGuiCol_TabActive,
+                            ImGui::ColorConvertU32ToFloat4(
+                                IM_COL32(36, 36, 36, 255))); // color_tab_active
+  CherryGUI::PushStyleColor(ImGuiCol_TabUnfocused,
+                            ImGui::ColorConvertU32ToFloat4(IM_COL32(
+                                21, 21, 21, 255))); // color_tab_unfocused
+  CherryGUI::PushStyleColor(
+      ImGuiCol_TabUnfocusedActive,
+      ImGui::ColorConvertU32ToFloat4(
+          IM_COL32(36, 36, 36, 100))); // color_tab_unfocused_active
+
+  CherryGUI::PushStyleColor(ImGuiCol_TitleBg,
+                            ImGui::ColorConvertU32ToFloat4(
+                                IM_COL32(21, 21, 21, 255))); // color_titlebg
+  CherryGUI::PushStyleColor(ImGuiCol_TitleBgActive,
+                            ImGui::ColorConvertU32ToFloat4(IM_COL32(
+                                21, 21, 21, 255))); // color_titlebg_active
+  CherryGUI::PushStyleColor(
+      ImGuiCol_TitleBgCollapsed,
+      ImVec4{0.15f, 0.1505f, 0.151f, 1.0f}); // color_titlebg_collapsed
+
+  CherryGUI::PushStyleColor(
+      ImGuiCol_ResizeGrip,
+      ImVec4(0.91f, 0.91f, 0.91f, 0.25f)); // color_resizegrip
+  CherryGUI::PushStyleColor(
+      ImGuiCol_ResizeGripHovered,
+      ImVec4(0.81f, 0.81f, 0.81f, 0.67f)); // color_resizegrip_hovered
+  CherryGUI::PushStyleColor(
+      ImGuiCol_ResizeGripActive,
+      ImVec4(0.46f, 0.46f, 0.46f, 0.95f)); // color_resizegrip_active
+
+  CherryGUI::PushStyleColor(
+      ImGuiCol_ScrollbarBg,
+      ImVec4(0.02f, 0.02f, 0.02f, 0.53f)); // color_scrollbar_bg
+  CherryGUI::PushStyleColor(
+      ImGuiCol_ScrollbarGrab,
+      ImVec4(0.31f, 0.31f, 0.31f, 1.0f)); // color_scrollbar_grab
+  CherryGUI::PushStyleColor(
+      ImGuiCol_ScrollbarGrabHovered,
+      ImVec4(0.41f, 0.41f, 0.41f, 1.0f)); // color_scrollbar_grab_hovered
+  CherryGUI::PushStyleColor(
+      ImGuiCol_ScrollbarGrabActive,
+      ImVec4(0.51f, 0.51f, 0.51f, 1.0f)); // color_scrollbar_grab_active
+
+  CherryGUI::PushStyleColor(
+      ImGuiCol_CheckMark, ImGui::ColorConvertU32ToFloat4(
+                              IM_COL32(200, 200, 200, 255))); // color_checkmark
+
+  CherryGUI::PushStyleColor(
+      ImGuiCol_SliderGrab,
+      ImVec4(0.51f, 0.51f, 0.51f, 0.7f)); // color_slidergrab
+  CherryGUI::PushStyleColor(
+      ImGuiCol_SliderGrabActive,
+      ImVec4(0.66f, 0.66f, 0.66f, 1.0f)); // color_slidergrab_active
+
+  CherryGUI::PushStyleColor(ImGuiCol_Separator,
+                            ImGui::ColorConvertU32ToFloat4(
+                                IM_COL32(21, 21, 21, 255))); // color_separator
+  CherryGUI::PushStyleColor(ImGuiCol_SeparatorActive,
+                            ImGui::ColorConvertU32ToFloat4(IM_COL32(
+                                39, 185, 242, 255))); // color_separator_active
+  CherryGUI::PushStyleColor(ImGuiCol_SeparatorHovered,
+                            ImGui::ColorConvertU32ToFloat4(IM_COL32(
+                                21, 21, 21, 255))); // color_separator_hovered
+
+  CherryGUI::PushStyleColor(ImGuiCol_WindowBg,
+                            ImGui::ColorConvertU32ToFloat4(
+                                IM_COL32(21, 21, 21, 255))); // color_window_bg
+  CherryGUI::PushStyleColor(ImGuiCol_ChildBg,
+                            ImGui::ColorConvertU32ToFloat4(
+                                IM_COL32(36, 36, 36, 255))); // color_child_bg
+  CherryGUI::PushStyleColor(ImGuiCol_PopupBg,
+                            ImGui::ColorConvertU32ToFloat4(
+                                IM_COL32(56, 56, 56, 255))); // color_popup_bg
+  CherryGUI::PushStyleColor(ImGuiCol_Border,
+                            ImGui::ColorConvertU32ToFloat4(
+                                IM_COL32(36, 36, 36, 255))); // color_border
+
+  CherryGUI::PushStyleColor(ImGuiCol_TableHeaderBg,
+                            ImGui::ColorConvertU32ToFloat4(IM_COL32(
+                                47, 47, 47, 255))); // color_table_header_bg
+  CherryGUI::PushStyleColor(ImGuiCol_TableBorderLight,
+                            ImGui::ColorConvertU32ToFloat4(IM_COL32(
+                                26, 26, 26, 255))); // color_table_border_light
+
+  CherryGUI::PushStyleColor(ImGuiCol_MenuBarBg,
+                            ImGui::ColorConvertU32ToFloat4(
+                                IM_COL32(36, 36, 36, 255))); // color_menubar_bg
+
+  auto &style = ImGui::GetStyle();
+  style.FrameRounding = 5.0f;   // rounding_frame
+  style.FrameBorderSize = 1.0f; // size_frame_border
+  style.IndentSpacing = 11.0f;  // spacing_ident
+  style.ScrollbarSize = 11.0f;  // size_scrollbar
+
+  style.WindowPadding = ImVec2(20.0f, 20.0f); // padding_window
+  style.FramePadding = ImVec2(15.0f, 5.0f);   // padding_frame
 }
 
-void Window::PopTheme(const std::vector<WindowThemeColorObject> &theme) {
-  ImGui::PopStyleColor(theme.size());
-}
+void Window::UnloadTheme() { CherryGUI::PopStyleColor(37); }
 
 void Window::free() {
   //
@@ -1088,4 +1216,24 @@ void Window::RestoreTTFFont() {
     ImGui::PopFont();
   }
 }
+
+std::string Window::GetThemeProperty(const std::string &key) {
+  if (m_SelectedTheme == "undefined") {
+    return "undefined";
+  } else {
+    auto prop = CherryApp.GetThemeProperty(m_SelectedTheme, key);
+    if (prop == "undefined") {
+      return "undefined";
+    } else {
+      return prop;
+    }
+  }
+}
+
+void Window::SetTheme(const std::string &theme_name) {
+  m_SelectedTheme = theme_name;
+}
+
+void Window::RemoveTheme() { m_SelectedTheme = "undefined"; }
+
 } // namespace Cherry

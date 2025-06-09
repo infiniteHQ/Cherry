@@ -87,6 +87,9 @@ public:
   void SetDeleteCallback(const std::function<void()> &callback);
   void DeleteSignal();
   std::string GetName();
+  std::string GetThemeProperty(const std::string &key);
+  void SetTheme(const std::string &theme_name);
+  void RemoveTheme();
 
 public:
   ImGuiID m_DockID;
@@ -139,6 +142,11 @@ public:
 
   AppWindowTypes m_AppWindowType = AppWindowTypes::StaticWindow;
   ReattachRequest m_AttachRequest;
+
+  // Different than the default theme !
+  // When the user specify this, the runtime will search level 3 theme at
+  // GetThemeProperty(theme, key) "manually", and not from the active theme.
+  std::string m_SelectedTheme = "undefined";
 
   // Notifications
   // Number of unread notifs

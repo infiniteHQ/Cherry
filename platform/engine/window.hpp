@@ -94,6 +94,8 @@ public:
   void RequestResize(int width, int height);
   void RequestMove(int x, int y);
 
+  std::string GetThemeProperty(const std::string &key);
+
   ImFont *m_FontToRestore = nullptr; // To store the font to restore
   std::vector<char> fontBuffer;      // Keep the font buffer in memory
 
@@ -144,6 +146,13 @@ public:
 
   void Render();
 
+  // Different than the default theme !
+  // When the user specify this, the runtime will search level 2 theme at
+  // GetThemeProperty(theme, key) "manually", and not from the active theme.
+  std::string m_SelectedTheme = "undefined";
+  void SetTheme(const std::string &theme_name);
+  void RemoveTheme();
+
   ImGuiContext *m_ImGuiContext;
 
   bool m_ResizePending = false;
@@ -187,8 +196,8 @@ public:
   std::unordered_map<std::string, std::shared_ptr<Cherry::Image>> m_ImageMap;
   std::unordered_map<std::string, std::shared_ptr<Cherry::Image>> m_HexImageMap;
 
-  void PushTheme(const std::vector<WindowThemeColorObject> &theme);
-  void PopTheme(const std::vector<WindowThemeColorObject> &theme);
+  void LoadTheme();
+  void UnloadTheme();
 
   std::shared_ptr<Cherry::Image> add(const std::string &path);
   std::shared_ptr<Cherry::Image> add(const uint8_t data[],

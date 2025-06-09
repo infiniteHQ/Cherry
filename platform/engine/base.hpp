@@ -148,7 +148,7 @@ struct ApplicationSpecification {
   Optimization OptimizationMode = Optimization::NoOptimization;
 
   std::vector<Theme> Themes;
-  std::string SelectedTheme;
+  std::string SelectedTheme = "undefined";
 
 public:
   WindowThemeColor ColorTheme;
@@ -163,9 +163,13 @@ public:
       theme.m_ThemeID = themeid;
     }
     Themes.push_back(theme);
+
+    if (Themes.size() == 1 && SelectedTheme == "undefined") {
+      SelectedTheme = themeid;
+    }
   }
 
-  void SetDebugMode(const std::string &selected_theme) {
+  void SetDefaultTheme(const std::string &selected_theme) {
     SelectedTheme = selected_theme;
   }
 

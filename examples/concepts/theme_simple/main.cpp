@@ -1,13 +1,16 @@
-#include "../../cherry.hpp"
+#include "../../../cherry.hpp"
 
 void Render() {
-  if (CherryKit::ButtonText("Light theme")->GetData("isClicked") == "true") {
+  /*if (CherryKit::ButtonText("Light theme")->GetData("isClicked") == "true") {
     // CherryApp.SetTheme("light");
   }
 
   if (CherryKit::ButtonText("Dark theme")->GetData("isClicked") == "true") {
     // CherryApp.SetTheme("dark");
-  }
+  }*/
+
+  Cherry::SetNextComponentProperty("color_text", "#FF0000");
+  CherryKit::TitleThree("Text");
 }
 
 CherryApplication *Cherry::CreateApplication(int argc, char **argv) {

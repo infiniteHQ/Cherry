@@ -1,4 +1,4 @@
-#include "../../cherry.hpp"
+#include "../../../cherry.hpp"
 
 void FirstAppWindow() {
   if (CherryKit::ButtonText("Light theme")->GetData("isClicked") == "true") {
@@ -15,7 +15,7 @@ void FirsSecondAppWindow() {
   }
 
   if (CherryKit::ButtonText("Dark theme")->GetData("isClicked") == "true") {
-    // CherryAppWindow.SetTheme("dark");
+    // CherryWindow.SetTheme("dark");
   }
 }
 

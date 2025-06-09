@@ -567,6 +567,53 @@ public:
   void PopCurrentComponent(int pop_number = 0);
   std::shared_ptr<Component> GetCurrentComponent() const;
 
+  // Theme engine
+  void AddTheme(const Theme &theme) { m_Themes[theme.m_ThemeID] = theme; }
+
+  void RemoveTheme(const std::string &theme_name) {
+    m_Themes.erase(theme_name);
+  }
+
+  void PushTheme(const std::string &theme_name) {
+    auto it = m_Themes.find(theme_name);
+    if (it != m_Themes.end()) {
+      m_ActiveThemes.push_back(it->second);
+    }
+  }
+
+  void PopTheme(int number = 1) {
+    while (number-- > 0 && m_ActiveThemes.size() > 1) {
+      m_ActiveThemes.pop_back();
+    }
+  }
+
+  std::string GetThemeProperty(const std::string &theme_name,
+                               const std::string &key) {
+    auto it = m_Themes.find(theme_name);
+    if (it != m_Themes.end()) {
+      return it->second.GetProperty(key);
+    }
+    return "undefined";
+  }
+
+  std::string GetActiveThemeProperty(const std::string &key) {
+    for (auto it = m_ActiveThemes.rbegin(); it != m_ActiveThemes.rend(); ++it) {
+      std::string val = it->GetProperty(key);
+      if (!val.empty()) {
+        return val;
+      }
+    }
+    return "undefned";
+  }
+
+  std::unordered_map<std::string, Theme> m_Themes;
+  std::vector<Theme> m_ActiveThemes;
+
+  // Different than the default theme !
+  // When the user specify this, the runtime will search level 1 theme at
+  // GetThemeProperty(theme, key) "manually", and not from the active theme.
+  std::string m_SelectedTheme = "undefined";
+
   // FIXME : Groups need to be on the CherryID, not on the pool.
   // FIXME : Component Arrays need also to be on the CherryID, when we create
   // the component we see if the CherryID have a group.

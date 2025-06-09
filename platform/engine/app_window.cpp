@@ -26,6 +26,25 @@ AppWindow::~AppWindow() {
 
 std::string AppWindow::GetName() { return m_Name; }
 
+std::string AppWindow::GetThemeProperty(const std::string &key) {
+  if (m_SelectedTheme == "undefined") {
+    return "undefined";
+  } else {
+    auto prop = CherryApp.GetThemeProperty(m_SelectedTheme, key);
+    if (prop == "undefined") {
+      return "undefined";
+    } else {
+      return prop;
+    }
+  }
+}
+
+void AppWindow::SetTheme(const std::string &theme_name) {
+  m_SelectedTheme = theme_name;
+}
+
+void AppWindow::RemoveTheme() { m_SelectedTheme = "undefined"; }
+
 std::shared_ptr<RedockRequest> AppWindow::CreateRedockEvent(
     const std::string &parentWindow, DockEmplacement emplacement,
     const bool &fromSave, const std::string &appWindow, const bool &new_win) {
@@ -64,6 +83,12 @@ void AppWindow::DeleteSignal() {
 
 void AppWindow::CtxRender(std::vector<std::shared_ptr<RedockRequest>> *reqs,
                           const std::string &winname) {
+
+  // Push window selected theme if defined
+  if (m_SelectedTheme != "undefined") {
+    CherryApp.PushTheme(m_SelectedTheme);
+  }
+
   if (!m_IsRendering) {
     return;
   }
@@ -475,6 +500,11 @@ void AppWindow::CtxRender(std::vector<std::shared_ptr<RedockRequest>> *reqs,
   } else {
     ImGui::EndChild();
     ImGui::PopStyleColor(2);
+  }
+
+  // Push window selected theme if defined
+  if (m_SelectedTheme != "undefined") {
+    CherryApp.PopTheme();
   }
 }
 

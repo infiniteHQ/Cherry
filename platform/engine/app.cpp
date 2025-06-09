@@ -49,6 +49,7 @@
 #include "imgui/Roboto-Bold.embed"
 #include "imgui/Roboto-Italic.embed"
 #include "imgui/Roboto-Regular.embed"
+#include "imgui/deftheme.hpp"
 
 namespace fs = std::filesystem;
 
@@ -171,6 +172,25 @@ Application::Application(const ApplicationSpecification &specification)
     if (m_AppWindows.empty()) {
       EnableNoAppWindowSafety();
     }
+  }
+
+  // Add themes from user.
+  if (!specification.Themes.empty()) {
+    for (auto theme : specification.Themes) {
+      AddTheme(theme);
+    }
+
+    if (specification.SelectedTheme != "undefined") {
+      PushTheme(specification.SelectedTheme);
+    } else {
+      PushTheme(specification.Themes[0].m_ThemeID);
+    }
+  }
+
+  // If no theme specified, add the default cherry theme
+  if (m_Themes.empty()) {
+    AddTheme(DefaultCherryTheme());
+    PushTheme("default");
   }
 
   Init();
@@ -1190,6 +1210,11 @@ void Application::PresentAllWindows() {
   for (auto &window : m_Windows) {
     ImGui::SetCurrentContext(window->m_ImGuiContext);
 
+    // Push window selected theme if defined
+    if (window->m_SelectedTheme != "undefined") {
+      PushTheme(window->m_SelectedTheme);
+    }
+
     c_CurrentRenderedWindow = window;
 
     if (c_MasterSwapChainRebuild) {
@@ -1216,7 +1241,7 @@ void Application::PresentAllWindows() {
 
     ImGui::NewFrame();
 
-    window->PushTheme(window->m_Specifications.ColorTheme.Colors);
+    window->LoadTheme();
     ImGui::PushFont(Application::GetFontList()["Default"]);
 
     app->RenderWindow(window.get());
@@ -1266,7 +1291,7 @@ void Application::PresentAllWindows() {
     }
 
     ImGui::PopFont();
-    window->PopTheme(window->m_Specifications.ColorTheme.Colors);
+    window->UnloadTheme();
 
     ImGui_ImplVulkanH_Window *wd = &window->m_WinData;
     ImGuiIO &io = ImGui::GetIO();
@@ -1286,6 +1311,11 @@ void Application::PresentAllWindows() {
 
     if (!main_is_minimized) {
       FramePresent(wd, window.get());
+    }
+
+    // Push window selected theme if defined
+    if (window->m_SelectedTheme != "undefined") {
+      PopTheme();
     }
   }
 }
@@ -1620,6 +1650,12 @@ void Application::SingleThreadRuntime() {
     }
 
     Identifier::ResetUniqueIndex(); // Reset anonymous components indexes
+
+    // Push Selected theme if defined
+    if (m_SelectedTheme != "undefined") {
+      PushTheme(m_SelectedTheme);
+    }
+
     c_ValidDropZoneFounded = false;
 
     if (m_NoAppWindowSafetyEnabled) {
@@ -1786,6 +1822,11 @@ void Application::SingleThreadRuntime() {
 
     // Erase empty main windows
     CleanupEmptyWindows();
+
+    // Pop Selected theme if defined
+    if (m_SelectedTheme != "undefined") {
+      PopTheme();
+    }
 
     for (auto &appwin : s_Instance->m_AppWindows) {
       appwin->m_WindowJustRebuilded = false;
@@ -2103,6 +2144,22 @@ void Application::HandleSimpleWindowRendering(Window *window) {
                        "\"UniqueAppWindowName\" in spec !");
   }
 }
+
+/*std::string Application::GetThemeProperty(const std::string &key) {
+  auto app_window_theme_prop = CherryAppWindow.GetThemeProperty(key);
+  if (app_window_theme_prop == "undefined") {
+
+    auto window_theme_prop = CherryWindow.GetThemeProperty(key);
+    if (window_theme_prop == "undefined") {
+
+      if (!m_SelectedTheme) {
+        return;
+      } else {
+        return m_SelectedTheme->GetProperty(key);
+      }
+    }
+  }
+}*/
 
 void Application::HandleLayerStackUpdate(Window *window) {
   for (auto &layer : m_LayerStack) {
