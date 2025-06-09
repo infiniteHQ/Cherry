@@ -1,11 +1,13 @@
 #include "../../cherry.hpp"
 
-void AppWindowRender() {
+void Render() {
+  std::string AppName = CherryApp.GetName();
   std::string WindowName = CherryWindow.GetName();
   std::string AppWindowName = CherryAppWindow.GetName();
 
-  CherryKit::TextSimple("I'm \"" + AppWindowName +
-                        "\" and i'm on the window \"" + WindowName + "\"");
+  CherryKit::TextSimple("App name (level 1): " + AppName);
+  CherryKit::TextSimple("Window name (level 2): " + WindowName);
+  CherryKit::TextSimple("App Window name (level 3: " + AppWindowName);
 }
 
 CherryApplication *Cherry::CreateApplication(int argc, char **argv) {
@@ -13,12 +15,7 @@ CherryApplication *Cherry::CreateApplication(int argc, char **argv) {
   config.SetRenderMode(Cherry::WindowRenderingMethod::DockingWindows);
   config.AddTheme(CherryThemes::DarkVortex());
 
-  Cherry::AddAppWindow(
-      CherryKit::WindowSimple("App Window 1", AppWindowRender));
-  Cherry::AddAppWindow(
-      CherryKit::WindowSimple("App Window 2", AppWindowRender));
-  Cherry::AddAppWindow(
-      CherryKit::WindowSimple("App Window 3", AppWindowRender));
+  Cherry::AddAppWindow(CherryKit::WindowSimple("Test window", Render));
   return new CherryApplication(config);
 }
 

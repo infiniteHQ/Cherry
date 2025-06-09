@@ -2,13 +2,6 @@
 
 void FirstAppWindow() {
   if (CherryKit::ButtonText("Light theme")->GetData("isClicked") == "true") {
-    // CherryAppWindow.SetTheme("light"); // Level 3
-    // CherryWindow.SetTheme() // Level 2
-    // CherryWindow.GetComponents() // Level 2
-    // CherryApp.SetBlabl(); // Level 1
-    // CherryLogic.IsKeyPressed(); // Separate logical functions
-    // CherryLogic.IsKeyReleased();
-    // CherryLogic.IsMouseMouved();
   }
 
   if (CherryKit::ButtonText("Dark theme")->GetData("isClicked") == "true") {
