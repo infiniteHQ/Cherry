@@ -1030,129 +1030,147 @@ ImVec2 Window::get_texture_size(const std::string &path) {
 
 void Window::LoadTheme() {
   CherryGUI::PushStyleColor(ImGuiCol_Header,
-                            ImGui::ColorConvertU32ToFloat4(
-                                IM_COL32(47, 47, 47, 255))); // color_header
-  CherryGUI::PushStyleColor(ImGuiCol_HeaderHovered,
-                            ImGui::ColorConvertU32ToFloat4(IM_COL32(
-                                47, 47, 47, 255))); // color_header_hovered
+                            Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
+                                "color_header"))); // color_header
+  CherryGUI::PushStyleColor(
+      ImGuiCol_HeaderHovered,
+      Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
+          "color_header_hovered"))); // color_header_hovered
   CherryGUI::PushStyleColor(ImGuiCol_HeaderActive,
-                            ImGui::ColorConvertU32ToFloat4(IM_COL32(
-                                47, 47, 47, 255))); // color_header_active
+                            Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
+                                "color_header_active"))); // color_header_active
 
   CherryGUI::PushStyleColor(ImGuiCol_Button,
-                            ImGui::ColorConvertU32ToFloat4(
-                                IM_COL32(56, 56, 56, 200))); // color_button
-  CherryGUI::PushStyleColor(ImGuiCol_ButtonHovered,
-                            ImGui::ColorConvertU32ToFloat4(IM_COL32(
-                                70, 70, 70, 255))); // color_button_hovered
+                            Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
+                                "color_button"))); // color_button
+  CherryGUI::PushStyleColor(
+      ImGuiCol_ButtonHovered,
+      Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
+          "color_button_hovered"))); // color_button_hovered
   CherryGUI::PushStyleColor(ImGuiCol_ButtonActive,
-                            ImGui::ColorConvertU32ToFloat4(IM_COL32(
-                                56, 56, 56, 150))); // color_button_active
+                            Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
+                                "color_button_active"))); // color_button_active
 
   CherryGUI::PushStyleColor(ImGuiCol_FrameBg,
-                            ImGui::ColorConvertU32ToFloat4(
-                                IM_COL32(15, 15, 15, 255))); // color_framebg
-  CherryGUI::PushStyleColor(ImGuiCol_FrameBgHovered,
-                            ImGui::ColorConvertU32ToFloat4(IM_COL32(
-                                15, 15, 15, 255))); // color_framebg_hovered
-  CherryGUI::PushStyleColor(ImGuiCol_FrameBgActive,
-                            ImGui::ColorConvertU32ToFloat4(IM_COL32(
-                                15, 15, 15, 255))); // color_framebg_active
+                            Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
+                                "color_framebg"))); // color_framebg
+  CherryGUI::PushStyleColor(
+      ImGuiCol_FrameBgHovered,
+      Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
+          "color_framebg_hovered"))); // color_framebg_hovered
+  CherryGUI::PushStyleColor(
+      ImGuiCol_FrameBgActive,
+      Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
+          "color_framebg_active"))); // color_framebg_active
 
-  CherryGUI::PushStyleColor(
-      ImGuiCol_Tab,
-      ImGui::ColorConvertU32ToFloat4(IM_COL32(21, 21, 21, 255))); // color_tab
-  CherryGUI::PushStyleColor(
-      ImGuiCol_TabHovered, ImGui::ColorConvertU32ToFloat4(
-                               IM_COL32(36, 36, 36, 100))); // color_tab_hovered
+  CherryGUI::PushStyleColor(ImGuiCol_Tab,
+                            Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
+                                "color_tab"))); // color_tab
+  CherryGUI::PushStyleColor(ImGuiCol_TabHovered,
+                            Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
+                                "color_tab_hovered"))); // color_tab_hovered
   CherryGUI::PushStyleColor(ImGuiCol_TabActive,
-                            ImGui::ColorConvertU32ToFloat4(
-                                IM_COL32(36, 36, 36, 255))); // color_tab_active
+                            Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
+                                "color_tab_active"))); // color_tab_active
   CherryGUI::PushStyleColor(ImGuiCol_TabUnfocused,
-                            ImGui::ColorConvertU32ToFloat4(IM_COL32(
-                                21, 21, 21, 255))); // color_tab_unfocused
+                            Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
+                                "color_tab_unfocused"))); // color_tab_unfocused
   CherryGUI::PushStyleColor(
       ImGuiCol_TabUnfocusedActive,
-      ImGui::ColorConvertU32ToFloat4(
-          IM_COL32(36, 36, 36, 100))); // color_tab_unfocused_active
+      Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
+          "color_tab_unfocused_active"))); // color_tab_unfocused_active
 
   CherryGUI::PushStyleColor(ImGuiCol_TitleBg,
-                            ImGui::ColorConvertU32ToFloat4(
-                                IM_COL32(21, 21, 21, 255))); // color_titlebg
-  CherryGUI::PushStyleColor(ImGuiCol_TitleBgActive,
-                            ImGui::ColorConvertU32ToFloat4(IM_COL32(
-                                21, 21, 21, 255))); // color_titlebg_active
+                            Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
+                                "color_titlebg"))); // color_titlebg
+  CherryGUI::PushStyleColor(
+      ImGuiCol_TitleBgActive,
+      Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
+          "color_titlebg_active"))); // color_titlebg_active
   CherryGUI::PushStyleColor(
       ImGuiCol_TitleBgCollapsed,
-      ImVec4{0.15f, 0.1505f, 0.151f, 1.0f}); // color_titlebg_collapsed
+      Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
+          "color_titlebg_collapsed"))); // color_titlebg_collapsed
 
-  CherryGUI::PushStyleColor(
-      ImGuiCol_ResizeGrip,
-      ImVec4(0.91f, 0.91f, 0.91f, 0.25f)); // color_resizegrip
+  CherryGUI::PushStyleColor(ImGuiCol_ResizeGrip,
+                            Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
+                                "color_resizegrip"))); // color_resizegrip
   CherryGUI::PushStyleColor(
       ImGuiCol_ResizeGripHovered,
-      ImVec4(0.81f, 0.81f, 0.81f, 0.67f)); // color_resizegrip_hovered
+      Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
+          "color_resizegrip_hovered"))); // color_resizegrip_hovered
   CherryGUI::PushStyleColor(
       ImGuiCol_ResizeGripActive,
-      ImVec4(0.46f, 0.46f, 0.46f, 0.95f)); // color_resizegrip_active
+      Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
+          "color_resizegrip_active"))); // color_resizegrip_active
 
-  CherryGUI::PushStyleColor(
-      ImGuiCol_ScrollbarBg,
-      ImVec4(0.02f, 0.02f, 0.02f, 0.53f)); // color_scrollbar_bg
+  CherryGUI::PushStyleColor(ImGuiCol_ScrollbarBg,
+                            Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
+                                "color_scrollbar_bg"))); // color_scrollbar_bg
+
   CherryGUI::PushStyleColor(
       ImGuiCol_ScrollbarGrab,
-      ImVec4(0.31f, 0.31f, 0.31f, 1.0f)); // color_scrollbar_grab
+      Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
+          "color_scrollbar_grab"))); // color_scrollbar_grab
   CherryGUI::PushStyleColor(
       ImGuiCol_ScrollbarGrabHovered,
-      ImVec4(0.41f, 0.41f, 0.41f, 1.0f)); // color_scrollbar_grab_hovered
+      Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
+          "color_scrollbar_grab_hovered"))); // color_scrollbar_grab_hovered
   CherryGUI::PushStyleColor(
       ImGuiCol_ScrollbarGrabActive,
-      ImVec4(0.51f, 0.51f, 0.51f, 1.0f)); // color_scrollbar_grab_active
+      Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
+          "color_scrollbar_grab_active"))); // color_scrollbar_grab_active
 
-  CherryGUI::PushStyleColor(
-      ImGuiCol_CheckMark, ImGui::ColorConvertU32ToFloat4(
-                              IM_COL32(200, 200, 200, 255))); // color_checkmark
+  CherryGUI::PushStyleColor(ImGuiCol_CheckMark,
+                            Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
+                                "color_checkmark"))); // color_checkmark
 
-  CherryGUI::PushStyleColor(
-      ImGuiCol_SliderGrab,
-      ImVec4(0.51f, 0.51f, 0.51f, 0.7f)); // color_slidergrab
+  CherryGUI::PushStyleColor(ImGuiCol_SliderGrab,
+                            Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
+                                "color_slidergrab"))); // color_slidergrab
   CherryGUI::PushStyleColor(
       ImGuiCol_SliderGrabActive,
-      ImVec4(0.66f, 0.66f, 0.66f, 1.0f)); // color_slidergrab_active
+      Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
+          "color_slidergrab_active"))); // color_slidergrab_active
 
   CherryGUI::PushStyleColor(ImGuiCol_Separator,
-                            ImGui::ColorConvertU32ToFloat4(
-                                IM_COL32(21, 21, 21, 255))); // color_separator
-  CherryGUI::PushStyleColor(ImGuiCol_SeparatorActive,
-                            ImGui::ColorConvertU32ToFloat4(IM_COL32(
-                                39, 185, 242, 255))); // color_separator_active
-  CherryGUI::PushStyleColor(ImGuiCol_SeparatorHovered,
-                            ImGui::ColorConvertU32ToFloat4(IM_COL32(
-                                21, 21, 21, 255))); // color_separator_hovered
+                            Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
+                                "color_separator"))); // color_separator
+
+  CherryGUI::PushStyleColor(
+      ImGuiCol_SeparatorActive,
+      Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
+          "color_separator_active"))); // color_separator_active
+  CherryGUI::PushStyleColor(
+      ImGuiCol_SeparatorHovered,
+      Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
+          "color_separator_hovered"))); // color_separator_hovered
 
   CherryGUI::PushStyleColor(ImGuiCol_WindowBg,
-                            ImGui::ColorConvertU32ToFloat4(
-                                IM_COL32(21, 21, 21, 255))); // color_window_bg
+                            Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
+                                "color_window_bg"))); // color_window_bg
   CherryGUI::PushStyleColor(ImGuiCol_ChildBg,
-                            ImGui::ColorConvertU32ToFloat4(
-                                IM_COL32(36, 36, 36, 255))); // color_child_bg
+                            Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
+                                "color_child_bg"))); // color_child_bg
   CherryGUI::PushStyleColor(ImGuiCol_PopupBg,
-                            ImGui::ColorConvertU32ToFloat4(
-                                IM_COL32(56, 56, 56, 255))); // color_popup_bg
+                            Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
+                                "color_popup_bg"))); // color_popup_bg
   CherryGUI::PushStyleColor(ImGuiCol_Border,
-                            ImGui::ColorConvertU32ToFloat4(
-                                IM_COL32(36, 36, 36, 255))); // color_border
+                            Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
+                                "color_border"))); // color_border
 
-  CherryGUI::PushStyleColor(ImGuiCol_TableHeaderBg,
-                            ImGui::ColorConvertU32ToFloat4(IM_COL32(
-                                47, 47, 47, 255))); // color_table_header_bg
-  CherryGUI::PushStyleColor(ImGuiCol_TableBorderLight,
-                            ImGui::ColorConvertU32ToFloat4(IM_COL32(
-                                26, 26, 26, 255))); // color_table_border_light
+  CherryGUI::PushStyleColor(
+      ImGuiCol_TableHeaderBg,
+      Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
+          "color_table_header_bg"))); // color_table_header_bg
+  CherryGUI::PushStyleColor(
+      ImGuiCol_TableBorderLight,
+      Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
+          "color_table_border_light"))); // color_table_border_light
 
   CherryGUI::PushStyleColor(ImGuiCol_MenuBarBg,
-                            ImGui::ColorConvertU32ToFloat4(
-                                IM_COL32(36, 36, 36, 255))); // color_menubar_bg
+                            Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
+                                "color_menubar_bg"))); // color_menubar_bg
 
   auto &style = ImGui::GetStyle();
   style.FrameRounding = 5.0f;   // rounding_frame

@@ -174,24 +174,24 @@ Application::Application(const ApplicationSpecification &specification)
     }
   }
 
+  // Default theme (first position in m_ActiveThemes, can't be removed)
+  AddTheme(DefaultCherryTheme());
+  PushTheme("default");
+
   // Add themes from user.
   if (!specification.Themes.empty()) {
     for (auto theme : specification.Themes) {
       AddTheme(theme);
     }
 
-    if (specification.SelectedTheme != "undefined") {
+    /*if (specification.SelectedTheme != "undefined") {
       PushTheme(specification.SelectedTheme);
     } else {
       PushTheme(specification.Themes[0].m_ThemeID);
-    }
+    }*/
   }
 
-  // If no theme specified, add the default cherry theme
-  if (m_Themes.empty()) {
-    AddTheme(DefaultCherryTheme());
-    PushTheme("default");
-  }
+  m_SelectedTheme = specification.SelectedTheme;
 
   Init();
 }

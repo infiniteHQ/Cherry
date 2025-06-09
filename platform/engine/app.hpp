@@ -599,7 +599,7 @@ public:
   std::string GetActiveThemeProperty(const std::string &key) {
     for (auto it = m_ActiveThemes.rbegin(); it != m_ActiveThemes.rend(); ++it) {
       std::string val = it->GetProperty(key);
-      if (!val.empty()) {
+      if (val != "undefined") {
         return val;
       }
     }

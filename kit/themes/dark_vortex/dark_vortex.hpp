@@ -23,6 +23,11 @@ public:
     SetProperty("block_border_color", "#353535");
     SetProperty("block_border_color_hovered", "#353535");
     SetProperty("block_border_color_pressed", "#555555");
+
+    SetProperty("color_window_bg", "#FF1515");
+    SetProperty("color_child_bg", "#FF1515");
+    SetProperty("color_popup_bg", "#FF1515");
+    SetProperty("color_border", "#FF1515");
   }
 };
 } // namespace Themes
