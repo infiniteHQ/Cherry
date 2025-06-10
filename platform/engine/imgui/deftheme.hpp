@@ -9,7 +9,7 @@ public:
   DefaultCherryTheme() {
     SetName("default");
 
-    // Colors
+    // Base Colors
     SetProperty("color_header", "#2F2F2FFF");
     SetProperty("color_header_hovered", "#2F2F2FFF");
     SetProperty("color_header_active", "#2F2F2FFF");
@@ -59,6 +59,17 @@ public:
     SetProperty("color_table_border_light", "#1A1A1AFF");
 
     SetProperty("color_menubar_bg", "#242424FF");
+
+    // Theme & Components colors
+    SetProperty("color_border", "#454545FF");
+    SetProperty("color_border_hovered", "#555555FF");
+    SetProperty("color_border_pressed", "#757575FF");
+    SetProperty("color_bg", "#242424FF");
+    SetProperty("color_bg_hovered", "#343434FF");
+    SetProperty("color_bg_pressed", "#444444FF");
+    SetProperty("color_text", "#BCBCBCFF");
+    SetProperty("color_text_hovered", "#FFFFFFFF");
+    SetProperty("color_text_pressed", "#FFFFFFFF");
   }
 };
 
