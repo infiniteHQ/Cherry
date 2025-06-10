@@ -1,4 +1,4 @@
-#include "../../cherry.hpp"
+#include "../../../cherry.hpp"
 
 void AppWindowRender() {
   std::string WindowName = CherryWindow.GetName();
@@ -10,8 +10,8 @@ void AppWindowRender() {
 
 CherryApplication *Cherry::CreateApplication(int argc, char **argv) {
   Cherry::ApplicationSpecification config;
+
   config.SetRenderMode(Cherry::WindowRenderingMethod::DockingWindows);
-  config.AddTheme(CherryThemes::DarkVortex());
 
   Cherry::AddAppWindow(
       CherryKit::WindowSimple("App Window 1", AppWindowRender));

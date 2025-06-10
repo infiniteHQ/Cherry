@@ -4,9 +4,9 @@ class RedThemeCherry : public Cherry::Theme {
 public:
   RedThemeCherry() {
     SetName("red");
-    SetProperty("color_window_bg", "#FF1515");
-    SetProperty("color_child_bg", "#FF1515");
-    SetProperty("color_framebg", "#FF1515");
+    SetProperty("color_window_bg", "#881515");
+    SetProperty("color_child_bg", "#881515");
+    SetProperty("color_framebg", "#881515");
   }
 };
 
@@ -14,42 +14,48 @@ class GreenThemeCherry : public Cherry::Theme {
 public:
   GreenThemeCherry() {
     SetName("green");
-    SetProperty("color_window_bg", "#15FF15");
-    SetProperty("color_child_bg", "#15FF15");
-    SetProperty("color_framebg", "#15FF15");
+    SetProperty("color_window_bg", "#158815");
+    SetProperty("color_child_bg", "#158815");
+    SetProperty("color_framebg", "#158815");
   }
 };
 
-class BleueThemeCherry : public Cherry::Theme {
+class BlueThemeCherry : public Cherry::Theme {
 public:
-  BleueThemeCherry() {
-    SetName("bleue");
-    SetProperty("color_window_bg", "#1515FF");
-    SetProperty("color_child_bg", "#1515FF");
-    SetProperty("color_framebg", "#1515FF");
+  BlueThemeCherry() {
+    SetName("blue");
+    SetProperty("color_window_bg", "#151588");
+    SetProperty("color_child_bg", "#151588");
+    SetProperty("color_framebg", "#151588");
   }
 };
 
-void AppWindowFirst() {
-  CherryAppWindow.SetTheme("red");
-  /*if (CherryKit::ButtonText("Light theme")->GetData("isClicked") == "true") {
-    // CherryApp.SetTheme("light");
+class YellowThemeCherry : public Cherry::Theme {
+public:
+  YellowThemeCherry() {
+    SetName("yellow");
+    SetProperty("color_window_bg", "#888815");
+    SetProperty("color_child_bg", "#888815");
+    SetProperty("color_framebg", "#888815");
+  }
+};
+
+void AppWindowSample() {
+  if (CherryKit::ButtonText("Red theme")->GetData("isClicked") == "true") {
+    CherryAppWindow.SetTheme("red");
   }
 
-  if (CherryKit::ButtonText("Dark theme")->GetData("isClicked") == "true") {
-    // CherryApp.SetTheme("dark");
-  }*/
-}
-
-void AppWindowSecond() {
-  CherryAppWindow.SetTheme("green");
-  /*if (CherryKit::ButtonText("Light theme")->GetData("isClicked") == "true") {
-    // CherryApp.SetTheme("light");
+  if (CherryKit::ButtonText("Blue theme")->GetData("isClicked") == "true") {
+    CherryAppWindow.SetTheme("blue");
   }
 
-  if (CherryKit::ButtonText("Dark theme")->GetData("isClicked") == "true") {
-    // CherryApp.SetTheme("dark");
-  }*/
+  if (CherryKit::ButtonText("Green theme")->GetData("isClicked") == "true") {
+    CherryAppWindow.SetTheme("green");
+  }
+
+  // We can specify a theme in a small part of the window !
+  CherryApp.PushTheme("yellow");
+  CherryApp.PopTheme();
 }
 
 CherryApplication *Cherry::CreateApplication(int argc, char **argv) {
@@ -60,10 +66,11 @@ CherryApplication *Cherry::CreateApplication(int argc, char **argv) {
 
   config.AddTheme(RedThemeCherry());
   config.AddTheme(GreenThemeCherry());
-  config.AddTheme(BleueThemeCherry());
+  config.AddTheme(BlueThemeCherry());
+  config.AddTheme(YellowThemeCherry());
 
-  Cherry::AddAppWindow(CherryKit::WindowSimple("First", AppWindowFirst));
-  Cherry::AddAppWindow(CherryKit::WindowSimple("Second", AppWindowSecond));
+  Cherry::AddAppWindow(CherryKit::WindowSimple("First", AppWindowSample));
+  Cherry::AddAppWindow(CherryKit::WindowSimple("Second", AppWindowSample));
   return new CherryApplication(config);
 }
 

@@ -87,10 +87,10 @@ void AppWindow::CtxRender(std::vector<std::shared_ptr<RedockRequest>> *reqs,
   // Push window selected theme if defined
   if (m_SelectedTheme != "undefined") {
     CherryApp.PushTheme(m_SelectedTheme);
-  }
 
-  // Load config of the app window theme
-  CherryWindow.LoadTheme();
+    // Load config of the app window theme
+    CherryWindow.LoadTheme();
+  }
 
   if (!m_IsRendering) {
     return;
@@ -505,11 +505,12 @@ void AppWindow::CtxRender(std::vector<std::shared_ptr<RedockRequest>> *reqs,
     ImGui::PopStyleColor(2);
   }
 
-  // Load config of the app window theme
-  CherryWindow.UnloadTheme();
-
   // Push window selected theme if defined
   if (m_SelectedTheme != "undefined") {
+    // Unload config of the app window theme
+    CherryWindow.UnloadTheme();
+
+    // Pop current theme
     CherryApp.PopTheme();
   }
 }
