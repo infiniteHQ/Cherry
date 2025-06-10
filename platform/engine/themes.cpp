@@ -18,4 +18,7 @@ std::string Theme::GetProperty(const std::string &key) {
   }
 }
 
+void Theme::SetName(const std::string &name) { m_ThemeID = name; }
+const std::string Theme::GetName() const { return m_ThemeID; }
+
 } // namespace Cherry

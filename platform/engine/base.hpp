@@ -160,7 +160,7 @@ public:
 
   void AddTheme(Theme theme, const std::string &themeid = "") {
     if (!themeid.empty()) {
-      theme.m_ThemeID = themeid;
+      theme.SetName(themeid);
     }
     Themes.push_back(theme);
 

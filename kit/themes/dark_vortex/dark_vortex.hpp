@@ -14,7 +14,7 @@ namespace Themes {
 class DarkVortex : public Theme {
 public:
   DarkVortex() {
-    m_ThemeID = "dark_vortex";
+    SetName("dark_vortex");
 
     // Colors
     SetProperty("block_color", "#252525");

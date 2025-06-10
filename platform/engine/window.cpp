@@ -648,7 +648,7 @@ void Window::UI_DrawTitlebar(float &outTitlebarHeight) {
   // DEBUG TITLEBAR BOUNDS
   // fgDrawList->AddRect(titlebarMin, titlebarMax,
   // UI::Colors::Theme::invalidPrefab); Logo
-  if (!m_Specifications.DisableLogo) {
+  if (!m_Specifications.DisableLogo && !m_Specifications.IconPath.empty()) {
     const int logoWidth = 48;  // Largeur du logo
     const int logoHeight = 48; // Hauteur du logo
     const ImVec2 logoOffset(16.0f + windowPadding.x,

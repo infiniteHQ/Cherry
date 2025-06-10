@@ -568,7 +568,7 @@ public:
   std::shared_ptr<Component> GetCurrentComponent() const;
 
   // Theme engine
-  void AddTheme(const Theme &theme) { m_Themes[theme.m_ThemeID] = theme; }
+  void AddTheme(const Theme &theme) { m_Themes[theme.GetName()] = theme; }
 
   void RemoveTheme(const std::string &theme_name) {
     m_Themes.erase(theme_name);

@@ -7,7 +7,7 @@ namespace Cherry {
 class DefaultCherryTheme : public Theme {
 public:
   DefaultCherryTheme() {
-    m_ThemeID = "default";
+    SetName("default");
 
     // Colors
     SetProperty("color_header", "#2F2F2FFF");

@@ -19,9 +19,11 @@ public:
   std::string SetProperty(const std::string &key, const std::string &val);
   std::string GetProperty(const std::string &key);
 
-  std::string m_ThemeID;
+  void SetName(const std::string &name);
+  const std::string GetName() const;
 
 private:
+  std::string m_ThemeID;
   std::unordered_map<std::string, std::string> m_Properties;
 };
 } // namespace Cherry
