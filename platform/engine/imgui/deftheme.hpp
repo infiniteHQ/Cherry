@@ -61,7 +61,7 @@ public:
     SetProperty("color_menubar_bg", "#242424FF");
 
     // Theme & Components colors
-    SetProperty("color_border", "#454545FF");
+    SetProperty("color_border", "#454545FF"); // color_button_bg -> theme:...
     SetProperty("color_border_hovered", "#555555FF");
     SetProperty("color_border_pressed", "#757575FF");
     SetProperty("color_bg", "#242424FF");

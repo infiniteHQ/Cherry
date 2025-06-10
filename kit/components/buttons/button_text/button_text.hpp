@@ -73,12 +73,8 @@ public:
                             ImVec2(std::stoi(GetProperty("padding_x")),
                                    std::stoi(GetProperty("padding_y"))));
 
-    std::cout << "1" << std::endl;
-    std::cout << GetProperty("color_border") << std::endl;
-    std::cout << "1" << std::endl;
     CherryGUI::PushStyleColor(ImGuiCol_Border,
                               HexToRGBA(GetProperty("color_border")));
-    std::cout << "2" << std::endl;
     CherryGUI::PushStyleColor(ImGuiCol_Button,
                               HexToRGBA(GetProperty("color_bg")));
     CherryGUI::PushStyleColor(ImGuiCol_ButtonHovered,

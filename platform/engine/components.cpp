@@ -27,13 +27,6 @@ std::string Component::SetProperty(const std::string &key,
   return val;
 }
 
-void Component::RenderWrapper() {
-  // If render disable flag enabled, dont render and consume properties
-  // button->RefreshContextProperties();
-
-  this->Render();
-}
-
 std::string Component::GetProperty(const std::string &key) {
   if (!m_IsPropsChanged) {
     auto cacheIt = m_CachedProperties.find(key);
@@ -44,10 +37,6 @@ std::string Component::GetProperty(const std::string &key) {
 
   std::string value;
   const std::string prefix = "theme:";
-  if (key.rfind(prefix, 0) == 0) {
-    std::string themeKey = key.substr(prefix.length());
-    value = CherryApp.GetActiveThemeProperty(value);
-  }
 
   auto onetimeMap = Application::Get().GetOneTimeProperties();
   auto onetimeIt = onetimeMap.find(key);
@@ -58,10 +47,12 @@ std::string Component::GetProperty(const std::string &key) {
     auto ctxIt = m_ContextProperties.find(key);
     if (ctxIt != m_ContextProperties.end()) {
       value = ctxIt->second;
+
     } else {
       auto it = m_Properties.find(key);
       if (it != m_Properties.end()) {
         value = it->second;
+
       } else {
         value = "undefined";
       }
@@ -72,7 +63,20 @@ std::string Component::GetProperty(const std::string &key) {
     m_CachedProperties[key] = value;
   }
 
+  // Post process operations
+  if (value.rfind(prefix, 0) == 0) {
+    std::string themeKey = value.substr(prefix.length());
+    value = CherryApp.GetActiveThemeProperty(themeKey);
+  }
+
   return value;
+}
+
+void Component::RenderWrapper() {
+  // If render disable flag enabled, dont render and consume properties
+  // button->RefreshContextProperties();
+
+  this->Render();
 }
 
 void Component::ClearProperty(const std::string &key) {
