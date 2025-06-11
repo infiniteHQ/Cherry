@@ -80,9 +80,11 @@ static bool c_MasterSwapChainRebuild = false;
 
 static std::shared_ptr<Cherry::WindowDragDropState> c_CurrentDragDropState;
 static Cherry::Window s_EmptyWindow;
+static Cherry::Component s_EmptyComponent;
 static Cherry::AppWindow s_EmptyAppWindow;
 static std::shared_ptr<Cherry::Window> c_CurrentRenderedWindow;
 static std::shared_ptr<Cherry::AppWindow> c_CurrentRenderedAppWindow;
+static std::shared_ptr<Cherry::Component> c_LastComponent;
 
 static std::string g_ExecutablePath;
 
@@ -163,6 +165,7 @@ Application::Application(const ApplicationSpecification &specification)
   }
 
   if (specification.RenderMode == WindowRenderingMethod::DockingWindows ||
+      specification.RenderMode == WindowRenderingMethod::TabWidows ||
       specification.RenderMode == WindowRenderingMethod::SimpleWindow) {
     for (auto preinit_app_windows : Application::GetTempAppWindows()) {
       this->PutWindow(preinit_app_windows);
@@ -480,6 +483,15 @@ int &Application::GetMinImageCount() { return g_MinImageCount; }
 
 std::shared_ptr<Cherry::Window> &Application::GetCurrentRenderedWindow() {
   return c_CurrentRenderedWindow;
+}
+
+Cherry::Component &Application::GetSafeLastComponent() {
+  return c_LastComponent ? *c_LastComponent : s_EmptyComponent;
+}
+
+void Application::SetLastComponent(
+    const std::shared_ptr<Cherry::Component> &component) {
+  c_LastComponent = component;
 }
 
 std::shared_ptr<Cherry::AppWindow> &Application::GetCurrentRenderedAppWindow() {
@@ -2764,7 +2776,8 @@ void Application::EnableNoAppWindowSafety() {
     m_NoAppWindowSafetyEnabled = true;
     ImGui::TextColored(
         Cherry::HexToRGBA("#FF2222FF"),
-        "ERROR: You selected the Docking render mode, but you did not specify "
+        "ERROR: You selected the Docking or Tabbed render mode, but you did "
+        "not specify "
         "any app windows. Please create and add an "
         "app window. (Cherry::AddAppWindow(std::shared_ptr<AppWindow>))");
   });

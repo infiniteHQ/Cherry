@@ -77,6 +77,9 @@ static int current_fps;
 #define CherryAppWindow                                                        \
   Cherry::Application::Get().GetSafeCurrentRenderedAppWindow() // AppWindow&
 
+#define CherryLastComponent                                                    \
+  Cherry::Application::Get().GetSafeLastComponent() // Component&
+
 // Cherry Identifier macros
 #define CherryInline                                                           \
   CherryID(Cherry::Identifier::GetUniqueIndex(),                               \
@@ -433,6 +436,9 @@ public:
   std::string GetComponentData(const Identifier &id, const std::string &topic);
 
   std::string GetName() { return m_DefaultSpecification.Name; }
+
+  Cherry::Component &GetSafeLastComponent();
+  void SetLastComponent(const std::shared_ptr<Cherry::Component> &component);
 
   void PushComponentArray(); // Add component array, create components will
                              // create in it
