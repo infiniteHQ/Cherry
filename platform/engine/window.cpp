@@ -1042,14 +1042,15 @@ void Window::LoadTheme() {
 
   CherryGUI::PushStyleColor(ImGuiCol_Button,
                             Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
-                                "color_button"))); // color_button
+                                "button_color_border"))); // color_button
   CherryGUI::PushStyleColor(
       ImGuiCol_ButtonHovered,
       Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
-          "color_button_hovered"))); // color_button_hovered
-  CherryGUI::PushStyleColor(ImGuiCol_ButtonActive,
-                            Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
-                                "color_button_active"))); // color_button_active
+          "button_color_border_hovered"))); // color_button_hovered
+  CherryGUI::PushStyleColor(
+      ImGuiCol_ButtonActive,
+      Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
+          "button_color_border_pressed"))); // color_button_active
 
   CherryGUI::PushStyleColor(ImGuiCol_FrameBg,
                             Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(

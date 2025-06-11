@@ -20,33 +20,25 @@ public:
     // Identifier
     SetIdentifier(id);
 
-    // Colors
-    // SetProperty("color_border", "#454545FF");
-    // SetProperty("color_border_hovered", "#555555FF");
-    // SetProperty("color_border_pressed", "#757575FF");
-    // SetProperty("color_bg", "#242424FF");
-    // SetProperty("color_bg_hovered", "#343434FF");
-    // SetProperty("color_bg_pressed", "#444444FF");
-    // SetProperty("color_text", "#BCBCBCFF");
-    // SetProperty("color_text_hovered", "#FFFFFFFF");
-    // SetProperty("color_text_pressed", "#FFFFFFFF");
-    SetProperty("color_border", "theme:color_border");
-    SetProperty("color_border_hovered", "theme:color_border_hovered");
-    SetProperty("color_border_pressed", "theme:color_border_pressed");
-    SetProperty("color_bg", "theme:color_bg");
-    SetProperty("color_bg_hovered", "theme:color_bg_hovered");
-    SetProperty("color_bg_pressed", "theme:color_bg_pressed");
-    SetProperty("color_text", "theme:color_text");
-    SetProperty("color_text_hovered", "theme:color_text_hovered");
-    SetProperty("color_text_pressed", "theme:color_text_pressed");
+    // Def ? (theme:var:def)
+    SetProperty("color_border", "theme:button_color_border");
+    SetProperty("color_border_hovered", "theme:button_color_border_hovered");
+    SetProperty("color_border_pressed", "theme:button_color_border_pressed");
+    SetProperty("color_bg", "theme:button_color_bg");
+    SetProperty("color_bg_hovered", "theme:button_color_bg_hovered");
+    SetProperty("color_bg_pressed", "theme:button_color_bg_pressed");
+    SetProperty("color_text", "theme:button_color_text");
+    SetProperty("color_text_hovered", "theme:button_color_text_hovered");
+    SetProperty("color_text_pressed", "theme:button_color_text_pressed");
 
     // Sizes
-    SetProperty("size_x", "0");
-    SetProperty("size_y", "0");
-    SetProperty("padding_x", "6");
-    SetProperty("padding_y", "6");
-    SetProperty("scale",
-                "0"); // Instead of using sizes manually, we can use scale.
+    SetProperty("size_x", "theme:button_size_x");
+    SetProperty("size_y", "theme:button_size_y");
+    SetProperty("padding_x", "theme:button_padding_x");
+    SetProperty("padding_y", "theme:button_padding_y");
+
+    // Instead of using sizes manually, we can use scale.
+    SetProperty("scale", "theme:button_scale");
 
     // Params
     SetProperty("disabled", "false");
@@ -67,8 +59,10 @@ public:
   }
 
   void Render() override {
+
     const ImVec2 &size = ImVec2(std::stoi(GetProperty("size_x")),
                                 std::stoi(GetProperty("size_y")));
+
     CherryGUI::PushStyleVar(ImGuiStyleVar_FramePadding,
                             ImVec2(std::stoi(GetProperty("padding_x")),
                                    std::stoi(GetProperty("padding_y"))));

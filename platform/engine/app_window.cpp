@@ -84,8 +84,15 @@ void AppWindow::DeleteSignal() {
 void AppWindow::CtxRender(std::vector<std::shared_ptr<RedockRequest>> *reqs,
                           const std::string &winname) {
 
-  // Push window selected theme if defined
+  // Calculate the selected theme before rendering app window if the theme will
+  // change during the render
+  bool use_theme = false;
   if (m_SelectedTheme != "undefined") {
+    use_theme = true;
+  }
+
+  // Push window selected theme if defined
+  if (use_theme) {
     CherryApp.PushTheme(m_SelectedTheme);
 
     // Load config of the app window theme
@@ -506,7 +513,7 @@ void AppWindow::CtxRender(std::vector<std::shared_ptr<RedockRequest>> *reqs,
   }
 
   // Push window selected theme if defined
-  if (m_SelectedTheme != "undefined") {
+  if (use_theme) {
     // Unload config of the app window theme
     CherryWindow.UnloadTheme();
 
