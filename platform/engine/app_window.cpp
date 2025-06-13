@@ -84,6 +84,11 @@ void AppWindow::DeleteSignal() {
 void AppWindow::CtxRender(std::vector<std::shared_ptr<RedockRequest>> *reqs,
                           const std::string &winname) {
 
+  // If static mode (only in app window) (and not immediate mode)
+  CherryApp.ResetCurrentComponent();
+  CherryApp.ResetNextComponent();
+  CherryApp.ResetLastComponent();
+
   // Calculate the selected theme before rendering app window if the theme will
   // change during the render
   bool use_theme = false;

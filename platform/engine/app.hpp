@@ -61,6 +61,20 @@ static int current_fps;
 #ifndef CHERRY_APP_H
 #define CHERRY_APP_H
 
+// If not Disbale Macros
+#define CherryCreateApp *Cherry::CreateApplication
+#define CherryMain *Cherry::CreateApplication
+#define CherryAppConfig Cherry::ApplicationSpecification
+#define CherryRun(argc, argv)                                                  \
+  std::thread([&]() { Cherry::Main(argc, argv); }).join();
+
+#define CherryComponentsPool std::vector<std::shared_ptr<Cherry::Component>>
+
+struct ComponentsPool {
+  std::vector<std::shared_ptr<Cherry::Component>> AnonymousComponents;
+  std::vector<std::shared_ptr<Cherry::Component>> IdentifiedComponents;
+};
+
 // Next component property
 #define CherryNextProp(key, value) Cherry::SetNextComponentProperty(key, value)
 
@@ -70,15 +84,24 @@ static int current_fps;
 // Cherry utils macros
 #define CherryPath(path) Cherry::GetPath(path)
 
-// Cherry Layers macros
+/////////////////////////////////////////////////
+// Cherry dynamic variables
+/////////////////////////////////////////////////
+// 3 Levels of rendering layers (App, Window and AppWindow)
 #define CherryApp Cherry::Application::Get() // Application&
 #define CherryWindow                                                           \
   Cherry::Application::Get().GetSafeCurrentRenderedWindow() // Window&
 #define CherryAppWindow                                                        \
   Cherry::Application::Get().GetSafeCurrentRenderedAppWindow() // AppWindow&
 
+// Components
 #define CherryLastComponent                                                    \
   Cherry::Application::Get().GetSafeLastComponent() // Component&
+#define CherryNextComponent                                                    \
+  Cherry::Application::Get().GetSafeNextComponent() // Component&
+#define CherryCurrentComponent                                                 \
+  Cherry::Application::Get().GetSafeCurrentComponent() // Component&
+/////////////////////////////////////////////////
 
 // Cherry Identifier macros
 #define CherryInline                                                           \
@@ -178,69 +201,70 @@ enum class CherryKey {
   F11,
   F12
 };
-
-static std::unordered_map<CherryKey, SDL_Scancode> keyMap = {
-    {CherryKey::A, SDL_SCANCODE_A},
-    {CherryKey::B, SDL_SCANCODE_B},
-    {CherryKey::C, SDL_SCANCODE_C},
-    {CherryKey::D, SDL_SCANCODE_D},
-    {CherryKey::E, SDL_SCANCODE_E},
-    {CherryKey::F, SDL_SCANCODE_F},
-    {CherryKey::G, SDL_SCANCODE_G},
-    {CherryKey::H, SDL_SCANCODE_H},
-    {CherryKey::I, SDL_SCANCODE_I},
-    {CherryKey::J, SDL_SCANCODE_J},
-    {CherryKey::K, SDL_SCANCODE_K},
-    {CherryKey::L, SDL_SCANCODE_L},
-    {CherryKey::M, SDL_SCANCODE_M},
-    {CherryKey::N, SDL_SCANCODE_N},
-    {CherryKey::O, SDL_SCANCODE_O},
-    {CherryKey::P, SDL_SCANCODE_P},
-    {CherryKey::Q, SDL_SCANCODE_Q},
-    {CherryKey::R, SDL_SCANCODE_R},
-    {CherryKey::S, SDL_SCANCODE_S},
-    {CherryKey::T, SDL_SCANCODE_T},
-    {CherryKey::U, SDL_SCANCODE_U},
-    {CherryKey::V, SDL_SCANCODE_V},
-    {CherryKey::W, SDL_SCANCODE_W},
-    {CherryKey::X, SDL_SCANCODE_X},
-    {CherryKey::Y, SDL_SCANCODE_Y},
-    {CherryKey::Z, SDL_SCANCODE_Z},
-    {CherryKey::NUM_0, SDL_SCANCODE_0},
-    {CherryKey::NUM_1, SDL_SCANCODE_1},
-    {CherryKey::NUM_2, SDL_SCANCODE_2},
-    {CherryKey::NUM_3, SDL_SCANCODE_3},
-    {CherryKey::NUM_4, SDL_SCANCODE_4},
-    {CherryKey::NUM_5, SDL_SCANCODE_5},
-    {CherryKey::NUM_6, SDL_SCANCODE_6},
-    {CherryKey::NUM_7, SDL_SCANCODE_7},
-    {CherryKey::NUM_8, SDL_SCANCODE_8},
-    {CherryKey::NUM_9, SDL_SCANCODE_9},
-    {CherryKey::ESCAPE, SDL_SCANCODE_ESCAPE},
-    {CherryKey::SPACE, SDL_SCANCODE_SPACE},
-    {CherryKey::ENTER, SDL_SCANCODE_RETURN},
-    {CherryKey::BACKSPACE, SDL_SCANCODE_BACKSPACE},
-    {CherryKey::TAB, SDL_SCANCODE_TAB},
-    {CherryKey::SHIFT, SDL_SCANCODE_LSHIFT},
-    {CherryKey::CTRL, SDL_SCANCODE_LCTRL},
-    {CherryKey::ALT, SDL_SCANCODE_LALT},
-    {CherryKey::LEFT, SDL_SCANCODE_LEFT},
-    {CherryKey::RIGHT, SDL_SCANCODE_RIGHT},
-    {CherryKey::UP, SDL_SCANCODE_UP},
-    {CherryKey::DOWN, SDL_SCANCODE_DOWN},
-    {CherryKey::F1, SDL_SCANCODE_F1},
-    {CherryKey::F2, SDL_SCANCODE_F2},
-    {CherryKey::F3, SDL_SCANCODE_F3},
-    {CherryKey::F4, SDL_SCANCODE_F4},
-    {CherryKey::F5, SDL_SCANCODE_F5},
-    {CherryKey::F6, SDL_SCANCODE_F6},
-    {CherryKey::F7, SDL_SCANCODE_F7},
-    {CherryKey::F8, SDL_SCANCODE_F8},
-    {CherryKey::F9, SDL_SCANCODE_F9},
-    {CherryKey::F10, SDL_SCANCODE_F10},
-    {CherryKey::F11, SDL_SCANCODE_F11},
-    {CherryKey::F12, SDL_SCANCODE_F12}};
-
+static const std::unordered_map<CherryKey, SDL_Scancode> &GetKeyMap() {
+  static std::unordered_map<CherryKey, SDL_Scancode> keyMap = {
+      {CherryKey::A, SDL_SCANCODE_A},
+      {CherryKey::B, SDL_SCANCODE_B},
+      {CherryKey::C, SDL_SCANCODE_C},
+      {CherryKey::D, SDL_SCANCODE_D},
+      {CherryKey::E, SDL_SCANCODE_E},
+      {CherryKey::F, SDL_SCANCODE_F},
+      {CherryKey::G, SDL_SCANCODE_G},
+      {CherryKey::H, SDL_SCANCODE_H},
+      {CherryKey::I, SDL_SCANCODE_I},
+      {CherryKey::J, SDL_SCANCODE_J},
+      {CherryKey::K, SDL_SCANCODE_K},
+      {CherryKey::L, SDL_SCANCODE_L},
+      {CherryKey::M, SDL_SCANCODE_M},
+      {CherryKey::N, SDL_SCANCODE_N},
+      {CherryKey::O, SDL_SCANCODE_O},
+      {CherryKey::P, SDL_SCANCODE_P},
+      {CherryKey::Q, SDL_SCANCODE_Q},
+      {CherryKey::R, SDL_SCANCODE_R},
+      {CherryKey::S, SDL_SCANCODE_S},
+      {CherryKey::T, SDL_SCANCODE_T},
+      {CherryKey::U, SDL_SCANCODE_U},
+      {CherryKey::V, SDL_SCANCODE_V},
+      {CherryKey::W, SDL_SCANCODE_W},
+      {CherryKey::X, SDL_SCANCODE_X},
+      {CherryKey::Y, SDL_SCANCODE_Y},
+      {CherryKey::Z, SDL_SCANCODE_Z},
+      {CherryKey::NUM_0, SDL_SCANCODE_0},
+      {CherryKey::NUM_1, SDL_SCANCODE_1},
+      {CherryKey::NUM_2, SDL_SCANCODE_2},
+      {CherryKey::NUM_3, SDL_SCANCODE_3},
+      {CherryKey::NUM_4, SDL_SCANCODE_4},
+      {CherryKey::NUM_5, SDL_SCANCODE_5},
+      {CherryKey::NUM_6, SDL_SCANCODE_6},
+      {CherryKey::NUM_7, SDL_SCANCODE_7},
+      {CherryKey::NUM_8, SDL_SCANCODE_8},
+      {CherryKey::NUM_9, SDL_SCANCODE_9},
+      {CherryKey::ESCAPE, SDL_SCANCODE_ESCAPE},
+      {CherryKey::SPACE, SDL_SCANCODE_SPACE},
+      {CherryKey::ENTER, SDL_SCANCODE_RETURN},
+      {CherryKey::BACKSPACE, SDL_SCANCODE_BACKSPACE},
+      {CherryKey::TAB, SDL_SCANCODE_TAB},
+      {CherryKey::SHIFT, SDL_SCANCODE_LSHIFT},
+      {CherryKey::CTRL, SDL_SCANCODE_LCTRL},
+      {CherryKey::ALT, SDL_SCANCODE_LALT},
+      {CherryKey::LEFT, SDL_SCANCODE_LEFT},
+      {CherryKey::RIGHT, SDL_SCANCODE_RIGHT},
+      {CherryKey::UP, SDL_SCANCODE_UP},
+      {CherryKey::DOWN, SDL_SCANCODE_DOWN},
+      {CherryKey::F1, SDL_SCANCODE_F1},
+      {CherryKey::F2, SDL_SCANCODE_F2},
+      {CherryKey::F3, SDL_SCANCODE_F3},
+      {CherryKey::F4, SDL_SCANCODE_F4},
+      {CherryKey::F5, SDL_SCANCODE_F5},
+      {CherryKey::F6, SDL_SCANCODE_F6},
+      {CherryKey::F7, SDL_SCANCODE_F7},
+      {CherryKey::F8, SDL_SCANCODE_F8},
+      {CherryKey::F9, SDL_SCANCODE_F9},
+      {CherryKey::F10, SDL_SCANCODE_F10},
+      {CherryKey::F11, SDL_SCANCODE_F11},
+      {CherryKey::F12, SDL_SCANCODE_F12}};
+  return keyMap;
+}
 struct ParentWindow {
   std::vector<std::shared_ptr<Layer>> m_LayerStack;
   std::string window_name;
@@ -438,12 +462,32 @@ public:
   std::string GetName() { return m_DefaultSpecification.Name; }
 
   Cherry::Component &GetSafeLastComponent();
-  void SetLastComponent(const std::shared_ptr<Cherry::Component> &component);
+  void SetLastComponent(Component *component);
+  void ResetLastComponent();
 
-  void PushComponentArray(); // Add component array, create components will
-                             // create in it
-  void PopComponentArray(); // REstore previous component array, if 0 it will be
-                            // created in the application component array
+  Cherry::Component &GetSafeNextComponent();
+  void SetNextComponent(Component *component);
+  void ResetNextComponent();
+
+  Cherry::Component &GetSafeCurrentComponent();
+  void SetCurrentComponent(Component *component);
+  void ResetCurrentComponent();
+
+  // Add component array, create
+  // components will create in it
+  void PushComponentPool(ComponentsPool *component_pool);
+  // REstore previous component array, if 0 it will be
+  // created in the application component array
+  void PopComponentPool();
+  ComponentsPool *GetActiveComponentPool();
+
+  // TODO:
+  // SetDataToComponentPool
+  // SetPopertyToComponentPool
+  // GetDataFromComponentPool
+  // GetPopertyFromComponentPool
+  // CherryNextComponent : Set-Get/Property-Data, CreateOnly, Inline
+
   // WARNING
   // A component array is différent than a component group.
   // Component group : Serve as "namespace" to separe component types or nature
@@ -513,7 +557,7 @@ public:
   }
 
   static void ClearAnonymousComponents() {
-    Application::Get().m_ApplicationAnonymousComponents.clear();
+    // Application::Get().m_ApplicationAnonymousComponents.clear();
   }
 
   template <typename T>
@@ -525,44 +569,49 @@ public:
         component_copy.GetIdentifier().string() == "anonymous") {
       Identifier anonymous_id = component_copy.GetIdentifier();
       anonymous_id.set(Identifier::GetUniqueIndex());
+      anonymous_id.m_ComponentGroup = CherryApp.GetComponentGroup();
       component_copy.SetIdentifier(anonymous_id);
     }
 
     std::shared_ptr<Component> new_component =
         std::make_shared<T>(component_copy);
-    Application::Get().m_ApplicationAnonymousComponents.push_back(
-        new_component);
+
+    ComponentsPool *pool = Application::Get().GetActiveComponentPool();
+    pool->AnonymousComponents.push_back(new_component);
+
     return new_component;
   }
 
   template <typename T>
   static std::shared_ptr<Component> CreateComponent(const T &component) {
     Identifier component_id = component.GetIdentifier();
+    component_id.m_ComponentGroup = CherryApp.GetComponentGroup();
 
     if (component_id.component_array_ptr() != nullptr) {
-      for (const auto &existing_component :
-           *component_id.component_array_ptr()) {
-        if (existing_component->GetIdentifier() == component.GetIdentifier()) {
+      auto *array = component_id.component_array_ptr();
+
+      for (const auto &existing_component : *array) {
+        if (existing_component->GetIdentifier() == component_id) {
           return existing_component;
         }
       }
 
       std::shared_ptr<Component> component_ptr = std::make_shared<T>(component);
-      component_id.component_array_ptr()->push_back(component_ptr);
-      return component_ptr;
-    } else {
-      for (const auto &existing_component :
-           Application::Get().m_ApplicationComponents) {
-        if (existing_component->GetIdentifier() == component.GetIdentifier()) {
-          return existing_component;
-        }
-      }
-
-      std::shared_ptr<Component> component_ptr = std::make_shared<T>(component);
-      Application::Get().m_ApplicationComponents.push_back(component_ptr);
+      array->push_back(component_ptr);
       return component_ptr;
     }
-    return nullptr;
+
+    ComponentsPool *pool = Application::Get().GetActiveComponentPool();
+
+    for (const auto &existing_component : pool->IdentifiedComponents) {
+      if (existing_component->GetIdentifier() == component_id) {
+        return existing_component;
+      }
+    }
+
+    std::shared_ptr<Component> component_ptr = std::make_shared<T>(component);
+    pool->IdentifiedComponents.push_back(component_ptr);
+    return component_ptr;
   }
 
   void PushComponentGroup(const std::string &groupname);
@@ -574,43 +623,17 @@ public:
   std::shared_ptr<Component> GetCurrentComponent() const;
 
   // Theme engine
-  void AddTheme(const Theme &theme) { m_Themes[theme.GetName()] = theme; }
-
-  void RemoveTheme(const std::string &theme_name) {
-    m_Themes.erase(theme_name);
-  }
-
-  void PushTheme(const std::string &theme_name) {
-    auto it = m_Themes.find(theme_name);
-    if (it != m_Themes.end()) {
-      m_ActiveThemes.push_back(it->second);
-    }
-  }
-
-  void PopTheme(int number = 1) {
-    while (number-- > 0 && m_ActiveThemes.size() > 1) {
-      m_ActiveThemes.pop_back();
-    }
-  }
-
+  void AddTheme(const Theme &theme);
+  void RemoveTheme(const std::string &theme_name);
+  void PushTheme(const std::string &theme_name);
+  void PopTheme(int number = 1);
   std::string GetThemeProperty(const std::string &theme_name,
-                               const std::string &key) {
-    auto it = m_Themes.find(theme_name);
-    if (it != m_Themes.end()) {
-      return it->second.GetProperty(key);
-    }
-    return "undefined";
-  }
+                               const std::string &key);
+  std::string GetActiveThemeProperty(const std::string &key);
 
-  std::string GetActiveThemeProperty(const std::string &key) {
-    for (auto it = m_ActiveThemes.rbegin(); it != m_ActiveThemes.rend(); ++it) {
-      std::string val = it->GetProperty(key);
-      if (val != "undefined") {
-        return val;
-      }
-    }
-    return "undefned";
-  }
+  void PurgeNoRenderedComponents(ComponentsPool *pool = nullptr);
+  void RefreshComponentsRenderFlags(ComponentsPool *pool = nullptr);
+  void DestroyComponent(const Identifier &id, ComponentsPool *pool = nullptr);
 
   std::unordered_map<std::string, Theme> m_Themes;
   std::vector<Theme> m_ActiveThemes;
@@ -706,8 +729,11 @@ public:
       m_CustomFonts;
   std::string m_FavIconPath;
 
-  std::vector<std::shared_ptr<Component>> m_ApplicationComponents;
-  std::vector<std::shared_ptr<Component>> m_ApplicationAnonymousComponents;
+  // std::vector<std::shared_ptr<Component>> m_ApplicationComponents;
+  // std::vector<std::shared_ptr<Component>> m_ApplicationAnonymousComponents;
+
+  ComponentsPool m_ApplicationComponentPool;
+  std::vector<ComponentsPool *> m_ComponentPoolStack;
 
   std::unordered_map<std::string, nlohmann::json> m_Locales;
   std::string m_SelectedLocale;

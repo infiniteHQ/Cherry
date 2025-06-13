@@ -84,7 +84,9 @@ static Cherry::Component s_EmptyComponent;
 static Cherry::AppWindow s_EmptyAppWindow;
 static std::shared_ptr<Cherry::Window> c_CurrentRenderedWindow;
 static std::shared_ptr<Cherry::AppWindow> c_CurrentRenderedAppWindow;
-static std::shared_ptr<Cherry::Component> c_LastComponent;
+static Cherry::Component *c_LastComponent;
+static Cherry::Component *c_NextComponent;
+static Cherry::Component *c_CurrentComponent;
 
 static std::string g_ExecutablePath;
 
@@ -489,10 +491,31 @@ Cherry::Component &Application::GetSafeLastComponent() {
   return c_LastComponent ? *c_LastComponent : s_EmptyComponent;
 }
 
-void Application::SetLastComponent(
-    const std::shared_ptr<Cherry::Component> &component) {
+void Application::SetLastComponent(Component *component) {
   c_LastComponent = component;
 }
+
+void Application::ResetLastComponent() { c_LastComponent = nullptr; }
+
+Cherry::Component &Application::GetSafeNextComponent() {
+  return c_NextComponent ? *c_NextComponent : s_EmptyComponent;
+}
+
+void Application::SetNextComponent(Component *component) {
+  c_NextComponent = component;
+}
+
+void Application::ResetNextComponent() { c_NextComponent = nullptr; }
+
+Cherry::Component &Application::GetSafeCurrentComponent() {
+  return c_CurrentComponent ? *c_CurrentComponent : s_EmptyComponent;
+}
+
+void Application::SetCurrentComponent(Component *component) {
+  c_CurrentComponent = component;
+}
+
+void Application::ResetCurrentComponent() { c_CurrentComponent = nullptr; }
 
 std::shared_ptr<Cherry::AppWindow> &Application::GetCurrentRenderedAppWindow() {
   return c_CurrentRenderedAppWindow;
@@ -1663,6 +1686,13 @@ void Application::SingleThreadRuntime() {
 
     Identifier::ResetUniqueIndex(); // Reset anonymous components indexes
 
+    // If persistant (in all app) static mode (and not immediate mode)
+    // CherryApp.ResetCurrentComponent();
+    // CherryApp.ResetNextComponent();
+    // CherryApp.ResetLastComponent();
+    CherryApp.PurgeNoRenderedComponents();
+    CherryApp.RefreshComponentsRenderFlags();
+
     // Push Selected theme if defined
     if (m_SelectedTheme != "undefined") {
       PushTheme(m_SelectedTheme);
@@ -2280,7 +2310,7 @@ ImDrawData *Application::RenderWindow(Window *window) {
   ImGuiWindow *win = ImGui::GetCurrentWindow();
 
   ImGui::PopStyleColor();
-  ImGui::PopStyleVar(2);
+  ImGui::PopStyleVar(4);
 
   if (window->m_Specifications.CustomTitlebar &&
       !window->m_Specifications.DisableTitleBar) {
@@ -2403,17 +2433,38 @@ void Application::SetWindowSaveDataFile(const std::string &input_path,
   this->m_SaveWindowData = true;
 }
 
+void Application::PushComponentPool(ComponentsPool *component_pool) {
+  if (component_pool == nullptr) {
+    return;
+  }
+  m_ComponentPoolStack.push_back(component_pool);
+}
+
+void Application::PopComponentPool() {
+  if (!m_ComponentPoolStack.empty()) {
+    m_ComponentPoolStack.pop_back();
+  }
+}
+
+ComponentsPool *Application::GetActiveComponentPool() {
+  if (!m_ComponentPoolStack.empty()) {
+    return m_ComponentPoolStack.back();
+  } else {
+    return &m_ApplicationComponentPool;
+  }
+}
+
 void Application::AddDataToComponentGroup(const std::string &group_name,
                                           const std::string &key,
                                           const std::string &value) {
   // Search all components from group_name (in the CherryID)
   // Obviously, this function serve only public components registered in runtime
   // api array, not in privates components.
-  for (auto component : Application::Get().m_ApplicationComponents) {
+  /*for (auto component : Application::Get().m_ApplicationComponents) {
     if (component->GetIdentifier().component_group() == group_name) {
       component->SetData(key, value);
     }
-  }
+  }*/
 }
 
 // Audio service if CHERRY_ENABLE_AUDIO
@@ -2450,11 +2501,9 @@ void Application::PlaySound(const std::string &wav_file_path) {
 
 bool Application::IsKeyPressed(CherryKey key) {
   const Uint8 *state = SDL_GetKeyboardState(NULL);
+  const auto &keyMap = GetKeyMap();
   auto it = keyMap.find(key);
-  if (it != keyMap.end()) {
-    return state[it->second];
-  }
-  return false;
+  return it != keyMap.end() && state[it->second];
 }
 
 void Application::PushCurrentComponent(
@@ -2501,9 +2550,107 @@ void Application::PopComponentGroup(int pop_number) {
 
 std::string Application::GetComponentGroup() const {
   if (m_PushedComponentGroups.empty()) {
-    return "";
+    return "undefined";
   }
   return m_PushedComponentGroups.back();
+}
+
+void Application::AddTheme(const Theme &theme) {
+  m_Themes[theme.GetName()] = theme;
+}
+
+void Application::RemoveTheme(const std::string &theme_name) {
+  m_Themes.erase(theme_name);
+}
+
+void Application::PushTheme(const std::string &theme_name) {
+  auto it = m_Themes.find(theme_name);
+  if (it != m_Themes.end()) {
+    m_ActiveThemes.push_back(it->second);
+  }
+}
+
+void Application::PopTheme(int number) {
+  while (number-- > 0 && m_ActiveThemes.size() > 1) {
+    m_ActiveThemes.pop_back();
+  }
+}
+
+void Application::PurgeNoRenderedComponents(ComponentsPool *pool) {
+  if (!pool) {
+    pool = &m_ApplicationComponentPool;
+  }
+
+  auto &components = pool->IdentifiedComponents;
+  auto &anonymous_components = pool->AnonymousComponents;
+
+  components.erase(
+      std::remove_if(components.begin(), components.end(),
+                     [](const std::shared_ptr<Component> &component) {
+                       return !component->m_IsComponentRendered;
+                     }),
+      components.end());
+
+  anonymous_components.erase(
+      std::remove_if(anonymous_components.begin(), anonymous_components.end(),
+                     [](const std::shared_ptr<Component> &component) {
+                       return !component->m_IsComponentRendered;
+                     }),
+      anonymous_components.end());
+}
+
+void Application::RefreshComponentsRenderFlags(ComponentsPool *pool) {
+  if (!pool) {
+    pool = &m_ApplicationComponentPool;
+  }
+
+  for (auto &component : pool->IdentifiedComponents) {
+    component->m_IsComponentRendered = false;
+  }
+
+  for (auto &component : pool->AnonymousComponents) {
+    component->m_IsComponentRendered = false;
+  }
+}
+
+void Application::DestroyComponent(const Identifier &id, ComponentsPool *pool) {
+  if (!pool) {
+    pool = &m_ApplicationComponentPool;
+  }
+
+  auto &components = pool->IdentifiedComponents;
+
+  auto it = std::remove_if(components.begin(), components.end(),
+                           [&id](const std::shared_ptr<Component> &component) {
+                             return component->GetIdentifier() == id;
+                           });
+
+  if (it != components.end()) {
+    components.erase(it, components.end());
+    std::cout << "[Info] Component \"" << id.string() << "\" destroyed.\n";
+  } else {
+    std::cout << "[Warning] Component \"" << id.string()
+              << "\" not found for destruction.\n";
+  }
+}
+
+std::string Application::GetThemeProperty(const std::string &theme_name,
+                                          const std::string &key) {
+  auto it = m_Themes.find(theme_name);
+  if (it != m_Themes.end()) {
+    return it->second.GetProperty(key);
+  }
+  return "undefined";
+}
+
+std::string Application::GetActiveThemeProperty(const std::string &key) {
+  for (auto it = m_ActiveThemes.rbegin(); it != m_ActiveThemes.rend(); ++it) {
+    std::string val = it->GetProperty(key);
+    if (val != "undefined") {
+      return val;
+    }
+  }
+  return "undefned";
 }
 
 std::string Application::CookPath(std::string_view input_path) {
@@ -2540,12 +2687,22 @@ void Application::PushLayer(const std::shared_ptr<Layer> &layer) {
 
 std::string Application::GetComponentData(const Identifier &id,
                                           const std::string &topic) {
-  for (auto &component : m_ApplicationComponents) {
-    if (component->GetIdentifier() == id) {
-      return component->GetData(topic);
+  if (id.component_array_ptr() != nullptr) {
+    for (const auto &component : *id.component_array_ptr()) {
+      if (component->GetIdentifier() == id) {
+        return component->GetData(topic);
+      }
+    }
+  } else {
+    ComponentsPool *pool = GetActiveComponentPool();
+    for (const auto &component : pool->IdentifiedComponents) {
+      if (component->GetIdentifier() == id) {
+        return component->GetData(topic);
+      }
     }
   }
-  return "none";
+
+  return "undefined";
 }
 
 std::string Application::PutWindow(const std::shared_ptr<AppWindow> &win) {
@@ -2694,8 +2851,8 @@ Application::GetAnonymousComponent(const Identifier &identifier) {
       }
     }
   } else {
-    for (const auto &existing_component :
-         Application::Get().m_ApplicationAnonymousComponents) {
+    ComponentsPool *pool = Application::Get().GetActiveComponentPool();
+    for (const auto &existing_component : pool->AnonymousComponents) {
       if (existing_component->GetIdentifier() == identifier) {
         return existing_component;
       }
@@ -2714,8 +2871,8 @@ Application::GetComponent(const Identifier &identifier) {
       }
     }
   } else {
-    for (const auto &existing_component :
-         Application::Get().m_ApplicationComponents) {
+    ComponentsPool *pool = Application::Get().GetActiveComponentPool();
+    for (const auto &existing_component : pool->IdentifiedComponents) {
       if (existing_component->GetIdentifier() == identifier) {
         return existing_component;
       }
@@ -2933,13 +3090,7 @@ bool IsReady() {
 }
 
 std::string GetData(const Identifier &id, const std::string topic) {
-  for (auto &component : Application::Get().m_ApplicationComponents) {
-    if (component->GetIdentifier() == id) {
-      return component->GetData(topic);
-    }
-  }
-  std::cout << "No components for \"" << id.string() << "\"" << std::endl;
-  return "undefined";
+  return CherryApp.GetComponentData(id, topic);
 }
 
 void PushPermanentProperty(const std::string &property,

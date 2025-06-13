@@ -46,6 +46,8 @@ public:
 
   virtual void Render() {};
 
+  bool m_IsComponentRendered = false;
+
 private:
   Identifier m_Identifier;
   bool m_IsPropsChanged = false;

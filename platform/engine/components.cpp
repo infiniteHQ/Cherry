@@ -75,8 +75,16 @@ std::string Component::GetProperty(const std::string &key) {
 void Component::RenderWrapper() {
   // If render disable flag enabled, dont render and consume properties
   // button->RefreshContextProperties();
+  m_IsComponentRendered = true;
+  // Pre process actions
 
+  // Render
+  CherryApp.SetCurrentComponent(this);
   this->Render();
+  CherryApp.ResetCurrentComponent();
+
+  // Post process actions
+  CherryApp.SetLastComponent(this);
 }
 
 void Component::ClearProperty(const std::string &key) {
