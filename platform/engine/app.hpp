@@ -593,13 +593,14 @@ public:
       break;
     }
     case IdentifierProperty::CreateOnly: {
-      CherryApp.ResetNextComponent();
       auto &existing_button = Application::GetComponent(identifier);
       if (existing_button.GetIdentifier().string() != "undefined") {
+        CherryApp.ResetNextComponent();
         return existing_button;
       } else {
         auto new_button =
             Application::CreateComponent<T>(T(identifier, args...));
+        CherryApp.ResetNextComponent();
         return *new_button;
       }
       return existing_button;
@@ -607,7 +608,6 @@ public:
     }
     default: { // Get the object if exist
       auto &existing_button = Application::GetComponent(identifier);
-      auto &existing_button2 = Application::GetComponent(identifier);
       if (existing_button.GetIdentifier().string() != "undefined") {
         existing_button.RenderWrapper();
         return existing_button;

@@ -31,7 +31,7 @@ std::string Component::GetProperty(const std::string &key) {
   if (!m_IsPropsChanged) {
     auto cacheIt = m_CachedProperties.find(key);
     if (cacheIt != m_CachedProperties.end()) {
-      return cacheIt->second;
+      // return cacheIt->second;
     }
   }
 
@@ -67,6 +67,11 @@ std::string Component::GetProperty(const std::string &key) {
   if (value.rfind(prefix, 0) == 0) {
     std::string themeKey = value.substr(prefix.length());
     value = CherryApp.GetActiveThemeProperty(themeKey);
+  }
+
+  auto it = CherryNextComponent.m_Properties.find(key);
+  if (it != CherryNextComponent.m_Properties.end()) {
+    value = it->second;
   }
 
   return value;

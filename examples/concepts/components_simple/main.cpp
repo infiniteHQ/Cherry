@@ -11,7 +11,19 @@ Lower level
 
 */
 
-void DynamicVars() { CherryKit::ButtonText(CherryID("dfg"), "Button__"); }
+void DynamicVars() {
+
+  CherryNextComponent.SetIdentifierProperty(ComponentProperty::CreateOnly);
+  auto &cmp = CherryKit::ButtonText("Button 1");
+
+  CherryNextComponent.SetProperty("color_bg", "#FF5555");
+  CherryNextComponent.SetProperty("color_border", "#FF5555");
+  CherryKit::ButtonText("Button 2");
+
+  CherryNextComponent.SetProperty("color_bg", "#55FF55");
+  CherryNextComponent.SetProperty("color_border", "#55FF55");
+  CherryApp.RenderComponent(cmp);
+}
 
 void ComponentGroups() {
   CherryApp.PushComponentGroup("test");
