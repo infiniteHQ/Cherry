@@ -42,36 +42,27 @@ public:
 
 // End-User API
 namespace Kit {
-inline std::shared_ptr<Component> TextSimple(const std::string &label) {
-  // Inline component
-  auto anonymous_id = Application::GenerateUniqueID(label);
-  auto existing = Application::GetAnonymousComponent(anonymous_id);
-  if (existing) {
-    existing->RenderWrapper();
-    return existing;
-  } else {
-    std::cout << "Create" << std::endl;
-    auto button = Application::CreateAnonymousComponent<Components::TextSimple>(
-        Components::TextSimple(anonymous_id, label));
-    button->RenderWrapper();
-    return button;
-  }
-}
 
-inline std::shared_ptr<Component>
-TextSimple(const Cherry::Identifier &identifier, const std::string &label) {
+inline Component &TextSimple(const Cherry::Identifier &identifier,
+                             const std::string &label) {
   // Get the object if exist
   auto existing_text = Application::GetComponent(identifier);
-  if (existing_text) {
-    existing_text->RenderWrapper();
+  if (existing_text.GetIdentifier().string() != "undefined") {
+    existing_text.RenderWrapper();
   } else {
     // Create the object if not exist
     auto new_text = Application::CreateComponent<Components::TextSimple>(
         Components::TextSimple(identifier, label));
     new_text->RenderWrapper();
-    return new_text;
+    return *new_text;
   }
   return existing_text;
+}
+
+inline Component &TextSimple(const std::string &label) {
+  // Inline component
+  auto anonymous_id = Application::GenerateUniqueID(label);
+  return Cherry::Kit::TextSimple(anonymous_id, label);
 }
 } // namespace Kit
 

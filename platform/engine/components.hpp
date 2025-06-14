@@ -44,6 +44,12 @@ public:
   void Refreshed();
   void RenderWrapper();
 
+  IdentifierProperty GetIdentifierProperty() { return m_IdentifierProperty; }
+
+  void SetIdentifierProperty(IdentifierProperty prop) {
+    m_IdentifierProperty = prop;
+  }
+
   virtual void Render() {};
   virtual void Refresh() {};
 
@@ -51,6 +57,7 @@ public:
 
 private:
   Identifier m_Identifier;
+  IdentifierProperty m_IdentifierProperty = IdentifierProperty::None;
   bool m_IsPropsChanged = false;
   std::string m_ComponentType =
       "undefined"; // Optionnal, some parent components can ask for a specific

@@ -175,5 +175,6 @@ inline IdentifierPattern ID(IdentifierProperty prop, Args &&...args) {
 } // namespace Cherry
 
 using CherryID = Cherry::Identifier;
+using ComponentProperty = Cherry::IdentifierProperty;
 
 #endif // CHERRY_IDENTIFIER

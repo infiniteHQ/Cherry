@@ -498,14 +498,30 @@ void Application::SetLastComponent(Component *component) {
 void Application::ResetLastComponent() { c_LastComponent = nullptr; }
 
 Cherry::Component &Application::GetSafeNextComponent() {
-  return c_NextComponent ? *c_NextComponent : s_EmptyComponent;
+  if (!c_NextComponent) {
+    CherryApp.ResetNextComponent();
+  }
+
+  return *c_NextComponent;
+}
+
+void Application::RenderComponent(const std::shared_ptr<Component> &component) {
+  if (component)
+    component->RenderWrapper();
+}
+
+void Application::RenderComponent(Component &component) {
+  component.RenderWrapper();
 }
 
 void Application::SetNextComponent(Component *component) {
   c_NextComponent = component;
 }
 
-void Application::ResetNextComponent() { c_NextComponent = nullptr; }
+void Application::ResetNextComponent() {
+  auto new_empty_cmp = s_EmptyComponent;
+  c_NextComponent = &new_empty_cmp;
+}
 
 Cherry::Component &Application::GetSafeCurrentComponent() {
   return c_CurrentComponent ? *c_CurrentComponent : s_EmptyComponent;
@@ -2873,44 +2889,42 @@ std::string Application::GetLocale(const std::string &locale_type) {
   return "locale_undefined";
 }
 
-std::shared_ptr<Component>
-Application::GetAnonymousComponent(const Identifier &identifier) {
+Component &Application::GetAnonymousComponent(const Identifier &identifier) {
   if (identifier.component_array_ptr() != nullptr) {
     for (const auto &existing_component : *identifier.component_array_ptr()) {
       if (existing_component->GetIdentifier() == identifier) {
-        return existing_component;
+        return existing_component ? *existing_component : s_EmptyComponent;
       }
     }
   } else {
     ComponentsPool *pool = Application::Get().GetComponentPool();
     for (const auto &existing_component : pool->AnonymousComponents) {
       if (existing_component->GetIdentifier() == identifier) {
-        return existing_component;
+        return existing_component ? *existing_component : s_EmptyComponent;
       }
     }
   }
 
-  return nullptr;
+  return s_EmptyComponent;
 }
 
-std::shared_ptr<Component>
-Application::GetComponent(const Identifier &identifier) {
+Component &Application::GetComponent(const Identifier &identifier) {
   if (identifier.component_array_ptr() != nullptr) {
     for (const auto &existing_component : *identifier.component_array_ptr()) {
       if (existing_component->GetIdentifier() == identifier) {
-        return existing_component;
+        return existing_component ? *existing_component : s_EmptyComponent;
       }
     }
   } else {
     ComponentsPool *pool = Application::Get().GetComponentPool();
     for (const auto &existing_component : pool->IdentifiedComponents) {
       if (existing_component->GetIdentifier() == identifier) {
-        return existing_component;
+        return existing_component ? *existing_component : s_EmptyComponent;
       }
     }
   }
 
-  return nullptr;
+  return s_EmptyComponent;
 }
 
 // Simplicity utils

@@ -85,6 +85,7 @@ void Component::RenderWrapper() {
 
   // Post process actions
   CherryApp.SetLastComponent(this);
+  CherryApp.ResetNextComponent();
 }
 
 void Component::ClearProperty(const std::string &key) {

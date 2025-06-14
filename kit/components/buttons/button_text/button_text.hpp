@@ -172,48 +172,18 @@ private:
 
 // End-User API
 namespace Kit {
-inline std::shared_ptr<Component> ButtonText(const std::string &label) {
-  auto anonymous_id = Application::GenerateUniqueID(label);
-  auto existing = Application::GetAnonymousComponent(anonymous_id);
-  if (existing) {
-    existing->RenderWrapper();
-    return existing;
-  } else {
-    std::cout << "Create" << std::endl;
-    auto button = Application::CreateAnonymousComponent<Components::ButtonText>(
-        Components::ButtonText(anonymous_id, label));
-    button->RenderWrapper();
-    return button;
-  }
+
+inline Component &ButtonText(const Identifier &identifier,
+                             const std::string &label) {
+  return CherryApp.PushComponent<Cherry::Components::ButtonText>(identifier,
+                                                                 label);
 }
 
-inline std::shared_ptr<Component>
-ButtonText(const Cherry::Identifier &identifier, const std::string &label) {
-  std::cout << "q" << identifier.string() << std::endl;
-  if (identifier.string() == "__inline") {
-    auto new_button = std::make_shared<Components::ButtonText>(
-        Components::ButtonText(identifier, label));
-    new_button->RenderWrapper();
-    return new_button;
-  }
-
-  // Get the object if exist
-  auto existing_button = Application::GetComponent(identifier);
-  if (existing_button) {
-    std::cout << "EX" << std::endl;
-    existing_button->RenderWrapper();
-  } else {
-    std::cout << "Create" << std::endl;
-    // Create the object if not exist
-    auto new_button = Application::CreateComponent<Components::ButtonText>(
-        Components::ButtonText(identifier, label));
-    new_button->RenderWrapper();
-    return new_button;
-  }
-  return existing_button;
+inline Component &ButtonText(const std::string &label) {
+  return Cherry::Kit::ButtonText(Application::GenerateUniqueID(label), label);
 }
+
 } // namespace Kit
-
 } // namespace Cherry
 
 #endif // CHERRY_KIT_BUTTON_TEXT

@@ -33,36 +33,27 @@ public:
 
 // End-User API
 namespace Kit {
-inline std::shared_ptr<Component> Separator() {
-  // Inline component
-  auto anonymous_id = Application::GenerateUniqueID("separator");
-  auto existing = Application::GetAnonymousComponent(anonymous_id);
-  if (existing) {
-    existing->RenderWrapper();
-    return existing;
-  } else {
-    auto button = Application::CreateAnonymousComponent<Components::Separator>(
-        Components::Separator(anonymous_id));
-    button->RenderWrapper();
-    return button;
-  }
-}
-
-inline std::shared_ptr<Component>
-Separator(const Cherry::Identifier &identifier) {
+inline Component &Separator(const Cherry::Identifier &identifier) {
   // Get the object if exist
   auto existing_title = Application::GetComponent(identifier);
-  if (existing_title) {
-    existing_title->RenderWrapper();
+  if (existing_title.GetIdentifier().string() != "undefined") {
+    existing_title.RenderWrapper();
   } else {
     // Create the object if not exist
     auto new_title = Application::CreateComponent<Components::Separator>(
         Components::Separator(identifier));
     new_title->RenderWrapper();
-    return new_title;
+    return *new_title;
   }
   return existing_title;
 }
+
+inline Component &Separator() {
+  // Inline component
+  auto anonymous_id = Application::GenerateUniqueID("separator");
+  return Cherry::Kit::Separator(anonymous_id);
+}
+
 } // namespace Kit
 
 } // namespace Cherry

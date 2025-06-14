@@ -453,9 +453,8 @@ public:
   void SetHttpCacheFolderName(const std::string &name);
 
   // Identified component
-  static std::shared_ptr<Component>
-  GetAnonymousComponent(const Identifier &identifier);
-  static std::shared_ptr<Component> GetComponent(const Identifier &identifier);
+  static Component &GetAnonymousComponent(const Identifier &identifier);
+  static Component &GetComponent(const Identifier &identifier);
 
   std::string GetComponentData(const Identifier &id, const std::string &topic);
 
@@ -480,6 +479,9 @@ public:
   // created in the application component array
   void PopComponentPool();
   ComponentsPool *GetComponentPool();
+
+  void RenderComponent(Component &component);
+  void RenderComponent(const std::shared_ptr<Component> &component);
 
   // TODO:
   // SetDataToComponentPool
@@ -579,6 +581,47 @@ public:
     pool->AnonymousComponents.push_back(new_component);
 
     return new_component;
+  }
+
+  template <typename T, typename... Args>
+  Component &PushComponent(const Identifier &identifier, Args... args) {
+    switch (CherryNextComponent.GetIdentifierProperty()) {
+    case IdentifierProperty::Inline: {
+      auto new_button = std::make_shared<T>(T(identifier, args...));
+      new_button->RenderWrapper();
+      return *new_button;
+      break;
+    }
+    case IdentifierProperty::CreateOnly: {
+      CherryApp.ResetNextComponent();
+      auto &existing_button = Application::GetComponent(identifier);
+      if (existing_button.GetIdentifier().string() != "undefined") {
+        return existing_button;
+      } else {
+        auto new_button =
+            Application::CreateComponent<T>(T(identifier, args...));
+        return *new_button;
+      }
+      return existing_button;
+      break;
+    }
+    default: { // Get the object if exist
+      auto &existing_button = Application::GetComponent(identifier);
+      auto &existing_button2 = Application::GetComponent(identifier);
+      if (existing_button.GetIdentifier().string() != "undefined") {
+        existing_button.RenderWrapper();
+        return existing_button;
+      } else {
+        // Create the object if not exist
+        auto new_button =
+            Application::CreateComponent<T>(T(identifier, args...));
+        new_button->RenderWrapper();
+        return *new_button;
+      }
+      return existing_button;
+      break;
+    }
+    }
   }
 
   template <typename T>

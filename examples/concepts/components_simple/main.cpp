@@ -1,45 +1,17 @@
 #include "../../../cherry.hpp"
 
-void DynamicVars() {
-  // We can safely make mistake by call invalid latest components
-  {
-    auto last_component = CherryLastComponent;
-    CherryKit::TextSimple("Invalid component :");
-    CherryKit::TextSimple("ID : " + last_component.GetIdentifier().string());
-    CherryKit::TextSimple("isClicked : " + last_component.GetData("isClicked"));
-    CherryKit::TextSimple("isPressed : " + last_component.GetData("isPressed"));
-    CherryKit::TextSimple("isHovered : " + last_component.GetData("isHovered"));
-  }
+/* Component Property level :
 
-  CherryKit::Separator();
+Higher level (high priority)
+->  -> NextComponent.SetProperty()
+-> -> Cherry::SetNextComponentProperty()
+-> -> Cherry::PushPermanentProperty()
+-> -> [Component]->SetProperty()
+Lower level
 
-  // We can also get the last anonymous component
-  CherryKit::ButtonText("Button");
+*/
 
-  {
-    auto last_component = CherryLastComponent;
-    CherryKit::TextSimple("Valid anonymous button :");
-    CherryKit::TextSimple("ID : " + last_component.GetIdentifier().string());
-    CherryKit::TextSimple("isClicked : " + last_component.GetData("isClicked"));
-    CherryKit::TextSimple("isPressed : " + last_component.GetData("isPressed"));
-    CherryKit::TextSimple("isHovered : " + last_component.GetData("isHovered"));
-  }
-
-  CherryKit::Separator();
-
-  // We can get the last identified compoent
-  CherryKit::ButtonText(CherryID("my_id"), "Button with ID");
-  CherryApp.DestroyComponent(CherryID("my_id"));
-
-  {
-    auto last_component = CherryLastComponent;
-    CherryKit::TextSimple("Valid button with ID :");
-    CherryKit::TextSimple("ID : " + last_component.GetIdentifier().string());
-    CherryKit::TextSimple("isClicked : " + last_component.GetData("isClicked"));
-    CherryKit::TextSimple("isPressed : " + last_component.GetData("isPressed"));
-    CherryKit::TextSimple("isHovered : " + last_component.GetData("isHovered"));
-  }
-}
+void DynamicVars() { CherryKit::ButtonText(CherryID("dfg"), "Button__"); }
 
 void ComponentGroups() {
   CherryApp.PushComponentGroup("test");
@@ -122,7 +94,7 @@ CherryApplication CherryMain(int argc, char **argv) {
 
   config.SetRenderMode(Cherry::WindowRenderingMethod::TabWidows);
 
-  Cherry::AddAppWindow(CherryKit::WindowSimple("Base", Base));
+  // Cherry::AddAppWindow(CherryKit::WindowSimple("Base", Base));
   Cherry::AddAppWindow(
       CherryKit::WindowSimple("Dynamic Variables", DynamicVars));
 
