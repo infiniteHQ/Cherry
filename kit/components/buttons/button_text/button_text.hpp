@@ -60,12 +60,20 @@ public:
 
   void Render() override {
 
-    const ImVec2 &size = ImVec2(std::stoi(GetProperty("size_x")),
-                                std::stoi(GetProperty("size_y")));
+    std::cout << "QF" << GetProperty("size_x") << std::endl;
+
+    std::cout << "QF" << GetProperty("padding_x") << std::endl;
+
+    std::cout << "QF" << GetProperty("padding_y") << std::endl;
+    std::cout << "QF" << GetProperty("disabled") << std::endl;
+    const ImVec2 &size =
+        ImVec2(GetPropertyAs<int>("size_x"), GetPropertyAs<int>("size_y"));
+    std::cout << "QF" << std::endl;
 
     CherryGUI::PushStyleVar(ImGuiStyleVar_FramePadding,
                             ImVec2(std::stoi(GetProperty("padding_x")),
                                    std::stoi(GetProperty("padding_y"))));
+    std::cout << "QF" << std::endl;
 
     CherryGUI::PushStyleColor(ImGuiCol_Border,
                               HexToRGBA(GetProperty("color_border")));

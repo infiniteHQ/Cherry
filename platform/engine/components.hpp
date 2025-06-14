@@ -13,6 +13,11 @@
 #include "identifier.hpp"
 
 namespace Cherry {
+
+enum class ComponentRefreshRate {
+  EveryFrame, // Immediate mode
+};
+
 class Component {
 public:
   Component(const Identifier &id);
@@ -20,28 +25,36 @@ public:
 
   // Properties
   std::string SetProperty(const std::string &key, const std::string &val);
+  std::string SetProperty(const std::string &key, const char *val);
+  std::string SetProperty(const std::string &key, float val);
+  std::string SetProperty(const std::string &key, int val);
+  std::string SetProperty(const std::string &key, double val);
+  std::string SetProperty(const std::string &key, bool val);
   std::string GetProperty(const std::string &key);
-  void ClearProperty(const std::string &key);
-  void RefreshContextProperties(); // Get active context properties
+  template <typename T> T GetPropertyAs(const std::string &key);
 
-  // Data
+  // Datas
   std::string SetData(const std::string &key, const std::string &val);
+  std::string SetData(const std::string &key, const char *val);
+  std::string SetData(const std::string &key, int val);
+  std::string SetData(const std::string &key, float val);
+  std::string SetData(const std::string &key, double val);
+  std::string SetData(const std::string &key, bool val);
   std::string GetData(const std::string &key);
-  // TODO GetJsonData(key)
-  // TODO GetIntData(key)
-  // TODO GetFloatData(key)
-  // TODO etc....
+  template <typename T> T GetDataAs(const std::string &key);
+
+  void ClearProperty(const std::string &key);
   void ClearData(const std::string &key);
+
+  void RefreshContextProperties();
 
   // Identifier
   void SetIdentifier(const Identifier &id);
   const Identifier &GetIdentifier() const;
-  bool NeedRefreshing();
 
   const std::string &GetType() const;
   void SetType(const std::string &type);
 
-  void Refreshed();
   void RenderWrapper();
 
   IdentifierProperty GetIdentifierProperty() { return m_IdentifierProperty; }
@@ -58,7 +71,7 @@ public:
 private:
   Identifier m_Identifier;
   IdentifierProperty m_IdentifierProperty = IdentifierProperty::None;
-  bool m_IsPropsChanged = false;
+
   std::string m_ComponentType =
       "undefined"; // Optionnal, some parent components can ask for a specific
                    // type (like NodeArea and Nodes), this type member can help

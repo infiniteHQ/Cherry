@@ -22,7 +22,15 @@ void DynamicVars() {
 
   CherryNextComponent.SetProperty("color_bg", "#55FF55");
   CherryNextComponent.SetProperty("color_border", "#55FF55");
+  CherryNextComponent.SetData("test", 56.0f);
   CherryApp.RenderComponent(cmp);
+
+  {
+    auto last_component = CherryLastComponent;
+    CherryKit::TextSimple("Valid button with ID :");
+    CherryKit::TextSimple("ID : " + last_component.GetIdentifier().string());
+    CherryKit::TextSimple("test : " + last_component.GetData("test"));
+  }
 }
 
 void ComponentGroups() {
