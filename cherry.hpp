@@ -39,26 +39,16 @@
 /// Kit : 80+ Components, All in one windows, theme, utils...   ///
 ///////////////////////////////////////////////////////////////
 // Buttons
-#include "./kit/components/buttons/button_text/button_text.hpp"
-#include "./kit/components/separators/separator/separator.hpp"
-#include "./kit/components/separators/separator_text/separator_text.hpp"
-#include "./kit/components/texts/text_simple/text_simple.hpp"
-/*
 #include "./kit/components/buttons/button_image/button_image.hpp"
-#include
-"./kit/components/buttons/button_image_drowpdown/button_image_drowpdown.hpp"
+#include "./kit/components/buttons/button_image_drowpdown/button_image_drowpdown.hpp"
 #include "./kit/components/buttons/button_image_text/button_image_text.hpp"
-#include
-"./kit/components/buttons/button_image_text_drowpdown/button_image_text_drowpdown.hpp"
-#include
-"./kit/components/buttons/button_image_text_image/button_image_text_image.hpp"
-#include
-"./kit/components/buttons/button_text_dropdown/button_text_dropdown.hpp"
+#include "./kit/components/buttons/button_image_text_drowpdown/button_image_text_drowpdown.hpp"
+#include "./kit/components/buttons/button_image_text_image/button_image_text_image.hpp"
+#include "./kit/components/buttons/button_text/button_text.hpp"
+#include "./kit/components/buttons/button_text_dropdown/button_text_dropdown.hpp"
 #include "./kit/components/buttons/button_text_image/button_text_image.hpp"
-#include
-"./kit/components/buttons/button_text_image_drowpdown/button_text_image_drowpdown.hpp"
-#include
-"./kit/components/buttons/button_text_underline/button_text_underline.hpp"
+#include "./kit/components/buttons/button_text_image_drowpdown/button_text_image_drowpdown.hpp"
+#include "./kit/components/buttons/button_text_underline/button_text_underline.hpp"
 // Titles
 #include "./kit/components/titles/title_h1/title_h1.hpp"
 #include "./kit/components/titles/title_h2/title_h2.hpp"
@@ -71,6 +61,7 @@
 #include "./kit/components/texts/text_image/text_image.hpp"
 #include "./kit/components/texts/text_left/text_left.hpp"
 #include "./kit/components/texts/text_right/text_right.hpp"
+#include "./kit/components/texts/text_simple/text_simple.hpp"
 #include "./kit/components/texts/text_wrapped/text_wrapped.hpp"
 // Table
 #include "./kit/components/tables/table_custom/table_custom.hpp"
@@ -90,8 +81,7 @@
 #include "./kit/components/keyval/keyval_vector4/keyval_vector4.hpp"
 // Headers
 #include "./kit/components/headers/header_image_text/header_image_text.hpp"
-#include
-"./kit/components/headers/header_image_text_button/header_image_text_button.hpp"
+#include "./kit/components/headers/header_image_text_button/header_image_text_button.hpp"
 #include "./kit/components/headers/header_text/header_text.hpp"
 #include "./kit/components/headers/header_text_button/header_text_button.hpp"
 // Combos
@@ -116,8 +106,7 @@
 #include "./kit/components/inputs/input_double/input_double.hpp"
 #include "./kit/components/inputs/input_float/input_float.hpp"
 #include "./kit/components/inputs/input_int/input_int.hpp"
-#include
-"./kit/components/inputs/input_multiline_string/input_multiline_string.hpp"
+#include "./kit/components/inputs/input_multiline_string/input_multiline_string.hpp"
 #include "./kit/components/inputs/input_string/input_string.hpp"
 // Bullets
 #include "./kit/components/bullets/bullet_button/bullet_button.hpp"
@@ -129,20 +118,15 @@
 #include "./kit/components/lists/list_string/list_string.hpp"
 // Tooltips
 #include "./kit/components/tooltips/tooltip_image/tooltip_image.hpp"
-#include
-"./kit/components/tooltips/tooltip_image_custom/tooltip_image_custom.hpp"
+#include "./kit/components/tooltips/tooltip_image_custom/tooltip_image_custom.hpp"
 #include "./kit/components/tooltips/tooltip_text/tooltip_text.hpp"
 #include "./kit/components/tooltips/tooltip_text_custom/tooltip_text_custom.hpp"
 // Progresses
-#include
-"./kit/components/progress/progress_bar_percentage/progress_bar_percentage.hpp"
-#include
-"./kit/components/progress/progress_bar_percentage_float/progress_bar_percentage_float.hpp"
-#include
-"./kit/components/progress/progress_bar_percentage_int/progress_bar_percentage_int.hpp"
+#include "./kit/components/progress/progress_bar_percentage/progress_bar_percentage.hpp"
+#include "./kit/components/progress/progress_bar_percentage_float/progress_bar_percentage_float.hpp"
+#include "./kit/components/progress/progress_bar_percentage_int/progress_bar_percentage_int.hpp"
 // Progresses
-#include
-"./kit/components/plots/plot_historigram_float/plot_historigram_float.hpp"
+#include "./kit/components/plots/plot_historigram_float/plot_historigram_float.hpp"
 #include "./kit/components/plots/plot_line_float/plot_line_float.hpp"
 // Grid
 #include "./kit/components/grid/grid_simple/grid_simple.hpp"
@@ -150,11 +134,9 @@
 #include "./kit/components/widgets/widget_folder/widget_folder.hpp"
 #include "./kit/components/widgets/widget_small_folder/widget_small_folder.hpp"
 // Blocks
-#include
-"./kit/components/blocks/block_vertical_custom/block_vertical_custom.hpp"
+#include "./kit/components/blocks/block_vertical_custom/block_vertical_custom.hpp"
 // Banner
-#include
-"./kit/components/banners/banner_image_context/banner_image_context.hpp"
+#include "./kit/components/banners/banner_image_context/banner_image_context.hpp"
 // Modals
 #include "./kit/components/modals/modal_title/modal_title.hpp"
 // Web
@@ -162,14 +144,11 @@
 #include "./kit/components/web/web_view/web_view.hpp"
 #endif
 // Notifications
-#include
-"./kit/components/notifications/notification_button/notification_button.hpp"
-#include
-"./kit/components/notifications/notification_custom/notification_custom.hpp"
-#include
-"./kit/components/notifications/notification_simple/notification_simple.hpp"
+#include "./kit/components/notifications/notification_button/notification_button.hpp"
+#include "./kit/components/notifications/notification_custom/notification_custom.hpp"
+#include "./kit/components/notifications/notification_simple/notification_simple.hpp"
 // Text
-#include "./kit/components/text/text_area/text_area.hpp"*/
+#include "./kit/components/text/text_area/text_area.hpp"
 
 ///////////////////////////////////////////////////////////////
 /// Style : +5 Style effects , All in one windows, theme, utils...   ///

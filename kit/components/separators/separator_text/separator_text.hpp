@@ -57,35 +57,15 @@ public:
 
 // End-User API
 namespace Kit {
-
-inline Component &SeparatorText(const Cherry::Identifier &identifier,
+inline Component &SeparatorText(const Identifier &identifier,
                                 const std::string &label) {
-  if (identifier.string() == "__inline") {
-    auto new_title =
-        Application::CreateAnonymousComponent<Components::SeparatorText>(
-            Components::SeparatorText(identifier, label));
-    new_title->RenderWrapper();
-    return *new_title;
-  }
-
-  // Get the object if exist
-  auto existing_title = Application::GetComponent(identifier);
-  if (existing_title.GetIdentifier().string() != "undefined") {
-    existing_title.RenderWrapper();
-  } else {
-    // Create the object if not exist
-    auto new_title = Application::CreateComponent<Components::SeparatorText>(
-        Components::SeparatorText(identifier, label));
-    new_title->RenderWrapper();
-    return *new_title;
-  }
-  return existing_title;
+  return CherryApp.PushComponent<Cherry::Components::SeparatorText>(identifier,
+                                                                    label);
 }
 
 inline Component &SeparatorText(const std::string &label) {
-  // Inline component
-  auto anonymous_id = Application::GenerateUniqueID(label);
-  return Cherry::Kit::SeparatorText(anonymous_id, label);
+  return Cherry::Kit::SeparatorText(Application::GenerateUniqueID(label),
+                                    label);
 }
 
 } // namespace Kit

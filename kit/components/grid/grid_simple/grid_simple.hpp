@@ -11,159 +11,117 @@
 #define CHERRY_KIT_GRID_SIMPLE
 
 namespace Cherry {
-  namespace Components {
-    class GridSimple : public Component {
-     public:
-      GridSimple(
-          const Cherry::Identifier &id,
-          std::vector<std::function<void()>> *elements,
-          const float &blockSize = 250.0f,
-          const float &minBlockSize = 250.0f)
-          : Component(id),
-            m_Elements(elements) {
-        SetProperty("blockSize", std::to_string(blockSize));
-        SetProperty("minBlockSize", std::to_string(minBlockSize));
-      }
+namespace Components {
+class GridSimple : public Component {
+public:
+  GridSimple(const Cherry::Identifier &id,
+             std::vector<std::function<void()>> *elements,
+             const float &blockSize = 250.0f,
+             const float &minBlockSize = 250.0f)
+      : Component(id), m_Elements(elements) {
+    SetProperty("blockSize", std::to_string(blockSize));
+    SetProperty("minBlockSize", std::to_string(minBlockSize));
+  }
 
-      GridSimple(
-          const Cherry::Identifier &id,
-          std::vector<std::shared_ptr<Cherry::Component>> *elements,
-          const float &blockSize = 250.0f,
-          const float &minBlockSize = 250.0f)
-          : Component(id),
-            m_Components(elements) {
-        SetProperty("blockSize", std::to_string(blockSize));
-        SetProperty("minBlockSize", std::to_string(minBlockSize));
-      }
+  GridSimple(const Cherry::Identifier &id,
+             std::vector<std::shared_ptr<Cherry::Component>> *elements,
+             const float &blockSize = 250.0f,
+             const float &minBlockSize = 250.0f)
+      : Component(id), m_Components(elements) {
+    SetProperty("blockSize", std::to_string(blockSize));
+    SetProperty("minBlockSize", std::to_string(minBlockSize));
+  }
 
-      void Render() override {
-        float block_size = std::stof(GetProperty("blockSize"));
-        float min_block_size = std::stof(GetProperty("minBlockSize"));
+  void Render() override {
+    float block_size = std::stof(GetProperty("blockSize"));
+    float min_block_size = std::stof(GetProperty("minBlockSize"));
 
-        ImVec2 avail = CherryGUI::GetContentRegionAvail();
-        int columns = (std::max)(1, static_cast<int>(avail.x / block_size));
-        float actual_block_size = (std::max)(min_block_size, avail.x / columns);
+    ImVec2 avail = CherryGUI::GetContentRegionAvail();
+    int columns = (std::max)(1, static_cast<int>(avail.x / block_size));
+    float actual_block_size = (std::max)(min_block_size, avail.x / columns);
 
-        int index = 0;
+    int index = 0;
 
-        if (m_Elements != nullptr) {
-          if (!m_Elements->empty()) {
-            for (const auto &element : *m_Elements) {
-              if (element) {
-                if (index > 0 && index % columns == 0)
-                  CherryGUI::NewLine();
+    if (m_Elements != nullptr) {
+      if (!m_Elements->empty()) {
+        for (const auto &element : *m_Elements) {
+          if (element) {
+            if (index > 0 && index % columns == 0)
+              CherryGUI::NewLine();
 
-                CherryGUI::BeginGroup();
+            CherryGUI::BeginGroup();
 
-                std::string id = GetIdentifier().string() + std::to_string(index);
-                CherryGUI::PushID(id.c_str());
-                CherryGUI::SetNextItemWidth(actual_block_size);
+            std::string id = GetIdentifier().string() + std::to_string(index);
+            CherryGUI::PushID(id.c_str());
+            CherryGUI::SetNextItemWidth(actual_block_size);
 
-                element();
+            element();
 
-                CherryGUI::PopID();
-                CherryGUI::EndGroup();
+            CherryGUI::PopID();
+            CherryGUI::EndGroup();
 
-                if (index < m_Elements->size() - 1) {
-                  CherryGUI::SameLine();
-                }
-                index++;
-              }
+            if (index < m_Elements->size() - 1) {
+              CherryGUI::SameLine();
             }
-          }
-        }
-
-        if (m_Components != nullptr) {
-          if (!m_Components->empty()) {
-            for (const auto &component : *m_Components) {
-              if (component) {
-                if (index > 0 && index % columns == 0)
-                  CherryGUI::NewLine();
-
-                CherryGUI::BeginGroup();
-                std::string id = GetIdentifier().string() + std::to_string(index);
-                CherryGUI::PushID(id.c_str());
-                CherryGUI::SetNextItemWidth(actual_block_size);
-
-                component->Render();
-
-                CherryGUI::PopID();
-                CherryGUI::EndGroup();
-
-                if (index < m_Components->size() - 1) {
-                  CherryGUI::SameLine();
-                }
-                index++;
-              }
-            }
+            index++;
           }
         }
       }
-
-     private:
-      std::vector<std::function<void()>> *m_Elements = nullptr;
-      std::vector<std::shared_ptr<Cherry::Component>> *m_Components = nullptr;
-    };
-  }  // namespace Components
-
-  // End-User API
-  namespace Kit {
-    inline std::shared_ptr<Component> GridSimple(
-        const float &blockSize = 250.0f,
-        const float &minBlockSize = 250.0f,
-        std::vector<std::shared_ptr<Cherry::Component>> *elements = nullptr) {
-      auto anonymous_id = Application::GenerateUniqueID(blockSize, minBlockSize, elements);
-      auto existing = Application::GetAnonymousComponent(anonymous_id);
-      if (existing) {
-        existing->Render();
-        return existing;
-      } else {
-        auto button = Application::CreateAnonymousComponent<Components::GridSimple>(
-            Components::GridSimple(anonymous_id, elements, blockSize, minBlockSize));
-        button->Render();
-        return button;
-      }
     }
 
-    inline std::shared_ptr<Component> GridSimple(
-        const Cherry::Identifier &identifier,
-        const float &blockSize = 250.0f,
-        const float &minBlockSize = 250.0f,
-        std::vector<std::shared_ptr<Cherry::Component>> *elements = nullptr) {
-      switch (identifier.property()) {
-        case IdentifierProperty::Inline: {
-          auto new_title = Application::CreateAnonymousComponent<Components::GridSimple>(
-              Components::GridSimple(identifier, elements, blockSize, minBlockSize));
-          new_title->Render();
-          return new_title;
-          break;
-        }
-        case IdentifierProperty::CreateOnly: {
-          break;
-        }
-        case IdentifierProperty::None: {
-          break;
-        }
-        default: {
-          break;
-        }
-      }
+    if (m_Components != nullptr) {
+      if (!m_Components->empty()) {
+        for (const auto &component : *m_Components) {
+          if (component) {
+            if (index > 0 && index % columns == 0)
+              CherryGUI::NewLine();
 
-      // Get the object if exist
-      auto existing_button = Application::GetComponent(identifier);
-      if (existing_button) {
-        existing_button->Render();
-      } else {
-        // Create the object if not exist
-        auto new_button = Application::CreateComponent<Components::GridSimple>(
-            Components::GridSimple(identifier, elements, blockSize, minBlockSize));
-        new_button->Render();
-        return new_button;
+            CherryGUI::BeginGroup();
+            std::string id = GetIdentifier().string() + std::to_string(index);
+            CherryGUI::PushID(id.c_str());
+            CherryGUI::SetNextItemWidth(actual_block_size);
+
+            component->Render();
+
+            CherryGUI::PopID();
+            CherryGUI::EndGroup();
+
+            if (index < m_Components->size() - 1) {
+              CherryGUI::SameLine();
+            }
+            index++;
+          }
+        }
       }
-      return existing_button;
     }
-  }  // namespace Kit
+  }
 
-}  // namespace Cherry
+private:
+  std::vector<std::function<void()>> *m_Elements = nullptr;
+  std::vector<std::shared_ptr<Cherry::Component>> *m_Components = nullptr;
+};
+} // namespace Components
 
-#endif  // CHERRY_KIT_GRID_SIMPLE
+// End-User API
+namespace Kit {
+inline Component &GridSimple(
+    const Identifier &identifier, const float &blockSize = 250.0f,
+    const float &minBlockSize = 250.0f,
+    std::vector<std::shared_ptr<Cherry::Component>> *elements = nullptr) {
+  return CherryApp.PushComponent<Cherry::Components::GridSimple>(
+      identifier, elements, blockSize, minBlockSize);
+}
+
+inline Component &GridSimple(
+    const float &blockSize = 250.0f, const float &minBlockSize = 250.0f,
+    std::vector<std::shared_ptr<Cherry::Component>> *elements = nullptr) {
+  return Cherry::Kit::GridSimple(
+      Application::GenerateUniqueID(blockSize, minBlockSize, elements),
+      blockSize, minBlockSize, elements);
+}
+
+} // namespace Kit
+
+} // namespace Cherry
+
+#endif // CHERRY_KIT_GRID_SIMPLE

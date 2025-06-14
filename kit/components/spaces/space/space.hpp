@@ -10,77 +10,44 @@
 #ifndef CHERRY_KIT_Space
 #define CHERRY_KIT_Space
 
-namespace Cherry
-{
-    namespace Components
-    {
-        class Space : public Component
-        {
-        public:
-            Space(const Cherry::Identifier &id, const float &spacing)
-                : Component(id)
-            {
-                // Identifier
-                SetIdentifier(id);
+namespace Cherry {
+namespace Components {
+class Space : public Component {
+public:
+  Space(const Cherry::Identifier &id, const float &spacing) : Component(id) {
+    // Identifier
+    SetIdentifier(id);
 
-                // Colors
-                SetProperty("color", "#454545B2");
-                SetProperty("spacing", std::to_string(spacing));
-            }
+    // Colors
+    SetProperty("color", "#454545B2");
+    SetProperty("spacing", std::to_string(spacing));
+  }
 
-            void Render() override
-            {
-                CherryGUI::BeginDisabled();
-                CherryGUI::PushStyleColor(ImGuiCol_Border, ImVec4(1.0f, 1.0f, 1.0f, 0.0f));
-                CherryGUI::PushStyleColor(ImGuiCol_Button, ImVec4(1.0f, 1.0f, 1.0f, 0.0f));
-                CherryGUI::Button("", ImVec2(0, std::stof(GetProperty("spacing"))));
-                CherryGUI::PopStyleColor(2);
-                CherryGUI::EndDisabled();
-            }
-        };
-    }
+  void Render() override {
+    CherryGUI::BeginDisabled();
+    CherryGUI::PushStyleColor(ImGuiCol_Border, ImVec4(1.0f, 1.0f, 1.0f, 0.0f));
+    CherryGUI::PushStyleColor(ImGuiCol_Button, ImVec4(1.0f, 1.0f, 1.0f, 0.0f));
+    CherryGUI::Button("", ImVec2(0, std::stof(GetProperty("spacing"))));
+    CherryGUI::PopStyleColor(2);
+    CherryGUI::EndDisabled();
+  }
+};
+} // namespace Components
 
-    // End-User API
-    namespace Kit
-    {
-        inline std::shared_ptr<Component> Space(const float &spacing)
-        {
-            // Inline component
-            auto anonymous_id = Application::GenerateUniqueID(spacing);
-            auto existing = Application::GetAnonymousComponent(anonymous_id);
-            if (existing)
-            {
-                existing->Render();
-                return existing;
-            }
-            else
-            {
+// End-User API
+namespace Kit {
 
-                auto button = Application::CreateAnonymousComponent<Components::Space>(Components::Space(anonymous_id, spacing));
-                button->Render();
-                return button;
-            }
-        }
-
-        inline std::shared_ptr<Component> Space(const Cherry::Identifier &identifier, const float &spacing)
-        {
-            // Get the object if exist
-            auto existing_title = Application::GetComponent(identifier);
-            if (existing_title)
-            {
-                existing_title->Render();
-            }
-            else
-            {
-                // Create the object if not exist
-                auto new_title = Application::CreateComponent<Components::Space>(Components::Space(identifier, spacing));
-                new_title->Render();
-                return new_title;
-            }
-            return existing_title;
-        }
-    }
-
+inline Component &Space(const Identifier &identifier, const float &spacing) {
+  return CherryApp.PushComponent<Cherry::Components::Space>(identifier,
+                                                            spacing);
 }
+
+inline Component &Space(const float &spacing) {
+  return Cherry::Kit::Space(Application::GenerateUniqueID(spacing), spacing);
+}
+
+} // namespace Kit
+
+} // namespace Cherry
 
 #endif // CHERRY_KIT_Space

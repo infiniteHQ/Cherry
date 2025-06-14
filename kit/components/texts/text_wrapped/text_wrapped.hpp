@@ -12,61 +12,44 @@
 #define CHERRY_KIT_TEXT_WRAPPED
 
 namespace Cherry {
-  namespace Components {
-    class TextWrapped : public Component {
-     public:
-      TextWrapped(const Cherry::Identifier &id, const std::string &label) : Component(id) {
-        // Identifier
-        SetIdentifier(id);
+namespace Components {
+class TextWrapped : public Component {
+public:
+  TextWrapped(const Cherry::Identifier &id, const std::string &label)
+      : Component(id) {
+    // Identifier
+    SetIdentifier(id);
 
-        // Colors
-        SetProperty("color_text", "#454545B2");
+    // Colors
+    SetProperty("color_text", "#454545B2");
 
-        // Informations
-        SetProperty("label", label);
-      }
+    // Informations
+    SetProperty("label", label);
+  }
 
-      void Render() override {
-        auto cached_text_color = Cherry::HexToRGBA(GetProperty("color_text"));
-        CherryGUI::PushStyleColor(ImGuiCol_Text, cached_text_color);
-        CherryGUI::TextWrapped(GetProperty("label").c_str());
-        CherryGUI::PopStyleColor();
-      }
-    };
-  }  // namespace Components
+  void Render() override {
+    auto cached_text_color = Cherry::HexToRGBA(GetProperty("color_text"));
+    CherryGUI::PushStyleColor(ImGuiCol_Text, cached_text_color);
+    CherryGUI::TextWrapped(GetProperty("label").c_str());
+    CherryGUI::PopStyleColor();
+  }
+};
+} // namespace Components
 
-  // End-User API
-  namespace Kit {
-    inline std::shared_ptr<Component> TextWrapped(const std::string &label) {
-      // Inline component
-      auto anonymous_id = Application::GenerateUniqueID(label);
-      auto existing = Application::GetAnonymousComponent(anonymous_id);
-      if (existing) {
-        existing->Render();
-        return existing;
-      } else {
-        auto button =
-            Application::CreateAnonymousComponent<Components::TextWrapped>(Components::TextWrapped(anonymous_id, label));
-        button->Render();
-        return button;
-      }
-    }
+// End-User API
+namespace Kit {
+inline Component &TextWrapped(const Identifier &identifier,
+                              const std::string &label) {
+  return CherryApp.PushComponent<Cherry::Components::TextWrapped>(identifier,
+                                                                  label);
+}
 
-    inline std::shared_ptr<Component> TextWrapped(const Cherry::Identifier &identifier, const std::string &label) {
-      // Get the object if exist
-      auto existing_text = Application::GetComponent(identifier);
-      if (existing_text) {
-        existing_text->Render();
-      } else {
-        // Create the object if not exist
-        auto new_text = Application::CreateComponent<Components::TextWrapped>(Components::TextWrapped(identifier, label));
-        new_text->Render();
-        return new_text;
-      }
-      return existing_text;
-    }
-  }  // namespace Kit
+inline Component &TextWrapped(const std::string &label) {
+  return Cherry::Kit::TextWrapped(Application::GenerateUniqueID(label), label);
+}
 
-}  // namespace Cherry
+} // namespace Kit
 
-#endif  // CHERRY_KIT_TEXT_WRAPPED
+} // namespace Cherry
+
+#endif // CHERRY_KIT_TEXT_WRAPPED

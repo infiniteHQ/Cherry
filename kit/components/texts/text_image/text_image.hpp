@@ -10,80 +10,55 @@
 #ifndef CHERRY_KIT_TEXT_IMAGE
 #define CHERRY_KIT_TEXT_IMAGE
 
-namespace Cherry
-{
-    namespace Components
-    {
-        class TextImage : public Component
-        {
-        public:
-            TextImage(const Cherry::Identifier &id, const std::string &label, const std::string &image_path)
-                : Component(id)
-            {
-                // Identifier
-                SetIdentifier(id);
+namespace Cherry {
+namespace Components {
+class TextImage : public Component {
+public:
+  TextImage(const Cherry::Identifier &id, const std::string &label,
+            const std::string &image_path)
+      : Component(id) {
+    // Identifier
+    SetIdentifier(id);
 
-                // Colors
-                SetProperty("color_text", "#454545B2");
+    // Colors
+    SetProperty("color_text", "#454545B2");
 
-                // Informations
-                SetProperty("label", label);
-                SetProperty("image_path", image_path);
-            }
+    // Informations
+    SetProperty("label", label);
+    SetProperty("image_path", image_path);
+  }
 
-            void Render() override
-            {
-                std::string text = GetProperty("label").c_str();
+  void Render() override {
+    std::string text = GetProperty("label").c_str();
 
-                ImTextureID texture = Application::Get().GetCurrentRenderedWindow()->get_texture(GetProperty("image_path"));
-                CherryGUI::Image(texture, ImVec2(15, 15));
-                CherryGUI::SameLine();
-                CherryGUI::Text(text.c_str());
-            }
-        };
-    }
+    ImTextureID texture =
+        Application::Get().GetCurrentRenderedWindow()->get_texture(
+            GetProperty("image_path"));
+    CherryGUI::Image(texture, ImVec2(15, 15));
+    CherryGUI::SameLine();
+    CherryGUI::Text(text.c_str());
+  }
+};
+} // namespace Components
 
-    // End-User API
-    namespace Kit
-    {
-        inline std::shared_ptr<Component> TextImage(const std::string &label, const std::string &image_path)
-        {
-            // Inline component
-            auto anonymous_id = Application::GenerateUniqueID(label, image_path);
-            auto existing = Application::GetAnonymousComponent(anonymous_id);
-            if (existing)
-            {
-                existing->Render();
-                return existing;
-            }
-            else
-            {
+// End-User API
+namespace Kit {
 
-                auto button = Application::CreateAnonymousComponent<Components::TextImage>(Components::TextImage(anonymous_id, label, image_path));
-                button->Render();
-                return button;
-            }
-        }
-
-        inline std::shared_ptr<Component> TextImage(const Cherry::Identifier &identifier, const std::string &label, const std::string &image_path)
-        {
-            // Get the object if exist
-            auto existing_text = Application::GetComponent(identifier);
-            if (existing_text)
-            {
-                existing_text->Render();
-            }
-            else
-            {
-                // Create the object if not exist
-                auto new_text = Application::CreateComponent<Components::TextImage>(Components::TextImage(identifier, label, image_path));
-                new_text->Render();
-                return new_text;
-            }
-            return existing_text;
-        }
-    }
-
+inline Component &TextImage(const Identifier &identifier,
+                            const std::string &label,
+                            const std::string &image_path) {
+  return CherryApp.PushComponent<Cherry::Components::TextImage>(
+      identifier, label, image_path);
 }
+
+inline Component &TextImage(const std::string &label,
+                            const std::string &image_path) {
+  return Cherry::Kit::TextImage(
+      Application::GenerateUniqueID(label, image_path), label, image_path);
+}
+
+} // namespace Kit
+
+} // namespace Cherry
 
 #endif // CHERRY_KIT_TEXT_IMAGE

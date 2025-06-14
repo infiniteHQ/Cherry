@@ -10,127 +10,101 @@
 #ifndef CHERRY_KIT_COMBO_CUSTOM
 #define CHERRY_KIT_COMBO_CUSTOM
 
-namespace Cherry
-{
-    namespace Components
-    {
-        class ComboCustom : public Component
-        {
-        public:
-            ComboCustom(const Cherry::Identifier &id, const std::string &label, const std::vector<std::shared_ptr<Component>> &list, int default_index)
-                : Component(id), m_List(list)
-            {
-                // Identifier
-                SetIdentifier(id);
+namespace Cherry {
+namespace Components {
+class ComboCustom : public Component {
+public:
+  ComboCustom(const Cherry::Identifier &id, const std::string &label,
+              const std::vector<std::shared_ptr<Component>> &list,
+              int default_index)
+      : Component(id), m_List(list) {
+    // Identifier
+    SetIdentifier(id);
 
-                // Colors
-                SetProperty("color_border", "#454545B2");
-                SetProperty("color_border_hovered", "#454545B2");
-                SetProperty("color_border_clicked", "#454545B2");
-                SetProperty("color_bg", "#242424FF");
-                SetProperty("color_bg_hovered", "#343434FF");
-                SetProperty("color_bg_clicked", "#444444FF");
+    // Colors
+    SetProperty("color_border", "#454545B2");
+    SetProperty("color_border_hovered", "#454545B2");
+    SetProperty("color_border_clicked", "#454545B2");
+    SetProperty("color_bg", "#242424FF");
+    SetProperty("color_bg_hovered", "#343434FF");
+    SetProperty("color_bg_clicked", "#444444FF");
 
-                // Images
-                SetProperty("default_index", std::to_string(default_index));
-                SetProperty("selected", std::to_string(default_index));
+    // Images
+    SetProperty("default_index", std::to_string(default_index));
+    SetProperty("selected", std::to_string(default_index));
 
-                // Informations
-                SetProperty("label", label);
+    // Informations
+    SetProperty("label", label);
 
-                // Data & User-level informations
-                SetData("lastClicked", "never");
-                SetData("isClicked", "false");
-            }
+    // Data & User-level informations
+    SetData("lastClicked", "never");
+    SetData("isClicked", "false");
+  }
 
-            void Render() override
-            {
-                int selected = std::stoi(GetProperty("selected"));
-                int default_index = std::stoi(GetProperty("default_index"));
-                static ImGuiComboFlags flags = 0;
+  void Render() override {
+    int selected = std::stoi(GetProperty("selected"));
+    int default_index = std::stoi(GetProperty("default_index"));
+    static ImGuiComboFlags flags = 0;
 
-                if (default_index < 0 || default_index >= m_List.size())
-                    default_index = 0;
-                std::string identifier = GetIdentifier().string();
-                std::string Label = GetProperty("label");
+    if (default_index < 0 || default_index >= m_List.size())
+      default_index = 0;
+    std::string identifier = GetIdentifier().string();
+    std::string Label = GetProperty("label");
 
-                if (!identifier.empty())
-                {
-                    Label += Label + "####" + identifier;
-                }
-
-                if (CherryGUI::BeginCombo(Label.c_str(), [&]()
-                                      { this->m_List[selected]->Render(); }))
-                {
-                    for (int n = 0; n < m_List.size(); n++)
-                    {
-                        const bool is_selected = (selected == n);
-
-                        if (CherryGUI::Selectable(std::string("####" + identifier + std::to_string(n)).c_str(), is_selected))
-                        {
-                            if (selected != n)
-                            {
-                                SetProperty("selected", std::to_string(n));
-                                selected = n;
-                                // UpdateLastChangedTime();
-                            }
-                        }
-
-                        CherryGUI::SameLine();
-                        m_List[n]->Render();
-
-                        if (is_selected)
-                            CherryGUI::SetItemDefaultFocus();
-                    }
-                    CherryGUI::EndCombo();
-                }
-            }
-
-        private:
-            std::vector<std::shared_ptr<Component>> m_List;
-        };
+    if (!identifier.empty()) {
+      Label += Label + "####" + identifier;
     }
 
-    // End-User API
-    namespace Kit
-    {
-        inline bool ComboCustom(const std::string &label, const std::vector<std::shared_ptr<Component>> &list, int default_index = 0)
-        {
-            // Inline component
-            auto anonymous_id = Application::GetAnonymousID();
-            auto existing = Application::GetAnonymousComponent(anonymous_id);
-            if (existing)
-            {
-                existing->Render();
-                return existing->GetData("isClicked") == "true" ? true : false;
-            }
+    if (CherryGUI::BeginCombo(Label.c_str(),
+                              [&]() { this->m_List[selected]->Render(); })) {
+      for (int n = 0; n < m_List.size(); n++) {
+        const bool is_selected = (selected == n);
 
-            else
-            {
-                auto button = Application::CreateAnonymousComponent<Components::ComboCustom>(Components::ComboCustom(anonymous_id, label, list, default_index));
-                button->Render();
-                return button->GetData("isClicked") == "true" ? true : false;
-            }
+        if (CherryGUI::Selectable(
+                std::string("####" + identifier + std::to_string(n)).c_str(),
+                is_selected)) {
+          if (selected != n) {
+            SetProperty("selected", std::to_string(n));
+            selected = n;
+            // UpdateLastChangedTime();
+          }
         }
 
-        inline bool ComboCustom(const Cherry::Identifier &identifier, const std::string &label, const std::vector<std::shared_ptr<Component>> &list, int default_index = 0)
-        {
-            // Get the object if exist
-            auto existing_button = Application::GetComponent(identifier);
-            if (existing_button)
-            {
-                existing_button->Render();
-                return existing_button->GetData("isClicked") == "true" ? true : false;
-            }
-            else
-            {
-                // Create the object if not exist
-                auto new_button = Application::CreateComponent<Components::ComboCustom>(Components::ComboCustom(identifier, label, list, default_index));
-                new_button->Render();
-                return new_button->GetData("isClicked") == "true" ? true : false;
-            }
-        }
+        CherryGUI::SameLine();
+        m_List[n]->Render();
+
+        if (is_selected)
+          CherryGUI::SetItemDefaultFocus();
+      }
+      CherryGUI::EndCombo();
     }
+  }
+
+private:
+  std::vector<std::shared_ptr<Component>> m_List;
+};
+} // namespace Components
+
+// End-User API
+namespace Kit {
+inline Component &
+ComboCustom(const Identifier &identifier, const std::string &label,
+            const std::vector<std::shared_ptr<Component>> &list,
+            int default_index = 0) {
+  return CherryApp.PushComponent<Cherry::Components::ComboCustom>(
+      identifier, label, list, default_index);
 }
+
+inline Component &
+ComboCustom(const std::string &label,
+            const std::vector<std::shared_ptr<Component>> &list,
+            int default_index = 0) {
+  return Cherry::Kit::ComboCustom(
+      Application::GenerateUniqueID(label, list, default_index), label, list,
+      default_index);
+}
+
+} // namespace Kit
+} // namespace Cherry
 
 #endif // CHERRY_KIT_COMBO_CUSTOM

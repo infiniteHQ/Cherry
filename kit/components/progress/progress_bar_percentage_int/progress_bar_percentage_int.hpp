@@ -10,73 +10,45 @@
 #ifndef CHERRY_KIT_PROGRESS_BAR_PERCENTAGE_INTEGER
 #define CHERRY_KIT_PROGRESS_BAR_PERCENTAGE_INTEGER
 
-namespace Cherry
-{
-    namespace Components
-    {
-        class ProgressBarPercentageInteger : public Component
-        {
-        public:
-            ProgressBarPercentageInteger(const Cherry::Identifier &id, int* number, int*goal)
-                : Component(id), m_Number(number), m_Goal(goal)
-            {
-                // Identifier
-                SetIdentifier(id);
-            }
+namespace Cherry {
+namespace Components {
+class ProgressBarPercentageInteger : public Component {
+public:
+  ProgressBarPercentageInteger(const Cherry::Identifier &id, int *number,
+                               int *goal)
+      : Component(id), m_Number(number), m_Goal(goal) {
+    // Identifier
+    SetIdentifier(id);
+  }
 
-            void Render() override
-            {            
-                float fraction = static_cast<float>(*m_Number) / static_cast<float>(*m_Goal);
-                CherryGUI::ProgressBar(fraction, ImVec2(-1.0f, 0.0f));
-            }
+  void Render() override {
+    float fraction =
+        static_cast<float>(*m_Number) / static_cast<float>(*m_Goal);
+    CherryGUI::ProgressBar(fraction, ImVec2(-1.0f, 0.0f));
+  }
 
-        private:
-            int *m_Number;
-            int *m_Goal;
-        };
+private:
+  int *m_Number;
+  int *m_Goal;
+};
 
-    }
+} // namespace Components
 
-    // End-User API
-    namespace Kit
-    {
-        inline bool ProgressBarPercentageInteger(int* number, int*goal)
-        {
-            // Inline component
-            auto anonymous_id = Application::GetAnonymousID();
-            auto existing = Application::GetAnonymousComponent(anonymous_id);
-            if (existing)
-            {
-                existing->Render();
-                return existing->GetData("isClicked") == "true" ? true : false;
-            }
-            else
-            {
-                auto button = Application::CreateAnonymousComponent<Components::ProgressBarPercentageInteger>(Components::ProgressBarPercentageInteger(anonymous_id, number, goal));
-                button->Render();
-                return button->GetData("isClicked") == "true" ? true : false;
-            }
-            return false;
-        }
-
-        inline bool ProgressBarPercentageInteger(const Cherry::Identifier &identifier, int* number, int*goal)
-        {
-            // Get the object if exist
-            auto existing_button = Application::GetComponent(identifier);
-            if (existing_button)
-            {
-                existing_button->Render();
-                return existing_button->GetData("isClicked") == "true" ? true : false;
-            }
-            else
-            {
-                // Create the object if not exist
-                auto new_button = Application::CreateComponent<Components::ProgressBarPercentageInteger>(Components::ProgressBarPercentageInteger(identifier, number, goal));
-                new_button->Render();
-                return new_button->GetData("isClicked") == "true" ? true : false;
-            }
-        }
-    }
+// End-User API
+namespace Kit {
+inline Component &ProgressBarPercentageInteger(const Identifier &identifier,
+                                               int *number, int *goal) {
+  return CherryApp
+      .PushComponent<Cherry::Components::ProgressBarPercentageInteger>(
+          identifier, number, goal);
 }
+
+inline Component &ProgressBarPercentageInteger(int *number, int *goal) {
+  return Cherry::Kit::ProgressBarPercentageInteger(
+      Application::GenerateUniqueID(number, goal), number, goal);
+}
+
+} // namespace Kit
+} // namespace Cherry
 
 #endif // CHERRY_KIT_PROGRESS_BAR_PERCENTAGE_INTEGER

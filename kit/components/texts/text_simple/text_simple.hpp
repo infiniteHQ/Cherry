@@ -42,28 +42,16 @@ public:
 
 // End-User API
 namespace Kit {
-
-inline Component &TextSimple(const Cherry::Identifier &identifier,
+inline Component &TextSimple(const Identifier &identifier,
                              const std::string &label) {
-  // Get the object if exist
-  auto existing_text = Application::GetComponent(identifier);
-  if (existing_text.GetIdentifier().string() != "undefined") {
-    existing_text.RenderWrapper();
-  } else {
-    // Create the object if not exist
-    auto new_text = Application::CreateComponent<Components::TextSimple>(
-        Components::TextSimple(identifier, label));
-    new_text->RenderWrapper();
-    return *new_text;
-  }
-  return existing_text;
+  return CherryApp.PushComponent<Cherry::Components::TextSimple>(identifier,
+                                                                 label);
 }
 
 inline Component &TextSimple(const std::string &label) {
-  // Inline component
-  auto anonymous_id = Application::GenerateUniqueID(label);
-  return Cherry::Kit::TextSimple(anonymous_id, label);
+  return Cherry::Kit::TextSimple(Application::GenerateUniqueID(label), label);
 }
+
 } // namespace Kit
 
 } // namespace Cherry

@@ -11,98 +11,68 @@
 #ifndef CHERRY_KIT_TEXT_CENTER
 #define CHERRY_KIT_TEXT_CENTER
 
-namespace Cherry
-{
-    namespace Components
-    {
-        class TextCenter : public Component
-        {
-        public:
-            TextCenter(const Cherry::Identifier &id, const std::string &label)
-                : Component(id)
-            {
-                // Identifier
-                SetIdentifier(id);
+namespace Cherry {
+namespace Components {
+class TextCenter : public Component {
+public:
+  TextCenter(const Cherry::Identifier &id, const std::string &label)
+      : Component(id) {
+    // Identifier
+    SetIdentifier(id);
 
-                // Colors
-                SetProperty("color_text", "#FFFFFFFF");
+    // Colors
+    SetProperty("color_text", "#FFFFFFFF");
 
-                // Informations
-                SetProperty("label", label);
-            }
+    // Informations
+    SetProperty("label", label);
+  }
 
-            void Render() override
-            {
-                ImVec2 text_size = CherryGUI::CalcTextSize(GetProperty("label").c_str());
+  void Render() override {
+    ImVec2 text_size = CherryGUI::CalcTextSize(GetProperty("label").c_str());
 
-                ImVec2 child_size = CherryGUI::GetWindowSize();
-                float posX = (child_size.x - text_size.x) * 0.5f;
+    ImVec2 child_size = CherryGUI::GetWindowSize();
+    float posX = (child_size.x - text_size.x) * 0.5f;
 
-                posX = posX > 0 ? posX : 0;
+    posX = posX > 0 ? posX : 0;
 
-                CherryGUI::SetCursorPosX(posX);
+    CherryGUI::SetCursorPosX(posX);
 
-                CherryGUI::TextColored(HexToRGBA(GetProperty("color_text")), GetProperty("label").c_str());
+    CherryGUI::TextColored(HexToRGBA(GetProperty("color_text")),
+                           GetProperty("label").c_str());
 
-                auto parent = Cherry::GetParent();
-                if (parent)
-                {
-                    ImVec2 text_size = CherryGUI::CalcTextSize(GetProperty("label").c_str());
+    auto parent = Cherry::GetParent();
+    if (parent) {
+      ImVec2 text_size = CherryGUI::CalcTextSize(GetProperty("label").c_str());
 
-                    ImVec2 child_size = CherryGUI::GetWindowSize();
-                    float posX = (child_size.x - text_size.x) * 0.5f;
+      ImVec2 child_size = CherryGUI::GetWindowSize();
+      float posX = (child_size.x - text_size.x) * 0.5f;
 
-                    posX = posX > 0 ? posX : 0;
+      posX = posX > 0 ? posX : 0;
 
-                    CherryGUI::SetCursorPosX(posX);
+      CherryGUI::SetCursorPosX(posX);
 
-                    CherryGUI::TextColored(HexToRGBA(GetProperty("color_text")), GetProperty("label").c_str());
-                }
-            }
-        };
+      CherryGUI::TextColored(HexToRGBA(GetProperty("color_text")),
+                             GetProperty("label").c_str());
     }
+  }
+};
+} // namespace Components
 
-    // End-User API
-    namespace Kit
-    {
-        inline std::shared_ptr<Component> TextCenter(const std::string &label)
-        {
-            // Inline component
-            auto anonymous_id = Application::GenerateUniqueID(label);
-            auto existing = Application::GetAnonymousComponent(anonymous_id);
-            if (existing)
-            {
-                existing->Render();
-                return existing;
-            }
-            else
-            {
+// End-User API
+namespace Kit {
 
-                auto button = Application::CreateAnonymousComponent<Components::TextCenter>(Components::TextCenter(anonymous_id, label));
-                button->Render();
-                return button;
-            }
-        }
-
-        inline std::shared_ptr<Component> TextCenter(const Cherry::Identifier &identifier, const std::string &label)
-        {
-            // Get the object if exist
-            auto existing_text = Application::GetComponent(identifier);
-            if (existing_text)
-            {
-                existing_text->Render();
-            }
-            else
-            {
-                // Create the object if not exist
-                auto new_text = Application::CreateComponent<Components::TextCenter>(Components::TextCenter(identifier, label));
-                new_text->Render();
-                return new_text;
-            }
-            return existing_text;
-        }
-    }
-
+inline Component &TextCenter(const Identifier &identifier,
+                             const std::string &label) {
+  return CherryApp.PushComponent<Cherry::Components::TextCenter>(identifier,
+                                                                 label);
 }
+
+inline Component &TextCenter(const std::string &label) {
+  return Cherry::Kit::TextCenter(Application::GenerateUniqueID(label), label);
+}
+
+} // namespace Kit
+
+} // namespace Cherry
 
 #endif // CHERRY_KIT_TEXT_CENTER

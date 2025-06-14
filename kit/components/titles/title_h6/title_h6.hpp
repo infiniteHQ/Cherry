@@ -12,85 +12,60 @@
 #define CHERRY_KIT_TITLE_H6
 
 namespace Cherry {
-  namespace Components {
-    class TitleSix : public Component {
-     public:
-      TitleSix(const Cherry::Identifier &id, const std::string &label) : Component(id) {
-        // Identifier
-        SetIdentifier(id);
+namespace Components {
+class TitleSix : public Component {
+public:
+  TitleSix(const Cherry::Identifier &id, const std::string &label)
+      : Component(id) {
+    // Identifier
+    SetIdentifier(id);
 
-        // Colors
-        SetProperty("color_text", "#FFFFFFFF");  // TODO get the default theme
-        SetProperty("font_scale", "1.1");        // TODO get the default theme
+    // Colors
+    SetProperty("color_text", "#FFFFFFFF"); // TODO get the default theme
+    SetProperty("font_scale", "1.1");       // TODO get the default theme
 
-        // Informations
-        SetProperty("label", label);
-      }
+    // Informations
+    SetProperty("label", label);
+  }
 
-      void Render() override {
-        if (NeedRefreshing()) {
-          /// Refreshed();
-        }
-        cached_text_color = HexToRGBA(GetProperty("color_text"));
-        cached_label = GetProperty("label");
-        font_scale = std::stof(GetProperty("font_scale"));
+  void Render() override {
+    cached_text_color = HexToRGBA(GetProperty("color_text"));
+    cached_label = GetProperty("label");
+    font_scale = std::stof(GetProperty("font_scale"));
 
-        float old_font_size = CherryGUI::GetFont()->Scale;
-        CherryGUI::GetFont()->Scale *= font_scale;
-        CherryGUI::PushFont(CherryGUI::GetFont());
+    float old_font_size = CherryGUI::GetFont()->Scale;
+    CherryGUI::GetFont()->Scale *= font_scale;
+    CherryGUI::PushFont(CherryGUI::GetFont());
 
-        CherryGUI::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(6, 6));
-        CherryGUI::TextColored(cached_text_color, cached_label.c_str());
-        CherryGUI::PopStyleVar();
+    CherryGUI::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(6, 6));
+    CherryGUI::TextColored(cached_text_color, cached_label.c_str());
+    CherryGUI::PopStyleVar();
 
-        CherryGUI::GetFont()->Scale = old_font_size;
-        CherryGUI::PopFont();
-      }
+    CherryGUI::GetFont()->Scale = old_font_size;
+    CherryGUI::PopFont();
+  }
 
-     private:
-      ImVec4 cached_text_color;
-      std::string cached_label;
-      float font_scale;
-    };
-  }  // namespace Components
+private:
+  ImVec4 cached_text_color;
+  std::string cached_label;
+  float font_scale;
+};
+} // namespace Components
 
-  // End-User API
-  namespace Kit {
-    inline std::shared_ptr<Component> TitleSix(const std::string &label) {
-      auto anonymous_id = Application::GenerateUniqueID(label);
-      auto existing = Application::GetAnonymousComponent(anonymous_id);
-      if (existing) {
-        existing->Render();
-        return existing;
-      }
+// End-User API
+namespace Kit {
+inline Component &TitleSix(const Identifier &identifier,
+                           const std::string &label) {
+  return CherryApp.PushComponent<Cherry::Components::TitleSix>(identifier,
+                                                               label);
+}
 
-      auto button = Application::CreateAnonymousComponent<Components::TitleSix>(Components::TitleSix(anonymous_id, label));
-      button->Render();
-      return button;
-    }
+inline Component &TitleSix(const std::string &label) {
+  return Cherry::Kit::TitleSix(Application::GenerateUniqueID(label), label);
+}
 
-    inline std::shared_ptr<Component> TitleSix(const Cherry::Identifier &identifier, const std::string &label) {
-      if (identifier.string() == "__inline") {
-        auto new_title =
-            Application::CreateAnonymousComponent<Components::TitleSix>(Components::TitleSix(identifier, label));
-        new_title->Render();
-        return new_title;
-      }
+} // namespace Kit
 
-      // Get the object if exist
-      auto existing_title = Application::GetComponent(identifier);
-      if (existing_title) {
-        existing_title->Render();
-      } else {
-        // Create the object if not exist
-        auto new_title = Application::CreateComponent<Components::TitleSix>(Components::TitleSix(identifier, label));
-        new_title->Render();
-        return new_title;
-      }
-      return existing_title;
-    }
-  }  // namespace Kit
+} // namespace Cherry
 
-}  // namespace Cherry
-
-#endif  // CHERRY_KIT_TITLE_H6
+#endif // CHERRY_KIT_TITLE_H6

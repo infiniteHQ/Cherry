@@ -33,25 +33,12 @@ public:
 
 // End-User API
 namespace Kit {
-inline Component &Separator(const Cherry::Identifier &identifier) {
-  // Get the object if exist
-  auto existing_title = Application::GetComponent(identifier);
-  if (existing_title.GetIdentifier().string() != "undefined") {
-    existing_title.RenderWrapper();
-  } else {
-    // Create the object if not exist
-    auto new_title = Application::CreateComponent<Components::Separator>(
-        Components::Separator(identifier));
-    new_title->RenderWrapper();
-    return *new_title;
-  }
-  return existing_title;
+inline Component &Separator(const Identifier &identifier) {
+  return CherryApp.PushComponent<Cherry::Components::Separator>(identifier);
 }
 
 inline Component &Separator() {
-  // Inline component
-  auto anonymous_id = Application::GenerateUniqueID("separator");
-  return Cherry::Kit::Separator(anonymous_id);
+  return Cherry::Kit::Separator(Application::GenerateUniqueID("separator"));
 }
 
 } // namespace Kit
