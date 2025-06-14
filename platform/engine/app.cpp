@@ -2446,7 +2446,7 @@ void Application::PopComponentPool() {
   }
 }
 
-ComponentsPool *Application::GetActiveComponentPool() {
+ComponentsPool *Application::GetComponentPool() {
   if (!m_ComponentPoolStack.empty()) {
     return m_ComponentPoolStack.back();
   } else {
@@ -2613,12 +2613,28 @@ void Application::RefreshComponentsRenderFlags(ComponentsPool *pool) {
   }
 }
 
+void Application::RefreshComponent(const Identifier &id, ComponentsPool *pool) {
+  if (!pool) {
+    pool = &m_ApplicationComponentPool;
+  }
+
+  auto &components = pool->IdentifiedComponents;
+
+  for (const auto &component : components) {
+    if (component->GetIdentifier() == id) {
+      component->Refresh();
+    }
+  }
+}
+
 void Application::DestroyComponent(const Identifier &id, ComponentsPool *pool) {
   if (!pool) {
     pool = &m_ApplicationComponentPool;
   }
 
   auto &components = pool->IdentifiedComponents;
+
+  size_t beforeSize = components.size();
 
   auto it = std::remove_if(components.begin(), components.end(),
                            [&id](const std::shared_ptr<Component> &component) {
@@ -2627,10 +2643,25 @@ void Application::DestroyComponent(const Identifier &id, ComponentsPool *pool) {
 
   if (it != components.end()) {
     components.erase(it, components.end());
-    std::cout << "[Info] Component \"" << id.string() << "\" destroyed.\n";
+  }
+
+  size_t afterSize = components.size();
+
+  if (beforeSize == afterSize) {
+    std::cout << "[LOG] Aucun composant avec l'identifiant " << id.string()
+              << " n'a été trouvé pour suppression." << std::endl;
   } else {
-    std::cout << "[Warning] Component \"" << id.string()
-              << "\" not found for destruction.\n";
+    std::cout << "[LOG] Composant avec l'identifiant " << id.string()
+              << " supprimé avec succès." << std::endl;
+  }
+
+  if (CherryLastComponent.GetIdentifier() == id) {
+    CherryApp.ResetLastComponent();
+    std::cout << "[LOG] CherryLastComponent a été reset." << std::endl;
+  }
+  if (CherryNextComponent.GetIdentifier() == id) {
+    CherryApp.ResetNextComponent();
+    std::cout << "[LOG] CherryNextComponent a été reset." << std::endl;
   }
 }
 
@@ -2694,7 +2725,7 @@ std::string Application::GetComponentData(const Identifier &id,
       }
     }
   } else {
-    ComponentsPool *pool = GetActiveComponentPool();
+    ComponentsPool *pool = GetComponentPool();
     for (const auto &component : pool->IdentifiedComponents) {
       if (component->GetIdentifier() == id) {
         return component->GetData(topic);
@@ -2851,7 +2882,7 @@ Application::GetAnonymousComponent(const Identifier &identifier) {
       }
     }
   } else {
-    ComponentsPool *pool = Application::Get().GetActiveComponentPool();
+    ComponentsPool *pool = Application::Get().GetComponentPool();
     for (const auto &existing_component : pool->AnonymousComponents) {
       if (existing_component->GetIdentifier() == identifier) {
         return existing_component;
@@ -2871,7 +2902,7 @@ Application::GetComponent(const Identifier &identifier) {
       }
     }
   } else {
-    ComponentsPool *pool = Application::Get().GetActiveComponentPool();
+    ComponentsPool *pool = Application::Get().GetComponentPool();
     for (const auto &existing_component : pool->IdentifiedComponents) {
       if (existing_component->GetIdentifier() == identifier) {
         return existing_component;

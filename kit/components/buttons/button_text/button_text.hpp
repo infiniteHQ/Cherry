@@ -173,7 +173,6 @@ private:
 // End-User API
 namespace Kit {
 inline std::shared_ptr<Component> ButtonText(const std::string &label) {
-  // Get current context & component group
   auto anonymous_id = Application::GenerateUniqueID(label);
   auto existing = Application::GetAnonymousComponent(anonymous_id);
   if (existing) {
@@ -190,6 +189,7 @@ inline std::shared_ptr<Component> ButtonText(const std::string &label) {
 
 inline std::shared_ptr<Component>
 ButtonText(const Cherry::Identifier &identifier, const std::string &label) {
+  std::cout << "q" << identifier.string() << std::endl;
   if (identifier.string() == "__inline") {
     auto new_button = std::make_shared<Components::ButtonText>(
         Components::ButtonText(identifier, label));
@@ -200,8 +200,10 @@ ButtonText(const Cherry::Identifier &identifier, const std::string &label) {
   // Get the object if exist
   auto existing_button = Application::GetComponent(identifier);
   if (existing_button) {
+    std::cout << "EX" << std::endl;
     existing_button->RenderWrapper();
   } else {
+    std::cout << "Create" << std::endl;
     // Create the object if not exist
     auto new_button = Application::CreateComponent<Components::ButtonText>(
         Components::ButtonText(identifier, label));

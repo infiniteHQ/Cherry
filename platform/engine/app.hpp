@@ -479,7 +479,7 @@ public:
   // REstore previous component array, if 0 it will be
   // created in the application component array
   void PopComponentPool();
-  ComponentsPool *GetActiveComponentPool();
+  ComponentsPool *GetComponentPool();
 
   // TODO:
   // SetDataToComponentPool
@@ -569,14 +569,13 @@ public:
         component_copy.GetIdentifier().string() == "anonymous") {
       Identifier anonymous_id = component_copy.GetIdentifier();
       anonymous_id.set(Identifier::GetUniqueIndex());
-      anonymous_id.m_ComponentGroup = CherryApp.GetComponentGroup();
       component_copy.SetIdentifier(anonymous_id);
     }
 
     std::shared_ptr<Component> new_component =
         std::make_shared<T>(component_copy);
 
-    ComponentsPool *pool = Application::Get().GetActiveComponentPool();
+    ComponentsPool *pool = Application::Get().GetComponentPool();
     pool->AnonymousComponents.push_back(new_component);
 
     return new_component;
@@ -585,7 +584,6 @@ public:
   template <typename T>
   static std::shared_ptr<Component> CreateComponent(const T &component) {
     Identifier component_id = component.GetIdentifier();
-    component_id.m_ComponentGroup = CherryApp.GetComponentGroup();
 
     if (component_id.component_array_ptr() != nullptr) {
       auto *array = component_id.component_array_ptr();
@@ -601,7 +599,7 @@ public:
       return component_ptr;
     }
 
-    ComponentsPool *pool = Application::Get().GetActiveComponentPool();
+    ComponentsPool *pool = Application::Get().GetComponentPool();
 
     for (const auto &existing_component : pool->IdentifiedComponents) {
       if (existing_component->GetIdentifier() == component_id) {
@@ -634,6 +632,7 @@ public:
   void PurgeNoRenderedComponents(ComponentsPool *pool = nullptr);
   void RefreshComponentsRenderFlags(ComponentsPool *pool = nullptr);
   void DestroyComponent(const Identifier &id, ComponentsPool *pool = nullptr);
+  void RefreshComponent(const Identifier &id, ComponentsPool *pool = nullptr);
 
   std::unordered_map<std::string, Theme> m_Themes;
   std::vector<Theme> m_ActiveThemes;

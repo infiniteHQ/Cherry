@@ -45,6 +45,7 @@ public:
   void RenderWrapper();
 
   virtual void Render() {};
+  virtual void Refresh() {};
 
   bool m_IsComponentRendered = false;
 

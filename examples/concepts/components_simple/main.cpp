@@ -29,6 +29,7 @@ void DynamicVars() {
 
   // We can get the last identified compoent
   CherryKit::ButtonText(CherryID("my_id"), "Button with ID");
+  CherryApp.DestroyComponent(CherryID("my_id"));
 
   {
     auto last_component = CherryLastComponent;
@@ -54,56 +55,6 @@ void ComponentGroups() {
   CherryApp.AddDataToComponentGroup("test", "test", "OK");
 }
 
-void LogImGuiContextState() {
-  ImGuiContext &g = *ImGui::GetCurrentContext();
-  ImGuiStyle &style = ImGui::GetStyle();
-
-  std::cout << "=== ImGui Context Diagnostics ===" << std::endl;
-
-  // Style stack sizes
-  std::cout << "[STACK] StyleColor Stack Size:   " << g.ColorStack.Size
-            << std::endl;
-  std::cout << "[STACK] Font Stack Size:         " << g.FontStack.Size
-            << std::endl;
-  std::cout << "[STACK] StyleVar Stack Size:     " << g.StyleVarStack.Size
-            << std::endl;
-  // std::cout << "[STACK] ID Stack Size:           " << g.IDStack.Size <<
-  // std::endl;
-  std::cout << "[STACK] Group Stack Size:        " << g.GroupStack.Size
-            << std::endl;
-  std::cout << "[STACK] Disabled Stack Size:     " << g.DisabledStackSize
-            << std::endl;
-
-  // Windows
-  std::cout << "[WINDOWS] Active Windows:        " << g.Windows.Size
-            << std::endl;
-
-  // Draw data
-  ImDrawData *drawData = ImGui::GetDrawData();
-  if (drawData) {
-    std::cout << "[DRAW] Total Draw Lists:         " << drawData->CmdListsCount
-              << std::endl;
-    std::cout << "[DRAW] Total Vtx Count:          " << drawData->TotalVtxCount
-              << std::endl;
-    std::cout << "[DRAW] Total Idx Count:          " << drawData->TotalIdxCount
-              << std::endl;
-  }
-
-  // Font atlas memory (if leaked, may grow)
-  ImFontAtlas *atlas = ImGui::GetIO().Fonts;
-  if (atlas) {
-    std::cout << "[FONT] Font Atlas TexID:         " << (void *)atlas->TexID
-              << std::endl;
-    std::cout << "[FONT] Font Count:               " << atlas->Fonts.Size
-              << std::endl;
-    std::cout << "[FONT] Tex Width/Height:         " << atlas->TexWidth << "x"
-              << atlas->TexHeight << std::endl;
-  }
-
-  std::cout << "=================================\n" << std::endl;
-}
-
-void Baset() { LogImGuiContextState(); }
 void Base() {
   ///////////////////////////////////////////////////////////////////////////////////////////////
   CherryKit::SeparatorText("Anonymous Component in public runtime");
@@ -146,6 +97,24 @@ void Base() {
   // CherryKit::ButtonText(CherryID(&custom_pool, "button_id"), "Button with ID
   // in custom pool");
   ///////////////////////////////////////////////////////////////////////////////////////////////
+
+  CherryKit::TextSimple(
+      CherryID("Mooving0"),
+      "Custom pool anonymous components pool size : " +
+          std::to_string(custom_pool.AnonymousComponents.size()));
+  CherryKit::TextSimple(
+      CherryID("Mooving1"),
+      "Custom pool identified components pool size : " +
+          std::to_string(custom_pool.IdentifiedComponents.size()));
+  CherryKit::TextSimple(
+      CherryID("Mooving2"),
+      "Runtime anonymous components pool size : " +
+          std::to_string(
+              CherryApp.m_ApplicationComponentPool.AnonymousComponents.size()));
+  CherryKit::TextSimple(CherryID("Mooving3"),
+                        "Runtime identified components pool size : " +
+                            std::to_string(CherryApp.m_ApplicationComponentPool
+                                               .IdentifiedComponents.size()));
 }
 
 CherryApplication CherryMain(int argc, char **argv) {
@@ -153,7 +122,9 @@ CherryApplication CherryMain(int argc, char **argv) {
 
   config.SetRenderMode(Cherry::WindowRenderingMethod::TabWidows);
 
-  Cherry::AddAppWindow(CherryKit::WindowSimple("Base", Baset));
+  Cherry::AddAppWindow(CherryKit::WindowSimple("Base", Base));
+  Cherry::AddAppWindow(
+      CherryKit::WindowSimple("Dynamic Variables", DynamicVars));
 
   return new CherryApplication(config);
 }
