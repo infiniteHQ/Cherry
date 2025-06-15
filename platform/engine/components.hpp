@@ -14,10 +14,6 @@
 
 namespace Cherry {
 
-enum class ComponentRefreshRate {
-  EveryFrame, // Immediate mode
-};
-
 class Component {
 public:
   Component(const Identifier &id);
@@ -57,11 +53,9 @@ public:
 
   void RenderWrapper();
 
-  IdentifierProperty GetIdentifierProperty() { return m_IdentifierProperty; }
+  RenderMode GetRenderMode() { return m_RenderMode; }
 
-  void SetIdentifierProperty(IdentifierProperty prop) {
-    m_IdentifierProperty = prop;
-  }
+  void SetRenderMode(RenderMode prop) { m_RenderMode = prop; }
 
   virtual void Render() {};
   virtual void Refresh() {};
@@ -70,7 +64,7 @@ public:
 
 private:
   Identifier m_Identifier;
-  IdentifierProperty m_IdentifierProperty = IdentifierProperty::None;
+  RenderMode m_RenderMode = RenderMode::None;
 
   std::string m_ComponentType =
       "undefined"; // Optionnal, some parent components can ask for a specific

@@ -70,11 +70,6 @@ static int current_fps;
 
 #define CherryComponentsPool std::vector<std::shared_ptr<Cherry::Component>>
 
-struct ComponentsPool {
-  std::vector<std::shared_ptr<Cherry::Component>> AnonymousComponents;
-  std::vector<std::shared_ptr<Cherry::Component>> IdentifiedComponents;
-};
-
 // Next component property
 #define CherryNextProp(key, value) Cherry::SetNextComponentProperty(key, value)
 
@@ -105,15 +100,13 @@ struct ComponentsPool {
 
 // Cherry Identifier macros
 #define CherryInline                                                           \
-  CherryID(Cherry::Identifier::GetUniqueIndex(),                               \
-           Cherry::IdentifierProperty::Inline)
+  CherryID(Cherry::Identifier::GetUniqueIndex(), Cherry::RenderMode::Inline)
 #define CherryCreateOnly                                                       \
-  CherryID(Cherry::Identifier::GetUniqueIndex(),                               \
-           Cherry::IdentifierProperty::CreateOnly)
+  CherryID(Cherry::Identifier::GetUniqueIndex(), Cherry::RenderMode::CreateOnly)
 
 namespace Cherry {
 class Component;
-}
+} // namespace Cherry
 
 void check_vk_result(VkResult err);
 
@@ -585,14 +578,14 @@ public:
 
   template <typename T, typename... Args>
   Component &PushComponent(const Identifier &identifier, Args... args) {
-    switch (CherryNextComponent.GetIdentifierProperty()) {
-    case IdentifierProperty::Inline: {
+    switch (GetRenderMode()) {
+    case RenderMode::Inline: {
       auto new_button = std::make_shared<T>(T(identifier, args...));
       new_button->RenderWrapper();
       return *new_button;
       break;
     }
-    case IdentifierProperty::CreateOnly: {
+    case RenderMode::CreateOnly: {
       auto &existing_button = Application::GetComponent(identifier);
       if (existing_button.GetIdentifier().string() != "undefined") {
         CherryApp.ResetNextComponent();
@@ -629,7 +622,7 @@ public:
     Identifier component_id = component.GetIdentifier();
 
     if (component_id.component_array_ptr() != nullptr) {
-      auto *array = component_id.component_array_ptr();
+      auto *array = &component_id.component_array_ptr()->IdentifiedComponents;
 
       for (const auto &existing_component : *array) {
         if (existing_component->GetIdentifier() == component_id) {
@@ -676,6 +669,36 @@ public:
   void RefreshComponentsRenderFlags(ComponentsPool *pool = nullptr);
   void DestroyComponent(const Identifier &id, ComponentsPool *pool = nullptr);
   void RefreshComponent(const Identifier &id, ComponentsPool *pool = nullptr);
+
+  void PushComponentRenderMode(Cherry::RenderMode render_mode) {
+    m_RenderModeStack.push_back(render_mode);
+  }
+
+  void PopRenderMode(int number = 1) {
+    for (int i = 0; i < number && !m_RenderModeStack.empty(); ++i) {
+      m_RenderModeStack.pop_back();
+    }
+  }
+
+  Cherry::RenderMode GetRenderMode() const {
+    if (!m_RenderModeStack.empty()) {
+      return m_RenderModeStack.back();
+    }
+
+    Cherry::RenderMode fallback = CherryNextComponent.GetRenderMode();
+
+    if (IsValidRenderMode(fallback)) {
+      return fallback;
+    }
+
+    return Cherry::RenderMode::None;
+  }
+
+  bool IsValidRenderMode(Cherry::RenderMode mode) const {
+    return mode != Cherry::RenderMode::None;
+  }
+
+  std::vector<RenderMode> m_RenderModeStack;
 
   std::unordered_map<std::string, Theme> m_Themes;
   std::vector<Theme> m_ActiveThemes;

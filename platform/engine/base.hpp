@@ -11,7 +11,21 @@
 #include <string>
 
 namespace Cherry {
-enum class WindowType { Docking, Tabs, Unique };
+enum class WindowType {
+  Docking,
+  Tabs,
+  Unique,
+};
+
+enum class ComponentRefreshRate {
+  EveryFrame, // Immediate mode
+};
+
+enum class RenderMode {
+  CreateOnly,
+  Inline,
+  None,
+};
 
 enum class Optimization {
   StopModeOptimization, // An innactive window will be stopped (warning: dont

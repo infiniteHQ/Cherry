@@ -1,35 +1,58 @@
 #include "../../../cherry.hpp"
 
-/* Component Property level :
+void RenderModes() {
+  // This exemple show the capabilities of Render Mode.
+  //
+  // Brief :
+  // - RenderMode::CreateOnly : Create without render (static component)
+  // - RenderMode::Inline : Render without create (immediate mode component)
+  // - RenderMode::None : Render and create (semi/static component)
 
-Higher level (high priority)
-->  -> NextComponent.SetProperty()
--> -> Cherry::SetNextComponentProperty()
--> -> Cherry::PushPermanentProperty()
--> -> [Component]->SetProperty()
-Lower level
+  // As you can see, we declare button 1, 2 and 3. But we render 3, 2 and 1.
 
-*/
-
-void DynamicVars() {
-
-  CherryNextComponent.SetIdentifierProperty(ComponentProperty::CreateOnly);
+  // We can se CreateOnly to the CherryNextComponent object
+  CherryNextComponent.SetRenderMode(RenderMode::CreateOnly);
   auto &cmp = CherryKit::ButtonText("Button 1");
 
-  CherryNextComponent.SetProperty("color_bg", "#FF5555");
-  CherryNextComponent.SetProperty("color_border", "#FF5555");
-  CherryKit::ButtonText("Button 2");
+  // We can se CreateOnly by pushing to context the RenderMode
+  CherryApp.PushComponentRenderMode(RenderMode::CreateOnly);
+  auto &cmp2 = CherryKit::ButtonText("Button 2");
+  CherryApp.PopRenderMode();
 
-  CherryNextComponent.SetProperty("color_bg", "#55FF55");
+  // SemiStatic rendering, default RenderMode::None
   CherryNextComponent.SetProperty("color_border", "#55FF55");
-  CherryNextComponent.SetData("test", 56.0f);
-  CherryApp.RenderComponent(cmp);
+  CherryKit::ButtonText("Button 3");
 
+  // Called rendering
+  CherryNextComponent.SetProperty("color_border", "#FF5555");
+  CherryApp.RenderComponent(cmp2);
+
+  // Called rendering
+  CherryNextComponent.SetProperty("color_border", "#5555FF");
+  CherryApp.RenderComponent(cmp);
+}
+
+void DynamicVars() {
+  // This exemple show objects and components references you can call and
+  // manipulate, also called "Dynamic Variables"
+
+  CherryKit::SeparatorText("CherryLastComponent / CherryNextComponent");
+
+  // We declare a simple button with green borders and some data with
+  // CherryNextComponent.
+  CherryNextComponent.SetProperty("color_border", "#55FF55");
+  CherryNextComponent.SetData("test", 42);
+  CherryKit::ButtonText("Super button");
   {
+    // We can call the last rendered component reference and manipulate or
+    // control it with CherryLastComponent.
     auto last_component = CherryLastComponent;
-    CherryKit::TextSimple("Valid button with ID :");
+    CherryKit::TextSimple("CherryLastComponent datas :");
     CherryKit::TextSimple("ID : " + last_component.GetIdentifier().string());
-    CherryKit::TextSimple("test : " + last_component.GetData("test"));
+    CherryKit::TextSimple("\"test\" data : " + last_component.GetData("test"));
+    CherryKit::TextSimple("isClicked : " + last_component.GetData("isClicked"));
+    CherryKit::TextSimple("isPressed : " + last_component.GetData("isPressed"));
+    CherryKit::TextSimple("isHovered : " + last_component.GetData("isHovered"));
   }
 }
 
@@ -39,12 +62,39 @@ void ComponentGroups() {
   CherryApp.PopComponentGroup();
   {
     auto last_component = CherryLastComponent;
-    CherryKit::TextSimple("Valid button with ID :");
+    CherryKit::TextSimple("CherryLastComponent datas :");
     CherryKit::TextSimple("ID : " + last_component.GetIdentifier().string());
-    CherryKit::TextSimple("test : " + last_component.GetData("test"));
+    CherryKit::TextSimple("Group : " +
+                          last_component.GetIdentifier().component_group());
+    CherryKit::TextSimple("\"test\" data : " + last_component.GetData("test"));
   }
 
   CherryApp.AddDataToComponentGroup("test", "test", "OK");
+}
+
+void ComponentPools() {
+  // This is a example of a custom component pool, different than the main app
+  // context.
+  static ComponentsPool custom_pool;
+
+  // We push the custom pool as default pool to create component in the main
+  // application.
+  CherryApp.PushComponentPool(&custom_pool);
+
+  // We can so, create a anonymous component in this custom pool.
+  CherryKit::ButtonText("Anonymous button in custom pool");
+
+  // After all, we remove the current custom pool.
+  CherryApp.PopComponentPool();
+
+  CherryKit::ButtonText(CherryID(&custom_pool, "my_button"),
+                        "Other button in custom pool by ID");
+
+  {
+    CherryKit::TextSimple(
+        "Custom pool components size : " +
+        std::to_string(custom_pool.IdentifiedComponents.size()));
+  }
 }
 
 void Base() {
@@ -117,6 +167,11 @@ CherryApplication CherryMain(int argc, char **argv) {
   // Cherry::AddAppWindow(CherryKit::WindowSimple("Base", Base));
   Cherry::AddAppWindow(
       CherryKit::WindowSimple("Dynamic Variables", DynamicVars));
+  Cherry::AddAppWindow(CherryKit::WindowSimple("Render Modes", RenderModes));
+  Cherry::AddAppWindow(
+      CherryKit::WindowSimple("Component Pools", ComponentPools));
+  Cherry::AddAppWindow(
+      CherryKit::WindowSimple("Component Groups", ComponentGroups));
 
   return new CherryApplication(config);
 }

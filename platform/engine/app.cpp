@@ -2727,7 +2727,8 @@ void Application::PushLayer(const std::shared_ptr<Layer> &layer) {
 std::string Application::GetComponentData(const Identifier &id,
                                           const std::string &topic) {
   if (id.component_array_ptr() != nullptr) {
-    for (const auto &component : *id.component_array_ptr()) {
+    for (const auto &component :
+         id.component_array_ptr()->IdentifiedComponents) {
       if (component->GetIdentifier() == id) {
         return component->GetData(topic);
       }
@@ -2883,7 +2884,8 @@ std::string Application::GetLocale(const std::string &locale_type) {
 
 Component &Application::GetAnonymousComponent(const Identifier &identifier) {
   if (identifier.component_array_ptr() != nullptr) {
-    for (const auto &existing_component : *identifier.component_array_ptr()) {
+    for (const auto &existing_component :
+         identifier.component_array_ptr()->IdentifiedComponents) {
       if (existing_component->GetIdentifier() == identifier) {
         return existing_component ? *existing_component : s_EmptyComponent;
       }
@@ -2902,7 +2904,8 @@ Component &Application::GetAnonymousComponent(const Identifier &identifier) {
 
 Component &Application::GetComponent(const Identifier &identifier) {
   if (identifier.component_array_ptr() != nullptr) {
-    for (const auto &existing_component : *identifier.component_array_ptr()) {
+    for (const auto &existing_component :
+         identifier.component_array_ptr()->IdentifiedComponents) {
       if (existing_component->GetIdentifier() == identifier) {
         return existing_component ? *existing_component : s_EmptyComponent;
       }

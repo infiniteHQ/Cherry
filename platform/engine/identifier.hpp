@@ -9,28 +9,26 @@
 #define CHERRY_IDENTIFIER
 
 namespace Cherry {
-class Component;
 
-enum class IdentifierProperty {
-  CreateOnly,
-  Inline,
-  None,
+class Component;
+struct ComponentsPool {
+  std::vector<std::shared_ptr<Component>> AnonymousComponents;
+  std::vector<std::shared_ptr<Component>> IdentifiedComponents;
 };
 
 class IdentifierPattern {
 public:
   template <typename... Args>
-  IdentifierPattern(IdentifierProperty property, Args &&...args)
-      : prop(property) {
+  IdentifierPattern(RenderMode property, Args &&...args) : prop(property) {
     (parameters.emplace_back(std::forward<Args>(args)), ...);
   }
 
-  IdentifierProperty GetProperty() const { return prop; }
+  RenderMode GetProperty() const { return prop; }
 
   const std::vector<std::any> &GetParameters() const { return parameters; }
 
 private:
-  IdentifierProperty prop;
+  RenderMode prop;
   std::vector<std::any> parameters;
 };
 
@@ -38,25 +36,23 @@ class Identifier {
 public:
   Identifier()
       : m_IdentifierName("undefined"), m_ComponentArrayPtr(nullptr),
-        m_IdentifierProperty(IdentifierProperty::None) {
+        m_RenderMode(RenderMode::None) {
     if (m_IdentifierName.empty()) {
       m_IdentifierName = GetUniqueIndex();
     }
   }
 
-  Identifier(const std::string &id,
-             IdentifierProperty property = IdentifierProperty::None)
-      : m_IdentifierName(id), m_IdentifierProperty(property) {
+  Identifier(const std::string &id, RenderMode property = RenderMode::None)
+      : m_IdentifierName(id), m_RenderMode(property) {
     if (m_IdentifierName.empty()) {
       m_IdentifierName = "undefined";
     }
   }
 
-  explicit Identifier(std::vector<std::shared_ptr<Component>> *components_,
-                      const std::string &id = "",
-                      IdentifierProperty property = IdentifierProperty::None)
+  explicit Identifier(ComponentsPool *components_, const std::string &id = "",
+                      RenderMode property = RenderMode::None)
       : m_IdentifierName(id), m_ComponentArrayPtr(components_),
-        m_IdentifierProperty(property) {
+        m_RenderMode(property) {
     if (m_IdentifierName.empty()) {
       m_IdentifierName = GetUniqueIndex();
     }
@@ -65,14 +61,9 @@ public:
   Identifier(const Identifier &other) = default;
   Identifier &operator=(const Identifier &other) = default;
 
-  [[nodiscard]] IdentifierProperty property() const {
-    return m_IdentifierProperty;
-  }
+  [[nodiscard]] RenderMode property() const { return m_RenderMode; }
   [[nodiscard]] const std::string &string() const { return m_IdentifierName; }
-  [[nodiscard]] std::vector<std::shared_ptr<Component>> *
-  component_array_ptr() const {
-    return m_ComponentArrayPtr;
-  }
+  ComponentsPool *component_array_ptr() const { return m_ComponentArrayPtr; }
   [[nodiscard]] const std::string &component_group() const {
     return m_ComponentGroup;
   }
@@ -123,9 +114,9 @@ public:
 
 private:
   std::string m_IdentifierName;
-  std::vector<std::shared_ptr<Component>> *m_ComponentArrayPtr = nullptr;
+  ComponentsPool *m_ComponentArrayPtr = nullptr;
 
-  IdentifierProperty m_IdentifierProperty;
+  RenderMode m_RenderMode;
 
   static inline int incrementor_level = 1;
   static inline std::vector<int> level_indices = {0};
@@ -163,18 +154,18 @@ private:
 };
 
 // Some API functions
-inline IdentifierPattern ID(IdentifierProperty prop) {
-  return IdentifierPattern(prop);
-}
+inline IdentifierPattern ID(RenderMode prop) { return IdentifierPattern(prop); }
 
 template <typename... Args>
-inline IdentifierPattern ID(IdentifierProperty prop, Args &&...args) {
+inline IdentifierPattern ID(RenderMode prop, Args &&...args) {
   return IdentifierPattern(prop, std::forward<Args>(args)...);
 }
 
 } // namespace Cherry
 
+// TODO : Macro to allow this
 using CherryID = Cherry::Identifier;
-using ComponentProperty = Cherry::IdentifierProperty;
+using RenderMode = Cherry::RenderMode;
+using ComponentsPool = Cherry::ComponentsPool;
 
 #endif // CHERRY_IDENTIFIER
