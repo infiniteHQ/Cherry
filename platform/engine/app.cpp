@@ -2462,17 +2462,29 @@ ComponentsPool *Application::GetComponentPool() {
   }
 }
 
-void Application::AddDataToComponentGroup(const std::string &group_name,
-                                          const std::string &key,
-                                          const std::string &value) {
-  // Search all components from group_name (in the CherryID)
-  // Obviously, this function serve only public components registered in runtime
-  // api array, not in privates components.
-  /*for (auto component : Application::Get().m_ApplicationComponents) {
+void Application::SetDataOnGroup(const std::string &group_name,
+                                 const std::string &key,
+                                 const std::string &value) {
+  for (auto component : CherryApp.GetComponentPool()->IdentifiedComponents) {
     if (component->GetIdentifier().component_group() == group_name) {
       component->SetData(key, value);
     }
-  }*/
+  }
+}
+void Application::SetPropertyOnGroup(const std::string &group_name,
+                                     const std::string &key,
+                                     const std::string &value) {
+  for (auto component : CherryApp.GetComponentPool()->IdentifiedComponents) {
+    if (component->GetIdentifier().component_group() == group_name) {
+      std::cout << " FF" << component << std::endl;
+      std::cout << " Before" << component->GetProperty(key) << std::endl;
+      std::cout << "Set for" << component->GetIdentifier().string()
+                << std::endl;
+      component->SetProperty(key, value);
+
+      std::cout << " After" << component->GetProperty(key) << std::endl;
+    }
+  }
 }
 
 // Audio service if CHERRY_ENABLE_AUDIO
@@ -2903,19 +2915,15 @@ Component &Application::GetAnonymousComponent(const Identifier &identifier) {
 }
 
 Component &Application::GetComponent(const Identifier &identifier) {
-  if (identifier.component_array_ptr() != nullptr) {
-    for (const auto &existing_component :
-         identifier.component_array_ptr()->IdentifiedComponents) {
-      if (existing_component->GetIdentifier() == identifier) {
-        return existing_component ? *existing_component : s_EmptyComponent;
-      }
-    }
-  } else {
-    ComponentsPool *pool = Application::Get().GetComponentPool();
-    for (const auto &existing_component : pool->IdentifiedComponents) {
-      if (existing_component->GetIdentifier() == identifier) {
-        return existing_component ? *existing_component : s_EmptyComponent;
-      }
+  auto &components =
+      identifier.component_array_ptr() != nullptr
+          ? identifier.component_array_ptr()->IdentifiedComponents
+          : Application::Get().GetComponentPool()->IdentifiedComponents;
+
+  for (const auto &existing_component : components) {
+    if (existing_component &&
+        existing_component->GetIdentifier() == identifier) {
+      return *existing_component;
     }
   }
 

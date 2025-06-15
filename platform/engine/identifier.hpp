@@ -34,30 +34,11 @@ private:
 
 class Identifier {
 public:
-  Identifier()
-      : m_IdentifierName("undefined"), m_ComponentArrayPtr(nullptr),
-        m_RenderMode(RenderMode::None) {
-    if (m_IdentifierName.empty()) {
-      m_IdentifierName = GetUniqueIndex();
-    }
-  }
-
-  Identifier(const std::string &id, RenderMode property = RenderMode::None)
-      : m_IdentifierName(id), m_RenderMode(property) {
-    if (m_IdentifierName.empty()) {
-      m_IdentifierName = "undefined";
-    }
-  }
+  Identifier();
+  Identifier(const std::string &id, RenderMode property = RenderMode::None);
 
   explicit Identifier(ComponentsPool *components_, const std::string &id = "",
-                      RenderMode property = RenderMode::None)
-      : m_IdentifierName(id), m_ComponentArrayPtr(components_),
-        m_RenderMode(property) {
-    if (m_IdentifierName.empty()) {
-      m_IdentifierName = GetUniqueIndex();
-    }
-  }
-
+                      RenderMode property = RenderMode::None);
   Identifier(const Identifier &other) = default;
   Identifier &operator=(const Identifier &other) = default;
 
@@ -66,6 +47,10 @@ public:
   ComponentsPool *component_array_ptr() const { return m_ComponentArrayPtr; }
   [[nodiscard]] const std::string &component_group() const {
     return m_ComponentGroup;
+  }
+
+  void set_component_group(const std::string &group) {
+    m_ComponentGroup = group;
   }
 
   void set(const std::string &id) { m_IdentifierName = id; }
@@ -110,10 +95,9 @@ public:
     return nullptr; // TODO
   }
 
-  std::string m_ComponentGroup;
-
 private:
   std::string m_IdentifierName;
+  std::string m_ComponentGroup;
   ComponentsPool *m_ComponentArrayPtr = nullptr;
 
   RenderMode m_RenderMode;

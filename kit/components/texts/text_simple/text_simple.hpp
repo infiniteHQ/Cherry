@@ -49,7 +49,8 @@ inline Component &TextSimple(const Identifier &identifier,
 }
 
 inline Component &TextSimple(const std::string &label) {
-  return Cherry::Kit::TextSimple(Application::GenerateUniqueID(label), label);
+  return Cherry::Kit::TextSimple(
+      Application::GenerateUniqueID(label + "TextSimple"), label);
 }
 
 } // namespace Kit

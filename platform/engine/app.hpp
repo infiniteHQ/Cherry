@@ -577,13 +577,13 @@ public:
   }
 
   template <typename T, typename... Args>
-  Component &PushComponent(const Identifier &identifier, Args... args) {
+  Component &PushComponent(const Identifier &identifier, Args &&...args) {
     switch (GetRenderMode()) {
     case RenderMode::Inline: {
-      auto new_button = std::make_shared<T>(T(identifier, args...));
+      auto new_button =
+          std::make_shared<T>(identifier, std::forward<Args>(args)...);
       new_button->RenderWrapper();
       return *new_button;
-      break;
     }
     case RenderMode::CreateOnly: {
       auto &existing_button = Application::GetComponent(identifier);
@@ -591,46 +591,40 @@ public:
         CherryApp.ResetNextComponent();
         return existing_button;
       } else {
-        auto new_button =
-            Application::CreateComponent<T>(T(identifier, args...));
+        auto new_button = Application::CreateComponent<T>(
+            identifier, std::forward<Args>(args)...);
         CherryApp.ResetNextComponent();
         return *new_button;
       }
-      return existing_button;
-      break;
     }
-    default: { // Get the object if exist
+    default: {
       auto &existing_button = Application::GetComponent(identifier);
       if (existing_button.GetIdentifier().string() != "undefined") {
         existing_button.RenderWrapper();
         return existing_button;
       } else {
-        // Create the object if not exist
-        auto new_button =
-            Application::CreateComponent<T>(T(identifier, args...));
+        auto new_button = Application::CreateComponent<T>(
+            identifier, std::forward<Args>(args)...);
         new_button->RenderWrapper();
         return *new_button;
       }
-      return existing_button;
-      break;
     }
     }
   }
 
-  template <typename T>
-  static std::shared_ptr<Component> CreateComponent(const T &component) {
-    Identifier component_id = component.GetIdentifier();
-
-    if (component_id.component_array_ptr() != nullptr) {
-      auto *array = &component_id.component_array_ptr()->IdentifiedComponents;
+  template <typename T, typename... Args>
+  static std::shared_ptr<Component> CreateComponent(const Identifier &id,
+                                                    Args &&...args) {
+    if (id.component_array_ptr() != nullptr) {
+      auto *array = &id.component_array_ptr()->IdentifiedComponents;
 
       for (const auto &existing_component : *array) {
-        if (existing_component->GetIdentifier() == component_id) {
+        if (existing_component->GetIdentifier() == id) {
           return existing_component;
         }
       }
 
-      std::shared_ptr<Component> component_ptr = std::make_shared<T>(component);
+      auto component_ptr = std::make_shared<T>(id, std::forward<Args>(args)...);
       array->push_back(component_ptr);
       return component_ptr;
     }
@@ -638,12 +632,12 @@ public:
     ComponentsPool *pool = Application::Get().GetComponentPool();
 
     for (const auto &existing_component : pool->IdentifiedComponents) {
-      if (existing_component->GetIdentifier() == component_id) {
+      if (existing_component->GetIdentifier() == id) {
         return existing_component;
       }
     }
 
-    std::shared_ptr<Component> component_ptr = std::make_shared<T>(component);
+    auto component_ptr = std::make_shared<T>(id, std::forward<Args>(args)...);
     pool->IdentifiedComponents.push_back(component_ptr);
     return component_ptr;
   }
@@ -726,9 +720,11 @@ public:
   // un array push si il y a eu un
   // PushComponentArray sans pop, 	   sinon il l créera dans le pool
   // général.
-  void AddDataToComponentGroup(const std::string &group_name,
-                               const std::string &key,
-                               const std::string &value);
+  void SetPropertyOnGroup(const std::string &group_name, const std::string &key,
+                          const std::string &value);
+
+  void SetDataOnGroup(const std::string &group_name, const std::string &key,
+                      const std::string &value);
 
   // Add common property/data to all group components
 

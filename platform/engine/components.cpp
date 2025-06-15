@@ -173,6 +173,7 @@ template <> bool Component::GetPropertyAs<bool>(const std::string &key) {
 }
 
 void Component::RenderWrapper() {
+  m_IsComponentRendered = true;
   // Pre process actions
   RefreshContextProperties();
 
