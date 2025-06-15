@@ -41,15 +41,15 @@ public:
 };
 
 void AppWindowSample() {
-  if (CherryKit::ButtonText("Red theme")->GetData("isClicked") == "true") {
+  if (CherryKit::ButtonText("Red theme").GetData("isClicked") == "true") {
     CherryAppWindow.SetTheme("red");
   }
 
-  if (CherryKit::ButtonText("Blue theme")->GetData("isClicked") == "true") {
+  if (CherryKit::ButtonText("Blue theme").GetData("isClicked") == "true") {
     CherryAppWindow.SetTheme("blue");
   }
 
-  if (CherryKit::ButtonText("Green theme")->GetData("isClicked") == "true") {
+  if (CherryKit::ButtonText("Green theme").GetData("isClicked") == "true") {
     CherryAppWindow.SetTheme("green");
   }
 

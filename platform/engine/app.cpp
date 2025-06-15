@@ -2476,13 +2476,7 @@ void Application::SetPropertyOnGroup(const std::string &group_name,
                                      const std::string &value) {
   for (auto component : CherryApp.GetComponentPool()->IdentifiedComponents) {
     if (component->GetIdentifier().component_group() == group_name) {
-      std::cout << " FF" << component << std::endl;
-      std::cout << " Before" << component->GetProperty(key) << std::endl;
-      std::cout << "Set for" << component->GetIdentifier().string()
-                << std::endl;
       component->SetProperty(key, value);
-
-      std::cout << " After" << component->GetProperty(key) << std::endl;
     }
   }
 }
