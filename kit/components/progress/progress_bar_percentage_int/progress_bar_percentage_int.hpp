@@ -45,7 +45,9 @@ inline Component &ProgressBarPercentageInteger(const Identifier &identifier,
 
 inline Component &ProgressBarPercentageInteger(int *number, int *goal) {
   return Cherry::Kit::ProgressBarPercentageInteger(
-      Application::GenerateUniqueID(number, goal), number, goal);
+      Application::GenerateUniqueID(number, goal,
+                                    "ProgressBarPercentageInteger"),
+      number, goal);
 }
 
 } // namespace Kit

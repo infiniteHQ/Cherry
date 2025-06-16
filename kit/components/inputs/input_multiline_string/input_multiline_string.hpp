@@ -66,7 +66,8 @@ inline Component &InputMultilineString(const Identifier &identifier,
 inline Component &InputMultilineString(const std::string &label,
                                        std::string *value) {
   return Cherry::Kit::InputMultilineString(
-      Application::GenerateUniqueID(label, value), label, value);
+      Application::GenerateUniqueID(label, value, "InputMultilineString"),
+      label, value);
 }
 
 } // namespace Kit

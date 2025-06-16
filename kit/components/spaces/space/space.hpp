@@ -19,7 +19,6 @@ public:
     SetIdentifier(id);
 
     // Colors
-    SetProperty("color", "#454545B2");
     SetProperty("spacing", std::to_string(spacing));
   }
 
@@ -43,7 +42,8 @@ inline Component &Space(const Identifier &identifier, const float &spacing) {
 }
 
 inline Component &Space(const float &spacing) {
-  return Cherry::Kit::Space(Application::GenerateUniqueID(spacing), spacing);
+  return Cherry::Kit::Space(Application::GenerateUniqueID(spacing, "Space"),
+                            spacing);
 }
 
 } // namespace Kit

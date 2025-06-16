@@ -20,7 +20,7 @@ public:
     SetIdentifier(id);
 
     // Colors
-    SetProperty("color_text", "#454545B2");
+    SetProperty("color_text", "theme:button_color_text");
 
     // Informations
     SetProperty("label", label);
@@ -42,7 +42,8 @@ inline Component &BulletButton(const Identifier &identifier,
 }
 
 inline Component &BulletButton(const std::string &label) {
-  return Cherry::Kit::BulletButton(Application::GenerateUniqueID(label), label);
+  return Cherry::Kit::BulletButton(
+      Application::GenerateUniqueID(label, "BulletButton"), label);
 }
 } // namespace Kit
 

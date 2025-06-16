@@ -20,8 +20,8 @@ public:
     SetIdentifier(id);
 
     // Colors
-    SetProperty("padding_x", "6.0"); // TODO get the default theme
-    SetProperty("padding_y", "6.0"); // TODO get the default theme
+    SetProperty("padding_x", "theme:modal_padding_x");
+    SetProperty("padding_y", "theme:modal_padding_y");
 
     // Informations
     SetProperty("title", title);
@@ -96,8 +96,9 @@ inline Component &ModalSimple(
     const std::string &title, bool *activated,
     const std::function<void()> &render_callback = []() {}) {
   return Cherry::Kit::ModalSimple(
-      Application::GenerateUniqueID(title, activated, render_callback), title,
-      activated, render_callback);
+      Application::GenerateUniqueID(title, activated, render_callback,
+                                    "ModalSimple"),
+      title, activated, render_callback);
 }
 
 } // namespace Kit

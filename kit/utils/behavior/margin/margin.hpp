@@ -11,25 +11,25 @@
 #define CHERRY_STYLE_MARGIN
 
 namespace Cherry {
-  // End-User API
-  namespace Style {
-    inline void AddMarginX(const float& margin) {
-      CherryGUI::SetCursorPosX(CherryGUI::GetCursorPosX() + margin);
-    }
+// End-User API
+namespace Style {
+inline void AddMarginX(const float &margin) {
+  CherryGUI::SetCursorPosX(CherryGUI::GetCursorPosX() + margin);
+}
 
-    inline void AddMarginY(const float& margin) {
-      CherryGUI::SetCursorPosY(CherryGUI::GetCursorPosY() + margin);
-    }
+inline void AddMarginY(const float &margin) {
+  CherryGUI::SetCursorPosY(CherryGUI::GetCursorPosY() + margin);
+}
 
-    inline void RemoveXMargin(const float& margin) {
-      CherryGUI::SetCursorPosX(CherryGUI::GetCursorPosX() - margin);
-    }
+inline void RemoveMarginX(const float &margin) {
+  CherryGUI::SetCursorPosX(CherryGUI::GetCursorPosX() - margin);
+}
 
-    inline void RemoveYMargin(const float& margin) {
-      CherryGUI::SetCursorPosY(CherryGUI::GetCursorPosY() - margin);
-    }
-  }  // namespace Style
+inline void RemoveMarginY(const float &margin) {
+  CherryGUI::SetCursorPosY(CherryGUI::GetCursorPosY() - margin);
+}
+} // namespace Style
 
-}  // namespace Cherry
+} // namespace Cherry
 
-#endif  // CHERRY_STYLE_MARGIN
+#endif // CHERRY_STYLE_MARGIN

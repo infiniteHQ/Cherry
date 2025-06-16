@@ -85,8 +85,9 @@ inline Component &PlotLineFloat(const std::string &label,
                                 const std::vector<float> &float_table,
                                 int number_showed = -1) {
   return Cherry::Kit::PlotLineFloat(
-      Application::GenerateUniqueID(label, float_table, number_showed), label,
-      float_table, number_showed);
+      Application::GenerateUniqueID(label, float_table, number_showed,
+                                    "PlotLineFloat"),
+      label, float_table, number_showed);
 }
 
 inline Component &PlotLineFloat(const Identifier &identifier,
@@ -101,8 +102,9 @@ inline Component &PlotLineFloat(const std::string &label,
                                 const std::vector<float> &float_table,
                                 int *number_showed) {
   return Cherry::Kit::PlotLineFloat(
-      Application::GenerateUniqueID(label, float_table, number_showed), label,
-      float_table, number_showed);
+      Application::GenerateUniqueID(label, float_table, number_showed,
+                                    "PlotLineFloat"),
+      label, float_table, number_showed);
 }
 
 } // namespace Kit

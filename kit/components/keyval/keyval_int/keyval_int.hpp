@@ -21,7 +21,7 @@ public:
     SetIdentifier(id);
 
     // Colors
-    SetProperty("color_text", "#454545B2");
+    SetProperty("color_text", "theme:keyval_color_text");
 
     // Behavior
     SetProperty("step", "1");
@@ -78,8 +78,9 @@ inline Component &KeyValInteger(const Identifier &identifier,
 }
 
 inline Component &KeyValInteger(const std::string &label, int *value) {
-  return Cherry::Kit::KeyValInteger(Application::GenerateUniqueID(label, value),
-                                    label, value);
+  return Cherry::Kit::KeyValInteger(
+      Application::GenerateUniqueID(label, value, "KeyValInteger"), label,
+      value);
 }
 
 } // namespace Kit

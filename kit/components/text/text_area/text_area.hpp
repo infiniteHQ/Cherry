@@ -21,7 +21,7 @@ public:
     SetIdentifier(id);
 
     // Colors
-    SetProperty("color_text", "#FFFFFFFF");
+    SetProperty("color_text", "theme:text_area_color_text");
   }
 
   void Render() override {
@@ -54,8 +54,8 @@ inline Component &TextArea(const Identifier &identifier, float *width,
 inline Component &TextArea(float *width, float *height,
                            const std::string &buffer) {
   return Cherry::Kit::TextArea(
-      Application::GenerateUniqueID(width, height, buffer), width, height,
-      buffer);
+      Application::GenerateUniqueID(width, height, buffer, "TextArea"), width,
+      height, buffer);
 }
 
 } // namespace Kit

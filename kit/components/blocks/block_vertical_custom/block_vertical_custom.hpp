@@ -25,14 +25,16 @@ public:
     SetIdentifier(id);
 
     // Colors
-    SetProperty("block_color", "#252525");
-    SetProperty("block_color_hovered", "#454545");
-    SetProperty("block_color_pressed", "#555555");
-    SetProperty("block_border_color", "#353535");
-    SetProperty("block_border_color_hovered", "#353535");
-    SetProperty("block_border_color_pressed", "#555555");
-    SetProperty("block_border_radius", std::to_string(0.0f));
-    SetProperty("block_border_size", std::to_string(1.0f));
+    SetProperty("block_color", "theme:block_color");
+    SetProperty("block_color_hovered", "theme:block_color_hovered");
+    SetProperty("block_color_pressed", "theme:block_color_pressed");
+    SetProperty("block_border_color", "theme:block_border_color");
+    SetProperty("block_border_color_hovered",
+                "theme:block_border_color_hovered");
+    SetProperty("block_border_color_pressed",
+                "theme:block_border_color_pressed");
+    SetProperty("block_border_radius", "theme:block_border_radius");
+    SetProperty("block_border_size", "theme:block_border_size");
     SetProperty("size_x", std::to_string(width));
     SetProperty("size_y", std::to_string(height));
 
@@ -202,7 +204,8 @@ BlockVerticalCustom(const Identifier &identifier,
 inline Component &
 BlockVerticalCustom(const std::vector<std::function<void()>> &renderCallbacks) {
   return Cherry::Kit::BlockVerticalCustom(
-      Application::GenerateUniqueID(renderCallbacks), renderCallbacks);
+      Application::GenerateUniqueID(renderCallbacks, "BlockVerticalCustom"),
+      renderCallbacks);
 }
 
 inline Component &BlockVerticalCustom(
@@ -220,7 +223,7 @@ inline Component &BlockVerticalCustom(
     const std::vector<std::function<void()>> &renderCallbacks = {}, int i = 0) {
   return Cherry::Kit::BlockVerticalCustom(
       Application::GenerateUniqueID(onClickedCallback, width, height,
-                                    renderCallbacks, i),
+                                    renderCallbacks, i, "BlockVerticalCustom"),
       onClickedCallback, width, height, renderCallbacks, i);
 }
 

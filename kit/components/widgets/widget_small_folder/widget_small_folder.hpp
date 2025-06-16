@@ -91,8 +91,8 @@ inline Component &WidgetSmallFolder(const std::string &color = "#CC9900",
                                     const float &size_x = 40.0f,
                                     const float &size_y = 40.0f) {
   return Cherry::Kit::WidgetSmallFolder(
-      Application::GenerateUniqueID(color, size_x, size_y), color, size_x,
-      size_y);
+      Application::GenerateUniqueID(color, size_x, size_y, "WidgetSmallFolder"),
+      color, size_x, size_y);
 }
 
 } // namespace Kit

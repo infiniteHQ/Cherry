@@ -22,12 +22,12 @@ public:
     SetIdentifier(id);
 
     // Colors
-    SetProperty("color_border", "#454545B2");
-    SetProperty("color_border_hovered", "#454545B2");
-    SetProperty("color_border_clicked", "#454545B2");
-    SetProperty("color_bg", "#242424FF");
-    SetProperty("color_bg_hovered", "#343434FF");
-    SetProperty("color_bg_clicked", "#444444FF");
+    SetProperty("color_border", "theme:tooltip_color_border");
+    SetProperty("color_border_hovered", "theme:tooltip_color_border_hovered");
+    SetProperty("color_border_clicked", "theme:tooltip_color_border_clicked");
+    SetProperty("color_bg", "theme:tooltip_color_bg");
+    SetProperty("color_bg_hovered", "theme:tooltip_color_bg_hovered");
+    SetProperty("color_bg_clicked", "theme:tooltip_color_bg_clicked");
 
     // Informations
     SetProperty("image_path", image_path);
@@ -68,8 +68,9 @@ inline Component &
 TooltipImageCustom(const std::string &image_path,
                    const std::function<void()> &render_callback) {
   return Cherry::Kit::TooltipImageCustom(
-      Application::GenerateUniqueID(image_path, render_callback), image_path,
-      render_callback);
+      Application::GenerateUniqueID(image_path, render_callback,
+                                    "TooltipImageCustom"),
+      image_path, render_callback);
 }
 
 } // namespace Kit

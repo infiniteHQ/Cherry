@@ -21,7 +21,7 @@ public:
     SetIdentifier(id);
 
     // Colors
-    SetProperty("color_text", "#FFFFFFFF"); // TODO get the default theme
+    SetProperty("color_text", "theme:title_color_text");
 
     // Informations
     SetProperty("label", label);
@@ -54,7 +54,8 @@ inline Component &TitleFive(const Identifier &identifier,
 }
 
 inline Component &TitleFive(const std::string &label) {
-  return Cherry::Kit::TitleFive(Application::GenerateUniqueID(label), label);
+  return Cherry::Kit::TitleFive(
+      Application::GenerateUniqueID(label, "TitleFive"), label);
 }
 
 } // namespace Kit

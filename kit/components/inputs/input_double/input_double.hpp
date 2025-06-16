@@ -20,7 +20,6 @@ public:
     // Identifier
     SetIdentifier(id);
 
-    // Colors
     SetProperty("step", "1.0");
     SetProperty("step_fast", "5.0");
 
@@ -59,8 +58,8 @@ inline Component &InputDouble(const Identifier &identifier,
 }
 
 inline Component &InputDouble(const std::string &label, double *value) {
-  return Cherry::Kit::InputDouble(Application::GenerateUniqueID(label, value),
-                                  label, value);
+  return Cherry::Kit::InputDouble(
+      Application::GenerateUniqueID(label, value, "InputDouble"), label, value);
 }
 } // namespace Kit
 

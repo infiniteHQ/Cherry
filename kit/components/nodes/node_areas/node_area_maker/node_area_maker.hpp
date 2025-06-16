@@ -2040,8 +2040,8 @@ inline Component &
 NodeAreaMaker(const std::string &label, int width, int height,
               const std::vector<std::shared_ptr<Component>> &node_array = {}) {
   return Cherry::Kit::NodeAreaMaker(
-      Application::GenerateUniqueID(label, width, height), label, width,
-      height);
+      Application::GenerateUniqueID(label, width, height, "NodeAreaMaker"),
+      label, width, height);
 }
 
 } // namespace Kit

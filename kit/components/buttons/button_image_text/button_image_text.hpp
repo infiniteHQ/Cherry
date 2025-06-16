@@ -21,20 +21,24 @@ public:
     SetIdentifier(id);
 
     // Colors
-    SetProperty("color_border", "#454545B2");
-    SetProperty("color_border_hovered", "#454545B2");
-    SetProperty("color_border_clicked", "#454545B2");
-    SetProperty("color_bg", "#242424FF");
-    SetProperty("color_bg_hovered", "#343434FF");
-    SetProperty("color_bg_clicked", "#444444FF");
+    SetProperty("color_border", "theme:button_color_border");
+    SetProperty("color_border_hovered", "theme:button_color_border_hovered");
+    SetProperty("color_border_pressed", "theme:button_color_border_pressed");
+    SetProperty("color_bg", "theme:button_color_bg");
+    SetProperty("color_bg_hovered", "theme:button_color_bg_hovered");
+    SetProperty("color_bg_pressed", "theme:button_color_bg_pressed");
+    SetProperty("color_text", "theme:button_color_text");
+    SetProperty("color_text_hovered", "theme:button_color_text_hovered");
+    SetProperty("color_text_pressed", "theme:button_color_text_pressed");
 
     // Sizes
-    SetProperty("size_x", "15");
-    SetProperty("size_y", "15");
+    SetProperty("size_x", "theme:button_size_x");
+    SetProperty("size_y", "theme:button_size_y");
+    SetProperty("padding_x", "theme:button_padding_x");
+    SetProperty("padding_y", "theme:button_padding_y");
+
     SetProperty("size_image_x", "15");
     SetProperty("size_image_y", "15");
-    SetProperty("padding_x", "10");
-    SetProperty("padding_y", "6");
 
     // Informations
     SetProperty("label", label);
@@ -110,7 +114,8 @@ inline Component &ButtonImageText(const Identifier &identifier,
 inline Component &ButtonImageText(const std::string &label,
                                   const std::string &image_path) {
   return Cherry::Kit::ButtonImageText(
-      Application::GenerateUniqueID(label, image_path), label, image_path);
+      Application::GenerateUniqueID(label, image_path, "ButtonImageText"),
+      label, image_path);
 }
 } // namespace Kit
 

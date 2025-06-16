@@ -23,22 +23,26 @@ public:
     SetIdentifier(id);
 
     // Colors
-    SetProperty("button_color_border", "#454545B2");
-    SetProperty("button_color_border_hovered", "#454545B2");
-    SetProperty("button_color_border_clicked", "#454545B2");
-    SetProperty("button_color_bg", "#242424FF");
-    SetProperty("button_color_bg_hovered", "#343434FF");
-    SetProperty("button_color_bg_clicked", "#444444FF");
-    SetProperty("color_border", "#454545B2");
-    SetProperty("color_border_hovered", "#454545B2");
-    SetProperty("color_border_clicked", "#454545B2");
-    SetProperty("color_bg", "#242424FF");
-    SetProperty("color_bg_hovered", "#343434FF");
-    SetProperty("color_bg_clicked", "#444444FF");
+    SetProperty("button_color_border", "theme:header_button_color_border");
+    SetProperty("button_color_border_hovered",
+                "theme:header_button_color_border_hovered");
+    SetProperty("button_color_border_clicked",
+                "theme:header_button_color_border_clicked");
+    SetProperty("button_color_bg", "theme:header_button_color_bg");
+    SetProperty("button_color_bg_hovered",
+                "theme:header_button_color_bg_hovered");
+    SetProperty("button_color_bg_clicked",
+                "theme:header_button_color_bg_clicked");
+    SetProperty("color_border", "theme:header_color_border");
+    SetProperty("color_border_hovered", "theme:header_color_border_hovered");
+    SetProperty("color_border_clicked", "theme:header_color_border_clicked");
+    SetProperty("color_bg", "theme:header_color_bg");
+    SetProperty("color_bg_hovered", "theme:header_color_bg_hovered");
+    SetProperty("color_bg_clicked", "theme:header_color_bg_clicked");
 
     // Sizes
-    SetProperty("size_x", "6");
-    SetProperty("size_y", "6");
+    SetProperty("size_x", "theme:header_size_x");
+    SetProperty("size_y", "theme:header_size_y");
 
     // Images
     SetProperty("image_path", image_path);
@@ -173,8 +177,9 @@ inline Component &HeaderImageTextButton(
     const std::string &label, const std::string &image_path,
     const std::function<void()> &render_content = []() {}) {
   return Cherry::Kit::HeaderImageTextButton(
-      Application::GenerateUniqueID(label, image_path, render_content), label,
-      image_path, render_content);
+      Application::GenerateUniqueID(label, image_path, render_content,
+                                    "HeaderImageTextButton"),
+      label, image_path, render_content);
 }
 
 } // namespace Kit

@@ -21,7 +21,7 @@ public:
     SetIdentifier(id);
 
     // Colors
-    SetProperty("color_text", "#454545B2");
+    SetProperty("color_text", "theme:text_color_text");
 
     // Informations
     SetProperty("label", label);
@@ -54,7 +54,8 @@ inline Component &TextImage(const Identifier &identifier,
 inline Component &TextImage(const std::string &label,
                             const std::string &image_path) {
   return Cherry::Kit::TextImage(
-      Application::GenerateUniqueID(label, image_path), label, image_path);
+      Application::GenerateUniqueID(label, image_path, "TextImage"), label,
+      image_path);
 }
 
 } // namespace Kit

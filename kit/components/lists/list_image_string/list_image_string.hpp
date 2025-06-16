@@ -85,8 +85,9 @@ ListImageString(const std::string &label,
                 const std::vector<std::pair<std::string, std::string>> &values,
                 int default_selected = 0) {
   return Cherry::Kit::ListImageString(
-      Application::GenerateUniqueID(label, values, default_selected), label,
-      values, default_selected);
+      Application::GenerateUniqueID(label, values, default_selected,
+                                    "ListImageString"),
+      label, values, default_selected);
 }
 
 } // namespace Kit

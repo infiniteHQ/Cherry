@@ -21,12 +21,12 @@ public:
     SetIdentifier(id);
 
     // Colors
-    SetProperty("color_border", "#454545B2");
-    SetProperty("color_border_hovered", "#454545B2");
-    SetProperty("color_border_clicked", "#454545B2");
-    SetProperty("color_bg", "#242424FF");
-    SetProperty("color_bg_hovered", "#343434FF");
-    SetProperty("color_bg_clicked", "#444444FF");
+    SetProperty("color_border", "theme:tooltip_color_border");
+    SetProperty("color_border_hovered", "theme:tooltip_color_border_hovered");
+    SetProperty("color_border_clicked", "theme:tooltip_color_border_clicked");
+    SetProperty("color_bg", "theme:tooltip_color_bg");
+    SetProperty("color_bg_hovered", "theme:tooltip_color_bg_hovered");
+    SetProperty("color_bg_clicked", "theme:tooltip_color_bg_clicked");
 
     // Informations
     SetProperty("label", label);
@@ -58,7 +58,8 @@ inline Component &TooltipText(const Identifier &identifier,
 inline Component &TooltipText(const std::string &label,
                               const std::string &description) {
   return Cherry::Kit::TooltipText(
-      Application::GenerateUniqueID(label, description), label, description);
+      Application::GenerateUniqueID(label, description, "TooltipText"), label,
+      description);
 }
 
 } // namespace Kit

@@ -20,17 +20,19 @@ public:
     SetIdentifier(id);
 
     // Colors
-    SetProperty("color_underline", "#242424FF");
-    SetProperty("color_underline_hovered", "#343434FF");
-    SetProperty("color_underline_pressed", "#444444FF");
-    SetProperty("color_text", "#BCBCBCFF");
-    SetProperty("color_text_hovered", "#FFFFFFFF");
-    SetProperty("color_text_pressed", "#FFFFFFFF");
+    SetProperty("color_underline", "theme:button_color_underline");
+    SetProperty("color_underline_hovered",
+                "theme:button_color_underline_hovered");
+    SetProperty("color_underline_pressed",
+                "theme:button_color_underline_pressed");
+    SetProperty("color_text", "theme:button_color_text");
+    SetProperty("color_text_hovered", "theme:button_color_text_hovered");
+    SetProperty("color_text_pressed", "theme:button_color_text_pressed");
 
     // Sizes
     SetProperty("margin_y", "2");
-    SetProperty("size_y", "0");
-    SetProperty("size_x", "0");
+    SetProperty("size_x", "theme:button_size_x");
+    SetProperty("size_y", "theme:button_size_y");
 
     // Params
     SetProperty("disabled", "false");

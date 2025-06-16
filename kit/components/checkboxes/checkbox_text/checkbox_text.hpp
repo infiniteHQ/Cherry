@@ -26,16 +26,16 @@ public:
     SetIdentifier(id);
 
     // Colors
-    SetProperty("color_border", "#454545B2");
-    SetProperty("color_border_hovered", "#454545B2");
-    SetProperty("color_border_clicked", "#454545B2");
-    SetProperty("color_bg", "#242424FF");
-    SetProperty("color_bg_hovered", "#343434FF");
-    SetProperty("color_bg_clicked", "#444444FF");
+    SetProperty("color_border", "theme:checkbox_color_border");
+    SetProperty("color_border_hovered", "theme:checkbox_color_border_hovered");
+    SetProperty("color_border_pressed", "theme:checkbox_color_border_pressed");
+    SetProperty("color_bg", "theme:checkbox_color_bg");
+    SetProperty("color_bg_hovered", "theme:checkbox_color_bg_hovered");
+    SetProperty("color_bg_pressed", "theme:checkbox_color_bg_pressed");
 
     // Sizes
-    SetProperty("size_x", "6");
-    SetProperty("size_y", "6");
+    SetProperty("size_x", "theme:checkbox_size_x");
+    SetProperty("size_y", "theme:checkbox_size_y");
 
     // Informations
     SetProperty("label", label);

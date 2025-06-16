@@ -70,9 +70,10 @@ inline Component &ListString(const Identifier &identifier,
 inline Component &ListString(const std::string &label,
                              const std::vector<std::string> &values,
                              int default_selected = 0) {
-  return Cherry::Kit::ListString(
-      Application::GenerateUniqueID(label, values, default_selected), label,
-      values, default_selected);
+  return Cherry::Kit::ListString(Application::GenerateUniqueID(label, values,
+                                                               default_selected,
+                                                               "ListString"),
+                                 label, values, default_selected);
 }
 
 } // namespace Kit

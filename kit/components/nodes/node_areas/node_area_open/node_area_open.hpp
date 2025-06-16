@@ -2395,7 +2395,8 @@ inline Component &NodeAreaOpen(const std::string &label, int width, int height,
                                Cherry::NodeSystem::NodeContext *node_ctx,
                                Cherry::NodeSystem::NodeGraph *graph) {
   return Cherry::Kit::NodeAreaOpen(
-      Application::GenerateUniqueID(label, width, height, node_ctx, graph),
+      Application::GenerateUniqueID(label, width, height, node_ctx, graph,
+                                    "NodeAreaOpen"),
       label, width, height, node_ctx, graph);
 }
 

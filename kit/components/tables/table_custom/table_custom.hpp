@@ -22,17 +22,16 @@ public:
     SetIdentifier(id);
 
     // Padding
-    SetProperty("cell_padding_x_header", "6.0");
-    SetProperty("cell_padding_y_header", "6.0");
-    SetProperty("cell_padding_x_row", "6.0");
-    SetProperty("cell_padding_y_row", "6.0");
+    SetProperty("cell_padding_x_header", "theme:table_cell_padding_x_header");
+    SetProperty("cell_padding_y_header", "theme:table_cell_padding_y_header");
+    SetProperty("cell_padding_x_row", "theme:table_cell_padding_x_row");
+    SetProperty("cell_padding_y_row", "theme:table_cell_padding_y_row");
+    // Style
+    SetProperty("color_border", "theme:table_color_border");
 
     // Visibility
     SetProperty("header_visible", "true");
     SetProperty("selectable", "true");
-
-    // Style
-    SetProperty("color_border", "#232323");
 
     // Columns
     SetProperty("columns_number", "2");
@@ -152,7 +151,8 @@ TableCustom(const std::string &label,
             const std::vector<std::function<void(int)>> &rows = {},
             ImGuiTableFlags flags = 0) {
   return Cherry::Kit::TableCustom(
-      Application::GenerateUniqueID(label, rows, flags), label, rows, flags);
+      Application::GenerateUniqueID(label, rows, flags, "TableCustom"), label,
+      rows, flags);
 }
 
 } // namespace Kit

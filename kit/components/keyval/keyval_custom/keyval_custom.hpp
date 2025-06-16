@@ -20,7 +20,7 @@ public:
     SetIdentifier(id);
 
     // Colors
-    SetProperty("color_text", "#454545B2");
+    SetProperty("color_text", "theme:keyval_color_text");
 
     // Informations
     SetProperty("label", label);
@@ -73,8 +73,8 @@ inline Component &KeyValCustom(const Identifier &identifier,
 inline Component &KeyValCustom(const std::string &label,
                                const std::function<void()> &renderCallback) {
   return Cherry::Kit::KeyValCustom(
-      Application::GenerateUniqueID(label, renderCallback), label,
-      renderCallback);
+      Application::GenerateUniqueID(label, renderCallback, "KeyValCustom"),
+      label, renderCallback);
 }
 
 } // namespace Kit

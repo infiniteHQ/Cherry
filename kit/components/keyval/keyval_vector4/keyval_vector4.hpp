@@ -22,7 +22,7 @@ public:
     SetIdentifier(id);
 
     // Colors
-    SetProperty("color_text", "#454545B2");
+    SetProperty("color_text", "theme:keyval_color_text");
 
     // Informations
     SetProperty("label", label);
@@ -135,8 +135,8 @@ inline Component &KeyValVector4(const std::string &label, float *x_value,
                                 float *y_value, float *z_value,
                                 float *w_value) {
   return Cherry::Kit::KeyValVector4(
-      Application::GenerateUniqueID(label, x_value, y_value), label, x_value,
-      y_value, z_value, w_value);
+      Application::GenerateUniqueID(label, x_value, y_value, "KeyValVector4"),
+      label, x_value, y_value, z_value, w_value);
 }
 
 } // namespace Kit

@@ -21,7 +21,7 @@ public:
     SetIdentifier(id);
 
     // Colors
-    SetProperty("color_text", "#454545B2");
+    SetProperty("color_text", "theme:button_color_text");
 
     // Informations
     std::string label;
@@ -50,8 +50,8 @@ inline Component &BulletMultiText(const Identifier &identifier,
 }
 
 inline Component &BulletMultiText(const std::vector<std::string> &labels) {
-  return Cherry::Kit::BulletMultiText(Application::GenerateUniqueID(labels),
-                                      labels);
+  return Cherry::Kit::BulletMultiText(
+      Application::GenerateUniqueID(labels, "BulletMultiText"), labels);
 }
 
 } // namespace Kit

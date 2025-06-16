@@ -22,7 +22,7 @@ public:
     SetIdentifier(id);
 
     // Colors
-    SetProperty("color_text", "#454545B2");
+    SetProperty("color_text", "theme:keyval_color_text");
 
     // Behavior
     SetProperty("default_index", std::to_string(default_selected_index));
@@ -115,8 +115,9 @@ inline Component &KeyValComboString(const std::string &label,
                                     std::vector<std::string> *list,
                                     int default_selected_index = 0) {
   return Cherry::Kit::KeyValComboString(
-      Application::GenerateUniqueID(label, list, default_selected_index), label,
-      list, default_selected_index);
+      Application::GenerateUniqueID(label, list, default_selected_index,
+                                    "KeyValComboString"),
+      label, list, default_selected_index);
 }
 } // namespace Kit
 

@@ -178,7 +178,8 @@ inline Component &ButtonText(const Identifier &identifier,
 }
 
 inline Component &ButtonText(const std::string &label) {
-  return Cherry::Kit::ButtonText(Application::GenerateUniqueID(label), label);
+  return Cherry::Kit::ButtonText(
+      Application::GenerateUniqueID(label, "ButtonText"), label);
 }
 
 } // namespace Kit

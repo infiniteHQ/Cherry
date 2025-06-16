@@ -116,7 +116,8 @@ inline Component &GridSimple(
     const float &blockSize = 250.0f, const float &minBlockSize = 250.0f,
     std::vector<std::shared_ptr<Cherry::Component>> *elements = nullptr) {
   return Cherry::Kit::GridSimple(
-      Application::GenerateUniqueID(blockSize, minBlockSize, elements),
+      Application::GenerateUniqueID(blockSize, minBlockSize, elements,
+                                    "GridSimple"),
       blockSize, minBlockSize, elements);
 }
 

@@ -20,7 +20,7 @@ public:
     SetIdentifier(id);
 
     // Colors
-    SetProperty("color_text", "#454545B2");
+    SetProperty("color_text", "theme:separator_color_text");
 
     // Informations
     SetProperty("label", label);

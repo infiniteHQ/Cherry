@@ -127,8 +127,8 @@ inline Component &WidgetFolder(const std::string &color = "#CC9900",
                                const float &size_x = 150.0f,
                                const float &size_y = 150.0f) {
   return Cherry::Kit::WidgetFolder(
-      Application::GenerateUniqueID(color, size_x, size_y), color, size_x,
-      size_y);
+      Application::GenerateUniqueID(color, size_x, size_y, "WidgetFolder"),
+      color, size_x, size_y);
 }
 } // namespace Kit
 

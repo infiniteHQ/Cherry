@@ -44,7 +44,8 @@ inline Component &ProgressBarPercentageFloat(const Identifier &identifier,
 
 inline Component &ProgressBarPercentageFloat(float *number, float *goal) {
   return Cherry::Kit::ProgressBarPercentageFloat(
-      Application::GenerateUniqueID(number, goal), number, goal);
+      Application::GenerateUniqueID(number, goal, "ProgressBarPercentageFloat"),
+      number, goal);
 }
 
 } // namespace Kit

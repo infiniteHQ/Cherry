@@ -77,9 +77,10 @@ inline Component &
 ListCustom(const std::string &label,
            const std::vector<std::shared_ptr<Component>> &values,
            int default_selected = 0) {
-  return Cherry::Kit::ListCustom(
-      Application::GenerateUniqueID(label, values, default_selected), label,
-      values, default_selected);
+  return Cherry::Kit::ListCustom(Application::GenerateUniqueID(label, values,
+                                                               default_selected,
+                                                               "ListCustom"),
+                                 label, values, default_selected);
 }
 
 } // namespace Kit

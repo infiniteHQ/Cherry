@@ -22,12 +22,12 @@ public:
     SetIdentifier(id);
 
     // Colors
-    SetProperty("color_border", "#454545B2");
-    SetProperty("color_border_hovered", "#454545B2");
-    SetProperty("color_border_clicked", "#454545B2");
-    SetProperty("color_bg", "#242424FF");
-    SetProperty("color_bg_hovered", "#343434FF");
-    SetProperty("color_bg_clicked", "#444444FF");
+    SetProperty("color_border", "theme:combo_color_border");
+    SetProperty("color_border_hovered", "theme:combo_color_border_hovered");
+    SetProperty("color_border_clicked", "theme:combo_color_border_clicked");
+    SetProperty("color_bg", "theme:combo_color_bg");
+    SetProperty("color_bg_hovered", "theme:combo_color_bg_hovered");
+    SetProperty("color_bg_clicked", "theme:combo_color_bg_clicked");
 
     // Images
     SetProperty("default_index", std::to_string(default_index));
@@ -100,8 +100,8 @@ ComboCustom(const std::string &label,
             const std::vector<std::shared_ptr<Component>> &list,
             int default_index = 0) {
   return Cherry::Kit::ComboCustom(
-      Application::GenerateUniqueID(label, list, default_index), label, list,
-      default_index);
+      Application::GenerateUniqueID(label, list, default_index, "ComboCustom"),
+      label, list, default_index);
 }
 
 } // namespace Kit

@@ -19,7 +19,7 @@ public:
     SetIdentifier(id);
 
     // Colors
-    SetProperty("color", "#424242");
+    SetProperty("color", "theme:separator_color");
   }
 
   void Render() override {
@@ -38,7 +38,7 @@ inline Component &Separator(const Identifier &identifier) {
 }
 
 inline Component &Separator() {
-  return Cherry::Kit::Separator(Application::GenerateUniqueID("separator"));
+  return Cherry::Kit::Separator(Application::GenerateUniqueID("Separator"));
 }
 
 } // namespace Kit

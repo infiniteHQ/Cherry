@@ -21,7 +21,7 @@ public:
     SetIdentifier(id);
 
     // Colors
-    SetProperty("color_text", "#FFFFFFFF");
+    SetProperty("color_text", "theme:text_color_text");
 
     // Informations
     SetProperty("label", label);
@@ -68,7 +68,8 @@ inline Component &TextCenter(const Identifier &identifier,
 }
 
 inline Component &TextCenter(const std::string &label) {
-  return Cherry::Kit::TextCenter(Application::GenerateUniqueID(label), label);
+  return Cherry::Kit::TextCenter(
+      Application::GenerateUniqueID(label, "TextCenter"), label);
 }
 
 } // namespace Kit

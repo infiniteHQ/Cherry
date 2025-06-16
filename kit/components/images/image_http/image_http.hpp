@@ -22,12 +22,12 @@ public:
     SetIdentifier(id);
 
     // Colors
-    SetProperty("color_border", "#454545B2");
-    SetProperty("color_border_hovered", "#454545B2");
-    SetProperty("color_border_clicked", "#454545B2");
-    SetProperty("color_bg", "#242424FF");
-    SetProperty("color_bg_hovered", "#343434FF");
-    SetProperty("color_bg_clicked", "#444444FF");
+    SetProperty("color_border", "theme:image_color_border");
+    SetProperty("color_border_hovered", "theme:image_color_border_hovered");
+    SetProperty("color_border_clicked", "theme:image_color_border_clicked");
+    SetProperty("color_bg", "theme:image_color_bg");
+    SetProperty("color_bg_hovered", "theme:image_color_bg_hovered");
+    SetProperty("color_bg_clicked", "theme:image_color_bg_clicked");
 
     // Sizes
     SetProperty("size_x", std::to_string(x_size));
@@ -57,12 +57,12 @@ public:
     SetIdentifier(id);
 
     // Colors
-    SetProperty("color_border", "#454545B2");
-    SetProperty("color_border_hovered", "#454545B2");
-    SetProperty("color_border_clicked", "#454545B2");
-    SetProperty("color_bg", "#242424FF");
-    SetProperty("color_bg_hovered", "#343434FF");
-    SetProperty("color_bg_clicked", "#444444FF");
+    SetProperty("color_border", "theme:image_color_border");
+    SetProperty("color_border_hovered", "theme:image_color_border_hovered");
+    SetProperty("color_border_clicked", "theme:image_color_border_clicked");
+    SetProperty("color_bg", "theme:image_color_bg");
+    SetProperty("color_bg_hovered", "theme:image_color_bg_hovered");
+    SetProperty("color_bg_clicked", "theme:image_color_bg_clicked");
 
     // Sizes
     SetProperty("size_x", std::to_string(x_size));
@@ -96,9 +96,10 @@ inline Component &ImageHttp(const Identifier &identifier,
 
 inline Component &ImageHttp(const std::string &image_http_path,
                             float x_size = 50.0f, float y_size = 50.0f) {
-  return Cherry::Kit::ImageHttp(
-      Application::GenerateUniqueID(image_http_path, x_size, y_size),
-      image_http_path, x_size, y_size);
+  return Cherry::Kit::ImageHttp(Application::GenerateUniqueID(image_http_path,
+                                                              x_size, y_size,
+                                                              "ImageHttp"),
+                                image_http_path, x_size, y_size);
 }
 
 } // namespace Kit

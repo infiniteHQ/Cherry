@@ -86,8 +86,9 @@ inline Component &PlotHistorigramFloat(const std::string &label,
                                        const std::vector<float> &float_table,
                                        int number_showed = -1) {
   return Cherry::Kit::PlotHistorigramFloat(
-      Application::GenerateUniqueID(label, float_table, number_showed), label,
-      float_table, number_showed);
+      Application::GenerateUniqueID(label, float_table, number_showed,
+                                    "PlotHistorigramFloat"),
+      label, float_table, number_showed);
 }
 
 inline Component &PlotHistorigramFloat(const Identifier &identifier,
@@ -102,8 +103,9 @@ inline Component &PlotHistorigramFloat(const std::string &label,
                                        const std::vector<float> &float_table,
                                        int *number_showed) {
   return Cherry::Kit::PlotHistorigramFloat(
-      Application::GenerateUniqueID(label, float_table, number_showed), label,
-      float_table, number_showed);
+      Application::GenerateUniqueID(label, float_table, number_showed,
+                                    "PlotHistorigramFloat"),
+      label, float_table, number_showed);
 }
 
 } // namespace Kit

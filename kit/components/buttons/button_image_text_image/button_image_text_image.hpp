@@ -22,29 +22,27 @@ public:
     SetIdentifier(id);
 
     // Colors
-    SetProperty("color_border", "#454545FF");
-    SetProperty("color_border_hovered", "#555555FF");
-    SetProperty("color_border_pressed", "#757575FF");
-    SetProperty("color_border_clicked", "#757575FF");
-    SetProperty("color_bg", "#242424FF");
-    SetProperty("color_bg_hovered", "#343434FF");
-    SetProperty("color_bg_pressed", "#444444FF");
-    SetProperty("color_bg_clicked", "#444444FF");
-    SetProperty("color_text", "#BCBCBCFF");
-    SetProperty("color_text_hovered", "#FFFFFFFF");
-    SetProperty("color_text_pressed", "#FFFFFFFF");
-    SetProperty("color_text_clicked", "#444444FF");
+    SetProperty("color_border", "theme:button_color_border");
+    SetProperty("color_border_hovered", "theme:button_color_border_hovered");
+    SetProperty("color_border_clicked", "theme:button_color_border_clicked");
+    SetProperty("color_border_pressed", "theme:button_color_border_pressed");
+    SetProperty("color_bg", "theme:button_color_bg");
+    SetProperty("color_bg_hovered", "theme:button_color_bg_hovered");
+    SetProperty("color_bg_clicked", "theme:button_color_bg_clicked");
+    SetProperty("color_bg_pressed", "theme:button_color_bg_pressed");
+    SetProperty("color_text", "theme:button_color_text");
+    SetProperty("color_text_hovered", "theme:button_color_text_hovered");
+    SetProperty("color_text_pressed", "theme:button_color_text_pressed");
 
     // Sizes
-    SetProperty("size_x", "15");
-    SetProperty("size_y", "15");
+    SetProperty("size_x", "theme:button_size_x");
+    SetProperty("size_y", "theme:button_size_y");
+    SetProperty("padding_x", "theme:button_padding_x");
+    SetProperty("padding_y", "theme:button_padding_y");
+    SetProperty("scale", "theme:button_scale");
+
     SetProperty("size_image_x", "15");
     SetProperty("size_image_y", "15");
-    SetProperty("padding_x", "10");
-    SetProperty("padding_y", "6");
-    SetProperty("scale",
-                "0"); // Instead of using sizes manually, we can use scale.
-
     // Params
     SetProperty("disabled", "false");
     SetProperty("disable_time", "false");
@@ -203,7 +201,8 @@ inline Component &ButtonImageTextImage(const std::string &label,
                                        const std::string &image_path,
                                        const std::string &second_image_path) {
   return Cherry::Kit::ButtonImageTextImage(
-      Application::GenerateUniqueID(label, image_path, second_image_path),
+      Application::GenerateUniqueID(label, image_path, second_image_path,
+                                    "ButtonImageTextImage"),
       label, image_path, second_image_path);
 }
 

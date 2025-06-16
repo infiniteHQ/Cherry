@@ -60,8 +60,8 @@ inline Component &InputInteger(const Identifier &identifier,
 }
 
 inline Component &InputInteger(const std::string &label, int *value) {
-  return Cherry::Kit::InputInteger(Application::GenerateUniqueID(label, value),
-                                   label, value);
+  return Cherry::Kit::InputInteger(
+      Application::GenerateUniqueID(label, value, "InputInt"), label, value);
 }
 
 } // namespace Kit

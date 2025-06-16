@@ -25,10 +25,11 @@ public:
     SetIdentifier(id);
 
     // Colors
-    SetProperty("color_border", "#454545FF");
-    SetProperty("color_border_hovered", "#555555FF");
-    SetProperty("color_bg", "#242424FF");
-    SetProperty("color_bg_hovered", "#343434FF");
+    SetProperty("color_border", "theme:notification_color_border");
+    SetProperty("color_border_hovered",
+                "theme:notification_color_border_hovered");
+    SetProperty("color_bg", "theme:notification_color_bg");
+    SetProperty("color_bg_hovered", "theme:notification_color_bg_hovered");
 
     SetProperty("icon", "undefined");
     SetProperty("close_button", "false");
@@ -133,7 +134,8 @@ inline Component &NotificationButton(
     const std::function<void()> &button_callback = []() {}) {
   return Cherry::Kit::NotificationButton(
       Application::GenerateUniqueID(activate, timer_in_seconds, type, title,
-                                    description, button_callback),
+                                    description, button_callback,
+                                    "NotificationButton"),
       activate, timer_in_seconds, type, title, description, button_callback);
 }
 

@@ -21,7 +21,7 @@ public:
     SetIdentifier(id);
 
     // Colors
-    SetProperty("color_text", "#454545B2");
+    SetProperty("color_text", "theme:keyval_color_text");
 
     // Behavior
     SetProperty("step", "1");
@@ -76,8 +76,8 @@ inline Component &KeyValFloat(const Identifier &identifier,
 }
 
 inline Component &KeyValFloat(const std::string &label, float *value) {
-  return Cherry::Kit::KeyValFloat(Application::GenerateUniqueID(label, value),
-                                  label, value);
+  return Cherry::Kit::KeyValFloat(
+      Application::GenerateUniqueID(label, value, "KeyValFloat"), label, value);
 }
 
 } // namespace Kit

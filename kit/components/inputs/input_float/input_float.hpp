@@ -20,7 +20,6 @@ public:
     // Identifier
     SetIdentifier(id);
 
-    // Colors
     SetProperty("step", "1.0");
     SetProperty("step_fast", "5.0");
 
@@ -59,8 +58,8 @@ inline Component &InputFloat(const Identifier &identifier,
 }
 
 inline Component &InputFloat(const std::string &label, float *value) {
-  return Cherry::Kit::InputFloat(Application::GenerateUniqueID(label, value),
-                                 label, value);
+  return Cherry::Kit::InputFloat(
+      Application::GenerateUniqueID(label, value, "InputFloat"), label, value);
 }
 
 } // namespace Kit
