@@ -1,15 +1,15 @@
 #include "window.hpp"
-#include "cef.hpp"
+#include "../cef.hpp"
 
-#include "embed/not_found_img.embed"
-#include "embed/window.embed"
+#include "../embed/not_found_img.embed"
+#include "../embed/window.embed"
 
 // Emedded font
-#include "imgui/Hack-Regular.embed"
-#include "imgui/Inconsolatas.embed"
-#include "imgui/Roboto-Bold.embed"
-#include "imgui/Roboto-Italic.embed"
-#include "imgui/Roboto-Regular.embed"
+#include "../imgui/Hack-Regular.embed"
+#include "../imgui/Inconsolatas.embed"
+#include "../imgui/Roboto-Bold.embed"
+#include "../imgui/Roboto-Italic.embed"
+#include "../imgui/Roboto-Regular.embed"
 
 namespace ImGui {
 // Docking

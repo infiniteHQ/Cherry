@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../../src/core/color.hpp"
-#include "../../src/layer.hpp"
+#include "../../../src/core/color.hpp"
+#include "../../../src/layer.hpp"
 
 #include <mutex>
 #include <string>
@@ -10,7 +10,7 @@
 #ifndef CHERRY_COMPONENT_H
 #define CHERRY_COMPONENT_H
 
-#include "identifier.hpp"
+#include "../identifier.hpp"
 
 namespace Cherry {
 

@@ -1,14 +1,14 @@
 #pragma once
 
-#include "../../src/core/color.hpp"
-#include "../../src/layer.hpp"
+#include "../../../src/core/color.hpp"
+#include "../../../src/layer.hpp"
 
-#include "../../lib/sdl2/include/SDL.h"
-#include "../../lib/sdl2/include/SDL_vulkan.h"
-#include "app/app.hpp"
-#include "app_window.hpp"
-#include "base.hpp"
-#include "image.hpp"
+#include "../../../lib/sdl2/include/SDL.h"
+#include "../../../lib/sdl2/include/SDL_vulkan.h"
+#include "../app/app.hpp"
+#include "../app_window.hpp"
+#include "../base.hpp"
+#include "../image.hpp"
 
 #include <filesystem>
 #include <functional>
@@ -19,8 +19,8 @@
 #include <string>
 #include <vector>
 
-#include "imgui/ImGuiTheme.h"
-#include "ui/ui.hpp"
+#include "../imgui/ImGuiTheme.h"
+#include "../ui/ui.hpp"
 #include "vulkan/vulkan.h"
 
 struct ImGuiDockPreviewData {

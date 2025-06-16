@@ -15,7 +15,7 @@
 #include "../../../../../lib/imgui/misc/nodes/imgui_node_editor.h"
 #include "../../../../../lib/imgui/misc/nodes/imgui_node_editor_internal.h"
 #include "../../../../../platform/engine/app/app.hpp"
-#include "../../../../../platform/engine/components.hpp"
+#include "../../../../../platform/engine/components/components.hpp"
 #include "../../../../../platform/engine/ui/nodes/api/node_api.hpp"
 #include "../../../../../platform/engine/ui/nodes/utils/builders.h"
 #include "../../../../../platform/engine/ui/nodes/utils/widgets.h"

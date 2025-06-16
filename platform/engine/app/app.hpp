@@ -22,11 +22,11 @@ Cherry::SetTheme();
 #include "../app_window.hpp"
 #include "../base.hpp"
 #include "../cef.hpp"
-#include "../components.hpp"
+#include "../components/components.hpp"
 #include "../image.hpp"
 #include "../themes.hpp"
 #include "../ui/notifications/notifications.hpp"
-#include "../window.hpp"
+#include "../window/window.hpp"
 
 // Libs
 #include <filesystem>

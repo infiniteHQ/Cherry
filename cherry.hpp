@@ -23,7 +23,7 @@
 ///////////////////////////////////////////////////////////////
 #include "./platform/engine/app/app.hpp"
 #include "./platform/engine/cef.hpp"
-#include "./platform/engine/components.hpp"
+#include "./platform/engine/components/components.hpp"
 #include "./platform/engine/embed/assets/icons.h"
 #include "./platform/engine/image.hpp"
 #include "./platform/engine/imgui/ImGuiTheme.h"

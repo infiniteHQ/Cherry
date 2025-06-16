@@ -1,6 +1,6 @@
 #include "image.hpp"
 #include "app/app.hpp"
-#include "window.hpp"
+#include "window/window.hpp"
 
 namespace Cherry {
 

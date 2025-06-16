@@ -4,7 +4,7 @@
 #include "../../src/core/color.hpp"
 #include "../../src/layer.hpp"
 #include "base.hpp"
-#include "components.hpp"
+#include "components/components.hpp"
 #include "image.hpp"
 
 #include <filesystem>

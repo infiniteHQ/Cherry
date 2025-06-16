@@ -4,8 +4,8 @@
 #include "../../../lib/sdl2/include/SDL_vulkan.h"
 #include "../../../src/core/log.hpp"
 #include "../app_window.hpp"
-#include "../components.hpp"
-#include "../window.hpp"
+#include "../components/components.hpp"
+#include "../window/window.hpp"
 
 /**
  * @file app.cpp
