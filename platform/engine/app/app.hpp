@@ -19,7 +19,7 @@ Cherry::SetTheme();
 #include "../../../options.hpp"
 #include "../../../src/core/color.hpp"
 #include "../../../src/layer.hpp"
-#include "../app_window.hpp"
+#include "../app_window/app_window.hpp"
 #include "../base.hpp"
 #include "../cef.hpp"
 #include "../components/components.hpp"

@@ -1,11 +1,11 @@
 
 #pragma once
 
-#include "../../src/core/color.hpp"
-#include "../../src/layer.hpp"
-#include "base.hpp"
-#include "components/components.hpp"
-#include "image.hpp"
+#include "../../../src/core/color.hpp"
+#include "../../../src/layer.hpp"
+#include "../base.hpp"
+#include "../components/components.hpp"
+#include "../image.hpp"
 
 #include <filesystem>
 #include <fstream>
@@ -17,8 +17,8 @@
 #include <string>
 #include <vector>
 
-#include "imgui/ImGuiTheme.h"
-#include "ui/ui.hpp"
+#include "../imgui/ImGuiTheme.h"
+#include "../ui/ui.hpp"
 #include "vulkan/vulkan.h"
 
 namespace Cherry {

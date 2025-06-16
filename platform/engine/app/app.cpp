@@ -3,7 +3,7 @@
 #include "../../../lib/sdl2/include/SDL.h"
 #include "../../../lib/sdl2/include/SDL_vulkan.h"
 #include "../../../src/core/log.hpp"
-#include "../app_window.hpp"
+#include "../app_window/app_window.hpp"
 #include "../components/components.hpp"
 #include "../window/window.hpp"
 

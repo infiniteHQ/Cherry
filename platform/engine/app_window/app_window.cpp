@@ -1,7 +1,7 @@
 #include "app_window.hpp"
-#include "app/app.hpp"
+#include "../app/app.hpp"
 
-#include "../../src/core/log.hpp"
+#include "../../../src/core/log.hpp"
 
 namespace Cherry {
 
