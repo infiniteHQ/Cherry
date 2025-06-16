@@ -33,6 +33,8 @@
 ### Summary
 *Cherry is a modern, minimalist yet comprehensive UI/UX framework for low-level native applications. It provides a complete solution, including backend support, a rendering engine, and UI components. Cherry is built using technologies like ImGui, Vulkan, and SDL, offering developers advanced tools to create efficient and high-performance interfaces.*
 
+### [The Cherry Documentation](https://cherry.infinite.si)
+
 *A presentation video will be apear here*
 
 ## What you can do ?  
@@ -51,15 +53,17 @@
 
 > ***(Top level)* Components, UI, Interfaces & Kits**
 > - 🧰 **+ 80 Components**, easy and ready to use
-> - 🧰 **+ 20 Style effects and utils**, like color, sizes, padding, layout managment
-> - 📦 **Many examples** and ready to use windows
+> - 🧰 **+ 20 Style effects and utils**, like color, sizes, padding, layout managment> 
+> - 🧰 **+ 8 themes**, including color palette and all properties
+> - 📦 **Many examples** and ready to use windows, concepts.
 > - 📦 **Many logics and interaction** utils like input detection, key managment, double click, Ctrl+C etc...
+> - 📦 **Complete and simple API** with Sound managment, web asset fetching, rendering possibilities, traduction managment etc...
 
 > ***(API)* Render engine**
-> - 📈 Data handler for windows & components
 > - 🔊 Sound engine
-> - 💬 Localization & Traduction managment
 > - 🎨 Themes manager, Dark & Ligth themes
+> - 📈 Data handler for windows & components
+> - 💬 Localization & Traduction managment
 > - ❓ Fonts manager
 > - 🖼️ Images & textures manager
 > - 🗂️ Menubar & Bottombar simple callbacks
@@ -93,22 +97,22 @@
 > ``` powershell
 > git clone https://github.com/infiniteHQ/Cherry
 > cd Cherry
-> git checkout 1.2
+> git checkout 1.3
 > git submodule update --init --recursive
-> cd examples/demo
+> cd examples/hello
 > build.bat
-> .\build\bin\demo.exe
+> .\build\bin\hello.exe
 > ```
 
 > 🐧 On **Linux** based distributions
 > ``` bash
 > git clone https://github.com/infiniteHQ/Cherry
 > cd Cherry
-> git checkout 1.2 # Latest release
+> git checkout 1.3 # Latest release
 > git submodule update --init --recursive
-> cd examples/demo
+> cd examples/hello
 > bash build.sh
-> ./build/bin/demo
+> ./build/bin/hello
 > ```
 
 *Congratulations! If everything is working well, you can now start in the Cherry environment. Please follow our documentation (WIP). If you encounter any issues, feel free to ask your question or reach out to us on Discord!*
