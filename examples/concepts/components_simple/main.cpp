@@ -120,8 +120,6 @@ void Base() { CherryKit::ButtonText("Simple button"); }
 CherryApplication CherryMain(int argc, char **argv) {
   CherryAppConfig config;
 
-  config.SetRenderMode(Cherry::WindowRenderingMethod::TabWidows);
-
   Cherry::AddAppWindow(CherryKit::WindowSimple("Base", Base));
   Cherry::AddAppWindow(
       CherryKit::WindowSimple("Dynamic Variables", DynamicVars));

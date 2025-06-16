@@ -450,6 +450,8 @@ public:
   // Identified component
   static Component &GetAnonymousComponent(const Identifier &identifier);
   static Component &GetComponent(const Identifier &identifier);
+  static std::shared_ptr<Component>
+  GetComponentPtr(const Identifier &identifier);
 
   std::string GetComponentData(const Identifier &id, const std::string &topic);
 
@@ -703,6 +705,8 @@ public:
   // When the user specify this, the runtime will search level 1 theme at
   // GetThemeProperty(theme, key) "manually", and not from the active theme.
   std::string m_SelectedTheme = "undefined";
+  void SetTheme(const std::string &theme_name);
+  void RemoveTheme();
 
   // FIXME : Groups need to be on the CherryID, not on the pool.
   // FIXME : Component Arrays need also to be on the CherryID, when we create

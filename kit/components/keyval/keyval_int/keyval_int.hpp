@@ -32,7 +32,7 @@ public:
   }
 
   void Render() override {
-    auto parent = Cherry::GetParent();
+    auto parent = CherryApp.GetParent();
     if (parent) {
       if (std::stoi(parent->GetData("renderedColumn")) == 0) {
         CherryGUI::TableSetBgColor(ImGuiTableBgTarget_CellBg,

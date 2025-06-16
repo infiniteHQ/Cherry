@@ -58,19 +58,75 @@ void AppWindowSample() {
   CherryApp.PopTheme();
 }
 
+void MainThemes() {
+  if (CherryKit::ButtonText("Dark").GetDataAs<bool>("isClicked")) {
+    CherryApp.SetTheme("dark");
+  }
+
+  if (CherryKit::ButtonText("Dark Colorfull").GetDataAs<bool>("isClicked")) {
+    CherryApp.SetTheme("dark_colorfull");
+  }
+
+  if (CherryKit::ButtonText("Dark Vortex").GetDataAs<bool>("isClicked")) {
+    CherryApp.SetTheme("dark_vortex");
+  }
+
+  if (CherryKit::ButtonText("Light").GetDataAs<bool>("isClicked")) {
+    CherryApp.SetTheme("light");
+  }
+
+  if (CherryKit::ButtonText("Light Colorfull").GetDataAs<bool>("isClicked")) {
+    CherryApp.SetTheme("light_colorfull");
+  }
+
+  if (CherryKit::ButtonText("Light Vortex").GetDataAs<bool>("isClicked")) {
+    CherryApp.SetTheme("light_vortex");
+  }
+
+  CherryKit::SeparatorText("Preview");
+
+  CherryKit::TextWrapped(
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod "
+      "tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim "
+      "veniam, quis nostrud exercitation.");
+
+  CherryKit::Separator();
+
+  static int integer_test = 42;
+  static std::string string_test = "Hello world";
+
+  CherryKit::TableSimple(
+      "ExampleTable",
+      {
+          CherryKit::KeyValInteger("Enter integer", &integer_test),
+          CherryKit::KeyValInteger("Enter string", &integer_test),
+          CherryKit::KeyValCustom("Project paths",
+                                  [=]() { CherryKit::TitleOne("nfg"); }),
+      });
+}
+
 CherryApplication *Cherry::CreateApplication(int argc, char **argv) {
   Cherry::ApplicationSpecification config;
 
+  config.SetRenderMode(Cherry::WindowRenderingMethod::TabWidows);
+  config.AddTheme(CherryThemes::Dark());
+  config.AddTheme(CherryThemes::Light());
+  config.AddTheme(CherryThemes::DarkColorfull());
+  config.AddTheme(CherryThemes::LightColorfull());
+  config.AddTheme(CherryThemes::DarkVortex());
+  config.AddTheme(CherryThemes::LightVortex());
+
   config.SetCustomTitlebar(true);
-  config.SetRenderMode(Cherry::WindowRenderingMethod::DockingWindows);
 
   config.AddTheme(RedThemeCherry());
   config.AddTheme(GreenThemeCherry());
   config.AddTheme(BlueThemeCherry());
   config.AddTheme(YellowThemeCherry());
 
+  Cherry::AddAppWindow(CherryKit::WindowSimple("Main Themes", MainThemes));
   Cherry::AddAppWindow(CherryKit::WindowSimple("First", AppWindowSample));
   Cherry::AddAppWindow(CherryKit::WindowSimple("Second", AppWindowSample));
+  Cherry::AddAppWindow(CherryKit::WindowSimple("Third", AppWindowSample));
   return new CherryApplication(config);
 }
 

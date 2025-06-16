@@ -15,11 +15,15 @@ namespace Components {
 class TableSimple : public Component {
 public:
   TableSimple(const Cherry::Identifier &id, const std::string &label,
-              const std::vector<std::shared_ptr<Component>> &rows = {},
+              const std::vector<Component> &rows = {},
               ImGuiTableFlags flags = 0)
-      : Component(id), m_Rows(rows), m_OtherFlags(flags) {
+      : Component(id), m_OtherFlags(flags) {
     // Identifier
     SetIdentifier(id);
+
+    for (auto row : rows) {
+      m_Rows.push_back(CherryApp.GetComponentPtr(row.GetIdentifier()));
+    }
 
     // Padding
     SetProperty("cell_padding_x_header", "theme:table_cell_padding_x_header");
@@ -106,7 +110,10 @@ public:
                column < std::stoi(GetProperty("columns_number")); column++) {
             CherryGUI::TableSetColumnIndex(column);
             SetData("renderedColumn", std::to_string(column));
+            CherryApp.PushParentComponent(
+                CherryApp.GetComponentPtr(this->GetIdentifier()));
             row->Render();
+            CherryApp.PopParentComponent();
           }
         }
       }
@@ -123,18 +130,17 @@ private:
 
 // End-User API
 namespace Kit {
-inline Component &
-TableSimple(const Identifier &identifier, const std::string &label,
-            const std::vector<std::shared_ptr<Component>> &rows = {},
-            ImGuiTableFlags flags = 0) {
+inline Component &TableSimple(const Identifier &identifier,
+                              const std::string &label,
+                              const std::vector<Component> &rows = {},
+                              ImGuiTableFlags flags = 0) {
   return CherryApp.PushComponent<Cherry::Components::TableSimple>(
       identifier, label, rows, flags);
 }
 
-inline Component &
-TableSimple(const std::string &label,
-            const std::vector<std::shared_ptr<Component>> &rows = {},
-            ImGuiTableFlags flags = 0) {
+inline Component &TableSimple(const std::string &label,
+                              const std::vector<Component> &rows = {},
+                              ImGuiTableFlags flags = 0) {
   return Cherry::Kit::TableSimple(
       Application::GenerateUniqueID(label, rows, flags, "TableSimple"), label,
       rows, flags);

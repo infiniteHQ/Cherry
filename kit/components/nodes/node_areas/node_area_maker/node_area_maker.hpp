@@ -2028,17 +2028,15 @@ private:
 
 // End-User API
 namespace Kit {
-inline Component &
-NodeAreaMaker(const Identifier &identifier, const std::string &label, int width,
-              int height,
-              const std::vector<std::shared_ptr<Component>> &node_array = {}) {
+inline Component &NodeAreaMaker(const Identifier &identifier,
+                                const std::string &label, int width, int height,
+                                const std::vector<Component> &node_array = {}) {
   return CherryApp.PushComponent<Cherry::Components::NodeAreaMaker>(
       identifier, label, width, height);
 }
 
-inline Component &
-NodeAreaMaker(const std::string &label, int width, int height,
-              const std::vector<std::shared_ptr<Component>> &node_array = {}) {
+inline Component &NodeAreaMaker(const std::string &label, int width, int height,
+                                const std::vector<Component> &node_array = {}) {
   return Cherry::Kit::NodeAreaMaker(
       Application::GenerateUniqueID(label, width, height, "NodeAreaMaker"),
       label, width, height);

@@ -2545,6 +2545,12 @@ std::shared_ptr<Component> Application::GetCurrentComponent() const {
   return m_PushedCurrentComponent.back();
 }
 
+void Application::SetTheme(const std::string &theme_name) {
+  m_SelectedTheme = theme_name;
+}
+
+void Application::RemoveTheme() { m_SelectedTheme = "undefined"; }
+
 void Application::PushComponentGroup(const std::string &groupname) {
   m_PushedComponentGroups.push_back(groupname);
 }
@@ -2922,6 +2928,23 @@ Component &Application::GetComponent(const Identifier &identifier) {
   }
 
   return s_EmptyComponent;
+}
+
+std::shared_ptr<Component>
+Application::GetComponentPtr(const Identifier &identifier) {
+  auto &components =
+      identifier.component_array_ptr() != nullptr
+          ? identifier.component_array_ptr()->IdentifiedComponents
+          : Application::Get().GetComponentPool()->IdentifiedComponents;
+
+  for (const auto &existing_component : components) {
+    if (existing_component &&
+        existing_component->GetIdentifier() == identifier) {
+      return existing_component;
+    }
+  }
+
+  return nullptr;
 }
 
 // Simplicity utils

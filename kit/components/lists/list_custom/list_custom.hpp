@@ -15,11 +15,14 @@ namespace Components {
 class ListCustom : public Component {
 public:
   ListCustom(const Cherry::Identifier &id, const std::string &label,
-             const std::vector<std::shared_ptr<Component>> &values,
-             int default_selected)
-      : Component(id), m_Values(values) {
+             const std::vector<Component> &values, int default_selected)
+      : Component(id) {
     // Identifier
     SetIdentifier(id);
+
+    for (auto element : values) {
+      m_Values.push_back(CherryApp.GetComponentPtr(element.GetIdentifier()));
+    }
 
     SetProperty("label", label);
     SetProperty("default_selected", std::to_string(default_selected));
@@ -47,7 +50,10 @@ public:
         }
 
         CherryGUI::SameLine();
+        CherryApp.PushParentComponent(
+            CherryApp.GetComponentPtr(this->GetIdentifier()));
         m_Values[n]->Render();
+        CherryApp.PopParentComponent();
 
         // Set the initial focus when opening the combo (scrolling + keyboard
         // navigation focus)
@@ -65,18 +71,17 @@ private:
 
 // End-User API
 namespace Kit {
-inline Component &
-ListCustom(const Identifier &identifier, const std::string &label,
-           const std::vector<std::shared_ptr<Component>> &values,
-           int default_selected = 0) {
+inline Component &ListCustom(const Identifier &identifier,
+                             const std::string &label,
+                             const std::vector<Component> &values,
+                             int default_selected = 0) {
   return CherryApp.PushComponent<Cherry::Components::ListCustom>(
       identifier, label, values, default_selected);
 }
 
-inline Component &
-ListCustom(const std::string &label,
-           const std::vector<std::shared_ptr<Component>> &values,
-           int default_selected = 0) {
+inline Component &ListCustom(const std::string &label,
+                             const std::vector<Component> &values,
+                             int default_selected = 0) {
   return Cherry::Kit::ListCustom(Application::GenerateUniqueID(label, values,
                                                                default_selected,
                                                                "ListCustom"),

@@ -166,7 +166,12 @@
 ///////////////////////////////////////////////////////////////
 /// Themes                                                  ///
 ///////////////////////////////////////////////////////////////
+#include "./kit/themes/dark/dark.hpp"
+#include "./kit/themes/dark_colorfull/dark_colorfull.hpp"
 #include "./kit/themes/dark_vortex/dark_vortex.hpp"
+#include "./kit/themes/light/light.hpp"
+#include "./kit/themes/light_colorfull/light_colorfull.hpp"
+#include "./kit/themes/light_vortex/light_vortex.hpp"
 
 namespace CherryKit = Cherry::Kit;
 namespace CherryStyle = Cherry::Style;

@@ -15,11 +15,14 @@ namespace Components {
 class ComboCustom : public Component {
 public:
   ComboCustom(const Cherry::Identifier &id, const std::string &label,
-              const std::vector<std::shared_ptr<Component>> &list,
-              int default_index)
-      : Component(id), m_List(list) {
+              const std::vector<Component> &list, int default_index)
+      : Component(id) {
     // Identifier
     SetIdentifier(id);
+
+    for (auto element : list) {
+      m_List.push_back(CherryApp.GetComponentPtr(element.GetIdentifier()));
+    }
 
     // Colors
     SetProperty("color_border", "theme:combo_color_border");
@@ -71,7 +74,10 @@ public:
         }
 
         CherryGUI::SameLine();
+        CherryApp.PushParentComponent(
+            CherryApp.GetComponentPtr(this->GetIdentifier()));
         m_List[n]->Render();
+        CherryApp.PopParentComponent();
 
         if (is_selected)
           CherryGUI::SetItemDefaultFocus();
@@ -87,18 +93,17 @@ private:
 
 // End-User API
 namespace Kit {
-inline Component &
-ComboCustom(const Identifier &identifier, const std::string &label,
-            const std::vector<std::shared_ptr<Component>> &list,
-            int default_index = 0) {
+inline Component &ComboCustom(const Identifier &identifier,
+                              const std::string &label,
+                              const std::vector<Component> &list,
+                              int default_index = 0) {
   return CherryApp.PushComponent<Cherry::Components::ComboCustom>(
       identifier, label, list, default_index);
 }
 
-inline Component &
-ComboCustom(const std::string &label,
-            const std::vector<std::shared_ptr<Component>> &list,
-            int default_index = 0) {
+inline Component &ComboCustom(const std::string &label,
+                              const std::vector<Component> &list,
+                              int default_index = 0) {
   return Cherry::Kit::ComboCustom(
       Application::GenerateUniqueID(label, list, default_index, "ComboCustom"),
       label, list, default_index);
