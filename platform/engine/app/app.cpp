@@ -1,11 +1,11 @@
 #include "app.hpp"
 
-#include "../../lib/sdl2/include/SDL.h"
-#include "../../lib/sdl2/include/SDL_vulkan.h"
-#include "../../src/core/log.hpp"
-#include "app_window.hpp"
-#include "components.hpp"
-#include "window.hpp"
+#include "../../../lib/sdl2/include/SDL.h"
+#include "../../../lib/sdl2/include/SDL_vulkan.h"
+#include "../../../src/core/log.hpp"
+#include "../app_window.hpp"
+#include "../components.hpp"
+#include "../window.hpp"
 
 /**
  * @file app.cpp
@@ -30,7 +30,7 @@
 #include <fstream>
 #include <string>
 
-#include "../../lib/httpcl/httpcl.h"
+#include "../../../lib/httpcl/httpcl.h"
 
 #ifdef _WIN32
 #include <windows.h>
@@ -44,12 +44,12 @@
 #endif // CHERRY_ENABLE_NET
 
 // Emedded font
-#include "imgui/Hack-Regular.embed"
-#include "imgui/Inconsolatas.embed"
-#include "imgui/Roboto-Bold.embed"
-#include "imgui/Roboto-Italic.embed"
-#include "imgui/Roboto-Regular.embed"
-#include "imgui/deftheme.hpp"
+#include "../imgui/Hack-Regular.embed"
+#include "../imgui/Inconsolatas.embed"
+#include "../imgui/Roboto-Bold.embed"
+#include "../imgui/Roboto-Italic.embed"
+#include "../imgui/Roboto-Regular.embed"
+#include "../imgui/deftheme.hpp"
 
 namespace fs = std::filesystem;
 
@@ -143,8 +143,8 @@ static void glfw_error_callback(int error, const char *description) {
 
 namespace Cherry {
 
-#include "embed/not_found_img.embed"
-#include "embed/window.embed"
+#include "../embed/not_found_img.embed"
+#include "../embed/window.embed"
 
 Application::Application(const ApplicationSpecification &specification)
     : m_DefaultSpecification(specification) {

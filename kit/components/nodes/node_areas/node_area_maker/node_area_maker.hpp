@@ -4,7 +4,7 @@
 #define IMGUI_DEFINE_MATH_OPERATORS
 #endif // IMGUI_DEFINE_MATH_OPERATORS
 
-#include "../../../../../platform/engine/app.hpp"
+#include "../../../../../platform/engine/app/app.hpp"
 #include "../../../../../platform/engine/components.hpp"
 
 #include "../../../../../lib/imgui/imgui.h"

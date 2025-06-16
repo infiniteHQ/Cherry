@@ -1,5 +1,5 @@
 #include "components.hpp"
-#include "app.hpp"
+#include "app/app.hpp"
 
 namespace Cherry {
 Component::Component(const Cherry::Identifier &id) : m_Identifier(id) {};

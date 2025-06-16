@@ -21,7 +21,7 @@
 ///////////////////////////////////////////////////////////////
 /// Backends and Render engine                              ///
 ///////////////////////////////////////////////////////////////
-#include "./platform/engine/app.hpp"
+#include "./platform/engine/app/app.hpp"
 #include "./platform/engine/cef.hpp"
 #include "./platform/engine/components.hpp"
 #include "./platform/engine/embed/assets/icons.h"

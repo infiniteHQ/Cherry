@@ -5,7 +5,7 @@
 
 #include "../../lib/sdl2/include/SDL.h"
 #include "../../lib/sdl2/include/SDL_vulkan.h"
-#include "app.hpp"
+#include "app/app.hpp"
 #include "app_window.hpp"
 #include "base.hpp"
 #include "image.hpp"

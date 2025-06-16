@@ -16,17 +16,17 @@ Cherry::SetTheme();
 
  */
 
-#include "../../options.hpp"
-#include "../../src/core/color.hpp"
-#include "../../src/layer.hpp"
-#include "app_window.hpp"
-#include "base.hpp"
-#include "cef.hpp"
-#include "components.hpp"
-#include "image.hpp"
-#include "themes.hpp"
-#include "ui/notifications/notifications.hpp"
-#include "window.hpp"
+#include "../../../options.hpp"
+#include "../../../src/core/color.hpp"
+#include "../../../src/layer.hpp"
+#include "../app_window.hpp"
+#include "../base.hpp"
+#include "../cef.hpp"
+#include "../components.hpp"
+#include "../image.hpp"
+#include "../themes.hpp"
+#include "../ui/notifications/notifications.hpp"
+#include "../window.hpp"
 
 // Libs
 #include <filesystem>
@@ -39,8 +39,8 @@ Cherry::SetTheme();
 #include <thread>
 #include <vector>
 
-#include "../../lib/miniaudio/miniaudio.h"
-#include "../../lib/sdl2/include/SDL_scancode.h"
+#include "../../../lib/miniaudio/miniaudio.h"
+#include "../../../lib/sdl2/include/SDL_scancode.h"
 
 #ifdef _WIN32
 #include <windows.h>
@@ -49,9 +49,9 @@ Cherry::SetTheme();
 #include <unistd.h>
 #endif
 
-#include "imgui/ImGuiTheme.h"
-#include "imgui/wrappers.hpp"
-#include "ui/ui.hpp"
+#include "../imgui/ImGuiTheme.h"
+#include "../imgui/wrappers.hpp"
+#include "../ui/ui.hpp"
 #include "vulkan/vulkan.h"
 
 static int current_fps;

@@ -1,5 +1,5 @@
 #include "themes.hpp"
-#include "app.hpp"
+#include "app/app.hpp"
 
 namespace Cherry {
 Theme::Theme() {};
