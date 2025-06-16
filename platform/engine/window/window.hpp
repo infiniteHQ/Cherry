@@ -8,7 +8,7 @@
 #include "../app/app.hpp"
 #include "../app_window/app_window.hpp"
 #include "../base.hpp"
-#include "../image.hpp"
+#include "../image/image.hpp"
 
 #include <filesystem>
 #include <functional>

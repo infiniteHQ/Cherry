@@ -23,7 +23,7 @@ Cherry::SetTheme();
 #include "../base.hpp"
 #include "../cef.hpp"
 #include "../components/components.hpp"
-#include "../image.hpp"
+#include "../image/image.hpp"
 #include "../themes/themes.hpp"
 #include "../ui/notifications/notifications.hpp"
 #include "../window/window.hpp"

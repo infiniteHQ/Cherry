@@ -25,7 +25,7 @@
 #include "./platform/engine/cef.hpp"
 #include "./platform/engine/components/components.hpp"
 #include "./platform/engine/embed/assets/icons.h"
-#include "./platform/engine/image.hpp"
+#include "./platform/engine/image/image.hpp"
 #include "./platform/engine/imgui/ImGuiTheme.h"
 #include "./platform/engine/imgui/wrappers.hpp"
 #include "./platform/engine/ui/notifications/notifications.hpp"

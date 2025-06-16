@@ -5,7 +5,7 @@
 #include "../../../src/layer.hpp"
 #include "../base.hpp"
 #include "../components/components.hpp"
-#include "../image.hpp"
+#include "../image/image.hpp"
 
 #include <filesystem>
 #include <fstream>

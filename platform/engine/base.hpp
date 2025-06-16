@@ -2,7 +2,7 @@
 
 #include "../../src/core/color.hpp"
 #include "../../src/layer.hpp"
-#include "image.hpp"
+#include "image/image.hpp"
 #include "themes/themes.hpp"
 
 #include <atomic>
