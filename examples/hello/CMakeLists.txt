@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 # Build options
-option(CHERRY_STATIC "Link cherry statically" ON)
+option(CHERRY_STATIC "Link Cherry statically" ON) # Advanced usage only: keep this ON to link Cherry statically
 option(CHERRY_DEBUG "Enable Cherry debug tools" OFF)
 option(CHERRY_PACKAGE "Enable packaging features with pyinstaller" OFF)
 
