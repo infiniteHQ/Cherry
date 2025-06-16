@@ -23,6 +23,7 @@ public:
     SetProperty("color_border", "#2F3242");
     SetProperty("color_table_border_light", "#373B4B");
     SetProperty("color_menubar_bg", "#232435");
+    SetProperty("color_text", "#898989FF"); // hex
 
     // Headers & Titlebars
     SetProperty("color_header", "#2B2D3C");

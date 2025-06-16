@@ -47,6 +47,7 @@ public:
     SetProperty("color_table_header_bg", "#2F2F2FFF");        // hex
     SetProperty("color_table_border_light", "#1A1A1AFF");     // hex
     SetProperty("color_menubar_bg", "#242424FF");             // hex
+    SetProperty("color_text", "#898989FF");                   // hex
 
     // Buttons
     SetProperty("button_color_border", "#454545FF");            // hex

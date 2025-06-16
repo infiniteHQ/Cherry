@@ -40,6 +40,7 @@ public:
     SetProperty("color_scrollbar_bg", "#EEEEEE");
     SetProperty("color_scrollbar_grab", "#C2C2C2");
     SetProperty("color_scrollbar_grab_hovered", "#A8A8A8");
+    SetProperty("color_text", "#252525FF"); // hex
     SetProperty("color_scrollbar_grab_active", "#8F8F8F");
     SetProperty("color_checkmark", "#3D7EFF");
     SetProperty("color_slidergrab", "#BBBBBB");

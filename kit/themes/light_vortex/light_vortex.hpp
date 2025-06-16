@@ -26,6 +26,7 @@ public:
     SetProperty("color_framebg", "#FFFFFF");
     SetProperty("color_framebg_hovered", "#F0F0F0");
     SetProperty("color_framebg_active", "#E0E0E0");
+    SetProperty("color_text", "#252525FF"); // hex
     SetProperty("color_tab", "#F2F2F2");
     SetProperty("color_tab_hovered", "#E6E6E6");
     SetProperty("color_tab_active", "#DDDDDD");

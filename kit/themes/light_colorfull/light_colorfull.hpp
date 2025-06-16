@@ -22,6 +22,7 @@ public:
     SetProperty("color_popup_bg", "#E6E9F0");
     SetProperty("color_border", "#C8CCD8");
     SetProperty("color_table_border_light", "#D8DCE6");
+    SetProperty("color_text", "#252525FF"); // hex
     SetProperty("color_menubar_bg", "#F0F2F5");
 
     // Headers / Titlebars

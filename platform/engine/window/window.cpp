@@ -1064,6 +1064,10 @@ void Window::LoadTheme() {
       Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
           "color_framebg_active"))); // color_framebg_active
 
+  CherryGUI::PushStyleColor(
+      ImGuiCol_Text,
+      Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty("color_text")));
+
   CherryGUI::PushStyleColor(ImGuiCol_Tab,
                             Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
                                 "color_tab"))); // color_tab
@@ -1183,7 +1187,7 @@ void Window::LoadTheme() {
   style.FramePadding = ImVec2(15.0f, 5.0f);   // padding_frame
 }
 
-void Window::UnloadTheme() { CherryGUI::PopStyleColor(37); }
+void Window::UnloadTheme() { CherryGUI::PopStyleColor(38); }
 
 void Window::free() {
   //

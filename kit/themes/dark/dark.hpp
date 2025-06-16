@@ -30,6 +30,7 @@ public:
     SetProperty("color_tab_hovered", "#24282C64");
     SetProperty("color_tab_active", "#282C30FF");
     SetProperty("color_tab_unfocused", "#1A1D1FFF");
+    SetProperty("color_text", "#898989FF"); // hex
     SetProperty("color_tab_unfocused_active", "#24282C64");
     SetProperty("color_titlebg", "#1A1D1FFF");
     SetProperty("color_titlebg_active", "#1A1D1FFF");

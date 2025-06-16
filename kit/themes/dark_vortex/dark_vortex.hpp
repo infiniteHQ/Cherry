@@ -31,6 +31,7 @@ public:
     SetProperty("color_tab_active", "#242424FF");             // hex
     SetProperty("color_tab_unfocused", "#151515FF");          // hex
     SetProperty("color_tab_unfocused_active", "#24242464");   // hex
+    SetProperty("color_text", "#898989FF");                   // hex
     SetProperty("color_titlebg", "#151515FF");                // hex
     SetProperty("color_titlebg_active", "#151515FF");         // hex
     SetProperty("color_titlebg_collapsed", "#262626FF");      // hex

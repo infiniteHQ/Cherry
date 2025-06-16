@@ -59,6 +59,8 @@ void AppWindowSample() {
 }
 
 void MainThemes() {
+  CherryKit::SeparatorText("Dark themes");
+
   if (CherryKit::ButtonText("Dark").GetDataAs<bool>("isClicked")) {
     CherryApp.SetTheme("dark");
   }
@@ -71,6 +73,13 @@ void MainThemes() {
     CherryApp.SetTheme("dark_vortex");
   }
 
+  if (CherryKit::ButtonText("Dark High contrast")
+          .GetDataAs<bool>("isClicked")) {
+    CherryApp.SetTheme("dark_high_contrast");
+  }
+
+  CherryKit::SeparatorText("Light themes");
+
   if (CherryKit::ButtonText("Light").GetDataAs<bool>("isClicked")) {
     CherryApp.SetTheme("light");
   }
@@ -81,6 +90,11 @@ void MainThemes() {
 
   if (CherryKit::ButtonText("Light Vortex").GetDataAs<bool>("isClicked")) {
     CherryApp.SetTheme("light_vortex");
+  }
+
+  if (CherryKit::ButtonText("Light High contrast")
+          .GetDataAs<bool>("isClicked")) {
+    CherryApp.SetTheme("light_high_contrast");
   }
 
   CherryKit::SeparatorText("Preview");
@@ -103,6 +117,13 @@ void MainThemes() {
           CherryKit::KeyValCustom("Project paths",
                                   [=]() { CherryKit::TitleOne("nfg"); }),
       });
+
+  CherryKit::ListCustom("ExampleTablList",
+                        {
+                            CherryKit::TitleFive("Enter integer"),
+                            CherryKit::TitleOne("Entdqer integer"),
+                            CherryKit::TitleFour("Entegr integer"),
+                        });
 }
 
 CherryApplication *Cherry::CreateApplication(int argc, char **argv) {
@@ -115,6 +136,8 @@ CherryApplication *Cherry::CreateApplication(int argc, char **argv) {
   config.AddTheme(CherryThemes::LightColorfull());
   config.AddTheme(CherryThemes::DarkVortex());
   config.AddTheme(CherryThemes::LightVortex());
+  config.AddTheme(CherryThemes::DarkHighContrast());
+  config.AddTheme(CherryThemes::LightHighContrast());
 
   config.SetCustomTitlebar(true);
 
