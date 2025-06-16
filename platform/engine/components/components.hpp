@@ -10,7 +10,7 @@
 #ifndef CHERRY_COMPONENT_H
 #define CHERRY_COMPONENT_H
 
-#include "../identifier.hpp"
+#include "../identifier/identifier.hpp"
 
 namespace Cherry {
 

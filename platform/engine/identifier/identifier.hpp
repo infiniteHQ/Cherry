@@ -3,7 +3,7 @@
 #include <mutex>
 #include <random>
 
-#include "base.hpp"
+#include "../base.hpp"
 
 #ifndef CHERRY_IDENTIFIER
 #define CHERRY_IDENTIFIER
