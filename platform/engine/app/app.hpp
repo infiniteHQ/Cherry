@@ -24,7 +24,7 @@ Cherry::SetTheme();
 #include "../cef.hpp"
 #include "../components/components.hpp"
 #include "../image.hpp"
-#include "../themes.hpp"
+#include "../themes/themes.hpp"
 #include "../ui/notifications/notifications.hpp"
 #include "../window/window.hpp"
 

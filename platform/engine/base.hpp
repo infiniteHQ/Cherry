@@ -3,7 +3,7 @@
 #include "../../src/core/color.hpp"
 #include "../../src/layer.hpp"
 #include "image.hpp"
-#include "themes.hpp"
+#include "themes/themes.hpp"
 
 #include <atomic>
 #include <memory>
