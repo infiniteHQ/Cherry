@@ -21,10 +21,10 @@ Cherry::SetTheme();
 #include "../../../src/layer.hpp"
 #include "../app_window/app_window.hpp"
 #include "../base.hpp"
-#include "../cef.hpp"
 #include "../components/components.hpp"
 #include "../image/image.hpp"
 #include "../themes/themes.hpp"
+#include "../ui/cef/cef.hpp"
 #include "../ui/notifications/notifications.hpp"
 #include "../window/window.hpp"
 
@@ -39,7 +39,9 @@ Cherry::SetTheme();
 #include <thread>
 #include <vector>
 
+#ifdef CHERRY_ENABLE_AUDIO
 #include "../../../lib/miniaudio/miniaudio.h"
+#endif
 #include "../../../lib/sdl2/include/SDL_scancode.h"
 
 #ifdef _WIN32
@@ -50,7 +52,7 @@ Cherry::SetTheme();
 #endif
 
 #include "../imgui/ImGuiTheme.h"
-#include "../imgui/wrappers.hpp"
+#include "../imgui/wrappers/wrappers.hpp"
 #include "../ui/ui.hpp"
 #include "vulkan/vulkan.h"
 

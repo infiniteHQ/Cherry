@@ -49,7 +49,7 @@
 #include "../imgui/Roboto-Bold.embed"
 #include "../imgui/Roboto-Italic.embed"
 #include "../imgui/Roboto-Regular.embed"
-#include "../imgui/deftheme.hpp"
+#include "../imgui/theme/deftheme.hpp"
 
 namespace fs = std::filesystem;
 

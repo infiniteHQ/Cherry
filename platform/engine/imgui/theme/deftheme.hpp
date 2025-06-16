@@ -1,4 +1,4 @@
-#include "../themes/themes.hpp"
+#include "../../themes/themes.hpp"
 
 #ifndef CHERRY_DEFTHEME_HPP
 #define CHERRY_DEFTHEME_HPP

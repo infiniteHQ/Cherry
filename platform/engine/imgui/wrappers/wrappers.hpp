@@ -1,5 +1,5 @@
 #pragma once
-#include "../base.hpp"
+#include "../../base.hpp"
 
 // This ImGui wrapper helps Cherry framework to easely add custom behaviors,
 // control and ui callbacks and other cool stuff for the end-user API.
@@ -237,10 +237,10 @@ bool IsItemHovered(
     ImGuiHoveredFlags flags =
         0); // is the last item hovered? (and usable, aka not blocked by a
             // popup, etc.). See ImGuiHoveredFlags for more options.
-bool IsItemActive(); // is the last item active? (e.g. button being held, text
-                     // field being edited. This will continuously return true
-                     // while holding mouse button on an item. Items that don't
-                     // interact will always return false)
+bool IsItemActive();  // is the last item active? (e.g. button being held, text
+                      // field being edited. This will continuously return true
+                      // while holding mouse button on an item. Items that don't
+                      // interact will always return false)
 bool IsItemFocused(); // is the last item focused for keyboard/gamepad
                       // navigation?
 bool IsItemClicked(

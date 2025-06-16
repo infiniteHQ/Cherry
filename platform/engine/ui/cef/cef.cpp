@@ -1,5 +1,5 @@
 #include "cef.hpp"
-#include "app/app.hpp"
+#include "../../app/app.hpp"
 #include <thread>
 
 #ifdef CHERRY_CEF
