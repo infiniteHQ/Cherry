@@ -97,7 +97,6 @@
 > ``` powershell
 > git clone https://github.com/infiniteHQ/Cherry
 > cd Cherry
-> git checkout 1.3
 > git submodule update --init --recursive
 > cd examples/hello
 > build.bat
@@ -108,7 +107,6 @@
 > ``` bash
 > git clone https://github.com/infiniteHQ/Cherry
 > cd Cherry
-> git checkout 1.3 # Latest release
 > git submodule update --init --recursive
 > cd examples/hello
 > bash build.sh
