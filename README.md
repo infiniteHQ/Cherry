@@ -35,7 +35,7 @@
 
 ### [The Cherry Documentation](https://cherry.infinite.si)
 
-*A presentation video will be apear here*
+*A presentation video will be appear here*
 
 ## What you can do ?  
 
