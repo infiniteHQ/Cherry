@@ -23,51 +23,83 @@
                     "subpages": []
                 },
                 {
-                    "name": "install_building",
-                    "link": "install_building.md",
-                    "description": "",
-                    "logo": "",
-                    "slug": "Install & build",
-                    "subpages": []
-                },
-                {
                     "name": "create_first_app",
                     "link": "create_first_app.md",
                     "description": "",
                     "logo": "",
                     "slug": "Create your first app",
                     "subpages": []
-                },
+                }
+            ]
+        },
+        {
+            "name": "understand_concepts",
+            "slug": "Understand concepts",
+            "title": "Understand concepts",
+            "sumary": "Introduction to the Cherry UI/UX Framework",
+            "pages": [
                 {
-                    "name": "index",
-                    "link": "index.md",
+                    "name": "rendering_paradigm",
+                    "link": "rendering_paradigm.md",
                     "description": "",
                     "logo": "",
-                    "slug": "Index",
+                    "slug": "Rendering & Paradigms",
+                    "subpages": []
+                },
+                {
+                    "name": "philosophy",
+                    "link": "philosophy.md",
+                    "description": "",
+                    "logo": "",
+                    "slug": "Philosophy",
                     "subpages": []
                 }
             ]
         },
         {
-            "name": "api",
-            "slug": "API",
-            "title": "API",
-            "sumary": "Introduction to the Cherry UI/UX Framework API",
+            "name": "learn",
+            "slug": "Learning Cherry",
+            "title": "Learning Cherry",
+            "sumary": "Introduction to the Cherry UI/UX Framework API & libraries",
             "pages": [
+                {
+                    "name": "create_configure_app",
+                    "link": "create_configure_app.md",
+                    "description": "",
+                    "logo": "",
+                    "slug": "Create & Configure app",
+                    "subpages": []
+                },
+                {
+                    "name": "compilation",
+                    "link": "compilation.md",
+                    "description": "",
+                    "logo": "",
+                    "slug": "Compilation",
+                    "subpages": []
+                },
+                {
+                    "name": "render_engine",
+                    "link": "render_engine.md",
+                    "description": "",
+                    "logo": "",
+                    "slug": "Render engine",
+                    "subpages": []
+                },
+                {
+                    "name": "components_management",
+                    "link": "components_management.md",
+                    "description": "",
+                    "logo": "",
+                    "slug": "Components management",
+                    "subpages": []
+                },
                 {
                     "name": "theme",
                     "link": "theme.md",
                     "description": "",
                     "logo": "",
                     "slug": "Theme & Design",
-                    "subpages": []
-                },
-                {
-                    "name": "components",
-                    "link": "components.md",
-                    "description": "",
-                    "logo": "",
-                    "slug": "Manage Components",
                     "subpages": []
                 },
                 {
@@ -95,6 +127,31 @@
                     "subpages": []
                 },
                 {
+                    "name": "user_inputs",
+                    "link": "user_inputs.md",
+                    "description": "",
+                    "logo": "",
+                    "slug": "User inputs",
+                    "subpages": []
+                },
+                {
+                    "name": "locales_traductions",
+                    "link": "locales_traductions.md",
+                    "description": "",
+                    "logo": "",
+                    "slug": "Locales & Traductions",
+                    "subpages": []
+                }
+            ]
+        },
+        {
+            "name": "advanced",
+            "slug": "Advanced features",
+            "title": "Advanced features",
+            "sumary": "Introduction to the Cherry UI/UX Framework",
+            "pages": [
+
+                {
                     "name": "callbacks",
                     "link": "callbacks.md",
                     "description": "",
@@ -119,14 +176,6 @@
                     "subpages": []
                 },
                 {
-                    "name": "user_inputs",
-                    "link": "user_inputs.md",
-                    "description": "",
-                    "logo": "",
-                    "slug": "User inputs",
-                    "subpages": []
-                },
-                {
                     "name": "saves",
                     "link": "saves.md",
                     "description": "",
@@ -140,14 +189,6 @@
                     "description": "",
                     "logo": "",
                     "slug": "Textures & Sprites",
-                    "subpages": []
-                },
-                {
-                    "name": "locales_traductions",
-                    "link": "locales_traductions.md",
-                    "description": "",
-                    "logo": "",
-                    "slug": "Locales & Traductions",
                     "subpages": []
                 },
                 {

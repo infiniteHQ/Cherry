@@ -16,7 +16,6 @@ CherryApplication CherryMain(int argc, char **argv) {
   CherryAppConfig config;
   config.SetRenderMode(Cherry::WindowRenderingMethod::DockingWindows);
   config.AddTheme(CherryThemes::DarkVortex());
-
   Cherry::AddAppWindow(CherryKit::WindowSimple("Test window", Render));
   Cherry::AddAppWindow(CherryKit::WindowSimple("Test window 2", Render));
   Cherry::AddAppWindow(CherryKit::WindowSimple("Test window 3", Render));
