@@ -66,7 +66,7 @@ You can directly see how to [create your first Cherry application](https://i.n:c
 ### Troubleshooting
 If the compilation fails, first make sure your system has a working C++ compiler installed.
 
-Next, verify that you have obtained a functional copy of Vortex. It is essential to use a Release version by running `git checkout 1.3` to get the latest released version of Cherry.
+Next, verify that you have obtained a functional copy of Cherry. It is essential to use a Release version by running `git checkout 1.3` to get the latest released version of Cherry.
 
 If issues persist, check that the Vulkan SDK is properly installed, Vulkan is available on your system, and the Vulkan environment variables are correctly set.
 
