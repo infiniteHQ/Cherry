@@ -29,10 +29,10 @@ mkdir src
 touch src/main.cpp
 ```
 
- Let’s now edit `main.cpp` to start our application:
+ Let’s now edit `src/main.cpp` to start our application:
 
 ```cpp
-#include "../../cherry.hpp"
+#include "../lib/cherry/cherry.hpp"
 
 int main(int argc, char *argv[]) {
   CherryRun(argc, argv);
@@ -122,8 +122,8 @@ option(CHERRY_DISABLE_WORKSPACESAVES "Disable workspace saves" OFF)
 Finally, we will create the executable and link our Cherry library to it:
 
 ```cpp 
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../../ cherry_build)
-add_executable(hello main.cpp)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/lib/cherry cherry_build)
+add_executable(hello src/main.cpp)
 target_link_libraries(hello PRIVATE cherry)
 ```
 
@@ -217,8 +217,8 @@ option(CHERRY_ENABLE_LINUXDRM "Enable Linux Direct Rendering Manager" OFF)
 option(CHERRY_DISABLE_NODES "Disable nodal systems" OFF)
 option(CHERRY_DISABLE_WORKSPACESAVES "Disable workspace saves" OFF)
 
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../../ cherry_build)
-add_executable(hello main.cpp)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/lib/cherry cherry_build)
+add_executable(hello src/main.cpp)
 target_link_libraries(hello PRIVATE cherry)
 ```
 ###### build.sh
