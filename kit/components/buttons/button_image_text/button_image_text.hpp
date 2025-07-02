@@ -27,6 +27,7 @@ public:
     SetProperty("color_bg", "theme:button_color_bg");
     SetProperty("color_bg_hovered", "theme:button_color_bg_hovered");
     SetProperty("color_bg_pressed", "theme:button_color_bg_pressed");
+    SetProperty("color_bg_clicked", "theme:button_color_bg_clicked");
     SetProperty("color_text", "theme:button_color_text");
     SetProperty("color_text_hovered", "theme:button_color_text_hovered");
     SetProperty("color_text_pressed", "theme:button_color_text_pressed");
