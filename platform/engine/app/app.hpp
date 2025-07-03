@@ -58,7 +58,7 @@ Cherry::SetTheme();
 
 static int current_fps;
 
-#define CHERRY_VERSION "1.3 WIP"
+#define CHERRY_VERSION "1.4 WIP"
 
 #ifndef CHERRY_APP_H
 #define CHERRY_APP_H
