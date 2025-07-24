@@ -14,10 +14,11 @@ namespace Cherry {
 namespace Components {
 class ButtonImageTextDropdown : public Component {
 public:
-  ButtonImageTextDropdown(const Cherry::Identifier &id,
-                          const std::string &label,
-                          const std::string &image_path)
-      : Component(id) {
+  ButtonImageTextDropdown(
+      const Cherry::Identifier &id, const std::string &label,
+      const std::string &image_path,
+      const std::function<void()> &dropdown_callback = []() {})
+      : Component(id), m_DropdownCallback(dropdown_callback) {
     // Identifier
     SetIdentifier(id);
 
@@ -46,6 +47,8 @@ public:
     SetProperty("padding_x", "theme:button_padding_x");
     SetProperty("padding_y", "theme:button_padding_y");
 
+    SetProperty("size_image_x", "15");
+    SetProperty("size_image_y", "15");
     // Informations
     SetProperty("label", label);
     SetProperty("image_path", image_path);
@@ -73,7 +76,9 @@ public:
 
     const ImVec2 &size = ImVec2(std::stoi(GetProperty("size_x")),
                                 std::stoi(GetProperty("size_y")));
-    CherryGUI::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(6, 6));
+    CherryGUI::PushStyleVar(ImGuiStyleVar_FramePadding,
+                            ImVec2(std::stoi(GetProperty("padding_x")),
+                                   std::stoi(GetProperty("padding_y"))));
 
     CherryGUI::PushStyleColor(ImGuiCol_Border,
                               HexToRGBA(GetProperty("color_border")));
@@ -82,7 +87,9 @@ public:
     CherryGUI::PushStyleColor(ImGuiCol_ButtonHovered,
                               HexToRGBA(GetProperty("color_bg_hovered")));
     CherryGUI::PushStyleColor(ImGuiCol_ButtonActive,
-                              HexToRGBA(GetProperty("color_bg_clicked")));
+                              HexToRGBA(GetProperty("color_bg_pressed")));
+    CherryGUI::PushStyleColor(ImGuiCol_Text,
+                              HexToRGBA(GetProperty("color_text")));
 
     std::string identifier = GetIdentifier().string();
     std::string Label = GetProperty("label");
@@ -91,17 +98,89 @@ public:
       Label += "####" + identifier;
     }
 
-    if (CherryGUI::ImageButtonWithTextWithIcon(image_texture, texture,
-                                               Label.c_str(), size, size)) {
+    int style_props_opt = 0;
+
+    if (GetData("isHovered") == "true") {
+      if (GetProperty("disable_time") == "false")
+        SetData("lastHovered", GetCurrentTime());
+      CherryGUI::PushStyleColor(ImGuiCol_Border,
+                                HexToRGBA(GetProperty("color_border_hovered")));
+      CherryGUI::PushStyleColor(ImGuiCol_Button,
+                                HexToRGBA(GetProperty("color_bg_hovered")));
+      CherryGUI::PushStyleColor(ImGuiCol_Text,
+                                HexToRGBA(GetProperty("color_text_hovered")));
+      style_props_opt += 3;
+    }
+
+    if (GetData("isClicked") == "true") {
+      if (GetProperty("disable_time") == "false")
+        SetData("lastClicked", GetCurrentTime());
+
+      CherryGUI::PushStyleColor(ImGuiCol_Border,
+                                HexToRGBA(GetProperty("color_border_pressed")));
+      CherryGUI::PushStyleColor(ImGuiCol_Button,
+                                HexToRGBA(GetProperty("color_bg_pressed")));
+      CherryGUI::PushStyleColor(ImGuiCol_Text,
+                                HexToRGBA(GetProperty("color_text_pressed")));
+      style_props_opt += 3;
+    }
+
+    if (GetData("isActivated") == "true") {
+      if (GetProperty("disable_time") == "false")
+        SetData("lastActivated", GetCurrentTime());
+    }
+
+    if (GetProperty("isPressed") == "true") {
+      if (GetProperty("disable_time") == "false")
+        SetData("lastPressed", GetCurrentTime());
+
+      CherryGUI::PushStyleColor(ImGuiCol_Border,
+                                HexToRGBA(GetProperty("color_border_pressed")));
+      CherryGUI::PushStyleColor(ImGuiCol_Button,
+                                HexToRGBA(GetProperty("color_bg_pressed")));
+      CherryGUI::PushStyleColor(ImGuiCol_Text,
+                                HexToRGBA(GetProperty("color_text_pressed")));
+      style_props_opt += 3;
+    }
+
+    SetData("isHovered", "false");
+    SetData("isClicked", "false");
+    SetData("isPressed", "false");
+    SetData("isActivated", "false");
+    Label = GetProperty("label");
+    if (!identifier.empty()) {
+      Label += "####" + identifier;
+    }
+
+    bool isClicked = CherryGUI::ImageButtonWithTextWithIcon(
+        image_texture, texture, Label.c_str(),
+        ImVec2(std::stof(GetProperty("size_image_x")),
+               std::stof(GetProperty("size_image_y"))),
+        ImVec2(std::stof(GetProperty("size_image_x")),
+               std::stof(GetProperty("size_image_y"))));
+
+    if (CherryGUI::IsItemHovered()) {
+      SetData("isHovered", "true");
+    }
+
+    if (CherryGUI::IsItemActivated()) {
+      SetData("isActivated", "true");
+    }
+
+    if (CherryGUI::IsItemActive()) {
+      SetData("isPressed", "true");
+    }
+
+    if (isClicked) {
       SetData("isClicked", "true");
       SetData("isMenuActivated", "true");
-      UpdateLastClickTime();
     } else {
       SetData("isClicked", "false");
     }
 
+    std::string context_menu_label = "TabContextMenu" + Label;
     if (GetData("isMenuActivated") == "true") {
-      if (CherryGUI::BeginPopupContextItem("TabContextMenu")) {
+      if (CherryGUI::BeginPopupContextItem(context_menu_label.c_str())) {
         ImVec4 grayColor = ImVec4(0.4f, 0.4f, 0.4f, 1.0f); // TODO : Props
         ImVec4 graySeparatorColor =
             ImVec4(0.4f, 0.4f, 0.4f, 0.5f); // TODO : Props
@@ -114,7 +193,14 @@ public:
         CherryGUI::PushStyleColor(ImGuiCol_Border, lightBorderColor);
         CherryGUI::PushStyleVar(ImGuiStyleVar_PopupRounding, 3.0f);
 
-        if (CherryGUI::MenuItem("Close window", "Close this current window")) {
+        if (m_DropdownCallback) {
+          m_DropdownCallback();
+        }
+
+        if (!CherryGUI::IsWindowHovered(ImGuiHoveredFlags_AnyWindow) &&
+            CherryGUI::IsMouseClicked(0)) {
+          CherryGUI::CloseCurrentPopup();
+          SetData("isMenuActivated", "false");
         }
 
         CherryGUI::PopStyleVar();
@@ -124,18 +210,25 @@ public:
     }
 
     if (GetData("isMenuActivated") == "true") {
-      CherryGUI::OpenPopup("TabContextMenu");
+      CherryGUI::OpenPopup(context_menu_label.c_str());
     }
-
-    if (CherryGUI::IsMouseClicked(ImGuiMouseButton_Left)) {
-      SetData("isMenuActivated", "false");
-    }
-
-    CherryGUI::PopStyleColor(4);
+    CherryGUI::PopStyleColor(style_props_opt);
+    CherryGUI::PopStyleColor(5);
     CherryGUI::PopStyleVar();
   }
 
 private:
+  std::function<void()> m_DropdownCallback;
+
+  std::string GetCurrentTime() {
+    std::string m_LastClickTime;
+    auto now = std::chrono::system_clock::now();
+    std::time_t now_c = std::chrono::system_clock::to_time_t(now);
+    m_LastClickTime = std::ctime(&now_c);
+    m_LastClickTime.erase(m_LastClickTime.length() - 1);
+    return m_LastClickTime;
+  }
+
   void UpdateLastClickTime() {
     std::string m_LastClickTime;
     auto now = std::chrono::system_clock::now();
@@ -149,15 +242,17 @@ private:
 
 // End-User API
 namespace Kit {
-inline Component &ButtonImageTextDropdown(const Identifier &identifier,
-                                          const std::string &label,
-                                          const std::string &image_path) {
+inline Component &ButtonImageTextDropdown(
+    const Identifier &identifier, const std::string &label,
+    const std::string &image_path,
+    const std::function<void()> &dropdown_callback = []() {}) {
   return CherryApp.PushComponent<Cherry::Components::ButtonImageTextDropdown>(
       identifier, label, image_path);
 }
 
-inline Component &ButtonImageTextDropdown(const std::string &label,
-                                          const std::string &image_path) {
+inline Component &ButtonImageTextDropdown(
+    const std::string &label, const std::string &image_path,
+    const std::function<void()> &dropdown_callback = []() {}) {
   return Cherry::Kit::ButtonImageTextDropdown(
       Application::GenerateUniqueID(label, image_path,
                                     "ButtonImageTextDropdown"),

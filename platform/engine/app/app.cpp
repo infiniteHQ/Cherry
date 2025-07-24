@@ -2080,7 +2080,6 @@ void Application::HandleDockingModeRendering(Window *window) {
       }
     }
   }
-
   bool context_loaded = false;
   for (auto &appwindow : m_AppWindows) {
     if (appwindow) {
