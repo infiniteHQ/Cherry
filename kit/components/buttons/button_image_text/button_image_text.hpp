@@ -57,6 +57,8 @@ public:
                             ImVec2(std::stoi(GetProperty("padding_x")),
                                    std::stoi(GetProperty("padding_y"))));
 
+    CherryGUI::PushStyleColor(ImGuiCol_Text,
+                              HexToRGBA(GetProperty("color_text")));
     CherryGUI::PushStyleColor(ImGuiCol_Border,
                               HexToRGBA(GetProperty("color_border")));
     CherryGUI::PushStyleColor(ImGuiCol_Button,
@@ -87,7 +89,7 @@ public:
       SetData("isClicked", "false");
     }
 
-    CherryGUI::PopStyleColor(4);
+    CherryGUI::PopStyleColor(5);
     CherryGUI::PopStyleVar();
   }
 

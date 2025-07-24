@@ -29,6 +29,7 @@ public:
     SetProperty("color_bg", "theme:header_color_bg");
     SetProperty("color_bg_hovered", "theme:header_color_bg_hovered");
     SetProperty("color_bg_clicked", "theme:header_color_bg_clicked");
+    SetProperty("color_text", "theme:color_text");
 
     // Sizes
     SetProperty("size_x", "theme:header_size_x");
@@ -47,11 +48,13 @@ public:
 
   void Render() override {
     CherryGUI::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, ImVec2(0.0f, 0.5f));
+    CherryGUI::PushStyleColor(ImGuiCol_Text,
+                              HexToRGBA(GetProperty("color_text")));
 
     CherryGUI::PushStyleColor(ImGuiCol_Border,
                               HexToRGBA(GetProperty("color_border")));
     CherryGUI::PushStyleColor(ImGuiCol_Button,
-                              HexToRGBA(GetProperty("color_border")));
+                              HexToRGBA(GetProperty("color_bg")));
     CherryGUI::PushStyleColor(ImGuiCol_ButtonHovered,
                               HexToRGBA(GetProperty("color_bg_hovered")));
     CherryGUI::PushStyleColor(ImGuiCol_ButtonActive,
@@ -74,9 +77,10 @@ public:
     bool isOpened = GetData("isOpened") == "true";
 
     if (CherryGUI::ImageSizeButtonWithText(
-            Cherry::GetTexture(GetProperty("image_path")), 700.0f,
-            Label.c_str(), ImVec2(-FLT_MIN, 0.0f), ImVec2(0, 0), ImVec2(1, 1),
-            -1, ImVec4(0, 0, 0, 0), ImVec4(1, 1, 1, 1))) {
+            Cherry::GetTexture(GetProperty("image_path")),
+            std::stof(GetProperty("size_x")), Label.c_str(),
+            ImVec2(-FLT_MIN, 0.0f), ImVec2(0, 0), ImVec2(1, 1), -1,
+            ImVec4(0, 0, 0, 0), ImVec4(1, 1, 1, 1))) {
       SetData("isOpened", isOpened ? "false" : "true");
     }
 
@@ -90,7 +94,7 @@ public:
                                                          : ImGuiDir_Right);
     CherryGUI::EndGroup();
 
-    CherryGUI::PopStyleColor(4);
+    CherryGUI::PopStyleColor(5);
     CherryGUI::PopStyleVar();
 
     if (GetData("isOpened") == "true") {

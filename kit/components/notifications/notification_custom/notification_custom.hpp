@@ -63,7 +63,7 @@ public:
         ImGuiToast toast(
             ImGuiToastType::Info, milliseconds_timer,
             []() {}, // Button callback
-            [=]() {
+            [texture, buttonSize, this]() {
               if (GetProperty("close_button") == "true") {
                 CherryGUI::PushStyleColor(ImGuiCol_Button,
                                           Cherry::HexToRGBA("#00000000"));

@@ -58,7 +58,7 @@ public:
     SetProperty("button_color_bg_hovered", "#343434FF");        // hex
     SetProperty("button_color_bg_pressed", "#444444FF");        // hex
     SetProperty("button_color_bg_clicked", "#444444FF");        // hex
-    SetProperty("button_color_text", "#BCBCBCFF");              // hex
+    SetProperty("button_color_text", "#BDBDBDFF");              // hex
     SetProperty("button_color_text_hovered", "#FFFFFFFF");      // hex
     SetProperty("button_color_text_pressed", "#FFFFFFFF");      // hex
     SetProperty("button_color_underline", "#242424FF");         // hex
