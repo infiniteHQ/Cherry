@@ -56,10 +56,13 @@ public:
     if (CherryGUI::IsItemHovered() &&
         CherryGUI::IsMouseDoubleClicked(ImGuiMouseButton_Left)) {
       SetData("isDoubleClicked", "true");
+    } else {
+      SetData("isDoubleClicked", "false");
     }
 
     if (CherryGUI::IsItemHovered()) {
       SetData("isHovered", "true");
+    } else {
     }
 
     if (CherryGUI::IsItemActivated()) {
@@ -68,10 +71,16 @@ public:
 
     if (CherryGUI::IsItemActive()) {
       SetData("isPressed", "true");
+    } else {
+
+      SetData("isPressed", "false");
     }
 
     if (isClicked) {
       SetData("isClicked", "true");
+    } else {
+
+      SetData("isClicked", "false");
     }
 
     ImDrawList *drawList = CherryGUI::GetWindowDrawList();

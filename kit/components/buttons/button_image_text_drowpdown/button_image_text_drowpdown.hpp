@@ -47,6 +47,8 @@ public:
     SetProperty("padding_x", "theme:button_padding_x");
     SetProperty("padding_y", "theme:button_padding_y");
 
+    SetProperty("disable_callback", "false");
+
     SetProperty("size_image_x", "15");
     SetProperty("size_image_y", "15");
     // Informations
@@ -179,39 +181,58 @@ public:
     }
 
     std::string context_menu_label = "TabContextMenu" + Label;
+
     if (GetData("isMenuActivated") == "true") {
-      if (CherryGUI::BeginPopupContextItem(context_menu_label.c_str())) {
-        ImVec4 grayColor = ImVec4(0.4f, 0.4f, 0.4f, 1.0f); // TODO : Props
-        ImVec4 graySeparatorColor =
-            ImVec4(0.4f, 0.4f, 0.4f, 0.5f); // TODO : Props
-        ImVec4 darkBackgroundColor =
-            ImVec4(0.15f, 0.15f, 0.15f, 1.0f); // TODO : Props
-        ImVec4 lightBorderColor =
-            ImVec4(0.2f, 0.2f, 0.2f, 1.0f); // TODO : Props
+      if (GetProperty("disable_callback") == "false") {
+        ImVec2 mousePos = ImGui::GetMousePos();
+        ImVec2 displaySize = ImGui::GetIO().DisplaySize;
+        ImVec2 popupSize(150, 100);
 
-        CherryGUI::PushStyleColor(ImGuiCol_PopupBg, darkBackgroundColor);
-        CherryGUI::PushStyleColor(ImGuiCol_Border, lightBorderColor);
-        CherryGUI::PushStyleVar(ImGuiStyleVar_PopupRounding, 3.0f);
-
-        if (m_DropdownCallback) {
-          m_DropdownCallback();
+        if (mousePos.x + popupSize.x > displaySize.x) {
+          mousePos.x -= popupSize.x;
+        }
+        if (mousePos.y + popupSize.y > displaySize.y) {
+          mousePos.y -= popupSize.y;
         }
 
-        if (!CherryGUI::IsWindowHovered(ImGuiHoveredFlags_AnyWindow) &&
-            CherryGUI::IsMouseClicked(0)) {
-          CherryGUI::CloseCurrentPopup();
-          SetData("isMenuActivated", "false");
-        }
+        ImGui::SetNextWindowPos(mousePos);
 
-        CherryGUI::PopStyleVar();
-        CherryGUI::PopStyleColor(2);
-        CherryGUI::EndPopup();
+        CherryGUI::OpenPopup(context_menu_label.c_str());
       }
     }
 
     if (GetData("isMenuActivated") == "true") {
-      CherryGUI::OpenPopup(context_menu_label.c_str());
+      if (GetProperty("disable_callback") == "false") {
+        if (CherryGUI::BeginPopupContextItem(context_menu_label.c_str())) {
+          ImVec4 grayColor = ImVec4(0.4f, 0.4f, 0.4f, 1.0f); // TODO : Props
+          ImVec4 graySeparatorColor =
+              ImVec4(0.4f, 0.4f, 0.4f, 0.5f); // TODO : Props
+          ImVec4 darkBackgroundColor =
+              ImVec4(0.15f, 0.15f, 0.15f, 1.0f); // TODO : Props
+          ImVec4 lightBorderColor =
+              ImVec4(0.2f, 0.2f, 0.2f, 1.0f); // TODO : Props
+
+          CherryGUI::PushStyleColor(ImGuiCol_PopupBg, darkBackgroundColor);
+          CherryGUI::PushStyleColor(ImGuiCol_Border, lightBorderColor);
+          CherryGUI::PushStyleVar(ImGuiStyleVar_PopupRounding, 3.0f);
+
+          if (m_DropdownCallback) {
+            m_DropdownCallback();
+          }
+
+          if (!CherryGUI::IsWindowHovered(ImGuiHoveredFlags_AnyWindow) &&
+              CherryGUI::IsMouseClicked(0)) {
+            CherryGUI::CloseCurrentPopup();
+            SetData("isMenuActivated", "false");
+          }
+
+          CherryGUI::PopStyleVar();
+          CherryGUI::PopStyleColor(2);
+          CherryGUI::EndPopup();
+        }
+      }
     }
+
     CherryGUI::PopStyleColor(style_props_opt);
     CherryGUI::PopStyleColor(5);
     CherryGUI::PopStyleVar();
@@ -247,7 +268,7 @@ inline Component &ButtonImageTextDropdown(
     const std::string &image_path,
     const std::function<void()> &dropdown_callback = []() {}) {
   return CherryApp.PushComponent<Cherry::Components::ButtonImageTextDropdown>(
-      identifier, label, image_path);
+      identifier, label, image_path, dropdown_callback);
 }
 
 inline Component &ButtonImageTextDropdown(
@@ -256,7 +277,7 @@ inline Component &ButtonImageTextDropdown(
   return Cherry::Kit::ButtonImageTextDropdown(
       Application::GenerateUniqueID(label, image_path,
                                     "ButtonImageTextDropdown"),
-      label, image_path);
+      label, image_path, dropdown_callback);
 }
 } // namespace Kit
 
