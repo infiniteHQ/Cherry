@@ -61,13 +61,11 @@ public:
   }
 
   void Render() override {
-    std::cout << "FQq" << std::endl;
     const ImVec2 &size = ImVec2(std::stof(GetProperty("size_x")),
                                 std::stof(GetProperty("size_y")));
     CherryGUI::PushStyleVar(ImGuiStyleVar_FramePadding,
                             ImVec2(std::stof(GetProperty("padding_x")),
                                    std::stof(GetProperty("padding_y"))));
-    std::cout << "FQq" << std::endl;
 
     CherryGUI::PushStyleColor(ImGuiCol_Border,
                               HexToRGBA(GetProperty("color_border")));
@@ -78,12 +76,10 @@ public:
     CherryGUI::PushStyleColor(ImGuiCol_ButtonActive,
                               HexToRGBA(GetProperty("color_bg_clicked")));
 
-    std::cout << "FQq8" << std::endl;
     std::string identifier = GetIdentifier().string();
     std::string Label = GetProperty("label");
     int style_props_opt = 0;
 
-    std::cout << "FQq" << std::endl;
     if (GetData("isHovered") == "true") {
       if (GetProperty("disable_time") == "false")
         SetData("lastHovered", GetCurrentTime());
@@ -96,7 +92,6 @@ public:
                                 HexToRGBA(GetProperty("color_text_hovered")));
       style_props_opt += 3;
     }
-    std::cout << "FQq9" << std::endl;
 
     if (GetData("isClicked") == "true") {
       if (GetProperty("disable_time") == "false")
@@ -111,13 +106,11 @@ public:
       style_props_opt += 3;
     }
 
-    std::cout << "FQq6" << std::endl;
     if (GetData("isActivated") == "true") {
       if (GetProperty("disable_time") == "false")
         SetData("lastActivated", GetCurrentTime());
     }
 
-    std::cout << "FQq7" << std::endl;
     if (GetProperty("isPressed") == "true") {
       if (GetProperty("disable_time") == "false")
         SetData("lastPressed", GetCurrentTime());
@@ -130,13 +123,11 @@ public:
                                 HexToRGBA(GetProperty("color_text_pressed")));
       style_props_opt += 3;
     }
-    std::cout << "FQq5" << std::endl;
 
     SetData("isHovered", "false");
     SetData("isClicked", "false");
     SetData("isPressed", "false");
     SetData("isActivated", "false");
-    std::cout << "FQq" << std::endl;
 
     if (!identifier.empty()) {
       Label += "####" + identifier;
@@ -170,7 +161,6 @@ public:
     CherryGUI::PopStyleColor(style_props_opt);
     CherryGUI::PopStyleColor(4);
     CherryGUI::PopStyleVar();
-    std::cout << "FQqe" << std::endl;
   }
 
 private:

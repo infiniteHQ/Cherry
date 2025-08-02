@@ -68,6 +68,7 @@
 #include "./kit/components/tables/table_simple/table_simple.hpp"
 // Keyval
 #include "./kit/components/keyval/keyval_bool/keyval_bool.hpp"
+#include "./kit/components/keyval/keyval_color_hex/keyval_color_hex.hpp"
 #include "./kit/components/keyval/keyval_combo_string/keyval_combo_string.hpp"
 #include "./kit/components/keyval/keyval_custom/keyval_custom.hpp"
 #include "./kit/components/keyval/keyval_double/keyval_double.hpp"
@@ -134,6 +135,7 @@
 #include "./kit/components/widgets/widget_folder/widget_folder.hpp"
 #include "./kit/components/widgets/widget_small_folder/widget_small_folder.hpp"
 // Blocks
+#include "./kit/components/blocks/block_horizontal_custom/block_horizontal_custom.hpp"
 #include "./kit/components/blocks/block_vertical_custom/block_vertical_custom.hpp"
 // Banner
 #include "./kit/components/banners/banner_image_context/banner_image_context.hpp"

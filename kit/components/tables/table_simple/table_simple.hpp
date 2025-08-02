@@ -38,6 +38,9 @@ public:
     SetProperty("header_visible", "true");
     SetProperty("header_text_visible", "true");
 
+    SetProperty("padding_x", "7");
+    SetProperty("padding_y", "7");
+
     // Columns
     SetProperty("columns_number", "2");
     SetProperty("columns_name_0", "First");
@@ -55,6 +58,10 @@ public:
   void Render() override {
     ImGuiTableFlags flags = ImGuiTableFlags_SizingStretchSame | m_OtherFlags;
 
+    float paddingX = std::stof(GetProperty("padding_x"));
+    float paddingY = std::stof(GetProperty("padding_y"));
+
+    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(paddingX, paddingY));
     // ImGuiStyle style = CherryGUI::GetStyle();
     // m_HeaderCellPaddingX = style.CellPadding.x;
     // m_HeaderCellPaddingY = style.CellPadding.y;
@@ -120,6 +127,8 @@ public:
       CherryGUI::PopStyleVar();
       CherryGUI::EndTable();
     }
+
+    ImGui::PopStyleVar();
   }
 
 private:

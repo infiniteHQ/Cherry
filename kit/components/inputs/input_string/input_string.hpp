@@ -25,12 +25,17 @@ public:
     SetProperty("size_x", "30");
     SetProperty("padding_x", "7");
     SetProperty("padding_y", "7");
+    SetProperty("enter_return", "false");
+    SetProperty("focus_on_appear", "false");
 
     // Informations
     SetProperty("label", label);
     SetProperty("description", "");
     SetProperty("description_logo", "");
     SetProperty("description_logo_place", "r");
+
+    // Data
+    SetData("active", "false");
   }
 
   void Render() override {
@@ -72,7 +77,24 @@ public:
       ImVec2 cursorPos = ImGui::GetCursorScreenPos();
       ImVec2 padding = ImGui::GetStyle().FramePadding;
 
-      ImGui::InputText(Label.c_str(), buffer, sizeof(buffer));
+      ImGuiInputTextFlags flags;
+
+      if (GetProperty("enter_return") == "true") {
+        flags | ImGuiInputTextFlags_EnterReturnsTrue;
+      }
+
+      bool active =
+          ImGui::InputText(Label.c_str(), buffer, sizeof(buffer), flags);
+      if (GetProperty("focus_on_appear") == "true") {
+        ImGui::SetKeyboardFocusHere();
+      }
+
+      if (active) {
+        SetData("active", "true");
+
+      } else {
+        SetData("active", "false");
+      }
 
       float textX = cursorPos.x + padding.x + 4.0f;
       float textRight = cursorPos.x + sizeX - padding.x;

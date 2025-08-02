@@ -22,6 +22,11 @@ public:
 
     // Colors
     SetProperty("color_text", "theme:keyval_color_text");
+    SetProperty("size_x", "30");
+    SetProperty("padding_x", "7");
+    SetProperty("padding_y", "7");
+    SetProperty("enter_return", "false");
+    SetProperty("focus_on_appear", "false");
 
     // Informations
     SetProperty("label", label);
@@ -41,6 +46,9 @@ public:
         std::string identifier = GetIdentifier().string();
         std::string Label = "####" + GetProperty("label");
 
+        float paddingX = std::stof(GetProperty("padding_x"));
+        float paddingY = std::stof(GetProperty("padding_y"));
+
         if (!identifier.empty()) {
           Label += Label + identifier;
         }
@@ -54,7 +62,11 @@ public:
           char buffer[256];
           std::strncpy(buffer, m_Value->c_str(), sizeof(buffer));
 
+          ImGui::PushStyleVar(ImGuiStyleVar_FramePadding,
+                              ImVec2(paddingX, paddingY));
           CherryGUI::InputText(Label.c_str(), buffer, sizeof(buffer));
+
+          ImGui::PopStyleVar();
           *m_Value = std::string(buffer);
         } else {
           CherryGUI::Text("INVALID VALUE");

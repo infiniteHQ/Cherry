@@ -76,10 +76,11 @@ public:
       SetData("isPressed", "false");
     }
 
-    if (isClicked) {
+    if (isClicked ||
+        (CherryGUI::IsItemHovered() &&
+         CherryGUI::IsMouseDoubleClicked(ImGuiMouseButton_Right))) {
       SetData("isClicked", "true");
     } else {
-
       SetData("isClicked", "false");
     }
 

@@ -707,8 +707,8 @@ void Window::UI_DrawTitlebar(float &outTitlebarHeight) {
   ImGui::Spring();
   UI::ShiftCursorY(8.0f);
 
-  if (Application::Get().m_FramebarCallback) {
-    Application::Get().m_FramebarCallback();
+  if (m_Specifications.FramebarCallback) {
+    m_Specifications.FramebarCallback();
   }
 
   if (m_Specifications.CustomTitlebar) {
