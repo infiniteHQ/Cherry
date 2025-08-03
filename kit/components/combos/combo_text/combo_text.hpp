@@ -36,8 +36,9 @@ public:
     SetProperty("label", label);
 
     // Size
-    SetProperty("x_padding", "7");
-    SetProperty("y_padding", "7");
+    SetProperty("size_x", "50");
+    SetProperty("padding_x", "7");
+    SetProperty("padding_y", "7");
 
     // Data & User-level informations
     SetData("lastClicked", "never");
@@ -50,8 +51,10 @@ public:
     int selected = std::stoi(GetProperty("selected"));
     int default_index = std::stoi(GetProperty("default_index"));
     CherryGUI::PushStyleVar(ImGuiStyleVar_FramePadding,
-                            ImVec2(std::stoi(GetProperty("x_padding")),
-                                   std::stoi(GetProperty("y_padding"))));
+                            ImVec2(std::stoi(GetProperty("padding_x")),
+                                   std::stoi(GetProperty("padding_y"))));
+
+    float sizeX = std::stof(GetProperty("size_x"));
 
     if (default_index < 0 || default_index >= m_List->size())
       default_index = 0;
@@ -65,6 +68,7 @@ public:
       Label += "####" + identifier;
     }
 
+    CherryGUI::SetNextItemWidth(sizeX);
     if (CherryGUI::BeginCombo(Label.c_str(), combo_preview_value, flags)) {
       for (int n = 0; n < (*m_List).size(); n++) {
         const bool is_selected = (selected == n);

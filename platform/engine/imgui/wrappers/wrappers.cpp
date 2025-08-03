@@ -1273,6 +1273,14 @@ bool TextButtonWithImageWithIcon(ImTextureID texIdFirst,
   // tint_col);
 }
 
+void PushClipRect(const ImVec2 &clip_rect_min, const ImVec2 &clip_rect_max,
+                  bool intersect_with_current_clip_rect) {
+  ImGui::PushClipRect(clip_rect_min, clip_rect_max,
+                      intersect_with_current_clip_rect);
+}
+
+void PopClipRect() { ImGui::PopClipRect(); }
+
 } // namespace GUI
 
 } // namespace Cherry

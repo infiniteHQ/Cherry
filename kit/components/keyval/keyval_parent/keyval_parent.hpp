@@ -12,6 +12,8 @@
 namespace Cherry {
 namespace Components {
 
+// TODO m_IsOpen also needs to be a cherry property
+
 class KeyValParent : public Component {
 public:
   KeyValParent(const Cherry::Identifier &id, const std::string &label,
@@ -146,6 +148,21 @@ inline Component &KeyValParent(const std::string &label,
       Application::GenerateUniqueID(label, rows, "KeyValParent"), label, rows);
 }
 
+inline Component &KeyValParent(const Identifier &identifier,
+                               const std::string &label,
+                               bool default_opened = false,
+                               const std::vector<Component> &rows = {}) {
+  return CherryApp.PushComponent<Cherry::Components::KeyValParent>(
+      identifier, label, rows, default_opened);
+}
+
+inline Component &KeyValParent(const std::string &label,
+                               bool default_opened = false,
+                               const std::vector<Component> &rows = {}) {
+  return Cherry::Kit::KeyValParent(
+      Application::GenerateUniqueID(label, rows, "KeyValParent"), label,
+      default_opened, rows);
+}
 } // namespace Kit
 
 } // namespace Cherry

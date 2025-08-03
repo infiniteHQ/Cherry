@@ -69,13 +69,13 @@ public:
       float logoSize = 16.0f;
       float logoSpacing = 4.0f;
 
-      ImGui::SetNextItemWidth(sizeX);
-      ImGui::PushStyleVar(ImGuiStyleVar_FramePadding,
-                          ImVec2(paddingX, paddingY));
-      ImGui::PushID(Label.c_str());
+      CherryGUI::SetNextItemWidth(sizeX);
+      CherryGUI::PushStyleVar(ImGuiStyleVar_FramePadding,
+                              ImVec2(paddingX, paddingY));
+      CherryGUI::PushID(Label.c_str());
 
-      ImVec2 cursorPos = ImGui::GetCursorScreenPos();
-      ImVec2 padding = ImGui::GetStyle().FramePadding;
+      ImVec2 cursorPos = CherryGUI::GetCursorScreenPos();
+      ImVec2 padding = CherryGUI::GetStyle().FramePadding;
 
       ImGuiInputTextFlags flags;
 
@@ -84,9 +84,9 @@ public:
       }
 
       bool active =
-          ImGui::InputText(Label.c_str(), buffer, sizeof(buffer), flags);
+          CherryGUI::InputText(Label.c_str(), buffer, sizeof(buffer), flags);
       if (GetProperty("focus_on_appear") == "true") {
-        ImGui::SetKeyboardFocusHere();
+        CherryGUI::SetKeyboardFocusHere();
       }
 
       if (active) {
@@ -114,7 +114,7 @@ public:
         std::string test = (len < (int)description.size())
                                ? description.substr(0, len) + ellipsis
                                : description;
-        if (ImGui::CalcTextSize(test.c_str()).x <= availableTextWidth) {
+        if (CherryGUI::CalcTextSize(test.c_str()).x <= availableTextWidth) {
           displayedHint = test;
           break;
         }
@@ -122,36 +122,36 @@ public:
 
       if (std::strlen(buffer) == 0) {
         float hintY = cursorPos.y + padding.y +
-                      (ImGui::GetFontSize() -
-                       ImGui::CalcTextSize(displayedHint.c_str()).y) *
+                      (CherryGUI::GetFontSize() -
+                       CherryGUI::CalcTextSize(displayedHint.c_str()).y) *
                           0.5f;
 
         ImVec2 clipMin = ImVec2(textX, cursorPos.y);
         ImVec2 clipMax =
             ImVec2(textX + availableTextWidth,
-                   cursorPos.y + ImGui::GetFontSize() + padding.y * 2.0f);
+                   cursorPos.y + CherryGUI::GetFontSize() + padding.y * 2.0f);
 
-        ImGui::PushClipRect(clipMin, clipMax, true);
-        ImGui::GetWindowDrawList()->AddText(
-            ImVec2(textX, hintY), ImGui::GetColorU32(ImGuiCol_TextDisabled),
+        CherryGUI::PushClipRect(clipMin, clipMax, true);
+        CherryGUI::GetWindowDrawList()->AddText(
+            ImVec2(textX, hintY), CherryGUI::GetColorU32(ImGuiCol_TextDisabled),
             displayedHint.c_str());
-        ImGui::PopClipRect();
+        CherryGUI::PopClipRect();
       }
 
       if (hasLogo) {
-        float logoY =
-            cursorPos.y + padding.y + (ImGui::GetFontSize() - logoSize) * 0.5f;
+        float logoY = cursorPos.y + padding.y +
+                      (CherryGUI::GetFontSize() - logoSize) * 0.5f;
         float logoX = (logoPlacement == "l")
                           ? cursorPos.x + padding.x
                           : cursorPos.x + sizeX - padding.x - logoSize;
 
-        ImGui::GetWindowDrawList()->AddImage(
+        CherryGUI::GetWindowDrawList()->AddImage(
             logo, ImVec2(logoX, logoY),
             ImVec2(logoX + logoSize, logoY + logoSize));
       }
 
-      ImGui::PopID();
-      ImGui::PopStyleVar();
+      CherryGUI::PopID();
+      CherryGUI::PopStyleVar();
       *m_Value = std::string(buffer);
 
     } else {
