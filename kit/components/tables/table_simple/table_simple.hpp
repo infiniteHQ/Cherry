@@ -53,6 +53,8 @@ public:
     SetProperty("label", label);
 
     SetData("renderedColumn", "-1");
+    SetData("indent", "10.0f");
+    SetData("padding", "0.0f");
   }
 
   void Render() override {

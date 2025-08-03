@@ -924,7 +924,20 @@ bool TableNextColumn(); // append into the next column (or first column of next
                         // column is visible.
 bool TableSetColumnIndex(int column_n); // append into the specified column.
                                         // Return true when column is visible.
-
+void TableOpenContextMenu(int column_n = -1);
+void TableSetColumnWidth(int column_n, float width);
+void TableSetColumnSortDirection(int column_n,
+                                 ImGuiSortDirection sort_direction,
+                                 bool append_to_sort_specs);
+int TableGetHoveredColumn(); // May use (TableGetColumnFlags() &
+                             // ImGuiTableColumnFlags_IsHovered) instead. Return
+                             // hovered column. return -1 when table is not
+                             // hovered. return columns_count if the unused
+                             // space at the right of visible columns is
+                             // hovered.
+float TableGetHeaderRowHeight();
+void TablePushBackgroundChannel();
+void TablePopBackgroundChannel();
 } // namespace GUI
 } // namespace Cherry
 

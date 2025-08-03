@@ -74,6 +74,7 @@
 #include "./kit/components/keyval/keyval_double/keyval_double.hpp"
 #include "./kit/components/keyval/keyval_float/keyval_float.hpp"
 #include "./kit/components/keyval/keyval_int/keyval_int.hpp"
+#include "./kit/components/keyval/keyval_parent/keyval_parent.hpp"
 #include "./kit/components/keyval/keyval_string/keyval_string.hpp"
 #include "./kit/components/keyval/keyval_vector1/keyval_vector1.hpp"
 #include "./kit/components/keyval/keyval_vector2/keyval_vector2.hpp"

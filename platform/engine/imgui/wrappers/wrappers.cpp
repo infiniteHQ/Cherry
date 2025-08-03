@@ -1243,7 +1243,23 @@ bool TableNextColumn() { return ImGui::TableNextColumn(); }
 bool TableSetColumnIndex(int column_n) {
   return ImGui::TableSetColumnIndex(column_n);
 }
+void TableOpenContextMenu(int column_n) {
+  ImGui::TableOpenContextMenu(column_n);
+}
+void TableSetColumnWidth(int column_n, float width) {
+  ImGui::TableSetColumnWidth(column_n, width);
+}
+void TableSetColumnSortDirection(int column_n,
+                                 ImGuiSortDirection sort_direction,
+                                 bool append_to_sort_specs) {
+  ImGui::TableSetColumnSortDirection(column_n, sort_direction,
+                                     append_to_sort_specs);
+}
 
+int TableGetHoveredColumn() { return ImGui::TableGetHoveredColumn(); }
+float TableGetHeaderRowHeight() { return ImGui::TableGetHeaderRowHeight(); }
+void TablePushBackgroundChannel() { ImGui::TablePushBackgroundChannel(); }
+void TablePopBackgroundChannel() { ImGui::TablePopBackgroundChannel(); }
 bool TextButtonWithImageWithIcon(ImTextureID texIdFirst,
                                  ImTextureID texIdSecond, const char *label,
                                  const ImVec2 &imageSizeFirst,

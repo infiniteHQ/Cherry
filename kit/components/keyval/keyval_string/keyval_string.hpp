@@ -39,7 +39,10 @@ public:
         CherryGUI::TableSetBgColor(ImGuiTableBgTarget_CellBg,
                                    IM_COL32(100, 100, 100, 40));
         CherryGUI::AlignTextToFramePadding();
+        float padding = std::stof(parent->GetData("padding"));
+        std::cout << "String ident : " << std::to_string(padding) << std::endl;
         CherryGUI::Indent(10.0f);
+        CherryGUI::SetCursorPosX(CherryGUI::GetCursorPosX() + padding);
         CherryGUI::TextWrapped(GetProperty("label").c_str());
         CherryGUI::Unindent(10.0f);
       } else if (std::stoi(parent->GetData("renderedColumn")) == 1) {
