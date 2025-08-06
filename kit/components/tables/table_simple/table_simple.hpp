@@ -112,6 +112,7 @@ public:
           ImGuiStyleVar_CellPadding,
           ImVec2(std::stof(GetProperty("cell_padding_x_row")),
                  std::stof(GetProperty("cell_padding_y_row"))));
+
       for (auto row : m_Rows) {
         if (row) {
           CherryGUI::TableNextRow();

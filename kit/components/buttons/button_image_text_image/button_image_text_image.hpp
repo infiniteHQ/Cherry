@@ -64,7 +64,6 @@ public:
   }
 
   void Render() override {
-    std::cout << "1" << std::endl;
     const ImVec2 &size = ImVec2(std::stoi(GetProperty("size_x")),
                                 std::stoi(GetProperty("size_y")));
     CherryGUI::PushStyleVar(ImGuiStyleVar_FramePadding,
