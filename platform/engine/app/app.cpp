@@ -1597,7 +1597,9 @@ void Application::MultiThreadWindowRuntime() {
     if (s_Instance->m_DefaultSpecification.RenderMode ==
             WindowRenderingMethod::DockingWindows ||
         Application::GetCurrentRenderedWindow()->m_Specifications.RenderMode ==
-            WindowRenderingMethod::TabWidows) {
+            WindowRenderingMethod::TabWidows ||
+        Application::GetCurrentRenderedWindow()->m_Specifications.RenderMode ==
+            WindowRenderingMethod::SimpleWindow) {
       for (auto &req : m_RedockRequests) {
         if (req->m_IsObsolete) {
           continue;
