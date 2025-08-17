@@ -8,21 +8,24 @@ void AppWindowRender() {
                         "\" and i'm on the window \"" + WindowName + "\"");
 }
 
-CherryApplication *Cherry::CreateApplication(int argc, char **argv) {
+CherryApplication CherryMain(int argc, char **argv) {
+  // Configuration of the application
   Cherry::ApplicationSpecification config;
-
   config.SetRenderMode(Cherry::WindowRenderingMethod::DockingWindows);
 
+  auto app =  new CherryApplication(config);
+
+  // When created, let's add some components to the runtime
   Cherry::AddAppWindow(
       CherryKit::WindowSimple("App Window 1", AppWindowRender));
   Cherry::AddAppWindow(
       CherryKit::WindowSimple("App Window 2", AppWindowRender));
   Cherry::AddAppWindow(
       CherryKit::WindowSimple("App Window 3", AppWindowRender));
-  return new CherryApplication(config);
+  return app;
 }
 
 int main(int argc, char *argv[]) {
-  std::thread([&]() { Cherry::Main(argc, argv); }).join();
+  CherryRun(argc, argv);
   return 0;
 }

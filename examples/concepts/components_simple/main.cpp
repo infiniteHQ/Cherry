@@ -118,9 +118,13 @@ void ComponentPools() {
 void Base() { CherryKit::ButtonText("Simple button"); }
 
 CherryApplication CherryMain(int argc, char **argv) {
+  // Configuration of the application
   CherryAppConfig config;
   config.SetRenderMode(Cherry::WindowRenderingMethod::TabWidows);
 
+  auto app =  new CherryApplication(config);
+
+  // When created, let's add some components to the runtime
   Cherry::AddAppWindow(CherryKit::WindowSimple("Base", Base));
   Cherry::AddAppWindow(
       CherryKit::WindowSimple("Dynamic Variables", DynamicVars));
@@ -130,7 +134,7 @@ CherryApplication CherryMain(int argc, char **argv) {
   Cherry::AddAppWindow(
       CherryKit::WindowSimple("Component Groups", ComponentGroups));
 
-  return new CherryApplication(config);
+  return app;
 }
 
 int main(int argc, char *argv[]) {

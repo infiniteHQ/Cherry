@@ -16,10 +16,9 @@ void Render() {
   }
 }
 
-CherryApplication *Cherry::CreateApplication(int argc, char **argv) {
+CherryApplication CherryMain(int argc, char **argv) {
   Cherry::ApplicationSpecification config;
   config.UseAudio();
-
   config.SetMainRenderCallback(Render);
   return new CherryApplication(config);
 }

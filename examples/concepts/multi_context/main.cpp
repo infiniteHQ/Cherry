@@ -13,15 +13,20 @@ void Render() {
 }
 
 CherryApplication CherryMain(int argc, char **argv) {
+  // Configuration of the application
   CherryAppConfig config;
   config.SetRenderMode(Cherry::WindowRenderingMethod::DockingWindows);
   config.AddTheme(CherryThemes::DarkVortex());
+
+  auto app =  new CherryApplication(config);
+
+  // When created, let's add some components to the runtime
   Cherry::AddAppWindow(CherryKit::WindowSimple("Test window", Render));
   Cherry::AddAppWindow(CherryKit::WindowSimple("Test window 2", Render));
   Cherry::AddAppWindow(CherryKit::WindowSimple("Test window 3", Render));
   Cherry::AddAppWindow(CherryKit::WindowSimple("Test window 4", Render));
   Cherry::AddAppWindow(CherryKit::WindowSimple("Test window 5", Render));
-  return new CherryApplication(config);
+  return app;
 }
 
 int main(int argc, char *argv[]) {

@@ -126,7 +126,8 @@ void MainThemes() {
                         });
 }
 
-CherryApplication *Cherry::CreateApplication(int argc, char **argv) {
+CherryApplication CherryMain(int argc, char **argv) {
+  // Configuration of the application
   Cherry::ApplicationSpecification config;
 
   config.SetRenderMode(Cherry::WindowRenderingMethod::TabWidows);
@@ -146,14 +147,18 @@ CherryApplication *Cherry::CreateApplication(int argc, char **argv) {
   config.AddTheme(BlueThemeCherry());
   config.AddTheme(YellowThemeCherry());
 
+  auto app =  new CherryApplication(config);
+
+  // When created, let's add some components to the runtime
   Cherry::AddAppWindow(CherryKit::WindowSimple("Main Themes", MainThemes));
   Cherry::AddAppWindow(CherryKit::WindowSimple("First", AppWindowSample));
   Cherry::AddAppWindow(CherryKit::WindowSimple("Second", AppWindowSample));
   Cherry::AddAppWindow(CherryKit::WindowSimple("Third", AppWindowSample));
-  return new CherryApplication(config);
+
+  return app;
 }
 
 int main(int argc, char *argv[]) {
-  std::thread([&]() { Cherry::Main(argc, argv); }).join();
+   CherryRun(argc, argv);
   return 0;
 }
