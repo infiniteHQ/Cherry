@@ -25,6 +25,6 @@ CherryApplication *Cherry::CreateApplication(int argc, char **argv) {
 }
 
 int main(int argc, char *argv[]) {
-  std::thread([&]() { Cherry::Main(argc, argv); }).join();
+   CherryRun(argc, argv);
   return 0;
 }
