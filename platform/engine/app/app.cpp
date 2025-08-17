@@ -2705,15 +2705,27 @@ std::string Application::GetActiveThemeProperty(const std::string &key) {
   return "undefned";
 }
 
+
 std::string Application::CookPath(std::string_view input_path) {
   static const std::string root_path = []() {
     std::string path;
+
 #ifdef _WIN32
     char result[MAX_PATH];
     if (GetModuleFileNameA(NULL, result, MAX_PATH))
       path = std::filesystem::path(result).parent_path().string();
     else
       std::cerr << "Failed to get root path" << std::endl;
+
+#elif __APPLE__
+    char result[PATH_MAX];
+    uint32_t size = sizeof(result);
+    if (_NSGetExecutablePath(result, &size) == 0) {
+      path = std::filesystem::path(result).parent_path().string();
+    } else {
+      std::cerr << "Buffer too small for executable path" << std::endl;
+    }
+
 #else
     char result[PATH_MAX];
     ssize_t count = readlink("/proc/self/exe", result, sizeof(result) - 1);
@@ -2724,6 +2736,7 @@ std::string Application::CookPath(std::string_view input_path) {
       std::cerr << "Failed to get root path" << std::endl;
     }
 #endif
+
     return path;
   }();
 

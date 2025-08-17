@@ -45,7 +45,10 @@ Cherry::SetTheme();
 #include "../../../lib/sdl2/include/SDL_scancode.h"
 
 #ifdef _WIN32
-#include <windows.h>
+  #include <windows.h>
+#elif __APPLE__
+  #include <mach-o/dyld.h>
+  #include <limits.h>
 #else
 #include <limits.h>
 #include <unistd.h>
