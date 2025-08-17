@@ -67,8 +67,9 @@ static int current_fps;
 #define CherryCreateApp *Cherry::CreateApplication
 #define CherryMain *Cherry::CreateApplication
 #define CherryAppConfig Cherry::ApplicationSpecification
-#define CherryRun(argc, argv)                                                  \
+#define CherryRunAsync(argc, argv)                                             \
   std::thread([&]() { Cherry::Main(argc, argv); }).join();
+#define CherryRun(argc, argv) Cherry::Main(argc, argv);
 
 #define CherryComponentsPool std::vector<std::shared_ptr<Cherry::Component>>
 
