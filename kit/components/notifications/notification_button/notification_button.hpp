@@ -25,6 +25,7 @@ public:
     SetIdentifier(id);
 
     // Colors
+    SetProperty("color_separator", "theme:notification_color_border");
     SetProperty("color_border", "theme:notification_color_border");
     SetProperty("color_border_hovered",
                 "theme:notification_color_border_hovered");
@@ -98,6 +99,9 @@ public:
         toast.setTitle(GetProperty("title").c_str());
         toast.setContent(GetProperty("description").c_str());
         toast.setOnButtonPress([]() {});
+        toast.setBackgroundColor(GetProperty("color_bg").c_str());
+        toast.setSeparatorColor(GetProperty("color_separator").c_str());
+        toast.setBorderColor(GetProperty("color_border").c_str());
 
         toast.setButtonLabel("OK");
 
