@@ -29,6 +29,12 @@ public:
     SetProperty("color_bg_hovered", "theme:combo_color_bg_hovered");
     SetProperty("color_bg_clicked", "theme:combo_color_bg_clicked");
 
+    // Sizes
+    SetProperty("size_x", "theme:button_size_x");
+    SetProperty("size_y", "theme:button_size_y");
+    SetProperty("padding_x", "theme:button_padding_x");
+    SetProperty("padding_y", "theme:button_padding_y");
+
     // Images
     SetProperty("default_index", std::to_string(default_index));
     SetProperty("selected", std::to_string(default_index));
@@ -42,6 +48,10 @@ public:
   }
 
   void Render() override {
+    CherryGUI::PushStyleVar(ImGuiStyleVar_FramePadding,
+                            ImVec2(std::stoi(GetProperty("padding_x")),
+                                   std::stoi(GetProperty("padding_y"))));
+
     int selected = std::stoi(GetProperty("selected"));
     int default_index = std::stoi(GetProperty("default_index"));
     static ImGuiComboFlags flags = 0;
@@ -54,6 +64,7 @@ public:
     if (!identifier.empty()) {
       Label += Label + "####" + identifier;
     }
+    CherryGUI::SetNextItemWidth(std::stof(GetProperty("size_x")));
 
     if (CherryGUI::BeginCombo(Label.c_str(), [&]() {
           ImTextureID texture =
@@ -90,6 +101,8 @@ public:
       }
       CherryGUI::EndCombo();
     }
+
+    CherryGUI::PopStyleVar();
   }
 
 private:
