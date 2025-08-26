@@ -4,7 +4,6 @@
 
 //
 // InputString
-// Authors : Infinite, Diego Moreno
 //
 
 #ifndef CHERRY_KIT_INPUT_STRING
@@ -106,7 +105,7 @@ public:
         textRight -= logoSize + logoSpacing;
       }
 
-      float availableTextWidth = std::max(0.0f, textRight - textX);
+      float availableTextWidth = (std::max)(0.0f, textRight - textX);
 
       std::string displayedHint;
       const std::string ellipsis = "...";
