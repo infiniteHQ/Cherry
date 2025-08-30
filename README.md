@@ -147,9 +147,15 @@ Whether you’re a beginner or an experienced developer, Cherry makes it easy to
 </p>
 
 ## Examples & Preview
-  
+
+Cherry is already used in real-world projects, such as:  
+- [**The Vortex Creation Platform**](https://vortex.infinite.si)  
+- [**Vortex Launcher**](https://github.com/infiniteHQ/VortexLauncher)  
+- [**Vortex Installer**](https://github.com/infiniteHQ/VortexInstaller)  
+
 > [!NOTE]  
-> New examples will be uploaded.
+> More examples and previews will be uploaded soon.  
+
 
 ## Special thanks
 - For all contributors of SDL2
