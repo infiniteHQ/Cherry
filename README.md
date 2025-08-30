@@ -26,21 +26,21 @@ Whether you’re a beginner or an experienced developer, Cherry makes it easy to
 
 
 <a href="https://cherry.infinite.si">
-  <h1 align="center">
+  <h3 align="center">
     <picture>
       <source media="(prefers-color-scheme: dark)" srcset="./.github/imgs/component_banner.png">
       <img src="./.github/imgs/component_banner.png">
     </picture>
-  </h1>
+  </h3>
 </a>
 
 <a href="https://cherry.infinite.si">
-  <h1 align="center">
+  <h3 align="center">
     <picture>
       <source media="(prefers-color-scheme: dark)" srcset="./.github/imgs/theme_banner.png">
       <img src="./.github/imgs/theme_banner.png">
     </picture>
-  </h1>
+  </h3>
 </a>
 <a href="https://cherry.infinite.si">
   <h1 align="center">
