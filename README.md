@@ -1,6 +1,6 @@
 
 
-<a href="https://infinite.si">
+<a href="https://cherry.infinite.si">
   <h1 align="center">
     <picture>
       <source media="(prefers-color-scheme: dark)" srcset="./.github/imgs/banner.png">
@@ -13,76 +13,76 @@
 <a title="Code Quality" href="https://www.codefactor.io/repository/github/infinitehq/cherry"><img alt="Code Quality" src="https://img.shields.io/codefactor/grade/github/infinitehq/cherry?longCache=true&style=for-the-badge&label=Code%20Quality&logoColor=fff&logo=CodeFactor&branch=master"></a>
   <a title="Discord Server" href="https://discord.gg/H2wptkecUg"><img alt="Discord Server" src="https://img.shields.io/discord/1095333825762046194?label=Discord&logo=Discord&logoColor=fff&style=for-the-badge"></a>
 <a title="'Linux Build' workflow Status" href="https://img.shields.io/github/actions/workflow/status/infiniteHQ/cherry/build.yml"><img alt="Linux Build" src="https://img.shields.io/github/actions/workflow/status/infiniteHQ/cherry/build.yml?longCache=true&style=for-the-badge&label=Build&logoColor=fff&logo=GitHub%20Actions&branch=main"></a>
+  
+  <a title="Latest Release" href="https://github.com/infiniteHQ/Cherry/releases/latest"><img alt="Latest Release" src="https://img.shields.io/github/v/release/infiniteHQ/Cherry?style=for-the-badge&label=Release&logo=github"></a>
+  <a title="Website" href="https://infinite.infinite.si/"><img alt="Website" src="https://img.shields.io/badge/Website-Visit-blueviolet?style=for-the-badge&logo=firefox-browser&logoColor=white"></a>
+
 </div>
+
+### What is Cherry ?
+*Cherry is a modern, minimalist framework for building cross-platform application interfaces.
+It avoids heavy web technologies and bloated solutions, focusing instead on being simple yet complete, powered by ImGui, Vulkan, and SDL.
+Whether you’re a beginner or an experienced developer, Cherry makes it easy to create real, efficient, and professional interfaces.*
+
+
+<a href="https://cherry.infinite.si">
+  <h1 align="center">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="./.github/imgs/component_banner.png">
+      <img src="./.github/imgs/component_banner.png">
+    </picture>
+  </h1>
+</a>
+
+<a href="https://cherry.infinite.si">
+  <h1 align="center">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="./.github/imgs/theme_banner.png">
+      <img src="./.github/imgs/theme_banner.png">
+    </picture>
+  </h1>
+</a>
+<a href="https://cherry.infinite.si">
+  <h1 align="center">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="./.github/imgs/style_banner.png">
+      <img src="./.github/imgs/style_banner.png">
+    </picture>
+  </h1>
+</a>
 
 > *Important: Cherry is part of [Infinite](https://infinite.si/)'s initiative to create free, independent, and ethical technology and computing. Cherry is a library powering many parts of this project, but maintaining libraries like Cherry is a time-consuming and costly process. If you appreciate Cherry, you can support us [on our funding page](https://fund.infinite.si/) if you can.*
 
-<p align="center" style="gap: 0; margin-bottom: 6px;">
-  <img src="./.github/imgs/tile1.png" width="49%" style="margin-right:1%;">
-  <img src="./.github/imgs/tile3.png" width="49%">
-</p>
-<p align="center" style="gap: 0;">
-  <a target="_blank" href="https://cherry.infinite.si">
-    <img src="./.github/imgs/tile2.png" width="49%" style="margin-right:1%;">
-  </a>
-  <img src="./.github/imgs/tile4.png" width="49%">
-</p>
+## All Features
 
-
-
-### Summary
-*Cherry is a modern, minimalist yet comprehensive UI/UX framework for low-level native applications. It provides a complete solution, including backend support, a rendering engine, and UI components. Cherry is built using technologies like ImGui, Vulkan, and SDL, offering developers advanced tools to create efficient and high-performance interfaces.*
-
-### [The Cherry Documentation](https://cherry.infinite.si)
-
-*A presentation video will be appear here*
-
-## What you can do ?  
-
-![✅ Ready](https://img.shields.io/badge/Desktop%20Applications-Ready-green?longCache=true&style=for-the-badge)
-![✅ Ready](https://img.shields.io/badge/Debug%20Tools%20%26%20Utilities-Ready-green?longCache=true&style=for-the-badge)
-![🧪 Experimental](https://img.shields.io/badge/Web%20Tech--Based%20Apps-Experimental-yellow?longCache=true&style=for-the-badge)
-![⏳ Planned](https://img.shields.io/badge/Embedded%20Systems%20%26%20UIs-Planned-lightgrey?longCache=true&style=for-the-badge)
-![⏳ Planned](https://img.shields.io/badge/Web%20Apps-Planned-lightgrey?longCache=true&style=for-the-badge)
-![⏳ Planned](https://img.shields.io/badge/Mobile%20Apps-Planned-lightgrey?longCache=true&style=for-the-badge)
-![⏳ Planned](https://img.shields.io/badge/UI%20in%20Games%20%26%20Renders-Planned-lightgrey?longCache=true&style=for-the-badge)
-
-
-
-## Features
-
-> ***(Top level)* Components, UI, Interfaces & Kits**
-> - 🧰 **+ 80 Components**, easy and ready to use
-> - 🧰 **+ 20 Style effects and utils**, like color, sizes, padding, layout managment> 
-> - 🧰 **+ 8 themes**, including color palette and all properties
+> - 🧰 **80+ Components**, easy and ready to use  
+> - 🎨 **20+ Style effects & utilities**, including colors, sizes, padding, and layout management  
+> - 🌈 **8 Built-in themes**, with full color palettes and properties  
+> - 🛠️ **Unlimited customization**: create your own **components, style effects, and themes**, either through the **low-level drawing API** for maximum control, or from **prefabricated building blocks** for faster development  
 > - 📦 **Many examples** and ready to use windows, concepts.
 > - 📦 **Many logics and interaction** utils like input detection, key managment, double click, Ctrl+C etc...
 > - 📦 **Complete and simple API** with Sound managment, web asset fetching, rendering possibilities, traduction managment etc...
 
-> ***(API)* Render engine**
-> - 🔊 Sound engine
-> - 🎨 Themes manager, Dark & Ligth themes
-> - 📈 Data handler for windows & components
-> - 💬 Localization & Traduction managment
-> - ❓ Fonts manager
-> - 🖼️ Images & textures manager
-> - 🗂️ Menubar & Bottombar simple callbacks
-> - 💪 Custom window close behaviors
-> - 🗄️ Advanced Docking (WIP)
-> - 🖼️ Toasts, Notifications & pop-ups
-> - 🛠️ Behaviros callbacks (closing, moving, etc...)
-> - 🏗️ Windows customisations (size, colors, properties & styles)
+> **Core engine**
+> - 🔊 **Sound engine**
+> - 🎨 **Themes manager, Dark & Ligth themes**
+> - 📈 **Data handler for windows & components**
+> - 🌍 **Localization & Translation management**  
+> - 🔤 **Fonts management**  
+> - 🌐 **Network media & Web assets**  
+> - 📦 **Assets management**  
+> - 🖼️ **Images & textures manager**
+> - 🗂️ **Menubar & Bottombar simple callbacks**
+> - 💪 **Custom window close behaviors**
+> - 🗄️ **Advanced Docking**
+> - 🖼️ **Toasts, Notifications & pop-ups**
+> - 🛠️ **Behaviros callbacks** (closing, moving, etc...)
+> - 🏗️ **Windows customisations** (size, colors, properties & styles)
 
 > **Backends**
 > - 🛠️ Multi context with contexts cohesion & communication (ImGui/SDL)
 > - 🛠️ Complete image load & show, cache & optimization
 > - 🛠️ Window builder
-
-
-> **Planned features for next updates :**
-> - 🏗️ Webviews & Website loading
-> - 🏗️ More components with more properties & customizations
-> - 🏗️ Internet images loading & cache managment
 
 
 > [!NOTE]  
@@ -113,8 +113,7 @@
 > ./build/bin/hello
 > ```
 
-*Congratulations! If everything is working well, you can now start in the Cherry environment. Please follow our documentation (WIP). If you encounter any issues, feel free to ask your question or reach out to us on Discord!*
-
+*Congratulations! If everything is working well, you can now start in the Cherry environment. Please follow our [documentation](https://cherry.infinite.si/). If you encounter any issues, feel free to ask your question or reach out to us on [Discord](https://discord.gg/H2wptkecUg)!*
 
 <h2>Compatibility</h2>
 
@@ -147,47 +146,10 @@
 ❌ <em>: Not planned, incompatible (for the moment...)</em>
 </p>
 
-
 ## Examples & Preview
   
 > [!NOTE]  
-> These examples are real-world examples of the use of Cherry. More examples will be uploaded.
-<table>
-  <tr>
-    <td align="center">
-      <img src="./.github/imgs/Cherry1.png" alt="Cherry 1" width="250">
-      <p>Simple window with sidebar</p>
-    </td>
-    <td align="center">
-      <img src="./.github/imgs/Cherry2.png" alt="Cherry 2" width="250">
-      <p>Toast notification</p>
-    </td>
-    <td align="center">
-      <img src="./.github/imgs/Cherry3.png" alt="Cherry 3" width="250">
-      <p>Rich menubar</p>
-    </td>
-  </tr>
-  <tr>
-    <td align="center">
-      <img src="./.github/imgs/Cherry4.png" alt="Cherry 4" width="250">
-      <p>Project selector with custom widgets</p>
-    </td>
-    <td align="center">
-      <img src="./.github/imgs/Cherry5.png" alt="Cherry 5" width="250">
-      <p>Item selection & navigation</p>
-    </td>
-    <td align="center">
-      <img src="./.github/imgs/Cherry6.png" alt="Cherry 6" width="250">
-      <p>Rich windows & Docking</p>
-    </td>
-  </tr>
-  <tr>
-    <td align="center">
-      <img src="./.github/imgs/Cherry7.png" alt="Cherry 7" width="250">
-      <p>Multi-windows on single app</p>
-    </td>
-  </tr>
-</table>
+> New examples will be uploaded.
 
 ## Special thanks
 - For all contributors of SDL2
