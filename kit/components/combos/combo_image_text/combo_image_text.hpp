@@ -41,6 +41,7 @@ public:
 
     // Informations
     SetProperty("label", label);
+    SetProperty("disable_text", "false");
 
     // Data & User-level informations
     SetData("lastClicked", "never");
@@ -71,8 +72,10 @@ public:
               Application::Get().GetCurrentRenderedWindow()->get_texture(
                   m_List[selected].second);
           CherryGUI::Image(texture, ImVec2(15, 15));
-          CherryGUI::SameLine();
-          CherryGUI::Text(m_List[selected].first.c_str());
+          if (!GetPropertyAs<bool>("disable_text")) {
+            CherryGUI::SameLine();
+            CherryGUI::Text(m_List[selected].first.c_str());
+          }
         })) {
       for (int n = 0; n < m_List.size(); n++) {
         const bool is_selected = (selected == n);
