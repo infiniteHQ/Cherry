@@ -20,10 +20,9 @@
 </div>
 
 ### What is Cherry ?
-*Cherry is a modern, minimalist framework for building cross-platform application interfaces.
-It avoids heavy web technologies and bloated solutions, focusing instead on being simple yet complete, powered by ImGui, Vulkan, and SDL.
-Whether you’re a beginner or an experienced developer, Cherry makes it easy to create real, efficient, and professional interfaces.*
-
+*Cherry is a modern, minimalist framework for building cross-platform application interfaces in **C++** (with support for other languages coming soon).  
+It avoids heavy web technologies and bloated solutions, focusing instead on being simple yet complete, powered by **ImGui, Vulkan, and SDL**.  
+Whether you’re a beginner or an experienced developer, Cherry makes it easy to create real, efficient, and professional interfaces.*  
 
 <a href="https://cherry.infinite.si">
   <h3 align="center">
