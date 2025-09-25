@@ -903,7 +903,65 @@ bool Selectable(const char *label, bool *p_selected, ImGuiSelectableFlags flags,
   return ImGui::Selectable(label, p_selected, flags, size);
 }
 
-bool TreeNode(const char *label) { return ImGui::TreeNode(label); }
+bool TreeNode(const char* label) {
+    return ImGui::TreeNode(label);
+}
+
+bool TreeNode(const char* str_id, const char* fmt, ...) {
+    va_list args;
+    va_start(args, fmt);
+    bool result = ImGui::TreeNodeV(str_id, fmt, args);
+    va_end(args);
+    return result;
+}
+
+bool TreeNode(const void* ptr_id, const char* fmt, ...) {
+    va_list args;
+    va_start(args, fmt);
+    bool result = ImGui::TreeNodeV(ptr_id, fmt, args);
+    va_end(args);
+    return result;
+}
+
+bool TreeNodeV(const char* str_id, const char* fmt, va_list args) {
+    return ImGui::TreeNodeV(str_id, fmt, args);
+}
+
+bool TreeNodeV(const void* ptr_id, const char* fmt, va_list args) {
+    return ImGui::TreeNodeV(ptr_id, fmt, args);
+}
+
+bool TreeNodeEx(const char* label, ImGuiTreeNodeFlags flags) {
+    return ImGui::TreeNodeEx(label, flags);
+}
+
+bool TreeNodeEx(const char* str_id, ImGuiTreeNodeFlags flags, const char* fmt, ...) {
+    va_list args;
+    va_start(args, fmt);
+    bool result = ImGui::TreeNodeExV(str_id, flags, fmt, args);
+    va_end(args);
+    return result;
+}
+
+bool TreeNodeEx(const void* ptr_id, ImGuiTreeNodeFlags flags, const char* fmt, ...) {
+    va_list args;
+    va_start(args, fmt);
+    bool result = ImGui::TreeNodeExV(ptr_id, flags, fmt, args);
+    va_end(args);
+    return result;
+}
+
+bool TreeNodeExV(const char* str_id, ImGuiTreeNodeFlags flags, const char* fmt, va_list args) {
+    return ImGui::TreeNodeExV(str_id, flags, fmt, args);
+}
+
+bool TreeNodeExV(const void* ptr_id, ImGuiTreeNodeFlags flags, const char* fmt, va_list args) {
+    return ImGui::TreeNodeExV(ptr_id, flags, fmt, args);
+}
+
+void TreePush(const char* str_id) {
+    ImGui::TreePush(str_id);
+}
 
 void TreePop() { ImGui::TreePop(); }
 
