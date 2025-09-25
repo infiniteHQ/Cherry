@@ -1029,151 +1029,151 @@ ImVec2 Window::get_texture_size(const std::string &path) {
 }
 
 void Window::LoadTheme() {
-  CherryGUI::PushStyleColor(ImGuiCol_Header,
+  ImGui::PushStyleColor(ImGuiCol_Header,
                             Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
                                 "color_header"))); // color_header
-  CherryGUI::PushStyleColor(
+  ImGui::PushStyleColor(
       ImGuiCol_HeaderHovered,
       Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
           "color_header_hovered"))); // color_header_hovered
-  CherryGUI::PushStyleColor(ImGuiCol_HeaderActive,
+  ImGui::PushStyleColor(ImGuiCol_HeaderActive,
                             Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
                                 "color_header_active"))); // color_header_active
 
-  CherryGUI::PushStyleColor(ImGuiCol_Button,
+  ImGui::PushStyleColor(ImGuiCol_Button,
                             Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
                                 "button_color_border"))); // color_button
-  CherryGUI::PushStyleColor(
+  ImGui::PushStyleColor(
       ImGuiCol_ButtonHovered,
       Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
           "button_color_border_hovered"))); // color_button_hovered
-  CherryGUI::PushStyleColor(
+  ImGui::PushStyleColor(
       ImGuiCol_ButtonActive,
       Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
           "button_color_border_pressed"))); // color_button_active
 
-  CherryGUI::PushStyleColor(ImGuiCol_FrameBg,
+  ImGui::PushStyleColor(ImGuiCol_FrameBg,
                             Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
                                 "color_framebg"))); // color_framebg
-  CherryGUI::PushStyleColor(
+  ImGui::PushStyleColor(
       ImGuiCol_FrameBgHovered,
       Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
           "color_framebg_hovered"))); // color_framebg_hovered
-  CherryGUI::PushStyleColor(
+  ImGui::PushStyleColor(
       ImGuiCol_FrameBgActive,
       Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
           "color_framebg_active"))); // color_framebg_active
 
-  CherryGUI::PushStyleColor(
+  ImGui::PushStyleColor(
       ImGuiCol_Text,
       Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty("color_text")));
 
-  CherryGUI::PushStyleColor(ImGuiCol_Tab,
+  ImGui::PushStyleColor(ImGuiCol_Tab,
                             Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
                                 "color_tab"))); // color_tab
-  CherryGUI::PushStyleColor(ImGuiCol_TabHovered,
+  ImGui::PushStyleColor(ImGuiCol_TabHovered,
                             Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
                                 "color_tab_hovered"))); // color_tab_hovered
-  CherryGUI::PushStyleColor(ImGuiCol_TabActive,
+  ImGui::PushStyleColor(ImGuiCol_TabActive,
                             Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
                                 "color_tab_active"))); // color_tab_active
-  CherryGUI::PushStyleColor(ImGuiCol_TabUnfocused,
+  ImGui::PushStyleColor(ImGuiCol_TabUnfocused,
                             Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
                                 "color_tab_unfocused"))); // color_tab_unfocused
-  CherryGUI::PushStyleColor(
+  ImGui::PushStyleColor(
       ImGuiCol_TabUnfocusedActive,
       Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
           "color_tab_unfocused_active"))); // color_tab_unfocused_active
 
-  CherryGUI::PushStyleColor(ImGuiCol_TitleBg,
+  ImGui::PushStyleColor(ImGuiCol_TitleBg,
                             Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
                                 "color_titlebg"))); // color_titlebg
-  CherryGUI::PushStyleColor(
+  ImGui::PushStyleColor(
       ImGuiCol_TitleBgActive,
       Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
           "color_titlebg_active"))); // color_titlebg_active
-  CherryGUI::PushStyleColor(
+  ImGui::PushStyleColor(
       ImGuiCol_TitleBgCollapsed,
       Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
           "color_titlebg_collapsed"))); // color_titlebg_collapsed
 
-  CherryGUI::PushStyleColor(ImGuiCol_ResizeGrip,
+  ImGui::PushStyleColor(ImGuiCol_ResizeGrip,
                             Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
                                 "color_resizegrip"))); // color_resizegrip
-  CherryGUI::PushStyleColor(
+  ImGui::PushStyleColor(
       ImGuiCol_ResizeGripHovered,
       Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
           "color_resizegrip_hovered"))); // color_resizegrip_hovered
-  CherryGUI::PushStyleColor(
+  ImGui::PushStyleColor(
       ImGuiCol_ResizeGripActive,
       Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
           "color_resizegrip_active"))); // color_resizegrip_active
 
-  CherryGUI::PushStyleColor(ImGuiCol_ScrollbarBg,
+  ImGui::PushStyleColor(ImGuiCol_ScrollbarBg,
                             Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
                                 "color_scrollbar_bg"))); // color_scrollbar_bg
 
-  CherryGUI::PushStyleColor(
+  ImGui::PushStyleColor(
       ImGuiCol_ScrollbarGrab,
       Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
           "color_scrollbar_grab"))); // color_scrollbar_grab
-  CherryGUI::PushStyleColor(
+  ImGui::PushStyleColor(
       ImGuiCol_ScrollbarGrabHovered,
       Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
           "color_scrollbar_grab_hovered"))); // color_scrollbar_grab_hovered
-  CherryGUI::PushStyleColor(
+  ImGui::PushStyleColor(
       ImGuiCol_ScrollbarGrabActive,
       Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
           "color_scrollbar_grab_active"))); // color_scrollbar_grab_active
 
-  CherryGUI::PushStyleColor(ImGuiCol_CheckMark,
+  ImGui::PushStyleColor(ImGuiCol_CheckMark,
                             Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
                                 "color_checkmark"))); // color_checkmark
 
-  CherryGUI::PushStyleColor(ImGuiCol_SliderGrab,
+  ImGui::PushStyleColor(ImGuiCol_SliderGrab,
                             Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
                                 "color_slidergrab"))); // color_slidergrab
-  CherryGUI::PushStyleColor(
+  ImGui::PushStyleColor(
       ImGuiCol_SliderGrabActive,
       Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
           "color_slidergrab_active"))); // color_slidergrab_active
 
-  CherryGUI::PushStyleColor(ImGuiCol_Separator,
+  ImGui::PushStyleColor(ImGuiCol_Separator,
                             Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
                                 "color_separator"))); // color_separator
 
-  CherryGUI::PushStyleColor(
+  ImGui::PushStyleColor(
       ImGuiCol_SeparatorActive,
       Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
           "color_separator_active"))); // color_separator_active
-  CherryGUI::PushStyleColor(
+  ImGui::PushStyleColor(
       ImGuiCol_SeparatorHovered,
       Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
           "color_separator_hovered"))); // color_separator_hovered
 
-  CherryGUI::PushStyleColor(ImGuiCol_WindowBg,
+  ImGui::PushStyleColor(ImGuiCol_WindowBg,
                             Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
                                 "color_window_bg"))); // color_window_bg
-  CherryGUI::PushStyleColor(ImGuiCol_ChildBg,
+  ImGui::PushStyleColor(ImGuiCol_ChildBg,
                             Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
                                 "color_child_bg"))); // color_child_bg
-  CherryGUI::PushStyleColor(ImGuiCol_PopupBg,
+  ImGui::PushStyleColor(ImGuiCol_PopupBg,
                             Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
                                 "color_popup_bg"))); // color_popup_bg
-  CherryGUI::PushStyleColor(ImGuiCol_Border,
+  ImGui::PushStyleColor(ImGuiCol_Border,
                             Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
                                 "color_border"))); // color_border
 
-  CherryGUI::PushStyleColor(
+  ImGui::PushStyleColor(
       ImGuiCol_TableHeaderBg,
       Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
           "color_table_header_bg"))); // color_table_header_bg
-  CherryGUI::PushStyleColor(
+  ImGui::PushStyleColor(
       ImGuiCol_TableBorderLight,
       Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
           "color_table_border_light"))); // color_table_border_light
 
-  CherryGUI::PushStyleColor(ImGuiCol_MenuBarBg,
+  ImGui::PushStyleColor(ImGuiCol_MenuBarBg,
                             Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
                                 "color_menubar_bg"))); // color_menubar_bg
 
@@ -1187,7 +1187,7 @@ void Window::LoadTheme() {
   style.FramePadding = ImVec2(15.0f, 5.0f);   // padding_frame
 }
 
-void Window::UnloadTheme() { CherryGUI::PopStyleColor(38); }
+void Window::UnloadTheme() { ImGui::PopStyleColor(38); }
 
 void Window::free() {
   //

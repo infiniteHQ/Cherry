@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../options.hpp"
 #include "../../../src/core/color.hpp"
 #include "../../../src/layer.hpp"
 
@@ -14,7 +15,7 @@
 
 namespace Cherry {
 
-class Component {
+class CHERRY_API Component {
 public:
   Component(const Identifier &id);
   Component();
@@ -80,6 +81,63 @@ private:
 
   std::unordered_map<std::string, std::string> m_CachedProperties;
 };
+
+
+template <>
+inline std::string Component::GetDataAs<std::string>(const std::string &key) {
+    return GetData(key);
+}
+
+template <>
+inline int Component::GetDataAs<int>(const std::string &key) {
+    return std::stoi(GetData(key));
+}
+
+template <>
+inline float Component::GetDataAs<float>(const std::string &key) {
+    std::string val = GetData(key);
+    if (!val.empty() && val.back() == 'f')
+        val.pop_back();
+    return std::stof(val);
+}
+
+template <>
+inline double Component::GetDataAs<double>(const std::string &key) {
+    return std::stod(GetData(key));
+}
+
+template <>
+inline bool Component::GetDataAs<bool>(const std::string &key) {
+    std::string val = GetData(key);
+    std::transform(val.begin(), val.end(), val.begin(), ::tolower);
+    return val == "true";
+}
+
+template <>
+inline std::string Component::GetPropertyAs<std::string>(const std::string &key) {
+  return GetProperty(key);
+}
+
+template <> inline int Component::GetPropertyAs<int>(const std::string &key) {
+  return std::stoi(GetProperty(key));
+}
+
+template <> inline float Component::GetPropertyAs<float>(const std::string &key) {
+  std::string val = GetProperty(key);
+  if (!val.empty() && val.back() == 'f')
+    val.pop_back();
+  return std::stof(val);
+}
+
+template <> inline double Component::GetPropertyAs<double>(const std::string &key) {
+  return std::stod(GetProperty(key));
+}
+
+template <> inline bool Component::GetPropertyAs<bool>(const std::string &key) {
+  std::string val = GetProperty(key);
+  std::transform(val.begin(), val.end(), val.begin(), ::tolower);
+  return val == "true";
+}
 } // namespace Cherry
 
 #endif // CHERRY_COMPONENT_H

@@ -53,7 +53,11 @@
 
 namespace fs = std::filesystem;
 
+#if defined(_WIN32) || defined(_WIN64)
+#else
 extern bool g_ApplicationRunning;
+#endif
+
 
 // #define IMGUI_UNLIMITED_FRAME_RATE
 #ifdef _DEBUG
@@ -465,8 +469,8 @@ VkDebugReportCallbackEXT &Application::GetVkDebugReportCallbackEXT() {
   return g_DebugReport;
 }
 
-void Application::SetExecutablePath() { g_ExecutablePath = "test"; }
-std::string &Application::GetExecutablePath() { return g_ExecutablePath; }
+ void Application::SetExecutablePath() { g_ExecutablePath = "test"; }
+ std::string &Application::GetExecutablePath() { return g_ExecutablePath; }
 
 VkPipelineCache &Application::GetVkPipelineCache() { return g_PipelineCache; }
 
@@ -610,6 +614,73 @@ void Application::AddProcessCallback(ProcessCallback process,
   g_ProcessCallbacks.push_back({process, callback});
 }
 
+const std::unordered_map<CherryKey, SDL_Scancode> &Application::GetKeyMap() {
+  static std::unordered_map<CherryKey, SDL_Scancode> keyMap = {
+      {CherryKey::A, SDL_SCANCODE_A},
+      {CherryKey::B, SDL_SCANCODE_B},
+      {CherryKey::C, SDL_SCANCODE_C},
+      {CherryKey::D, SDL_SCANCODE_D},
+      {CherryKey::E, SDL_SCANCODE_E},
+      {CherryKey::F, SDL_SCANCODE_F},
+      {CherryKey::G, SDL_SCANCODE_G},
+      {CherryKey::H, SDL_SCANCODE_H},
+      {CherryKey::I, SDL_SCANCODE_I},
+      {CherryKey::J, SDL_SCANCODE_J},
+      {CherryKey::K, SDL_SCANCODE_K},
+      {CherryKey::L, SDL_SCANCODE_L},
+      {CherryKey::M, SDL_SCANCODE_M},
+      {CherryKey::N, SDL_SCANCODE_N},
+      {CherryKey::O, SDL_SCANCODE_O},
+      {CherryKey::P, SDL_SCANCODE_P},
+      {CherryKey::Q, SDL_SCANCODE_Q},
+      {CherryKey::R, SDL_SCANCODE_R},
+      {CherryKey::S, SDL_SCANCODE_S},
+      {CherryKey::T, SDL_SCANCODE_T},
+      {CherryKey::U, SDL_SCANCODE_U},
+      {CherryKey::V, SDL_SCANCODE_V},
+      {CherryKey::W, SDL_SCANCODE_W},
+      {CherryKey::X, SDL_SCANCODE_X},
+      {CherryKey::Y, SDL_SCANCODE_Y},
+      {CherryKey::Z, SDL_SCANCODE_Z},
+      {CherryKey::NUM_0, SDL_SCANCODE_0},
+      {CherryKey::NUM_1, SDL_SCANCODE_1},
+      {CherryKey::NUM_2, SDL_SCANCODE_2},
+      {CherryKey::NUM_3, SDL_SCANCODE_3},
+      {CherryKey::NUM_4, SDL_SCANCODE_4},
+      {CherryKey::NUM_5, SDL_SCANCODE_5},
+      {CherryKey::NUM_6, SDL_SCANCODE_6},
+      {CherryKey::NUM_7, SDL_SCANCODE_7},
+      {CherryKey::NUM_8, SDL_SCANCODE_8},
+      {CherryKey::NUM_9, SDL_SCANCODE_9},
+      {CherryKey::ESCAPE, SDL_SCANCODE_ESCAPE},
+      {CherryKey::SPACE, SDL_SCANCODE_SPACE},
+      {CherryKey::KEY_DELETE, SDL_SCANCODE_DELETE},
+      {CherryKey::ENTER, SDL_SCANCODE_RETURN},
+      {CherryKey::BACKSPACE, SDL_SCANCODE_BACKSPACE},
+      {CherryKey::TAB, SDL_SCANCODE_TAB},
+      {CherryKey::SHIFT, SDL_SCANCODE_LSHIFT},
+      {CherryKey::CTRL, SDL_SCANCODE_LCTRL},
+      {CherryKey::ALT, SDL_SCANCODE_LALT},
+      {CherryKey::LEFT, SDL_SCANCODE_LEFT},
+      {CherryKey::RIGHT, SDL_SCANCODE_RIGHT},
+      {CherryKey::UP, SDL_SCANCODE_UP},
+      {CherryKey::DOWN, SDL_SCANCODE_DOWN},
+      {CherryKey::F1, SDL_SCANCODE_F1},
+      {CherryKey::F2, SDL_SCANCODE_F2},
+      {CherryKey::F3, SDL_SCANCODE_F3},
+      {CherryKey::F4, SDL_SCANCODE_F4},
+      {CherryKey::F5, SDL_SCANCODE_F5},
+      {CherryKey::F6, SDL_SCANCODE_F6},
+      {CherryKey::F7, SDL_SCANCODE_F7},
+      {CherryKey::F8, SDL_SCANCODE_F8},
+      {CherryKey::F9, SDL_SCANCODE_F9},
+      {CherryKey::F10, SDL_SCANCODE_F10},
+      {CherryKey::F11, SDL_SCANCODE_F11},
+      {CherryKey::F12, SDL_SCANCODE_F12}};
+  return keyMap;
+}
+
+
 void Application::ExecuteProcessCallbacks(ProcessCallback process) {
   for (auto callback : g_ProcessCallbacks) {
     if (callback.first == process) {
@@ -730,7 +801,6 @@ void Application::Shutdown() {
 
   SDL_Quit();
 
-  g_ApplicationRunning = false;
   Log::Shutdown();
 }
 

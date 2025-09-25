@@ -26,7 +26,7 @@ enum class DefaultAppWindowBehaviors { DefaultDocking, DefaultSize };
 
 enum class AppWindowTypes { InstanciableWindow, StaticWindow };
 
-class AppWindow {
+class CHERRY_API AppWindow {
 public:
   AppWindow();
   AppWindow(const std::string &id, const std::string &name);

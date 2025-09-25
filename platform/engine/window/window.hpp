@@ -51,7 +51,7 @@ struct ImGuiDockPreviewData {
 namespace Cherry {
 class Application;
 
-class Window {
+class CHERRY_API Window {
 public:
   Window(const std::string &name, int width, int height,
          ApplicationSpecification specs, bool cold_start = true);

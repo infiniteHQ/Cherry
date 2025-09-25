@@ -3,6 +3,7 @@
 #include <mutex>
 #include <random>
 
+#include "../options.hpp"
 #include "../base.hpp"
 
 #ifndef CHERRY_IDENTIFIER
@@ -16,7 +17,7 @@ struct ComponentsPool {
   std::vector<std::shared_ptr<Component>> IdentifiedComponents;
 };
 
-class IdentifierPattern {
+class CHERRY_API IdentifierPattern {
 public:
   template <typename... Args>
   IdentifierPattern(RenderMode property, Args &&...args) : prop(property) {
@@ -32,7 +33,7 @@ private:
   std::vector<std::any> parameters;
 };
 
-class Identifier {
+class CHERRY_API Identifier {
 public:
   Identifier();
   Identifier(const std::string &id, RenderMode property = RenderMode::None);

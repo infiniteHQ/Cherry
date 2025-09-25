@@ -184,8 +184,8 @@ public:
 
     if (GetData("isMenuActivated") == "true") {
       if (GetProperty("disable_callback") == "false") {
-        ImVec2 mousePos = ImGui::GetMousePos();
-        ImVec2 displaySize = ImGui::GetIO().DisplaySize;
+        ImVec2 mousePos = CherryGUI::GetMousePos();
+        ImVec2 displaySize = CherryGUI::GetIO().DisplaySize;
         ImVec2 popupSize(150, 100);
 
         if (mousePos.x + popupSize.x > displaySize.x) {
@@ -195,7 +195,7 @@ public:
           mousePos.y -= popupSize.y;
         }
 
-        ImGui::SetNextWindowPos(mousePos);
+        CherryGUI::SetNextWindowPos(mousePos);
 
         CherryGUI::OpenPopup(context_menu_label.c_str());
       }

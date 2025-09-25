@@ -16,11 +16,12 @@ Cherry::SetTheme();
 
  */
 
+#include "../options.hpp"
+#include "../base.hpp"
 #include "../../../options.hpp"
 #include "../../../src/core/color.hpp"
 #include "../../../src/layer.hpp"
 #include "../app_window/app_window.hpp"
-#include "../base.hpp"
 #include "../components/components.hpp"
 #include "../image/image.hpp"
 #include "../themes/themes.hpp"
@@ -207,25 +208,25 @@ struct ParentWindow {
   std::string window_name;
 };
 
-class Application {
+class CHERRY_API Application {
 public:
-  Application(const ApplicationSpecification &applicationSpecification =
+   Application(const ApplicationSpecification &applicationSpecification =
                   ApplicationSpecification());
-  ~Application();
+   ~Application();
 
   // Set static components
-  static Application &Get();
-  static VkDevice &GetVkDevice();
-  static VkPhysicalDevice &GetVkPhysicalDevice();
-  static uint32_t &GetQueueFamily();
-  static VkQueue &GetVkQueue();
-  static VkAllocationCallbacks &GetVkAllocationCallbacks();
-  static VkDebugReportCallbackEXT &GetVkDebugReportCallbackEXT();
-  static VkPipelineCache &GetVkPipelineCache();
-  static VkDescriptorPool &GetVkDescriptorPool();
-  static int &GetMinImageCount();
-  static std::shared_ptr<Cherry::Window> &GetCurrentRenderedWindow();
-  static std::shared_ptr<Cherry::AppWindow> &GetCurrentRenderedAppWindow();
+   static Application &Get();
+   static VkDevice &GetVkDevice();
+   static VkPhysicalDevice &GetVkPhysicalDevice();
+   static uint32_t &GetQueueFamily();
+   static VkQueue &GetVkQueue();
+   static VkAllocationCallbacks &GetVkAllocationCallbacks();
+   static VkDebugReportCallbackEXT &GetVkDebugReportCallbackEXT();
+   static VkPipelineCache &GetVkPipelineCache();
+   static VkDescriptorPool &GetVkDescriptorPool();
+   static int &GetMinImageCount();
+   static std::shared_ptr<Cherry::Window> &GetCurrentRenderedWindow();
+   static std::shared_ptr<Cherry::AppWindow> &GetCurrentRenderedAppWindow();
 
   Window &GetSafeCurrentRenderedWindow();
   AppWindow &GetSafeCurrentRenderedAppWindow();
@@ -278,72 +279,7 @@ public:
                                  const std::function<void()> callback);
   static void ExecuteProcessCallbacks(ProcessCallback process);
 
-  static const std::unordered_map<CherryKey, SDL_Scancode> &GetKeyMap() {
-  static std::unordered_map<CherryKey, SDL_Scancode> keyMap = {
-      {CherryKey::A, SDL_SCANCODE_A},
-      {CherryKey::B, SDL_SCANCODE_B},
-      {CherryKey::C, SDL_SCANCODE_C},
-      {CherryKey::D, SDL_SCANCODE_D},
-      {CherryKey::E, SDL_SCANCODE_E},
-      {CherryKey::F, SDL_SCANCODE_F},
-      {CherryKey::G, SDL_SCANCODE_G},
-      {CherryKey::H, SDL_SCANCODE_H},
-      {CherryKey::I, SDL_SCANCODE_I},
-      {CherryKey::J, SDL_SCANCODE_J},
-      {CherryKey::K, SDL_SCANCODE_K},
-      {CherryKey::L, SDL_SCANCODE_L},
-      {CherryKey::M, SDL_SCANCODE_M},
-      {CherryKey::N, SDL_SCANCODE_N},
-      {CherryKey::O, SDL_SCANCODE_O},
-      {CherryKey::P, SDL_SCANCODE_P},
-      {CherryKey::Q, SDL_SCANCODE_Q},
-      {CherryKey::R, SDL_SCANCODE_R},
-      {CherryKey::S, SDL_SCANCODE_S},
-      {CherryKey::T, SDL_SCANCODE_T},
-      {CherryKey::U, SDL_SCANCODE_U},
-      {CherryKey::V, SDL_SCANCODE_V},
-      {CherryKey::W, SDL_SCANCODE_W},
-      {CherryKey::X, SDL_SCANCODE_X},
-      {CherryKey::Y, SDL_SCANCODE_Y},
-      {CherryKey::Z, SDL_SCANCODE_Z},
-      {CherryKey::NUM_0, SDL_SCANCODE_0},
-      {CherryKey::NUM_1, SDL_SCANCODE_1},
-      {CherryKey::NUM_2, SDL_SCANCODE_2},
-      {CherryKey::NUM_3, SDL_SCANCODE_3},
-      {CherryKey::NUM_4, SDL_SCANCODE_4},
-      {CherryKey::NUM_5, SDL_SCANCODE_5},
-      {CherryKey::NUM_6, SDL_SCANCODE_6},
-      {CherryKey::NUM_7, SDL_SCANCODE_7},
-      {CherryKey::NUM_8, SDL_SCANCODE_8},
-      {CherryKey::NUM_9, SDL_SCANCODE_9},
-      {CherryKey::ESCAPE, SDL_SCANCODE_ESCAPE},
-      {CherryKey::SPACE, SDL_SCANCODE_SPACE},
-      {CherryKey::KEY_DELETE, SDL_SCANCODE_DELETE},
-      {CherryKey::ENTER, SDL_SCANCODE_RETURN},
-      {CherryKey::BACKSPACE, SDL_SCANCODE_BACKSPACE},
-      {CherryKey::TAB, SDL_SCANCODE_TAB},
-      {CherryKey::SHIFT, SDL_SCANCODE_LSHIFT},
-      {CherryKey::CTRL, SDL_SCANCODE_LCTRL},
-      {CherryKey::ALT, SDL_SCANCODE_LALT},
-      {CherryKey::LEFT, SDL_SCANCODE_LEFT},
-      {CherryKey::RIGHT, SDL_SCANCODE_RIGHT},
-      {CherryKey::UP, SDL_SCANCODE_UP},
-      {CherryKey::DOWN, SDL_SCANCODE_DOWN},
-      {CherryKey::F1, SDL_SCANCODE_F1},
-      {CherryKey::F2, SDL_SCANCODE_F2},
-      {CherryKey::F3, SDL_SCANCODE_F3},
-      {CherryKey::F4, SDL_SCANCODE_F4},
-      {CherryKey::F5, SDL_SCANCODE_F5},
-      {CherryKey::F6, SDL_SCANCODE_F6},
-      {CherryKey::F7, SDL_SCANCODE_F7},
-      {CherryKey::F8, SDL_SCANCODE_F8},
-      {CherryKey::F9, SDL_SCANCODE_F9},
-      {CherryKey::F10, SDL_SCANCODE_F10},
-      {CherryKey::F11, SDL_SCANCODE_F11},
-      {CherryKey::F12, SDL_SCANCODE_F12}};
-  return keyMap;
-}
-
+  static const std::unordered_map<CherryKey, SDL_Scancode> &GetKeyMap();
 
   // Set callbacks
   void SetCloseCallback(const std::function<void()> &closeCallback) {
@@ -831,51 +767,51 @@ private:
 
 //
 // Main utilities
-//
+// TODO : Move to api section
 
 // Window
-std::shared_ptr<Cherry::Window> &GetCurrentRenderedWindow();
+CHERRY_API std::shared_ptr<Cherry::Window> &GetCurrentRenderedWindow();
 
 // AppWindow
-void AddAppWindow(const std::shared_ptr<AppWindow> &win);
-void DeleteAppWindow(const std::shared_ptr<AppWindow> &win);
-std::shared_ptr<AppWindow> GetAppWindowByName(const std::string &win_name);
-std::shared_ptr<AppWindow> GetCurrentRenderedAppWindow();
-std::shared_ptr<Window> GetWindowByName(const std::string &win_name);
+CHERRY_API void AddAppWindow(const std::shared_ptr<AppWindow> &win);
+CHERRY_API void DeleteAppWindow(const std::shared_ptr<AppWindow> &win);
+CHERRY_API std::shared_ptr<AppWindow> GetAppWindowByName(const std::string &win_name);
+CHERRY_API std::shared_ptr<AppWindow> GetCurrentRenderedAppWindow();
+CHERRY_API std::shared_ptr<Window> GetWindowByName(const std::string &win_name);
 
 // Images
-ImTextureID GetTexture(const std::string &path);
-ImVec2 GetTextureSize(const std::string &path);
+CHERRY_API ImTextureID GetTexture(const std::string &path);
+CHERRY_API ImVec2 GetTextureSize(const std::string &path);
 
 // Notification
-void AddNotification(const ImGuiToast &toast);
+CHERRY_API void AddNotification(const ImGuiToast &toast);
 
 // Font
-void PushFont(const std::string &font_name);
-void PopFont();
+CHERRY_API void PushFont(const std::string &font_name);
+CHERRY_API void PopFont();
 
 // Runtime
-std::string GetPath(const std::string &path);
-std::string GetLocale(const std::string &topic);
+CHERRY_API std::string GetPath(const std::string &path);
+CHERRY_API std::string GetLocale(const std::string &topic);
 #ifdef CHERRY_ENABLE_NET
-std::string GetHttpPath(const std::string &url);
+CHERRY_API std::string GetHttpPath(const std::string &url);
 #endif // CHERRY_ENABLE_NET
 
 // Data (theses functions can return JSON to string format or legacy string.)
-std::string GetData(const Identifier &id, const std::string topic);
-std::string GetWindowData(const std::string &id, const std::string topic);
+CHERRY_API std::string GetData(const Identifier &id, const std::string topic);
+CHERRY_API std::string GetWindowData(const std::string &id, const std::string topic);
 
-void PushPermanentProperty(const std::string &property,
+CHERRY_API void PushPermanentProperty(const std::string &property,
                            const std::string &value);
-void PopPermanentProperty(int number_of_pops = 0);
-void SetNextComponentProperty(const std::string &property,
+CHERRY_API void PopPermanentProperty(int number_of_pops = 0);
+CHERRY_API void SetNextComponentProperty(const std::string &property,
                               const std::string &value);
 
-void PushParentComponent(const std::shared_ptr<Component> &component);
-void PopParentComponent();
-std::shared_ptr<Component> GetParent(int parent_number = 0);
+CHERRY_API void PushParentComponent(const std::shared_ptr<Component> &component);
+CHERRY_API void PopParentComponent();
+CHERRY_API std::shared_ptr<Component> GetParent(int parent_number = 0);
 
-bool IsReady();
+CHERRY_API bool IsReady();
 
 // Implemented by CLIENT
 Application *CreateApplication(int argc, char **argv);

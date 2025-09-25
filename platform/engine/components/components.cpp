@@ -58,32 +58,6 @@ std::string Component::GetData(const std::string &key) {
   return value;
 }
 
-template <>
-std::string Component::GetDataAs<std::string>(const std::string &key) {
-  return GetData(key);
-}
-
-template <> int Component::GetDataAs<int>(const std::string &key) {
-  return std::stoi(GetData(key));
-}
-
-template <> float Component::GetDataAs<float>(const std::string &key) {
-  std::string val = GetData(key);
-  if (!val.empty() && val.back() == 'f')
-    val.pop_back();
-  return std::stof(val);
-}
-
-template <> double Component::GetDataAs<double>(const std::string &key) {
-  return std::stod(GetData(key));
-}
-
-template <> bool Component::GetDataAs<bool>(const std::string &key) {
-  std::string val = GetData(key);
-  std::transform(val.begin(), val.end(), val.begin(), ::tolower);
-  return val == "true";
-}
-
 void Component::ClearData(const std::string &key) { m_Data.erase(key); }
 
 std::string Component::SetProperty(const std::string &key,
@@ -144,32 +118,6 @@ std::string Component::GetProperty(const std::string &key) {
   }
 
   return value;
-}
-
-template <>
-std::string Component::GetPropertyAs<std::string>(const std::string &key) {
-  return GetProperty(key);
-}
-
-template <> int Component::GetPropertyAs<int>(const std::string &key) {
-  return std::stoi(GetProperty(key));
-}
-
-template <> float Component::GetPropertyAs<float>(const std::string &key) {
-  std::string val = GetProperty(key);
-  if (!val.empty() && val.back() == 'f')
-    val.pop_back();
-  return std::stof(val);
-}
-
-template <> double Component::GetPropertyAs<double>(const std::string &key) {
-  return std::stod(GetProperty(key));
-}
-
-template <> bool Component::GetPropertyAs<bool>(const std::string &key) {
-  std::string val = GetProperty(key);
-  std::transform(val.begin(), val.end(), val.begin(), ::tolower);
-  return val == "true";
 }
 
 void Component::RenderWrapper() {

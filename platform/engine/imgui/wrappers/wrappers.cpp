@@ -2,6 +2,103 @@
 
 namespace Cherry {
 namespace GUI {
+  
+
+// Drawlist
+void AddLine(ImDrawList* ptr, const ImVec2& p1, const ImVec2& p2, ImU32 col, float thickness) {
+    ptr->AddLine(p1, p2, col, thickness);
+}
+
+void AddRect(ImDrawList* ptr, const ImVec2& p_min, const ImVec2& p_max, ImU32 col, float rounding, ImDrawFlags flags, float thickness) {
+    ptr->AddRect(p_min, p_max, col, rounding, flags, thickness);
+}
+
+void AddRectFilled(ImDrawList* ptr, const ImVec2& p_min, const ImVec2& p_max, ImU32 col, float rounding, ImDrawFlags flags) {
+    ptr->AddRectFilled(p_min, p_max, col, rounding, flags);
+}
+
+void AddRectFilledMultiColor(ImDrawList* ptr, const ImVec2& p_min, const ImVec2& p_max, ImU32 col_upr_left, ImU32 col_upr_right, ImU32 col_bot_right, ImU32 col_bot_left) {
+    ptr->AddRectFilledMultiColor(p_min, p_max, col_upr_left, col_upr_right, col_bot_right, col_bot_left);
+}
+
+void AddQuad(ImDrawList* ptr, const ImVec2& p1, const ImVec2& p2, const ImVec2& p3, const ImVec2& p4, ImU32 col, float thickness) {
+    ptr->AddQuad(p1, p2, p3, p4, col, thickness);
+}
+
+void AddQuadFilled(ImDrawList* ptr, const ImVec2& p1, const ImVec2& p2, const ImVec2& p3, const ImVec2& p4, ImU32 col) {
+    ptr->AddQuadFilled(p1, p2, p3, p4, col);
+}
+
+void AddTriangle(ImDrawList* ptr, const ImVec2& p1, const ImVec2& p2, const ImVec2& p3, ImU32 col, float thickness) {
+    ptr->AddTriangle(p1, p2, p3, col, thickness);
+}
+
+void AddTriangleFilled(ImDrawList* ptr, const ImVec2& p1, const ImVec2& p2, const ImVec2& p3, ImU32 col) {
+    ptr->AddTriangleFilled(p1, p2, p3, col);
+}
+
+void AddCircle(ImDrawList* ptr, const ImVec2& center, float radius, ImU32 col, int num_segments, float thickness) {
+    ptr->AddCircle(center, radius, col, num_segments, thickness);
+}
+
+void AddCircleFilled(ImDrawList* ptr, const ImVec2& center, float radius, ImU32 col, int num_segments) {
+    ptr->AddCircleFilled(center, radius, col, num_segments);
+}
+
+void AddNgon(ImDrawList* ptr, const ImVec2& center, float radius, ImU32 col, int num_segments, float thickness) {
+    ptr->AddNgon(center, radius, col, num_segments, thickness);
+}
+
+void AddNgonFilled(ImDrawList* ptr, const ImVec2& center, float radius, ImU32 col, int num_segments) {
+    ptr->AddNgonFilled(center, radius, col, num_segments);
+}
+
+void AddText(ImDrawList* ptr, const ImVec2& pos, ImU32 col, const char* text_begin, const char* text_end) {
+    ptr->AddText(pos, col, text_begin, text_end);
+}
+
+void AddText(ImDrawList* ptr, const ImFont* font, float font_size, const ImVec2& pos, ImU32 col, const char* text_begin, const char* text_end, float wrap_width, const ImVec4* cpu_fine_clip_rect) {
+    ptr->AddText(font, font_size, pos, col, text_begin, text_end, wrap_width, cpu_fine_clip_rect);
+}
+
+void AddPolyline(ImDrawList* ptr, const ImVec2* points, int num_points, ImU32 col, ImDrawFlags flags, float thickness) {
+    ptr->AddPolyline(points, num_points, col, flags, thickness);
+}
+
+void AddConvexPolyFilled(ImDrawList* ptr, const ImVec2* points, int num_points, ImU32 col) {
+    ptr->AddConvexPolyFilled(points, num_points, col);
+}
+
+void AddBezierCubic(ImDrawList* ptr, const ImVec2& p1, const ImVec2& p2, const ImVec2& p3, const ImVec2& p4, ImU32 col, float thickness, int num_segments) {
+    ptr->AddBezierCubic(p1, p2, p3, p4, col, thickness, num_segments);
+}
+
+void AddBezierQuadratic(ImDrawList* ptr, const ImVec2& p1, const ImVec2& p2, const ImVec2& p3, ImU32 col, float thickness, int num_segments) {
+    ptr->AddBezierQuadratic(p1, p2, p3, col, thickness, num_segments);
+}
+
+ImVec2 CalcTextSizeA(ImFont* ptr, float size, float max_width, float wrap_width, const char* text_begin, const char* text_end, const char** remaining) {
+    return ptr->CalcTextSizeA(size, max_width, wrap_width, text_begin, text_end, remaining);
+}
+
+const char* CalcWordWrapPositionA(ImFont* ptr, float scale, const char* text, const char* text_end, float wrap_width) {
+    return ptr->CalcWordWrapPositionA(scale, text, text_end, wrap_width);
+}
+
+void RenderChar(ImFont* ptr, ImDrawList* draw_list, float size, ImVec2 pos, ImU32 col, ImWchar c) {
+    ptr->RenderChar(draw_list, size, pos, col, c);
+}
+
+void RenderText(ImFont* ptr, ImDrawList* draw_list, float size, ImVec2 pos, ImU32 col, const ImVec4& clip_rect, const char* text_begin, const char* text_end, float wrap_width, bool cpu_fine_clip) {
+    ptr->RenderText(draw_list, size, pos, col, clip_rect, text_begin, text_end, wrap_width, cpu_fine_clip);
+}
+
+void ClearInputQueueCharacters(ImGuiIO& io)
+{
+    io.InputQueueCharacters.clear(); 
+}
+
+
 void PushStyleVar(ImGuiStyleVar idx, float val) {
   ImGui::PushStyleVar(idx, val);
 }
@@ -1280,6 +1377,27 @@ void PushClipRect(const ImVec2 &clip_rect_min, const ImVec2 &clip_rect_max,
 }
 
 void PopClipRect() { ImGui::PopClipRect(); }
+
+const char *GetClipboardText() {
+  ImGuiContext &g = *GImGui;
+  return g.IO.GetClipboardTextFn
+             ? g.IO.GetClipboardTextFn(g.IO.ClipboardUserData)
+             : "";
+}
+
+void SetClipboardText(const char *text) {
+  ImGuiContext &g = *GImGui;
+  if (g.IO.SetClipboardTextFn)
+    g.IO.SetClipboardTextFn(g.IO.ClipboardUserData, text);
+}
+
+double GetTime() { return GImGui->Time; }
+
+void PushAllowKeyboardFocus(bool allow_keyboard_focus) {
+  ImGui::PushItemFlag(ImGuiItemFlags_NoTabStop, !allow_keyboard_focus);
+}
+
+void PopAllowKeyboardFocus() { ImGui::PopItemFlag(); }
 
 } // namespace GUI
 

@@ -3,12 +3,21 @@ project(libcherry LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# ---------------------------------------------------------------------------
+# Options
+# ---------------------------------------------------------------------------
 option(CHERRY_STATIC "Build cherry as a static library" OFF)
 option(CHERRY_CEF "Enable CEF support" OFF)
 option(CHERRY_ENABLE_NET "Enable networking" OFF)
 option(CHERRY_ENABLE_AUDIO "Enable audio" OFF)
 option(CHERRY_ENABLE_WEBVIEW "Enable webview" OFF)
+option(CHERRY_IMGUI_EXPORT "Export ImGui to DLL" OFF)
 
+
+# ---------------------------------------------------------------------------
+# Compiler flags
+# ---------------------------------------------------------------------------
 if (NOT MSVC)
     add_compile_options(-O3 -fPIC)
 else()
@@ -21,14 +30,18 @@ if(lto_supported)
     set(CMAKE_INTERPROCEDURAL_OPTIMIZATION ON)
 endif()
 
+# ---------------------------------------------------------------------------
+# Library type
+# ---------------------------------------------------------------------------
 if(CHERRY_STATIC)
     set(CHERRY_LIB_TYPE STATIC)
-    add_definitions(-DCHERRY_STATIC_LIB)
 else()
     set(CHERRY_LIB_TYPE SHARED)
-    add_definitions(-DCHERRY_SHARED)
 endif()
 
+# ---------------------------------------------------------------------------
+# Dependencies
+# ---------------------------------------------------------------------------
 find_package(Vulkan REQUIRED)
 include_directories(${Vulkan_INCLUDE_DIRS})
 
@@ -36,6 +49,7 @@ add_subdirectory(lib/glm)
 add_subdirectory(lib/imgui)
 add_subdirectory(lib/spdlog)
 add_subdirectory(lib/stb-image)
+
 set(SDL2_STATIC ON CACHE BOOL "Build SDL2 as static lib" FORCE)
 add_subdirectory(lib/sdl2)
 
@@ -51,7 +65,9 @@ if(CHERRY_ENABLE_AUDIO)
     add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/lib/miniaudio miniaudio_build)
 endif()
 
+# ---------------------------------------------------------------------------
 # Cherry source files
+# ---------------------------------------------------------------------------
 file(GLOB_RECURSE CHERRY_SRC CONFIGURE_DEPENDS
     "platform/*.[ch]pp" "platform/*.c*" 
     "src/*.[ch]pp" "src/*.c*"
@@ -61,24 +77,44 @@ file(GLOB_RECURSE CHERRY_SRC CONFIGURE_DEPENDS
 
 add_library(cherry ${CHERRY_LIB_TYPE} ${CHERRY_SRC})
 
-set_target_properties(cherry PROPERTIES
-    WINDOWS_EXPORT_ALL_SYMBOLS ON
-)
+# ---------------------------------------------------------------------------
+# DLL export/import macros
+# ---------------------------------------------------------------------------
+if(CHERRY_STATIC)
+    target_compile_definitions(cherry PUBLIC CHERRY_STATIC_LIB)
+else()
+    # Lors de la compilation de Cherry DLL
+    target_compile_definitions(cherry PRIVATE CHERRY_EXPORT_SYM)
+    target_compile_definitions(cherry PUBLIC CHERRY_SHARED)
+endif()
 
+# ---------------------------------------------------------------------------
+# Link libraries
+# ---------------------------------------------------------------------------
 target_link_libraries(cherry PRIVATE Vulkan::Vulkan glm stbimage)
+
+# ---------------------------------------------------------------------------
+# ImGui export/import macros
+# ---------------------------------------------------------------------------
+if(CHERRY_IMGUI_EXPORT)
+    if(CHERRY_STATIC)
+        target_compile_definitions(imgui PUBLIC IMGUI_STATIC_LIB)
+    else()
+        target_compile_definitions(imgui PRIVATE IMGUI_EXPORT_SYM)
+        target_compile_definitions(imgui PUBLIC IMGUI_SHARED)
+    endif()
+endif()
 target_link_libraries(cherry PUBLIC imgui)
 
 if(CHERRY_STATIC)
-    set(CHERRY_LIB_TYPE STATIC)
-    add_definitions(-DCHERRY_STATIC_LIB)
     target_link_libraries(cherry PUBLIC SDL2-static)
 else()
-    set(CHERRY_LIB_TYPE SHARED)
-    add_definitions(-DCHERRY_SHARED)
     target_link_libraries(cherry PUBLIC SDL2)
 endif()
 
-# Includes publics
+# ---------------------------------------------------------------------------
+# Include directories
+# ---------------------------------------------------------------------------
 target_include_directories(cherry PUBLIC
     "${CMAKE_CURRENT_SOURCE_DIR}/src"
     "${PROJECT_SOURCE_DIR}/lib/stb_image"
@@ -86,13 +122,14 @@ target_include_directories(cherry PUBLIC
     "${Vulkan_INCLUDE_DIRS}"
 )
 
-# Audio
+# ---------------------------------------------------------------------------
+# Optional features
+# ---------------------------------------------------------------------------
 if(CHERRY_ENABLE_AUDIO)
     target_compile_definitions(cherry PUBLIC CHERRY_ENABLE_AUDIO)
     target_link_libraries(cherry PUBLIC miniaudio)
 endif()
 
-# Réseau
 if(CHERRY_ENABLE_NET)
     target_compile_definitions(cherry PUBLIC CHERRY_ENABLE_NET)
     target_link_libraries(cherry PUBLIC httpcl)
@@ -101,7 +138,6 @@ if(CHERRY_ENABLE_NET)
     endif()
 endif()
 
-# CEF
 if(CHERRY_CEF)
     target_compile_definitions(cherry PUBLIC CHERRY_CEF)
     target_include_directories(cherry PUBLIC ${CEF_ROOT})
