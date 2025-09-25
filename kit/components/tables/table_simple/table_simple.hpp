@@ -63,7 +63,7 @@ public:
     float paddingX = std::stof(GetProperty("padding_x"));
     float paddingY = std::stof(GetProperty("padding_y"));
 
-    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(paddingX, paddingY));
+    CherryGUI::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(paddingX, paddingY));
     // ImGuiStyle style = CherryGUI::GetStyle();
     // m_HeaderCellPaddingX = style.CellPadding.x;
     // m_HeaderCellPaddingY = style.CellPadding.y;
@@ -131,7 +131,7 @@ public:
       CherryGUI::EndTable();
     }
 
-    ImGui::PopStyleVar();
+    CherryGUI::PopStyleVar();
   }
 
 private:

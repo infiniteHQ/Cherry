@@ -64,11 +64,11 @@ public:
           char buffer[256];
           std::strncpy(buffer, m_Value->c_str(), sizeof(buffer));
 
-          ImGui::PushStyleVar(ImGuiStyleVar_FramePadding,
+          CherryGUI::PushStyleVar(ImGuiStyleVar_FramePadding,
                               ImVec2(paddingX, paddingY));
           CherryGUI::InputText(Label.c_str(), buffer, sizeof(buffer));
 
-          ImGui::PopStyleVar();
+          CherryGUI::PopStyleVar();
           *m_Value = std::string(buffer);
         } else {
           CherryGUI::Text("INVALID VALUE");

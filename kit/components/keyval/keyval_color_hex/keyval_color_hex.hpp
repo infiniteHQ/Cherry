@@ -49,64 +49,64 @@ public:
       std::string popupID = "ColorPickerPopup##" + identifier;
 
       ImU32 currentColor = HexToImU32(*m_Value);
-      ImVec4 colorForButton = ImGui::ColorConvertU32ToFloat4(currentColor);
+      ImVec4 colorForButton = CherryGUI::ColorConvertU32ToFloat4(currentColor);
 
-      if (ImGui::ColorButton(
+      if (CherryGUI::ColorButton(
               ("##ColorPreview" + identifier).c_str(), colorForButton,
               ImGuiColorEditFlags_NoTooltip | ImGuiColorEditFlags_NoDragDrop)) {
-        ImGui::OpenPopup(popupID.c_str());
+        CherryGUI::OpenPopup(popupID.c_str());
       }
 
-      ImGui::SameLine();
+      CherryGUI::SameLine();
       char buffer[10];
       std::strncpy(buffer, m_Value->c_str(), sizeof(buffer));
       buffer[sizeof(buffer) - 1] = '\0';
 
-      ImGui::SetNextItemWidth(-FLT_MIN);
-      if (ImGui::InputText(("##" + identifier).c_str(), buffer, sizeof(buffer),
+      CherryGUI::SetNextItemWidth(-FLT_MIN);
+      if (CherryGUI::InputText(("##" + identifier).c_str(), buffer, sizeof(buffer),
                            ImGuiInputTextFlags_CharsHexadecimal |
                                ImGuiInputTextFlags_CharsUppercase)) {
         *m_Value = std::string(buffer);
       }
 
-      if (ImGui::BeginPopup(popupID.c_str())) {
+      if (CherryGUI::BeginPopup(popupID.c_str())) {
         static ImU32 tempColor;
 
-        if (ImGui::IsPopupOpen(popupID.c_str(), ImGuiPopupFlags_AnyPopupId)) {
+        if (CherryGUI::IsPopupOpen(popupID.c_str(), ImGuiPopupFlags_AnyPopupId)) {
           tempColor = currentColor;
         }
 
-        ImVec4 tempColorVec4 = ImGui::ColorConvertU32ToFloat4(tempColor);
+        ImVec4 tempColorVec4 = CherryGUI::ColorConvertU32ToFloat4(tempColor);
 
         ImGuiColorEditFlags picker_flags =
             ImGuiColorEditFlags_AlphaBar | ImGuiColorEditFlags_DisplayRGB |
             ImGuiColorEditFlags_DisplayHSV | ImGuiColorEditFlags_DisplayHex;
 
-        if (ImGui::ColorPicker4("##picker", (float *)&tempColorVec4,
+        if (CherryGUI::ColorPicker4("##picker", (float *)&tempColorVec4,
                                 picker_flags)) {
-          tempColor = ImGui::ColorConvertFloat4ToU32(tempColorVec4);
+          tempColor = CherryGUI::ColorConvertFloat4ToU32(tempColorVec4);
         }
 
-        ImGui::Separator();
+        CherryGUI::Separator();
 
-        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.2f, 0.4f, 0.8f, 1.0f));
-        ImGui::PushStyleColor(ImGuiCol_ButtonHovered,
+        CherryGUI::PushStyleColor(ImGuiCol_Button, ImVec4(0.2f, 0.4f, 0.8f, 1.0f));
+        CherryGUI::PushStyleColor(ImGuiCol_ButtonHovered,
                               ImVec4(0.3f, 0.5f, 0.9f, 1.0f));
-        ImGui::PushStyleColor(ImGuiCol_ButtonActive,
+        CherryGUI::PushStyleColor(ImGuiCol_ButtonActive,
                               ImVec4(0.1f, 0.3f, 0.7f, 1.0f));
 
-        if (ImGui::Button("OK", ImVec2(120, 0))) {
+        if (CherryGUI::Button("OK", ImVec2(120, 0))) {
           *m_Value = ImU32ToHex(tempColor);
-          ImGui::CloseCurrentPopup();
+          CherryGUI::CloseCurrentPopup();
         }
 
-        ImGui::PopStyleColor(3);
-        ImGui::SameLine();
-        if (ImGui::Button("Cancel", ImVec2(120, 0))) {
-          ImGui::CloseCurrentPopup();
+        CherryGUI::PopStyleColor(3);
+        CherryGUI::SameLine();
+        if (CherryGUI::Button("Cancel", ImVec2(120, 0))) {
+          CherryGUI::CloseCurrentPopup();
         }
 
-        ImGui::EndPopup();
+        CherryGUI::EndPopup();
       }
     }
   }

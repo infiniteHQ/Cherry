@@ -975,6 +975,9 @@ CHERRY_API void          SetClipboardText(const char* text);
 CHERRY_API double        GetTime();   
 CHERRY_API void          PushAllowKeyboardFocus(bool allow_keyboard_focus);              // == tab stop enable. Allow focusing using TAB/Shift-TAB, enabled by default but you can disable it for certain widgets
 CHERRY_API void          PopAllowKeyboardFocus(); 
+
+CHERRY_API bool          IsPopupOpen(const char* str_id, ImGuiPopupFlags flags = 0);                         // return true if the popup is open.
+
 } // namespace GUI
 } // namespace Cherry
 

@@ -1398,6 +1398,9 @@ void PushAllowKeyboardFocus(bool allow_keyboard_focus) {
 }
 
 void PopAllowKeyboardFocus() { ImGui::PopItemFlag(); }
+bool IsPopupOpen(const char* str_id, ImGuiPopupFlags flags){
+  return ImGui::IsPopupOpen(str_id, flags);
+}                         // return true if the popup is open.
 
 } // namespace GUI
 

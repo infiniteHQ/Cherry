@@ -67,10 +67,10 @@ public:
     cached_radius = std::stof(GetProperty("block_border_radius"));
     disabletime = GetProperty("disable_time") == "false";
 
-    ImVec2 pos = ImGui::GetCursorScreenPos();
+    ImVec2 pos = CherryGUI::GetCursorScreenPos();
 
-    ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, cached_radius);
-    ImGui::PushStyleColor(ImGuiCol_ChildBg, background_color);
+    CherryGUI::PushStyleVar(ImGuiStyleVar_ChildRounding, cached_radius);
+    CherryGUI::PushStyleColor(ImGuiCol_ChildBg, background_color);
 
     int style_props_opt = 0;
 
@@ -82,7 +82,7 @@ public:
     if (isHovered) {
       if (disabletime)
         SetData("lastHovered", GetCurrentTime());
-      ImGui::PushStyleColor(ImGuiCol_ChildBg, background_color_hovered);
+      CherryGUI::PushStyleColor(ImGuiCol_ChildBg, background_color_hovered);
       border_color = border_color_hovered;
       style_props_opt++;
     }
@@ -90,7 +90,7 @@ public:
     if (isClicked) {
       if (disabletime)
         SetData("lastClicked", GetCurrentTime());
-      ImGui::PushStyleColor(ImGuiCol_ChildBg, background_color_pressed);
+      CherryGUI::PushStyleColor(ImGuiCol_ChildBg, background_color_pressed);
       border_color = border_color_pressed;
       style_props_opt++;
     }
@@ -98,14 +98,14 @@ public:
     if (isActivated) {
       if (disabletime)
         SetData("lastActivated", GetCurrentTime());
-      ImGui::PushStyleColor(ImGuiCol_ChildBg, background_color_pressed);
+      CherryGUI::PushStyleColor(ImGuiCol_ChildBg, background_color_pressed);
       border_color = border_color_pressed;
     }
 
     if (isPressed) {
       if (disabletime)
         SetData("lastPressed", GetCurrentTime());
-      ImGui::PushStyleColor(ImGuiCol_ChildBg, background_color_pressed);
+      CherryGUI::PushStyleColor(ImGuiCol_ChildBg, background_color_pressed);
       border_color = border_color_pressed;
       style_props_opt++;
     }
@@ -117,49 +117,49 @@ public:
 
     std::string label = GetIdentifier().string() + "RenderCallbacks";
 
-    if (ImGui::BeginChild(label.c_str(), cachedSize, false,
+    if (CherryGUI::BeginChild(label.c_str(), cachedSize, false,
                           ImGuiWindowFlags_NoScrollbar |
                               ImGuiWindowFlags_NoScrollWithMouse)) {
       // Plus d'InvisibleButton qui bloque tout
 
       // Interaction souris sur la zone du Child
-      if (ImGui::IsWindowHovered(
+      if (CherryGUI::IsWindowHovered(
               ImGuiHoveredFlags_AllowWhenBlockedByActiveItem) &&
-          ImGui::IsMouseClicked(ImGuiMouseButton_Left)) {
+          CherryGUI::IsMouseClicked(ImGuiMouseButton_Left)) {
         SetData("isClicked", "true");
         if (m_OnClickedCallback) {
           m_OnClickedCallback();
         }
       }
 
-      if (ImGui::IsWindowHovered(
+      if (CherryGUI::IsWindowHovered(
               ImGuiHoveredFlags_AllowWhenBlockedByPopup |
               ImGuiHoveredFlags_AllowWhenBlockedByActiveItem)) {
-        ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+        CherryGUI::SetMouseCursor(ImGuiMouseCursor_Hand);
         SetData("isHovered", "true");
       }
 
-      if (ImGui::IsItemActivated())
+      if (CherryGUI::IsItemActivated())
         SetData("isActivated", "true");
 
-      if (ImGui::IsItemActive())
+      if (CherryGUI::IsItemActive())
         SetData("isPressed", "true");
 
       // ✅ Aligner horizontalement les callbacks visibles
       for (size_t i = 0; i < m_RenderCallbacks.size(); ++i) {
         if (i > 0)
-          ImGui::SameLine(0, 10.0f); // espacement horizontal
+          CherryGUI::SameLine(0, 10.0f); // espacement horizontal
         m_RenderCallbacks[i]();
       }
     }
-    ImGui::EndChild();
+    CherryGUI::EndChild();
 
-    ImGui::PopStyleVar();   // ChildRounding
-    ImGui::PopStyleColor(); // ChildBg
-    ImGui::PopStyleColor(style_props_opt);
+    CherryGUI::PopStyleVar();   // ChildRounding
+    CherryGUI::PopStyleColor(); // ChildBg
+    CherryGUI::PopStyleColor(style_props_opt);
 
     // ✅ Dessin du contour autour du bloc
-    ImDrawList *drawList = ImGui::GetWindowDrawList();
+    ImDrawList *drawList = CherryGUI::GetWindowDrawList();
     drawList->AddRect(pos, ImVec2(pos.x + cachedSize.x, pos.y + cachedSize.y),
                       border_color, cached_radius, 0, border_size);
   }
