@@ -1,8 +1,8 @@
 #pragma once
 
+#include "../../../src/core/color.hpp"
+#include "../../../src/layer.hpp"
 #include "../options.hpp"
-#include "../../src/core/color.hpp"
-#include "../../src/layer.hpp"
 
 #include <mutex>
 #include <string>
