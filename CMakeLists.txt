@@ -106,11 +106,7 @@ if(CHERRY_IMGUI_EXPORT)
 endif()
 target_link_libraries(cherry PUBLIC imgui)
 
-if(CHERRY_STATIC)
-    target_link_libraries(cherry PUBLIC SDL2-static)
-else()
-    target_link_libraries(cherry PUBLIC SDL2)
-endif()
+target_link_libraries(cherry PUBLIC SDL2-static)
 
 # ---------------------------------------------------------------------------
 # Include directories
