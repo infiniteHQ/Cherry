@@ -233,10 +233,8 @@ void DockNodePreviewDockR(ImGuiWindow *host_window, ImGuiDockNode *host_node,
     }
   }
 
-  // Display drop boxes
   const float overlay_rounding = ImMax(3.0f, g.Style.FrameRounding);
   for (int dir = ImGuiDir_None; dir < ImGuiDir_COUNT; dir++) {
-    // Assurer que les index sont corrects
     ImRect draw_r = data->DropRectsDraw[dir];
     if (!draw_r.IsInverted()) {
       ImRect draw_r_in = draw_r;
@@ -253,7 +251,6 @@ void DockNodePreviewDockR(ImGuiWindow *host_window, ImGuiDockNode *host_node,
         overlay_draw_lists[overlay_n]->AddRect(
             draw_r_in.Min, draw_r_in.Max, overlay_col_lines, overlay_rounding);
 
-        // Ajouter des lignes seulement pour les zones split
         if (dir == ImGuiDir_Left || dir == ImGuiDir_Right)
           overlay_draw_lists[overlay_n]->AddLine(
               ImVec2(center.x, draw_r_in.Min.y),
@@ -265,7 +262,6 @@ void DockNodePreviewDockR(ImGuiWindow *host_window, ImGuiDockNode *host_node,
       }
     }
 
-    // Stop après avoir traité toutes les directions
     if (dir == ImGuiDir_None && (host_node && (host_node->MergedFlags &
                                                ImGuiDockNodeFlags_NoSplit)) ||
         g.IO.ConfigDockingNoSplit)
@@ -282,26 +278,47 @@ Window::Window() : m_Name("empty") {}
 Window::Window(const std::string &name, int width, int height,
                ApplicationSpecification specs, bool cold_start)
     : m_Name(name), m_Width(specs.Width), m_Height(specs.Height) {
-  SDL_WindowFlags window_flags;
 
   m_Specifications = specs;
+  SDL_WindowFlags window_flags;
 
-  if (m_Specifications.DisableWindowManagerTitleBar) {
-    window_flags =
-        (SDL_WindowFlags)(SDL_WINDOW_VULKAN | SDL_WINDOW_RESIZABLE |
-                          SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_BORDERLESS);
-  } else {
-    window_flags = (SDL_WindowFlags)(SDL_WINDOW_VULKAN | SDL_WINDOW_RESIZABLE |
-                                     SDL_WINDOW_ALLOW_HIGHDPI);
+#ifdef CHERRY_ENABLE_LINUXDRM
+  window_flags = SDL_WindowFlags(SDL_WINDOW_VULKAN | SDL_WINDOW_FULLSCREEN);
+
+  if (SDL_getenv("SDL_VIDEODRIVER") == nullptr) {
+    SDL_setenv("SDL_VIDEODRIVER", "KMSDRM", 1);
   }
 
-  m_WindowHandler =
-      SDL_CreateWindow(m_Name.c_str(), SDL_WINDOWPOS_CENTERED,
-                       SDL_WINDOWPOS_CENTERED, m_Width, m_Height, window_flags);
+#else
+  if (m_Specifications.DisableWindowManagerTitleBar) {
+    window_flags =
+        SDL_WindowFlags(SDL_WINDOW_VULKAN | SDL_WINDOW_RESIZABLE |
+                        SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_BORDERLESS);
+  } else {
+    window_flags = SDL_WindowFlags(SDL_WINDOW_VULKAN | SDL_WINDOW_RESIZABLE |
+                                   SDL_WINDOW_ALLOW_HIGHDPI);
+  }
+#endif
+
+  m_WindowHandler = SDL_CreateWindow(m_Name.c_str(), SDL_WINDOWPOS_UNDEFINED,
+                                     SDL_WINDOWPOS_UNDEFINED, m_Width, m_Height,
+                                     window_flags);
+
+#ifdef CHERRY_ENABLE_LINUXDRM
+  SDL_DisplayMode mode;
+  if (SDL_GetCurrentDisplayMode(0, &mode) == 0) {
+    m_Width = mode.w;
+    m_Height = mode.h;
+  } else {
+    SDL_GetWindowSize(m_WindowHandler, &m_Width, &m_Height);
+  }
+#else
+  SDL_GetWindowSize(m_WindowHandler, &m_Width, &m_Height);
+#endif
 
   // Setup Vulkan
   uint32_t extensions_count = 0;
-  SDL_Vulkan_GetInstanceExtensions(m_WindowHandler, &extensions_count, NULL);
+  SDL_Vulkan_GetInstanceExtensions(m_WindowHandler, &extensions_count, nullptr);
   const char **extensions = new const char *[extensions_count];
   SDL_Vulkan_GetInstanceExtensions(m_WindowHandler, &extensions_count,
                                    extensions);
@@ -310,12 +327,20 @@ Window::Window(const std::string &name, int width, int height,
 
   VkResult err;
 
-  // Create Window Surface
+#ifdef CHERRY_ENABLE_LINUXDRM
+  if (!SDL_Vulkan_CreateSurface(m_WindowHandler, Application::GetInstance(),
+                                &m_Surface)) {
+    printf("Warning: SDL Vulkan surface creation failed on DRM. "
+           "You may need to use VK_KHR_display directly.\n");
+    m_Surface = VK_NULL_HANDLE;
+  }
+#else
   if (SDL_Vulkan_CreateSurface(m_WindowHandler, Application::GetInstance(),
                                &m_Surface) == 0) {
     printf("Failed to create Vulkan surface.\n");
     return;
   }
+#endif
 
   // Setup Dear ImGui context
   IMGUI_CHECKVERSION();
@@ -1030,19 +1055,18 @@ ImVec2 Window::get_texture_size(const std::string &path) {
 
 void Window::LoadTheme() {
   ImGui::PushStyleColor(ImGuiCol_Header,
-                            Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
-                                "color_header"))); // color_header
-  ImGui::PushStyleColor(
-      ImGuiCol_HeaderHovered,
-      Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
-          "color_header_hovered"))); // color_header_hovered
+                        Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
+                            "color_header"))); // color_header
+  ImGui::PushStyleColor(ImGuiCol_HeaderHovered,
+                        Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
+                            "color_header_hovered"))); // color_header_hovered
   ImGui::PushStyleColor(ImGuiCol_HeaderActive,
-                            Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
-                                "color_header_active"))); // color_header_active
+                        Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
+                            "color_header_active"))); // color_header_active
 
   ImGui::PushStyleColor(ImGuiCol_Button,
-                            Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
-                                "button_color_border"))); // color_button
+                        Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
+                            "button_color_border"))); // color_button
   ImGui::PushStyleColor(
       ImGuiCol_ButtonHovered,
       Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
@@ -1053,53 +1077,50 @@ void Window::LoadTheme() {
           "button_color_border_pressed"))); // color_button_active
 
   ImGui::PushStyleColor(ImGuiCol_FrameBg,
-                            Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
-                                "color_framebg"))); // color_framebg
-  ImGui::PushStyleColor(
-      ImGuiCol_FrameBgHovered,
-      Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
-          "color_framebg_hovered"))); // color_framebg_hovered
-  ImGui::PushStyleColor(
-      ImGuiCol_FrameBgActive,
-      Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
-          "color_framebg_active"))); // color_framebg_active
+                        Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
+                            "color_framebg"))); // color_framebg
+  ImGui::PushStyleColor(ImGuiCol_FrameBgHovered,
+                        Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
+                            "color_framebg_hovered"))); // color_framebg_hovered
+  ImGui::PushStyleColor(ImGuiCol_FrameBgActive,
+                        Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
+                            "color_framebg_active"))); // color_framebg_active
 
   ImGui::PushStyleColor(
       ImGuiCol_Text,
       Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty("color_text")));
 
   ImGui::PushStyleColor(ImGuiCol_Tab,
-                            Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
-                                "color_tab"))); // color_tab
+                        Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
+                            "color_tab"))); // color_tab
   ImGui::PushStyleColor(ImGuiCol_TabHovered,
-                            Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
-                                "color_tab_hovered"))); // color_tab_hovered
+                        Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
+                            "color_tab_hovered"))); // color_tab_hovered
   ImGui::PushStyleColor(ImGuiCol_TabActive,
-                            Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
-                                "color_tab_active"))); // color_tab_active
+                        Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
+                            "color_tab_active"))); // color_tab_active
   ImGui::PushStyleColor(ImGuiCol_TabUnfocused,
-                            Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
-                                "color_tab_unfocused"))); // color_tab_unfocused
+                        Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
+                            "color_tab_unfocused"))); // color_tab_unfocused
   ImGui::PushStyleColor(
       ImGuiCol_TabUnfocusedActive,
       Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
           "color_tab_unfocused_active"))); // color_tab_unfocused_active
 
   ImGui::PushStyleColor(ImGuiCol_TitleBg,
-                            Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
-                                "color_titlebg"))); // color_titlebg
-  ImGui::PushStyleColor(
-      ImGuiCol_TitleBgActive,
-      Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
-          "color_titlebg_active"))); // color_titlebg_active
+                        Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
+                            "color_titlebg"))); // color_titlebg
+  ImGui::PushStyleColor(ImGuiCol_TitleBgActive,
+                        Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
+                            "color_titlebg_active"))); // color_titlebg_active
   ImGui::PushStyleColor(
       ImGuiCol_TitleBgCollapsed,
       Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
           "color_titlebg_collapsed"))); // color_titlebg_collapsed
 
   ImGui::PushStyleColor(ImGuiCol_ResizeGrip,
-                            Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
-                                "color_resizegrip"))); // color_resizegrip
+                        Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
+                            "color_resizegrip"))); // color_resizegrip
   ImGui::PushStyleColor(
       ImGuiCol_ResizeGripHovered,
       Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
@@ -1110,13 +1131,12 @@ void Window::LoadTheme() {
           "color_resizegrip_active"))); // color_resizegrip_active
 
   ImGui::PushStyleColor(ImGuiCol_ScrollbarBg,
-                            Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
-                                "color_scrollbar_bg"))); // color_scrollbar_bg
+                        Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
+                            "color_scrollbar_bg"))); // color_scrollbar_bg
 
-  ImGui::PushStyleColor(
-      ImGuiCol_ScrollbarGrab,
-      Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
-          "color_scrollbar_grab"))); // color_scrollbar_grab
+  ImGui::PushStyleColor(ImGuiCol_ScrollbarGrab,
+                        Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
+                            "color_scrollbar_grab"))); // color_scrollbar_grab
   ImGui::PushStyleColor(
       ImGuiCol_ScrollbarGrabHovered,
       Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
@@ -1127,20 +1147,20 @@ void Window::LoadTheme() {
           "color_scrollbar_grab_active"))); // color_scrollbar_grab_active
 
   ImGui::PushStyleColor(ImGuiCol_CheckMark,
-                            Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
-                                "color_checkmark"))); // color_checkmark
+                        Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
+                            "color_checkmark"))); // color_checkmark
 
   ImGui::PushStyleColor(ImGuiCol_SliderGrab,
-                            Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
-                                "color_slidergrab"))); // color_slidergrab
+                        Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
+                            "color_slidergrab"))); // color_slidergrab
   ImGui::PushStyleColor(
       ImGuiCol_SliderGrabActive,
       Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
           "color_slidergrab_active"))); // color_slidergrab_active
 
   ImGui::PushStyleColor(ImGuiCol_Separator,
-                            Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
-                                "color_separator"))); // color_separator
+                        Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
+                            "color_separator"))); // color_separator
 
   ImGui::PushStyleColor(
       ImGuiCol_SeparatorActive,
@@ -1152,30 +1172,29 @@ void Window::LoadTheme() {
           "color_separator_hovered"))); // color_separator_hovered
 
   ImGui::PushStyleColor(ImGuiCol_WindowBg,
-                            Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
-                                "color_window_bg"))); // color_window_bg
+                        Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
+                            "color_window_bg"))); // color_window_bg
   ImGui::PushStyleColor(ImGuiCol_ChildBg,
-                            Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
-                                "color_child_bg"))); // color_child_bg
+                        Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
+                            "color_child_bg"))); // color_child_bg
   ImGui::PushStyleColor(ImGuiCol_PopupBg,
-                            Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
-                                "color_popup_bg"))); // color_popup_bg
+                        Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
+                            "color_popup_bg"))); // color_popup_bg
   ImGui::PushStyleColor(ImGuiCol_Border,
-                            Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
-                                "color_border"))); // color_border
+                        Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
+                            "color_border"))); // color_border
 
-  ImGui::PushStyleColor(
-      ImGuiCol_TableHeaderBg,
-      Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
-          "color_table_header_bg"))); // color_table_header_bg
+  ImGui::PushStyleColor(ImGuiCol_TableHeaderBg,
+                        Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
+                            "color_table_header_bg"))); // color_table_header_bg
   ImGui::PushStyleColor(
       ImGuiCol_TableBorderLight,
       Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
           "color_table_border_light"))); // color_table_border_light
 
   ImGui::PushStyleColor(ImGuiCol_MenuBarBg,
-                            Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
-                                "color_menubar_bg"))); // color_menubar_bg
+                        Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty(
+                            "color_menubar_bg"))); // color_menubar_bg
 
   auto &style = ImGui::GetStyle();
   style.FrameRounding = 5.0f;   // rounding_frame

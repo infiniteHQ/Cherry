@@ -14,7 +14,6 @@ option(CHERRY_ENABLE_AUDIO "Enable audio" OFF)
 option(CHERRY_ENABLE_WEBVIEW "Enable webview" OFF)
 option(CHERRY_IMGUI_EXPORT "Export ImGui to DLL" OFF)
 
-
 # ---------------------------------------------------------------------------
 # Compiler flags
 # ---------------------------------------------------------------------------
@@ -50,7 +49,9 @@ add_subdirectory(lib/imgui)
 add_subdirectory(lib/spdlog)
 add_subdirectory(lib/stb-image)
 
+if(CHERRY_STATIC)
 set(SDL2_STATIC ON CACHE BOOL "Build SDL2 as static lib" FORCE)
+endif()
 add_subdirectory(lib/sdl2)
 
 if(CHERRY_CEF)
@@ -77,13 +78,17 @@ file(GLOB_RECURSE CHERRY_SRC CONFIGURE_DEPENDS
 
 add_library(cherry ${CHERRY_LIB_TYPE} ${CHERRY_SRC})
 
+if(CHERRY_ENABLE_LINUXDRM)
+target_compile_definitions(cherry PUBLIC CHERRY_ENABLE_LINUXDRM)
+endif()
+
+
 # ---------------------------------------------------------------------------
 # DLL export/import macros
 # ---------------------------------------------------------------------------
 if(CHERRY_STATIC)
     target_compile_definitions(cherry PUBLIC CHERRY_STATIC_LIB)
 else()
-    # Lors de la compilation de Cherry DLL
     target_compile_definitions(cherry PRIVATE CHERRY_EXPORT_SYM)
     target_compile_definitions(cherry PUBLIC CHERRY_SHARED)
 endif()

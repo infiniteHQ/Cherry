@@ -725,6 +725,12 @@ void Application::Init() {
     return;
   }
 
+#ifdef CHERRY_ENABLE_LINUXDRM
+  if (SDL_getenv("SDL_VIDEODRIVER") == nullptr) {
+    SDL_setenv("SDL_VIDEODRIVER", "KMSDRM", 1);
+  }
+#endif
+
   ExecuteProcessCallbacks(ProcessCallback::ON_INITIALIZATION_FINISHED);
 }
 
