@@ -22,11 +22,11 @@
 
 //
 // NodeAreaOpen
-// Authors : Infinite, Diego Moreno
+// Authors : Infinite
 //
 
-#ifndef CHERRY_KIT_NODE_AREA
-#define CHERRY_KIT_NODE_AREA
+#ifndef CHERRY_KIT_NODE_AREA_OPEN
+#define CHERRY_KIT_NODE_AREA_OPEN
 
 // Move into the vortex render engine ?
 namespace ed = ax::NodeEditor;
@@ -170,8 +170,9 @@ static bool Splitter(bool split_vertically, float thickness, float *size1,
   return SplitterBehavior(bb, id, split_vertically ? ImGuiAxis_X : ImGuiAxis_Y,
                           size1, size2, min_size1, min_size2, 0.0f);
 }
+namespace Cherry {
 
-struct Example {
+struct NodeEngine {
   ed::EditorContext *m_Editor = nullptr;
 
   Cherry::NodeSystem::NodeContext *m_NodeContext;
@@ -202,6 +203,14 @@ struct Example {
       if (entry.second > 0.0f)
         entry.second -= deltaTime;
     }
+  }
+
+  Node *FindNodeByInstanceID(const std::string &instanceID) {
+    for (auto &node : m_Nodes) {
+      if (node.InstanceID == instanceID)
+        return &node;
+    }
+    return nullptr;
   }
 
   Node *FindNode(ed::NodeId id) {
@@ -358,9 +367,9 @@ struct Example {
 
       Cherry::NodeSystem::NodeConnection conn;
       conn.NodeInstanceIDA = nodeA->InstanceID;
-      conn.PinIDA = pinA->Name;
+      conn.PinIDA = ed::ToString(pinA->ID);
       conn.NodeInstanceIDB = nodeB->InstanceID;
-      conn.PinIDB = pinB->Name;
+      conn.PinIDB = ed::ToString(pinB->ID);
 
       m_NodeGraph->AddConnection(conn);
     }
@@ -426,13 +435,6 @@ struct Example {
     return &newNode;
   }
 
-  Node *FindNodeByInstanceID(const std::string &id) {
-    for (auto &n : m_Nodes)
-      if (n.InstanceID == id)
-        return &n;
-    return nullptr;
-  }
-
   Pin *FindPinByID(ed::PinId pinID) {
     int id = static_cast<int>(pinID.Get());
     for (auto &n : m_Nodes) {
@@ -471,332 +473,11 @@ struct Example {
 
   int m_InstanceCounter = 0;
 
-  /*Node *SpawnInputActionNode()
-  {
-      m_Nodes.emplace_back(GetNextId(), "InputAction Fire", ImColor(255, 128,
-  128)); m_Nodes.back().Outputs.emplace_back(GetNextId(), "",
-  PinType::Delegate); m_Nodes.back().Outputs.emplace_back(GetNextId(),
-  "Pressed", PinType::Flow); m_Nodes.back().Outputs.emplace_back(GetNextId(),
-  "Released", PinType::Flow);
-
-      BuildNode(&m_Nodes.back());
-
-      return &m_Nodes.back();
-  }
-
-  Node *SpawnBranchNode()
-  {
-      m_Nodes.emplace_back(GetNextId(), "Branch");
-      m_Nodes.back().Inputs.emplace_back(GetNextId(), "", PinType::Flow);
-      m_Nodes.back().Inputs.emplace_back(GetNextId(), "Condition",
-  PinType::Bool); m_Nodes.back().Outputs.emplace_back(GetNextId(), "True",
-  PinType::Flow); m_Nodes.back().Outputs.emplace_back(GetNextId(), "False",
-  PinType::Flow);
-
-      BuildNode(&m_Nodes.back());
-
-      return &m_Nodes.back();
-  }
-
-  Node *SpawnDoNNode()
-  {
-      m_Nodes.emplace_back(GetNextId(), "Do N");
-      m_Nodes.back().Inputs.emplace_back(GetNextId(), "Enter", PinType::Flow);
-      m_Nodes.back().Inputs.emplace_back(GetNextId(), "N", PinType::Int);
-      m_Nodes.back().Inputs.emplace_back(GetNextId(), "Reset", PinType::Flow);
-      m_Nodes.back().Outputs.emplace_back(GetNextId(), "Exit", PinType::Flow);
-      m_Nodes.back().Outputs.emplace_back(GetNextId(), "Counter", PinType::Int);
-
-      BuildNode(&m_Nodes.back());
-
-      return &m_Nodes.back();
-  }
-
-  Node *SpawnOutputActionNode()
-  {
-      m_Nodes.emplace_back(GetNextId(), "OutputAction");
-      m_Nodes.back().Inputs.emplace_back(GetNextId(), "Sample", PinType::Float);
-      m_Nodes.back().Outputs.emplace_back(GetNextId(), "Condition",
-  PinType::Bool); m_Nodes.back().Inputs.emplace_back(GetNextId(), "Event",
-  PinType::Delegate);
-
-      BuildNode(&m_Nodes.back());
-
-      return &m_Nodes.back();
-  }
-
-  Node *SpawnPrintStringNode()
-  {
-      m_Nodes.emplace_back(GetNextId(), "Print String");
-      m_Nodes.back().Inputs.emplace_back(GetNextId(), "", PinType::Flow);
-      m_Nodes.back().Inputs.emplace_back(GetNextId(), "In String",
-  PinType::String); m_Nodes.back().Outputs.emplace_back(GetNextId(), "",
-  PinType::Flow);
-
-      BuildNode(&m_Nodes.back());
-
-      return &m_Nodes.back();
-  }
-
-  Node *SpawnMessageNode()
-  {
-      m_Nodes.emplace_back(GetNextId(), "", ImColor(128, 195, 248));
-      m_Nodes.back().Type = NodeType::Simple;
-      m_Nodes.back().Outputs.emplace_back(GetNextId(), "Message",
-  PinType::String);
-
-      BuildNode(&m_Nodes.back());
-
-      return &m_Nodes.back();
-  }
-
-  Node *SpawnSetTimerNode()
-  {
-      m_Nodes.emplace_back(GetNextId(), "Set Timer", ImColor(128, 195, 248));
-      m_Nodes.back().Inputs.emplace_back(GetNextId(), "", PinType::Flow);
-      m_Nodes.back().Inputs.emplace_back(GetNextId(), "Object",
-  PinType::Object); m_Nodes.back().Inputs.emplace_back(GetNextId(), "Function
-  Name", PinType::Function); m_Nodes.back().Inputs.emplace_back(GetNextId(),
-  "Time", PinType::Float); m_Nodes.back().Inputs.emplace_back(GetNextId(),
-  "Looping", PinType::Bool); m_Nodes.back().Outputs.emplace_back(GetNextId(),
-  "", PinType::Flow);
-
-      BuildNode(&m_Nodes.back());
-
-      return &m_Nodes.back();
-  }
-
-  Node *SpawnLessNode()
-  {
-      m_Nodes.emplace_back(GetNextId(), "<", ImColor(128, 195, 248));
-      m_Nodes.back().Type = NodeType::Simple;
-      m_Nodes.back().Inputs.emplace_back(GetNextId(), "", PinType::Float);
-      m_Nodes.back().Inputs.emplace_back(GetNextId(), "", PinType::Float);
-      m_Nodes.back().Outputs.emplace_back(GetNextId(), "", PinType::Float);
-
-      BuildNode(&m_Nodes.back());
-
-      return &m_Nodes.back();
-  }
-
-  Node *SpawnWeirdNode()
-  {
-      m_Nodes.emplace_back(GetNextId(), "o.O", ImColor(128, 195, 248));
-      m_Nodes.back().Type = NodeType::Simple;
-      m_Nodes.back().Inputs.emplace_back(GetNextId(), "", PinType::Float);
-      m_Nodes.back().Outputs.emplace_back(GetNextId(), "", PinType::Float);
-      m_Nodes.back().Outputs.emplace_back(GetNextId(), "", PinType::Float);
-
-      BuildNode(&m_Nodes.back());
-
-      return &m_Nodes.back();
-  }
-
-  Node *SpawnTraceByChannelNode()
-  {
-      m_Nodes.emplace_back(GetNextId(), "Single Line Trace by Channel",
-  ImColor(255, 128, 64)); m_Nodes.back().Inputs.emplace_back(GetNextId(), "",
-  PinType::Flow); m_Nodes.back().Inputs.emplace_back(GetNextId(), "Start",
-  PinType::Flow); m_Nodes.back().Inputs.emplace_back(GetNextId(), "End",
-  PinType::Int); m_Nodes.back().Inputs.emplace_back(GetNextId(), "Trace
-  Channel", PinType::Float); m_Nodes.back().Inputs.emplace_back(GetNextId(),
-  "Trace Complex", PinType::Bool);
-      m_Nodes.back().Inputs.emplace_back(GetNextId(), "Actors to Ignore",
-  PinType::Int); m_Nodes.back().Inputs.emplace_back(GetNextId(), "Draw Debug
-  Type", PinType::Bool); m_Nodes.back().Inputs.emplace_back(GetNextId(), "Ignore
-  Self", PinType::Bool); m_Nodes.back().Outputs.emplace_back(GetNextId(), "",
-  PinType::Flow); m_Nodes.back().Outputs.emplace_back(GetNextId(), "Out Hit",
-  PinType::Float); m_Nodes.back().Outputs.emplace_back(GetNextId(), "Return
-  Value", PinType::Bool);
-
-      BuildNode(&m_Nodes.back());
-
-      return &m_Nodes.back();
-  }
-
-  Node *SpawnTreeSequenceNode()
-  {
-      m_Nodes.emplace_back(GetNextId(), "Sequence");
-      m_Nodes.back().Type = NodeType::Tree;
-      m_Nodes.back().Inputs.emplace_back(GetNextId(), "", PinType::Flow);
-      m_Nodes.back().Outputs.emplace_back(GetNextId(), "", PinType::Flow);
-
-      BuildNode(&m_Nodes.back());
-
-      return &m_Nodes.back();
-  }
-
-  Node *SpawnTreeTaskNode()
-  {
-      m_Nodes.emplace_back(GetNextId(), "Move To");
-      m_Nodes.back().Type = NodeType::Tree;
-      m_Nodes.back().Inputs.emplace_back(GetNextId(), "", PinType::Flow);
-
-      BuildNode(&m_Nodes.back());
-
-      return &m_Nodes.back();
-  }
-
-  Node *SpawnTreeTask2Node()
-  {
-      m_Nodes.emplace_back(GetNextId(), "Random Wait");
-      m_Nodes.back().Type = NodeType::Tree;
-      m_Nodes.back().Inputs.emplace_back(GetNextId(), "", PinType::Flow);
-
-      BuildNode(&m_Nodes.back());
-
-      return &m_Nodes.back();
-  }
-
-  Node *SpawnComment()
-  {
-      m_Nodes.emplace_back(GetNextId(), "Test Comment");
-      m_Nodes.back().Type = NodeType::Comment;
-      m_Nodes.back().Size = ImVec2(300, 200);
-
-      return &m_Nodes.back();
-  }
-
-  Node *SpawnHoudiniTransformNode()
-  {
-      m_Nodes.emplace_back(GetNextId(), "Transform");
-      m_Nodes.back().Type = NodeType::Houdini;
-      m_Nodes.back().Inputs.emplace_back(GetNextId(), "", PinType::Flow);
-      m_Nodes.back().Outputs.emplace_back(GetNextId(), "", PinType::Flow);
-
-      BuildNode(&m_Nodes.back());
-
-      return &m_Nodes.back();
-  }
-
-  Node *SpawnHoudiniGroupNode()
-  {
-      m_Nodes.emplace_back(GetNextId(), "Group");
-      m_Nodes.back().Type = NodeType::Houdini;
-      m_Nodes.back().Inputs.emplace_back(GetNextId(), "", PinType::Flow);
-      m_Nodes.back().Inputs.emplace_back(GetNextId(), "", PinType::Flow);
-      m_Nodes.back().Outputs.emplace_back(GetNextId(), "", PinType::Flow);
-
-      BuildNode(&m_Nodes.back());
-
-      return &m_Nodes.back();
-  }*/
-
   void BuildNodes() {
     for (auto &node : m_Nodes)
       BuildNode(&node);
   }
 
-  /* void OnStart() override
-   {
-       ed::Config config;
-
-       config.SettingsFile = "Blueprints.json";
-
-       config.UserPointer = this;
-
-       config.LoadNodeSettings = [](ed::NodeId nodeId, char* data, void*
-   userPointer) -> size_t
-       {
-           auto self = static_cast<Example*>(userPointer);
-
-           auto node = self->FindNode(nodeId);
-           if (!node)
-               return 0;
-
-           if (data != nullptr)
-               memcpy(data, node->State.data(), node->State.size());
-           return node->State.size();
-       };
-
-       config.SaveNodeSettings = [](ed::NodeId nodeId, const char* data, size_t
-   size, ed::SaveReasonFlags reason, void* userPointer) -> bool
-       {
-           auto self = static_cast<Example*>(userPointer);
-
-           auto node = self->FindNode(nodeId);
-           if (!node)
-               return false;
-
-           node->State.assign(data, size);
-
-           self->TouchNode(nodeId);
-
-           return true;
-       };
-
-       m_Editor = ed::CreateEditor(&config);
-       ed::SetCurrentEditor(m_Editor);
-
-       Node* node;
-       node = SpawnInputActionNode();      ed::SetNodePosition(node->ID,
-   ImVec2(-252, 220)); node = SpawnBranchNode(); ed::SetNodePosition(node->ID,
-   ImVec2(-300, 351)); node = SpawnDoNNode(); ed::SetNodePosition(node->ID,
-   ImVec2(-238, 504)); node = SpawnOutputActionNode();
-   ed::SetNodePosition(node->ID, ImVec2(71, 80)); node = SpawnSetTimerNode();
-   ed::SetNodePosition(node->ID, ImVec2(168, 316));
-
-       node = SpawnTreeSequenceNode();     ed::SetNodePosition(node->ID,
-   ImVec2(1028, 329)); node = SpawnTreeTaskNode(); ed::SetNodePosition(node->ID,
-   ImVec2(1204, 458)); node = SpawnTreeTask2Node();
-   ed::SetNodePosition(node->ID, ImVec2(868, 538));
-
-       node = SpawnComment();              ed::SetNodePosition(node->ID,
-   ImVec2(112, 576)); ed::SetGroupSize(node->ID, ImVec2(384, 154)); node =
-   SpawnComment();              ed::SetNodePosition(node->ID, ImVec2(800, 224));
-   ed::SetGroupSize(node->ID, ImVec2(640, 400));
-
-       node = SpawnLessNode();             ed::SetNodePosition(node->ID,
-   ImVec2(366, 652)); node = SpawnWeirdNode(); ed::SetNodePosition(node->ID,
-   ImVec2(144, 652)); node = SpawnMessageNode(); ed::SetNodePosition(node->ID,
-   ImVec2(-348, 698)); node = SpawnPrintStringNode();
-   ed::SetNodePosition(node->ID, ImVec2(-69, 652));
-
-       node = SpawnHoudiniTransformNode(); ed::SetNodePosition(node->ID,
-   ImVec2(500, -70)); node = SpawnHoudiniGroupNode();
-   ed::SetNodePosition(node->ID, ImVec2(500, 42));
-
-       ed::NavigateToContent();
-
-       BuildNodes();
-
-       m_Links.push_back(Link(GetNextLinkId(), m_Nodes[5].Outputs[0].ID,
-   m_Nodes[6].Inputs[0].ID)); m_Links.push_back(Link(GetNextLinkId(),
-   m_Nodes[5].Outputs[0].ID, m_Nodes[7].Inputs[0].ID));
-
-       m_Links.push_back(Link(GetNextLinkId(), m_Nodes[14].Outputs[0].ID,
-   m_Nodes[15].Inputs[0].ID));
-
-       m_HeaderBackground = LoadTexture("data/BlueprintBackground.png");
-       m_SaveIcon         = LoadTexture("data/ic_save_white_24dp.png");
-       m_RestoreIcon      = LoadTexture("data/ic_restore_white_24dp.png");
-
-
-       //auto& io = CherryGUI::GetIO();
-   }
-*/
-  /*void OnStop() override
-  {
-      auto releaseTexture = [this](ImTextureID& id)
-      {
-          if (id)
-          {
-              DestroyTexture(id);
-              id = nullptr;
-          }
-      };
-
-      releaseTexture(m_RestoreIcon);
-      releaseTexture(m_SaveIcon);
-      releaseTexture(m_HeaderBackground);
-
-      if (m_Editor)
-      {
-          ed::DestroyEditor(m_Editor);
-          m_Editor = nullptr;
-      }
-  }
-*/
   ImColor GetIconColor(PinType type) {
     switch (type) {
     default:
@@ -845,38 +526,6 @@ struct Example {
     default:
       return;
     }
-
-    /*ImColor color = GetIconColor(pin.Type);
-    color.Value.w = alpha / 255.0f;
-    switch (pin.Type)
-    {
-    case PinType::Flow:
-        iconType = IconType::Flow;
-        break;
-    case PinType::Bool:
-        iconType = IconType::Circle;
-        break;
-    case PinType::Int:
-        iconType = IconType::Circle;
-        break;
-    case PinType::Float:
-        iconType = IconType::Circle;
-        break;
-    case PinType::String:
-        iconType = IconType::Circle;
-        break;
-    case PinType::Object:
-        iconType = IconType::Circle;
-        break;
-    case PinType::Function:
-        iconType = IconType::Circle;
-        break;
-    case PinType::Delegate:
-        iconType = IconType::Square;
-        break;
-    default:
-        return;
-    }*/
 
     ax::Widgets::Icon(ImVec2(static_cast<float>(m_PinIconSize),
                              static_cast<float>(m_PinIconSize)),
@@ -1204,7 +853,6 @@ struct Example {
   bool m_ShowOrdinals = false;
 };
 
-namespace Cherry {
 namespace Components {
 // A NodeAreaOpen is a flexible and modular area with minimal built-in
 // functionality. It’s perfect for anyone who wants to create their own
@@ -1221,8 +869,10 @@ class NodeAreaOpen : public Component {
 public:
   NodeAreaOpen(const Cherry::Identifier &id, const std::string &label,
                int width, int height, Cherry::NodeSystem::NodeContext *node_ctx,
-               Cherry::NodeSystem::NodeGraph *graph)
-      : Component(id) {
+               Cherry::NodeSystem::NodeGraph *graph,
+               NodeEngine *node_system = nullptr)
+      : Component(id),
+        m_NodeEngine(node_system ? node_system : &m_DefaultEngine) {
     // Identifier
     SetIdentifier(id);
 
@@ -1246,7 +896,6 @@ public:
     SetData("isClicked", "false");
 
     // Init
-    m_NodeEngine = std::make_shared<Example>();
     m_NodeEngine->m_NodeGraph = graph;
     m_NodeEngine->m_NodeContext = node_ctx;
 
@@ -1254,7 +903,7 @@ public:
 
     // config.SettingsFile = "Blueprints.json";
 
-    config.UserPointer = m_NodeEngine.get();
+    config.UserPointer = m_NodeEngine;
     config.SaveSettings = nullptr;
 
     /*config.LoadNodeSettings = [](ed::NodeId nodeId, char *data, void
@@ -1314,8 +963,8 @@ public:
 
     auto &io = CherryGUI::GetIO();
 
-    CherryGUI::Text("FPS: %.2f (%.2gms)", io.Framerate,
-                    io.Framerate ? 1000.0f / io.Framerate : 0.0f);
+    // CherryGUI::Text("FPS: %.2f (%.2gms)", io.Framerate,
+    //                io.Framerate ? 1000.0f / io.Framerate : 0.0f);
 
     ed::SetCurrentEditor(m_NodeEngine->m_Editor);
 
@@ -2252,79 +1901,126 @@ public:
     }
 
     if (CherryGUI::BeginPopup("Create New Node")) {
-      auto newNodePostion = openPopupPosition;
-      // CherryGUI::SetCursorScreenPos(CherryGUI::GetMousePosOnOpeningCurrentPopup());
+      static char searchBuf[128] = "";
+      static bool contextSensitive = false;
 
-      // auto drawList = CherryGUI::GetWindowDrawList();
-      // drawList->AddCircleFilled(CherryGUI::GetMousePosOnOpeningCurrentPopup(),
-      // 10.0f, 0xFFFF00FF);
+      CherryGUI::InputText("Search", searchBuf, IM_ARRAYSIZE(searchBuf));
+      CherryGUI::Checkbox("Context Sensitive", &contextSensitive);
 
-      Node *node = nullptr;
-      // TODO : Node maker (only on node_area_maker)
-      /*if (CherryGUI::MenuItem("Input Action"))
-          node = m_NodeEngine->SpawnInputActionNode();
-      if (CherryGUI::MenuItem("Output Action"))
-          node = m_NodeEngine->SpawnOutputActionNode();
-      if (CherryGUI::MenuItem("Branch"))
-          node = m_NodeEngine->SpawnBranchNode();
-      if (CherryGUI::MenuItem("Do N"))
-          node = m_NodeEngine->SpawnDoNNode();
-      if (CherryGUI::MenuItem("Set Timer"))
-          node = m_NodeEngine->SpawnSetTimerNode();
-      if (CherryGUI::MenuItem("Less"))
-          node = m_NodeEngine->SpawnLessNode();
-      if (CherryGUI::MenuItem("Weird"))
-          node = m_NodeEngine->SpawnWeirdNode();
-      if (CherryGUI::MenuItem("Trace by Channel"))
-          node = m_NodeEngine->SpawnTraceByChannelNode();
-      if (CherryGUI::MenuItem("Print String"))
-          node = m_NodeEngine->SpawnPrintStringNode();
       CherryGUI::Separator();
-      if (CherryGUI::MenuItem("Comment"))
-          node = m_NodeEngine->SpawnComment();
-      CherryGUI::Separator();
-      if (CherryGUI::MenuItem("Sequence"))
-          node = m_NodeEngine->SpawnTreeSequenceNode();
-      if (CherryGUI::MenuItem("Move To"))
-          node = m_NodeEngine->SpawnTreeTaskNode();
-      if (CherryGUI::MenuItem("Random Wait"))
-          node = m_NodeEngine->SpawnTreeTask2Node();
-      CherryGUI::Separator();
-      if (CherryGUI::MenuItem("Message"))
-          node = m_NodeEngine->SpawnMessageNode();
-      CherryGUI::Separator();
-      if (CherryGUI::MenuItem("Transform"))
-          node = m_NodeEngine->SpawnHoudiniTransformNode();
-      if (CherryGUI::MenuItem("Group"))
-          node = m_NodeEngine->SpawnHoudiniGroupNode();*/
 
-      if (node) {
-        m_NodeEngine->BuildNodes();
+      std::string searchStr = searchBuf;
+      std::transform(searchStr.begin(), searchStr.end(), searchStr.begin(),
+                     ::tolower);
 
-        createNewNode = false;
+      std::unordered_map<std::string,
+                         std::vector<Cherry::NodeSystem::NodeSpawnPossibility>>
+          categories;
 
-        ed::SetNodePosition(node->ID, newNodePostion);
+      for (const auto &poss : m_NodeEngine->m_NodeGraph->GetPossibilities()) {
+        if (!searchStr.empty()) {
+          std::string nameLower = poss.proper_name;
+          std::string descLower = poss.proper_description;
+          std::transform(nameLower.begin(), nameLower.end(), nameLower.begin(),
+                         ::tolower);
+          std::transform(descLower.begin(), descLower.end(), descLower.begin(),
+                         ::tolower);
 
-        if (auto startPin = newNodeLinkPin) {
-          auto &pins =
-              startPin->Kind == PinKind::Input ? node->Outputs : node->Inputs;
+          if (nameLower.find(searchStr) == std::string::npos &&
+              descLower.find(searchStr) == std::string::npos)
+            continue;
+        }
 
-          for (auto &pin : pins) {
-            if (m_NodeEngine->CanCreateLink(startPin, &pin)) {
-              auto endPin = &pin;
-              if (startPin->Kind == PinKind::Input)
-                std::swap(startPin, endPin);
+        std::string category =
+            poss.category.empty() ? "Primitive" : poss.category;
+        if (!category.empty())
+          category[0] = static_cast<char>(::toupper(category[0]));
+        categories[category].push_back(poss);
+      }
 
-              m_NodeEngine->m_Links.emplace_back(
-                  Link(m_NodeEngine->GetNextId(), startPin->ID, endPin->ID));
-              m_NodeEngine->m_Links.back().Color =
-                  Cherry::HexToImColor(startPin->Format.m_Color);
+      if (CherryGUI::BeginChild("nodes_scroll", ImVec2(420, 320), true)) {
+        for (auto &[category, nodes] : categories) {
+          bool open = (category == "Primitive");
+          if (CherryGUI::CollapsingHeader(category.c_str(),
+                                          open ? ImGuiTreeNodeFlags_DefaultOpen
+                                               : 0)) {
+            for (const auto &poss : nodes) {
+              CherryGUI::PushID(poss.schema_id.c_str());
 
-              break;
+              ImVec2 start = CherryGUI::GetCursorScreenPos();
+              CherryGUI::BeginGroup();
+
+              if (!poss.proper_logo.empty()) {
+                CherryGUI::Image(Cherry::GetTexture(poss.proper_logo),
+                                 ImVec2(32, 32));
+                CherryGUI::SameLine();
+              }
+
+              CherryGUI::BeginGroup();
+
+              auto drawHighlighted = [&](const std::string &text) {
+                if (searchStr.empty()) {
+                  CherryGUI::TextUnformatted(text.c_str());
+                  return;
+                }
+
+                std::string lower = text;
+                std::transform(lower.begin(), lower.end(), lower.begin(),
+                               ::tolower);
+
+                size_t pos = 0, match;
+                while ((match = lower.find(searchStr, pos)) !=
+                       std::string::npos) {
+                  if (match > pos)
+                    CherryGUI::TextUnformatted(
+                        text.substr(pos, match - pos).c_str());
+
+                  CherryGUI::SameLine(0, 0);
+                  CherryGUI::PushStyleColor(ImGuiCol_Text,
+                                            IM_COL32(255, 255, 0, 255));
+                  CherryGUI::TextUnformatted(
+                      text.substr(match, searchStr.size()).c_str());
+                  CherryGUI::PopStyleColor();
+
+                  pos = match + searchStr.size();
+                  CherryGUI::SameLine(0, 0);
+                }
+
+                if (pos < text.size())
+                  CherryGUI::TextUnformatted(text.substr(pos).c_str());
+              };
+
+              drawHighlighted(poss.proper_name);
+              if (!poss.proper_description.empty())
+                CherryGUI::TextDisabled("%s", poss.proper_description.c_str());
+
+              CherryGUI::EndGroup();
+              CherryGUI::EndGroup();
+
+              if (CherryGUI::IsItemClicked()) {
+                if (m_NodeEngine->m_NodeGraph->m_NodeSpawnCallback) {
+                  m_NodeEngine->m_NodeGraph->m_NodeSpawnCallback(
+                      poss.schema_id, openPopupPosition.x, openPopupPosition.y,
+                      newNodeLinkPin ? std::to_string(newNodeLinkPin->ID.Get())
+                                     : "");
+                }
+                CherryGUI::CloseCurrentPopup();
+              }
+
+              if (CherryGUI::IsItemHovered()) {
+                ImVec2 end = CherryGUI::GetCursorScreenPos();
+                end.y = start.y + 48;
+                ImDrawList *dl = ImGui::GetWindowDrawList();
+                dl->AddRectFilled(start, end, IM_COL32(60, 60, 60, 100));
+              }
+
+              CherryGUI::Dummy(ImVec2(0, 8));
+              CherryGUI::PopID();
             }
           }
         }
       }
+      CherryGUI::EndChild();
 
       CherryGUI::EndPopup();
     } else
@@ -2377,7 +2073,9 @@ public:
   }
 
 private:
-  std::shared_ptr<Example> m_NodeEngine;
+  NodeEngine *m_NodeEngine;
+
+  NodeEngine m_DefaultEngine;
 };
 } // namespace Components
 
@@ -2386,21 +2084,23 @@ namespace Kit {
 inline Component &NodeAreaOpen(const Identifier &identifier,
                                const std::string &label, int width, int height,
                                Cherry::NodeSystem::NodeContext *node_ctx,
-                               Cherry::NodeSystem::NodeGraph *graph) {
+                               Cherry::NodeSystem::NodeGraph *graph,
+                               NodeEngine *node_system = nullptr) {
   return CherryApp.PushComponent<Cherry::Components::NodeAreaOpen>(
-      identifier, label, width, height, node_ctx, graph);
+      identifier, label, width, height, node_ctx, graph, node_system);
 }
 
 inline Component &NodeAreaOpen(const std::string &label, int width, int height,
                                Cherry::NodeSystem::NodeContext *node_ctx,
-                               Cherry::NodeSystem::NodeGraph *graph) {
+                               Cherry::NodeSystem::NodeGraph *graph,
+                               NodeEngine *node_system = nullptr) {
   return Cherry::Kit::NodeAreaOpen(
       Application::GenerateUniqueID(label, width, height, node_ctx, graph,
-                                    "NodeAreaOpen"),
-      label, width, height, node_ctx, graph);
+                                    node_system, "NodeAreaOpen"),
+      label, width, height, node_ctx, graph, node_system);
 }
 
 } // namespace Kit
 } // namespace Cherry
 
-#endif // CHERRY_KIT_NODE_AREA
+#endif // CHERRY_KIT_NODE_AREA_OPEN

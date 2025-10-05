@@ -4,29 +4,29 @@
 #define IMGUI_DEFINE_MATH_OPERATORS
 #endif // IMGUI_DEFINE_MATH_OPERATORS
 
-#include "../../../../../platform/engine/app/app.hpp"
-#include "../../../../../platform/engine/components/components.hpp"
-
-#include "../../../../../lib/imgui/imgui.h"
-#include "../../../../../lib/imgui/imgui_internal.h"
-#include "../../../../../lib/imgui/misc/nodes/imgui_node_editor.h"
-#include "../../../../../lib/imgui/misc/nodes/imgui_node_editor_internal.h"
-#include "../../../../../platform/engine/ui/nodes/utils/builders.h"
-#include "../../../../../platform/engine/ui/nodes/utils/widgets.h"
-
 #include <algorithm>
 #include <map>
 #include <string>
 #include <utility>
 #include <vector>
 
+#include "../../../../../lib/imgui/imgui.h"
+#include "../../../../../lib/imgui/imgui_internal.h"
+#include "../../../../../lib/imgui/misc/nodes/imgui_node_editor.h"
+#include "../../../../../lib/imgui/misc/nodes/imgui_node_editor_internal.h"
+#include "../../../../../platform/engine/app/app.hpp"
+#include "../../../../../platform/engine/components/components.hpp"
+#include "../../../../../platform/engine/ui/nodes/api/node_api.hpp"
+#include "../../../../../platform/engine/ui/nodes/utils/builders.h"
+#include "../../../../../platform/engine/ui/nodes/utils/widgets.h"
+
 //
 // NodeAreaMaker
-// Authors : Infinite, Diego Moreno
+// Authors : Infinite
 //
 
-#ifndef CHERRY_KIT_NODE_AREA
-#define CHERRY_KIT_NODE_AREA
+#ifdef CHERRY_KIT_NODE_AREA_MAKER // Disable for while...
+#define CHERRY_KIT_NODE_AREA_MAKER
 
 // Move into the vortex render engine ?
 namespace ed = ax::NodeEditor;
@@ -89,16 +89,30 @@ struct Pin {
   ed::PinId ID;
   ::Node *Node;
   std::string Name;
-  PinType Type;
+  // PinType Type;
   PinKind Kind;
 
-  Pin(int id, const char *name, PinType type)
-      : ID(id), Node(nullptr), Name(name), Type(type), Kind(PinKind::Input) {}
+  Cherry::NodeSystem::PinFormat Format;
+
+  /*Pin(int id, const char *name, PinType type) : ID(id), Node(nullptr),
+  Name(name), Type(type), Kind(PinKind::Input)
+  {
+  }*/
+
+  Pin(int id, const char *name, const Cherry::NodeSystem::PinFormat &format)
+      : ID(id), Node(nullptr), Name(name), Format(format),
+        Kind(PinKind::Input) {}
 };
 
 struct Node {
   ed::NodeId ID;
   std::string Name;
+  std::string NameColor;
+  std::string SecondName;
+  std::string SecondNameColor;
+  std::string LogoPath;
+  std::string BackgroundColor;
+  std::string BorderColor;
   std::vector<Pin> Inputs;
   std::vector<Pin> Outputs;
   ImColor Color;
@@ -107,6 +121,10 @@ struct Node {
 
   std::string State;
   std::string SavedState;
+
+  Cherry::NodeSystem::NodeSchemaStatus Status;
+  std::string InstanceID;
+  std::string TypeID;
 
   Node(int id, const char *name, ImColor color = ImColor(255, 255, 255))
       : ID(id), Name(name), Color(color), Type(NodeType::Blueprint),
@@ -121,9 +139,9 @@ struct Link {
 
   ImColor Color;
 
-  Link(ed::LinkId id, ed::PinId startPinId, ed::PinId endPinId)
-      : ID(id), StartPinID(startPinId), EndPinID(endPinId),
-        Color(255, 255, 255) {}
+  Link(ed::LinkId id, ed::PinId startPinId, ed::PinId endPinId,
+       ImColor color = ImColor(255, 255, 255))
+      : ID(id), StartPinID(startPinId), EndPinID(endPinId), Color(color) {}
 };
 
 struct NodeIdLess {
@@ -2045,4 +2063,4 @@ inline Component &NodeAreaMaker(const std::string &label, int width, int height,
 } // namespace Kit
 } // namespace Cherry
 
-#endif // CHERRY_KIT_NODE_AREA
+#endif // CHERRY_KIT_NODE_AREA_MAKER

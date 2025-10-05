@@ -16,14 +16,14 @@ Cherry::SetTheme();
 
  */
 
-#include "../options.hpp"
-#include "../base.hpp"
 #include "../../../options.hpp"
 #include "../../../src/core/color.hpp"
 #include "../../../src/layer.hpp"
 #include "../app_window/app_window.hpp"
+#include "../base.hpp"
 #include "../components/components.hpp"
 #include "../image/image.hpp"
+#include "../options.hpp"
 #include "../themes/themes.hpp"
 #include "../ui/cef/cef.hpp"
 #include "../ui/notifications/notifications.hpp"
@@ -46,10 +46,10 @@ Cherry::SetTheme();
 #include "../../../lib/sdl2/include/SDL_scancode.h"
 
 #ifdef _WIN32
-  #include <windows.h>
+#include <windows.h>
 #elif __APPLE__
-  #include <mach-o/dyld.h>
-  #include <limits.h>
+#include <limits.h>
+#include <mach-o/dyld.h>
 #else
 #include <limits.h>
 #include <unistd.h>
@@ -210,23 +210,23 @@ struct ParentWindow {
 
 class CHERRY_API Application {
 public:
-   Application(const ApplicationSpecification &applicationSpecification =
+  Application(const ApplicationSpecification &applicationSpecification =
                   ApplicationSpecification());
-   ~Application();
+  ~Application();
 
   // Set static components
-   static Application &Get();
-   static VkDevice &GetVkDevice();
-   static VkPhysicalDevice &GetVkPhysicalDevice();
-   static uint32_t &GetQueueFamily();
-   static VkQueue &GetVkQueue();
-   static VkAllocationCallbacks &GetVkAllocationCallbacks();
-   static VkDebugReportCallbackEXT &GetVkDebugReportCallbackEXT();
-   static VkPipelineCache &GetVkPipelineCache();
-   static VkDescriptorPool &GetVkDescriptorPool();
-   static int &GetMinImageCount();
-   static std::shared_ptr<Cherry::Window> &GetCurrentRenderedWindow();
-   static std::shared_ptr<Cherry::AppWindow> &GetCurrentRenderedAppWindow();
+  static Application &Get();
+  static VkDevice &GetVkDevice();
+  static VkPhysicalDevice &GetVkPhysicalDevice();
+  static uint32_t &GetQueueFamily();
+  static VkQueue &GetVkQueue();
+  static VkAllocationCallbacks &GetVkAllocationCallbacks();
+  static VkDebugReportCallbackEXT &GetVkDebugReportCallbackEXT();
+  static VkPipelineCache &GetVkPipelineCache();
+  static VkDescriptorPool &GetVkDescriptorPool();
+  static int &GetMinImageCount();
+  static std::shared_ptr<Cherry::Window> &GetCurrentRenderedWindow();
+  static std::shared_ptr<Cherry::AppWindow> &GetCurrentRenderedAppWindow();
 
   Window &GetSafeCurrentRenderedWindow();
   AppWindow &GetSafeCurrentRenderedAppWindow();
@@ -298,6 +298,9 @@ public:
     m_MainRenderCallback = mainRenderCallback;
   }
 
+  void SetCurrentRedockEvent(
+      const std::shared_ptr<Cherry::WindowDragDropState> &state);
+
   std::string CertifyWindowName(const std::string &name);
 
   // Window factory
@@ -310,6 +313,7 @@ public:
   // Main loop utilities
   void ApplyDockingFromSave();
   void ApplyDockingFromDefault();
+  void ProcessDeferredRequests();
   void RebuildDockingLinks();
   void PresentAllWindows();
   void CleanupEmptyWindows();
@@ -775,7 +779,8 @@ CHERRY_API std::shared_ptr<Cherry::Window> &GetCurrentRenderedWindow();
 // AppWindow
 CHERRY_API void AddAppWindow(const std::shared_ptr<AppWindow> &win);
 CHERRY_API void DeleteAppWindow(const std::shared_ptr<AppWindow> &win);
-CHERRY_API std::shared_ptr<AppWindow> GetAppWindowByName(const std::string &win_name);
+CHERRY_API std::shared_ptr<AppWindow>
+GetAppWindowByName(const std::string &win_name);
 CHERRY_API std::shared_ptr<AppWindow> GetCurrentRenderedAppWindow();
 CHERRY_API std::shared_ptr<Window> GetWindowByName(const std::string &win_name);
 
@@ -799,15 +804,17 @@ CHERRY_API std::string GetHttpPath(const std::string &url);
 
 // Data (theses functions can return JSON to string format or legacy string.)
 CHERRY_API std::string GetData(const Identifier &id, const std::string topic);
-CHERRY_API std::string GetWindowData(const std::string &id, const std::string topic);
+CHERRY_API std::string GetWindowData(const std::string &id,
+                                     const std::string topic);
 
 CHERRY_API void PushPermanentProperty(const std::string &property,
-                           const std::string &value);
+                                      const std::string &value);
 CHERRY_API void PopPermanentProperty(int number_of_pops = 0);
 CHERRY_API void SetNextComponentProperty(const std::string &property,
-                              const std::string &value);
+                                         const std::string &value);
 
-CHERRY_API void PushParentComponent(const std::shared_ptr<Component> &component);
+CHERRY_API void
+PushParentComponent(const std::shared_ptr<Component> &component);
 CHERRY_API void PopParentComponent();
 CHERRY_API std::shared_ptr<Component> GetParent(int parent_number = 0);
 

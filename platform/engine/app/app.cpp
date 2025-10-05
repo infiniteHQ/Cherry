@@ -58,7 +58,6 @@ namespace fs = std::filesystem;
 extern bool g_ApplicationRunning;
 #endif
 
-
 // #define IMGUI_UNLIMITED_FRAME_RATE
 #ifdef _DEBUG
 #define IMGUI_VULKAN_DEBUG_REPORT
@@ -469,8 +468,8 @@ VkDebugReportCallbackEXT &Application::GetVkDebugReportCallbackEXT() {
   return g_DebugReport;
 }
 
- void Application::SetExecutablePath() { g_ExecutablePath = "test"; }
- std::string &Application::GetExecutablePath() { return g_ExecutablePath; }
+void Application::SetExecutablePath() { g_ExecutablePath = "test"; }
+std::string &Application::GetExecutablePath() { return g_ExecutablePath; }
 
 VkPipelineCache &Application::GetVkPipelineCache() { return g_PipelineCache; }
 
@@ -679,7 +678,6 @@ const std::unordered_map<CherryKey, SDL_Scancode> &Application::GetKeyMap() {
       {CherryKey::F12, SDL_SCANCODE_F12}};
   return keyMap;
 }
-
 
 void Application::ExecuteProcessCallbacks(ProcessCallback process) {
   for (auto callback : g_ProcessCallbacks) {
@@ -1321,6 +1319,11 @@ void Application::CurrentDockRequestOnNewWindow() {
   Application::PushRedockEvent(c_CurrentDragDropState);
 
   c_CurrentDragDropState->CreateNewWindow = false;
+}
+
+void Application::SetCurrentRedockEvent(
+    const std::shared_ptr<Cherry::WindowDragDropState> &state) {
+  c_CurrentDragDropState = state;
 }
 
 void Application::PresentAllWindows() {
