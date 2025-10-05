@@ -367,9 +367,9 @@ struct NodeEngine {
 
       Cherry::NodeSystem::NodeConnection conn;
       conn.NodeInstanceIDA = nodeA->InstanceID;
-      conn.PinIDA = ed::ToString(pinA->ID);
+      conn.PinIDA = pinA->Name;
       conn.NodeInstanceIDB = nodeB->InstanceID;
-      conn.PinIDB = ed::ToString(pinB->ID);
+      conn.PinIDB = pinB->Name;
 
       m_NodeGraph->AddConnection(conn);
     }
