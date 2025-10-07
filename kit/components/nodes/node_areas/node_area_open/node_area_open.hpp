@@ -127,6 +127,7 @@ struct Node {
   Cherry::NodeSystem::NodeSchemaStatus Status;
   std::string InstanceID;
   std::string TypeID;
+  json Datas = json::object();
 
   Node(int id, const char *name, ImColor color = ImColor(255, 255, 255))
       : ID(id), Name(name), Color(color), Type(NodeType::Blueprint),
@@ -298,13 +299,21 @@ struct NodeEngine {
     if (!m_NodeGraph || !m_NodeContext)
       return;
 
-    // Clear current UI nodes
     m_Nodes.clear();
+    m_Links.clear();
 
-    // Recreate all nodes
     for (const auto &inst : m_NodeGraph->m_InstanciatedNodes) {
+      // Note: inst.TypeID can contains '@context', we need to ask the commplete
+      // schema
       Cherry::NodeSystem::NodeSchema *schema =
           m_NodeContext->GetSchema(inst.TypeID);
+      if (!schema) {
+        // try fallback: if TypeID contains '@', remove suffix
+        std::string baseType = inst.TypeID;
+        if (auto p = baseType.find('@'); p != std::string::npos)
+          baseType = baseType.substr(0, p);
+        schema = m_NodeContext->GetSchema(baseType);
+      }
       if (!schema)
         continue;
 
@@ -312,16 +321,30 @@ struct NodeEngine {
       if (!node)
         continue;
 
+      // restore identity/position/size
       node->InstanceID = inst.InstanceID;
+      node->TypeID = inst.TypeID;
       ed::SetNodePosition(node->ID, ImVec2(inst.Position.x, inst.Position.y));
+      node->Size = ImVec2(inst.Size.x, inst.Size.y);
+
+      // Restore custom Datas (if present)
+      if (!inst.Datas.is_null()) {
+        node->Datas = inst.Datas; // copy JSON object into renderer node
+      } else {
+        node->Datas = json::object();
+      }
     }
+
+    // Recreate links from graph (call link builder that uses m_Nodes)
+    RefreshNodeGraphLinks();
   }
 
   void RefreshNodeGraphLinks() {
     if (!m_NodeGraph || !m_NodeContext)
       return;
 
-    // Recreate all links
+    m_Links.clear();
+
     for (const auto &conn : m_NodeGraph->m_Connections) {
       auto *nodeA = FindNodeByInstanceID(conn.NodeInstanceIDA);
       auto *nodeB = FindNodeByInstanceID(conn.NodeInstanceIDB);
@@ -342,18 +365,34 @@ struct NodeEngine {
     if (!m_NodeGraph)
       return;
 
-    m_NodeGraph->m_InstanciatedNodes.clear();
-    m_NodeGraph->m_Connections.clear();
+    for (auto &editorNode : m_Nodes) {
+      auto it = std::find_if(
+          m_NodeGraph->m_InstanciatedNodes.begin(),
+          m_NodeGraph->m_InstanciatedNodes.end(),
+          [&editorNode](const Cherry::NodeSystem::NodeInstance &n) {
+            return n.InstanceID == editorNode.InstanceID;
+          });
 
-    for (const auto &node : m_Nodes) {
-      Cherry::NodeSystem::NodeInstance instance;
-      instance.InstanceID = node.InstanceID;
-      instance.TypeID = node.TypeID;
-      ImVec2 pos = ed::GetNodePosition(node.ID);
-      instance.Position = {pos.x, pos.y};
-      m_NodeGraph->AddNodeInstance(instance);
+      if (it != m_NodeGraph->m_InstanciatedNodes.end()) {
+        ImVec2 pos = ed::GetNodePosition(editorNode.ID);
+        it->Position = {pos.x, pos.y};
+        it->Size = {editorNode.Size.x, editorNode.Size.y};
+      } else {
+        Cherry::NodeSystem::NodeInstance newNode;
+        newNode.InstanceID = editorNode.InstanceID;
+        newNode.TypeID = editorNode.TypeID;
+        ImVec2 pos = ed::GetNodePosition(editorNode.ID);
+        newNode.Position = {pos.x, pos.y};
+        newNode.Size = {editorNode.Size.x, editorNode.Size.y};
+        if (editorNode.Datas.is_object())
+          newNode.Datas = editorNode.Datas;
+        else
+          newNode.Datas = json::object();
+        m_NodeGraph->AddNodeInstance(newNode);
+      }
     }
 
+    m_NodeGraph->m_Connections.clear();
     for (const auto &link : m_Links) {
       auto *pinA = FindPinByID(link.StartPinID);
       auto *pinB = FindPinByID(link.EndPinID);
@@ -372,6 +411,10 @@ struct NodeEngine {
       conn.PinIDB = pinB->Name;
 
       m_NodeGraph->AddConnection(conn);
+    }
+
+    if (!m_NodeGraph->DumpGraphToJsonFile(m_NodeContext)) {
+      std::cerr << "SaveNodeGraph: failed to dump NodeGraph" << std::endl;
     }
   }
 
@@ -971,7 +1014,8 @@ public:
     if (CherryApp.IsKeyPressed(Cherry::CherryKey::CTRL) &&
         CherryApp.IsKeyPressed(Cherry::CherryKey::S)) {
       m_NodeEngine->SaveNodeGraph();
-      m_NodeEngine->m_NodeGraph->DumpGraphToJsonFile();
+      m_NodeEngine->m_NodeGraph->DumpGraphToJsonFile(
+          m_NodeEngine->m_NodeContext);
     }
 
     // auto& style = CherryGUI::GetStyle();
@@ -1056,14 +1100,11 @@ public:
           CherryGUI::Spring(0);
 
           if (!node.SecondName.empty()) {
-            CherryGUI::BeginHorizontal(
-                "horizontal_logo_and_text"); // Commence la ligne
+            CherryGUI::BeginHorizontal("horizontal_logo_and_text");
 
             if (!node.LogoPath.empty()) {
-              CherryGUI::BeginVertical(
-                  "logo_align"); // Pour centrer le logo verticalement
-              CherryGUI::Dummy(ImVec2(
-                  0, 4)); // Ajuste cette valeur pour bien centrer le logo
+              CherryGUI::BeginVertical("logo_align");
+              CherryGUI::Dummy(ImVec2(0, 4));
               CherryGUI::Image(Cherry::GetTexture(node.LogoPath),
                                ImVec2(28, 28));
               CherryGUI::EndVertical();
@@ -1071,8 +1112,7 @@ public:
 
             CherryGUI::BeginVertical("text_block");
 
-            // Padding en haut
-            CherryGUI::Dummy(ImVec2(0, 1)); // ↑ ajustable
+            CherryGUI::Dummy(ImVec2(0, 1));
 
             CherryGUI::GetFont()->Scale = 1.20f;
             CherryGUI::PushFont(CherryGUI::GetFont());
@@ -1092,12 +1132,11 @@ public:
             CherryGUI::TextUnformatted(node.SecondName.c_str());
             CherryGUI::PopStyleColor();
 
-            // Padding en bas
-            CherryGUI::Dummy(ImVec2(0, 1)); // ↓ ajustable
+            CherryGUI::Dummy(ImVec2(0, 1));
 
             CherryGUI::EndVertical();
 
-            CherryGUI::EndHorizontal(); // Fin de la ligne
+            CherryGUI::EndHorizontal();
           } else {
             if (!node.LogoPath.empty()) {
               CherryGUI::Image(Cherry::GetTexture(node.LogoPath),
@@ -1153,7 +1192,6 @@ public:
             CherryGUI::Spring(0);
           builder.EndHeader();
         }
-
         for (auto &input : node.Inputs) {
           auto alpha = CherryGUI::GetStyle().Alpha;
           if (newLinkPin && !m_NodeEngine->CanCreateLink(newLinkPin, &input) &&
@@ -1162,19 +1200,32 @@ public:
 
           builder.Input(input.ID);
           CherryGUI::PushStyleVar(ImGuiStyleVar_Alpha, alpha);
-          m_NodeEngine->DrawPinIcon(input, m_NodeEngine->IsPinLinked(input.ID),
-                                    (int)(alpha * 255));
-          CherryGUI::Spring(0);
-          if (!input.Name.empty()) {
-            CherryGUI::TextUnformatted(input.Name.c_str());
+
+          auto it = m_NodeEngine->m_NodeGraph->g_NodeDataHandlers.find(
+              input.Format.m_TypeID);
+          if (it != m_NodeEngine->m_NodeGraph->g_NodeDataHandlers.end() &&
+              it->second.render) {
+            auto instIt = std::find_if(
+                m_NodeEngine->m_NodeGraph->m_InstanciatedNodes.begin(),
+                m_NodeEngine->m_NodeGraph->m_InstanciatedNodes.end(),
+                [&](const Cherry::NodeSystem::NodeInstance &inst) {
+                  return inst.InstanceID == node.InstanceID;
+                });
+
+            if (instIt !=
+                m_NodeEngine->m_NodeGraph->m_InstanciatedNodes.end()) {
+              it->second.render(*instIt);
+            }
+          } else {
+            m_NodeEngine->DrawPinIcon(
+                input, m_NodeEngine->IsPinLinked(input.ID), (int)(alpha * 255));
             CherryGUI::Spring(0);
-          }
-          // TODO : Input content
-          /*if (input.Type == PinType::Bool)
-          {
-              CherryGUI::Button("Hello");
+            if (!input.Name.empty()) {
+              CherryGUI::TextUnformatted(input.Name.c_str());
               CherryGUI::Spring(0);
-          }*/
+            }
+          }
+
           CherryGUI::PopStyleVar();
           builder.EndInput();
         }
@@ -1199,34 +1250,32 @@ public:
           CherryGUI::PushStyleVar(ImGuiStyleVar_Alpha, alpha);
           builder.Output(output.ID);
 
-          // TODO : Contents & Render callabcks
-          /*if (output.Type == PinType::String)
-          {
-              static char buffer[128] = "Edit Me\nMultiline!";
-              static bool wasActive = false;
+          auto it =
+              m_NodeEngine->m_NodeGraph->g_NodeDataHandlers.find(node.TypeID);
+          if (it != m_NodeEngine->m_NodeGraph->g_NodeDataHandlers.end() &&
+              it->second.render) {
+            auto instIt = std::find_if(
+                m_NodeEngine->m_NodeGraph->m_InstanciatedNodes.begin(),
+                m_NodeEngine->m_NodeGraph->m_InstanciatedNodes.end(),
+                [&](const Cherry::NodeSystem::NodeInstance &inst) {
+                  return inst.InstanceID == node.InstanceID;
+                });
 
-              CherryGUI::PushItemWidth(100.0f);
-              CherryGUI::InputText("##edit", buffer, 127);
-              CherryGUI::PopItemWidth();
-              if (CherryGUI::IsItemActive() && !wasActive)
-              {
-                  ed::EnableShortcuts(false);
-                  wasActive = true;
-              }
-              else if (!CherryGUI::IsItemActive() && wasActive)
-              {
-                  ed::EnableShortcuts(true);
-                  wasActive = false;
-              }
+            if (instIt !=
+                m_NodeEngine->m_NodeGraph->m_InstanciatedNodes.end()) {
+              it->second.render(*instIt);
+            }
+          } else {
+            if (!output.Name.empty()) {
               CherryGUI::Spring(0);
-          }*/
-          if (!output.Name.empty()) {
+              CherryGUI::TextUnformatted(output.Name.c_str());
+            }
             CherryGUI::Spring(0);
-            CherryGUI::TextUnformatted(output.Name.c_str());
+            m_NodeEngine->DrawPinIcon(output,
+                                      m_NodeEngine->IsPinLinked(output.ID),
+                                      (int)(alpha * 255));
           }
-          CherryGUI::Spring(0);
-          m_NodeEngine->DrawPinIcon(
-              output, m_NodeEngine->IsPinLinked(output.ID), (int)(alpha * 255));
+
           CherryGUI::PopStyleVar();
           builder.EndOutput();
         }
