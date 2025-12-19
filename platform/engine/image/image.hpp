@@ -32,7 +32,7 @@ public:
 
   ImTextureID GetImGuiTextureID(
       VkImageLayout layout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL) const {
-    return ImGui_ImplVulkan_AddTexture(m_Sampler, m_ImageView, layout);
+    return (ImTextureID)m_DescriptorSet;
   }
 
   void Resize(uint32_t width, uint32_t height);

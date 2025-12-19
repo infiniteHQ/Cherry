@@ -162,8 +162,6 @@ void Image::Release() {
           vkFreeDescriptorSets(device, pool, 1, &descriptorSet);
         }
 
-        VkDevice device = Application::GetDevice();
-
         vkDestroySampler(device, sampler, nullptr);
         vkDestroyImageView(device, imageView, nullptr);
         vkDestroyImage(device, image, nullptr);
