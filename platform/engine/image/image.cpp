@@ -153,7 +153,15 @@ void Image::Release() {
   Application::SubmitResourceFree(
       [sampler = m_Sampler, imageView = m_ImageView, image = m_Image,
        memory = m_Memory, stagingBuffer = m_StagingBuffer,
-       stagingBufferMemory = m_StagingBufferMemory, winnameCopy]() {
+       stagingBufferMemory = m_StagingBufferMemory,
+       descriptorSet = m_DescriptorSet, winnameCopy]() {
+        VkDevice device = Application::GetDevice();
+
+        if (descriptorSet) {
+          VkDescriptorPool pool = Application::GetVkDescriptorPool();
+          vkFreeDescriptorSets(device, pool, 1, &descriptorSet);
+        }
+
         VkDevice device = Application::GetDevice();
 
         vkDestroySampler(device, sampler, nullptr);
@@ -165,6 +173,7 @@ void Image::Release() {
       },
       winnameCopy);
 
+  m_DescriptorSet = nullptr;
   m_Sampler = nullptr;
   m_ImageView = nullptr;
   m_Image = nullptr;
