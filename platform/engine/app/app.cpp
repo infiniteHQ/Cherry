@@ -805,6 +805,8 @@ void Application::Shutdown() {
 
   SDL_Quit();
 
+  g_ApplicationRunning = false;
+
   Log::Shutdown();
 }
 
