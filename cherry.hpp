@@ -27,7 +27,6 @@
 #include "./platform/engine/image/image.hpp"
 #include "./platform/engine/imgui/ImGuiTheme.h"
 #include "./platform/engine/imgui/wrappers/wrappers.hpp"
-#include "./platform/engine/ui/cef/cef.hpp"
 #include "./platform/engine/ui/notifications/notifications.hpp"
 #include "./platform/engine/ui/ui.hpp"
 #include "./src/entry_point.hpp"
@@ -142,10 +141,6 @@
 #include "./kit/components/banners/banner_image_context/banner_image_context.hpp"
 // Modals
 #include "./kit/components/modals/modal_title/modal_title.hpp"
-// Web
-#ifdef CHERRY_CEF
-#include "./kit/components/web/web_view/web_view.hpp"
-#endif
 // Notifications
 #include "./kit/components/notifications/notification_button/notification_button.hpp"
 #include "./kit/components/notifications/notification_custom/notification_custom.hpp"

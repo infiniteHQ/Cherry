@@ -50,10 +50,6 @@ option(CHERRY_ENABLE_NET "Enable net features" OFF)
 ```
 
 ```cpp
-# If ON, this will add the Chrome Embedded Framework for an integrated web browser; if OFF, no CEF-related features are included
-option(CHERRY_ENABLE_CEF "Enable chrome embedded framwork (CEF)" OFF)
-```
-```cpp
 option(CHERRY_ENABLE_AUDIO "Enable audio features" OFF)
 ```
 ```cpp
@@ -90,7 +86,6 @@ option(CHERRY_PACKAGE "Enable packaging features with pyinstaller" OFF)
 
 # Cherry Options & Addons
 option(CHERRY_ENABLE_NET "Enable net features" OFF)
-option(CHERRY_ENABLE_CEF "Enable chrome embedded framwork (CEF)" OFF)
 option(CHERRY_ENABLE_AUDIO "Enable audio features" OFF)
 option(CHERRY_ENABLE_LINUXDRM "Enable Linux Direct Rendering Manager" OFF)
 

@@ -8,7 +8,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # Options
 # ---------------------------------------------------------------------------
 option(CHERRY_STATIC "Build cherry as a static library" OFF)
-option(CHERRY_CEF "Enable CEF support" OFF)
 option(CHERRY_ENABLE_NET "Enable networking" OFF)
 option(CHERRY_ENABLE_AUDIO "Enable audio" OFF)
 option(CHERRY_ENABLE_WEBVIEW "Enable webview" OFF)
@@ -53,10 +52,6 @@ if(CHERRY_STATIC)
 set(SDL2_STATIC ON CACHE BOOL "Build SDL2 as static lib" FORCE)
 endif()
 add_subdirectory(lib/sdl2)
-
-if(CHERRY_CEF)
-    add_subdirectory(lib/cef-project)
-endif()
 
 if(CHERRY_ENABLE_NET)
     add_subdirectory(lib/httpcl)
@@ -137,38 +132,4 @@ if(CHERRY_ENABLE_NET)
     if(WIN32)
         target_link_libraries(cherry PUBLIC winhttp)
     endif()
-endif()
-
-if(CHERRY_CEF)
-    target_compile_definitions(cherry PUBLIC CHERRY_CEF)
-    target_include_directories(cherry PUBLIC ${CEF_ROOT})
-
-    set(CEF_RELEASE_DIR "${CMAKE_BINARY_DIR}/Release")
-    if(WIN32)
-        set(CEF_LIBRARIES "${CEF_RELEASE_DIR}/libcef.lib")
-        set(CEF_EXTRA_LIBRARIES
-            "${CEF_RELEASE_DIR}/libEGL.dll"
-            "${CEF_RELEASE_DIR}/libGLESv2.dll"
-            "${CEF_RELEASE_DIR}/vk_swiftshader.dll"
-            "${CEF_RELEASE_DIR}/vulkan-1.dll"
-        )
-    else()
-        set(CEF_LIBRARIES "${CEF_RELEASE_DIR}/libcef.so")
-        set(CEF_EXTRA_LIBRARIES
-            "${CEF_RELEASE_DIR}/libEGL.so"
-            "${CEF_RELEASE_DIR}/libGLESv2.so"
-            "${CEF_RELEASE_DIR}/libvk_swiftshader.so"
-            "${CEF_RELEASE_DIR}/libvulkan.so.1"
-        )
-    endif()
-
-    target_link_libraries(cherry PUBLIC ${CEF_LIBRARIES} libcef_dll_wrapper)
-
-    file(GLOB CEF_RESOURCES
-        "${CEF_RELEASE_DIR}/icudtl.dat"
-        "${CEF_RELEASE_DIR}/*.pak"
-        "${CEF_RELEASE_DIR}/*.bin"
-        "${CEF_RELEASE_DIR}/*.json"
-    )
-    file(COPY ${CEF_RESOURCES} DESTINATION "${CMAKE_BINARY_DIR}/Resources")
 endif()
