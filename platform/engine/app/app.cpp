@@ -2579,6 +2579,21 @@ void Application::StopAudioService() { ma_engine_uninit(&this->m_AudioEngine); }
 void Application::PlaySound(const std::string &wav_file_path) {
   ma_engine_play_sound(&this->m_AudioEngine, wav_file_path.c_str(), NULL);
 }
+
+void Application::CreateChannel(const std::string &name) {
+  m_Channels[name] = std::make_shared<AudioChannel>(&m_AudioEngine, name);
+}
+
+std::shared_ptr<AudioChannel> Application::GetChannel(const std::string &name) {
+  if (m_Channels.find(name) != m_Channels.end())
+    return m_Channels[name];
+  return nullptr;
+}
+
+std::map<std::string, std::shared_ptr<AudioChannel>> &
+Application::GetChannels() {
+  return m_Channels;
+}
 #else
 void Application::StartAudioService() {
   //

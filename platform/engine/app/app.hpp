@@ -40,7 +40,7 @@ Cherry::SetTheme();
 #include <vector>
 
 #ifdef CHERRY_ENABLE_AUDIO
-#include "../../../lib/miniaudio/miniaudio.h"
+#include "../audio/audio.hpp"
 #endif
 #include "../../../lib/sdl2/include/SDL_scancode.h"
 
@@ -331,6 +331,11 @@ public:
   void StartAudioService();
   void StopAudioService();
   void PlaySound(const std::string &wav_file_path);
+#ifdef CHERRY_ENABLE_AUDIO
+  void CreateChannel(const std::string &name);
+  std::shared_ptr<AudioChannel> GetChannel(const std::string &name);
+  std::map<std::string, std::shared_ptr<AudioChannel>> &GetChannels();
+#endif
 
   static void FramePresent(ImGui_ImplVulkanH_Window *wd, Cherry::Window *win);
   static void FrameRender(ImGui_ImplVulkanH_Window *wd, Cherry::Window *win,
@@ -697,6 +702,7 @@ public:
 
 #ifdef CHERRY_ENABLE_AUDIO
   ma_engine m_AudioEngine;
+  std::map<std::string, std::shared_ptr<AudioChannel>> m_Channels;
 #endif
 
   std::vector<std::pair<std::string, std::string>>

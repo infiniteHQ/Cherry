@@ -24,6 +24,6 @@ CherryApplication CherryMain(int argc, char **argv) {
 }
 
 int main(int argc, char *argv[]) {
-   CherryRun(argc, argv);
+  CherryRun(argc, argv);
   return 0;
 }
