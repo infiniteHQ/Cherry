@@ -15,10 +15,10 @@ The `ButtonTextDropdown` component displays a very simple button with text and i
 
 ### Preview
 In idle mode
-<img src="https://static.infinite.si/cherrydocs/1.3/all/imgs/components_references/button_buttontextdropdown.png" alt="Cherry 1" width="350">
+<img src="https://static.infinite.si/cherrydocs/1.4/all/imgs/components_references/button_buttontextdropdown.png" alt="Cherry 1" width="350">
 
 With menu opened
-<img src="https://static.infinite.si/cherrydocs/1.3/all/imgs/components_references/button_buttontextdropdown2.png" alt="Cherry 1" width="350">
+<img src="https://static.infinite.si/cherrydocs/1.4/all/imgs/components_references/button_buttontextdropdown2.png" alt="Cherry 1" width="350">
 
 
 ### Examples 

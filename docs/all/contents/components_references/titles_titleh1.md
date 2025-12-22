@@ -8,7 +8,7 @@ CherryKit::TitleOne("Big Super Title");
 > `TitleOne` will show a Big Super Title.  
 
 ### Preview
-<img src="https://static.infinite.si/cherrydocs/1.3/all/imgs/components_references/buttons_button_h1.png" alt="Cherry 1" width="350">
+<img src="https://static.infinite.si/cherrydocs/1.4/all/imgs/components_references/buttons_button_h1.png" alt="Cherry 1" width="350">
 
 ### Examples 
 #### Create title (as object)

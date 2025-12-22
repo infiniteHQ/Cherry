@@ -8,7 +8,7 @@ CherryKit::ButtonImage("Text Image");
 > `ButtonImage` will show a Text Image.  
 
 ### Preview
-<img src="https://static.infinite.si/cherrydocs/1.3/all/imgs/components_references/button_buttonimage.png" alt="Cherry 1" width="350">
+<img src="https://static.infinite.si/cherrydocs/1.4/all/imgs/components_references/button_buttonimage.png" alt="Cherry 1" width="350">
 
 ### Examples 
 #### Create Text Image (as object)
