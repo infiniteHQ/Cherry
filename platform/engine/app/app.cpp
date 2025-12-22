@@ -136,10 +136,6 @@ debug_report(VkDebugReportFlagsEXT flags, VkDebugReportObjectTypeEXT objectType,
 }
 #endif // IMGUI_VULKAN_DEBUG_REPORT
 
-static void CleanupVulkanWindow(ImGui_ImplVulkanH_Window *wd) {
-  ImGui_ImplVulkanH_DestroyWindow(g_Instance, g_Device, wd, g_Allocator);
-}
-
 static void glfw_error_callback(int error, const char *description) {
   fprintf(stderr, "Glfw Error %d: %s\n", error, description);
 }
@@ -407,47 +403,54 @@ void Application::SetupVulkanWindow(ImGui_ImplVulkanH_Window *wd,
                                          wd, g_QueueFamily, g_Allocator, width,
                                          height, g_MinImageCount);
 }
-
-void Application::CleanupVulkan(Cherry::Window *win) {
-  vkDestroyDescriptorPool(g_Device, g_DescriptorPool, g_Allocator);
-
-#ifdef IMGUI_VULKAN_DEBUG_REPORT
-  // Remove the debug report callback
-  auto vkDestroyDebugReportCallbackEXT =
-      (PFN_vkDestroyDebugReportCallbackEXT)vkGetInstanceProcAddr(
-          g_Instance, "vkDestroyDebugReportCallbackEXT");
-  vkDestroyDebugReportCallbackEXT(g_Instance, g_DebugReport, g_Allocator);
-#endif // IMGUI_VULKAN_DEBUG_REPORT
-
-  vkDestroyDevice(g_Device, g_Allocator);
-  vkDestroyInstance(g_Instance, g_Allocator);
-}
-
 void Application::CleanupVulkanWindow(Cherry::Window *win) {
+  if (!win)
+    return;
+
+  win->m_WinData.Surface = win->m_Surface;
+
   ImGui_ImplVulkanH_DestroyWindow(g_Instance, g_Device, &win->m_WinData,
                                   g_Allocator);
+
+  win->m_Surface = VK_NULL_HANDLE;
 }
 
 void Application::CleanupSpecificVulkanWindow(Cherry::Window *win) {
-  ImGui_ImplVulkanH_DestroyWindow(g_Instance, g_Device, &win->m_WinData,
-                                  g_Allocator);
+  CleanupVulkanWindow(win);
 }
 
-void Application::CleanupVulkan() {
-  vkDestroyDescriptorPool(g_Device, g_DescriptorPool, g_Allocator);
+void Application::CleanupVulkan(Cherry::Window *win) {
+  // Sécurité pour ne pas détruire deux fois
+  if (g_Device == VK_NULL_HANDLE)
+    return;
+
+  // 1. Détruire le pool de descripteurs global
+  if (g_DescriptorPool != VK_NULL_HANDLE) {
+    vkDestroyDescriptorPool(g_Device, g_DescriptorPool, g_Allocator);
+    g_DescriptorPool = VK_NULL_HANDLE;
+  }
 
 #ifdef IMGUI_VULKAN_DEBUG_REPORT
-  // Remove the debug report callback
   auto vkDestroyDebugReportCallbackEXT =
       (PFN_vkDestroyDebugReportCallbackEXT)vkGetInstanceProcAddr(
           g_Instance, "vkDestroyDebugReportCallbackEXT");
-  vkDestroyDebugReportCallbackEXT(g_Instance, g_DebugReport, g_Allocator);
-#endif // IMGUI_VULKAN_DEBUG_REPORT
+  if (vkDestroyDebugReportCallbackEXT && g_DebugReport != VK_NULL_HANDLE) {
+    vkDestroyDebugReportCallbackEXT(g_Instance, g_DebugReport, g_Allocator);
+    g_DebugReport = VK_NULL_HANDLE;
+  }
+#endif
 
+  // 2. Détruire le Device (Le GPU logique)
   vkDestroyDevice(g_Device, g_Allocator);
-  vkDestroyInstance(g_Instance, g_Allocator);
-}
+  g_Device = VK_NULL_HANDLE;
 
+  // 3. Détruire l'Instance (Le lien avec le driver)
+  // C'est l'étape ultime. Rien ne doit être appelé après ça.
+  if (g_Instance != VK_NULL_HANDLE) {
+    vkDestroyInstance(g_Instance, g_Allocator);
+    g_Instance = VK_NULL_HANDLE;
+  }
+}
 Application &Application::Get() { return *s_Instance; }
 
 VkDevice &Application::GetVkDevice() { return g_Device; }
@@ -758,54 +761,50 @@ void Application::BoostrappWindow() {
 }
 
 void Application::Shutdown() {
+  g_ApplicationRunning = false;
+
   for (auto &layer : m_LayerStack)
     layer->OnDetach();
-
   m_LayerStack.clear();
 
 #ifdef CHERRY_ENABLE_AUDIO
-  // Stop audio service if needed
   if (app->m_DefaultSpecification.UseAudioService) {
     StopAudioService();
   }
 #endif
 
-#ifdef CHERRY_ENABLE_CEF
-  // ShutdownCEF();
-#endif
-
-  VkResult err;
-  for (auto &window : m_Windows) {
-    window->m_IsClosing = true;
-    c_CurrentRenderedWindow = window;
-    ImGui::SetCurrentContext(window->m_ImGuiContext);
-
-    err = vkDeviceWaitIdle(g_Device);
-    check_vk_result(err);
-
-    // Free resources in queue
-    for (auto &queue : window->s_ResourceFreeQueue) {
-      for (auto &func : queue)
-        func();
-    }
-    window->s_ResourceFreeQueue.clear();
-
-    ImGui_ImplVulkan_Shutdown();
-    ImGui_ImplSDL2_Shutdown();
-    ImGui::DestroyContext();
-
-    // CleanupVulkanWindow(&window->m_WinData);
-    Application::CleanupSpecificVulkanWindow(window.get());
-    Application::CleanupVulkan(window.get());
-
-    SDL_DestroyWindow(window->GetWindowHandle());
-
-    window = nullptr;
+  if (g_Device != VK_NULL_HANDLE) {
+    vkDeviceWaitIdle(g_Device);
   }
 
-  SDL_Quit();
+  for (size_t i = 0; i < m_Windows.size(); ++i) {
+    auto &window = m_Windows[i];
+    if (!window)
+      continue;
 
-  g_ApplicationRunning = false;
+    if (window->m_ImGuiContext) {
+      ImGui::SetCurrentContext(window->m_ImGuiContext);
+      ImGui_ImplVulkan_Shutdown();
+      ImGui_ImplSDL2_Shutdown();
+      ImGui::DestroyContext(window->m_ImGuiContext);
+      window->m_ImGuiContext = nullptr;
+    }
+
+    CleanupVulkanWindow(window.get());
+
+    if (window->GetWindowHandle()) {
+      SDL_DestroyWindow(window->GetWindowHandle());
+    }
+  }
+
+  if (!m_Windows.empty()) {
+    CleanupVulkan(nullptr);
+  }
+
+  m_Windows.clear();
+
+  SDL_Quit();
+  s_Instance = nullptr;
 
   Log::Shutdown();
 }
@@ -1635,11 +1634,6 @@ void Application::MultiThreadWindowRuntime() {
       Uint32 focusedWindowID =
           focusedWindow ? SDL_GetWindowID(focusedWindow) : 0;
 
-#ifdef CHERRY_CEF
-      // OnCEFFrame();
-      // ProcessSDLEvent(event); // Ajoute cette ligne pour gérer les inputs CEF
-#endif // CHERRY_CEF
-
       bool eventHandled = false;
 
       for (auto &window : m_Windows) {
@@ -1850,17 +1844,6 @@ void Application::SingleThreadRuntime() {
       SDL_Window *focusedWindow = SDL_GetMouseFocus();
       Uint32 focusedWindowID =
           focusedWindow ? SDL_GetWindowID(focusedWindow) : 0;
-
-#ifdef CHERRY_CEF
-      for (auto browser : registered_browsers) {
-        browser->OnCEFFrame();
-
-        // TODO : if active
-        // browser->ProcessSDLEvent(event); // Ajoute cette ligne pour gérer les
-        // inputs CEF
-      }
-
-#endif // CHERRY_CEF
 
       bool eventHandled = false;
 
