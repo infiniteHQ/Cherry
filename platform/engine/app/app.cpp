@@ -54,6 +54,7 @@
 namespace fs = std::filesystem;
 
 #if defined(_WIN32) || defined(_WIN64)
+extern bool g_ApplicationRunning;
 #else
 extern bool g_ApplicationRunning;
 #endif
