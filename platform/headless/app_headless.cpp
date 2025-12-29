@@ -1,16 +1,16 @@
 #include "app_headless.hpp"
 
-#include "../../../src/core/log.hpp"
+#include "../../src/core/log.hpp"
 
 #include <chrono>
 #include <iostream>
-
-extern bool g_ApplicationRunning = false;
 
 static Cherry::Application *s_Instance = nullptr;
 
 #ifndef APP_HEADLESS_HPP
 #define APP_HEADLESS_HPP
+
+extern bool g_ApplicationRunning = false;
 
 namespace Cherry {
 

@@ -9,7 +9,6 @@ namespace Cherry {
 extern Cherry::Application *CreateApplication(int argc, char **argv);
 }
 
-
 #if defined(_WIN32) || defined(_WIN64)
 inline bool g_ApplicationRunning = true;
 #else

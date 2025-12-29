@@ -712,9 +712,6 @@ void Application::Init() {
   // Set main context application ptr
   app = &this->Get();
 
-  // Intialize logging
-  Log::Init();
-
 #ifdef CHERRY_ENABLE_AUDIO
   // Init audio service if needed
   if (app->m_DefaultSpecification.UseAudioService) {
@@ -806,8 +803,6 @@ void Application::Shutdown() {
 
   SDL_Quit();
   s_Instance = nullptr;
-
-  Log::Shutdown();
 }
 
 void Application::FrameRender(ImGui_ImplVulkanH_Window *wd, Cherry::Window *win,

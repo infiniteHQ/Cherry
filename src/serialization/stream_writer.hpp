@@ -3,122 +3,108 @@
 #include "../core/assert.hpp"
 #include "../core/buffer.hpp"
 
-#include <string>
 #include <map>
+#include <string>
 #include <unordered_map>
 
-namespace Cherry
-{
-	class StreamWriter
-	{
-	public:
-		virtual ~StreamWriter() = default;
+namespace Cherry {
+class StreamWriter {
+public:
+  virtual ~StreamWriter() = default;
 
-		virtual bool IsStreamGood() const = 0;
-		virtual uint64_t GetStreamPosition() = 0;
-		virtual void SetStreamPosition(uint64_t position) = 0;
-		virtual bool WriteData(const char* data, size_t size) = 0;
-		
-		operator bool() const { return IsStreamGood(); }
+  virtual bool IsStreamGood() const = 0;
+  virtual uint64_t GetStreamPosition() = 0;
+  virtual void SetStreamPosition(uint64_t position) = 0;
+  virtual bool WriteData(const char *data, size_t size) = 0;
 
-		void WriteBuffer(Buffer buffer, bool writeSize = true);
-		void WriteZero(uint64_t size);
-		void WriteString(const std::string& string);
-		void WriteString(std::string_view string);
+  operator bool() const { return IsStreamGood(); }
 
-		template<typename T>
-		void WriteRaw(const T& type)
-		{
-			bool success = WriteData((char*)&type, sizeof(T));
-			WL_CORE_ASSERT(success);
-		}
+  void WriteBuffer(Buffer buffer, bool writeSize = true);
+  void WriteZero(uint64_t size);
+  void WriteString(const std::string &string);
+  void WriteString(std::string_view string);
 
-		template<typename T>
-		void WriteObject(const T& obj)
-		{
-			T::Serialize(this, obj);
-		}
+  template <typename T> void WriteRaw(const T &type) {
+    bool success = WriteData((char *)&type, sizeof(T));
+  }
 
-		template<typename Key, typename Value>
-		void WriteMap(const std::map<Key, Value>& map, bool writeSize = true)
-		{
-			if (writeSize)
-				WriteRaw<uint32_t>((uint32_t)map.size());
+  template <typename T> void WriteObject(const T &obj) {
+    T::Serialize(this, obj);
+  }
 
-			for (const auto& [key, value] : map)
-			{
-				if constexpr (std::is_trivial<Key>())
-					WriteRaw<Key>(key);
-				else
-					WriteObject<Key>(key);
+  template <typename Key, typename Value>
+  void WriteMap(const std::map<Key, Value> &map, bool writeSize = true) {
+    if (writeSize)
+      WriteRaw<uint32_t>((uint32_t)map.size());
 
-				if constexpr (std::is_trivial<Value>())
-					WriteRaw<Value>(value);
-				else
-					WriteObject<Value>(value);
-			}
-		}
+    for (const auto &[key, value] : map) {
+      if constexpr (std::is_trivial<Key>())
+        WriteRaw<Key>(key);
+      else
+        WriteObject<Key>(key);
 
-		template<typename Key, typename Value>
-		void WriteMap(const std::unordered_map<Key, Value>& map, bool writeSize = true)
-		{
-			if (writeSize)
-				WriteRaw<uint32_t>((uint32_t)map.size());
+      if constexpr (std::is_trivial<Value>())
+        WriteRaw<Value>(value);
+      else
+        WriteObject<Value>(value);
+    }
+  }
 
-			for (const auto& [key, value] : map)
-			{
-				if constexpr (std::is_trivial<Key>())
-					WriteRaw<Key>(key);
-				else
-					WriteObject<Key>(key);
+  template <typename Key, typename Value>
+  void WriteMap(const std::unordered_map<Key, Value> &map,
+                bool writeSize = true) {
+    if (writeSize)
+      WriteRaw<uint32_t>((uint32_t)map.size());
 
-				if constexpr (std::is_trivial<Value>())
-					WriteRaw<Value>(value);
-				else
-					WriteObject<Value>(value);
-			}
-		}
+    for (const auto &[key, value] : map) {
+      if constexpr (std::is_trivial<Key>())
+        WriteRaw<Key>(key);
+      else
+        WriteObject<Key>(key);
 
-		template<typename Value>
-		void WriteMap(const std::unordered_map<std::string, Value>& map, bool writeSize = true)
-		{
-			if (writeSize)
-				WriteRaw<uint32_t>((uint32_t)map.size());
+      if constexpr (std::is_trivial<Value>())
+        WriteRaw<Value>(value);
+      else
+        WriteObject<Value>(value);
+    }
+  }
 
-			for (const auto& [key, value] : map)
-			{
-				WriteString(key);
+  template <typename Value>
+  void WriteMap(const std::unordered_map<std::string, Value> &map,
+                bool writeSize = true) {
+    if (writeSize)
+      WriteRaw<uint32_t>((uint32_t)map.size());
 
-				if constexpr (std::is_trivial<Value>())
-					WriteRaw<Value>(value);
-				else
-					WriteObject<Value>(value);
-			}
-		}
+    for (const auto &[key, value] : map) {
+      WriteString(key);
 
-		template<typename T>
-		void WriteArray(const std::vector<T>& array, bool writeSize = true)
-		{
-			if (writeSize)
-				WriteRaw<uint32_t>((uint32_t)array.size());
+      if constexpr (std::is_trivial<Value>())
+        WriteRaw<Value>(value);
+      else
+        WriteObject<Value>(value);
+    }
+  }
 
-			for (const auto& element : array)
-			{
-				if constexpr (std::is_trivial<T>())
-					WriteRaw<T>(element);
-				else
-					WriteObject<T>(element);
-			}
-		}
+  template <typename T>
+  void WriteArray(const std::vector<T> &array, bool writeSize = true) {
+    if (writeSize)
+      WriteRaw<uint32_t>((uint32_t)array.size());
 
-		//template<>
-		void WriteArray(const std::vector<std::string>& array, bool writeSize)
-		{
-			if (writeSize)
-				WriteRaw<uint32_t>((uint32_t)array.size());
+    for (const auto &element : array) {
+      if constexpr (std::is_trivial<T>())
+        WriteRaw<T>(element);
+      else
+        WriteObject<T>(element);
+    }
+  }
 
-			for (const auto& element : array)
-				WriteString(element);
-		}
-	};
+  // template<>
+  void WriteArray(const std::vector<std::string> &array, bool writeSize) {
+    if (writeSize)
+      WriteRaw<uint32_t>((uint32_t)array.size());
+
+    for (const auto &element : array)
+      WriteString(element);
+  }
+};
 } // namespace Cherry

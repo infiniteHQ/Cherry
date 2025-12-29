@@ -45,7 +45,6 @@ include_directories(${Vulkan_INCLUDE_DIRS})
 
 add_subdirectory(lib/glm)
 add_subdirectory(lib/imgui)
-add_subdirectory(lib/spdlog)
 add_subdirectory(lib/stb-image)
 
 if(CHERRY_STATIC)
@@ -114,7 +113,6 @@ target_link_libraries(cherry PUBLIC SDL2-static)
 target_include_directories(cherry PUBLIC
     "${CMAKE_CURRENT_SOURCE_DIR}/src"
     "${PROJECT_SOURCE_DIR}/lib/stb_image"
-    "${PROJECT_SOURCE_DIR}/lib/spdlog/include"
     "${Vulkan_INCLUDE_DIRS}"
 )
 

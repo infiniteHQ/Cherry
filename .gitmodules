@@ -4,9 +4,6 @@
 [submodule "lib/glm"]
 	path = lib/glm
 	url = https://github.com/infiniteHQ/glm
-[submodule "lib/spdlog"]
-	path = lib/spdlog
-	url = https://github.com/gabime/spdlog
 [submodule "lib/fmt"]
 	path = lib/fmt
 	url = https://github.com/fmtlib/fmt
