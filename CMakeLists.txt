@@ -7,11 +7,19 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # ---------------------------------------------------------------------------
 # Options
 # ---------------------------------------------------------------------------
-option(CHERRY_STATIC "Build cherry as a static library" OFF)
-option(CHERRY_ENABLE_NET "Enable networking" OFF)
-option(CHERRY_ENABLE_AUDIO "Enable audio" OFF)
-option(CHERRY_ENABLE_WEBVIEW "Enable webview" OFF)
-option(CHERRY_IMGUI_EXPORT "Export ImGui to DLL" OFF)
+option(CHERRY_STATIC "Link Cherry statically"                            ON)
+option(CHERRY_DEBUG "Enable Cherry debug tools"                         OFF)
+
+option(CHERRY_IMGUI_EXPORT "Disable workspace saves"                    OFF)
+option(CHERRY_PACKAGE "Enable packaging features with pyinstaller"      OFF)
+option(CHERRY_MULTIAPP "Use multiple apps in one executable"            OFF)
+
+option(CHERRY_ENABLE_NET "Enable net features"                          OFF)
+option(CHERRY_ENABLE_AUDIO "Enable audio features"                      OFF)
+option(CHERRY_ENABLE_KIT "Enable base component kit"                    OFF)
+option(CHERRY_ENABLE_LINUXDRM "Enable Linux Direct Rendering Manager"   OFF)
+option(CHERRY_ENABLE_NODES "Disable nodal systems"                      OFF)
+option(CHERRY_ENABLE_WORKSPACESAVES "Disable workspace saves"           OFF)
 
 # ---------------------------------------------------------------------------
 # Compiler flags
@@ -76,6 +84,9 @@ if(CHERRY_ENABLE_LINUXDRM)
 target_compile_definitions(cherry PUBLIC CHERRY_ENABLE_LINUXDRM)
 endif()
 
+if(CHERRY_MULTIAPP)
+target_compile_definitions(cherry PUBLIC CHERRY_MULTIAPP)
+endif()
 
 # ---------------------------------------------------------------------------
 # DLL export/import macros
@@ -113,6 +124,7 @@ target_link_libraries(cherry PUBLIC SDL2-static)
 target_include_directories(cherry PUBLIC
     "${CMAKE_CURRENT_SOURCE_DIR}/src"
     "${PROJECT_SOURCE_DIR}/lib/stb_image"
+    "${PROJECT_SOURCE_DIR}/lib"
     "${Vulkan_INCLUDE_DIRS}"
 )
 

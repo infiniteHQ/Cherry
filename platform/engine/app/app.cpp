@@ -98,7 +98,7 @@ static std::vector<std::shared_ptr<Cherry::AppWindow>>
                       // applications
 
 static bool g_LogicalDeviceInitialized = false;
-static int g_MinImageCount = 0;
+static int g_MinImageCount = 2;
 static int c_WindowsCount = 0;
 static std::string LastWindowPressed = "";
 static int RedockCount = 0;
@@ -404,6 +404,7 @@ void Application::SetupVulkanWindow(ImGui_ImplVulkanH_Window *wd,
                                          wd, g_QueueFamily, g_Allocator, width,
                                          height, g_MinImageCount);
 }
+
 void Application::CleanupVulkanWindow(Cherry::Window *win) {
   if (!win)
     return;
@@ -421,11 +422,9 @@ void Application::CleanupSpecificVulkanWindow(Cherry::Window *win) {
 }
 
 void Application::CleanupVulkan(Cherry::Window *win) {
-  // Sécurité pour ne pas détruire deux fois
   if (g_Device == VK_NULL_HANDLE)
     return;
 
-  // 1. Détruire le pool de descripteurs global
   if (g_DescriptorPool != VK_NULL_HANDLE) {
     vkDestroyDescriptorPool(g_Device, g_DescriptorPool, g_Allocator);
     g_DescriptorPool = VK_NULL_HANDLE;
@@ -441,12 +440,9 @@ void Application::CleanupVulkan(Cherry::Window *win) {
   }
 #endif
 
-  // 2. Détruire le Device (Le GPU logique)
   vkDestroyDevice(g_Device, g_Allocator);
   g_Device = VK_NULL_HANDLE;
 
-  // 3. Détruire l'Instance (Le lien avec le driver)
-  // C'est l'étape ultime. Rien ne doit être appelé après ça.
   if (g_Instance != VK_NULL_HANDLE) {
     vkDestroyInstance(g_Instance, g_Allocator);
     g_Instance = VK_NULL_HANDLE;
@@ -2291,13 +2287,9 @@ void Application::HandleLayerStackUpdate(Window *window) {
 
 void Application::PrepareViewport(Window *window) {
   ImGuiViewport *viewport = ImGui::GetMainViewport();
-  ImGuiViewportP *p_viewport = window->m_ImGuiContext->Viewports[window->WinID];
 
-  for (int n = 0; n < window->m_ImGuiContext->Viewports.Size; n++) {
-    ImGuiViewportP *viewport = window->m_ImGuiContext->Viewports[n];
-    viewport->DrawData = NULL;
-    viewport->DrawDataP.Clear();
-  }
+  // N'utilisez plus window->WinID s'il contient un gros nombre (hash)
+  // Laissez ImGui gérer ses propres viewports internes pour l'instant
 
   ImGui::SetNextWindowPos(viewport->Pos);
   ImGui::SetNextWindowSize(viewport->Size);

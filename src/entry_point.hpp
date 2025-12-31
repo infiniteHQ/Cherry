@@ -41,6 +41,7 @@ static int ThirdMain(int argc, char **argv,
 
 // For single app usage
 static int Main(int argc, char **argv) {
+#if !defined(CHERRY_MULTIAPP)
   while (g_ApplicationRunning) {
     Cherry::Application *app = Cherry::CreateApplication(argc, argv);
     switch (app->m_DefaultSpecification.RuntimeMode) {
@@ -56,6 +57,9 @@ static int Main(int argc, char **argv) {
     delete app;
   }
 
+#else
+  printf("Please turn CHERRY_MULTIAPP OFF to use the main Cherry function.");
+#endif
   return 0;
 }
 

@@ -18,6 +18,7 @@ Cherry::SetTheme();
 
 #include "../../../options.hpp"
 #include "../../../src/core/color.hpp"
+#include "../../../src/core/log.hpp"
 #include "../../../src/layer.hpp"
 #include "../app_window/app_window.hpp"
 #include "../base.hpp"
