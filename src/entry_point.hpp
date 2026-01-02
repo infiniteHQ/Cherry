@@ -13,54 +13,62 @@ extern Cherry::Application *CreateApplication(int argc, char **argv);
 
 namespace Cherry {
 
-// For multiple app usage
-static int ThirdMain(int argc, char **argv,
-                     Cherry::Application *(*create_app)(int argc,
-                                                        char **argv)) {
-  while (g_ApplicationRunning) {
-    Cherry::Application *app = create_app(argc, argv);
+static int ThirdMain(
+    int argc,
+    char** argv,
+    Cherry::Application* (*create_app)(int, char**)) {
+
+  while (Cherry::Application::RunningState().load(
+      std::memory_order_acquire)) {
+
+    Cherry::Application* app = create_app(argc, argv);
+
     switch (app->m_DefaultSpecification.RuntimeMode) {
-    case Runtime::SingleThread: {
-      app->SingleThreadRuntime();
-      break;
+      case Runtime::SingleThread:
+      default:
+        app->SingleThreadRuntime();
+        break;
     }
-    default: {
-      app->SingleThreadRuntime();
-      break;
-    }
-    }
+
     delete app;
   }
 
   return 0;
 }
 
+
 // For single app usage
-static int Main(int argc, char **argv) {
+static int Main(int argc, char** argv) {
 #if !defined(CHERRY_MULTIAPP)
-  while (g_ApplicationRunning) {
-    Cherry::Application *app = Cherry::CreateApplication(argc, argv);
+
+  while (Cherry::Application::RunningState().load(
+      std::memory_order_acquire)) {
+
+    Cherry::Application* app = Cherry::CreateApplication(argc, argv);
+
     switch (app->m_DefaultSpecification.RuntimeMode) {
-    case Runtime::SingleThread: {
-      app->SingleThreadRuntime();
-      break;
+      case Runtime::SingleThread:
+      default:
+        app->SingleThreadRuntime();
+        break;
     }
-    default: {
-      app->SingleThreadRuntime();
-      break;
-    }
-    }
+
     delete app;
   }
 
 #else
-  printf("Please turn CHERRY_MULTIAPP OFF to use the main Cherry "
-         "function.");
+  printf(
+    "Please turn CHERRY_MULTIAPP OFF to use the main Cherry function."
+  );
 #endif
+
   return 0;
 }
 
-static bool IsRunning() { return g_ApplicationRunning; }
+static bool IsRunning() {
+    return Cherry::Application::RunningState().load(std::memory_order_acquire);
+}
+
 
 } // namespace Cherry
 

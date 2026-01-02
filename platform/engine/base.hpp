@@ -10,8 +10,6 @@
 #include <mutex>
 #include <string>
 
-inline bool g_ApplicationRunning = true;
-
 namespace Cherry {
 enum class WindowType {
   Docking,

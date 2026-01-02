@@ -214,6 +214,10 @@ public:
                   ApplicationSpecification());
   ~Application();
 
+  static std::atomic<bool>& RunningState();
+
+  static void RequestShutdown();
+
   // Set static components
   static Application &Get();
   static VkDevice &GetVkDevice();

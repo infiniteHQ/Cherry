@@ -750,8 +750,17 @@ void Application::BoostrappWindow() {
       app->m_DefaultSpecification.Height, app->m_DefaultSpecification));
 }
 
+std::atomic<bool>& Application::RunningState() {
+  static std::atomic<bool> running{true};
+  return running;
+}
+
+void Application::RequestShutdown() {
+  RunningState().store(false, std::memory_order_release);
+}
+
 void Application::Shutdown() {
-  g_ApplicationRunning = false;
+  RequestShutdown();
 
   for (auto &layer : m_LayerStack)
     layer->OnDetach();
