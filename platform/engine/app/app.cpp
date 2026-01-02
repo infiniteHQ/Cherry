@@ -4,9 +4,9 @@
 #include "../../../lib/sdl2/include/SDL_vulkan.h"
 #include "../../../src/core/log.hpp"
 #include "../app_window/app_window.hpp"
+#include "../base.hpp"
 #include "../components/components.hpp"
 #include "../window/window.hpp"
-#include "../base.hpp"
 
 /**
  * @file app.cpp
@@ -53,7 +53,6 @@
 #include "../imgui/theme/deftheme.hpp"
 
 namespace fs = std::filesystem;
-
 
 // #define IMGUI_UNLIMITED_FRAME_RATE
 #ifdef _DEBUG
@@ -750,7 +749,7 @@ void Application::BoostrappWindow() {
       app->m_DefaultSpecification.Height, app->m_DefaultSpecification));
 }
 
-std::atomic<bool>& Application::RunningState() {
+std::atomic<bool> &Application::RunningState() {
   static std::atomic<bool> running{true};
   return running;
 }
@@ -1374,46 +1373,69 @@ void Application::PresentAllWindows() {
       SDL_GetGlobalMouseState(&c_CurrentDragDropState->mouseX,
                               &c_CurrentDragDropState->mouseY);
 
-      {
-        float oldsize = ImGui::GetFont()->Scale;
-        ImGui::GetFont()->Scale *= window->m_Specifications.FontGlobalScale;
-        ImGui::PushFont(ImGui::GetFont());
+      float oldScale = ImGui::GetFont()->Scale;
+      ImGui::GetFont()->Scale *= window->m_Specifications.FontGlobalScale;
+      ImGui::PushFont(ImGui::GetFont());
 
-        ImVec4 grayColor = ImVec4(0.4f, 0.4f, 0.4f, 1.0f);
-        ImVec4 graySeparatorColor = ImVec4(0.4f, 0.4f, 0.4f, 0.5f);
-        ImVec4 darkBackgroundColor = ImVec4(0.15f, 0.15f, 0.15f, 1.0f);
-        ImVec4 lightBorderColor = ImVec4(0.2f, 0.2f, 0.2f, 1.0f);
+      ImGui::PushStyleColor(ImGuiCol_WindowBg,
+                            ImVec4(0.12f, 0.12f, 0.12f, 0.95f));
+      ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0.30f, 0.30f, 0.30f, 1.0f));
 
-        ImGui::PushStyleColor(ImGuiCol_PopupBg, darkBackgroundColor);
-        ImGui::PushStyleColor(ImGuiCol_Border, lightBorderColor);
-        ImGui::PushStyleVar(ImGuiStyleVar_PopupRounding, 3.0f);
+      ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(8, 8));
+      ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 4.0f);
+      ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 1.0f);
 
-        ImGui::SetNextWindowPos(
-            ImVec2((float)c_CurrentDragDropState->mouseX - 75,
-                   (float)c_CurrentDragDropState->mouseY - 25));
-        ImGui::SetNextWindowSize(ImVec2(170, 55));
-        ImGui::OpenPopup("FloatingRectangle");
-        if (ImGui::BeginPopup("FloatingRectangle")) {
-          ImGui::Text(
-              c_CurrentDragDropState->LastDraggingAppWindowHost.c_str());
+      ImGui::SetNextWindowPos(
+          ImVec2((float)c_CurrentDragDropState->mouseX + 15,
+                 (float)c_CurrentDragDropState->mouseY + 15));
 
-          ImGui::GetFont()->Scale *= 0.64;
-          ImGui::TextColored(ImVec4(0.5f, 0.5f, 0.5f, 1.0f),
-                             "This is the current state");
+      ImGuiWindowFlags previewFlags =
+          ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize |
+          ImGuiWindowFlags_NoInputs | ImGuiWindowFlags_NoNav |
+          ImGuiWindowFlags_NoFocusOnAppearing |
+          ImGuiWindowFlags_NoSavedSettings;
 
-          ImGui::GetFont()->Scale *= window->m_Specifications.FontGlobalScale;
+      if (ImGui::Begin("##DragPreviewOverlay", NULL, previewFlags)) {
+        float iconSize = 30.0f;
+        ImVec2 p = ImGui::GetCursorScreenPos();
+        const char *titleText =
+            c_CurrentDragDropState->LastDraggingAppWindowHost.c_str();
+        const char *descText = "Desc...";
 
-          ImGui::EndPopup();
+        bool hasDesc = (descText && descText[0] != '\0');
+        ImVec2 titleSize = ImGui::CalcTextSize(titleText);
+
+        ImGui::GetWindowDrawList()->AddRectFilled(
+            p, ImVec2(p.x + iconSize, p.y + iconSize),
+            IM_COL32(230, 40, 40, 255), 2.0f);
+
+        float textStartX = p.x + iconSize + 10.0f;
+
+        if (hasDesc) {
+          ImGui::SetCursorScreenPos(ImVec2(textStartX, p.y - 1.0f));
+          ImGui::TextUnformatted(titleText);
+
+          ImGui::SetCursorScreenPos(
+              ImVec2(textStartX, p.y + titleSize.y + 1.0f));
+          ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.5f, 0.5f, 0.5f, 1.0f));
+          ImGui::TextDisabled("%s", descText);
+          ImGui::PopStyleColor();
+        } else {
+          float centeredY = p.y + (iconSize - titleSize.y) * 0.5f;
+          ImGui::SetCursorScreenPos(ImVec2(textStartX, centeredY));
+          ImGui::TextUnformatted(titleText);
         }
 
-        ImGui::PopStyleVar();
-        ImGui::PopStyleColor(2);
-
-        ImGui::GetFont()->Scale = oldsize;
-        ImGui::PopFont();
+        ImGui::SetCursorScreenPos(p);
+        ImGui::Dummy(ImVec2(iconSize + 10.0f + titleSize.x, iconSize));
       }
-    }
+      ImGui::End();
 
+      ImGui::PopStyleVar(3);
+      ImGui::PopStyleColor(2);
+      ImGui::GetFont()->Scale = oldScale;
+      ImGui::PopFont();
+    }
     ImGui::PopFont();
     window->UnloadTheme();
 
