@@ -6,6 +6,7 @@
 #include "../app_window/app_window.hpp"
 #include "../components/components.hpp"
 #include "../window/window.hpp"
+#include "../base.hpp"
 
 /**
  * @file app.cpp
@@ -53,11 +54,6 @@
 
 namespace fs = std::filesystem;
 
-#if defined(_WIN32) || defined(_WIN64)
-extern bool g_ApplicationRunning;
-#else
-extern bool g_ApplicationRunning;
-#endif
 
 // #define IMGUI_UNLIMITED_FRAME_RATE
 #ifdef _DEBUG
