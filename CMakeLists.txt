@@ -14,9 +14,10 @@ option(CHERRY_IMGUI_EXPORT "Disable workspace saves"                    OFF)
 option(CHERRY_PACKAGE "Enable packaging features with pyinstaller"      OFF)
 option(CHERRY_MULTIAPP "Use multiple apps in one executable"            OFF)
 
+option(CHERRY_ENABLE_SHADERS "Enable vulkan shaders system"             OFF)
 option(CHERRY_ENABLE_NET "Enable net features"                          OFF)
 option(CHERRY_ENABLE_AUDIO "Enable audio features"                      OFF)
-option(CHERRY_ENABLE_KIT "Enable base component kit"                    OFF)
+option(CHERRY_ENABLE_KIT "Enable base component kit"                     ON)
 option(CHERRY_ENABLE_LINUXDRM "Enable Linux Direct Rendering Manager"   OFF)
 option(CHERRY_ENABLE_NODES "Disable nodal systems"                      OFF)
 option(CHERRY_ENABLE_WORKSPACESAVES "Disable workspace saves"           OFF)
@@ -135,6 +136,10 @@ endif()
 
 if(CHERRY_MULTIAPP)
     target_compile_definitions(cherry PUBLIC CHERRY_MULTIAPP)
+endif()
+
+if(CHERRY_ENABLE_KIT)
+    target_compile_definitions(cherry PUBLIC CHERRY_ENABLE_KIT)
 endif()
 
 if(CHERRY_ENABLE_NET)

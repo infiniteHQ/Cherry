@@ -2,7 +2,7 @@
 
 CherryApplication *Cherry::CreateApplication(int argc, char **argv) {
   Cherry::ApplicationSpecification config;
-  config.SetMainRenderCallback([]() { CherryKit::TitleOne("Hello World"); });
+  config.SetMainRenderCallback([]() { CherryKit::TextSimple("Hello World"); });
   return new CherryApplication(config);
 }
 

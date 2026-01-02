@@ -37,6 +37,13 @@
 ///////////////////////////////////////////////////////////////
 /// Kit : 80+ Components, All in one windows, theme, utils...   ///
 ///////////////////////////////////////////////////////////////
+// Minimal includes
+#include "./kit/components/texts/text_simple/text_simple.hpp"
+#include "./kit/themes/dark/dark.hpp"
+#include "./kit/utils/behavior/margin/margin.hpp"
+
+// Additional includes
+#ifdef CHERRY_ENABLE_KIT
 // Buttons
 #include "./kit/components/buttons/button_image/button_image.hpp"
 #include "./kit/components/buttons/button_image_drowpdown/button_image_drowpdown.hpp"
@@ -60,7 +67,6 @@
 #include "./kit/components/texts/text_image/text_image.hpp"
 #include "./kit/components/texts/text_left/text_left.hpp"
 #include "./kit/components/texts/text_right/text_right.hpp"
-#include "./kit/components/texts/text_simple/text_simple.hpp"
 #include "./kit/components/texts/text_wrapped/text_wrapped.hpp"
 // Table
 #include "./kit/components/tables/table_custom/table_custom.hpp"
@@ -151,8 +157,6 @@
 ///////////////////////////////////////////////////////////////
 /// Style : +5 Style effects , All in one windows, theme, utils...   ///
 ///////////////////////////////////////////////////////////////
-// Margin style
-#include "./kit/utils/behavior/margin/margin.hpp"
 // Font style
 #include "./kit/utils/behavior/font/font.hpp"
 
@@ -164,7 +168,6 @@
 ///////////////////////////////////////////////////////////////
 /// Themes                                                  ///
 ///////////////////////////////////////////////////////////////
-#include "./kit/themes/dark/dark.hpp"
 #include "./kit/themes/dark_colorfull/dark_colorfull.hpp"
 #include "./kit/themes/dark_high_contrast/dark_high_contrast.hpp"
 #include "./kit/themes/dark_vortex/dark_vortex.hpp"
@@ -172,6 +175,7 @@
 #include "./kit/themes/light_colorfull/light_colorfull.hpp"
 #include "./kit/themes/light_high_contrast/light_high_contrast.hpp"
 #include "./kit/themes/light_vortex/light_vortex.hpp"
+#endif // CHERRY_ENABLE_KIT
 
 namespace CherryKit = Cherry::Kit;
 namespace CherryStyle = Cherry::Style;
