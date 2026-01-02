@@ -5,16 +5,17 @@
 #ifndef UIKIT_ENTRYPOINT_H
 #define UIKIT_ENTRYPOINT_H
 
+#if !defined(CHERRY_MULTIAPP)
 namespace Cherry {
 extern Cherry::Application *CreateApplication(int argc, char **argv);
 }
+#endif
 
 #if defined(_WIN32) || defined(_WIN64)
 inline bool g_ApplicationRunning = true;
 #else
 inline bool g_ApplicationRunning = true;
 #endif
-
 namespace Cherry {
 
 // For multiple app usage
@@ -58,7 +59,8 @@ static int Main(int argc, char **argv) {
   }
 
 #else
-  printf("Please turn CHERRY_MULTIAPP OFF to use the main Cherry function.");
+  printf("Please turn CHERRY_MULTIAPP OFF to use the main Cherry "
+         "function.");
 #endif
   return 0;
 }

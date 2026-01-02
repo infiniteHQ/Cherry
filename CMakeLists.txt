@@ -7,7 +7,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # ---------------------------------------------------------------------------
 # Options
 # ---------------------------------------------------------------------------
-option(CHERRY_STATIC "Link Cherry statically"                            ON)
+option(CHERRY_STATIC "Link Cherry statically"                           OFF)
 option(CHERRY_DEBUG "Enable Cherry debug tools"                         OFF)
 
 option(CHERRY_IMGUI_EXPORT "Disable workspace saves"                    OFF)
@@ -20,6 +20,7 @@ option(CHERRY_ENABLE_KIT "Enable base component kit"                    OFF)
 option(CHERRY_ENABLE_LINUXDRM "Enable Linux Direct Rendering Manager"   OFF)
 option(CHERRY_ENABLE_NODES "Disable nodal systems"                      OFF)
 option(CHERRY_ENABLE_WORKSPACESAVES "Disable workspace saves"           OFF)
+
 
 # ---------------------------------------------------------------------------
 # Compiler flags
@@ -84,9 +85,6 @@ if(CHERRY_ENABLE_LINUXDRM)
 target_compile_definitions(cherry PUBLIC CHERRY_ENABLE_LINUXDRM)
 endif()
 
-if(CHERRY_MULTIAPP)
-target_compile_definitions(cherry PUBLIC CHERRY_MULTIAPP)
-endif()
 
 # ---------------------------------------------------------------------------
 # DLL export/import macros
@@ -124,7 +122,6 @@ target_link_libraries(cherry PUBLIC SDL2-static)
 target_include_directories(cherry PUBLIC
     "${CMAKE_CURRENT_SOURCE_DIR}/src"
     "${PROJECT_SOURCE_DIR}/lib/stb_image"
-    "${PROJECT_SOURCE_DIR}/lib"
     "${Vulkan_INCLUDE_DIRS}"
 )
 
@@ -134,6 +131,10 @@ target_include_directories(cherry PUBLIC
 if(CHERRY_ENABLE_AUDIO)
     target_compile_definitions(cherry PUBLIC CHERRY_ENABLE_AUDIO)
     target_link_libraries(cherry PUBLIC miniaudio)
+endif()
+
+if(CHERRY_MULTIAPP)
+    target_compile_definitions(cherry PUBLIC CHERRY_MULTIAPP)
 endif()
 
 if(CHERRY_ENABLE_NET)

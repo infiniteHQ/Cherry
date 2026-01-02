@@ -98,7 +98,7 @@ static std::vector<std::shared_ptr<Cherry::AppWindow>>
                       // applications
 
 static bool g_LogicalDeviceInitialized = false;
-static int g_MinImageCount = 2;
+static int g_MinImageCount = 0;
 static int c_WindowsCount = 0;
 static std::string LastWindowPressed = "";
 static int RedockCount = 0;

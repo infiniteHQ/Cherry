@@ -18,7 +18,7 @@ CherryApplication CherryMain(int argc, char **argv) {
   config.SetRenderMode(Cherry::WindowRenderingMethod::DockingWindows);
   config.AddTheme(CherryThemes::DarkVortex());
 
-  auto app =  new CherryApplication(config);
+  auto app = new CherryApplication(config);
 
   // When created, let's add some components to the runtime
   Cherry::AddAppWindow(CherryKit::WindowSimple("Test window", Render));
