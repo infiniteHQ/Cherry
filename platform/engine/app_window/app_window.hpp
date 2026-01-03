@@ -42,8 +42,9 @@ public:
                     DockEmplacement emplacement, const bool &fromSave = false,
                     const std::string &appWindow = "none",
                     const bool &newwin = false);
-  void AttachOnNewWindow(ApplicationSpecification spec);
-  void AttachOnWindow(const std::string winname);
+  void AttachOnNewWindow(const ApplicationSpecification &spec);
+  void AttachOnWindow(const ApplicationSpecification &spec);
+  void AttachOnWindow(const std::string &window_name);
   std::shared_ptr<Cherry::Image> GetImage(const std::string &path);
   ImTextureID *GetTexture(const std::string &path);
   float EstimateMenubarRightWidth();

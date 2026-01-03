@@ -5,6 +5,10 @@ void Render() {
   std::string WindowName = CherryWindow.GetName();
   std::string AppWindowName = CherryAppWindow.GetName();
 
+  if (CherryKit::ButtonText("Start debug").GetDataAs<bool>("isClicked")) {
+    Cherry::Tools::StartDebugTool();
+  }
+
   CherryKit::TitleOne("Try to undock me !!");
 
   CherryKit::TextSimple("App name (level 1): " + AppName);
@@ -21,6 +25,9 @@ CherryApplication CherryMain(int argc, char **argv) {
   auto app = new CherryApplication(config);
 
   // When created, let's add some components to the runtime
+  CherryApp.SetDescriptionForAppWindow("Test window", "A super cool window");
+  CherryApp.SetLogoPathForAppWindow("Test window",
+                                    "/home/diego/Téléchargements/fa_send.png");
   Cherry::AddAppWindow(CherryKit::WindowSimple("Test window", Render));
   Cherry::AddAppWindow(CherryKit::WindowSimple("Test window 2", Render));
   Cherry::AddAppWindow(CherryKit::WindowSimple("Test window 3", Render));

@@ -17,7 +17,7 @@
 // with CEF (Chrome Embedded Framework) #define CHERRY_ENABLE_CEF     //
 // OBSOLETE #define CHERRY_CEF            // OBSOLETE
 // ──────────────────────────────────────────────────────────
-
+#define CHERRY_DEBUG
 #define IMGUI_ENABLE_FREETYPE
 
 // ──────────────────────────────────────────────────────────

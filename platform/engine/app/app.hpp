@@ -214,7 +214,7 @@ public:
                   ApplicationSpecification());
   ~Application();
 
-  static std::atomic<bool>& RunningState();
+  static std::atomic<bool> &RunningState();
 
   static void RequestShutdown();
 
@@ -437,6 +437,14 @@ public:
 
   void RenderComponent(Component &component);
   void RenderComponent(const std::shared_ptr<Component> &component);
+
+  // App window data
+  void SetDescriptionForAppWindow(const std::string &windowId,
+                                  const std::string &description);
+  void SetLogoPathForAppWindow(const std::string &windowId,
+                               const std::string &path);
+  const std::string &GetDescriptionForAppWindow(const std::string &windowId);
+  const std::string &GetLogoPathForAppWindow(const std::string &windowId);
 
   // TODO:
   // SetDataToComponentPool
@@ -766,6 +774,8 @@ public:
   std::string m_DefaultLocale;
 
   std::string m_HttpCacheFolderName = "http_cache";
+
+  std::unordered_map<std::string, WindowMetaData> m_AppWindowRegistry;
 
 private:
   void Init();

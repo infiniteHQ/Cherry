@@ -1398,18 +1398,42 @@ void Application::PresentAllWindows() {
       if (ImGui::Begin("##DragPreviewOverlay", NULL, previewFlags)) {
         float iconSize = 30.0f;
         ImVec2 p = ImGui::GetCursorScreenPos();
-        const char *titleText =
-            c_CurrentDragDropState->LastDraggingAppWindowHost.c_str();
-        const char *descText = "Desc...";
 
+        const std::string &windowId =
+            c_CurrentDragDropState->LastDraggingAppWindowHost;
+        const std::string &logoPath = GetLogoPathForAppWindow(windowId);
+        const std::string &descStr = GetDescriptionForAppWindow(windowId);
+
+        const char *titleText = windowId.c_str();
+        const char *descText = descStr.c_str();
         bool hasDesc = (descText && descText[0] != '\0');
-        ImVec2 titleSize = ImGui::CalcTextSize(titleText);
 
-        ImGui::GetWindowDrawList()->AddRectFilled(
-            p, ImVec2(p.x + iconSize, p.y + iconSize),
-            IM_COL32(230, 40, 40, 255), 2.0f);
+        if (!logoPath.empty()) {
+          ImGui::SetCursorScreenPos(p);
+          CherryGUI::Image(Cherry::GetTexture(logoPath),
+                           ImVec2(iconSize, iconSize));
+        } else {
+          ImDrawList *drawList = ImGui::GetWindowDrawList();
+          ImU32 colGray = IM_COL32(200, 200, 200, 255);
+          ImU32 colAccent = IM_COL32(230, 40, 40, 255);
+
+          drawList->AddRectFilled(p, ImVec2(p.x + iconSize, p.y + iconSize),
+                                  IM_COL32(50, 50, 50, 255), 2.0f);
+
+          float winX = p.x + 5.0f;
+          float winY = p.y + 7.0f;
+          float winW = iconSize - 10.0f;
+          float winH = iconSize - 14.0f;
+
+          drawList->AddRectFilled(ImVec2(winX, winY),
+                                  ImVec2(winX + winW, winY + 4.0f), colAccent,
+                                  1.0f);
+          drawList->AddRect(ImVec2(winX, winY),
+                            ImVec2(winX + winW, winY + winH), colGray, 1.0f);
+        }
 
         float textStartX = p.x + iconSize + 10.0f;
+        ImVec2 titleSize = ImGui::CalcTextSize(titleText);
 
         if (hasDesc) {
           ImGui::SetCursorScreenPos(ImVec2(textStartX, p.y - 1.0f));
@@ -1418,7 +1442,7 @@ void Application::PresentAllWindows() {
           ImGui::SetCursorScreenPos(
               ImVec2(textStartX, p.y + titleSize.y + 1.0f));
           ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.5f, 0.5f, 0.5f, 1.0f));
-          ImGui::TextDisabled("%s", descText);
+          ImGui::TextUnformatted(descText);
           ImGui::PopStyleColor();
         } else {
           float centeredY = p.y + (iconSize - titleSize.y) * 0.5f;
@@ -1429,6 +1453,7 @@ void Application::PresentAllWindows() {
         ImGui::SetCursorScreenPos(p);
         ImGui::Dummy(ImVec2(iconSize + 10.0f + titleSize.x, iconSize));
       }
+      ImGui::End();
       ImGui::End();
 
       ImGui::PopStyleVar(3);
@@ -1935,8 +1960,13 @@ void Application::SingleThreadRuntime() {
     for (auto &appwin : s_Instance->m_AppWindows) {
       if (!AppWindowRedocked) {
         if (!appwin->m_AttachRequest.m_IsFinished) {
-          std::string win = Application::Get().SpawnWindow(
-              appwin->m_AttachRequest.m_Specification);
+          std::string win;
+          if (appwin->m_AttachRequest.m_ExistingWindow) {
+            win = appwin->m_AttachRequest.m_Specification.Name;
+          } else {
+            win = Application::Get().SpawnWindow(
+                appwin->m_AttachRequest.m_Specification);
+          }
           appwin->SetParentWindow(win);
           appwin->m_AttachRequest.m_IsFinished = true;
         }
@@ -3042,6 +3072,36 @@ Application::GetComponentPtr(const Identifier &identifier) {
   return nullptr;
 }
 
+void Application::SetDescriptionForAppWindow(const std::string &windowId,
+                                             const std::string &description) {
+  m_AppWindowRegistry[windowId].Description = description;
+}
+
+void Application::SetLogoPathForAppWindow(const std::string &windowId,
+                                          const std::string &path) {
+  m_AppWindowRegistry[windowId].LogoPath = path;
+}
+
+const std::string &
+Application::GetDescriptionForAppWindow(const std::string &windowId) {
+  auto it = m_AppWindowRegistry.find(windowId);
+  if (it != m_AppWindowRegistry.end()) {
+    return it->second.Description;
+  }
+  static const std::string defaultDesc = "";
+  return defaultDesc;
+}
+
+const std::string &
+Application::GetLogoPathForAppWindow(const std::string &windowId) {
+  auto it = m_AppWindowRegistry.find(windowId);
+  if (it != m_AppWindowRegistry.end()) {
+    return it->second.LogoPath;
+  }
+  static const std::string emptyPath = "";
+  return emptyPath;
+}
+
 // Simplicity utils
 
 std::shared_ptr<Cherry::Window> &GetCurrentRenderedWindow() {
@@ -3292,4 +3352,5 @@ void PushFont(const std::string &font_name) {
 }
 
 void PopFont() { ImGui::PopFont(); }
+
 } // namespace Cherry

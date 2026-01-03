@@ -118,6 +118,11 @@ struct WindowThemeColor {
   }
 };
 
+struct WindowMetaData {
+  std::string Description = "";
+  std::string LogoPath = "";
+};
+
 struct ApplicationSpecification {
   std::string Name = "Cherry App";
   std::string IconPath;
@@ -252,6 +257,7 @@ struct ReattachRequest {
   ApplicationSpecification m_Specification;
   std::string m_AppWindowName;
   bool m_IsFinished = true;
+  bool m_ExistingWindow = false;
 };
 
 struct RedockRequest {

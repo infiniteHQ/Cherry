@@ -58,14 +58,26 @@ std::shared_ptr<RedockRequest> AppWindow::CreateRedockEvent(
   return req;
 }
 
-void AppWindow::AttachOnNewWindow(ApplicationSpecification spec) {
+void AppWindow::AttachOnNewWindow(const ApplicationSpecification &spec) {
   m_AttachRequest.m_Specification = spec;
   m_AttachRequest.m_AppWindowName = m_IdName;
   m_AttachRequest.m_IsFinished = false;
 }
 
-void AppWindow::AttachOnWindow(const std::string winname) {
-  //
+void AppWindow::AttachOnWindow(const ApplicationSpecification &spec) {
+  m_AttachRequest.m_Specification = spec;
+  m_AttachRequest.m_AppWindowName = m_IdName;
+  m_AttachRequest.m_IsFinished = false;
+  m_AttachRequest.m_ExistingWindow = true;
+}
+
+void AppWindow::AttachOnWindow(const std::string &window_name) {
+  ApplicationSpecification spec;
+  spec.SetName(window_name);
+  m_AttachRequest.m_Specification = spec;
+  m_AttachRequest.m_AppWindowName = m_IdName;
+  m_AttachRequest.m_IsFinished = false;
+  m_AttachRequest.m_ExistingWindow = true;
 }
 
 void AppWindow::SetDeleteCallback(const std::function<void()> &callback) {

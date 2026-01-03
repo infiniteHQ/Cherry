@@ -42,6 +42,9 @@
 #include "./kit/themes/dark/dark.hpp"
 #include "./kit/utils/behavior/margin/margin.hpp"
 
+#ifdef CHERRY_DEBUG
+#include "./kit/tools/debug/debug.hpp"
+#endif
 // Additional includes
 #ifdef CHERRY_ENABLE_KIT
 // Buttons
