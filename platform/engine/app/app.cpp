@@ -52,6 +52,10 @@
 #include "../imgui/Roboto-Regular.embed"
 #include "../imgui/theme/deftheme.hpp"
 
+#ifdef CHERRY_DEBUG
+#include "../debug/debug.hpp"
+#endif
+
 namespace fs = std::filesystem;
 
 // #define IMGUI_UNLIMITED_FRAME_RATE
@@ -65,7 +69,7 @@ static Cherry::Application *app;
 static bool c_ValidDropZoneFounded = false;
 static bool c_DockIsDragging = false;
 static bool c_MasterSwapChainRebuild = false;
-
+static bool m_TriggerDevtools = false;
 static std::shared_ptr<Cherry::WindowDragDropState> c_CurrentDragDropState;
 static Cherry::Window s_EmptyWindow;
 static Cherry::Component s_EmptyComponent;
@@ -98,6 +102,7 @@ static int c_WindowsCount = 0;
 static std::string LastWindowPressed = "";
 static int RedockCount = 0;
 static bool DragRendered = false;
+
 static std::shared_ptr<Cherry::RedockRequest> LatestRequest;
 static std::vector<std::pair<Cherry::ProcessCallback, std::function<void()>>>
     g_ProcessCallbacks;
@@ -702,7 +707,10 @@ void Application::PushRedockEvent(
 void Application::Init() {
   // Set main context application ptr
   app = &this->Get();
-
+#ifdef CHERRY_DEBUG
+  Cherry::Application::DebugToolState().load(std::memory_order_acquire);
+  Cherry::Application::DebugToolState().store(false);
+#endif
 #ifdef CHERRY_ENABLE_AUDIO
   // Init audio service if needed
   if (app->m_DefaultSpecification.UseAudioService) {
@@ -757,6 +765,35 @@ std::atomic<bool> &Application::RunningState() {
 void Application::RequestShutdown() {
   RunningState().store(false, std::memory_order_release);
 }
+
+#ifdef CHERRY_DEBUG
+std::atomic<bool> &Application::DebugToolState() {
+  static std::atomic<bool> devtools{true};
+  return devtools;
+}
+void Application::EnableDebugTools() {
+  DebugToolState().store(true);
+  Debugger::StartDevTools();
+}
+
+void Application::DisableDebugTools() {
+  DebugToolState().store(false);
+  Debugger::StopDevTools();
+}
+
+void Application::ToggleDebugTools() {
+  bool current = DebugToolState().load();
+  bool nextState = !current;
+
+  DebugToolState().store(nextState);
+
+  if (nextState) {
+    Debugger::StartDevTools();
+  } else {
+    Debugger::StopDevTools();
+  }
+}
+#endif // CHERRY_DEBUG
 
 void Application::Shutdown() {
   RequestShutdown();
@@ -1672,7 +1709,12 @@ void Application::MultiThreadWindowRuntime() {
       layer->OnUpdate(m_TimeStep);
     }
 
+#ifdef CHERRY_DEBUG
+    m_TriggerDevtools = false;
+#endif // CHERRY_DEBUG
+
     SDL_Event event;
+
     while (SDL_PollEvent(&event)) {
       SDL_Window *focusedWindow = SDL_GetMouseFocus();
       Uint32 focusedWindowID =
@@ -1930,7 +1972,6 @@ void Application::SingleThreadRuntime() {
         break;
       }
     }
-
     bool AppWindowRedocked = false;
     for (auto &req : m_RedockRequests) {
       if (req->m_IsObsolete) {
@@ -1974,6 +2015,7 @@ void Application::SingleThreadRuntime() {
     }
 
     DragRendered = false;
+    m_DevtoolsSwitchUsed = false;
 
     PresentAllWindows();
 
@@ -2470,6 +2512,59 @@ ImDrawData *Application::RenderWindow(Window *window) {
 
   style.WindowMinSize.x = minWinSizeX;
 
+// Devtools
+#ifdef CHERRY_DEBUG
+  static bool s_DevtoolsLock = false;
+  bool isF12Down = IsKeyPressed(CherryKey::F12);
+
+  if (isF12Down) {
+    if (!s_DevtoolsLock) {
+      ToggleDebugTools();
+      s_DevtoolsLock = true;
+    }
+  } else {
+    s_DevtoolsLock = false;
+  }
+#endif
+
+  // Debug overlay
+#ifdef CHERRY_DEBUG
+  if (Application::DebugToolState().load() &&
+      window->GetName() != "Cherry devtools") {
+    const float PAD = 10.0f;
+    const ImGuiViewport *viewport = ImGui::GetMainViewport();
+    ImVec2 work_pos = viewport->WorkPos;
+    ImGui::SetNextWindowPos(ImVec2(work_pos.x + PAD, work_pos.y + PAD),
+                            ImGuiCond_Always);
+
+    ImGui::SetNextWindowBgAlpha(0.55f);
+    ImGuiWindowFlags overlay_flags =
+        ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize |
+        ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing |
+        ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoMove |
+        ImGuiWindowFlags_NoInputs;
+
+    if (ImGui::Begin("##DebugOverlay", nullptr, overlay_flags)) {
+      ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "CHERRY ENGINE DEBUG");
+      ImGui::Separator();
+
+      ImGui::Text("Application: %s", window->GetName().c_str());
+      ImGui::Text("FPS: %.1f (%.3f ms/frame)", ImGui::GetIO().Framerate,
+                  1000.0f / ImGui::GetIO().Framerate);
+
+      int w, h;
+      SDL_GetWindowSize(window->GetWindowHandle(), &w, &h);
+      ImGui::Text("Resolution: %dx%d", w, h);
+
+      if (ImGui::IsMousePosValid())
+        ImGui::Text("Mouse: %.1f, %.1f", ImGui::GetIO().MousePos.x,
+                    ImGui::GetIO().MousePos.y);
+      else
+        ImGui::Text("Mouse: Off-screen");
+    }
+    ImGui::End();
+  }
+#endif
   ImGui::End();
 
   return &window->DrawData;

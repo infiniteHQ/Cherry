@@ -5,10 +5,6 @@ void Render() {
   std::string WindowName = CherryWindow.GetName();
   std::string AppWindowName = CherryAppWindow.GetName();
 
-  if (CherryKit::ButtonText("Start debug").GetDataAs<bool>("isClicked")) {
-    Cherry::Tools::StartDebugTool();
-  }
-
   CherryKit::TitleOne("Try to undock me !!");
 
   CherryKit::TextSimple("App name (level 1): " + AppName);

@@ -129,13 +129,17 @@ target_include_directories(cherry PUBLIC
 # ---------------------------------------------------------------------------
 # Optional features
 # ---------------------------------------------------------------------------
-if(CHERRY_ENABLE_AUDIO)
-    target_compile_definitions(cherry PUBLIC CHERRY_ENABLE_AUDIO)
-    target_link_libraries(cherry PUBLIC miniaudio)
+if(CHERRY_DEBUG)
+target_compile_definitions(cherry PUBLIC CHERRY_DEBUG)
 endif()
 
 if(CHERRY_MULTIAPP)
     target_compile_definitions(cherry PUBLIC CHERRY_MULTIAPP)
+endif()
+
+if(CHERRY_ENABLE_AUDIO)
+    target_compile_definitions(cherry PUBLIC CHERRY_ENABLE_AUDIO)
+    target_link_libraries(cherry PUBLIC miniaudio)
 endif()
 
 if(CHERRY_ENABLE_KIT)

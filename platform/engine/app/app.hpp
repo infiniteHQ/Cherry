@@ -215,6 +215,14 @@ public:
   ~Application();
 
   static std::atomic<bool> &RunningState();
+#ifdef CHERRY_DEBUG
+  static std::atomic<bool> &DebugToolState();
+  void EnableDebugTools();
+  void DisableDebugTools();
+  void ToggleDebugTools();
+
+  bool m_DevtoolsSwitchUsed = false;
+#endif // CHERRY_DEBUG
 
   static void RequestShutdown();
 
