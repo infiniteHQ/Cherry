@@ -36,7 +36,7 @@ void GeneralView::Render() {
   float fps = ImGui::GetIO().Framerate;
   float ms = 1000.0f / fps;
 
-  ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.8f, 1.0f), "SYSTEM STATUS");
+  ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.8f, 1.0f), "Performances");
   ImGui::Separator();
   ImGui::Text("FPS: %.1f", fps);
   ImGui::SameLine(150);

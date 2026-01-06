@@ -22,7 +22,7 @@ void Devtool::Start() {
   spec.DisableWindowManagerTitleBar = false;
   spec.RenderMode = Cherry::WindowRenderingMethod::TabWidows;
   spec.UsingCloseCallback = true;
-  spec.MenubarCallback = []() {};
+  spec.CloseCallback = []() { CherryApp.ToggleDebugTools(); };
   spec.WindowSaves = false;
 
   GeneralAppWindow = GeneralView::Create("General");
