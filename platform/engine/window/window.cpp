@@ -501,6 +501,16 @@ void Window::ShowDockingPreview(
     return;
   }
 
+  int winX, winY, winW, winH;
+  SDL_GetWindowPosition(win->GetWindowHandle(), &winX, &winY);
+  SDL_GetWindowSize(win->GetWindowHandle(), &winW, &winH);
+  int mouseX = dragState->mouseX;
+  int mouseY = dragState->mouseY;
+  if (mouseX < winX || mouseX > winX + winW || mouseY < winY ||
+      mouseY > winY + winH) {
+    return;
+  }
+
   // TODO If future "AllowAllRedocks", disable the following safety feature.
   if (appwin) {
     if (dragState->LastDraggingAppWindowHost == appwin->m_Name) {
