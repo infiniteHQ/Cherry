@@ -3,4 +3,7 @@
 - Complete devtools
 - Effects
 - Animations ?
+- Lua scripting ! 
+    - Building components with scripts
+    - Building windows with scripts
 - BUG : Bad redock from root window to new win
