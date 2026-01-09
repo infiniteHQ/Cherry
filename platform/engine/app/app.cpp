@@ -194,11 +194,7 @@ Application::Application(const ApplicationSpecification &specification)
   Init();
 }
 
-Application::~Application() {
-  Shutdown();
-
-  s_Instance = nullptr;
-}
+Application::~Application() { Shutdown(); }
 
 void Application::SetMasterSwapChainRebuild(const bool &new_state) {
   c_MasterSwapChainRebuild = new_state;
@@ -817,6 +813,7 @@ void Application::Shutdown() {
     if (!window)
       continue;
 
+    window->m_IsClosing = true;
     if (window->m_ImGuiContext) {
       ImGui::SetCurrentContext(window->m_ImGuiContext);
       ImGui_ImplVulkan_Shutdown();
@@ -834,6 +831,13 @@ void Application::Shutdown() {
 
   if (!m_Windows.empty()) {
     CleanupVulkan(nullptr);
+  }
+
+  for (auto &window : m_Windows) {
+    if (window) {
+      window->m_ImageMap.clear();
+      window->m_HexImageMap.clear();
+    }
   }
 
   m_Windows.clear();
@@ -1623,6 +1627,18 @@ void Application::CleanupEmptyWindows() {
       }
     }
     for (const auto &win : to_remove) {
+      if (win->m_ImGuiContext) {
+        ImGui::SetCurrentContext(win->m_ImGuiContext);
+        ImGui_ImplVulkan_Shutdown();
+        ImGui_ImplSDL2_Shutdown();
+        ImGui::DestroyContext(win->m_ImGuiContext);
+        win->m_ImGuiContext = nullptr;
+      }
+
+      CleanupVulkanWindow(win.get());
+      if (win->GetWindowHandle()) {
+        SDL_DestroyWindow(win->GetWindowHandle());
+      }
       m_Windows.erase(std::remove(m_Windows.begin(), m_Windows.end(), win),
                       m_Windows.end());
     }
@@ -2887,21 +2903,11 @@ void Application::DestroyComponent(const Identifier &id, ComponentsPool *pool) {
 
   size_t afterSize = components.size();
 
-  if (beforeSize == afterSize) {
-    std::cout << "[LOG] Aucun composant avec l'identifiant " << id.string()
-              << " n'a été trouvé pour suppression." << std::endl;
-  } else {
-    std::cout << "[LOG] Composant avec l'identifiant " << id.string()
-              << " supprimé avec succès." << std::endl;
-  }
-
   if (CherryLastComponent.GetIdentifier() == id) {
     CherryApp.ResetLastComponent();
-    std::cout << "[LOG] CherryLastComponent a été reset." << std::endl;
   }
   if (CherryNextComponent.GetIdentifier() == id) {
     CherryApp.ResetNextComponent();
-    std::cout << "[LOG] CherryNextComponent a été reset." << std::endl;
   }
 }
 

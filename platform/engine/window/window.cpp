@@ -1217,10 +1217,6 @@ void Window::LoadTheme() {
 
 void Window::UnloadTheme() { ImGui::PopStyleColor(38); }
 
-void Window::free() {
-  //
-}
-
 void Window::CleanupVulkanWindow() {
   ImGui_ImplVulkanH_DestroyWindow(Application::GetInstance(),
                                   Application::GetDevice(), &m_WinData,

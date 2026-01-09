@@ -208,7 +208,6 @@ public:
   ImTextureID get_texture(const std::string &path);
   ImVec2 get_texture_size(const std::string &path);
   VkDescriptorSet get_texture_descriptor(const std::string &path);
-  void free();
 
   VkSurfaceKHR m_Surface;
   std::shared_ptr<WindowClickEvent> m_PendingClick = nullptr;
