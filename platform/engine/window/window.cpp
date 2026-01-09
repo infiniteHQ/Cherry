@@ -482,7 +482,13 @@ Window::~Window() {
       m_WindowHandler = nullptr;
     }
 
+    for (auto &frameQueue : s_ResourceFreeQueue) {
+      for (auto &func : frameQueue) {
+        func();
+      }
+    }
     s_ResourceFreeQueue.clear();
+
     m_CommandBuffers.clear();
   }
 }

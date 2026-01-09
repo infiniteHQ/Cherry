@@ -10,6 +10,9 @@ void Render() {
   CherryKit::TextSimple("App name (level 1): " + AppName);
   CherryKit::TextSimple("Window name (level 2): " + WindowName);
   CherryKit::TextSimple("App Window name (level 3: " + AppWindowName);
+
+  static std::string test = "Hello";
+  CherryKit::InputString(WindowName, &test);
 }
 
 CherryApplication CherryMain(int argc, char **argv) {

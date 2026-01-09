@@ -426,6 +426,11 @@ void Application::CleanupVulkan(Cherry::Window *win) {
     g_DescriptorPool = VK_NULL_HANDLE;
   }
 
+  if (g_PipelineCache != VK_NULL_HANDLE) {
+    vkDestroyPipelineCache(g_Device, g_PipelineCache, g_Allocator);
+    g_PipelineCache = VK_NULL_HANDLE;
+  }
+
 #ifdef IMGUI_VULKAN_DEBUG_REPORT
   auto vkDestroyDebugReportCallbackEXT =
       (PFN_vkDestroyDebugReportCallbackEXT)vkGetInstanceProcAddr(
