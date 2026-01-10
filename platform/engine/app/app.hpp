@@ -23,6 +23,7 @@ Cherry::SetTheme();
 #include "../app_window/app_window.hpp"
 #include "../base.hpp"
 #include "../components/components.hpp"
+#include "../drawing/drawing.hpp"
 #include "../image/image.hpp"
 #include "../options.hpp"
 #include "../themes/themes.hpp"
@@ -762,6 +763,8 @@ public:
   bool m_NoAppWindowSafetyEnabled = false;
   bool m_Running = false;
   bool m_Dragging = false;
+
+  SDL_Window *m_MouseHoveredWindow = nullptr;
 
   std::vector<std::shared_ptr<Window>> m_Windows;
   std::vector<std::shared_ptr<RedockRequest>> m_RedockRequests;

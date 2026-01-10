@@ -178,6 +178,7 @@
 #endif // CHERRY_ENABLE_KIT
 
 namespace CherryKit = Cherry::Kit;
+namespace CherryDraw = Cherry::Draw;
 namespace CherryStyle = Cherry::Style;
 namespace CherryThemes = Cherry::Themes;
 using CherryApplication = Cherry::Application;

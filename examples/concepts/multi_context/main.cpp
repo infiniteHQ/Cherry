@@ -1,15 +1,11 @@
 #include "../../cherry.hpp"
 
 void Render() {
-  std::string AppName = CherryApp.GetName();
+  using Cherry::Vec2;
+  using namespace Cherry::Draw;
+
   std::string WindowName = CherryWindow.GetName();
   std::string AppWindowName = CherryAppWindow.GetName();
-
-  CherryKit::TitleOne("Try to undock me !!");
-
-  CherryKit::TextSimple("App name (level 1): " + AppName);
-  CherryKit::TextSimple("Window name (level 2): " + WindowName);
-  CherryKit::TextSimple("App Window name (level 3: " + AppWindowName);
 
   static std::string test = "Hello";
   CherryKit::InputString(WindowName, &test);

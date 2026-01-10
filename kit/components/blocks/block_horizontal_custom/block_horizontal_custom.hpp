@@ -118,11 +118,8 @@ public:
     std::string label = GetIdentifier().string() + "RenderCallbacks";
 
     if (CherryGUI::BeginChild(label.c_str(), cachedSize, false,
-                          ImGuiWindowFlags_NoScrollbar |
-                              ImGuiWindowFlags_NoScrollWithMouse)) {
-      // Plus d'InvisibleButton qui bloque tout
-
-      // Interaction souris sur la zone du Child
+                              ImGuiWindowFlags_NoScrollbar |
+                                  ImGuiWindowFlags_NoScrollWithMouse)) {
       if (CherryGUI::IsWindowHovered(
               ImGuiHoveredFlags_AllowWhenBlockedByActiveItem) &&
           CherryGUI::IsMouseClicked(ImGuiMouseButton_Left)) {
@@ -145,7 +142,6 @@ public:
       if (CherryGUI::IsItemActive())
         SetData("isPressed", "true");
 
-      // ✅ Aligner horizontalement les callbacks visibles
       for (size_t i = 0; i < m_RenderCallbacks.size(); ++i) {
         if (i > 0)
           CherryGUI::SameLine(0, 10.0f); // espacement horizontal
@@ -158,7 +154,6 @@ public:
     CherryGUI::PopStyleColor(); // ChildBg
     CherryGUI::PopStyleColor(style_props_opt);
 
-    // ✅ Dessin du contour autour du bloc
     ImDrawList *drawList = CherryGUI::GetWindowDrawList();
     drawList->AddRect(pos, ImVec2(pos.x + cachedSize.x, pos.y + cachedSize.y),
                       border_color, cached_radius, 0, border_size);

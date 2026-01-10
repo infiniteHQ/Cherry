@@ -1379,6 +1379,11 @@ void Application::PresentAllWindows() {
   for (auto &window : m_Windows) {
     ImGui::SetCurrentContext(window->m_ImGuiContext);
 
+    bool isMouseOver = (m_MouseHoveredWindow == window->GetWindowHandle());
+    if (!isMouseOver && m_MouseHoveredWindow != nullptr) {
+      ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_NoMouseCursorChange;
+    }
+
     // Push window selected theme if defined
     if (window->m_SelectedTheme != "undefined") {
       PushTheme(window->m_SelectedTheme);
@@ -1405,6 +1410,10 @@ void Application::PresentAllWindows() {
 
     ImGui_ImplVulkan_NewFrame();
     ImGui_ImplSDL2_NewFrame();
+
+    if (!isMouseOver && m_MouseHoveredWindow != nullptr) {
+      ImGui::GetIO().ConfigFlags &= ~ImGuiConfigFlags_NoMouseCursorChange;
+    }
 
     ImGui::SetCurrentContext(window->m_ImGuiContext);
 
@@ -1969,6 +1978,18 @@ void Application::SingleThreadRuntime() {
           m_Running = false;
           eventHandled = true;
           break;
+        }
+
+        if (event.type == SDL_WINDOWEVENT) {
+          if (event.window.event == SDL_WINDOWEVENT_ENTER) {
+            m_MouseHoveredWindow = SDL_GetWindowFromID(event.window.windowID);
+          } else if (event.window.event == SDL_WINDOWEVENT_LEAVE) {
+            SDL_Window *leavingWindow =
+                SDL_GetWindowFromID(event.window.windowID);
+            if (m_MouseHoveredWindow == leavingWindow) {
+              m_MouseHoveredWindow = nullptr;
+            }
+          }
         }
 
         if (event.type == SDL_WINDOWEVENT &&
