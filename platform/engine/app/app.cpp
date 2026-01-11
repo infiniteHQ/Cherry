@@ -1964,6 +1964,18 @@ void Application::SingleThreadRuntime() {
         ImGui::SetCurrentContext(window->m_ImGuiContext);
         ImGui_ImplSDL2_ProcessEvent(&event);
 
+        if (event.type == SDL_MOUSEBUTTONDOWN) {
+          Uint32 clickedWindowID = event.button.windowID;
+
+          for (auto &window : m_Windows) {
+            Uint32 windowID = SDL_GetWindowID(window->GetWindowHandle());
+            if (windowID != clickedWindowID) {
+              ImGui::SetCurrentContext(window->m_ImGuiContext);
+              ImGui::ClearActiveID();
+            }
+          }
+        }
+
         if (event.type == SDL_QUIT) {
           m_Running = false;
           eventHandled = true;
