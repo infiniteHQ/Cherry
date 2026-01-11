@@ -2059,7 +2059,9 @@ void Application::SingleThreadRuntime() {
     }
 
     DragRendered = false;
+#ifdef CHERRY_DEBUG
     m_DevtoolsSwitchUsed = false;
+#endif // CHERRY_DEBUG
 
     PresentAllWindows();
 

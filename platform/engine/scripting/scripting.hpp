@@ -54,4 +54,8 @@ void RenderLuaFreshScript(const std::string &lua_file_path);
 } // namespace Script
 } // namespace Cherry
 
+#else
+namespace Cherry {
+namespace Script {}
+} // namespace Cherry
 #endif // CHERRY_ENABLE_SCRIPTING
