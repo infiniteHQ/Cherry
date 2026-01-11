@@ -22,3 +22,6 @@
 [submodule "lib/httpcl"]
 	path = lib/httpcl
 	url = https://github.com/infiniteHQ/httpcl.git
+[submodule "lib/lua"]
+	path = lib/lua
+	url = https://github.com/infiniteHQ/lua
