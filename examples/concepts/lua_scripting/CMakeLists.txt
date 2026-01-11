@@ -13,6 +13,7 @@ option(CHERRY_PACKAGE "Enable packaging features with pyinstaller" OFF)
 option(CHERRY_ENABLE_NET "Enable net features" OFF)
 option(CHERRY_ENABLE_AUDIO "Enable audio features" ON)
 option(CHERRY_ENABLE_LINUXDRM "Enable Linux Direct Rendering Manager" OFF)
+option(CHERRY_ENABLE_SCRIPTING "Enable Lua scripting" ON)
 
 # Cherry Optimizations
 option(CHERRY_DISABLE_NODES "Disable nodal systems" OFF)
@@ -20,8 +21,8 @@ option(CHERRY_DISABLE_WORKSPACESAVES "Disable workspace saves" OFF)
 
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../../ cherry_build)
 add_executable(hello main.cpp)
-target_link_libraries(hello PRIVATE cherry)
 
+target_link_libraries(hello PRIVATE cherry)
 add_custom_command(TARGET hello POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
     ${CMAKE_CURRENT_SOURCE_DIR}/assets

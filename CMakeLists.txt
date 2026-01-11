@@ -20,7 +20,10 @@ option(CHERRY_ENABLE_AUDIO "Enable audio features"                      OFF)
 option(CHERRY_ENABLE_KIT "Enable base component kit"                     ON)
 option(CHERRY_ENABLE_LINUXDRM "Enable Linux Direct Rendering Manager"   OFF)
 option(CHERRY_ENABLE_NODES "Disable nodal systems"                      OFF)
+option(CHERRY_ENABLE_SCRIPTING "Enable Lua scripting"                   ON)
 option(CHERRY_ENABLE_WORKSPACESAVES "Disable workspace saves"           OFF)
+
+
 
 
 # ---------------------------------------------------------------------------
@@ -65,7 +68,9 @@ add_subdirectory(lib/sdl2)
 if(CHERRY_ENABLE_NET)
     add_subdirectory(lib/httpcl)
 endif()
-
+if(CHERRY_ENABLE_SCRIPTING)
+    add_subdirectory(lib/lua) 
+endif()
 if(CHERRY_ENABLE_AUDIO)
     add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/lib/miniaudio miniaudio_build)
 endif()
@@ -117,6 +122,13 @@ target_link_libraries(cherry PUBLIC imgui)
 
 target_link_libraries(cherry PUBLIC SDL2-static)
 
+if(CHERRY_ENABLE_SCRIPTING)
+    target_compile_definitions(cherry PUBLIC CHERRY_ENABLE_SCRIPTING)
+    target_link_libraries(cherry PUBLIC lua)
+    target_include_directories(cherry PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/lib/lua/src")
+endif()
+
+
 # ---------------------------------------------------------------------------
 # Include directories
 # ---------------------------------------------------------------------------
@@ -130,7 +142,7 @@ target_include_directories(cherry PUBLIC
 # Optional features
 # ---------------------------------------------------------------------------
 if(CHERRY_DEBUG)
-target_compile_definitions(cherry PUBLIC CHERRY_DEBUG)
+    target_compile_definitions(cherry PUBLIC CHERRY_DEBUG)
 endif()
 
 if(CHERRY_MULTIAPP)
