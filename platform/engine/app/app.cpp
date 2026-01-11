@@ -1640,19 +1640,9 @@ void Application::CleanupEmptyWindows() {
         to_remove.push_back(*it);
       }
     }
-    for (const auto &win : to_remove) {
-      if (win->m_ImGuiContext) {
-        ImGui::SetCurrentContext(win->m_ImGuiContext);
-        ImGui_ImplVulkan_Shutdown();
-        ImGui_ImplSDL2_Shutdown();
-        ImGui::DestroyContext(win->m_ImGuiContext);
-        win->m_ImGuiContext = nullptr;
-      }
 
-      CleanupVulkanWindow(win.get());
-      if (win->GetWindowHandle()) {
-        SDL_DestroyWindow(win->GetWindowHandle());
-      }
+    for (const auto &win : to_remove) {
+      // TODO : Proper remove
       m_Windows.erase(std::remove(m_Windows.begin(), m_Windows.end(), win),
                       m_Windows.end());
     }
