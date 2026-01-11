@@ -9,6 +9,8 @@ void Render() {
 
   static std::string test = "Hello";
   CherryKit::InputString(WindowName, &test);
+
+  CherryKit::ButtonText(AppWindowName + test);
 }
 
 CherryApplication CherryMain(int argc, char **argv) {

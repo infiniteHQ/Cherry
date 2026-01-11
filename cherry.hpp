@@ -27,6 +27,7 @@
 #include "./platform/engine/image/image.hpp"
 #include "./platform/engine/imgui/ImGuiTheme.h"
 #include "./platform/engine/imgui/wrappers/wrappers.hpp"
+#include "./platform/engine/scripting/scripting.hpp"
 #include "./platform/engine/ui/notifications/notifications.hpp"
 #include "./platform/engine/ui/ui.hpp"
 #include "./src/entry_point.hpp"
@@ -179,6 +180,7 @@
 
 namespace CherryKit = Cherry::Kit;
 namespace CherryDraw = Cherry::Draw;
+namespace CherryScript = Cherry::Script;
 namespace CherryStyle = Cherry::Style;
 namespace CherryThemes = Cherry::Themes;
 using CherryApplication = Cherry::Application;
