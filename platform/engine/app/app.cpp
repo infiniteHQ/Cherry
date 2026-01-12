@@ -680,6 +680,104 @@ const std::unordered_map<CherryKey, SDL_Scancode> &Application::GetKeyMap() {
   return keyMap;
 }
 
+std::optional<CherryKey> Application::StringToCherryKey(std::string str) {
+  if (str.empty())
+    return std::nullopt;
+
+  std::transform(str.begin(), str.end(), str.begin(),
+                 [](unsigned char c) { return std::toupper(c); });
+
+  static const std::unordered_map<std::string, CherryKey> stringToEnumMap = {
+      {"A", CherryKey::A},
+      {"B", CherryKey::B},
+      {"C", CherryKey::C},
+      {"D", CherryKey::D},
+      {"E", CherryKey::E},
+      {"F", CherryKey::F},
+      {"G", CherryKey::G},
+      {"H", CherryKey::H},
+      {"I", CherryKey::I},
+      {"J", CherryKey::J},
+      {"K", CherryKey::K},
+      {"L", CherryKey::L},
+      {"M", CherryKey::M},
+      {"N", CherryKey::N},
+      {"O", CherryKey::O},
+      {"P", CherryKey::P},
+      {"Q", CherryKey::Q},
+      {"R", CherryKey::R},
+      {"S", CherryKey::S},
+      {"T", CherryKey::T},
+      {"U", CherryKey::U},
+      {"V", CherryKey::V},
+      {"W", CherryKey::W},
+      {"X", CherryKey::X},
+      {"Y", CherryKey::Y},
+      {"Z", CherryKey::Z},
+
+      {"0", CherryKey::NUM_0},
+      {"NUM_0", CherryKey::NUM_0},
+      {"1", CherryKey::NUM_1},
+      {"NUM_1", CherryKey::NUM_1},
+      {"2", CherryKey::NUM_2},
+      {"NUM_2", CherryKey::NUM_2},
+      {"3", CherryKey::NUM_3},
+      {"NUM_3", CherryKey::NUM_3},
+      {"4", CherryKey::NUM_4},
+      {"NUM_4", CherryKey::NUM_4},
+      {"5", CherryKey::NUM_5},
+      {"NUM_5", CherryKey::NUM_5},
+      {"6", CherryKey::NUM_6},
+      {"NUM_6", CherryKey::NUM_6},
+      {"7", CherryKey::NUM_7},
+      {"NUM_7", CherryKey::NUM_7},
+      {"8", CherryKey::NUM_8},
+      {"NUM_8", CherryKey::NUM_8},
+      {"9", CherryKey::NUM_9},
+      {"NUM_9", CherryKey::NUM_9},
+
+      {"ESC", CherryKey::ESCAPE},
+      {"ESCAPE", CherryKey::ESCAPE},
+      {"SPACE", CherryKey::SPACE},
+      {" ", CherryKey::SPACE},
+      {"ENTER", CherryKey::ENTER},
+      {"RETURN", CherryKey::ENTER},
+      {"BACKSPACE", CherryKey::BACKSPACE},
+      {"DELETE", CherryKey::KEY_DELETE},
+      {"DEL", CherryKey::KEY_DELETE},
+      {"TAB", CherryKey::TAB},
+      {"SHIFT", CherryKey::SHIFT},
+      {"LSHIFT", CherryKey::SHIFT},
+      {"CTRL", CherryKey::CTRL},
+      {"CONTROL", CherryKey::CTRL},
+      {"ALT", CherryKey::ALT},
+
+      {"LEFT", CherryKey::LEFT},
+      {"RIGHT", CherryKey::RIGHT},
+      {"UP", CherryKey::UP},
+      {"DOWN", CherryKey::DOWN},
+
+      {"F1", CherryKey::F1},
+      {"F2", CherryKey::F2},
+      {"F3", CherryKey::F3},
+      {"F4", CherryKey::F4},
+      {"F5", CherryKey::F5},
+      {"F6", CherryKey::F6},
+      {"F7", CherryKey::F7},
+      {"F8", CherryKey::F8},
+      {"F9", CherryKey::F9},
+      {"F10", CherryKey::F10},
+      {"F11", CherryKey::F11},
+      {"F12", CherryKey::F12}};
+
+  auto it = stringToEnumMap.find(str);
+  if (it != stringToEnumMap.end()) {
+    return it->second;
+  }
+
+  return std::nullopt;
+}
+
 void Application::ExecuteProcessCallbacks(ProcessCallback process) {
   for (auto callback : g_ProcessCallbacks) {
     if (callback.first == process) {

@@ -293,6 +293,7 @@ public:
   static void ExecuteProcessCallbacks(ProcessCallback process);
 
   static const std::unordered_map<CherryKey, SDL_Scancode> &GetKeyMap();
+  static std::optional<CherryKey> StringToCherryKey(std::string str);
 
   // Set callbacks
   void SetCloseCallback(const std::function<void()> &closeCallback) {

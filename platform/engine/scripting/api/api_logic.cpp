@@ -220,6 +220,26 @@ LUA_FUNC(LogTrace) {
 
   return 0;
 }
+
+LUA_FUNC(IsKeyPressed) {
+  if (!lua_isstring(L, 1)) {
+    lua_pushboolean(L, false);
+    return 1;
+  }
+
+  std::string keyStr = lua_tostring(L, 1);
+  auto cherryKey = Cherry::Application::StringToCherryKey(keyStr);
+
+  if (cherryKey.has_value()) {
+    bool pressed = CherryApp.IsKeyPressed(cherryKey.value());
+    lua_pushboolean(L, pressed);
+  } else {
+    lua_pushboolean(L, false);
+  }
+
+  return 1;
+}
+
 // IsRightClickedOnArea
 // IsKeyPressed
 // IsKeyPressedOnArea
@@ -260,6 +280,9 @@ void RegisterLogicAPI(lua_State *L) {
   LUA_REGISTER(L, -1, LogError);
   LUA_REGISTER(L, -1, LogFatal);
   LUA_REGISTER(L, -1, LogTrace);
+
+  // Keys
+  LUA_REGISTER(L, -1, IsKeyPressed);
 
   // Audio
 #ifdef CHERRY_ENABLE_AUDIO
