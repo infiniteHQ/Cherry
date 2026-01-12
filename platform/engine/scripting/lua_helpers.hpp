@@ -27,3 +27,10 @@ inline bool lua_getbool(lua_State *L, int idx) {
 inline int lua_error_msg(lua_State *L, const char *msg) {
   return luaL_error(L, "%s", msg);
 }
+
+inline void lua_push(lua_State *L, float val) { lua_pushnumber(L, val); }
+inline void lua_push(lua_State *L, int val) { lua_pushinteger(L, val); }
+inline void lua_push(lua_State *L, const std::string &val) {
+  lua_pushstring(L, val.c_str());
+}
+inline void lua_push(lua_State *L, bool val) { lua_pushboolean(L, val); }

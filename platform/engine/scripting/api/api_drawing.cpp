@@ -21,7 +21,22 @@ LUA_FUNC(DrawRect) {
   return 0;
 }
 
-void RegisterDrawingAPI(lua_State *L) { LUA_REGISTER(L, -1, DrawRect); }
+LUA_FUNC(DrawRectFixed) {
+  float x = lua_getfloat(L, 1);
+  float y = lua_getfloat(L, 2);
+  float w = lua_getfloat(L, 3);
+  float h = lua_getfloat(L, 4);
+  std::string color = static_cast<std::string>(lua_getstring(L, 5));
+
+  Cherry::Draw::RectScreen(Cherry::Vec2(x, y), Cherry::Vec2(w, h), color);
+
+  return 0;
+}
+
+void RegisterDrawingAPI(lua_State *L) {
+  LUA_REGISTER(L, -1, DrawRect);
+  LUA_REGISTER(L, -1, DrawRectFixed);
+}
 
 } // namespace Script
 } // namespace Cherry

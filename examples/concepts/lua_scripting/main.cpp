@@ -3,8 +3,8 @@
 
 void Render() {
   // WARNING, to test live scripting, you need to edit
-  // "bin/resources/render.lua", because of Cherry::GetPath, our relative
-  // linking feature
+  // "bin/resources/scripts/render.lua", because of Cherry::GetPath, our
+  // relative linking feature
   Cherry::Script::RenderLuaFreshScript(
       Cherry::GetPath("resources/scripts/render.lua"));
 }

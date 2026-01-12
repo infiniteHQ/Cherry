@@ -48,6 +48,7 @@ private:
 CHERRY_API ScriptingEngine &GetScriptingEngine();
 
 void RegisterDrawingAPI(lua_State *L);
+void RegisterLogicAPI(lua_State *L);
 void RenderLuaScript(const std::string &lua_file_path);
 void RenderLuaFreshScript(const std::string &lua_file_path);
 

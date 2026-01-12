@@ -170,6 +170,7 @@ void ScriptingEngine::RegisterCherryAPI() {
 
   // Register apis
   RegisterDrawingAPI(L);
+  RegisterLogicAPI(L);
 
   lua_setglobal(L, "Cherry"); // Lib global
 }
