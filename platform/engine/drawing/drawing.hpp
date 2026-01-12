@@ -41,5 +41,10 @@ void SquareScreen(Vec2 pos, float size, const std::string &hexcol);
 void QuadWindow(Vec2 p0, Vec2 p1, Vec2 p2, Vec2 p3, const std::string &hexcol);
 void QuadScreen(Vec2 p0, Vec2 p1, Vec2 p2, Vec2 p3, const std::string &hexcol);
 
+// Texts
+void TextWindow(const std::string &text, Vec2 pos, float size,
+                const std::string &hexcol);
+void TextScreen(const std::string &text, Vec2 pos, float size,
+                const std::string &hexcol);
 } // namespace Draw
 } // namespace Cherry

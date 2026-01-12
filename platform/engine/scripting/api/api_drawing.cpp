@@ -33,9 +33,22 @@ LUA_FUNC(DrawRectFixed) {
   return 0;
 }
 
+LUA_FUNC(DrawText) {
+  float x = lua_getfloat(L, 1);
+  float y = lua_getfloat(L, 2);
+  float size = lua_getfloat(L, 3);
+  std::string color = static_cast<std::string>(lua_getstring(L, 4));
+  std::string text = static_cast<std::string>(lua_getstring(L, 5));
+
+  Cherry::Draw::TextWindow(text, Cherry::Vec2(x, y), size, color);
+
+  return 0;
+}
+
 void RegisterDrawingAPI(lua_State *L) {
   LUA_REGISTER(L, -1, DrawRect);
   LUA_REGISTER(L, -1, DrawRectFixed);
+  LUA_REGISTER(L, -1, DrawText);
 }
 
 } // namespace Script

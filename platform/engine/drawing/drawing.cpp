@@ -132,5 +132,23 @@ void QuadScreen(Vec2 p0, Vec2 p1, Vec2 p2, Vec2 p3, const std::string &hexcol) {
   ImGui::GetForegroundDrawList()->AddQuadFilled(ToIm(p0), ToIm(p1), ToIm(p2),
                                                 ToIm(p3), Col(hexcol));
 }
+void TextWindow(const std::string &text, Vec2 pos, float size,
+                const std::string &hexcol) {
+  ImVec2 wp = ImGui::GetWindowPos();
+  ImDrawList *dl = ImGui::GetWindowDrawList();
+
+  float currentFontSize = ImGui::GetFontSize();
+  float scale = size / currentFontSize;
+
+  dl->AddText(ImGui::GetFont(), size, {wp.x + pos.x, wp.y + pos.y}, Col(hexcol),
+              text.c_str());
+}
+
+void TextScreen(const std::string &text, Vec2 pos, float size,
+                const std::string &hexcol) {
+  ImDrawList *dl = ImGui::GetForegroundDrawList();
+
+  dl->AddText(ImGui::GetFont(), size, ToIm(pos), Col(hexcol), text.c_str());
+}
 } // namespace Draw
 } // namespace Cherry
