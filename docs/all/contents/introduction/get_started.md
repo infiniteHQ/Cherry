@@ -15,7 +15,7 @@ cd Cherry
 
 Once downloaded, you can now enter the folder, switch to the latest release using `git checkout`, and add Cherry’s automatic dependencies via `git submodule`.
 ``` bash
-git checkout 1.4
+git checkout 1.5
 ``` 
 ``` bash
 git submodule update --init --recursive
@@ -66,7 +66,7 @@ You can directly see how to [create your first Cherry application](https://i.n:c
 ### Troubleshooting
 If the compilation fails, first make sure your system has a working C++ compiler installed.
 
-Next, verify that you have obtained a functional copy of Cherry. It is essential to use a Release version by running `git checkout 1.4` to get the latest released version of Cherry.
+Next, verify that you have obtained a functional copy of Cherry. It is essential to use a Release version by running `git checkout 1.5` to get the latest released version of Cherry.
 
 If issues persist, check that the Vulkan SDK is properly installed, Vulkan is available on your system, and the Vulkan environment variables are correctly set.
 

@@ -508,6 +508,209 @@ LUA_FUNC(DrawImageQuadFixed) {
   return 0;
 }
 
+LUA_FUNC(DrawRectGradient) {
+  float x = lua_getfloat(L, 1);
+  float y = lua_getfloat(L, 2);
+  float w = lua_getfloat(L, 3);
+  float h = lua_getfloat(L, 4);
+  std::string c1 = lua_getstring(L, 5);
+  std::string c2 = lua_getstring(L, 6);
+  bool vertical = (lua_gettop(L) >= 7) ? lua_toboolean(L, 7) : true;
+  int steps = (lua_gettop(L) >= 8) ? (int)lua_getfloat(L, 8) : 32;
+
+  Cherry::Draw::RectGradientWindow({x, y}, {w, h}, c1, c2, vertical, steps);
+  return 0;
+}
+
+LUA_FUNC(DrawRectGradientFixed) {
+  float x = lua_getfloat(L, 1);
+  float y = lua_getfloat(L, 2);
+  float w = lua_getfloat(L, 3);
+  float h = lua_getfloat(L, 4);
+  std::string c1 = lua_getstring(L, 5);
+  std::string c2 = lua_getstring(L, 6);
+  bool vertical = (lua_gettop(L) >= 7) ? lua_toboolean(L, 7) : true;
+  int steps = (lua_gettop(L) >= 8) ? (int)lua_getfloat(L, 8) : 32;
+
+  Cherry::Draw::RectGradientScreen({x, y}, {w, h}, c1, c2, vertical, steps);
+  return 0;
+}
+
+LUA_FUNC(DrawRectOutlineGradient) {
+  float x = lua_getfloat(L, 1);
+  float y = lua_getfloat(L, 2);
+  float w = lua_getfloat(L, 3);
+  float h = lua_getfloat(L, 4);
+  std::string c1 = lua_getstring(L, 5);
+  std::string c2 = lua_getstring(L, 6);
+  float thickness = (lua_gettop(L) >= 7) ? lua_getfloat(L, 7) : 1.0f;
+
+  Cherry::Draw::RectOutlineGradientWindow({x, y}, {w, h}, c1, c2, thickness);
+  return 0;
+}
+
+LUA_FUNC(DrawRectOutlineGradientFixed) {
+  float x = lua_getfloat(L, 1);
+  float y = lua_getfloat(L, 2);
+  float w = lua_getfloat(L, 3);
+  float h = lua_getfloat(L, 4);
+  std::string c1 = lua_getstring(L, 5);
+  std::string c2 = lua_getstring(L, 6);
+  float thickness = (lua_gettop(L) >= 7) ? lua_getfloat(L, 7) : 1.0f;
+
+  Cherry::Draw::RectOutlineGradientScreen({x, y}, {w, h}, c1, c2, thickness);
+  return 0;
+}
+
+LUA_FUNC(DrawCircleGradient) {
+  float x = lua_getfloat(L, 1);
+  float y = lua_getfloat(L, 2);
+  float radius = lua_getfloat(L, 3);
+  std::string c1 = lua_getstring(L, 4);
+  std::string c2 = lua_getstring(L, 5);
+  int steps = (lua_gettop(L) >= 6) ? (int)lua_getfloat(L, 6) : 16;
+
+  Cherry::Draw::CircleGradientWindow({x, y}, radius, c1, c2, steps);
+  return 0;
+}
+
+LUA_FUNC(DrawCircleGradientFixed) {
+  float x = lua_getfloat(L, 1);
+  float y = lua_getfloat(L, 2);
+  float radius = lua_getfloat(L, 3);
+  std::string c1 = lua_getstring(L, 4);
+  std::string c2 = lua_getstring(L, 5);
+  int steps = (lua_gettop(L) >= 6) ? (int)lua_getfloat(L, 6) : 16;
+
+  Cherry::Draw::CircleGradientScreen({x, y}, radius, c1, c2, steps);
+  return 0;
+}
+
+LUA_FUNC(DrawCircleOutlineGradient) {
+  float x = lua_getfloat(L, 1);
+  float y = lua_getfloat(L, 2);
+  float radius = lua_getfloat(L, 3);
+  std::string c1 = lua_getstring(L, 4);
+  std::string c2 = lua_getstring(L, 5);
+  float thickness = (lua_gettop(L) >= 6) ? lua_getfloat(L, 6) : 1.0f;
+
+  Cherry::Draw::CircleOutlineGradientWindow({x, y}, radius, c1, c2, thickness);
+  return 0;
+}
+
+LUA_FUNC(DrawCircleOutlineGradientFixed) {
+  float x = lua_getfloat(L, 1);
+  float y = lua_getfloat(L, 2);
+  float radius = lua_getfloat(L, 3);
+  std::string c1 = lua_getstring(L, 4);
+  std::string c2 = lua_getstring(L, 5);
+  float thickness = (lua_gettop(L) >= 6) ? lua_getfloat(L, 6) : 1.0f;
+
+  Cherry::Draw::CircleOutlineGradientScreen({x, y}, radius, c1, c2, thickness);
+  return 0;
+}
+LUA_FUNC(DrawTriangleGradient) {
+  Cherry::Vec2 p1(lua_getfloat(L, 1), lua_getfloat(L, 2));
+  Cherry::Vec2 p2(lua_getfloat(L, 3), lua_getfloat(L, 4));
+  Cherry::Vec2 p3(lua_getfloat(L, 5), lua_getfloat(L, 6));
+  std::string c1 = lua_getstring(L, 7);
+  std::string c2 = lua_getstring(L, 8);
+  std::string c3 = lua_getstring(L, 9);
+
+  Cherry::Draw::TriangleGradientWindow(p1, p2, p3, c1, c2, c3);
+  return 0;
+}
+
+LUA_FUNC(DrawTriangleGradientFixed) {
+  Cherry::Vec2 p1(lua_getfloat(L, 1), lua_getfloat(L, 2));
+  Cherry::Vec2 p2(lua_getfloat(L, 3), lua_getfloat(L, 4));
+  Cherry::Vec2 p3(lua_getfloat(L, 5), lua_getfloat(L, 6));
+  std::string c1 = lua_getstring(L, 7);
+  std::string c2 = lua_getstring(L, 8);
+  std::string c3 = lua_getstring(L, 9);
+
+  Cherry::Draw::TriangleGradientScreen(p1, p2, p3, c1, c2, c3);
+  return 0;
+}
+
+LUA_FUNC(DrawTriangleOutlineGradient) {
+  Cherry::Vec2 p1(lua_getfloat(L, 1), lua_getfloat(L, 2));
+  Cherry::Vec2 p2(lua_getfloat(L, 3), lua_getfloat(L, 4));
+  Cherry::Vec2 p3(lua_getfloat(L, 5), lua_getfloat(L, 6));
+  std::string c1 = lua_getstring(L, 7);
+  std::string c2 = lua_getstring(L, 8);
+  float thickness = (lua_gettop(L) >= 9) ? lua_getfloat(L, 9) : 1.0f;
+
+  Cherry::Draw::TriangleOutlineGradientWindow(p1, p2, p3, c1, c2, thickness);
+  return 0;
+}
+
+LUA_FUNC(DrawTriangleOutlineGradientFixed) {
+  Cherry::Vec2 p1(lua_getfloat(L, 1), lua_getfloat(L, 2));
+  Cherry::Vec2 p2(lua_getfloat(L, 3), lua_getfloat(L, 4));
+  Cherry::Vec2 p3(lua_getfloat(L, 5), lua_getfloat(L, 6));
+  std::string c1 = lua_getstring(L, 7);
+  std::string c2 = lua_getstring(L, 8);
+  float thickness = (lua_gettop(L) >= 9) ? lua_getfloat(L, 9) : 1.0f;
+
+  Cherry::Draw::TriangleOutlineGradientScreen(p1, p2, p3, c1, c2, thickness);
+  return 0;
+}
+
+LUA_FUNC(DrawQuadGradient) {
+  Cherry::Vec2 p1(lua_getfloat(L, 1), lua_getfloat(L, 2));
+  Cherry::Vec2 p2(lua_getfloat(L, 3), lua_getfloat(L, 4));
+  Cherry::Vec2 p3(lua_getfloat(L, 5), lua_getfloat(L, 6));
+  Cherry::Vec2 p4(lua_getfloat(L, 7), lua_getfloat(L, 8));
+  std::string c1 = lua_getstring(L, 9);
+  std::string c2 = lua_getstring(L, 10);
+  std::string c3 = lua_getstring(L, 11);
+  std::string c4 = lua_getstring(L, 12);
+
+  Cherry::Draw::QuadGradientWindow(p1, p2, p3, p4, c1, c2, c3, c4);
+  return 0;
+}
+
+LUA_FUNC(DrawQuadGradientFixed) {
+  Cherry::Vec2 p1(lua_getfloat(L, 1), lua_getfloat(L, 2));
+  Cherry::Vec2 p2(lua_getfloat(L, 3), lua_getfloat(L, 4));
+  Cherry::Vec2 p3(lua_getfloat(L, 5), lua_getfloat(L, 6));
+  Cherry::Vec2 p4(lua_getfloat(L, 7), lua_getfloat(L, 8));
+  std::string c1 = lua_getstring(L, 9);
+  std::string c2 = lua_getstring(L, 10);
+  std::string c3 = lua_getstring(L, 11);
+  std::string c4 = lua_getstring(L, 12);
+
+  Cherry::Draw::QuadGradientScreen(p1, p2, p3, p4, c1, c2, c3, c4);
+  return 0;
+}
+
+LUA_FUNC(DrawQuadOutlineGradient) {
+  Cherry::Vec2 p1(lua_getfloat(L, 1), lua_getfloat(L, 2));
+  Cherry::Vec2 p2(lua_getfloat(L, 3), lua_getfloat(L, 4));
+  Cherry::Vec2 p3(lua_getfloat(L, 5), lua_getfloat(L, 6));
+  Cherry::Vec2 p4(lua_getfloat(L, 7), lua_getfloat(L, 8));
+  std::string c1 = lua_getstring(L, 9);
+  std::string c2 = lua_getstring(L, 10);
+  float thickness = (lua_gettop(L) >= 11) ? lua_getfloat(L, 11) : 1.0f;
+
+  Cherry::Draw::QuadOutlineGradientWindow(p1, p2, p3, p4, c1, c2, thickness);
+  return 0;
+}
+
+LUA_FUNC(DrawQuadOutlineGradientFixed) {
+  Cherry::Vec2 p1(lua_getfloat(L, 1), lua_getfloat(L, 2));
+  Cherry::Vec2 p2(lua_getfloat(L, 3), lua_getfloat(L, 4));
+  Cherry::Vec2 p3(lua_getfloat(L, 5), lua_getfloat(L, 6));
+  Cherry::Vec2 p4(lua_getfloat(L, 7), lua_getfloat(L, 8));
+  std::string c1 = lua_getstring(L, 9);
+  std::string c2 = lua_getstring(L, 10);
+  float thickness = (lua_gettop(L) >= 11) ? lua_getfloat(L, 11) : 1.0f;
+
+  Cherry::Draw::QuadOutlineGradientScreen(p1, p2, p3, p4, c1, c2, thickness);
+  return 0;
+}
+
 void RegisterDrawingAPI(lua_State *L) {
   LUA_REGISTER(L, -1, DrawRect);
   LUA_REGISTER(L, -1, DrawRectFixed);
@@ -543,6 +746,22 @@ void RegisterDrawingAPI(lua_State *L) {
   LUA_REGISTER(L, -1, DrawImageFixed);
   LUA_REGISTER(L, -1, DrawImageQuad);
   LUA_REGISTER(L, -1, DrawImageQuadFixed);
+  LUA_REGISTER(L, -1, DrawRectGradient);
+  LUA_REGISTER(L, -1, DrawRectGradientFixed);
+  LUA_REGISTER(L, -1, DrawRectOutlineGradient);
+  LUA_REGISTER(L, -1, DrawRectOutlineGradientFixed);
+  LUA_REGISTER(L, -1, DrawCircleGradient);
+  LUA_REGISTER(L, -1, DrawCircleGradientFixed);
+  LUA_REGISTER(L, -1, DrawCircleOutlineGradient);
+  LUA_REGISTER(L, -1, DrawCircleOutlineGradientFixed);
+  LUA_REGISTER(L, -1, DrawTriangleGradient);
+  LUA_REGISTER(L, -1, DrawTriangleGradientFixed);
+  LUA_REGISTER(L, -1, DrawTriangleOutlineGradient);
+  LUA_REGISTER(L, -1, DrawTriangleOutlineGradientFixed);
+  LUA_REGISTER(L, -1, DrawQuadGradient);
+  LUA_REGISTER(L, -1, DrawQuadGradientFixed);
+  LUA_REGISTER(L, -1, DrawQuadOutlineGradient);
+  LUA_REGISTER(L, -1, DrawQuadOutlineGradientFixed);
 }
 
 } // namespace Script

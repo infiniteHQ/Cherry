@@ -97,5 +97,64 @@ void ImageRoundedWindow(Vec2 pos, Vec2 size, const std::string &path,
 void ImageRoundedScreen(Vec2 pos, Vec2 size, const std::string &path,
                         float rounding,
                         const std::string &hexcol = "#FFFFFFFF");
+
+void RectGradientWindow(Vec2 pos, Vec2 size, const std::string &col_start,
+                        const std::string &col_end, bool vertical = true,
+                        int steps = 32);
+void RectGradientScreen(Vec2 pos, Vec2 size, const std::string &col_start,
+                        const std::string &col_end, bool vertical = true,
+                        int steps = 32);
+
+void CircleGradientWindow(Vec2 center, float radius,
+                          const std::string &col_center,
+                          const std::string &col_edge, int steps = 16);
+void CircleGradientScreen(Vec2 center, float radius,
+                          const std::string &col_center,
+                          const std::string &col_edge, int steps = 16);
+
+void TriangleGradientWindow(Vec2 p1, Vec2 p2, Vec2 p3, const std::string &c1,
+                            const std::string &c2, const std::string &c3);
+void TriangleGradientScreen(Vec2 p1, Vec2 p2, Vec2 p3, const std::string &c1,
+                            const std::string &c2, const std::string &c3);
+
+void QuadGradientWindow(Vec2 p1, Vec2 p2, Vec2 p3, Vec2 p4,
+                        const std::string &c1, const std::string &c2,
+                        const std::string &c3, const std::string &c4);
+void QuadGradientScreen(Vec2 p1, Vec2 p2, Vec2 p3, Vec2 p4,
+                        const std::string &c1, const std::string &c2,
+                        const std::string &c3, const std::string &c4);
+
+void RectOutlineGradientWindow(Vec2 pos, Vec2 size,
+                               const std::string &col_start,
+                               const std::string &col_end,
+                               float thickness = 1.0f);
+void RectOutlineGradientScreen(Vec2 pos, Vec2 size,
+                               const std::string &col_start,
+                               const std::string &col_end,
+                               float thickness = 1.0f);
+
+void CircleOutlineGradientWindow(Vec2 center, float radius,
+                                 const std::string &col_start,
+                                 const std::string &col_end,
+                                 float thickness = 1.0f);
+void CircleOutlineGradientScreen(Vec2 center, float radius,
+                                 const std::string &col_start,
+                                 const std::string &col_end,
+                                 float thickness = 1.0f);
+
+void TriangleOutlineGradientWindow(Vec2 p1, Vec2 p2, Vec2 p3,
+                                   const std::string &c1, const std::string &c2,
+                                   float thickness = 1.0f);
+void TriangleOutlineGradientScreen(Vec2 p1, Vec2 p2, Vec2 p3,
+                                   const std::string &c1, const std::string &c2,
+                                   float thickness = 1.0f);
+
+void QuadOutlineGradientWindow(Vec2 p1, Vec2 p2, Vec2 p3, Vec2 p4,
+                               const std::string &c1, const std::string &c2,
+                               float thickness = 1.0f);
+void QuadOutlineGradientScreen(Vec2 p1, Vec2 p2, Vec2 p3, Vec2 p4,
+                               const std::string &c1, const std::string &c2,
+                               float thickness = 1.0f);
+
 } // namespace Draw
 } // namespace Cherry
