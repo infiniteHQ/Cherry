@@ -1,4 +1,5 @@
 #include "drawing.hpp"
+#include "../app/app.hpp"
 #include "../imgui/wrappers/wrappers.hpp"
 
 namespace Cherry {
@@ -171,6 +172,13 @@ void CircleOutlineWindow(Vec2 center, float radius, const std::string &hexcol,
                                         radius, Col(hexcol), num_segments,
                                         thickness);
 }
+void CircleOutlineScreen(Vec2 center, float radius, const std::string &hexcol,
+                         float thickness, int num_segments) {
+  ImVec2 wp = ImGui::GetWindowPos();
+  ImGui::GetForegroundDrawList()->AddCircle({wp.x + center.x, wp.y + center.y},
+                                            radius, Col(hexcol), num_segments,
+                                            thickness);
+}
 
 void TriangleWindow(Vec2 p1, Vec2 p2, Vec2 p3, const std::string &hexcol) {
   ImVec2 wp = ImGui::GetWindowPos();
@@ -234,6 +242,62 @@ void CircleSectorScreen(Vec2 center, float radius, float angle_min,
   drawList->PathArcTo(ToIm(center), radius, angle_min, angle_max, num_segments);
   drawList->PathLineTo(ToIm(center));
   drawList->PathFillConvex(Col(hexcol));
+}
+void ImageWindow(Vec2 pos, Vec2 size, const std::string &path, Vec2 uv_min,
+                 Vec2 uv_max, const std::string &hexcol) {
+  ImVec2 wp = ImGui::GetWindowPos();
+  ImVec2 p_min = {wp.x + pos.x, wp.y + pos.y};
+  ImVec2 p_max = {p_min.x + size.x, p_min.y + size.y};
+
+  ImGui::GetWindowDrawList()->AddImage(Cherry::GetTexture(path), p_min, p_max,
+                                       {uv_min.x, uv_min.y},
+                                       {uv_max.x, uv_max.y}, Col(hexcol));
+}
+
+void ImageScreen(Vec2 pos, Vec2 size, const std::string &path, Vec2 uv_min,
+                 Vec2 uv_max, const std::string &hexcol) {
+  ImVec2 p_min = {pos.x, pos.y};
+  ImVec2 p_max = {pos.x + size.x, pos.y + size.y};
+
+  ImGui::GetForegroundDrawList()->AddImage(Cherry::GetTexture(path), p_min,
+                                           p_max, {uv_min.x, uv_min.y},
+                                           {uv_max.x, uv_max.y}, Col(hexcol));
+}
+void ImageQuadWindow(Vec2 p1, Vec2 p2, Vec2 p3, Vec2 p4,
+                     const std::string &path, const std::string &hexcol) {
+  ImVec2 wp = ImGui::GetWindowPos();
+  ImGui::GetWindowDrawList()->AddImageQuad(
+      Cherry::GetTexture(path), {wp.x + p1.x, wp.y + p1.y},
+      {wp.x + p2.x, wp.y + p2.y}, {wp.x + p3.x, wp.y + p3.y},
+      {wp.x + p4.x, wp.y + p4.y}, {0, 0}, {1, 0}, {1, 1}, {0, 1}, Col(hexcol));
+}
+
+void ImageQuadScreen(Vec2 p1, Vec2 p2, Vec2 p3, Vec2 p4,
+                     const std::string &path, const std::string &hexcol) {
+  ImGui::GetForegroundDrawList()->AddImageQuad(
+      Cherry::GetTexture(path), ToIm(p1), ToIm(p2), ToIm(p3), ToIm(p4), {0, 0},
+      {1, 0}, {1, 1}, {0, 1}, Col(hexcol));
+}
+
+void ImageRoundedWindow(Vec2 pos, Vec2 size, const std::string &path,
+                        float rounding, const std::string &hexcol) {
+  ImVec2 wp = ImGui::GetWindowPos();
+  ImVec2 p_min = {wp.x + pos.x, wp.y + pos.y};
+  ImVec2 p_max = {p_min.x + size.x, p_min.y + size.y};
+
+  ImGui::GetWindowDrawList()->AddImageRounded(
+      Cherry::GetTexture(path), p_min, p_max, {0, 0}, {1, 1}, Col(hexcol),
+      rounding, ImDrawFlags_RoundCornersAll);
+}
+
+void ImageRoundedScreen(Vec2 pos, Vec2 size, const std::string &path,
+                        float rounding, const std::string &hexcol) {
+  ImVec2 p_min = {pos.x, pos.y};
+  ImVec2 p_max = {pos.x + size.x, pos.y + size.y};
+
+  ImGui::GetForegroundDrawList()->AddImageRounded(
+      Cherry::GetTexture(path), p_min, p_max, {0, 0}, {1, 1}, Col(hexcol),
+      rounding, ImDrawFlags_RoundCornersAll);
 }
 } // namespace Draw
 } // namespace Cherry

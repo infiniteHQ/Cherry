@@ -406,6 +406,108 @@ LUA_FUNC(DrawRectRoundedFixed) {
   return 0;
 }
 
+LUA_FUNC(DrawImageRounded) {
+  float x = lua_getfloat(L, 1);
+  float y = lua_getfloat(L, 2);
+  float w = lua_getfloat(L, 3);
+  float h = lua_getfloat(L, 4);
+  float rounding = lua_getfloat(L, 5);
+  std::string path = static_cast<std::string>(lua_getstring(L, 6));
+  std::string color = (lua_gettop(L) >= 7)
+                          ? static_cast<std::string>(lua_getstring(L, 7))
+                          : "#FFFFFFFF";
+
+  Cherry::Draw::ImageRoundedWindow(Cherry::Vec2(x, y), Cherry::Vec2(w, h), path,
+                                   rounding, color);
+  return 0;
+}
+
+LUA_FUNC(DrawImageRoundedFixed) {
+  float x = lua_getfloat(L, 1);
+  float y = lua_getfloat(L, 2);
+  float w = lua_getfloat(L, 3);
+  float h = lua_getfloat(L, 4);
+  float rounding = lua_getfloat(L, 5);
+  std::string path = static_cast<std::string>(lua_getstring(L, 6));
+  std::string color = (lua_gettop(L) >= 7)
+                          ? static_cast<std::string>(lua_getstring(L, 7))
+                          : "#FFFFFFFF";
+
+  Cherry::Draw::ImageRoundedScreen(Cherry::Vec2(x, y), Cherry::Vec2(w, h), path,
+                                   rounding, color);
+  return 0;
+}
+
+LUA_FUNC(DrawImage) {
+  float x = lua_getfloat(L, 1);
+  float y = lua_getfloat(L, 2);
+  float w = lua_getfloat(L, 3);
+  float h = lua_getfloat(L, 4);
+  std::string path = static_cast<std::string>(lua_getstring(L, 5));
+
+  float uv_min_x = (lua_gettop(L) >= 6) ? lua_getfloat(L, 6) : 0.0f;
+  float uv_min_y = (lua_gettop(L) >= 7) ? lua_getfloat(L, 7) : 0.0f;
+  float uv_max_x = (lua_gettop(L) >= 8) ? lua_getfloat(L, 8) : 1.0f;
+  float uv_max_y = (lua_gettop(L) >= 9) ? lua_getfloat(L, 9) : 1.0f;
+
+  std::string color = (lua_gettop(L) >= 10)
+                          ? static_cast<std::string>(lua_getstring(L, 10))
+                          : "#FFFFFFFF";
+
+  Cherry::Draw::ImageWindow({x, y}, {w, h}, path, {uv_min_x, uv_min_y},
+                            {uv_max_x, uv_max_y}, color);
+  return 0;
+}
+
+LUA_FUNC(DrawImageFixed) {
+  float x = lua_getfloat(L, 1);
+  float y = lua_getfloat(L, 2);
+  float w = lua_getfloat(L, 3);
+  float h = lua_getfloat(L, 4);
+  std::string path = static_cast<std::string>(lua_getstring(L, 5));
+
+  float uv_min_x = (lua_gettop(L) >= 6) ? lua_getfloat(L, 6) : 0.0f;
+  float uv_min_y = (lua_gettop(L) >= 7) ? lua_getfloat(L, 7) : 0.0f;
+  float uv_max_x = (lua_gettop(L) >= 8) ? lua_getfloat(L, 8) : 1.0f;
+  float uv_max_y = (lua_gettop(L) >= 9) ? lua_getfloat(L, 9) : 1.0f;
+
+  std::string color = (lua_gettop(L) >= 10)
+                          ? static_cast<std::string>(lua_getstring(L, 10))
+                          : "#FFFFFFFF";
+
+  Cherry::Draw::ImageScreen({x, y}, {w, h}, path, {uv_min_x, uv_min_y},
+                            {uv_max_x, uv_max_y}, color);
+  return 0;
+}
+
+LUA_FUNC(DrawImageQuad) {
+  Cherry::Vec2 p1(lua_getfloat(L, 1), lua_getfloat(L, 2));
+  Cherry::Vec2 p2(lua_getfloat(L, 3), lua_getfloat(L, 4));
+  Cherry::Vec2 p3(lua_getfloat(L, 5), lua_getfloat(L, 6));
+  Cherry::Vec2 p4(lua_getfloat(L, 7), lua_getfloat(L, 8));
+  std::string path = static_cast<std::string>(lua_getstring(L, 9));
+  std::string color = (lua_gettop(L) >= 10)
+                          ? static_cast<std::string>(lua_getstring(L, 10))
+                          : "#FFFFFFFF";
+
+  Cherry::Draw::ImageQuadWindow(p1, p2, p3, p4, path, color);
+  return 0;
+}
+
+LUA_FUNC(DrawImageQuadFixed) {
+  Cherry::Vec2 p1(lua_getfloat(L, 1), lua_getfloat(L, 2));
+  Cherry::Vec2 p2(lua_getfloat(L, 3), lua_getfloat(L, 4));
+  Cherry::Vec2 p3(lua_getfloat(L, 5), lua_getfloat(L, 6));
+  Cherry::Vec2 p4(lua_getfloat(L, 7), lua_getfloat(L, 8));
+  std::string path = static_cast<std::string>(lua_getstring(L, 9));
+  std::string color = (lua_gettop(L) >= 10)
+                          ? static_cast<std::string>(lua_getstring(L, 10))
+                          : "#FFFFFFFF";
+
+  Cherry::Draw::ImageQuadScreen(p1, p2, p3, p4, path, color);
+  return 0;
+}
+
 void RegisterDrawingAPI(lua_State *L) {
   LUA_REGISTER(L, -1, DrawRect);
   LUA_REGISTER(L, -1, DrawRectFixed);
@@ -435,6 +537,12 @@ void RegisterDrawingAPI(lua_State *L) {
   LUA_REGISTER(L, -1, DrawTriangleFixed);
   LUA_REGISTER(L, -1, DrawRectRounded);
   LUA_REGISTER(L, -1, DrawRectRoundedFixed);
+  LUA_REGISTER(L, -1, DrawImageRounded);
+  LUA_REGISTER(L, -1, DrawImageRoundedFixed);
+  LUA_REGISTER(L, -1, DrawImage);
+  LUA_REGISTER(L, -1, DrawImageFixed);
+  LUA_REGISTER(L, -1, DrawImageQuad);
+  LUA_REGISTER(L, -1, DrawImageQuadFixed);
 }
 
 } // namespace Script

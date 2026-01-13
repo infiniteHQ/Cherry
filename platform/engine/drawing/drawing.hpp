@@ -79,5 +79,23 @@ void CircleSectorWindow(Vec2 center, float radius, float angle_min,
 void CircleSectorScreen(Vec2 center, float radius, float angle_min,
                         float angle_max, const std::string &hexcol,
                         int num_segments = 0);
+void ImageWindow(Vec2 pos, Vec2 size, const std::string &path,
+                 Vec2 uv_min = {0, 0}, Vec2 uv_max = {1, 1},
+                 const std::string &hexcol = "#FFFFFFFF");
+void ImageScreen(Vec2 pos, Vec2 size, const std::string &path,
+                 Vec2 uv_min = {0, 0}, Vec2 uv_max = {1, 1},
+                 const std::string &hexcol = "#FFFFFFFF");
+void ImageQuadWindow(Vec2 p1, Vec2 p2, Vec2 p3, Vec2 p4,
+                     const std::string &path,
+                     const std::string &hexcol = "#FFFFFFFF");
+void ImageQuadScreen(Vec2 p1, Vec2 p2, Vec2 p3, Vec2 p4,
+                     const std::string &path,
+                     const std::string &hexcol = "#FFFFFFFF");
+void ImageRoundedWindow(Vec2 pos, Vec2 size, const std::string &path,
+                        float rounding,
+                        const std::string &hexcol = "#FFFFFFFF");
+void ImageRoundedScreen(Vec2 pos, Vec2 size, const std::string &path,
+                        float rounding,
+                        const std::string &hexcol = "#FFFFFFFF");
 } // namespace Draw
 } // namespace Cherry
