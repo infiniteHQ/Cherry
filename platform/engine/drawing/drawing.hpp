@@ -46,5 +46,38 @@ void TextWindow(const std::string &text, Vec2 pos, float size,
                 const std::string &hexcol);
 void TextScreen(const std::string &text, Vec2 pos, float size,
                 const std::string &hexcol);
+
+void CircleWindow(Vec2 center, float radius, const std::string &hexcol,
+                  int num_segments = 0);
+void CircleScreen(Vec2 center, float radius, const std::string &hexcol,
+                  int num_segments = 0);
+
+void CircleOutlineWindow(Vec2 center, float radius, const std::string &hexcol,
+                         float thickness = 1.0f, int num_segments = 0);
+void CircleOutlineScreen(Vec2 center, float radius, const std::string &hexcol,
+                         float thickness = 1.0f, int num_segments = 0);
+
+void TriangleWindow(Vec2 p1, Vec2 p2, Vec2 p3, const std::string &hexcol);
+void TriangleScreen(Vec2 p1, Vec2 p2, Vec2 p3, const std::string &hexcol);
+void TriangleOutlineWindow(Vec2 p1, Vec2 p2, Vec2 p3, const std::string &hexcol,
+                           float thickness = 1.0f);
+
+void RectRoundedWindow(Vec2 pos, Vec2 size, float rounding,
+                       const std::string &hexcol);
+void RectRoundedScreen(Vec2 pos, Vec2 size, float rounding,
+                       const std::string &hexcol);
+
+void RectRoundedOutlineWindow(Vec2 pos, Vec2 size, float rounding,
+                              const std::string &hexcol,
+                              float thickness = 1.0f);
+void RectRoundedOutlineScreen(Vec2 pos, Vec2 size, float rounding,
+                              const std::string &hexcol,
+                              float thickness = 1.0f);
+void CircleSectorWindow(Vec2 center, float radius, float angle_min,
+                        float angle_max, const std::string &hexcol,
+                        int num_segments = 0);
+void CircleSectorScreen(Vec2 center, float radius, float angle_min,
+                        float angle_max, const std::string &hexcol,
+                        int num_segments = 0);
 } // namespace Draw
 } // namespace Cherry

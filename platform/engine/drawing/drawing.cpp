@@ -150,5 +150,90 @@ void TextScreen(const std::string &text, Vec2 pos, float size,
 
   dl->AddText(ImGui::GetFont(), size, ToIm(pos), Col(hexcol), text.c_str());
 }
+
+void CircleWindow(Vec2 center, float radius, const std::string &hexcol,
+                  int num_segments) {
+  ImVec2 wp = ImGui::GetWindowPos();
+  ImGui::GetWindowDrawList()->AddCircleFilled(
+      {wp.x + center.x, wp.y + center.y}, radius, Col(hexcol), num_segments);
+}
+
+void CircleScreen(Vec2 center, float radius, const std::string &hexcol,
+                  int num_segments) {
+  ImGui::GetForegroundDrawList()->AddCircleFilled(ToIm(center), radius,
+                                                  Col(hexcol), num_segments);
+}
+
+void CircleOutlineWindow(Vec2 center, float radius, const std::string &hexcol,
+                         float thickness, int num_segments) {
+  ImVec2 wp = ImGui::GetWindowPos();
+  ImGui::GetWindowDrawList()->AddCircle({wp.x + center.x, wp.y + center.y},
+                                        radius, Col(hexcol), num_segments,
+                                        thickness);
+}
+
+void TriangleWindow(Vec2 p1, Vec2 p2, Vec2 p3, const std::string &hexcol) {
+  ImVec2 wp = ImGui::GetWindowPos();
+  ImGui::GetWindowDrawList()->AddTriangleFilled(
+      {wp.x + p1.x, wp.y + p1.y}, {wp.x + p2.x, wp.y + p2.y},
+      {wp.x + p3.x, wp.y + p3.y}, Col(hexcol));
+}
+
+void TriangleScreen(Vec2 p1, Vec2 p2, Vec2 p3, const std::string &hexcol) {
+  ImGui::GetForegroundDrawList()->AddTriangleFilled(ToIm(p1), ToIm(p2),
+                                                    ToIm(p3), Col(hexcol));
+}
+
+void RectRoundedWindow(Vec2 pos, Vec2 size, float rounding,
+                       const std::string &hexcol) {
+  ImVec2 wp = ImGui::GetWindowPos();
+  ImGui::GetWindowDrawList()->AddRectFilled(
+      {wp.x + pos.x, wp.y + pos.y},
+      {wp.x + pos.x + size.x, wp.y + pos.y + size.y}, Col(hexcol), rounding,
+      ImDrawFlags_RoundCornersAll);
+}
+
+void RectRoundedOutlineWindow(Vec2 pos, Vec2 size, float rounding,
+                              const std::string &hexcol, float thickness) {
+  ImVec2 wp = ImGui::GetWindowPos();
+  ImGui::GetWindowDrawList()->AddRect(
+      {wp.x + pos.x, wp.y + pos.y},
+      {wp.x + pos.x + size.x, wp.y + pos.y + size.y}, Col(hexcol), rounding,
+      ImDrawFlags_RoundCornersAll, thickness);
+}
+
+void CircleSectorWindow(Vec2 center, float radius, float angle_min,
+                        float angle_max, const std::string &hexcol,
+                        int num_segments) {
+  ImVec2 wp = ImGui::GetWindowPos();
+  ImGui::GetWindowDrawList()->PathArcTo({wp.x + center.x, wp.y + center.y},
+                                        radius, angle_min, angle_max,
+                                        num_segments);
+  ImGui::GetWindowDrawList()->PathLineTo({wp.x + center.x, wp.y + center.y});
+  ImGui::GetWindowDrawList()->PathFillConvex(Col(hexcol));
+}
+void RectRoundedScreen(Vec2 pos, Vec2 size, float rounding,
+                       const std::string &hexcol) {
+  ImGui::GetForegroundDrawList()->AddRectFilled(
+      ToIm(pos), {pos.x + size.x, pos.y + size.y}, Col(hexcol), rounding,
+      ImDrawFlags_RoundCornersAll);
+}
+
+void RectRoundedOutlineScreen(Vec2 pos, Vec2 size, float rounding,
+                              const std::string &hexcol, float thickness) {
+  ImGui::GetForegroundDrawList()->AddRect(
+      ToIm(pos), {pos.x + size.x, pos.y + size.y}, Col(hexcol), rounding,
+      ImDrawFlags_RoundCornersAll, thickness);
+}
+
+void CircleSectorScreen(Vec2 center, float radius, float angle_min,
+                        float angle_max, const std::string &hexcol,
+                        int num_segments) {
+  ImDrawList *drawList = ImGui::GetForegroundDrawList();
+
+  drawList->PathArcTo(ToIm(center), radius, angle_min, angle_max, num_segments);
+  drawList->PathLineTo(ToIm(center));
+  drawList->PathFillConvex(Col(hexcol));
+}
 } // namespace Draw
 } // namespace Cherry
