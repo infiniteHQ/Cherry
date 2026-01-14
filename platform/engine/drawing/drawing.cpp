@@ -23,6 +23,8 @@ static ImU32 LerpColor(ImU32 a, ImU32 b, float t) {
 static void AddQuadGradientInternal(ImDrawList *drawList, ImVec2 p1, ImVec2 p2,
                                     ImVec2 p3, ImVec2 p4, ImU32 c1, ImU32 c2,
                                     ImU32 c3, ImU32 c4) {
+  ImVec2 uv = ImGui::GetDrawListSharedData()->TexUvWhitePixel;
+
   drawList->PrimReserve(6, 4);
   drawList->PrimWriteIdx(drawList->_VtxCurrentIdx);
   drawList->PrimWriteIdx(drawList->_VtxCurrentIdx + 1);
@@ -30,25 +32,27 @@ static void AddQuadGradientInternal(ImDrawList *drawList, ImVec2 p1, ImVec2 p2,
   drawList->PrimWriteIdx(drawList->_VtxCurrentIdx);
   drawList->PrimWriteIdx(drawList->_VtxCurrentIdx + 2);
   drawList->PrimWriteIdx(drawList->_VtxCurrentIdx + 3);
-  drawList->PrimWriteVtx(p1, {0, 0}, c1);
-  drawList->PrimWriteVtx(p2, {1, 0}, c2);
-  drawList->PrimWriteVtx(p3, {1, 1}, c3);
-  drawList->PrimWriteVtx(p4, {0, 1}, c4);
+
+  drawList->PrimWriteVtx(p1, uv, c1);
+  drawList->PrimWriteVtx(p2, uv, c2);
+  drawList->PrimWriteVtx(p3, uv, c3);
+  drawList->PrimWriteVtx(p4, uv, c4);
 }
 
 static void AddTriangleGradientInternal(ImDrawList *drawList, ImVec2 p1,
                                         ImVec2 p2, ImVec2 p3, ImU32 c1,
                                         ImU32 c2, ImU32 c3) {
-  drawList->PrimReserve(3, 3);
+  ImVec2 uv = ImGui::GetDrawListSharedData()->TexUvWhitePixel;
 
+  drawList->PrimReserve(3, 3);
   drawList->PrimWriteIdx(drawList->_VtxCurrentIdx);
   drawList->PrimWriteIdx(drawList->_VtxCurrentIdx + 1);
   drawList->PrimWriteIdx(drawList->_VtxCurrentIdx + 2);
-  drawList->PrimWriteVtx(p1, {0, 0}, c1);
-  drawList->PrimWriteVtx(p2, {0, 0}, c2);
-  drawList->PrimWriteVtx(p3, {0, 0}, c3);
-}
 
+  drawList->PrimWriteVtx(p1, uv, c1);
+  drawList->PrimWriteVtx(p2, uv, c2);
+  drawList->PrimWriteVtx(p3, uv, c3);
+}
 void LineWindow(Vec2 a, Vec2 b, const std::string &hexcol, float thickness) {
   ImVec2 wp = ImGui::GetWindowPos();
   ImGui::GetWindowDrawList()->AddLine({wp.x + a.x, wp.y + a.y},
@@ -213,9 +217,8 @@ void CircleOutlineWindow(Vec2 center, float radius, const std::string &hexcol,
 void CircleOutlineScreen(Vec2 center, float radius, const std::string &hexcol,
                          float thickness, int num_segments) {
   ImVec2 wp = ImGui::GetWindowPos();
-  ImGui::GetForegroundDrawList()->AddCircle({wp.x + center.x, wp.y + center.y},
-                                            radius, Col(hexcol), num_segments,
-                                            thickness);
+  ImGui::GetForegroundDrawList()->AddCircle(
+      {center.x, center.y}, radius, Col(hexcol), num_segments, thickness);
 }
 
 void TriangleWindow(Vec2 p1, Vec2 p2, Vec2 p3, const std::string &hexcol) {

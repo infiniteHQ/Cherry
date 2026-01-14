@@ -239,27 +239,27 @@
             "sumary": "This is all the references of Cherry",
             "pages": [
                 {
-                    "name": "api_reference",
-                    "link": "api_reference.md",
+                    "name": "cpp_logic",
+                    "link": "cpp_logic.md",
                     "description": "",
                     "logo": "",
-                    "slug": "API Reference",
+                    "slug": "C++ Logic API",
                     "subpages": []
                 },
                 {
-                    "name": "kit_references",
-                    "link": "kit_references.md",
+                    "name": "lua_drawing",
+                    "link": "lua_drawing.md",
                     "description": "",
                     "logo": "",
-                    "slug": "Kit Reference",
+                    "slug": "Lua Drawing API",
                     "subpages": []
                 },
                 {
-                    "name": "lua_scripting_references",
-                    "link": "lua_scripting_references.md",
+                    "name": "lua_logic",
+                    "link": "lua_logic.md",
                     "description": "",
                     "logo": "",
-                    "slug": "Lua Scripting Reference",
+                    "slug": "Lua Logic API",
                     "subpages": []
                 }
             ]

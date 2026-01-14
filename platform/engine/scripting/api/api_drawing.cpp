@@ -117,11 +117,10 @@ LUA_FUNC(DrawLineHorizontal) {
   float y = lua_getfloat(L, 1);
   float sx = lua_getfloat(L, 2);
   float ex = lua_getfloat(L, 3);
-  std::string color = static_cast<std::string>(lua_getstring(L, 5));
-  float thickness = lua_getfloat(L, 6);
+  std::string color = static_cast<std::string>(lua_getstring(L, 4));
+  float thickness = (lua_gettop(L) >= 5) ? lua_getfloat(L, 5) : 1.0f;
 
   Cherry::Draw::LineHWindow(y, sx, ex, color, thickness);
-
   return 0;
 }
 
@@ -129,11 +128,10 @@ LUA_FUNC(DrawLineHorizontalFixed) {
   float y = lua_getfloat(L, 1);
   float sx = lua_getfloat(L, 2);
   float ex = lua_getfloat(L, 3);
-  std::string color = static_cast<std::string>(lua_getstring(L, 5));
-  float thickness = lua_getfloat(L, 6);
+  std::string color = static_cast<std::string>(lua_getstring(L, 4));
+  float thickness = (lua_gettop(L) >= 5) ? lua_getfloat(L, 5) : 1.0f;
 
   Cherry::Draw::LineHScreen(y, sx, ex, color, thickness);
-
   return 0;
 }
 
@@ -141,11 +139,10 @@ LUA_FUNC(DrawLineVertical) {
   float x = lua_getfloat(L, 1);
   float sy = lua_getfloat(L, 2);
   float ey = lua_getfloat(L, 3);
-  std::string color = static_cast<std::string>(lua_getstring(L, 5));
-  float thickness = lua_getfloat(L, 6);
+  std::string color = static_cast<std::string>(lua_getstring(L, 4));
+  float thickness = (lua_gettop(L) >= 5) ? lua_getfloat(L, 5) : 1.0f;
 
   Cherry::Draw::LineVWindow(x, sy, ey, color, thickness);
-
   return 0;
 }
 
@@ -153,14 +150,12 @@ LUA_FUNC(DrawLineVerticalFixed) {
   float x = lua_getfloat(L, 1);
   float sy = lua_getfloat(L, 2);
   float ey = lua_getfloat(L, 3);
-  std::string color = static_cast<std::string>(lua_getstring(L, 5));
-  float thickness = lua_getfloat(L, 6);
+  std::string color = static_cast<std::string>(lua_getstring(L, 4));
+  float thickness = (lua_gettop(L) >= 5) ? lua_getfloat(L, 5) : 1.0f;
 
   Cherry::Draw::LineVScreen(x, sy, ey, color, thickness);
-
   return 0;
 }
-
 LUA_FUNC(DrawPolyline) {
   if (!lua_istable(L, 1)) {
     return 0;
@@ -229,8 +224,8 @@ LUA_FUNC(DrawCross) {
   float x = lua_getfloat(L, 1);
   float y = lua_getfloat(L, 2);
   float size = lua_getfloat(L, 3);
-  std::string color = static_cast<std::string>(lua_getstring(L, 5));
-  float thickness = lua_getfloat(L, 6);
+  std::string color = static_cast<std::string>(lua_getstring(L, 4));
+  float thickness = (lua_gettop(L) >= 5) ? lua_getfloat(L, 5) : 1.0f;
 
   Cherry::Draw::CrossWindow(Cherry::Vec2(x, y), size, color, thickness);
 
@@ -241,19 +236,18 @@ LUA_FUNC(DrawCrossFixed) {
   float x = lua_getfloat(L, 1);
   float y = lua_getfloat(L, 2);
   float size = lua_getfloat(L, 3);
-  std::string color = static_cast<std::string>(lua_getstring(L, 5));
-  float thickness = lua_getfloat(L, 6);
+  std::string color = static_cast<std::string>(lua_getstring(L, 4));
+  float thickness = (lua_gettop(L) >= 5) ? lua_getfloat(L, 5) : 1.0f;
 
   Cherry::Draw::CrossScreen(Cherry::Vec2(x, y), size, color, thickness);
 
   return 0;
 }
-
 LUA_FUNC(DrawSquare) {
   float x = lua_getfloat(L, 1);
   float y = lua_getfloat(L, 2);
   float size = lua_getfloat(L, 3);
-  std::string color = static_cast<std::string>(lua_getstring(L, 5));
+  std::string color = static_cast<std::string>(lua_getstring(L, 4));
 
   Cherry::Draw::SquareWindow(Cherry::Vec2(x, y), size, color);
 
@@ -264,7 +258,7 @@ LUA_FUNC(DrawSquareFixed) {
   float x = lua_getfloat(L, 1);
   float y = lua_getfloat(L, 2);
   float size = lua_getfloat(L, 3);
-  std::string color = static_cast<std::string>(lua_getstring(L, 5));
+  std::string color = static_cast<std::string>(lua_getstring(L, 4));
 
   Cherry::Draw::SquareScreen(Cherry::Vec2(x, y), size, color);
 
@@ -735,7 +729,7 @@ void RegisterDrawingAPI(lua_State *L) {
   LUA_REGISTER(L, -1, DrawCircle);
   LUA_REGISTER(L, -1, DrawCircleFixed);
   LUA_REGISTER(L, -1, DrawCircleOutline);
-  LUA_REGISTER(L, -1, DrawCircleOutlineFixed);
+  LUA_REGISTER(L, -1, DrawCircleOutlineFixed); // Not Fixed
   LUA_REGISTER(L, -1, DrawTriangle);
   LUA_REGISTER(L, -1, DrawTriangleFixed);
   LUA_REGISTER(L, -1, DrawRectRounded);
