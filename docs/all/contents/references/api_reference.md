@@ -1,3 +1,1 @@
-We're currently working on this documentation. Thank you for your patience!
-
-:)
+This is all the C++ API reference of cherry. You will find here all features and functions you can call in your C++ application.

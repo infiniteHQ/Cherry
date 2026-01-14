@@ -1,1 +1,1 @@
-We're currently working on this documentation. Thank you for your patience!
+Cherry had integrated devtools allowing you to debug components, render, process or components

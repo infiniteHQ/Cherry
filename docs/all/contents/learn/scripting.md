@@ -1,1 +1,5 @@
-We're currently working on this documentation. Thank you for your patience!
+Cherry allow you to script your components, renders and all your application with Lua ! 
+
+### Setup scripting env
+
+### Live scripting
