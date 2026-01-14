@@ -2884,6 +2884,14 @@ bool Application::IsKeyPressed(CherryKey key) {
   return it != keyMap.end() && state[it->second];
 }
 
+bool Application::IsMouseClicked(int btn, bool repeat) {
+  CherryGUI::IsMouseClicked(btn, repeat);
+}
+
+bool Application::IsMouseDoubleClicked(int btn) {
+  CherryGUI::IsMouseDoubleClicked(btn);
+}
+
 void Application::PushCurrentComponent(
     const std::shared_ptr<Component> &component) {
   m_PushedCurrentComponent.push_back(component);

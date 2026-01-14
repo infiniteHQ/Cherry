@@ -3,6 +3,9 @@ This section provides functions for drawing primitive shapes. Functions without 
 
 ---
 
+
+<bloc>
+
 #### DrawRect
 Draws a filled rectangle at the specified coordinates, relative to the window position.
 
@@ -19,7 +22,9 @@ Cherry.DrawRect(x, y, width, height, hex_color)
 Cherry.DrawRect(100, 100, 50, 50, "#FF0000FF")
 ```
 
----
+</bloc>
+
+<bloc>
 
 #### DrawRectFixed
 Draws a filled rectangle using absolute screen coordinates.
@@ -37,7 +42,9 @@ Cherry.DrawRectFixed(x, y, width, height, hex_color)
 Cherry.DrawRectFixed(0, 0, 1920, 30, "#000000FF")
 ```
 
----
+</bloc>
+
+<bloc>
 
 #### DrawRectOutline
 Draws the outline of a rectangle with a customizable line thickness, relative to the window position.
@@ -56,7 +63,9 @@ Cherry.DrawRectOutline(x, y, width, height, hex_color, thickness)
 Cherry.DrawRectOutline(45, 45, 110, 110, "#00AAFFFF", 2.0)
 ```
 
----
+</bloc>
+
+<bloc>
 
 #### DrawRectOutlineFixed
 Draws the outline of a rectangle using absolute screen coordinates.
@@ -75,7 +84,9 @@ Cherry.DrawRectOutlineFixed(x, y, width, height, hex_color, thickness)
 Cherry.DrawRectOutlineFixed(10, 10, 200, 50, "#FFFFFFFF", 1.0)
 ```
 
----
+</bloc>
+
+<bloc>
 
 #### DrawText
 Draws a string of text relative to the window position.
@@ -94,7 +105,9 @@ Cherry.DrawText(x, y, size, hex_color, text)
 Cherry.DrawText(20, 20, 18.0, "#FFFFFFCC", "Hello World")
 ```
 
----
+</bloc>
+
+<bloc>
 
 #### DrawTextFixed
 Draws a string of text using absolute screen coordinates.
@@ -113,7 +126,9 @@ Cherry.DrawTextFixed(x, y, size, hex_color, text)
 Cherry.DrawTextFixed(100, 100, 24.0, "#00FF00FF", "Screen Overlay")
 ```
 
----
+</bloc>
+
+<bloc>
 
 #### DrawLine
 Draws a line between two points relative to the window position.
@@ -132,7 +147,9 @@ Cherry.DrawLine(start_x, start_y, end_x, end_y, hex_color, thickness)
 Cherry.DrawLine(0, 0, 100, 100, "#FF0000FF", 2.0)
 ```
 
----
+</bloc>
+
+<bloc>
 
 #### DrawLineFixed
 Draws a line between two points using absolute screen coordinates.
@@ -151,7 +168,9 @@ Cherry.DrawLineFixed(start_x, start_y, end_x, end_y, hex_color, thickness)
 Cherry.DrawLineFixed(0, 0, 500, 500, "#FFFFFFFF", 1.0)
 ```
 
----
+</bloc>
+
+<bloc>
 
 #### DrawLineHorizontal
 Draws a horizontal line relative to the window position.
@@ -171,7 +190,9 @@ Cherry.DrawLineHorizontal(y, start_x, end_x, hex_color, thickness)
 Cherry.DrawLineHorizontal(50, 10, 100, "#00AAFFFF", 1.0)
 ```
 
----
+</bloc>
+
+<bloc>
 
 #### DrawLineHorizontalFixed
 Draws a horizontal line using absolute screen coordinates.
@@ -191,7 +212,9 @@ Cherry.DrawLineHorizontalFixed(y, start_x, end_x, hex_color, thickness)
 Cherry.DrawLineHorizontalFixed(1080 / 2, 0, 1920, "#FF00FFFF", 2.0)
 ```
 
----
+</bloc>
+
+<bloc>
 
 #### DrawLineVertical
 Draws a vertical line relative to the window position.
@@ -211,7 +234,9 @@ Cherry.DrawLineVertical(x, start_y, end_y, hex_color, thickness)
 Cherry.DrawLineVertical(50, 10, 100, "#00AAFFFF", 1.0)
 ```
 
----
+</bloc>
+
+<bloc>
 
 #### DrawLineVerticalFixed
 Draws a vertical line using absolute screen coordinates.
@@ -230,7 +255,10 @@ Cherry.DrawLineVerticalFixed(x, start_y, end_y, hex_color, thickness)
 ```lua
 Cherry.DrawLineVerticalFixed(1920 / 2, 0, 1080, "#FFFF00FF", 2.0)
 ```
----
+</bloc>
+
+
+<bloc>
 
 #### DrawPolyline
 Draws a sequence of connected line segments relative to the window position.
@@ -248,7 +276,9 @@ Cherry.DrawPolyline(points_table, hex_color, thickness)
 Cherry.DrawPolyline({{10, 10}, {50, 20}, {90, 10}}, "#FFFFFFFF", 2.0)
 ```
 
----
+</bloc>
+
+<bloc>
 
 #### DrawPolylineFixed
 Draws a sequence of connected line segments using absolute screen coordinates.
@@ -266,7 +296,9 @@ Cherry.DrawPolylineFixed(points_table, hex_color, thickness)
 Cherry.DrawPolylineFixed({{0, 0}, {100, 100}, {200, 0}}, "#FF0000FF", 1.0)
 ```
 
----
+</bloc>
+
+<bloc>
 
 #### DrawCross
 Draws an "X" shaped cross centered at the specified position, relative to the window.
@@ -285,7 +317,9 @@ Cherry.DrawCross(x, y, size, hex_color, thickness)
 Cherry.DrawCross(100, 100, 20, "#FF0000FF", 2.0)
 ```
 
----
+</bloc>
+
+<bloc>
 
 #### DrawCrossFixed
 Draws an "X" shaped cross centered at absolute screen coordinates.
@@ -304,7 +338,9 @@ Cherry.DrawCrossFixed(x, y, size, hex_color, thickness)
 Cherry.DrawCrossFixed(960, 540, 50, "#00FF00FF", 1.5)
 ```
 
----
+</bloc>
+
+<bloc>
 
 #### DrawSquare
 Draws a filled square relative to the window position.
@@ -322,7 +358,9 @@ Cherry.DrawSquare(x, y, size, hex_color)
 Cherry.DrawSquare(50, 50, 40, "#00AAFFFF")
 ```
 
----
+</bloc>
+
+<bloc>
 
 #### DrawSquareFixed
 Draws a filled square at absolute screen coordinates.
@@ -340,7 +378,9 @@ Cherry.DrawSquareFixed(x, y, size, hex_color)
 Cherry.DrawSquareFixed(10, 10, 100, "#222222FF")
 ```
 
----
+</bloc>
+
+<bloc>
 
 #### DrawQuad
 Draws a filled quadrilateral (4-sided polygon) relative to the window position.
@@ -357,7 +397,9 @@ Cherry.DrawQuad(x1, y1, x2, y2, x3, y3, x4, y4, hex_color)
 Cherry.DrawQuad(10, 10, 100, 20, 90, 80, 20, 90, "#FFCC00FF")
 ```
 
----
+</bloc>
+
+<bloc>
 
 #### DrawQuadFixed
 Draws a filled quadrilateral at absolute screen coordinates.
@@ -374,7 +416,9 @@ Cherry.DrawQuadFixed(x1, y1, x2, y2, x3, y3, x4, y4, hex_color)
 Cherry.DrawQuadFixed(0, 0, 200, 50, 150, 200, 50, 150, "#FF00FFFF")
 ```
 
----
+</bloc>
+
+<bloc>
 
 #### DrawCircle
 Draws a filled circle relative to the window position.
@@ -393,7 +437,9 @@ Cherry.DrawCircle(x, y, radius, hex_color, segments)
 Cherry.DrawCircle(100, 100, 30, "#FF0000FF", 0)
 ```
 
----
+</bloc>
+
+<bloc>
 
 #### DrawCircleFixed
 Draws a filled circle at absolute screen coordinates.
@@ -412,7 +458,9 @@ Cherry.DrawCircleFixed(x, y, radius, hex_color, segments)
 Cherry.DrawCircleFixed(960, 540, 100, "#FFFFFFFF", 64)
 ```
 
----
+</bloc>
+
+<bloc>
 
 #### DrawCircleOutline
 Draws a circle outline relative to the window position.
@@ -432,7 +480,9 @@ Cherry.DrawCircleOutline(x, y, radius, hex_color, thickness, segments)
 Cherry.DrawCircleOutline(100, 100, 30, "#00FF00FF", 2.0, 32)
 ```
 
----
+</bloc>
+
+<bloc>
 
 #### DrawCircleOutlineFixed
 Draws a circle outline at absolute screen coordinates.
@@ -452,7 +502,9 @@ Cherry.DrawCircleOutlineFixed(x, y, radius, hex_color, thickness, segments)
 Cherry.DrawCircleOutlineFixed(500, 500, 50, "#FFAA00FF", 1.0, 0)
 ```
 
----
+</bloc>
+
+<bloc>
 
 #### DrawTriangle
 Draws a filled triangle relative to the window position.
@@ -469,7 +521,9 @@ Cherry.DrawTriangle(p1x, p1y, p2x, p2y, p3x, p3y, hex_color)
 Cherry.DrawTriangle(50, 10, 90, 90, 10, 90, "#00FF00FF")
 ```
 
----
+</bloc>
+
+<bloc>
 
 #### DrawTriangleFixed
 Draws a filled triangle at absolute screen coordinates.
@@ -486,7 +540,9 @@ Cherry.DrawTriangleFixed(p1x, p1y, p2x, p2y, p3x, p3y, hex_color)
 Cherry.DrawTriangleFixed(100, 100, 200, 100, 150, 200, "#FF0000FF")
 ```
 
----
+</bloc>
+
+<bloc>
 
 #### DrawRectRounded
 Draws a filled rectangle with rounded corners relative to the window position.
@@ -505,7 +561,9 @@ Cherry.DrawRectRounded(x, y, width, height, rounding, hex_color)
 Cherry.DrawRectRounded(10, 10, 200, 100, 10.0, "#333333FF")
 ```
 
----
+</bloc>
+
+<bloc>
 
 #### DrawRectRoundedFixed
 Draws a filled rectangle with rounded corners using absolute screen coordinates.
@@ -524,7 +582,9 @@ Cherry.DrawRectRoundedFixed(x, y, width, height, rounding, hex_color)
 Cherry.DrawRectRoundedFixed(0, 0, 400, 50, 5.0, "#FF0000FF")
 ```
 
----
+</bloc>
+
+<bloc>
 
 #### DrawImage
 Draws a standard image texture with optional UV mapping and tinting.
@@ -543,7 +603,9 @@ Cherry.DrawImage(x, y, w, h, path, [uv_min_x, uv_min_y, uv_max_x, uv_max_y, hex_
 Cherry.DrawImage(50, 50, 128, 128, "textures/ui_icon.png", 0, 0, 1, 1, "#FFFFFF88")
 ```
 
----
+</bloc>
+
+<bloc>
 
 #### DrawImageFixed
 Draws a standard image texture using absolute screen coordinates.
@@ -560,7 +622,9 @@ Cherry.DrawImageFixed(x, y, w, h, path, [uv_min_x, uv_min_y, uv_max_x, uv_max_y,
 Cherry.DrawImageFixed(0, 0, 1920, 1080, "backgrounds/main.jpg")
 ```
 
----
+</bloc>
+
+<bloc>
 
 #### DrawImageRounded
 Draws an image texture clipped to a rounded rectangle.
@@ -578,7 +642,9 @@ Cherry.DrawImageRounded(x, y, w, h, rounding, path, [hex_color])
 Cherry.DrawImageRounded(20, 20, 100, 100, 50.0, "avatars/user.png")
 ```
 
----
+</bloc>
+
+<bloc>
 
 #### DrawImageRoundedFixed
 Draws an image texture clipped to a rounded rectangle at absolute screen coordinates.
@@ -595,7 +661,9 @@ Cherry.DrawImageRoundedFixed(x, y, w, h, rounding, path, [hex_color])
 Cherry.DrawImageRoundedFixed(800, 20, 64, 64, 32.0, "icons/status.png")
 ```
 
----
+</bloc>
+
+<bloc>
 
 #### DrawImageQuad
 Draws an image texture mapped onto a custom 4-point quadrilateral.
@@ -613,7 +681,9 @@ Cherry.DrawImageQuad(p1x, p1y, p2x, p2y, p3x, p3y, p4x, p4y, path, [hex_color])
 Cherry.DrawImageQuad(10,10, 110,20, 100,120, 0,100, "textures/skewed.png")
 ```
 
----
+</bloc>
+
+<bloc>
 
 #### DrawImageQuadFixed
 Draws an image texture mapped onto a custom 4-point quadrilateral using absolute coordinates.
@@ -629,7 +699,9 @@ Cherry.DrawImageQuadFixed(p1x, p1y, p2x, p2y, p3x, p3y, p4x, p4y, path, [hex_col
 Cherry.DrawImageQuadFixed(0,0, 200,0, 180,150, 20,150, "ui/header_skew.png")
 ```
 
----
+</bloc>
+
+<bloc>
 
 #### DrawRectGradient
 Draws a rectangle with a linear color gradient.
@@ -648,7 +720,9 @@ Cherry.DrawRectGradient(x, y, w, h, color_start, color_end, [vertical, steps])
 Cherry.DrawRectGradient(0, 0, 300, 50, "#FF0000FF", "#0000FFFF", false)
 ```
 
----
+</bloc>
+
+<bloc>
 
 #### DrawRectGradientFixed
 Draws a rectangle with a linear color gradient at absolute screen coordinates.
@@ -664,7 +738,9 @@ Cherry.DrawRectGradientFixed(x, y, w, h, color_start, color_end, [vertical, step
 Cherry.DrawRectGradientFixed(0, 0, 1920, 2, "#FFFFFFFF", "#FFFFFF00")
 ```
 
----
+</bloc>
+
+<bloc>
 
 #### DrawRectOutlineGradient
 Draws the outline of a rectangle with a color gradient.
@@ -681,7 +757,9 @@ Cherry.DrawRectOutlineGradient(x, y, w, h, color_start, color_end, [thickness])
 Cherry.DrawRectOutlineGradient(50, 50, 100, 100, "#00FF00FF", "#002200FF", 2.5)
 ```
 
----
+</bloc>
+
+<bloc>
 
 #### DrawRectOutlineGradientFixed
 Draws the outline of a rectangle with a color gradient at absolute screen coordinates.
@@ -697,7 +775,9 @@ Cherry.DrawRectOutlineGradientFixed(x, y, w, h, color_start, color_end, [thickne
 Cherry.DrawRectOutlineGradientFixed(10, 10, 500, 500, "#FFFFFF88", "#FFFFFF00", 1.0)
 ```
 
----
+</bloc>
+
+<bloc>
 
 #### DrawCircleGradient
 Draws a filled circle with a radial gradient from the center to the edge, relative to the window.
@@ -717,7 +797,9 @@ Cherry.DrawCircleGradient(x, y, radius, color_center, color_edge, [steps])
 Cherry.DrawCircleGradient(100, 100, 50, "#FFFFFFFF", "#00000000", 32)
 ```
 
----
+</bloc>
+
+<bloc>
 
 #### DrawCircleGradientFixed
 Draws a filled circle with a radial gradient using absolute screen coordinates.
@@ -732,7 +814,9 @@ Cherry.DrawCircleGradientFixed(x, y, radius, color_center, color_edge, [steps])
 Cherry.DrawCircleGradientFixed(960, 540, 200, "#FFCC00FF", "#FF000000")
 ```
 
----
+</bloc>
+
+<bloc>
 
 #### DrawCircleOutlineGradient
 Draws a circle outline with a color gradient between two points, relative to the window.
@@ -749,9 +833,12 @@ Cherry.DrawCircleOutlineGradient(x, y, radius, color_start, color_end, [thicknes
 Cherry.DrawCircleOutlineGradient(100, 100, 40, "#00FFFFFF", "#004444FF", 2.0)
 ```
 
----
+</bloc>
+
+<bloc>
 
 #### DrawCircleOutlineGradientFixed
+
 Draws a circle outline with a color gradient using absolute screen coordinates.
 
 **Signature and Parameters:**
@@ -764,7 +851,9 @@ Cherry.DrawCircleOutlineGradientFixed(x, y, radius, color_start, color_end, [thi
 Cherry.DrawCircleOutlineGradientFixed(500, 500, 100, "#FFFFFFFF", "#FF0000FF", 3.0)
 ```
 
----
+</bloc>
+
+<bloc>
 
 #### DrawTriangleGradient
 Draws a filled triangle with a unique color at each vertex, creating a multi-color interpolation.
@@ -781,7 +870,9 @@ Cherry.DrawTriangleGradient(x1, y1, x2, y2, x3, y3, c1, c2, c3)
 Cherry.DrawTriangleGradient(100, 20, 180, 150, 20, 150, "#FF0000FF", "#00FF00FF", "#0000FFFF")
 ```
 
----
+</bloc>
+
+<bloc>
 
 #### DrawTriangleGradientFixed
 Draws a multi-color filled triangle using absolute screen coordinates.
@@ -796,7 +887,9 @@ Cherry.DrawTriangleGradientFixed(x1, y1, x2, y2, x3, y3, c1, c2, c3)
 Cherry.DrawTriangleGradientFixed(0, 0, 100, 0, 50, 100, "#FFFFFFFF", "#FF00FFFF", "#00FFFFFF")
 ```
 
----
+</bloc>
+
+<bloc>
 
 #### DrawTriangleOutlineGradient
 Draws a triangle outline with a gradient between vertices, relative to the window.
@@ -813,7 +906,9 @@ Cherry.DrawTriangleOutlineGradient(x1, y1, x2, y2, x3, y3, c1, c2, [thickness])
 Cherry.DrawTriangleOutlineGradient(50, 50, 100, 100, 0, 100, "#FF0000FF", "#FFFF00FF", 2.0)
 ```
 
----
+</bloc>
+
+<bloc>
 
 #### DrawTriangleOutlineGradientFixed
 Draws a triangle outline with a gradient using absolute screen coordinates.
@@ -828,7 +923,9 @@ Cherry.DrawTriangleOutlineGradientFixed(x1, y1, x2, y2, x3, y3, c1, c2, [thickne
 Cherry.DrawTriangleOutlineGradientFixed(960, 100, 1000, 150, 920, 150, "#00FF00FF", "#00000000")
 ```
 
----
+</bloc>
+
+<bloc>
 
 #### DrawQuadGradient
 Draws a filled quadrilateral with a unique color at each of its four corners.
@@ -845,7 +942,9 @@ Cherry.DrawQuadGradient(x1, y1, x2, y2, x3, y3, x4, y4, c1, c2, c3, c4)
 Cherry.DrawQuadGradient(0,0, 100,0, 100,100, 0,100, "#FF0000FF", "#FFFF00FF", "#00FF00FF", "#0000FFFF")
 ```
 
----
+</bloc>
+
+<bloc>
 
 #### DrawQuadGradientFixed
 Draws a multi-color filled quadrilateral using absolute screen coordinates.
@@ -860,7 +959,9 @@ Cherry.DrawQuadGradientFixed(x1, y1, x2, y2, x3, y3, x4, y4, c1, c2, c3, c4)
 Cherry.DrawQuadGradientFixed(0, 0, 1920, 0, 1920, 1080, 0, 1080, "#000000FF", "#222222FF", "#111111FF", "#000000FF")
 ```
 
----
+</bloc>
+
+<bloc>
 
 #### DrawQuadOutlineGradient
 Draws a quadrilateral outline with a color gradient, relative to the window.
@@ -877,7 +978,9 @@ Cherry.DrawQuadOutlineGradient(x1, y1, x2, y2, x3, y3, x4, y4, c1, c2, [thicknes
 Cherry.DrawQuadOutlineGradient(10, 10, 110, 10, 110, 110, 10, 110, "#FFFFFF88", "#FFFFFF00", 1.5)
 ```
 
----
+</bloc>
+
+<bloc>
 
 #### DrawQuadOutlineGradientFixed
 Draws a quadrilateral outline with a color gradient using absolute screen coordinates.

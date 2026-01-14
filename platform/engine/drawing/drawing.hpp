@@ -156,5 +156,13 @@ void QuadOutlineGradientScreen(Vec2 p1, Vec2 p2, Vec2 p3, Vec2 p4,
                                const std::string &c1, const std::string &c2,
                                float thickness = 1.0f);
 
+void BeginRectMask(Vec2 pos, Vec2 size,
+                   bool intersect_with_current_clip_rect = true);
+void BeginRectMaskFixed(Vec2 pos, Vec2 size,
+                        bool intersect_with_current_clip_rect = true);
+
+void EndRectMask();
+void EndRectMaskFixed();
+
 } // namespace Draw
 } // namespace Cherry

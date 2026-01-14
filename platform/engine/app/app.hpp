@@ -368,6 +368,8 @@ public:
   static void SetupVulkan(const char **extensions, uint32_t extensions_count);
 
   bool IsKeyPressed(CherryKey key);
+  bool IsMouseClicked(int btn, bool repeat = false);
+  bool IsMouseDoubleClicked(int btn);
 
   Window *GetWindowByHandle(SDL_Window *window_handle);
   std::string GetRootPath() { return m_RootPath; }

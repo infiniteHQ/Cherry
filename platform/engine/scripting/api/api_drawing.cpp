@@ -705,6 +705,38 @@ LUA_FUNC(DrawQuadOutlineGradientFixed) {
   return 0;
 }
 
+LUA_FUNC(BeginRectMask) {
+  float x = lua_getfloat(L, 1);
+  float y = lua_getfloat(L, 2);
+  float w = lua_getfloat(L, 3);
+  float h = lua_getfloat(L, 4);
+  bool intersect = (lua_gettop(L) >= 5) ? lua_toboolean(L, 5) : true;
+
+  Cherry::Draw::BeginRectMask({x, y}, {w, h}, intersect);
+  return 0;
+}
+
+LUA_FUNC(EndRectMask) {
+  Cherry::Draw::EndRectMask();
+  return 0;
+}
+
+LUA_FUNC(BeginRectMaskFixed) {
+  float x = lua_getfloat(L, 1);
+  float y = lua_getfloat(L, 2);
+  float w = lua_getfloat(L, 3);
+  float h = lua_getfloat(L, 4);
+  bool intersect = (lua_gettop(L) >= 5) ? lua_toboolean(L, 5) : true;
+
+  Cherry::Draw::BeginRectMaskFixed({x, y}, {w, h}, intersect);
+  return 0;
+}
+
+LUA_FUNC(EndRectMaskFixed) {
+  Cherry::Draw::EndRectMaskFixed();
+  return 0;
+}
+
 void RegisterDrawingAPI(lua_State *L) {
   LUA_REGISTER(L, -1, DrawRect);
   LUA_REGISTER(L, -1, DrawRectFixed);
@@ -756,6 +788,11 @@ void RegisterDrawingAPI(lua_State *L) {
   LUA_REGISTER(L, -1, DrawQuadGradientFixed);
   LUA_REGISTER(L, -1, DrawQuadOutlineGradient);
   LUA_REGISTER(L, -1, DrawQuadOutlineGradientFixed);
+
+  LUA_REGISTER(L, -1, BeginRectMask);
+  LUA_REGISTER(L, -1, EndRectMask);
+  LUA_REGISTER(L, -1, BeginRectMaskFixed);
+  LUA_REGISTER(L, -1, EndRectMaskFixed);
 }
 
 } // namespace Script

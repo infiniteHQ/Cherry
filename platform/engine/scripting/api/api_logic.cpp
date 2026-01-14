@@ -9,7 +9,143 @@
 namespace Cherry {
 namespace Script {
 
-LUA_FUNC(GetCursorPos) {
+LUA_FUNC(IsMouseClickedOnPos) {
+  float x = lua_getfloat(L, 1);
+  float y = lua_getfloat(L, 2);
+  float w = lua_getfloat(L, 3);
+  float h = lua_getfloat(L, 4);
+  int btn = lua_getint(L, 5);
+  bool repeat = (lua_gettop(L) >= 6) ? lua_toboolean(L, 6) : false;
+
+  ImVec2 mousePos = ImGui::GetMousePos();
+  ImVec2 winPos = ImGui::GetWindowPos();
+
+  bool inside = (mousePos.x >= winPos.x + x && mousePos.x <= winPos.x + x + w &&
+                 mousePos.y >= winPos.y + y && mousePos.y <= winPos.y + y + h);
+
+  bool result = inside && CherryApp.IsMouseClicked(btn, repeat);
+  lua_pushboolean(L, result);
+  return 1;
+}
+
+LUA_FUNC(IsMouseDoubleClickedOnPos) {
+  float x = lua_getfloat(L, 1);
+  float y = lua_getfloat(L, 2);
+  float w = lua_getfloat(L, 3);
+  float h = lua_getfloat(L, 4);
+  int btn = lua_getint(L, 5);
+
+  ImVec2 mousePos = ImGui::GetMousePos();
+  ImVec2 winPos = ImGui::GetWindowPos();
+
+  bool inside = (mousePos.x >= winPos.x + x && mousePos.x <= winPos.x + x + w &&
+                 mousePos.y >= winPos.y + y && mousePos.y <= winPos.y + y + h);
+
+  bool result = inside && CherryApp.IsMouseDoubleClicked(btn);
+  lua_pushboolean(L, result);
+  return 1;
+}
+
+LUA_FUNC(IsKeyPressedOnPos) {
+  float x = lua_getfloat(L, 1);
+  float y = lua_getfloat(L, 2);
+  float w = lua_getfloat(L, 3);
+  float h = lua_getfloat(L, 4);
+
+  if (!lua_isstring(L, 5)) {
+    lua_pushboolean(L, false);
+    return 1;
+  }
+
+  std::string keyStr = lua_tostring(L, 5);
+  auto cherryKey = Cherry::Application::StringToCherryKey(keyStr);
+
+  ImVec2 mousePos = ImGui::GetMousePos();
+  ImVec2 winPos = ImGui::GetWindowPos();
+
+  bool inside = (mousePos.x >= winPos.x + x && mousePos.x <= winPos.x + x + w &&
+                 mousePos.y >= winPos.y + y && mousePos.y <= winPos.y + y + h);
+
+  if (inside && cherryKey.has_value()) {
+    lua_pushboolean(L, CherryApp.IsKeyPressed(cherryKey.value()));
+  } else {
+    lua_pushboolean(L, false);
+  }
+  return 1;
+}
+
+LUA_FUNC(IsMouseClicked) {
+  int btn = lua_getint(L, 1);
+
+  bool repeat = (lua_gettop(L) >= 2) ? lua_toboolean(L, 2) : false;
+
+  bool pressed = CherryApp.IsMouseClicked(btn, repeat);
+
+  lua_pushboolean(L, pressed);
+  return 1;
+}
+
+LUA_FUNC(IsMouseDoubleClicked) {
+  int btn = lua_getint(L, 1);
+
+  bool pressed = CherryApp.IsMouseDoubleClicked(btn);
+
+  return 1;
+}
+
+LUA_FUNC(GetMouseScreenPos) {
+  float x = CherryGUI::GetScreenMousePos().x;
+  float y = CherryGUI::GetScreenMousePos().y;
+
+  lua_pushnumber(L, x);
+  lua_pushnumber(L, y);
+
+  return 2;
+}
+
+LUA_FUNC(GetMouseScreenPosY) {
+  float y = CherryGUI::GetScreenMousePos().y;
+
+  lua_pushnumber(L, y);
+
+  return 1;
+}
+
+LUA_FUNC(GetMouseScreenPosX) {
+  float x = CherryGUI::GetScreenMousePos().x;
+
+  lua_pushnumber(L, x);
+
+  return 1;
+}
+
+LUA_FUNC(GetMousePos) {
+  float x = CherryGUI::GetWindowMousePos().x;
+  float y = CherryGUI::GetWindowMousePos().y;
+
+  lua_pushnumber(L, x);
+  lua_pushnumber(L, y);
+
+  return 2;
+}
+
+LUA_FUNC(GetMousePosY) {
+  float y = CherryGUI::GetWindowMousePos().y;
+
+  lua_pushnumber(L, y);
+
+  return 1;
+}
+
+LUA_FUNC(GetMousePosX) {
+  float x = CherryGUI::GetWindowMousePos().x;
+
+  lua_pushnumber(L, x);
+
+  return 1;
+}
+
+LUA_FUNC(GetDrawCursorPos) {
   float x = CherryGUI::GetCursorPosX();
   float y = CherryGUI::GetCursorPosY();
 
@@ -19,7 +155,7 @@ LUA_FUNC(GetCursorPos) {
   return 2;
 }
 
-LUA_FUNC(GetCursorPosY) {
+LUA_FUNC(GetDrawCursorPosY) {
   float y = CherryGUI::GetCursorPosY();
 
   lua_pushnumber(L, y);
@@ -27,7 +163,7 @@ LUA_FUNC(GetCursorPosY) {
   return 1;
 }
 
-LUA_FUNC(GetCursorPosX) {
+LUA_FUNC(GetDrawCursorPosX) {
   float x = CherryGUI::GetCursorPosX();
 
   lua_pushnumber(L, x);
@@ -245,10 +381,18 @@ LUA_FUNC(IsKeyPressed) {
 // IsKeyPressedOnArea
 
 void RegisterLogicAPI(lua_State *L) {
-  // Cursor pos
-  LUA_REGISTER(L, -1, GetCursorPos);
-  LUA_REGISTER(L, -1, GetCursorPosY);
-  LUA_REGISTER(L, -1, GetCursorPosX);
+  // Drawing Cursor pos
+  LUA_REGISTER(L, -1, GetDrawCursorPos);
+  LUA_REGISTER(L, -1, GetDrawCursorPosY);
+  LUA_REGISTER(L, -1, GetDrawCursorPosX);
+
+  // Mouse pos
+  LUA_REGISTER(L, -1, GetMousePos);
+  LUA_REGISTER(L, -1, GetMousePosY);
+  LUA_REGISTER(L, -1, GetMousePosX);
+  LUA_REGISTER(L, -1, GetMouseScreenPos);
+  LUA_REGISTER(L, -1, GetMouseScreenPosY);
+  LUA_REGISTER(L, -1, GetMouseScreenPosX);
 
   // Window size
   LUA_REGISTER(L, -1, GetWindowSize);
@@ -283,6 +427,11 @@ void RegisterLogicAPI(lua_State *L) {
 
   // Keys
   LUA_REGISTER(L, -1, IsKeyPressed);
+  LUA_REGISTER(L, -1, IsMouseClicked);
+  LUA_REGISTER(L, -1, IsMouseDoubleClicked);
+  LUA_REGISTER(L, -1, IsMouseClickedOnPos);
+  LUA_REGISTER(L, -1, IsMouseDoubleClickedOnPos);
+  LUA_REGISTER(L, -1, IsKeyPressedOnPos);
 
   // Audio
 #ifdef CHERRY_ENABLE_AUDIO

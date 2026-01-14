@@ -2,102 +2,131 @@
 
 namespace Cherry {
 namespace GUI {
-  
 
 // Drawlist
-void AddLine(ImDrawList* ptr, const ImVec2& p1, const ImVec2& p2, ImU32 col, float thickness) {
-    ptr->AddLine(p1, p2, col, thickness);
+void AddLine(ImDrawList *ptr, const ImVec2 &p1, const ImVec2 &p2, ImU32 col,
+             float thickness) {
+  ptr->AddLine(p1, p2, col, thickness);
 }
 
-void AddRect(ImDrawList* ptr, const ImVec2& p_min, const ImVec2& p_max, ImU32 col, float rounding, ImDrawFlags flags, float thickness) {
-    ptr->AddRect(p_min, p_max, col, rounding, flags, thickness);
+void AddRect(ImDrawList *ptr, const ImVec2 &p_min, const ImVec2 &p_max,
+             ImU32 col, float rounding, ImDrawFlags flags, float thickness) {
+  ptr->AddRect(p_min, p_max, col, rounding, flags, thickness);
 }
 
-void AddRectFilled(ImDrawList* ptr, const ImVec2& p_min, const ImVec2& p_max, ImU32 col, float rounding, ImDrawFlags flags) {
-    ptr->AddRectFilled(p_min, p_max, col, rounding, flags);
+void AddRectFilled(ImDrawList *ptr, const ImVec2 &p_min, const ImVec2 &p_max,
+                   ImU32 col, float rounding, ImDrawFlags flags) {
+  ptr->AddRectFilled(p_min, p_max, col, rounding, flags);
 }
 
-void AddRectFilledMultiColor(ImDrawList* ptr, const ImVec2& p_min, const ImVec2& p_max, ImU32 col_upr_left, ImU32 col_upr_right, ImU32 col_bot_right, ImU32 col_bot_left) {
-    ptr->AddRectFilledMultiColor(p_min, p_max, col_upr_left, col_upr_right, col_bot_right, col_bot_left);
+void AddRectFilledMultiColor(ImDrawList *ptr, const ImVec2 &p_min,
+                             const ImVec2 &p_max, ImU32 col_upr_left,
+                             ImU32 col_upr_right, ImU32 col_bot_right,
+                             ImU32 col_bot_left) {
+  ptr->AddRectFilledMultiColor(p_min, p_max, col_upr_left, col_upr_right,
+                               col_bot_right, col_bot_left);
 }
 
-void AddQuad(ImDrawList* ptr, const ImVec2& p1, const ImVec2& p2, const ImVec2& p3, const ImVec2& p4, ImU32 col, float thickness) {
-    ptr->AddQuad(p1, p2, p3, p4, col, thickness);
+void AddQuad(ImDrawList *ptr, const ImVec2 &p1, const ImVec2 &p2,
+             const ImVec2 &p3, const ImVec2 &p4, ImU32 col, float thickness) {
+  ptr->AddQuad(p1, p2, p3, p4, col, thickness);
 }
 
-void AddQuadFilled(ImDrawList* ptr, const ImVec2& p1, const ImVec2& p2, const ImVec2& p3, const ImVec2& p4, ImU32 col) {
-    ptr->AddQuadFilled(p1, p2, p3, p4, col);
+void AddQuadFilled(ImDrawList *ptr, const ImVec2 &p1, const ImVec2 &p2,
+                   const ImVec2 &p3, const ImVec2 &p4, ImU32 col) {
+  ptr->AddQuadFilled(p1, p2, p3, p4, col);
 }
 
-void AddTriangle(ImDrawList* ptr, const ImVec2& p1, const ImVec2& p2, const ImVec2& p3, ImU32 col, float thickness) {
-    ptr->AddTriangle(p1, p2, p3, col, thickness);
+void AddTriangle(ImDrawList *ptr, const ImVec2 &p1, const ImVec2 &p2,
+                 const ImVec2 &p3, ImU32 col, float thickness) {
+  ptr->AddTriangle(p1, p2, p3, col, thickness);
 }
 
-void AddTriangleFilled(ImDrawList* ptr, const ImVec2& p1, const ImVec2& p2, const ImVec2& p3, ImU32 col) {
-    ptr->AddTriangleFilled(p1, p2, p3, col);
+void AddTriangleFilled(ImDrawList *ptr, const ImVec2 &p1, const ImVec2 &p2,
+                       const ImVec2 &p3, ImU32 col) {
+  ptr->AddTriangleFilled(p1, p2, p3, col);
 }
 
-void AddCircle(ImDrawList* ptr, const ImVec2& center, float radius, ImU32 col, int num_segments, float thickness) {
-    ptr->AddCircle(center, radius, col, num_segments, thickness);
+void AddCircle(ImDrawList *ptr, const ImVec2 &center, float radius, ImU32 col,
+               int num_segments, float thickness) {
+  ptr->AddCircle(center, radius, col, num_segments, thickness);
 }
 
-void AddCircleFilled(ImDrawList* ptr, const ImVec2& center, float radius, ImU32 col, int num_segments) {
-    ptr->AddCircleFilled(center, radius, col, num_segments);
+void AddCircleFilled(ImDrawList *ptr, const ImVec2 &center, float radius,
+                     ImU32 col, int num_segments) {
+  ptr->AddCircleFilled(center, radius, col, num_segments);
 }
 
-void AddNgon(ImDrawList* ptr, const ImVec2& center, float radius, ImU32 col, int num_segments, float thickness) {
-    ptr->AddNgon(center, radius, col, num_segments, thickness);
+void AddNgon(ImDrawList *ptr, const ImVec2 &center, float radius, ImU32 col,
+             int num_segments, float thickness) {
+  ptr->AddNgon(center, radius, col, num_segments, thickness);
 }
 
-void AddNgonFilled(ImDrawList* ptr, const ImVec2& center, float radius, ImU32 col, int num_segments) {
-    ptr->AddNgonFilled(center, radius, col, num_segments);
+void AddNgonFilled(ImDrawList *ptr, const ImVec2 &center, float radius,
+                   ImU32 col, int num_segments) {
+  ptr->AddNgonFilled(center, radius, col, num_segments);
 }
 
-void AddText(ImDrawList* ptr, const ImVec2& pos, ImU32 col, const char* text_begin, const char* text_end) {
-    ptr->AddText(pos, col, text_begin, text_end);
+void AddText(ImDrawList *ptr, const ImVec2 &pos, ImU32 col,
+             const char *text_begin, const char *text_end) {
+  ptr->AddText(pos, col, text_begin, text_end);
 }
 
-void AddText(ImDrawList* ptr, const ImFont* font, float font_size, const ImVec2& pos, ImU32 col, const char* text_begin, const char* text_end, float wrap_width, const ImVec4* cpu_fine_clip_rect) {
-    ptr->AddText(font, font_size, pos, col, text_begin, text_end, wrap_width, cpu_fine_clip_rect);
+void AddText(ImDrawList *ptr, const ImFont *font, float font_size,
+             const ImVec2 &pos, ImU32 col, const char *text_begin,
+             const char *text_end, float wrap_width,
+             const ImVec4 *cpu_fine_clip_rect) {
+  ptr->AddText(font, font_size, pos, col, text_begin, text_end, wrap_width,
+               cpu_fine_clip_rect);
 }
 
-void AddPolyline(ImDrawList* ptr, const ImVec2* points, int num_points, ImU32 col, ImDrawFlags flags, float thickness) {
-    ptr->AddPolyline(points, num_points, col, flags, thickness);
+void AddPolyline(ImDrawList *ptr, const ImVec2 *points, int num_points,
+                 ImU32 col, ImDrawFlags flags, float thickness) {
+  ptr->AddPolyline(points, num_points, col, flags, thickness);
 }
 
-void AddConvexPolyFilled(ImDrawList* ptr, const ImVec2* points, int num_points, ImU32 col) {
-    ptr->AddConvexPolyFilled(points, num_points, col);
+void AddConvexPolyFilled(ImDrawList *ptr, const ImVec2 *points, int num_points,
+                         ImU32 col) {
+  ptr->AddConvexPolyFilled(points, num_points, col);
 }
 
-void AddBezierCubic(ImDrawList* ptr, const ImVec2& p1, const ImVec2& p2, const ImVec2& p3, const ImVec2& p4, ImU32 col, float thickness, int num_segments) {
-    ptr->AddBezierCubic(p1, p2, p3, p4, col, thickness, num_segments);
+void AddBezierCubic(ImDrawList *ptr, const ImVec2 &p1, const ImVec2 &p2,
+                    const ImVec2 &p3, const ImVec2 &p4, ImU32 col,
+                    float thickness, int num_segments) {
+  ptr->AddBezierCubic(p1, p2, p3, p4, col, thickness, num_segments);
 }
 
-void AddBezierQuadratic(ImDrawList* ptr, const ImVec2& p1, const ImVec2& p2, const ImVec2& p3, ImU32 col, float thickness, int num_segments) {
-    ptr->AddBezierQuadratic(p1, p2, p3, col, thickness, num_segments);
+void AddBezierQuadratic(ImDrawList *ptr, const ImVec2 &p1, const ImVec2 &p2,
+                        const ImVec2 &p3, ImU32 col, float thickness,
+                        int num_segments) {
+  ptr->AddBezierQuadratic(p1, p2, p3, col, thickness, num_segments);
 }
 
-ImVec2 CalcTextSizeA(ImFont* ptr, float size, float max_width, float wrap_width, const char* text_begin, const char* text_end, const char** remaining) {
-    return ptr->CalcTextSizeA(size, max_width, wrap_width, text_begin, text_end, remaining);
+ImVec2 CalcTextSizeA(ImFont *ptr, float size, float max_width, float wrap_width,
+                     const char *text_begin, const char *text_end,
+                     const char **remaining) {
+  return ptr->CalcTextSizeA(size, max_width, wrap_width, text_begin, text_end,
+                            remaining);
 }
 
-const char* CalcWordWrapPositionA(ImFont* ptr, float scale, const char* text, const char* text_end, float wrap_width) {
-    return ptr->CalcWordWrapPositionA(scale, text, text_end, wrap_width);
+const char *CalcWordWrapPositionA(ImFont *ptr, float scale, const char *text,
+                                  const char *text_end, float wrap_width) {
+  return ptr->CalcWordWrapPositionA(scale, text, text_end, wrap_width);
 }
 
-void RenderChar(ImFont* ptr, ImDrawList* draw_list, float size, ImVec2 pos, ImU32 col, ImWchar c) {
-    ptr->RenderChar(draw_list, size, pos, col, c);
+void RenderChar(ImFont *ptr, ImDrawList *draw_list, float size, ImVec2 pos,
+                ImU32 col, ImWchar c) {
+  ptr->RenderChar(draw_list, size, pos, col, c);
 }
 
-void RenderText(ImFont* ptr, ImDrawList* draw_list, float size, ImVec2 pos, ImU32 col, const ImVec4& clip_rect, const char* text_begin, const char* text_end, float wrap_width, bool cpu_fine_clip) {
-    ptr->RenderText(draw_list, size, pos, col, clip_rect, text_begin, text_end, wrap_width, cpu_fine_clip);
+void RenderText(ImFont *ptr, ImDrawList *draw_list, float size, ImVec2 pos,
+                ImU32 col, const ImVec4 &clip_rect, const char *text_begin,
+                const char *text_end, float wrap_width, bool cpu_fine_clip) {
+  ptr->RenderText(draw_list, size, pos, col, clip_rect, text_begin, text_end,
+                  wrap_width, cpu_fine_clip);
 }
 
-void ClearInputQueueCharacters(ImGuiIO& io)
-{
-    io.InputQueueCharacters.clear(); 
-}
-
+void ClearInputQueueCharacters(ImGuiIO &io) { io.InputQueueCharacters.clear(); }
 
 void PushStyleVar(ImGuiStyleVar idx, float val) {
   ImGui::PushStyleVar(idx, val);
@@ -398,6 +427,14 @@ ImVec2 GetCursorPos() { return ImGui::GetCursorPos(); }
 float GetCursorPosX() { return ImGui::GetCursorPosX(); }
 
 float GetCursorPosY() { return ImGui::GetCursorPosY(); }
+
+ImVec2 GetWindowMousePos() {
+  ImVec2 mousePos = ImGui::GetMousePos();
+  ImVec2 windowPos = ImGui::GetWindowPos();
+  return ImVec2(mousePos.x - windowPos.x, mousePos.y - windowPos.y);
+}
+
+ImVec2 GetScreenMousePos() { return ImGui::GetMousePos(); }
 
 void SetCursorPos(const ImVec2 &local_pos) { ImGui::SetCursorPos(local_pos); }
 
@@ -903,65 +940,65 @@ bool Selectable(const char *label, bool *p_selected, ImGuiSelectableFlags flags,
   return ImGui::Selectable(label, p_selected, flags, size);
 }
 
-bool TreeNode(const char* label) {
-    return ImGui::TreeNode(label);
+bool TreeNode(const char *label) { return ImGui::TreeNode(label); }
+
+bool TreeNode(const char *str_id, const char *fmt, ...) {
+  va_list args;
+  va_start(args, fmt);
+  bool result = ImGui::TreeNodeV(str_id, fmt, args);
+  va_end(args);
+  return result;
 }
 
-bool TreeNode(const char* str_id, const char* fmt, ...) {
-    va_list args;
-    va_start(args, fmt);
-    bool result = ImGui::TreeNodeV(str_id, fmt, args);
-    va_end(args);
-    return result;
+bool TreeNode(const void *ptr_id, const char *fmt, ...) {
+  va_list args;
+  va_start(args, fmt);
+  bool result = ImGui::TreeNodeV(ptr_id, fmt, args);
+  va_end(args);
+  return result;
 }
 
-bool TreeNode(const void* ptr_id, const char* fmt, ...) {
-    va_list args;
-    va_start(args, fmt);
-    bool result = ImGui::TreeNodeV(ptr_id, fmt, args);
-    va_end(args);
-    return result;
+bool TreeNodeV(const char *str_id, const char *fmt, va_list args) {
+  return ImGui::TreeNodeV(str_id, fmt, args);
 }
 
-bool TreeNodeV(const char* str_id, const char* fmt, va_list args) {
-    return ImGui::TreeNodeV(str_id, fmt, args);
+bool TreeNodeV(const void *ptr_id, const char *fmt, va_list args) {
+  return ImGui::TreeNodeV(ptr_id, fmt, args);
 }
 
-bool TreeNodeV(const void* ptr_id, const char* fmt, va_list args) {
-    return ImGui::TreeNodeV(ptr_id, fmt, args);
+bool TreeNodeEx(const char *label, ImGuiTreeNodeFlags flags) {
+  return ImGui::TreeNodeEx(label, flags);
 }
 
-bool TreeNodeEx(const char* label, ImGuiTreeNodeFlags flags) {
-    return ImGui::TreeNodeEx(label, flags);
+bool TreeNodeEx(const char *str_id, ImGuiTreeNodeFlags flags, const char *fmt,
+                ...) {
+  va_list args;
+  va_start(args, fmt);
+  bool result = ImGui::TreeNodeExV(str_id, flags, fmt, args);
+  va_end(args);
+  return result;
 }
 
-bool TreeNodeEx(const char* str_id, ImGuiTreeNodeFlags flags, const char* fmt, ...) {
-    va_list args;
-    va_start(args, fmt);
-    bool result = ImGui::TreeNodeExV(str_id, flags, fmt, args);
-    va_end(args);
-    return result;
+bool TreeNodeEx(const void *ptr_id, ImGuiTreeNodeFlags flags, const char *fmt,
+                ...) {
+  va_list args;
+  va_start(args, fmt);
+  bool result = ImGui::TreeNodeExV(ptr_id, flags, fmt, args);
+  va_end(args);
+  return result;
 }
 
-bool TreeNodeEx(const void* ptr_id, ImGuiTreeNodeFlags flags, const char* fmt, ...) {
-    va_list args;
-    va_start(args, fmt);
-    bool result = ImGui::TreeNodeExV(ptr_id, flags, fmt, args);
-    va_end(args);
-    return result;
+bool TreeNodeExV(const char *str_id, ImGuiTreeNodeFlags flags, const char *fmt,
+                 va_list args) {
+  return ImGui::TreeNodeExV(str_id, flags, fmt, args);
 }
 
-bool TreeNodeExV(const char* str_id, ImGuiTreeNodeFlags flags, const char* fmt, va_list args) {
-    return ImGui::TreeNodeExV(str_id, flags, fmt, args);
+bool TreeNodeExV(const void *ptr_id, ImGuiTreeNodeFlags flags, const char *fmt,
+                 va_list args) {
+  return ImGui::TreeNodeExV(ptr_id, flags, fmt, args);
 }
 
-bool TreeNodeExV(const void* ptr_id, ImGuiTreeNodeFlags flags, const char* fmt, va_list args) {
-    return ImGui::TreeNodeExV(ptr_id, flags, fmt, args);
-}
-
-void TreePush(const char* str_id) {
-    ImGui::TreePush(str_id);
-}
+void TreePush(const char *str_id) { ImGui::TreePush(str_id); }
 
 void TreePop() { ImGui::TreePop(); }
 
@@ -1456,9 +1493,9 @@ void PushAllowKeyboardFocus(bool allow_keyboard_focus) {
 }
 
 void PopAllowKeyboardFocus() { ImGui::PopItemFlag(); }
-bool IsPopupOpen(const char* str_id, ImGuiPopupFlags flags){
+bool IsPopupOpen(const char *str_id, ImGuiPopupFlags flags) {
   return ImGui::IsPopupOpen(str_id, flags);
-}                         // return true if the popup is open.
+} // return true if the popup is open.
 
 } // namespace GUI
 
