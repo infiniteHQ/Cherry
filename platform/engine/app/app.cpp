@@ -2674,44 +2674,143 @@ ImDrawData *Application::RenderWindow(Window *window) {
   }
 #endif
 
-  // Debug overlay
+// Debug overlay
 #ifdef CHERRY_DEBUG
+  static float ms_values[90] = {0};
+  static int frame_offset = 0;
+
   if (Application::DebugToolState().load() &&
       window->GetName() != "Cherry devtools") {
     const float PAD = 10.0f;
     const ImGuiViewport *viewport = ImGui::GetMainViewport();
-    ImVec2 work_pos = viewport->WorkPos;
-    ImGui::SetNextWindowPos(ImVec2(work_pos.x + PAD, work_pos.y + PAD),
-                            ImGuiCond_Always);
 
-    ImGui::SetNextWindowBgAlpha(0.55f);
+    ImGui::SetNextWindowPos(
+        ImVec2(viewport->WorkPos.x + PAD, viewport->WorkPos.y + PAD),
+        ImGuiCond_Always);
+    ImGui::SetNextWindowSize(ImVec2(250, 0));
+    ImGui::SetNextWindowBgAlpha(0.92f);
+
     ImGuiWindowFlags overlay_flags =
         ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize |
         ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing |
         ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoMove |
         ImGuiWindowFlags_NoInputs;
 
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(10, 10));
+    ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4, 4));
+
     if (ImGui::Begin("##DebugOverlay", nullptr, overlay_flags)) {
-      ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "CHERRY ENGINE DEBUG");
+      ImGui::TextColored(ImVec4(0.4f, 0.8f, 1.0f, 1.0f), "CHERRY");
+      ImGui::SameLine();
+      ImGui::TextDisabled("| %s", CHERRY_VERSION);
       ImGui::Separator();
+      ImGui::Spacing();
 
-      ImGui::Text("Application: %s", window->GetName().c_str());
-      ImGui::Text("FPS: %.1f (%.3f ms/frame)", ImGui::GetIO().Framerate,
-                  1000.0f / ImGui::GetIO().Framerate);
+      float fps = ImGui::GetIO().Framerate;
+      float ms = 1000.0f / fps;
+      ms_values[frame_offset] = ms;
+      frame_offset = (frame_offset + 1) % IM_ARRAYSIZE(ms_values);
 
-      int w, h;
-      SDL_GetWindowSize(window->GetWindowHandle(), &w, &h);
-      ImGui::Text("Resolution: %dx%d", w, h);
+      ImVec4 perf_color_vec = (fps > 58.0f) ? ImVec4(0.4f, 1.0f, 0.4f, 1.0f)
+                                            : ImVec4(1.0f, 0.4f, 0.4f, 1.0f);
+      ImU32 perf_color = ImGui::ColorConvertFloat4ToU32(perf_color_vec);
 
-      if (ImGui::IsMousePosValid())
-        ImGui::Text("Mouse: %.1f, %.1f", ImGui::GetIO().MousePos.x,
+      auto DebugLine = [](const char *label, const char *value,
+                          ImVec4 val_color = ImVec4(1, 1, 1, 1)) {
+        ImGui::TextDisabled("%s", label);
+        ImGui::SameLine(100);
+        ImGui::TextColored(val_color, "%s", value);
+      };
+
+      DebugLine("FPS", std::to_string((int)fps).c_str(), perf_color_vec);
+      DebugLine("Frame", (std::to_string(ms).substr(0, 4) + " ms").c_str());
+
+      ImGui::Spacing();
+      ImVec2 canvas_pos = ImGui::GetCursorScreenPos();
+      ImVec2 canvas_size = ImVec2(230, 45);
+
+      ImDrawList *draw_list = ImGui::GetWindowDrawList();
+      draw_list->AddRectFilled(
+          canvas_pos,
+          ImVec2(canvas_pos.x + canvas_size.x, canvas_pos.y + canvas_size.y),
+          IM_COL32(20, 20, 20, 255));
+
+      static ImVec2 points[90];
+      float max_v = 33.0f;
+
+      for (int i = 0; i < 90; i++) {
+        int idx = (frame_offset + i) % 90;
+        float val = ImClamp(ms_values[idx], 0.0f, max_v);
+        points[i].x = canvas_pos.x + ((float)i / 89.0f) * canvas_size.x;
+        points[i].y = canvas_pos.y + (1.0f - (val / max_v)) * canvas_size.y;
+      }
+
+      for (int i = 0; i < 89; i++) {
+        ImVec2 p1 = points[i];
+        ImVec2 p2 = points[i + 1];
+        ImVec2 b1 = ImVec2(p1.x, canvas_pos.y + canvas_size.y);
+        ImVec2 b2 = ImVec2(p2.x, canvas_pos.y + canvas_size.y);
+
+        draw_list->AddRectFilledMultiColor(
+            p1, b2, perf_color & 0x00FFFFFF | 0x80000000,
+            perf_color & 0x00FFFFFF | 0x80000000,
+            perf_color & 0x00FFFFFF | 0x00000000,
+            perf_color & 0x00FFFFFF | 0x00000000);
+      }
+
+      for (int i = 0; i < 89; i++) {
+        draw_list->AddLine(points[i], points[i + 1], perf_color, 1.5f);
+      }
+
+      ImGui::Dummy(canvas_size);
+      ImGui::Spacing();
+
+      if (ImGui::CollapsingHeader("SYSTEM", ImGuiTreeNodeFlags_DefaultOpen)) {
+        DebugLine("Renderer", ImGui::GetIO().BackendRendererName
+                                  ? ImGui::GetIO().BackendRendererName
+                                  : "N/A");
+        DebugLine("DrawCalls",
+                  std::to_string(ImGui::GetDrawData()
+                                     ? ImGui::GetDrawData()->CmdListsCount
+                                     : 0)
+                      .c_str());
+        DebugLine("CPU Cores",
+                  (std::to_string(SDL_GetCPUCount()) + " threads").c_str());
+      }
+
+      if (ImGui::CollapsingHeader("DISPLAY", ImGuiTreeNodeFlags_DefaultOpen)) {
+        int d_idx = SDL_GetWindowDisplayIndex(window->GetWindowHandle());
+        SDL_DisplayMode d_mode;
+        SDL_GetCurrentDisplayMode(d_idx, &d_mode);
+
+        DebugLine("Monitor",
+                  (std::string("#") + std::to_string(d_idx)).c_str());
+        DebugLine("Resolution",
+                  (std::to_string(d_mode.w) + "x" + std::to_string(d_mode.h))
+                      .c_str());
+        DebugLine("Refresh",
+                  (std::to_string(d_mode.refresh_rate) + " Hz").c_str());
+        DebugLine(
+            "DPI Scale",
+            (std::to_string(viewport->DpiScale).substr(0, 3) + "x").c_str());
+      }
+
+      if (ImGui::IsMousePosValid()) {
+        ImGui::Separator();
+        ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
+        ImGui::TextDisabled("MOUSE: ");
+        ImGui::SameLine();
+        ImGui::Text("%.0f, %.0f", ImGui::GetIO().MousePos.x,
                     ImGui::GetIO().MousePos.y);
-      else
-        ImGui::Text("Mouse: Off-screen");
+        ImGui::PopStyleVar();
+      }
     }
     ImGui::End();
+    ImGui::PopStyleVar(3);
   }
 #endif
+
   ImGui::End();
 
   return &window->DrawData;
@@ -2888,11 +2987,11 @@ bool Application::IsKeyPressed(CherryKey key) {
 }
 
 bool Application::IsMouseClicked(int btn, bool repeat) {
-  CherryGUI::IsMouseClicked(btn, repeat);
+  return CherryGUI::IsMouseClicked(btn, repeat);
 }
 
 bool Application::IsMouseDoubleClicked(int btn) {
-  CherryGUI::IsMouseDoubleClicked(btn);
+  return CherryGUI::IsMouseDoubleClicked(btn);
 }
 
 void Application::PushCurrentComponent(

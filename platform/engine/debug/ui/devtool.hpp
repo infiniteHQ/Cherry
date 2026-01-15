@@ -5,7 +5,7 @@
 #define CHERRY_DEBUG_TOOL
 
 #include "views/about/about.hpp"
-#include "views/general/general.hpp"
+#include "views/console/console.hpp"
 #include "views/inspector/inspector.hpp"
 
 #include <memory>
@@ -21,7 +21,7 @@ public:
   void Start();
   void Stop();
 
-  std::shared_ptr<GeneralView> GeneralAppWindow;
+  std::shared_ptr<ConsoleView> ConsoleAppWindow;
   std::shared_ptr<AboutView> AboutAppWindow;
   std::shared_ptr<InspectorView> InspectorAppWindow;
 

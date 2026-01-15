@@ -1,10 +1,10 @@
 
 #include "../../drawing/drawing.hpp"
 #include "../../imgui/wrappers/wrappers.hpp"
-#include "../lua_helpers.hpp"
 #include "../scripting.hpp"
 
 #ifdef CHERRY_ENABLE_SCRIPTING
+#include "../lua_helpers.hpp"
 
 namespace Cherry {
 namespace Script {

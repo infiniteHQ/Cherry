@@ -3,10 +3,12 @@
 #include <chrono>
 #include <cstdarg>
 #include <ctime>
+#include <functional>
 #include <iomanip>
 #include <iostream>
 #include <string>
 #include <string_view>
+#include <vector>
 
 namespace Cherry {
 
@@ -15,6 +17,10 @@ public:
   enum class Level { Trace = 0, Info, Warn, Error, Fatal };
 
   static void SetLevel(Level level) { s_FilterLevel = level; }
+
+  using LogCallback =
+      std::function<void(Level level, const std::string &message)>;
+  static void AddCallback(LogCallback cb) { s_Callbacks.push_back(cb); }
 
   static void Print(Level level, std::string_view tag, const char *fmt, ...) {
     if (level < s_FilterLevel)
@@ -64,9 +70,14 @@ public:
     }
 
     out << message << std::endl;
+    for (auto &cb : s_Callbacks) {
+      cb(level, message);
+    }
   }
 
 private:
+  inline static std::vector<LogCallback> s_Callbacks;
+
   static constexpr const char *LevelToString(Level level) {
     switch (level) {
     case Level::Trace:

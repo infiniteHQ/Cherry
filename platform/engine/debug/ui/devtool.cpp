@@ -25,27 +25,22 @@ void Devtool::Start() {
   spec.CloseCallback = []() { CherryApp.ToggleDebugTools(); };
   spec.WindowSaves = false;
 
-  GeneralAppWindow = GeneralView::Create("General");
-  GeneralAppWindow->GetAppWindow()->SetVisibility(true);
-  Cherry::AddAppWindow(GeneralAppWindow->GetAppWindow());
-  GeneralAppWindow->GetAppWindow()->AttachOnNewWindow(spec);
+  ConsoleAppWindow = ConsoleView::Create("Console");
+  ConsoleAppWindow->GetAppWindow()->SetVisibility(true);
+  Cherry::AddAppWindow(ConsoleAppWindow->GetAppWindow());
+  ConsoleAppWindow->GetAppWindow()->AttachOnNewWindow(spec);
 
   InspectorAppWindow = InspectorView::Create("Inspector");
   InspectorAppWindow->GetAppWindow()->SetVisibility(true);
   Cherry::AddAppWindow(InspectorAppWindow->GetAppWindow());
   InspectorAppWindow->GetAppWindow()->AttachOnWindow(window_name);
-
-  AboutAppWindow = AboutView::Create("About");
-  AboutAppWindow->GetAppWindow()->SetVisibility(true);
-  Cherry::AddAppWindow(AboutAppWindow->GetAppWindow());
-  AboutAppWindow->GetAppWindow()->AttachOnWindow(window_name);
 };
 
 void Devtool::Stop() {
   const std::string window_name = "Cherry devtools";
   Cherry::DeleteAppWindow(InspectorAppWindow->GetAppWindow());
   Cherry::DeleteAppWindow(AboutAppWindow->GetAppWindow());
-  Cherry::DeleteAppWindow(GeneralAppWindow->GetAppWindow());
+  Cherry::DeleteAppWindow(ConsoleAppWindow->GetAppWindow());
 };
 
 } // namespace Tools

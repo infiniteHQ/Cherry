@@ -5,10 +5,8 @@
 
 AboutView::AboutView(const std::string &name) {
   m_AppWindow = std::make_shared<Cherry::AppWindow>(name, name);
-  m_AppWindow->SetClosable(true);
-  m_AppWindow->m_CloseCallback = [=]() { m_AppWindow->SetVisibility(false); };
-  m_AppWindow->SetInternalPaddingX(8.0f);
-  m_AppWindow->SetInternalPaddingY(8.0f);
+  m_AppWindow->SetInternalPaddingX(0.0f);
+  m_AppWindow->SetInternalPaddingY(0.0f);
   std::shared_ptr<Cherry::AppWindow> win = m_AppWindow;
 }
 

@@ -13,10 +13,12 @@ public:
   static std::shared_ptr<InspectorView> Create(const std::string &name);
 
   void SetupRenderCallback();
-
+  void RenderComponentDetails(std::shared_ptr<Cherry::Component> &comp);
+  void
+  RenderSimpleTable(const char *label,
+                    const std::unordered_map<std::string, std::string> &map,
+                    ImVec4 key_color);
   void Render();
-  void RenderDragDropWidget(
-      const std::shared_ptr<Cherry::WindowDragDropState> &state);
   std::shared_ptr<Cherry::AppWindow> m_AppWindow;
 };
 

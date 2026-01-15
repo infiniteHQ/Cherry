@@ -12,7 +12,12 @@ CherryApplication CherryMain(int argc, char **argv) {
   Cherry::ApplicationSpecification config;
   config.SetName("Cherry Scripting Demo");
   config.SetMainRenderCallback(Render);
-  return new CherryApplication(config);
+
+  auto app = new CherryApplication(config);
+
+  Cherry::Kit::RegisterTextSimple();
+
+  return app;
 }
 int main(int argc, char *argv[]) {
   CherryRun(argc, argv);

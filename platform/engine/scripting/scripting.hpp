@@ -53,6 +53,16 @@ void RenderLuaScript(const std::string &lua_file_path);
 void RenderLuaFreshScript(const std::string &lua_file_path);
 
 } // namespace Script
+
+namespace Components {
+template <typename T> class RegistrableComponent : public Component {
+public:
+  using Component::Component;
+
+  static void Register(lua_State *L) { T::RegisterInternal(L); }
+};
+} // namespace Components
+
 } // namespace Cherry
 
 #else

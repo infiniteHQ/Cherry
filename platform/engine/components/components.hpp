@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../options.hpp"
 #include "../../../src/core/color.hpp"
 #include "../../../src/layer.hpp"
+#include "../options.hpp"
 
 #include <mutex>
 #include <string>
@@ -61,6 +61,21 @@ public:
   virtual void Render() {};
   virtual void Refresh() {};
 
+  const std::unordered_map<std::string, std::string> &GetPropertiesMap() const {
+    return m_Properties;
+  }
+  const std::unordered_map<std::string, std::string> &GetDataMap() const {
+    return m_Data;
+  }
+  const std::unordered_map<std::string, std::string> &
+  GetContextPropertiesMap() const {
+    return m_ContextProperties;
+  }
+  const std::unordered_map<std::string, std::string> &
+  GetContextDataMap() const {
+    return m_ContextData;
+  }
+
   bool m_IsComponentRendered = false;
 
 private:
@@ -82,39 +97,35 @@ private:
   std::unordered_map<std::string, std::string> m_CachedProperties;
 };
 
-
 template <>
 inline std::string Component::GetDataAs<std::string>(const std::string &key) {
-    return GetData(key);
+  return GetData(key);
+}
+
+template <> inline int Component::GetDataAs<int>(const std::string &key) {
+  return std::stoi(GetData(key));
+}
+
+template <> inline float Component::GetDataAs<float>(const std::string &key) {
+  std::string val = GetData(key);
+  if (!val.empty() && val.back() == 'f')
+    val.pop_back();
+  return std::stof(val);
+}
+
+template <> inline double Component::GetDataAs<double>(const std::string &key) {
+  return std::stod(GetData(key));
+}
+
+template <> inline bool Component::GetDataAs<bool>(const std::string &key) {
+  std::string val = GetData(key);
+  std::transform(val.begin(), val.end(), val.begin(), ::tolower);
+  return val == "true";
 }
 
 template <>
-inline int Component::GetDataAs<int>(const std::string &key) {
-    return std::stoi(GetData(key));
-}
-
-template <>
-inline float Component::GetDataAs<float>(const std::string &key) {
-    std::string val = GetData(key);
-    if (!val.empty() && val.back() == 'f')
-        val.pop_back();
-    return std::stof(val);
-}
-
-template <>
-inline double Component::GetDataAs<double>(const std::string &key) {
-    return std::stod(GetData(key));
-}
-
-template <>
-inline bool Component::GetDataAs<bool>(const std::string &key) {
-    std::string val = GetData(key);
-    std::transform(val.begin(), val.end(), val.begin(), ::tolower);
-    return val == "true";
-}
-
-template <>
-inline std::string Component::GetPropertyAs<std::string>(const std::string &key) {
+inline std::string
+Component::GetPropertyAs<std::string>(const std::string &key) {
   return GetProperty(key);
 }
 
@@ -122,14 +133,16 @@ template <> inline int Component::GetPropertyAs<int>(const std::string &key) {
   return std::stoi(GetProperty(key));
 }
 
-template <> inline float Component::GetPropertyAs<float>(const std::string &key) {
+template <>
+inline float Component::GetPropertyAs<float>(const std::string &key) {
   std::string val = GetProperty(key);
   if (!val.empty() && val.back() == 'f')
     val.pop_back();
   return std::stof(val);
 }
 
-template <> inline double Component::GetPropertyAs<double>(const std::string &key) {
+template <>
+inline double Component::GetPropertyAs<double>(const std::string &key) {
   return std::stod(GetProperty(key));
 }
 
@@ -138,6 +151,7 @@ template <> inline bool Component::GetPropertyAs<bool>(const std::string &key) {
   std::transform(val.begin(), val.end(), val.begin(), ::tolower);
   return val == "true";
 }
+
 } // namespace Cherry
 
 #endif // CHERRY_COMPONENT_H

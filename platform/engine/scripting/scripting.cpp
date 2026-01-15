@@ -77,9 +77,12 @@ void ScriptingEngine::ReloadFile(const std::string &path) {
 }
 
 void ScriptingEngine::CaptureOutput(const std::string &text) {
-  m_OutputHistory.push_back(text);
-  if (m_OutputHistory.size() > 500)
-    m_OutputHistory.erase(m_OutputHistory.begin());
+  if (text.find("[Error]") != std::string::npos ||
+      text.find("[Runtime Error]") != std::string::npos) {
+    CH_ERROR_TAG("Lua", "%s", text.c_str());
+  } else {
+    CH_INFO_TAG("Lua", "%s", text.c_str());
+  }
 }
 
 int ScriptingEngine::LuaPrint(lua_State *L) {

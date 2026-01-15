@@ -53,6 +53,20 @@ inline Component &TextSimple(const std::string &label) {
       Application::GenerateUniqueID(label + "TextSimple"), label);
 }
 
+#ifdef CHERRY_ENABLE_SCRIPTING
+LUA_FUNC(DrawTextSimple) {
+  const char *label = luaL_checkstring(L, 1);
+  auto cmp = Cherry::Kit::TextSimple(label);
+
+  lua_pushstring(L, cmp.GetIdentifier().string().c_str());
+  return 1;
+}
+
+inline void RegisterTextSimple() {
+  LUA_REGISTER_GLOBAL_FUNC("Cherry", DrawTextSimple);
+}
+
+#endif
 } // namespace Kit
 
 } // namespace Cherry

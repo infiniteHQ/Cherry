@@ -3,12 +3,12 @@
 #ifdef CHERRY_DEBUG
 #include "../../../../app/app.hpp"
 
+static std::shared_ptr<Cherry::Component> s_SelectedComponent = nullptr;
+
 InspectorView::InspectorView(const std::string &name) {
   m_AppWindow = std::make_shared<Cherry::AppWindow>(name, name);
-  m_AppWindow->SetClosable(true);
-  m_AppWindow->m_CloseCallback = [=]() { m_AppWindow->SetVisibility(false); };
-  m_AppWindow->SetInternalPaddingX(8.0f);
-  m_AppWindow->SetInternalPaddingY(8.0f);
+  m_AppWindow->SetInternalPaddingX(0.0f);
+  m_AppWindow->SetInternalPaddingY(0.0f);
   std::shared_ptr<Cherry::AppWindow> win = m_AppWindow;
 }
 
@@ -30,127 +30,258 @@ void InspectorView::SetupRenderCallback() {
     }
   });
 }
-void InspectorView::Render() {
-  if (ImGui::BeginTabBar("InspectorTabs")) {
-    if (ImGui::BeginTabItem("Components")) {
-      //
+
+void InspectorView::RenderSimpleTable(
+    const char *label, const std::unordered_map<std::string, std::string> &map,
+    ImVec4 key_color) {
+  if (map.empty()) {
+    if (ImGui::CollapsingHeader(label)) {
+      ImGui::Indent();
+      ImGui::TextDisabled("Empty");
+      ImGui::Unindent();
+    }
+    return;
+  }
+
+  if (ImGui::CollapsingHeader(label, ImGuiTreeNodeFlags_DefaultOpen)) {
+    if (ImGui::BeginTable(label, 2,
+                          ImGuiTableFlags_BordersInnerH |
+                              ImGuiTableFlags_RowBg |
+                              ImGuiTableFlags_Resizable)) {
+      ImGui::TableSetupColumn("Key", ImGuiTableColumnFlags_WidthFixed, 130.0f);
+      ImGui::TableSetupColumn("Value");
+
+      for (auto const &[key, val] : map) {
+        ImGui::TableNextRow();
+        ImGui::TableSetColumnIndex(0);
+        ImGui::TextColored(key_color, "%s", key.c_str());
+
+        ImGui::TableSetColumnIndex(1);
+        ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.85f, 0.85f, 0.85f, 1.0f));
+        ImGui::TextUnformatted(val.c_str());
+        ImGui::PopStyleColor();
+      }
+      ImGui::EndTable();
+    }
+  }
+}
+
+void InspectorView::RenderComponentDetails(
+    std::shared_ptr<Cherry::Component> &comp) {
+  if (!comp)
+    return;
+
+  ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.11f, 0.11f, 0.11f, 1.0f));
+  ImGui::BeginChild("DetailsHeader", ImVec2(0, 38), false);
+
+  ImGui::SetCursorPos(ImVec2(10, 10));
+  ImGui::TextDisabled("node");
+  ImGui::SameLine();
+  ImGui::Text(">");
+  ImGui::SameLine();
+
+  ImGui::TextColored(ImVec4(0.9f, 0.8f, 0.4f, 1.0f), "%s",
+                     comp->GetType().c_str());
+
+  std::string id_str = comp->GetIdentifier().string();
+  if (!id_str.empty()) {
+    ImGui::SameLine();
+    ImGui::TextDisabled("#");
+    ImGui::SameLine();
+    ImGui::TextColored(ImVec4(0.4f, 0.7f, 1.0f, 1.0f), "%s", id_str.c_str());
+  }
+
+  ImGui::SameLine(ImGui::GetWindowWidth() - 85);
+  if (comp->m_IsComponentRendered) {
+    ImGui::TextColored(ImVec4(0.3f, 0.8f, 0.3f, 1.0f), "● Rendered");
+  } else {
+    ImGui::TextDisabled("○ Hidden");
+  }
+
+  ImGui::EndChild();
+  ImGui::PopStyleColor();
+
+  ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 10));
+
+  if (ImGui::BeginTabBar("InspectorTabs", ImGuiTabBarFlags_None)) {
+
+    if (ImGui::BeginTabItem("Properties")) {
+      RenderSimpleTable("Internal Properties", comp->GetPropertiesMap(),
+                        ImVec4(0.5f, 0.75f, 1.0f, 1.0f));
       ImGui::EndTabItem();
     }
 
-    if (ImGui::BeginTabItem("Effects")) {
-      //
+    if (ImGui::BeginTabItem("Data")) {
+      RenderSimpleTable("Component Data", comp->GetDataMap(),
+                        ImVec4(0.4f, 1.0f, 0.4f, 1.0f));
       ImGui::EndTabItem();
     }
 
-    if (ImGui::BeginTabItem("Animations")) {
-      //
+    if (ImGui::BeginTabItem("Context")) {
+      RenderSimpleTable("Context Properties", comp->GetContextPropertiesMap(),
+                        ImVec4(0.4f, 0.6f, 0.9f, 1.0f));
+      RenderSimpleTable("Context Data", comp->GetContextDataMap(),
+                        ImVec4(1.0f, 0.4f, 1.0f, 1.0f));
       ImGui::EndTabItem();
     }
 
-    //
-    if (ImGui::BeginTabItem("DragDrop")) {
-      auto &state = CherryApp.GetCurrentDragDropState();
+    if (ImGui::BeginTabItem("API Support")) {
+      ImGui::Spacing();
+      if (ImGui::CollapsingHeader("Interface Methods",
+                                  ImGuiTreeNodeFlags_DefaultOpen)) {
+        ImGui::Indent();
+        ImGui::TextColored(ImVec4(0.8f, 0.5f, 1.0f, 1.0f), "f");
+        ImGui::SameLine();
+        ImGui::Text("OnUpdate(delta_time)");
 
-      if (!state) {
-        ImGui::TextDisabled("No drag drop state available.");
-      } else {
-        RenderDragDropWidget(state);
+        ImGui::TextColored(ImVec4(0.8f, 0.5f, 1.0f, 1.0f), "f");
+        ImGui::SameLine();
+        ImGui::Text("OnRender()");
+
+        ImGui::TextColored(ImVec4(0.8f, 0.5f, 1.0f, 1.0f), "f");
+        ImGui::SameLine();
+        ImGui::Text("RebuildProperties()");
+        ImGui::Unindent();
+      }
+
+      if (ImGui::CollapsingHeader("Scripting Support")) {
+        ImGui::Indent();
+        ImGui::TextDisabled("Lua Binding: ");
+        ImGui::SameLine();
+        ImGui::Text("cherry.component.%s", comp->GetType().c_str());
+        ImGui::Unindent();
       }
       ImGui::EndTabItem();
     }
 
     ImGui::EndTabBar();
   }
+
+  ImGui::PopStyleVar();
 }
 
-void InspectorView::RenderDragDropWidget(
-    const std::shared_ptr<Cherry::WindowDragDropState> &state) {
-  bool isDragging = state->DockIsDragging || (state->DragOwner != "none");
-  ImVec4 statusColor = isDragging ? ImVec4(0.15f, 0.8f, 0.15f, 1.0f)
-                                  : ImVec4(0.8f, 0.15f, 0.15f, 1.0f);
+void InspectorView::Render() {
+  auto pool = CherryApp.GetComponentPool();
+  if (!pool)
+    return;
 
-  ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.12f, 0.12f, 0.12f, 1.0f));
-  ImGui::BeginChild("StatusHeader", ImVec2(0, 40), true);
-  {
-    ImGui::Columns(2, "statusCols", false);
-    ImGui::SetColumnWidth(0, 100);
+  ImDrawList *draw_list = ImGui::GetWindowDrawList();
 
-    ImDrawList *draw_list = ImGui::GetWindowDrawList();
-    ImVec2 p = ImGui::GetCursorScreenPos();
-    draw_list->AddCircleFilled(ImVec2(p.x + 10, p.y + 10), 6.0f,
-                               ImGui::GetColorU32(statusColor));
+  ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 0.0f);
+  ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 0.0f);
+  ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
 
-    ImGui::Indent(25);
-    ImGui::Text(isDragging ? "ACTIVE" : "IDLE");
-    ImGui::Unindent(25);
+  static int active_main_tab = 0;
+  const char *main_tabs[] = {"Components", "Effects", "Animations", "Drawing",
+                             "Scripting"};
 
-    ImGui::NextColumn();
-    ImGui::Text("Owner: %s", state->DragOwner.c_str());
-    ImGui::Columns(1);
+  ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.08f, 0.08f, 0.08f, 1.0f));
+  ImGui::BeginChild("TopNav", ImVec2(0, 34), false,
+                    ImGuiWindowFlags_NoScrollbar);
+
+  ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 8));
+  float total_width = ImGui::GetContentRegionAvail().x;
+  float tab_width = total_width / 5.0f;
+
+  for (int i = 0; i < 5; i++) {
+    bool is_active = (active_main_tab == i);
+
+    if (is_active) {
+      ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.18f, 0.18f, 0.18f, 1.0f));
+      ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.4f, 0.8f, 1.0f, 1.0f));
+    } else {
+      ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.08f, 0.08f, 0.08f, 1.0f));
+      ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.7f, 0.7f, 0.7f, 1.0f));
+    }
+
+    if (ImGui::Button(main_tabs[i], ImVec2(tab_width, 34))) {
+      active_main_tab = i;
+    }
+
+    ImGui::PopStyleColor(2);
+    if (i < 4)
+      ImGui::SameLine();
   }
+  ImGui::PopStyleVar();
   ImGui::EndChild();
   ImGui::PopStyleColor();
-
-  ImGui::Spacing();
-
-  if (ImGui::BeginTable("DragDetails", 2,
-                        ImGuiTableFlags_BordersInnerH |
-                            ImGuiTableFlags_RowBg)) {
-    ImGui::TableSetupColumn("Property", ImGuiTableColumnFlags_WidthFixed,
-                            120.0f);
-    ImGui::TableSetupColumn("Value");
-
-    ImGui::TableNextRow();
-    ImGui::TableSetColumnIndex(0);
-    ImGui::TextDisabled("WINDOWING");
-
-    ImGui::TableNextRow();
-    ImGui::TableSetColumnIndex(0);
-    ImGui::Text("Last Window");
-    ImGui::TableSetColumnIndex(1);
-    ImGui::Text("%s", state->LastDraggingWindow.c_str());
-
-    ImGui::TableNextRow();
-    ImGui::TableSetColumnIndex(0);
-    ImGui::Text("App Host");
-    ImGui::TableSetColumnIndex(1);
-    ImGui::Text("%s", state->LastDraggingAppWindowHost.c_str());
-
-    ImGui::TableNextRow();
-    ImGui::TableSetColumnIndex(0);
-    ImGui::TextDisabled("DOCKING");
-
-    ImGui::TableNextRow();
-    ImGui::TableSetColumnIndex(0);
-    ImGui::Text("Emplacement");
-    ImGui::TableSetColumnIndex(1);
-    ImGui::TextColored(ImVec4(0.4f, 0.8f, 1.0f, 1.0f), "Emplacement #%d",
-                       (int)state->LastDraggingPlace);
-
-    ImGui::TableNextRow();
-    ImGui::TableSetColumnIndex(0);
-    ImGui::Text("Parenting");
-    ImGui::TableSetColumnIndex(1);
-    ImGui::Checkbox("Has Parent", &state->LastDraggingAppWindowHaveParent);
-
-    ImGui::EndTable();
-  }
-
   ImGui::Separator();
-  ImGui::Text("Mouse Context: %d, %d", state->mouseX, state->mouseY);
+  if (active_main_tab == 0) {
 
-  ImVec2 canvas_p0 = ImGui::GetCursorScreenPos();
-  ImVec2 canvas_sz = ImVec2(ImGui::GetContentRegionAvail().x, 60.0f);
-  ImDrawList *dl = ImGui::GetWindowDrawList();
-  dl->AddRectFilled(
-      canvas_p0, ImVec2(canvas_p0.x + canvas_sz.x, canvas_p0.y + canvas_sz.y),
-      IM_COL32(30, 30, 30, 255));
+    float left_panel_w = ImGui::GetContentRegionAvail().x * 0.35f;
 
-  if (isDragging) {
-    float relX = (float)(state->mouseX % (int)canvas_sz.x);
-    dl->AddCircleFilled(ImVec2(canvas_p0.x + 50, canvas_p0.y + 30), 4.0f,
-                        IM_COL32(255, 255, 0, 255));
+    ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.11f, 0.11f, 0.11f, 1.0f));
+    ImGui::BeginChild("LeftTreePanel", ImVec2(left_panel_w, 0), true);
+
+    ImGui::Spacing();
+    if (ImGui::TreeNodeEx("Application Pools",
+                          ImGuiTreeNodeFlags_DefaultOpen |
+                              ImGuiTreeNodeFlags_SpanAvailWidth)) {
+
+      std::vector<std::shared_ptr<Cherry::Component>> all_comps;
+      all_comps.insert(all_comps.end(), pool->IdentifiedComponents.begin(),
+                       pool->IdentifiedComponents.end());
+      all_comps.insert(all_comps.end(), pool->AnonymousComponents.begin(),
+                       pool->AnonymousComponents.end());
+
+      for (auto &comp : all_comps) {
+        if (!comp)
+          continue;
+
+        bool is_selected = (s_SelectedComponent == comp);
+        std::string label = comp->GetIdentifier().string();
+        if (label.empty())
+          label = "anonymous-node";
+
+        ImGui::PushID(comp.get());
+        ImGui::BeginGroup();
+
+        ImVec2 p = ImGui::GetCursorScreenPos();
+        if (is_selected)
+          draw_list->AddRectFilled(
+              p, ImVec2(p.x + 3, p.y + ImGui::GetTextLineHeightWithSpacing()),
+              IM_COL32(100, 200, 255, 255));
+
+        ImGui::Indent(2);
+        if (ImGui::Selectable(label.c_str(), is_selected,
+                              ImGuiTreeNodeFlags_SpanAvailWidth)) {
+          s_SelectedComponent = comp;
+        }
+
+        ImGui::Unindent(2);
+
+        ImGui::EndGroup();
+        ImGui::PopID();
+      }
+      ImGui::TreePop();
+    }
+
+    ImGui::EndChild();
+    ImGui::PopStyleColor();
+    ImGui::SameLine();
+
+    ImGui::BeginChild("RightDetailsPanel", ImVec2(0, 0), true);
+    if (s_SelectedComponent) {
+      RenderComponentDetails(s_SelectedComponent);
+    } else {
+      ImGui::SetCursorPos(ImVec2(ImGui::GetContentRegionAvail().x * 0.5f - 100,
+                                 ImGui::GetContentRegionAvail().y * 0.45f));
+      ImGui::TextDisabled("Select a component to inspect");
+    }
+    ImGui::EndChild();
+
+  } else {
+    ImGui::BeginChild("WIPContent", ImVec2(0, 0), true,
+                      ImGuiWindowFlags_NoScrollbar);
+    ImGui::SetCursorPos(ImVec2(ImGui::GetContentRegionAvail().x * 0.4f,
+                               ImGui::GetContentRegionAvail().y * 0.4f));
+    ImGui::TextColored(ImVec4(1, 0.6f, 0, 1), "Work In Progress");
+    ImGui::SetCursorPosX(ImGui::GetContentRegionAvail().x * 0.4f);
+    ImGui::TextDisabled("Come back at v1.6!");
+    ImGui::EndChild();
   }
+
+  ImGui::PopStyleVar(3);
 }
 
 #endif // CHERRY_DEBUG
