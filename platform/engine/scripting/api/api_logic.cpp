@@ -376,10 +376,6 @@ LUA_FUNC(IsKeyPressed) {
   return 1;
 }
 
-// IsRightClickedOnArea
-// IsKeyPressed
-// IsKeyPressedOnArea
-
 void RegisterLogicAPI(lua_State *L) {
   // Drawing Cursor pos
   LUA_REGISTER(L, -1, GetDrawCursorPos);
