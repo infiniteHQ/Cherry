@@ -1716,27 +1716,28 @@ std::string Application::CertifyWindowName(const std::string &name) {
 }
 #endif
 
-void Application::CleanupEmptyWindows() {
-  if (s_Instance->m_DefaultSpecification.RenderMode ==
+void Application::CleanupWindowIfEmpty(const std::shared_ptr<Window> &win) {
+  if (win->m_Specifications.RenderMode ==
           WindowRenderingMethod::DockingWindows ||
-      s_Instance->m_DefaultSpecification.RenderMode ==
-          WindowRenderingMethod::TabWidows ||
-      s_Instance->m_DefaultSpecification.RenderMode ==
-          WindowRenderingMethod::SimpleWindow) {
+      win->m_Specifications.RenderMode == WindowRenderingMethod::TabWidows ||
+      win->m_Specifications.RenderMode == WindowRenderingMethod::SimpleWindow) {
+
+    if (!win) {
+      return;
+    }
+
     std::vector<std::shared_ptr<Window>> to_remove;
 
-    for (auto it = m_Windows.begin(); it != m_Windows.end(); ++it) {
-      int app_wins_inside = 0;
+    int app_wins_inside = 0;
 
-      for (const auto &app_win : m_AppWindows) {
-        if (app_win->CheckWinParent((*it)->GetName())) {
-          app_wins_inside++;
-        }
+    for (const auto &app_win : m_AppWindows) {
+      if (app_win->CheckWinParent(win->GetName())) {
+        app_wins_inside++;
       }
+    }
 
-      if (app_wins_inside == 0) {
-        to_remove.push_back(*it);
-      }
+    if (app_wins_inside == 0) {
+      to_remove.push_back(win);
     }
 
     for (const auto &win : to_remove) {
@@ -1944,7 +1945,7 @@ void Application::MultiThreadWindowRuntime() {
     c_DockIsDragging = false;
 
     // Erase empty main windows
-    CleanupEmptyWindows();
+    // CleanupEmptyWindows();
 
     for (auto &appwin : s_Instance->m_AppWindows) {
       appwin->m_WindowJustRebuilded = false;
@@ -2172,7 +2173,9 @@ void Application::SingleThreadRuntime() {
     c_DockIsDragging = false;
 
     // Erase empty main windows
-    CleanupEmptyWindows();
+    for (auto win : m_Windows) {
+      CleanupWindowIfEmpty(win);
+    }
 
     // Pop Selected theme if defined
     if (m_SelectedTheme != "undefined") {

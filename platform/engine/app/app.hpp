@@ -330,7 +330,7 @@ public:
   void ProcessDeferredRequests();
   void RebuildDockingLinks();
   void PresentAllWindows();
-  void CleanupEmptyWindows();
+  void CleanupWindowIfEmpty(const std::shared_ptr<Window> &win);
   void CurrentDockRequestOnNewWindow();
 
   // Window "Low" Rendering
