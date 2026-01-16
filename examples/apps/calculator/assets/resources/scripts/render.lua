@@ -79,13 +79,10 @@ Cherry.DrawLine(offX+2, offY+2, offX+2, offY + offH-2, btnHighlight, 2)
 
 Cherry.DrawText(offX + offW/2, offY + offH/2 - 7, 14, textColor, "OFF", true)
 
-    if Cherry.IsMouseClickedOnPos(offX, offY, offW, offH, 1) then
-      Cherry.PlaySound(Cherry.GetPath("resources/audio/click.mp3"))
-            currentValue = "0"
-            storedValue = nil
-            currentOp = nil
-            resetNext = false
-    end
+if Cherry.IsMouseClickedOnPos(offX, + offY, offW, offH, 0) then
+    Cherry.PlaySound(Cherry.GetPath("resources/audio/click.mp3"))
+    Cherry.Close()
+end
 
 Cherry.DrawLineHorizontal(160, 20, winW - 20, "#000000FF", 2)
 Cherry.DrawLineHorizontal(161, 20, winW - 20, "#444444FF", 1)
