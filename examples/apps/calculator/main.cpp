@@ -10,7 +10,7 @@ void Render() {
 }
 CherryApplication CherryMain(int argc, char **argv) {
   Cherry::ApplicationSpecification config;
-  config.SetName("Cherry Scripting Demo");
+  config.SetName("Cherry Calculator");
   config.SetMainRenderCallback(Render);
   config.SetDefaultHeight(500);
   config.SetDefaultWidth(445);

@@ -18,7 +18,7 @@ option(CHERRY_ENABLE_LINUXDRM "Enable Linux Direct Rendering Manager"   OFF)
 option(CHERRY_ENABLE_NODES "Disable nodal systems"                      OFF)
 option(CHERRY_ENABLE_WORKSPACESAVES "Disable workspace saves"           OFF)
 
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../../../../ cherry_build)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../../ cherry_build)
 add_executable(hello main.cpp)
 
 target_link_libraries(hello PRIVATE cherry)
