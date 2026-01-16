@@ -483,8 +483,15 @@ void CircleGradientWindow(Vec2 center, float radius,
                           const std::string &col_center,
                           const std::string &col_edge, int steps) {
   ImVec2 wp = ImGui::GetWindowPos();
-  CircleGradientScreen({wp.x + center.x, wp.y + center.y}, radius, col_center,
-                       col_edge, steps);
+  ImU32 c1 = Col(col_center);
+  ImU32 c2 = Col(col_edge);
+  ImDrawList *dl = ImGui::GetWindowDrawList();
+
+  for (int i = steps; i > 0; i--) {
+    float t = (float)i / steps;
+    dl->AddCircleFilled({wp.x + center.x, wp.y + center.y}, radius * t,
+                        LerpColor(c1, c2, t), 32);
+  }
 }
 
 void CircleGradientScreen(Vec2 center, float radius,
@@ -493,6 +500,7 @@ void CircleGradientScreen(Vec2 center, float radius,
   ImU32 c1 = Col(col_center);
   ImU32 c2 = Col(col_edge);
   ImDrawList *dl = ImGui::GetForegroundDrawList();
+
   for (int i = steps; i > 0; i--) {
     float t = (float)i / steps;
     dl->AddCircleFilled(ToIm(center), radius * t, LerpColor(c1, c2, t), 32);
@@ -536,8 +544,19 @@ void RectOutlineGradientWindow(Vec2 pos, Vec2 size,
                                const std::string &col_start,
                                const std::string &col_end, float thickness) {
   ImVec2 wp = ImGui::GetWindowPos();
-  RectOutlineGradientScreen({wp.x + pos.x, wp.y + pos.y}, size, col_start,
-                            col_end, thickness);
+  ImU32 c1 = Col(col_start);
+  ImU32 c2 = Col(col_end);
+  ImDrawList *dl = ImGui::GetWindowDrawList();
+
+  ImVec2 p[4] = {{wp.x + pos.x, wp.y + pos.y},
+                 {wp.x + pos.x + size.x, wp.y + pos.y},
+                 {wp.x + pos.x + size.x, wp.y + pos.y + size.y},
+                 {wp.x + pos.x, wp.y + pos.y + size.y}};
+
+  dl->AddLine(p[0], p[1], c1, thickness);
+  dl->AddLine(p[1], p[2], LerpColor(c1, c2, 0.5f), thickness);
+  dl->AddLine(p[2], p[3], c2, thickness);
+  dl->AddLine(p[3], p[0], LerpColor(c2, c1, 0.5f), thickness);
 }
 
 void RectOutlineGradientScreen(Vec2 pos, Vec2 size,
@@ -560,8 +579,21 @@ void CircleOutlineGradientWindow(Vec2 center, float radius,
                                  const std::string &col_start,
                                  const std::string &col_end, float thickness) {
   ImVec2 wp = ImGui::GetWindowPos();
-  CircleOutlineGradientScreen({wp.x + center.x, wp.y + center.y}, radius,
-                              col_start, col_end, thickness);
+  ImU32 c1 = Col(col_start);
+  ImU32 c2 = Col(col_end);
+  ImDrawList *dl = ImGui::GetWindowDrawList();
+  const int segments = 64;
+
+  for (int i = 0; i < segments; i++) {
+    float a1 = ((float)i / segments) * 6.28318f;
+    float a2 = ((float)(i + 1) / segments) * 6.28318f;
+
+    dl->AddLine({wp.x + center.x + cosf(a1) * radius,
+                 wp.y + center.y + sinf(a1) * radius},
+                {wp.x + center.x + cosf(a2) * radius,
+                 wp.y + center.y + sinf(a2) * radius},
+                LerpColor(c1, c2, (float)i / segments), thickness);
+  }
 }
 
 void CircleOutlineGradientScreen(Vec2 center, float radius,
@@ -571,9 +603,11 @@ void CircleOutlineGradientScreen(Vec2 center, float radius,
   ImU32 c2 = Col(col_end);
   ImDrawList *dl = ImGui::GetForegroundDrawList();
   const int segments = 64;
+
   for (int i = 0; i < segments; i++) {
     float a1 = ((float)i / segments) * 6.28318f;
     float a2 = ((float)(i + 1) / segments) * 6.28318f;
+
     dl->AddLine({center.x + cosf(a1) * radius, center.y + sinf(a1) * radius},
                 {center.x + cosf(a2) * radius, center.y + sinf(a2) * radius},
                 LerpColor(c1, c2, (float)i / segments), thickness);
@@ -584,9 +618,16 @@ void TriangleOutlineGradientWindow(Vec2 p1, Vec2 p2, Vec2 p3,
                                    const std::string &c1, const std::string &c2,
                                    float thickness) {
   ImVec2 wp = ImGui::GetWindowPos();
-  TriangleOutlineGradientScreen({wp.x + p1.x, wp.y + p1.y},
-                                {wp.x + p2.x, wp.y + p2.y},
-                                {wp.x + p3.x, wp.y + p3.y}, c1, c2, thickness);
+  ImU32 col1 = Col(c1);
+  ImU32 col2 = Col(c2);
+  ImDrawList *dl = ImGui::GetWindowDrawList();
+
+  dl->AddLine({wp.x + p1.x, wp.y + p1.y}, {wp.x + p2.x, wp.y + p2.y}, col1,
+              thickness);
+  dl->AddLine({wp.x + p2.x, wp.y + p2.y}, {wp.x + p3.x, wp.y + p3.y},
+              LerpColor(col1, col2, 0.5f), thickness);
+  dl->AddLine({wp.x + p3.x, wp.y + p3.y}, {wp.x + p1.x, wp.y + p1.y}, col2,
+              thickness);
 }
 
 void TriangleOutlineGradientScreen(Vec2 p1, Vec2 p2, Vec2 p3,
@@ -604,10 +645,20 @@ void QuadOutlineGradientWindow(Vec2 p1, Vec2 p2, Vec2 p3, Vec2 p4,
                                const std::string &c1, const std::string &c2,
                                float thickness) {
   ImVec2 wp = ImGui::GetWindowPos();
-  QuadOutlineGradientScreen({wp.x + p1.x, wp.y + p1.y},
-                            {wp.x + p2.x, wp.y + p2.y},
-                            {wp.x + p3.x, wp.y + p3.y},
-                            {wp.x + p4.x, wp.y + p4.y}, c1, c2, thickness);
+
+  ImDrawList *dl = ImGui::GetWindowDrawList();
+
+  ImU32 col1 = Col(c1);
+  ImU32 col2 = Col(c2);
+
+  dl->AddLine({wp.x + p1.x, wp.y + p1.y}, {wp.x + p2.x, wp.y + p2.y}, col1,
+              thickness);
+  dl->AddLine({wp.x + p2.x, wp.y + p2.y}, {wp.x + p3.x, wp.y + p3.y}, col1,
+              thickness);
+  dl->AddLine({wp.x + p3.x, wp.y + p3.y}, {wp.x + p4.x, wp.y + p4.y}, col2,
+              thickness);
+  dl->AddLine({wp.x + p4.x, wp.y + p4.y}, {wp.x + p1.x, wp.y + p1.y}, col2,
+              thickness);
 }
 
 void QuadOutlineGradientScreen(Vec2 p1, Vec2 p2, Vec2 p3, Vec2 p4,
