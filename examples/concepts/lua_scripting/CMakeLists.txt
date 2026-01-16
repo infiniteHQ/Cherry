@@ -10,6 +10,7 @@ option(CHERRY_DEBUG "Enable Cherry debug tools" ON)
 option(CHERRY_PACKAGE "Enable packaging features with pyinstaller" OFF)
 
 # Cherry Options & Addons
+option(CHERRY_ENABLE_KIT "Enable net features" ON)
 option(CHERRY_ENABLE_NET "Enable net features" OFF)
 option(CHERRY_ENABLE_AUDIO "Enable audio features" ON)
 option(CHERRY_ENABLE_LINUXDRM "Enable Linux Direct Rendering Manager" OFF)

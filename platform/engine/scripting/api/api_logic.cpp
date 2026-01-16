@@ -6,8 +6,108 @@
 
 #ifdef CHERRY_ENABLE_SCRIPTING
 
+#include "../../components/components.hpp"
+#include "../../identifier/identifier.hpp"
+
 namespace Cherry {
 namespace Script {
+
+// Aide interne pour récupérer un composant depuis une chaîne Lua
+static Cherry::Component &Lua_GetComponentHelper(lua_State *L,
+                                                 const std::string &id_str) {
+  Cherry::Identifier id(id_str);
+  return Cherry::Application::Get().GetComponent(id);
+}
+LUA_FUNC(SetComponentProperty) {
+  std::string id_str = lua_getstring(L, 1);
+  std::string key = lua_getstring(L, 2);
+  std::string val = lua_getstring(L, 3);
+
+  auto comp = Cherry::Application::GetComponentPtr(Cherry::Identifier(id_str));
+  if (comp) {
+    comp->SetProperty(key, val);
+  }
+  return 0;
+}
+
+LUA_FUNC(GetComponentProperty) {
+  std::string id_str = lua_getstring(L, 1);
+  std::string key = lua_getstring(L, 2);
+
+  auto comp = Cherry::Application::GetComponentPtr(Cherry::Identifier(id_str));
+  if (comp) {
+    lua_pushstring(L, comp->GetProperty(key).c_str());
+  } else {
+    lua_pushstring(L, "");
+  }
+  return 1;
+}
+
+LUA_FUNC(SetComponentData) {
+  std::string id_str = lua_getstring(L, 1);
+  std::string key = lua_getstring(L, 2);
+  std::string val = lua_getstring(L, 3);
+
+  auto comp = Cherry::Application::GetComponentPtr(Cherry::Identifier(id_str));
+  if (comp) {
+    comp->SetData(key, val);
+  }
+  return 0;
+}
+
+LUA_FUNC(GetComponentData) {
+  std::string id_str = lua_getstring(L, 1);
+  std::string key = lua_getstring(L, 2);
+
+  auto comp = Cherry::Application::GetComponentPtr(Cherry::Identifier(id_str));
+  if (comp) {
+    lua_pushstring(L, comp->GetData(key).c_str());
+  } else {
+    lua_pushstring(L, "");
+  }
+  return 1;
+}
+
+LUA_FUNC(GetCurrentComponentID) {
+  auto &comp = CherryCurrentComponent;
+  lua_pushstring(L, comp.GetIdentifier().string().c_str());
+  return 1;
+}
+
+LUA_FUNC(SetCurrentComponentData) {
+  std::string key = lua_getstring(L, 1);
+  std::string val = lua_getstring(L, 2);
+
+  auto &comp = CherryCurrentComponent;
+  comp.SetData(key, val);
+  return 0;
+}
+
+LUA_FUNC(SetCurrentComponentProperty) {
+  std::string key = lua_getstring(L, 1);
+  std::string val = lua_getstring(L, 2);
+
+  auto &comp = CherryCurrentComponent;
+  comp.SetProperty(key, val);
+  return 0;
+}
+
+LUA_FUNC(GetCurrentComponentData) {
+  std::string key = lua_getstring(L, 1);
+
+  auto &comp = CherryCurrentComponent;
+  lua_pushstring(L, comp.GetData(key).c_str());
+  return 1;
+}
+
+LUA_FUNC(GetCurrentComponentProperty) {
+  std::string key = lua_getstring(L, 1);
+
+  auto &comp = CherryCurrentComponent;
+  lua_pushstring(L, comp.GetProperty(key).c_str());
+
+  return 1;
+}
 
 LUA_FUNC(IsMouseClickedOnPos) {
   float x = lua_getfloat(L, 1);
@@ -169,6 +269,25 @@ LUA_FUNC(GetDrawCursorPosX) {
   lua_pushnumber(L, x);
 
   return 1;
+}
+
+LUA_FUNC(SetDrawCursorPos) {
+  float x = lua_getfloat(L, 1);
+  float y = lua_getfloat(L, 2);
+  CherryGUI::SetCursorPos(ImVec2(x, y));
+  return 0;
+}
+
+LUA_FUNC(SetDrawCursorPosX) {
+  float x = lua_getfloat(L, 1);
+  CherryGUI::SetCursorPosX(x);
+  return 0;
+}
+
+LUA_FUNC(SetDrawCursorPosY) {
+  float y = lua_getfloat(L, 1);
+  CherryGUI::SetCursorPosY(y);
+  return 0;
 }
 
 LUA_FUNC(GetWindowSize) {
@@ -376,11 +495,33 @@ LUA_FUNC(IsKeyPressed) {
   return 1;
 }
 
+LUA_FUNC(Close) {
+  CherryApp.Close();
+  return 0;
+}
+
 void RegisterLogicAPI(lua_State *L) {
+  // Application
+  LUA_REGISTER(L, -1, Close);
+
   // Drawing Cursor pos
   LUA_REGISTER(L, -1, GetDrawCursorPos);
   LUA_REGISTER(L, -1, GetDrawCursorPosY);
   LUA_REGISTER(L, -1, GetDrawCursorPosX);
+  LUA_REGISTER(L, -1, SetDrawCursorPos);
+  LUA_REGISTER(L, -1, SetDrawCursorPosY);
+  LUA_REGISTER(L, -1, SetDrawCursorPosX);
+
+  // Components
+  LUA_REGISTER(L, -1, GetCurrentComponentID);
+  LUA_REGISTER(L, -1, SetComponentProperty);
+  LUA_REGISTER(L, -1, GetComponentProperty);
+  LUA_REGISTER(L, -1, SetComponentData);
+  LUA_REGISTER(L, -1, GetComponentData);
+  LUA_REGISTER(L, -1, SetCurrentComponentProperty);
+  LUA_REGISTER(L, -1, GetCurrentComponentProperty);
+  LUA_REGISTER(L, -1, SetCurrentComponentData);
+  LUA_REGISTER(L, -1, GetCurrentComponentData);
 
   // Mouse pos
   LUA_REGISTER(L, -1, GetMousePos);

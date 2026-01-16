@@ -2786,6 +2786,10 @@ ImDrawData *Application::RenderWindow(Window *window) {
 
         DebugLine("Monitor",
                   (std::string("#") + std::to_string(d_idx)).c_str());
+        DebugLine("Screen size",
+                  (std::to_string(ImGui::GetWindowSize().x) + "x" +
+                   std::to_string(ImGui::GetWindowSize().y))
+                      .c_str());
         DebugLine("Resolution",
                   (std::to_string(d_mode.w) + "x" + std::to_string(d_mode.h))
                       .c_str());

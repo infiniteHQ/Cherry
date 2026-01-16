@@ -35,6 +35,11 @@ void RectOutlineWindow(Vec2 pos, Vec2 size, const std::string &hexcol,
 void RectOutlineScreen(Vec2 pos, Vec2 size, const std::string &hexcol,
                        float thickness = 1.0f);
 
+void RectOutlineRoundedWindow(Vec2 pos, Vec2 size, float rounding,
+                              const std::string &hexcol, float thickness);
+void RectOutlineRoundedScreen(Vec2 pos, Vec2 size, float rounding,
+                              const std::string &hexcol, float thickness);
+
 // Squares
 void SquareWindow(Vec2 pos, float size, const std::string &hexcol);
 void SquareScreen(Vec2 pos, float size, const std::string &hexcol);

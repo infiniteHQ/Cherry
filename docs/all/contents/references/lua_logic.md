@@ -20,7 +20,7 @@ Cherry.IsMouseClickedOnPos(x, y, w, h, button, repeat)
 **Example:**
 ```lua
 if Cherry.IsMouseClickedOnPos(0, 0, 100, 50, 0) then
-    print("Clicked in the top-left corner region!")
+    Cherry.Log("Clicked in the top-left corner region!")
 end
 ```
 </bloc>
@@ -43,7 +43,7 @@ Cherry.IsMouseDoubleClickedOnPos(x, y, w, h, button)
 **Example:**
 ```lua
 if Cherry.IsMouseDoubleClickedOnPos(10, 10, 50, 50, 0) then
-    print("Double click detected!")
+    Cherry.Log("Double click detected!")
 end
 ```
 </bloc>
@@ -66,7 +66,7 @@ Cherry.IsKeyPressedOnPos(x, y, w, h, key_name)
 **Example:**
 ```lua
 if Cherry.IsKeyPressedOnPos(0, 0, 200, 200, "R") then
-    print("Key R pressed while hovering the area!")
+    Cherry.Log("Key R pressed while hovering the area!")
 end
 ```
 </bloc>
@@ -86,7 +86,7 @@ Cherry.IsMouseClicked(button, repeat)
 **Example:**
 ```lua
 if Cherry.IsMouseClicked(1) then
-    print("Right click detected anywhere!")
+    Cherry.Log("Right click detected anywhere!")
 end
 ```
 </bloc>
@@ -105,7 +105,7 @@ Cherry.IsMouseDoubleClicked(button)
 **Example:**
 ```lua
 if Cherry.IsMouseDoubleClicked(0) then
-    print("Global double click!")
+    Cherry.Log("Global double click!")
 end
 ```
 </bloc>
@@ -144,7 +144,7 @@ local y = Cherry.GetMouseScreenPosY()
 ```lua
 local my = Cherry.GetMouseScreenPosY()
 if my > 540 then
-    print("Mouse is in the bottom half of the screen")
+    Cherry.Log("Mouse is in the bottom half of the screen")
 end
 ```
 </bloc>
@@ -182,7 +182,7 @@ local x, y = Cherry.GetMousePos()
 ```lua
 local lx, ly = Cherry.GetMousePos()
 if lx < 0 or ly < 0 then
-    print("Mouse is outside the window bounds")
+    Cherry.Log("Mouse is outside the window bounds")
 end
 ```
 </bloc>
@@ -308,7 +308,7 @@ local width = Cherry.GetWindowSizeX()
 ```lua
 local w = Cherry.GetWindowSizeX()
 if w < 800 then
-    print("Window is too narrow!")
+    Cherry.Log("Window is too narrow!")
 end
 ```
 </bloc>
@@ -345,7 +345,7 @@ local x, y = Cherry.GetWindowPos()
 **Example:**
 ```lua
 local wx, wy = Cherry.GetWindowPos()
-print("Window origin is at: " .. wx .. ", " .. wy)
+Cherry.Log("Window origin is at: " .. wx .. ", " .. wy)
 ```
 </bloc>
 
@@ -397,7 +397,7 @@ local absolute_path = Cherry.GetPath(relative_path)
 **Example:**
 ```lua
 local full_path = Cherry.GetPath("scripts/main.lua")
-print("Resolved path: " .. full_path)
+Cherry.Log("Resolved path: " .. full_path)
 ```
 </bloc>
 
@@ -506,7 +506,7 @@ local value = Cherry.GetThemeProperty(theme_name, key)
 **Example:**
 ```lua
 local btnColor = Cherry.GetThemeProperty("Dark", "ButtonPrimary")
-print("The primary button color in Dark theme is: " .. btnColor)
+Cherry.Log("The primary button color in Dark theme is: " .. btnColor)
 ```
 </bloc>
 
@@ -630,6 +630,88 @@ local pressed = Cherry.IsKeyPressed(key_name)
 ```lua
 if Cherry.IsKeyPressed("Escape") then
     Cherry.Log("Exit requested via keyboard.")
+end
+```
+</bloc>
+
+<bloc>
+
+#### SetComponentProperty
+Modifies a property of a specific component using its unique string identifier.
+
+**Signature and Parameters:**
+```lua
+Cherry.SetComponentProperty(id, key, value)
+```
+* **id**: The string identifier of the component (e.g., "#main_window" or "submit_btn").
+* **key**: The property name to modify.
+* **value**: The new value as a string.
+
+**Example:**
+```lua
+-- Change the label of a button dynamically
+Cherry.SetComponentProperty("login_button", "label", "Connecting...")
+```
+</bloc>
+
+<bloc>
+
+#### GetComponentProperty
+Retrieves the value of a property from a specific component.
+
+**Signature and Parameters:**
+```lua
+local val = Cherry.GetComponentProperty(id, key)
+```
+* **id**: The string identifier of the component.
+* **key**: The property name to query.
+* **Returns**: The property value as a string, or an empty string if the component/key doesn't exist.
+
+**Example:**
+```lua
+local current_theme = Cherry.GetComponentProperty("root_node", "theme_variant")
+Cherry.Log("Current node theme: " .. current_theme)
+```
+</bloc>
+
+<bloc>
+
+#### SetComponentData
+Sets internal state data for a component. Unlike properties, data is often used for logic rather than visual configuration.
+
+**Signature and Parameters:**
+```lua
+Cherry.SetComponentData(id, key, value)
+```
+* **id**: The string identifier of the component.
+* **key**: The data key to store.
+* **value**: The value to store.
+
+**Example:**
+```lua
+-- Store a temporary score in a UI component
+Cherry.SetComponentData("score_display", "last_points", "500")
+```
+</bloc>
+
+<bloc>
+
+#### GetComponentData
+Retrieves internal data stored in a specific component.
+
+**Signature and Parameters:**
+```lua
+local val = Cherry.GetComponentData(id, key)
+```
+* **id**: The string identifier of the component.
+* **key**: The data key to query.
+* **Returns**: The data value as a string, or an empty string if the component/key doesn't exist.
+
+**Example:**
+```lua
+local health = Cherry.GetComponentData("player_stats", "hp")
+if health == "0" then
+    Cherry.LogWarn("Player is dead!")
 end
 ```
 </bloc>

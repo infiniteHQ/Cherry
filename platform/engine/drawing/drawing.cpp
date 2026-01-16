@@ -242,6 +242,21 @@ void RectRoundedWindow(Vec2 pos, Vec2 size, float rounding,
       ImDrawFlags_RoundCornersAll);
 }
 
+void RectOutlineRoundedWindow(Vec2 pos, Vec2 size, float rounding,
+                              const std::string &hexcol, float thickness) {
+  ImVec2 wp = ImGui::GetWindowPos();
+  ImGui::GetWindowDrawList()->AddRect(
+      {wp.x + pos.x, wp.y + pos.y},
+      {wp.x + pos.x + size.x, wp.y + pos.y + size.y}, Col(hexcol), rounding,
+      ImDrawFlags_RoundCornersAll, thickness);
+}
+void RectOutlineRoundedScreen(Vec2 pos, Vec2 size, float rounding,
+                              const std::string &hexcol, float thickness) {
+  ImGui::GetForegroundDrawList()->AddRect(
+      {pos.x, pos.y}, {pos.x + size.x, pos.y + size.y}, Col(hexcol), rounding,
+      ImDrawFlags_RoundCornersAll, thickness);
+}
+
 void BeginRectMask(Vec2 pos, Vec2 size, bool intersect_with_current_clip_rect) {
   ImVec2 wp = ImGui::GetWindowPos();
   ImVec2 min = {wp.x + pos.x, wp.y + pos.y};

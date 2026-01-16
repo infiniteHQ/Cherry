@@ -387,6 +387,34 @@ LUA_FUNC(DrawRectRounded) {
   return 0;
 }
 
+LUA_FUNC(DrawRectOutlineRounded) {
+  float x = lua_getfloat(L, 1);
+  float y = lua_getfloat(L, 2);
+  float w = lua_getfloat(L, 3);
+  float h = lua_getfloat(L, 4);
+  float rounding = lua_getfloat(L, 5);
+  std::string color = static_cast<std::string>(lua_getstring(L, 6));
+  float thickness = lua_getfloat(L, 7);
+
+  Cherry::Draw::RectOutlineRoundedWindow(Cherry::Vec2(x, y), Cherry::Vec2(w, h),
+                                         rounding, color, thickness);
+  return 0;
+}
+
+LUA_FUNC(DrawRectOutlineRoundedFixed) {
+  float x = lua_getfloat(L, 1);
+  float y = lua_getfloat(L, 2);
+  float w = lua_getfloat(L, 3);
+  float h = lua_getfloat(L, 4);
+  float rounding = lua_getfloat(L, 5);
+  std::string color = static_cast<std::string>(lua_getstring(L, 6));
+  float thickness = lua_getfloat(L, 7);
+
+  Cherry::Draw::RectOutlineRoundedWindow(Cherry::Vec2(x, y), Cherry::Vec2(w, h),
+                                         rounding, color, thickness);
+  return 0;
+}
+
 LUA_FUNC(DrawRectRoundedFixed) {
   float x = lua_getfloat(L, 1);
   float y = lua_getfloat(L, 2);
@@ -742,6 +770,8 @@ void RegisterDrawingAPI(lua_State *L) {
   LUA_REGISTER(L, -1, DrawRectFixed);
   LUA_REGISTER(L, -1, DrawRectOutline);
   LUA_REGISTER(L, -1, DrawRectOutlineFixed);
+  LUA_REGISTER(L, -1, DrawRectOutlineRounded);
+  LUA_REGISTER(L, -1, DrawRectOutlineRoundedFixed);
   LUA_REGISTER(L, -1, DrawText);
   LUA_REGISTER(L, -1, DrawTextFixed);
   LUA_REGISTER(L, -1, DrawLine);

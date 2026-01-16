@@ -39,7 +39,6 @@ void Devtool::Start() {
 void Devtool::Stop() {
   const std::string window_name = "Cherry devtools";
   Cherry::DeleteAppWindow(InspectorAppWindow->GetAppWindow());
-  Cherry::DeleteAppWindow(AboutAppWindow->GetAppWindow());
   Cherry::DeleteAppWindow(ConsoleAppWindow->GetAppWindow());
 };
 
