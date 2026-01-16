@@ -166,6 +166,14 @@ void BeginRectMask(Vec2 pos, Vec2 size,
 void BeginRectMaskFixed(Vec2 pos, Vec2 size,
                         bool intersect_with_current_clip_rect = true);
 
+void RectGradientRoundedWindow(Vec2 pos, Vec2 size,
+                               const std::string &hexcol_start,
+                               const std::string &hexcol_end, float rounding,
+                               bool vertical);
+void RectGradientRoundedScreen(Vec2 pos, Vec2 size,
+                               const std::string &hexcol_start,
+                               const std::string &hexcol_end, float rounding,
+                               bool vertical);
 void EndRectMask();
 void EndRectMaskFixed();
 

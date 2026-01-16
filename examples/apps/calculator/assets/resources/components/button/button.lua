@@ -18,7 +18,7 @@ end
 
 if isDown then
     Cherry.DrawRectRounded(x, y, w, h, 8, "#000000AA")
-    Cherry.DrawRectGradient(x + 1, y + 2, w - 2, h - 2, colBot, colTop, true)
+    Cherry.DrawRectGradientRounded(x + 1, y + 2, w - 2, h - 2, colBot, colTop, 8, true)
 else
     Cherry.DrawRectRounded(x, y + 6, w, h, 8, "#00000077")
     Cherry.DrawRectRounded(x, y, w, h + 4, 8, colBot)

@@ -382,8 +382,24 @@ void ImageRoundedScreen(Vec2 pos, Vec2 size, const std::string &path,
 void RectGradientWindow(Vec2 pos, Vec2 size, const std::string &col_start,
                         const std::string &col_end, bool vertical, int steps) {
   ImVec2 wp = ImGui::GetWindowPos();
-  RectGradientScreen({wp.x + pos.x, wp.y + pos.y}, size, col_start, col_end,
-                     vertical, steps);
+  ImU32 c1 = Col(col_start);
+  ImU32 c2 = Col(col_end);
+  ImDrawList *dl = ImGui::GetWindowDrawList();
+
+  for (int i = 0; i < steps; i++) {
+    float t1 = (float)i / steps;
+    float t2 = (float)(i + 1) / steps;
+    ImU32 curr_col = LerpColor(c1, c2, t1);
+
+    if (vertical)
+      dl->AddRectFilled({wp.x + pos.x, wp.y + pos.y + size.y * t1},
+                        {wp.x + pos.x + size.x, wp.y + pos.y + size.y * t2},
+                        curr_col);
+    else
+      dl->AddRectFilled({wp.x + pos.x + size.x * t1, wp.y + pos.y},
+                        {wp.x + pos.x + size.x * t2, wp.y + pos.y + size.y},
+                        curr_col);
+  }
 }
 
 void RectGradientScreen(Vec2 pos, Vec2 size, const std::string &col_start,
@@ -391,16 +407,75 @@ void RectGradientScreen(Vec2 pos, Vec2 size, const std::string &col_start,
   ImU32 c1 = Col(col_start);
   ImU32 c2 = Col(col_end);
   ImDrawList *dl = ImGui::GetForegroundDrawList();
+
   for (int i = 0; i < steps; i++) {
     float t1 = (float)i / steps;
     float t2 = (float)(i + 1) / steps;
     ImU32 curr_col = LerpColor(c1, c2, t1);
+
     if (vertical)
       dl->AddRectFilled({pos.x, pos.y + size.y * t1},
                         {pos.x + size.x, pos.y + size.y * t2}, curr_col);
     else
       dl->AddRectFilled({pos.x + size.x * t1, pos.y},
                         {pos.x + size.x * t2, pos.y + size.y}, curr_col);
+  }
+}
+
+void RectGradientRoundedWindow(Vec2 pos, Vec2 size,
+                               const std::string &hexcol_start,
+                               const std::string &hexcol_end, float rounding,
+                               bool vertical) {
+  ImDrawList *dl = ImGui::GetWindowDrawList();
+  ImVec2 wp = ImGui::GetWindowPos();
+
+  ImVec2 p_min = {wp.x + pos.x, wp.y + pos.y};
+  ImVec2 p_max = {wp.x + pos.x + size.x, wp.y + pos.y + size.y};
+
+  ImU32 col1 = Col(hexcol_start);
+  ImU32 col2 = Col(hexcol_end);
+
+  int vtx_start = dl->VtxBuffer.Size;
+
+  dl->AddRectFilled(p_min, p_max, IM_COL32_WHITE, rounding,
+                    ImDrawFlags_RoundCornersAll);
+
+  if (vertical) {
+    ImGui::ShadeVertsLinearColorGradientKeepAlpha(
+        dl, vtx_start, dl->VtxBuffer.Size, ImVec2(p_min.x, p_min.y),
+        ImVec2(p_min.x, p_max.y), col1, col2);
+  } else {
+    ImGui::ShadeVertsLinearColorGradientKeepAlpha(
+        dl, vtx_start, dl->VtxBuffer.Size, ImVec2(p_min.x, p_min.y),
+        ImVec2(p_max.x, p_min.y), col1, col2);
+  }
+}
+
+void RectGradientRoundedScreen(Vec2 pos, Vec2 size,
+                               const std::string &hexcol_start,
+                               const std::string &hexcol_end, float rounding,
+                               bool vertical) {
+  ImDrawList *dl = ImGui::GetForegroundDrawList();
+
+  ImVec2 p_min = {pos.x, pos.y};
+  ImVec2 p_max = {pos.x + size.x, pos.y + size.y};
+
+  ImU32 col1 = Col(hexcol_start);
+  ImU32 col2 = Col(hexcol_end);
+
+  int vtx_start = dl->VtxBuffer.Size;
+
+  dl->AddRectFilled(p_min, p_max, IM_COL32_WHITE, rounding,
+                    ImDrawFlags_RoundCornersAll);
+
+  if (vertical) {
+    ImGui::ShadeVertsLinearColorGradientKeepAlpha(
+        dl, vtx_start, dl->VtxBuffer.Size, ImVec2(p_min.x, p_min.y),
+        ImVec2(p_min.x, p_max.y), col1, col2);
+  } else {
+    ImGui::ShadeVertsLinearColorGradientKeepAlpha(
+        dl, vtx_start, dl->VtxBuffer.Size, ImVec2(p_min.x, p_min.y),
+        ImVec2(p_max.x, p_min.y), col1, col2);
   }
 }
 

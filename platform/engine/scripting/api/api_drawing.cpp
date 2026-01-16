@@ -558,6 +558,36 @@ LUA_FUNC(DrawRectGradientFixed) {
   return 0;
 }
 
+LUA_FUNC(DrawRectGradientRounded) {
+  float x = lua_getfloat(L, 1);
+  float y = lua_getfloat(L, 2);
+  float w = lua_getfloat(L, 3);
+  float h = lua_getfloat(L, 4);
+  std::string c1 = lua_getstring(L, 5);
+  std::string c2 = lua_getstring(L, 6);
+  float rounded = lua_getfloat(L, 7);
+  bool vertical = (lua_gettop(L) >= 8) ? lua_toboolean(L, 8) : true;
+
+  Cherry::Draw::RectGradientRoundedWindow({x, y}, {w, h}, c1, c2, rounded,
+                                          vertical);
+  return 0;
+}
+
+LUA_FUNC(DrawRectGradientRoundedFixed) {
+  float x = lua_getfloat(L, 1);
+  float y = lua_getfloat(L, 2);
+  float w = lua_getfloat(L, 3);
+  float h = lua_getfloat(L, 4);
+  std::string c1 = lua_getstring(L, 5);
+  std::string c2 = lua_getstring(L, 6);
+  float rounded = lua_getfloat(L, 7);
+  bool vertical = (lua_gettop(L) >= 8) ? lua_toboolean(L, 8) : true;
+
+  Cherry::Draw::RectGradientRoundedScreen({x, y}, {w, h}, c1, c2, rounded,
+                                          vertical);
+  return 0;
+}
+
 LUA_FUNC(DrawRectOutlineGradient) {
   float x = lua_getfloat(L, 1);
   float y = lua_getfloat(L, 2);
@@ -804,6 +834,8 @@ void RegisterDrawingAPI(lua_State *L) {
   LUA_REGISTER(L, -1, DrawImageQuadFixed);
   LUA_REGISTER(L, -1, DrawRectGradient);
   LUA_REGISTER(L, -1, DrawRectGradientFixed);
+  LUA_REGISTER(L, -1, DrawRectGradientRounded);
+  LUA_REGISTER(L, -1, DrawRectGradientRoundedFixed);
   LUA_REGISTER(L, -1, DrawRectOutlineGradient);
   LUA_REGISTER(L, -1, DrawRectOutlineGradientFixed);
   LUA_REGISTER(L, -1, DrawCircleGradient);
