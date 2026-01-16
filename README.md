@@ -13,16 +13,53 @@
 <a title="Code Quality" href="https://www.codefactor.io/repository/github/infinitehq/cherry"><img alt="Code Quality" src="https://img.shields.io/codefactor/grade/github/infinitehq/cherry?longCache=true&style=for-the-badge&label=Code%20Quality&logoColor=fff&logo=CodeFactor&branch=master"></a>
   <a title="Discord Server" href="https://discord.gg/H2wptkecUg"><img alt="Discord Server" src="https://img.shields.io/discord/1095333825762046194?label=Discord&logo=Discord&logoColor=fff&style=for-the-badge"></a>
 <a title="'Linux Build' workflow Status" href="https://img.shields.io/github/actions/workflow/status/infiniteHQ/cherry/build.yml"><img alt="Linux Build" src="https://img.shields.io/github/actions/workflow/status/infiniteHQ/cherry/build.yml?longCache=true&style=for-the-badge&label=Build&logoColor=fff&logo=GitHub%20Actions&branch=main"></a>
-  
+    <a title="Changelog" href="https://changelogs.infinite.si/cherry"><img alt="Changelog" src="https://img.shields.io/badge/Changelog-View-blue?style=for-the-badge&logo=readme&logoColor=white"></a>
+
   <a title="Latest Release" href="https://github.com/infiniteHQ/Cherry/releases/latest"><img alt="Latest Release" src="https://img.shields.io/github/v/release/infiniteHQ/Cherry?style=for-the-badge&label=Release&logo=github"></a>
-  <a title="Website" href="https://infinite.infinite.si/"><img alt="Website" src="https://img.shields.io/badge/Website-Visit-blueviolet?style=for-the-badge&logo=firefox-browser&logoColor=white"></a>
+  <a title="Documentation" href="https://infinite.infinite.si/"><img alt="Documentation" src="https://img.shields.io/badge/Documentation-Read-blueviolet?style=for-the-badge&logo=readme&logoColor=white"></a>
 
 </div>
 
 ### What is Cherry ?
-*Cherry is a modern, minimalist framework for building cross-platform application interfaces in **C++** (with support for other languages coming soon).  
+Cherry is a modern, minimalist framework for building cross-platform application or cool user interfaces.
 It avoids heavy web technologies and bloated solutions, focusing instead on being simple yet complete, powered by **ImGui, Vulkan, and SDL**.  
-Whether you’re a beginner or an experienced developer, Cherry makes it easy to create real, efficient, and professional interfaces.*  
+Whether you’re a beginner or an experienced developer, Cherry makes it easy to create real, efficient, and professional interfaces. 
+
+## All Features
+
+> - 🧰 **80+ Components**, easy and ready to use  
+> - 📗 **60+ Drawing effects**,
+> - 🎨 **20+ Style effects & utilities**, including colors, sizes, padding, and layout management  
+> - 📦 **13+ examples** and ready to use windows, concepts to learn quiclky.
+> - 🌈 **8 Built-in themes**, with full color palettes and properties  
+> - 🛠️ **Unlimited customization**: create your own **components, style effects, and themes**, either through the **low-level drawing API** for maximum control, or from **prefabricated building blocks** for faster development  
+> - 📜 **Scripting engine** with Lua, allowing live scripting, easy UI builds and simplier way of building interfaces !
+> - 🪛 **Many logics and interaction** utils like input detection, key managment, double click, Ctrl+C etc...
+> - 📦 **Complete and simple API** with Sound managment, web asset fetching, rendering possibilities, traduction managment etc...
+
+> **Core engine**
+> - 🔊 **Sound engine**
+> - 📜 **Scripting engine with lua**
+> - 📜 **Complete drawing API (C++ and Lua)**
+> - 🎨 **Themes manager, Dark & Ligth themes**
+> - 📈 **Data handler for windows & components**
+> - 🌍 **Localization & Translation management**  
+> - 🔤 **Fonts management**  
+> - 🌐 **Network media & Web assets**  
+> - 📦 **Assets management**  
+> - 🖼️ **Images & textures manager**
+> - 🗂️ **Menubar & Bottombar simple callbacks**
+> - 💪 **Custom window close behaviors**
+> - 🗄️ **Advanced Docking**
+> - 🖼️ **Toasts, Notifications & pop-ups**
+> - 🛠️ **Behaviros callbacks** (closing, moving, etc...)
+> - 🏗️ **Windows customisations** (size, colors, properties & styles)
+
+> **Backends**
+> - 🛠️ Multi context with contexts cohesion & communication (ImGui/SDL)
+> - 🛠️ Complete image load & show, cache & optimization
+> - 🛠️ Window builder
+
 
 <a href="https://cherry.infinite.si">
   <h3 align="center">
@@ -51,38 +88,6 @@ Whether you’re a beginner or an experienced developer, Cherry makes it easy to
 </a>
 
 > *Important: Cherry is part of [Infinite](https://infinite.si/)'s initiative to create free, independent, and ethical technology and computing. Cherry is a library powering many parts of this project, but maintaining libraries like Cherry is a time-consuming and costly process. If you appreciate Cherry, you can support us [on our funding page](https://fund.infinite.si/) if you can.*
-
-## All Features
-
-> - 🧰 **80+ Components**, easy and ready to use  
-> - 🎨 **20+ Style effects & utilities**, including colors, sizes, padding, and layout management  
-> - 🌈 **8 Built-in themes**, with full color palettes and properties  
-> - 🛠️ **Unlimited customization**: create your own **components, style effects, and themes**, either through the **low-level drawing API** for maximum control, or from **prefabricated building blocks** for faster development  
-> - 📦 **Many examples** and ready to use windows, concepts.
-> - 📦 **Many logics and interaction** utils like input detection, key managment, double click, Ctrl+C etc...
-> - 📦 **Complete and simple API** with Sound managment, web asset fetching, rendering possibilities, traduction managment etc...
-
-> **Core engine**
-> - 🔊 **Sound engine**
-> - 🎨 **Themes manager, Dark & Ligth themes**
-> - 📈 **Data handler for windows & components**
-> - 🌍 **Localization & Translation management**  
-> - 🔤 **Fonts management**  
-> - 🌐 **Network media & Web assets**  
-> - 📦 **Assets management**  
-> - 🖼️ **Images & textures manager**
-> - 🗂️ **Menubar & Bottombar simple callbacks**
-> - 💪 **Custom window close behaviors**
-> - 🗄️ **Advanced Docking**
-> - 🖼️ **Toasts, Notifications & pop-ups**
-> - 🛠️ **Behaviros callbacks** (closing, moving, etc...)
-> - 🏗️ **Windows customisations** (size, colors, properties & styles)
-
-> **Backends**
-> - 🛠️ Multi context with contexts cohesion & communication (ImGui/SDL)
-> - 🛠️ Complete image load & show, cache & optimization
-> - 🛠️ Window builder
-
 
 > [!NOTE]  
 > This framework is new and still under active development, so some bugs may occur, and content is subject to change. We are also working to improve the overall stability of Cherry, particularly with regard to memory safety and the rendering stack, as well as the graphical libraries used. Thank you for your understanding! Stay tuned :)
