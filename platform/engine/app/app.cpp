@@ -44,6 +44,12 @@
 #endif // _WIN32
 #endif // CHERRY_ENABLE_NET
 
+
+#if defined(__APPLE__)
+  #include <mach-o/dyld.h>
+  #include <limits.h>
+#endif
+
 // Emedded font
 #include "../imgui/Hack-Regular.embed"
 #include "../imgui/Inconsolatas.embed"
@@ -3172,31 +3178,45 @@ std::string Application::GetActiveThemeProperty(const std::string &key) {
   return "undefned";
 }
 
+
 std::string Application::CookPath(std::string_view input_path) {
   static const std::string root_path = []() {
     std::string path;
+
 #ifdef _WIN32
     char result[MAX_PATH];
-    if (GetModuleFileNameA(NULL, result, MAX_PATH))
+    if (GetModuleFileNameA(nullptr, result, MAX_PATH)) {
       path = std::filesystem::path(result).parent_path().string();
-    else
-      std::cerr << "Failed to get root path" << std::endl;
-#else
+    } else {
+      std::cerr << "Failed to get root path (Windows)\n";
+    }
+
+#elif defined(__APPLE__)
+    char result[PATH_MAX];
+    uint32_t size = sizeof(result);
+    if (_NSGetExecutablePath(result, &size) == 0) {
+      path = std::filesystem::path(result).parent_path().string();
+    } else {
+      std::cerr << "Failed to get root path (macOS)\n";
+    }
+
+#else // Linux
     char result[PATH_MAX];
     ssize_t count = readlink("/proc/self/exe", result, sizeof(result) - 1);
     if (count != -1) {
       result[count] = '\0';
       path = std::filesystem::path(result).parent_path().string();
     } else {
-      std::cerr << "Failed to get root path" << std::endl;
+      std::cerr << "Failed to get root path (Linux)\n";
     }
 #endif
+
     return path;
   }();
 
-  return (input_path.empty() || input_path[0] == '/')
-             ? std::string(input_path)
-             : root_path + "/" + std::string(input_path);
+  return (input_path.empty() || input_path.front() == '/')
+           ? std::string(input_path)
+           : root_path + "/" + std::string(input_path);
 }
 
 void Application::PushLayer(const std::shared_ptr<Layer> &layer) {
