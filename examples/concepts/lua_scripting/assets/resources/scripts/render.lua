@@ -14,6 +14,3 @@ end
 
 DrawLines("#343434")
 Cherry.DrawRect(3, 4, 100, 200, color)
-
-local cursor_x = Cherry.GetCursorPosX()
-Cherry.LogFatal(cursor_x)
