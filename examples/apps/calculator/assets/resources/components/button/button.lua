@@ -28,13 +28,13 @@ else
 end
 
 local wx, wy = Cherry.GetWindowPos()
-local tx, ty = wx + x + (w * 0.5), wy + y + (h * 0.5) - 12
+local tx, ty = x + (w * 0.5),  y + (h * 0.5) - 12
 
 if isDown then 
     tx, ty = tx + 1, ty + 2 
 else
-    Cherry.DrawTextFixed(tx - 7, ty + 1, 24, "#00000099", label)
+    Cherry.DrawText(tx - 7, ty + 1, 24, "#00000099", label)
 end
 
 local fontOffset = #label > 1 and 15 or 8
-Cherry.DrawTextFixed(tx - fontOffset, ty, 24, "#FFFFFFFF", label)
+Cherry.DrawText(tx - fontOffset, ty, 24, "#FFFFFFFF", label)
