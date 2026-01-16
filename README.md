@@ -16,7 +16,7 @@
     <a title="Changelog" href="https://changelogs.infinite.si/cherry"><img alt="Changelog" src="https://img.shields.io/badge/Changelog-View-blue?style=for-the-badge&logo=readme&logoColor=white"></a>
 
   <a title="Latest Release" href="https://github.com/infiniteHQ/Cherry/releases/latest"><img alt="Latest Release" src="https://img.shields.io/github/v/release/infiniteHQ/Cherry?style=for-the-badge&label=Release&logo=github"></a>
-  <a title="Documentation" href="https://infinite.infinite.si/"><img alt="Documentation" src="https://img.shields.io/badge/Documentation-Read-blueviolet?style=for-the-badge&logo=readme&logoColor=white"></a>
+  <a title="Documentation" href="https://cherry.infinite.si/"><img alt="Documentation" src="https://img.shields.io/badge/Documentation-Read-blueviolet?style=for-the-badge&logo=readme&logoColor=white"></a>
 
 </div>
 
