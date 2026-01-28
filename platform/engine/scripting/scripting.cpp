@@ -50,17 +50,19 @@ bool ScriptingEngine::Execute(const std::string &code) {
   return true;
 }
 
-bool ScriptingEngine::LoadFile(const std::string &path, int nargs) {
+int ScriptingEngine::LoadFile(const std::string &path, int nargs) {
   if (luaL_loadfile(L, path.c_str()) != LUA_OK) {
     m_LastError = lua_tostring(L, -1);
     CaptureOutput("[Error] " + m_LastError);
     lua_pop(L, 1 + nargs);
-    return false;
+    return 0;
   }
 
   if (nargs > 0) {
     lua_insert(L, -(nargs + 1));
   }
+
+  int baseStack = lua_gettop(L) - (nargs + 1);
 
   if (m_HotReloadEnabled) {
     m_FileTimestamps[path] = GetFileModTime(path);
@@ -70,11 +72,12 @@ bool ScriptingEngine::LoadFile(const std::string &path, int nargs) {
     m_LastError = lua_tostring(L, -1);
     CaptureOutput("[Runtime Error] " + m_LastError);
     lua_pop(L, 1);
-    return false;
+    return 0;
   }
-  return true;
-}
 
+  int currentStack = lua_gettop(L);
+  return currentStack - baseStack;
+}
 void ScriptingEngine::ReloadFile(const std::string &path) {
   CaptureOutput("[System] Reloading: " + path);
   LoadFile(path);
@@ -141,8 +144,8 @@ const std::vector<std::string> &ScriptingEngine::GetOutputHistory() const {
 
 void ScriptingEngine::ClearOutput() { m_OutputHistory.clear(); }
 
-void ScriptingEngine::InternalRenderScript(const std::string &path, bool fresh,
-                                           int nargs) {
+int ScriptingEngine::InternalRenderScript(const std::string &path, bool fresh,
+                                          int nargs) {
   auto &engine = GetScriptingEngine();
   static std::unordered_map<std::string, bool> s_InitializedFiles;
 
@@ -152,7 +155,7 @@ void ScriptingEngine::InternalRenderScript(const std::string &path, bool fresh,
     s_InitializedFiles[path] = true;
   }
 
-  engine.LoadFile(path, nargs);
+  return engine.LoadFile(path, nargs);
 }
 
 void RenderLuaScript(const std::string &lua_file_path) {

@@ -515,8 +515,7 @@ LUA_FUNC(Script) {
   std::string rawPath = static_cast<std::string>(lua_tostring(L, 1));
   std::string resolvedPath = ResolveLuaPath(Cherry::GetPath(rawPath));
 
-  ScriptingEngine::InternalRenderScript(resolvedPath, false, n - 1);
-  return 0;
+  return ScriptingEngine::InternalRenderScript(resolvedPath, false, n - 1);
 }
 
 LUA_FUNC(FreshScript) {
@@ -524,8 +523,7 @@ LUA_FUNC(FreshScript) {
   std::string rawPath = static_cast<std::string>(lua_tostring(L, 1));
   std::string resolvedPath = ResolveLuaPath(Cherry::GetPath(rawPath));
 
-  ScriptingEngine::InternalRenderScript(resolvedPath, true, n - 1);
-  return 0;
+  return ScriptingEngine::InternalRenderScript(resolvedPath, true, n - 1);
 }
 
 LUA_FUNC(AbsoluteScript) {
@@ -533,8 +531,7 @@ LUA_FUNC(AbsoluteScript) {
   std::string rawPath = static_cast<std::string>(lua_tostring(L, 1));
   std::string resolvedPath = ResolveLuaPath(rawPath);
 
-  ScriptingEngine::InternalRenderScript(resolvedPath, false, n - 1);
-  return 0;
+  return ScriptingEngine::InternalRenderScript(resolvedPath, false, n - 1);
 }
 
 LUA_FUNC(FreshAbsoluteScript) {
@@ -542,8 +539,7 @@ LUA_FUNC(FreshAbsoluteScript) {
   std::string rawPath = static_cast<std::string>(lua_tostring(L, 1));
   std::string resolvedPath = ResolveLuaPath(rawPath);
 
-  ScriptingEngine::InternalRenderScript(resolvedPath, true, n - 1);
-  return 0;
+  return ScriptingEngine::InternalRenderScript(resolvedPath, true, n - 1);
 }
 
 LUA_FUNC(Close) {

@@ -17,11 +17,11 @@ public:
   ~ScriptingEngine();
 
   bool Execute(const std::string &code);
-  bool LoadFile(const std::string &path, int nargs = 0);
+  int LoadFile(const std::string &path, int nargs = 0);
   void ReloadFile(const std::string &path);
 
-  static void InternalRenderScript(const std::string &path, bool fresh,
-                                   int nargs);
+  static int InternalRenderScript(const std::string &path, bool fresh,
+                                  int nargs);
 
   std::string GetLastOutput() const;
   std::string GetLastError() const;
