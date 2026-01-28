@@ -495,6 +495,38 @@ LUA_FUNC(IsKeyPressed) {
   return 1;
 }
 
+LUA_FUNC(Script) {
+  int n = lua_gettop(L);
+  std::string path = static_cast<std::string>(lua_tostring(L, 1));
+
+  ScriptingEngine::InternalRenderScript(Cherry::GetPath(path), false, n - 1);
+
+  return 0;
+}
+
+LUA_FUNC(FreshScript) {
+  int n = lua_gettop(L);
+  std::string path = static_cast<std::string>(lua_tostring(L, 1));
+  ScriptingEngine::InternalRenderScript(Cherry::GetPath(path), true, n - 1);
+  return 0;
+}
+
+LUA_FUNC(FreshAbsoluteScript) {
+  std::string path = static_cast<std::string>(lua_getstring(L, 1));
+
+  RenderLuaFreshScript(path);
+
+  return 0;
+}
+
+LUA_FUNC(AbsoluteScript) {
+  std::string path = static_cast<std::string>(lua_getstring(L, 1));
+
+  RenderLuaScript(path);
+
+  return 0;
+}
+
 LUA_FUNC(Close) {
   CherryApp.Close();
   return 0;
@@ -503,6 +535,12 @@ LUA_FUNC(Close) {
 void RegisterLogicAPI(lua_State *L) {
   // Application
   LUA_REGISTER(L, -1, Close);
+
+  // Execute lua (in lua)
+  LUA_REGISTER(L, -1, FreshScript);
+  LUA_REGISTER(L, -1, Script);
+  LUA_REGISTER(L, -1, FreshAbsoluteScript);
+  LUA_REGISTER(L, -1, AbsoluteScript);
 
   // Drawing Cursor pos
   LUA_REGISTER(L, -1, GetDrawCursorPos);

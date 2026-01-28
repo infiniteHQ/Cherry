@@ -50,19 +50,23 @@ bool ScriptingEngine::Execute(const std::string &code) {
   return true;
 }
 
-bool ScriptingEngine::LoadFile(const std::string &path) {
+bool ScriptingEngine::LoadFile(const std::string &path, int nargs) {
   if (luaL_loadfile(L, path.c_str()) != LUA_OK) {
     m_LastError = lua_tostring(L, -1);
     CaptureOutput("[Error] " + m_LastError);
-    lua_pop(L, 1);
+    lua_pop(L, 1 + nargs);
     return false;
+  }
+
+  if (nargs > 0) {
+    lua_insert(L, -(nargs + 1));
   }
 
   if (m_HotReloadEnabled) {
     m_FileTimestamps[path] = GetFileModTime(path);
   }
 
-  if (lua_pcall(L, 0, LUA_MULTRET, 0) != LUA_OK) {
+  if (lua_pcall(L, nargs, LUA_MULTRET, 0) != LUA_OK) {
     m_LastError = lua_tostring(L, -1);
     CaptureOutput("[Runtime Error] " + m_LastError);
     lua_pop(L, 1);
@@ -137,45 +141,35 @@ const std::vector<std::string> &ScriptingEngine::GetOutputHistory() const {
 
 void ScriptingEngine::ClearOutput() { m_OutputHistory.clear(); }
 
-static void InternalRenderScript(const std::string &path, bool fresh) {
+void ScriptingEngine::InternalRenderScript(const std::string &path, bool fresh,
+                                           int nargs) {
   auto &engine = GetScriptingEngine();
-
   static std::unordered_map<std::string, bool> s_InitializedFiles;
 
-  if (fresh) {
-    if (!s_InitializedFiles[path]) {
-      std::filesystem::path p(path);
-      engine.EnableHotReload(p.parent_path().string());
-      engine.LoadFile(path);
-      s_InitializedFiles[path] = true;
-    }
-    engine.CheckForChanges();
-  } else {
-    if (!s_InitializedFiles[path]) {
-      engine.LoadFile(path);
-      s_InitializedFiles[path] = true;
-    }
+  if (fresh && !s_InitializedFiles[path]) {
+    std::filesystem::path p(path);
+    engine.EnableHotReload(p.parent_path().string());
+    s_InitializedFiles[path] = true;
   }
 
-  engine.LoadFile(path);
+  engine.LoadFile(path, nargs);
 }
 
 void RenderLuaScript(const std::string &lua_file_path) {
-  InternalRenderScript(lua_file_path, false);
+  ScriptingEngine::InternalRenderScript(lua_file_path, false, 0);
 }
 
 void RenderLuaFreshScript(const std::string &lua_file_path) {
-  InternalRenderScript(lua_file_path, true);
+  ScriptingEngine::InternalRenderScript(lua_file_path, true, 0);
 }
 
 void ScriptingEngine::RegisterCherryAPI() {
   lua_newtable(L);
 
-  // Register apis
   RegisterDrawingAPI(L);
   RegisterLogicAPI(L);
 
-  lua_setglobal(L, "Cherry"); // Lib global
+  lua_setglobal(L, "Cherry"); // global lib
 }
 } // namespace Script
 } // namespace Cherry
