@@ -495,35 +495,54 @@ LUA_FUNC(IsKeyPressed) {
   return 1;
 }
 
+static std::string ResolveLuaPath(const std::string &path) {
+  namespace fs = std::filesystem;
+  try {
+    if (fs::is_directory(path)) {
+      fs::path mainFile = fs::path(path) / "main.lua";
+      if (fs::exists(mainFile)) {
+        return mainFile.string();
+      }
+    }
+  } catch (...) {
+    // failed
+  }
+  return path;
+}
+
 LUA_FUNC(Script) {
   int n = lua_gettop(L);
-  std::string path = static_cast<std::string>(lua_tostring(L, 1));
+  std::string rawPath = static_cast<std::string>(lua_tostring(L, 1));
+  std::string resolvedPath = ResolveLuaPath(Cherry::GetPath(rawPath));
 
-  ScriptingEngine::InternalRenderScript(Cherry::GetPath(path), false, n - 1);
-
+  ScriptingEngine::InternalRenderScript(resolvedPath, false, n - 1);
   return 0;
 }
 
 LUA_FUNC(FreshScript) {
   int n = lua_gettop(L);
-  std::string path = static_cast<std::string>(lua_tostring(L, 1));
-  ScriptingEngine::InternalRenderScript(Cherry::GetPath(path), true, n - 1);
-  return 0;
-}
+  std::string rawPath = static_cast<std::string>(lua_tostring(L, 1));
+  std::string resolvedPath = ResolveLuaPath(Cherry::GetPath(rawPath));
 
-LUA_FUNC(FreshAbsoluteScript) {
-  std::string path = static_cast<std::string>(lua_getstring(L, 1));
-
-  RenderLuaFreshScript(path);
-
+  ScriptingEngine::InternalRenderScript(resolvedPath, true, n - 1);
   return 0;
 }
 
 LUA_FUNC(AbsoluteScript) {
-  std::string path = static_cast<std::string>(lua_getstring(L, 1));
+  int n = lua_gettop(L);
+  std::string rawPath = static_cast<std::string>(lua_tostring(L, 1));
+  std::string resolvedPath = ResolveLuaPath(rawPath);
 
-  RenderLuaScript(path);
+  ScriptingEngine::InternalRenderScript(resolvedPath, false, n - 1);
+  return 0;
+}
 
+LUA_FUNC(FreshAbsoluteScript) {
+  int n = lua_gettop(L);
+  std::string rawPath = static_cast<std::string>(lua_tostring(L, 1));
+  std::string resolvedPath = ResolveLuaPath(rawPath);
+
+  ScriptingEngine::InternalRenderScript(resolvedPath, true, n - 1);
   return 0;
 }
 
