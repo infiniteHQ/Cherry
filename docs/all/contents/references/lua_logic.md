@@ -715,3 +715,106 @@ if health == "0" then
 end
 ```
 </bloc>
+
+<bloc>
+
+#### Script
+Execute another lua script
+
+**Signature and Parameters:**
+```lua
+Cherry.Script(url)
+```
+* **url**: Relative url of the script.
+
+Note : The script can handle args (with nargs) and return values.
+
+**Example:**
+```lua
+local clicked = Cherry.Script("ui/components/button")
+```
+</bloc>
+
+<bloc>
+#### FreshScript
+Execute another lua script with live scripting
+
+**Signature and Parameters:**
+```lua
+Cherry.Script(url)
+```
+* **url**: Relative url of the script.
+
+Note : The script can handle args (with nargs) and return values.
+
+**Example:**
+```lua
+local clicked = Cherry.Script("ui/components/button")
+```
+</bloc>
+
+<bloc>
+
+#### AbsoluteScript
+Execute another lua script with absolute path
+
+**Signature and Parameters:**
+```lua
+Cherry.Script(url)
+```
+* **url**: Relative url of the script.
+
+Note : The script can handle args (with nargs) and return values.
+
+**Example:**
+```lua
+local clicked = Cherry.Script("(full path)/ui/components/button")
+```
+</bloc>
+
+<bloc>
+
+#### FreshAbsoluteScript
+Execute another lua script with live scripting and absolute path
+
+**Signature and Parameters:**
+```lua
+Cherry.Script(url)
+```
+* **url**: Relative url of the script.
+
+Note : The script can handle args (with nargs) and return values.
+
+**Example:**
+```lua
+local clicked = Cherry.Script("(full path)/ui/components/button")
+```
+</bloc>
+
+
+
+<bloc>
+
+#### Return and arguments example
+
+**Example of main script:**
+```lua
+local string, int = Cherry.Script("resources/scripts", "hi component!", 500)
+
+Cherry.DrawText(5, 40, 30, "#FF0000", string) -- hello
+Cherry.DrawText(5, 70, 30, "#00F0FF", int) -- 42
+```
+
+**Example of subcomponent:**
+```lua
+local button_label, width = ...
+
+button_label = button_label or "Default"
+width = width or 50
+
+Cherry.DrawRect(4, 4, width, 50, "#232323") -- 500
+Cherry.DrawText(4, 4, 50, "#B1FF31", button_label) -- hi component!
+
+return "hello", 42
+```
+</bloc>
