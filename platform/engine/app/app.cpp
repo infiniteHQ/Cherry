@@ -44,10 +44,9 @@
 #endif // _WIN32
 #endif // CHERRY_ENABLE_NET
 
-
 #if defined(__APPLE__)
-  #include <mach-o/dyld.h>
-  #include <limits.h>
+#include <limits.h>
+#include <mach-o/dyld.h>
 #endif
 
 // Emedded font
@@ -3178,7 +3177,6 @@ std::string Application::GetActiveThemeProperty(const std::string &key) {
   return "undefned";
 }
 
-
 std::string Application::CookPath(std::string_view input_path) {
   static const std::string root_path = []() {
     std::string path;
@@ -3215,8 +3213,8 @@ std::string Application::CookPath(std::string_view input_path) {
   }();
 
   return (input_path.empty() || input_path.front() == '/')
-           ? std::string(input_path)
-           : root_path + "/" + std::string(input_path);
+             ? std::string(input_path)
+             : root_path + "/" + std::string(input_path);
 }
 
 void Application::PushLayer(const std::shared_ptr<Layer> &layer) {

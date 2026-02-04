@@ -340,6 +340,19 @@ LUA_FUNC(GetWindowPosY) {
   return 1;
 }
 
+LUA_FUNC(PushFont) {
+  std::string font = static_cast<std::string>(lua_getstring(L, 1));
+
+  Cherry::PushFont(font);
+
+  return 0;
+}
+
+LUA_FUNC(PopFont) {
+  Cherry::PopFont();
+
+  return 0;
+}
 LUA_FUNC(GetPath) {
   std::string relative_path = static_cast<std::string>(lua_getstring(L, 1));
 
@@ -542,6 +555,21 @@ LUA_FUNC(FreshAbsoluteScript) {
   return ScriptingEngine::InternalRenderScript(resolvedPath, true, n - 1);
 }
 
+LUA_FUNC(BeginComponent) {
+  std::string id = static_cast<std::string>(lua_getstring(L, 1));
+
+  auto component = CherryApp.PushComponent<Cherry::Component>(
+      Cherry::Identifier(id, Cherry::RenderMode::CreateOnly));
+
+  CherryApp.SetCurrentComponent(&component);
+  return 0;
+}
+
+LUA_FUNC(EndComponent) {
+  CherryApp.ResetCurrentComponent();
+  return 0;
+}
+
 LUA_FUNC(Close) {
   CherryApp.Close();
   return 0;
@@ -564,6 +592,14 @@ void RegisterLogicAPI(lua_State *L) {
   LUA_REGISTER(L, -1, SetDrawCursorPos);
   LUA_REGISTER(L, -1, SetDrawCursorPosY);
   LUA_REGISTER(L, -1, SetDrawCursorPosX);
+
+  // Components
+  LUA_REGISTER(L, -1, BeginComponent);
+  LUA_REGISTER(L, -1, EndComponent);
+
+  // Fonts
+  LUA_REGISTER(L, -1, PushFont);
+  LUA_REGISTER(L, -1, PopFont);
 
   // Components
   LUA_REGISTER(L, -1, GetCurrentComponentID);
