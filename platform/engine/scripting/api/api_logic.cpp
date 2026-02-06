@@ -12,7 +12,6 @@
 namespace Cherry {
 namespace Script {
 
-// Aide interne pour récupérer un composant depuis une chaîne Lua
 static Cherry::Component &Lua_GetComponentHelper(lua_State *L,
                                                  const std::string &id_str) {
   Cherry::Identifier id(id_str);

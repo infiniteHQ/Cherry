@@ -54,6 +54,10 @@ public:
       char buffer[256];
       std::strncpy(buffer, m_Value->c_str(), sizeof(buffer));
 
+      ImGuiInputTextFlags input_flags = ImGuiInputTextFlags_EnterReturnsTrue |
+                                        ImGuiInputTextFlags_CallbackCompletion |
+                                        ImGuiInputTextFlags_CallbackHistory;
+
       float sizeX = std::stof(GetProperty("size_x"));
       float paddingX = std::stof(GetProperty("padding_x"));
       float paddingY = std::stof(GetProperty("padding_y"));
@@ -77,23 +81,21 @@ public:
       ImVec2 padding = CherryGUI::GetStyle().FramePadding;
 
       ImGuiInputTextFlags flags;
-
       if (GetProperty("enter_return") == "true") {
-        flags | ImGuiInputTextFlags_EnterReturnsTrue;
+        flags |= ImGuiInputTextFlags_EnterReturnsTrue;
       }
 
-      bool active =
+      bool submitted =
           CherryGUI::InputText(Label.c_str(), buffer, sizeof(buffer), flags);
+
       if (GetProperty("focus_on_appear") == "true") {
         CherryGUI::SetKeyboardFocusHere();
       }
 
-      if (active) {
-        SetData("active", "true");
+      bool is_active = ImGui::IsItemActive();
+      SetData("active", is_active ? "true" : "false");
 
-      } else {
-        SetData("active", "false");
-      }
+      SetData("submitted", submitted ? "true" : "false");
 
       float textX = cursorPos.x + padding.x + 4.0f;
       float textRight = cursorPos.x + sizeX - padding.x;

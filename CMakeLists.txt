@@ -23,9 +23,6 @@ option(CHERRY_ENABLE_NODES "Disable nodal systems"                      OFF)
 option(CHERRY_ENABLE_SCRIPTING "Enable Lua scripting"                   OFF)
 option(CHERRY_ENABLE_WORKSPACESAVES "Disable workspace saves"           OFF)
 
-
-
-
 # ---------------------------------------------------------------------------
 # Compiler flags
 # ---------------------------------------------------------------------------
