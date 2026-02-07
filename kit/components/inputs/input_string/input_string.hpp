@@ -88,13 +88,22 @@ public:
       bool submitted =
           CherryGUI::InputText(Label.c_str(), buffer, sizeof(buffer), flags);
 
-      if (GetProperty("focus_on_appear") == "true") {
-        CherryGUI::SetKeyboardFocusHere();
+      if (GetProperty("maintain_focus") == "true") {
+        if (CherryGUI::IsItemDeactivated() && !CherryGUI::IsMouseClicked(0)) {
+          CherryGUI::SetKeyboardFocusHere(-1);
+        }
       }
 
-      bool is_active = ImGui::IsItemActive();
+      if (GetProperty("focus_on_appear") == "true" &&
+          CherryGUI::IsItemVisible()) {
+        CherryGUI::SetKeyboardFocusHere(-1);
+      }
+
+      bool is_focused = CherryGUI::IsItemFocused();
+      bool is_active = CherryGUI::IsItemActive();
       SetData("active", is_active ? "true" : "false");
 
+      SetData("focused", is_focused ? "true" : "false");
       SetData("submitted", submitted ? "true" : "false");
 
       float textX = cursorPos.x + padding.x + 4.0f;
@@ -137,18 +146,18 @@ public:
             ImVec2(textX, hintY), CherryGUI::GetColorU32(ImGuiCol_TextDisabled),
             displayedHint.c_str());
         CherryGUI::PopClipRect();
-      }
 
-      if (hasLogo) {
-        float logoY = cursorPos.y + padding.y +
-                      (CherryGUI::GetFontSize() - logoSize) * 0.5f;
-        float logoX = (logoPlacement == "l")
-                          ? cursorPos.x + padding.x
-                          : cursorPos.x + sizeX - padding.x - logoSize;
+        if (hasLogo) {
+          float logoY = cursorPos.y + padding.y +
+                        (CherryGUI::GetFontSize() - logoSize) * 0.5f;
+          float logoX = (logoPlacement == "l")
+                            ? cursorPos.x + padding.x
+                            : cursorPos.x + sizeX - padding.x - logoSize;
 
-        CherryGUI::GetWindowDrawList()->AddImage(
-            logo, ImVec2(logoX, logoY),
-            ImVec2(logoX + logoSize, logoY + logoSize));
+          CherryGUI::GetWindowDrawList()->AddImage(
+              logo, ImVec2(logoX, logoY),
+              ImVec2(logoX + logoSize, logoY + logoSize));
+        }
       }
 
       CherryGUI::PopID();
