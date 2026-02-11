@@ -228,6 +228,23 @@ LUA_FUNC(GetMousePos) {
   return 2;
 }
 
+LUA_FUNC(IsMouseOverRect) {
+  float x = luaL_checknumber(L, 1);
+  float y = luaL_checknumber(L, 2);
+  float w = luaL_checknumber(L, 3);
+  float h = luaL_checknumber(L, 4);
+
+  ImVec2 min(x, y);
+  ImVec2 max(x + w, y + h);
+
+  bool hovered = ImGui::IsMouseHoveringRect(min, max, false) &&
+                 !ImGui::IsAnyItemHovered() &&
+                 !ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow);
+
+  lua_pushboolean(L, hovered);
+  return 1;
+}
+
 LUA_FUNC(GetMousePosY) {
   float y = CherryGUI::GetWindowMousePos().y;
 
@@ -652,6 +669,7 @@ void RegisterLogicAPI(lua_State *L) {
 
   // Keys
   LUA_REGISTER(L, -1, IsKeyPressed);
+  LUA_REGISTER(L, -1, IsMouseOverRect);
   LUA_REGISTER(L, -1, IsMouseClicked);
   LUA_REGISTER(L, -1, IsMouseDoubleClicked);
   LUA_REGISTER(L, -1, IsMouseClickedOnPos);
