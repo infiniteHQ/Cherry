@@ -127,6 +127,30 @@ LUA_FUNC(IsMouseClickedOnPos) {
   return 1;
 }
 
+LUA_FUNC(IsMouseClickedOnCurrentPos) {
+  float x = lua_getfloat(L, 1);
+  float y = lua_getfloat(L, 2);
+  float w = lua_getfloat(L, 3);
+  float h = lua_getfloat(L, 4);
+  int btn = lua_getint(L, 5);
+  bool repeat = (lua_gettop(L) >= 6) ? lua_toboolean(L, 6) : false;
+
+  ImVec2 mousePos = ImGui::GetMousePos();
+  ImVec2 winPos = ImGui::GetWindowPos();
+
+  bool inside = mousePos.x >= winPos.x + x && mousePos.x <= winPos.x + x + w &&
+                mousePos.y >= winPos.y + y && mousePos.y <= winPos.y + y + h;
+
+  bool windowHovered =
+      ImGui::IsWindowHovered(ImGuiHoveredFlags_RootAndChildWindows);
+
+  bool clicked = inside && windowHovered &&
+                 CherryApp.IsMouseClicked((ImGuiMouseButton)btn, repeat);
+
+  lua_pushboolean(L, clicked);
+  return 1;
+}
+
 LUA_FUNC(IsMouseDoubleClickedOnPos) {
   float x = lua_getfloat(L, 1);
   float y = lua_getfloat(L, 2);
@@ -674,6 +698,7 @@ void RegisterLogicAPI(lua_State *L) {
   LUA_REGISTER(L, -1, IsMouseDoubleClicked);
   LUA_REGISTER(L, -1, IsMouseClickedOnPos);
   LUA_REGISTER(L, -1, IsMouseDoubleClickedOnPos);
+  LUA_REGISTER(L, -1, IsMouseClickedOnCurrentPos);
   LUA_REGISTER(L, -1, IsKeyPressedOnPos);
 
   // Audio
