@@ -657,8 +657,9 @@ public:
   }
 
   Cherry::RenderMode GetRenderMode() const {
-    if (!m_RenderModeStack.empty()) {
-      return m_RenderModeStack.back();
+    auto stackCopy = m_RenderModeStack;
+    if (!stackCopy.empty()) {
+      return stackCopy.back();
     }
 
     Cherry::RenderMode fallback = CherryNextComponent.GetRenderMode();
