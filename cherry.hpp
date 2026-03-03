@@ -26,6 +26,7 @@
 #include "./platform/engine/embed/assets/icons.h"
 #include "./platform/engine/image/image.hpp"
 #include "./platform/engine/imgui/ImGuiTheme.h"
+#include "./platform/engine/imgui/markdown/markdown.hpp"
 #include "./platform/engine/imgui/wrappers/wrappers.hpp"
 #include "./platform/engine/scripting/scripting.hpp"
 #include "./platform/engine/ui/notifications/notifications.hpp"
