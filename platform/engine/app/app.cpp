@@ -3380,6 +3380,45 @@ std::string Application::GetLocale(const std::string &locale_type) {
   return "locale_undefined";
 }
 
+void Application::OverrideLocale(const std::string &locale_name,
+                                 const std::string &data_path) {
+  std::ifstream file(data_path);
+  if (!file.is_open())
+    return;
+
+  nlohmann::json json_data;
+  file >> json_data;
+  file.close();
+
+  if (m_Locales.find(locale_name) == m_Locales.end()) {
+    m_Locales[locale_name] = json_data;
+    return;
+  }
+
+  auto &existing_locales = m_Locales[locale_name]["locales"];
+
+  for (const auto &new_item : json_data["locales"]) {
+
+    auto new_it = new_item.begin();
+    const std::string &new_key = new_it.key();
+    const auto &new_value = new_it.value();
+
+    bool replaced = false;
+
+    for (auto &existing_item : existing_locales) {
+      if (existing_item.contains(new_key)) {
+        existing_item[new_key] = new_value;
+        replaced = true;
+        break;
+      }
+    }
+
+    if (!replaced) {
+      existing_locales.push_back(new_item);
+    }
+  }
+}
+
 Component &Application::GetAnonymousComponent(const Identifier &identifier) {
   if (identifier.component_array_ptr() != nullptr) {
     for (const auto &existing_component :

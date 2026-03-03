@@ -1,21 +1,5 @@
 #pragma once
 
-/*
-TODO :
-
-// COMPONENTS LOGICS
-Cherry::GetLastRenderedComponent();
-
-// THEME (with all generic properties (h1col, h2col, bg1, bg2, bg3, borders,
-etc...)) Colors + Styles effects !! Cherry::SetThemeProperty();
-Cherry::GetThemeProperty();
-Cherry::PushTheme(); // Push a theme on a specified area.
-Cherry::PopTheme();
-Cherry::AddTheme();
-Cherry::SetTheme();
-
- */
-
 #include "../../../options.hpp"
 #include "../../../src/core/color.hpp"
 #include "../../../src/core/log.hpp"
@@ -409,6 +393,8 @@ public:
 
   // Locales & Traductions
   void AddLocale(const std::string &locale_name, const std::string &data_path);
+  void OverrideLocale(const std::string &locale_name,
+                      const std::string &data_path);
   void SetLocale(const std::string &locale_name);
   void SetDefaultLocale(const std::string &locale_name);
   std::string GetLocale(const std::string &locale_type);
