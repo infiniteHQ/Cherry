@@ -160,11 +160,9 @@ void imgui_md::BLOCK_TABLE(const MD_BLOCK_TABLE_DETAIL *, bool e) {
 
     m_table_last_pos = ImGui::GetCursorPos();
   } else {
-
     ImGui::NewLine();
 
     if (m_table_border) {
-
       m_table_last_pos.y = ImGui::GetCursorPos().y;
 
       m_table_col_pos.push_back(m_table_last_pos.x);
@@ -229,7 +227,6 @@ void imgui_md::BLOCK_TH(const MD_BLOCK_TD_DETAIL *d, bool e) { BLOCK_TD(d, e); }
 
 void imgui_md::BLOCK_TD(const MD_BLOCK_TD_DETAIL *, bool e) {
   if (e) {
-
     if (m_table_next_column < m_table_col_pos.size()) {
       ImGui::SetCursorPosX(m_table_col_pos[m_table_next_column]);
     } else {
@@ -320,7 +317,6 @@ void imgui_md::SPAN_IMG(const MD_SPAN_IMG_DETAIL *d, bool e) {
 
     image_info nfo;
     if (get_image(nfo)) {
-
       const float scale = ImGui::GetIO().FontGlobalScale;
       nfo.size.x *= scale;
       nfo.size.y *= scale;
@@ -336,7 +332,6 @@ void imgui_md::SPAN_IMG(const MD_SPAN_IMG_DETAIL *d, bool e) {
                    nfo.col_border);
 
       if (ImGui::IsItemHovered()) {
-
         // if (d->title.size) {
         //	ImGui::SetTooltip("%.*s", (int)d->title.size, d->title.text);
         // }
@@ -367,11 +362,9 @@ void imgui_md::render_text(const char *str, const char *str_end) {
   bool is_lf = false;
 
   while (!m_is_image && str < str_end) {
-
     const char *te = str_end;
 
     if (!m_is_table_header) {
-
       float wl = ImGui::GetContentRegionAvail().x;
 
       if (m_is_table_body) {
@@ -394,10 +387,8 @@ void imgui_md::render_text(const char *str, const char *str_end) {
     }
 
     if (!m_href.empty()) {
-
       ImVec4 c;
       if (ImGui::IsItemHovered()) {
-
         ImGui::SetTooltip("%s", m_href.c_str());
 
         c = s.Colors[ImGuiCol_ButtonHovered];
@@ -485,7 +476,6 @@ static std::string get_div_class(const char *str, const char *str_end) {
 
   size_t pe;
   for (pe = p; pe < d.length(); ++pe) {
-
     const char c = d[pe];
 
     if (has_q) {
