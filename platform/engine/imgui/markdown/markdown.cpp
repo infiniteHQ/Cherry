@@ -24,6 +24,8 @@
  * IN THE SOFTWARE.
  */
 
+#ifdef CHERRY_ENABLE_MARKDOWN
+
 #include "markdown.hpp"
 
 // Fonts and images (ImTextureID) must be loaded in other place
@@ -808,3 +810,5 @@ void MarkdownView(const std::string &raw) {
   markdown(raw.c_str(), raw.c_str() + raw.size());
 }
 } // namespace ImGui
+
+#endif // CHERRY_ENABLE_MARKDOWN

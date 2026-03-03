@@ -23,6 +23,8 @@
  * IN THE SOFTWARE.
  */
 
+#ifdef CHERRY_ENABLE_MARKDOWN
+
 #ifndef MD4C_H
 #define MD4C_H
 
@@ -430,3 +432,5 @@ int md_parse(const MD_CHAR *text, MD_SIZE size, const MD_PARSER *parser,
 #endif
 
 #endif /* MD4C_H */
+
+#endif // CHERRY_ENABLE_MARKDOWN

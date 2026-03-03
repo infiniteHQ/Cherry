@@ -24,6 +24,8 @@
  * IN THE SOFTWARE.
  */
 
+#ifdef CHERRY_ENABLE_MARKDOWN
+
 #ifndef IMGUI_MD_H
 #define IMGUI_MD_H
 
@@ -162,3 +164,5 @@ void MarkdownView(const std::string &raw);
 }
 
 #endif /* IMGUI_MD_H */
+
+#endif // CHERRY_ENABLE_MARKDOWN

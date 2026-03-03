@@ -23,6 +23,8 @@
  * IN THE SOFTWARE.
  */
 
+#ifdef CHERRY_ENABLE_MARKDOWN
+
 #include "md4c.h"
 
 #include <limits.h>
@@ -6617,3 +6619,5 @@ int md_parse(const MD_CHAR *text, MD_SIZE size, const MD_PARSER *parser,
 
   return ret;
 }
+
+#endif // CHERRY_ENABLE_MARKDOWN
