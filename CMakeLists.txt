@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(libcherry LANGUAGES CXX)
+project(libcherry LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -30,12 +30,6 @@ if (NOT MSVC)
     add_compile_options(-O3 -fPIC)
 else()
     add_compile_options(/utf-8)
-endif()
-
-include(CheckIPOSupported)
-check_ipo_supported(RESULT lto_supported OUTPUT lto_output)
-if(lto_supported)
-    set(CMAKE_INTERPROCEDURAL_OPTIMIZATION ON)
 endif()
 
 # ---------------------------------------------------------------------------
@@ -83,6 +77,14 @@ file(GLOB_RECURSE CHERRY_SRC CONFIGURE_DEPENDS
 )
 
 add_library(cherry ${CHERRY_LIB_TYPE} ${CHERRY_SRC})
+
+include(CheckIPOSupported)
+
+check_ipo_supported(RESULT ipo_supported OUTPUT ipo_error LANGUAGES C CXX)
+
+if(ipo_supported)
+    set_property(TARGET cherry PROPERTY INTERPROCEDURAL_OPTIMIZATION TRUE)
+endif()
 
 if(CHERRY_ENABLE_LINUXDRM)
 target_compile_definitions(cherry PUBLIC CHERRY_ENABLE_LINUXDRM)
