@@ -91,6 +91,9 @@ if(CHERRY_ENABLE_LINUXDRM)
 target_compile_definitions(cherry PUBLIC CHERRY_ENABLE_LINUXDRM)
 endif()
 
+if(CHERRY_ENABLE_MARKDOWN)
+target_compile_definitions(cherry PUBLIC CHERRY_ENABLE_MARKDOWN)
+endif()
 
 # ---------------------------------------------------------------------------
 # DLL export/import macros
