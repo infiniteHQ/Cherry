@@ -4,11 +4,12 @@
 #include "../embed/window.embed"
 
 // Emedded font
-#include "../imgui/Hack-Regular.embed"
-#include "../imgui/Inconsolatas.embed"
-#include "../imgui/Roboto-Bold.embed"
-#include "../imgui/Roboto-Italic.embed"
-#include "../imgui/Roboto-Regular.embed"
+#include "../imgui/embed/Hack-Regular.embed"
+#include "../imgui/embed/Inconsolatas.embed"
+#include "../imgui/embed/JetrainsMono.embed"
+#include "../imgui/embed/Roboto-Bold.embed"
+#include "../imgui/embed/Roboto-Italic.embed"
+#include "../imgui/embed/Roboto-Regular.embed"
 
 namespace ImGui {
 // Docking

@@ -50,11 +50,11 @@
 #endif
 
 // Emedded font
-#include "../imgui/Hack-Regular.embed"
-#include "../imgui/Inconsolatas.embed"
-#include "../imgui/Roboto-Bold.embed"
-#include "../imgui/Roboto-Italic.embed"
-#include "../imgui/Roboto-Regular.embed"
+#include "../imgui/embed/Hack-Regular.embed"
+#include "../imgui/embed/Inconsolatas.embed"
+#include "../imgui/embed/Roboto-Bold.embed"
+#include "../imgui/embed/Roboto-Italic.embed"
+#include "../imgui/embed/Roboto-Regular.embed"
 #include "../imgui/theme/deftheme.hpp"
 
 #ifdef CHERRY_DEBUG
