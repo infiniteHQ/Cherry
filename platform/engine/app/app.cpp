@@ -1983,10 +1983,120 @@ void Application::SingleThreadRuntime() {
       startTime = std::chrono::steady_clock::now();
     }
 
-    auto frameTime = std::chrono::duration_cast<std::chrono::milliseconds>(
-        std::chrono::steady_clock::now() - frameStart);
-    if (frameTime < frameDuration) {
-      std::this_thread::sleep_for(frameDuration - frameTime);
+    SDL_Event event;
+
+    while (SDL_PollEvent(&event)) {
+
+      bool eventHandled = false;
+
+      SDL_Window *inputTargetSDLWindow = nullptr;
+
+      switch (event.type) {
+      case SDL_MOUSEBUTTONDOWN:
+      case SDL_MOUSEBUTTONUP:
+        inputTargetSDLWindow = SDL_GetWindowFromID(event.button.windowID);
+        break;
+      case SDL_MOUSEMOTION:
+        inputTargetSDLWindow = SDL_GetWindowFromID(event.motion.windowID);
+        break;
+      case SDL_MOUSEWHEEL:
+        inputTargetSDLWindow = SDL_GetWindowFromID(event.wheel.windowID);
+        break;
+      case SDL_KEYDOWN:
+      case SDL_KEYUP:
+      case SDL_TEXTINPUT:
+      case SDL_TEXTEDITING:
+        inputTargetSDLWindow = SDL_GetKeyboardFocus();
+        break;
+      default:
+        inputTargetSDLWindow = nullptr;
+        break;
+      }
+
+      ImGuiContext *inputTargetContext = nullptr;
+
+      if (inputTargetSDLWindow) {
+        for (auto &window : m_Windows) {
+          if (window->GetWindowHandle() == inputTargetSDLWindow) {
+            inputTargetContext = window->m_ImGuiContext;
+            break;
+          }
+        }
+
+        if (!inputTargetContext) {
+          for (auto &window : m_Windows) {
+            ImGui::SetCurrentContext(window->m_ImGuiContext);
+            ImGuiPlatformIO &pio = ImGui::GetPlatformIO();
+            for (ImGuiViewport *vp : pio.Viewports) {
+              if (vp->PlatformHandle == (void *)inputTargetSDLWindow) {
+                inputTargetContext = window->m_ImGuiContext;
+                break;
+              }
+            }
+            if (inputTargetContext)
+              break;
+          }
+        }
+      }
+
+      for (auto &window : m_Windows) {
+
+        c_CurrentRenderedWindow = window;
+        Uint32 windowID = SDL_GetWindowID(window->GetWindowHandle());
+
+        ImGui::SetCurrentContext(window->m_ImGuiContext);
+
+        bool isOwner = (inputTargetContext == nullptr) ||
+                       (inputTargetContext == window->m_ImGuiContext);
+
+        if (isOwner) {
+          ImGui_ImplSDL2_ProcessEvent(&event);
+        } else {
+          if (event.type == SDL_WINDOWEVENT || event.type == SDL_QUIT) {
+            ImGui_ImplSDL2_ProcessEvent(&event);
+          }
+          if (event.type == SDL_MOUSEBUTTONDOWN) {
+            ImGui::ClearActiveID();
+          }
+        }
+
+        if (event.type == SDL_QUIT) {
+          m_Running = false;
+          eventHandled = true;
+          break;
+        }
+
+        if (event.type == SDL_WINDOWEVENT) {
+          if (event.window.event == SDL_WINDOWEVENT_ENTER) {
+            m_MouseHoveredWindow = SDL_GetWindowFromID(event.window.windowID);
+
+          } else if (event.window.event == SDL_WINDOWEVENT_LEAVE) {
+            SDL_Window *leavingWindow =
+                SDL_GetWindowFromID(event.window.windowID);
+            if (m_MouseHoveredWindow == leavingWindow)
+              m_MouseHoveredWindow = nullptr;
+          }
+        }
+
+        if (event.type == SDL_WINDOWEVENT &&
+            event.window.event == SDL_WINDOWEVENT_CLOSE &&
+            event.window.windowID == windowID) {
+
+          if (window->m_Specifications.UsingCloseCallback) {
+            if (window->m_Specifications.CloseCallback)
+              window->m_Specifications.CloseCallback();
+            m_ClosePending = false;
+          } else {
+            if (Application::Get().m_CloseCallback)
+              Application::Get().m_CloseCallback();
+            else
+              Application::Get().Close();
+          }
+        }
+      }
+
+      if (eventHandled)
+        break;
     }
 
     Identifier::ResetUniqueIndex(); // Reset anonymous components indexes
@@ -2049,77 +2159,6 @@ void Application::SingleThreadRuntime() {
       layer->OnUpdate(m_TimeStep);
     }
 
-    SDL_Event event;
-    while (SDL_PollEvent(&event)) {
-      // SDL_Window *focusedWindow = SDL_GetMouseFocus();
-      // Uint32 focusedWindowID =
-      //     focusedWindow ? SDL_GetWindowID(focusedWindow) : 0;
-
-      bool eventHandled = false;
-
-      for (auto &window : m_Windows) {
-        c_CurrentRenderedWindow = window;
-        Uint32 windowID = SDL_GetWindowID(window->GetWindowHandle());
-
-        // if (focusedWindowID != 0 && windowID != focusedWindowID) {
-        //   continue;
-        // }
-
-        ImGui::SetCurrentContext(window->m_ImGuiContext);
-        ImGui_ImplSDL2_ProcessEvent(&event);
-
-        if (event.type == SDL_MOUSEBUTTONDOWN) {
-          Uint32 clickedWindowID = event.button.windowID;
-
-          for (auto &window : m_Windows) {
-            Uint32 windowID = SDL_GetWindowID(window->GetWindowHandle());
-            if (windowID != clickedWindowID) {
-              ImGui::SetCurrentContext(window->m_ImGuiContext);
-              ImGui::ClearActiveID();
-            }
-          }
-        }
-
-        if (event.type == SDL_QUIT) {
-          m_Running = false;
-          eventHandled = true;
-          break;
-        }
-
-        if (event.type == SDL_WINDOWEVENT) {
-          if (event.window.event == SDL_WINDOWEVENT_ENTER) {
-            m_MouseHoveredWindow = SDL_GetWindowFromID(event.window.windowID);
-          } else if (event.window.event == SDL_WINDOWEVENT_LEAVE) {
-            SDL_Window *leavingWindow =
-                SDL_GetWindowFromID(event.window.windowID);
-            if (m_MouseHoveredWindow == leavingWindow) {
-              m_MouseHoveredWindow = nullptr;
-            }
-          }
-        }
-
-        if (event.type == SDL_WINDOWEVENT &&
-            event.window.event == SDL_WINDOWEVENT_CLOSE &&
-            event.window.windowID == windowID) {
-          if (window->m_Specifications.UsingCloseCallback) {
-            if (window->m_Specifications.CloseCallback) {
-              window->m_Specifications.CloseCallback();
-            }
-            m_ClosePending = false;
-          } else {
-            if (Application::Get().m_CloseCallback) {
-              Application::Get().m_CloseCallback();
-            } else {
-              Application::Get().Close();
-            }
-          }
-        }
-      }
-
-      if (eventHandled) {
-        break;
-      }
-    }
     bool AppWindowRedocked = false;
     for (auto &req : m_RedockRequests) {
       if (req->m_IsObsolete) {
@@ -2192,6 +2231,12 @@ void Application::SingleThreadRuntime() {
     }
 
     AppWindowRedocked = false;
+
+    auto frameTime = std::chrono::duration_cast<std::chrono::milliseconds>(
+        std::chrono::steady_clock::now() - frameStart);
+    if (frameTime < frameDuration) {
+      std::this_thread::sleep_for(frameDuration - frameTime);
+    }
   }
 }
 
