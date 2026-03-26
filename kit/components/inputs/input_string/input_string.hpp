@@ -54,10 +54,6 @@ public:
       char buffer[256];
       std::strncpy(buffer, m_Value->c_str(), sizeof(buffer));
 
-      ImGuiInputTextFlags input_flags = ImGuiInputTextFlags_EnterReturnsTrue |
-                                        ImGuiInputTextFlags_CallbackCompletion |
-                                        ImGuiInputTextFlags_CallbackHistory;
-
       float sizeX = std::stof(GetProperty("size_x"));
       float paddingX = std::stof(GetProperty("padding_x"));
       float paddingY = std::stof(GetProperty("padding_y"));

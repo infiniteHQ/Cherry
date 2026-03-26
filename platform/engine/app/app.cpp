@@ -2051,9 +2051,9 @@ void Application::SingleThreadRuntime() {
 
     SDL_Event event;
     while (SDL_PollEvent(&event)) {
-      SDL_Window *focusedWindow = SDL_GetMouseFocus();
-      Uint32 focusedWindowID =
-          focusedWindow ? SDL_GetWindowID(focusedWindow) : 0;
+      // SDL_Window *focusedWindow = SDL_GetMouseFocus();
+      // Uint32 focusedWindowID =
+      //     focusedWindow ? SDL_GetWindowID(focusedWindow) : 0;
 
       bool eventHandled = false;
 
@@ -2061,9 +2061,9 @@ void Application::SingleThreadRuntime() {
         c_CurrentRenderedWindow = window;
         Uint32 windowID = SDL_GetWindowID(window->GetWindowHandle());
 
-        if (focusedWindowID != 0 && windowID != focusedWindowID) {
-          continue;
-        }
+        // if (focusedWindowID != 0 && windowID != focusedWindowID) {
+        //   continue;
+        // }
 
         ImGui::SetCurrentContext(window->m_ImGuiContext);
         ImGui_ImplSDL2_ProcessEvent(&event);
@@ -2538,10 +2538,6 @@ void Application::HandleLayerStackUpdate(Window *window) {
 
 void Application::PrepareViewport(Window *window) {
   ImGuiViewport *viewport = ImGui::GetMainViewport();
-
-  // N'utilisez plus window->WinID s'il contient un gros nombre (hash)
-  // Laissez ImGui gérer ses propres viewports internes pour l'instant
-
   ImGui::SetNextWindowPos(viewport->Pos);
   ImGui::SetNextWindowSize(viewport->Size);
   ImGui::SetNextWindowViewport(viewport->ID);
