@@ -25,3 +25,6 @@
 [submodule "lib/lua"]
 	path = lib/lua
 	url = https://github.com/infiniteHQ/lua
+[submodule "lib/DearMarkdown"]
+	path = lib/DearMarkdown
+	url = https://github.com/infiniteHQ/DearMarkdown
