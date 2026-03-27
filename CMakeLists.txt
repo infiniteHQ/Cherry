@@ -63,6 +63,9 @@ endif()
 if(CHERRY_ENABLE_SCRIPTING)
     add_subdirectory(lib/lua) 
 endif()
+if(CHERRY_ENABLE_MARKDOWN)
+    add_subdirectory(lib/DearMarkdown) 
+endif()
 if(CHERRY_ENABLE_AUDIO)
     add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/lib/miniaudio miniaudio_build)
 endif()
@@ -89,10 +92,6 @@ endif()
 
 if(CHERRY_ENABLE_LINUXDRM)
 target_compile_definitions(cherry PUBLIC CHERRY_ENABLE_LINUXDRM)
-endif()
-
-if(CHERRY_ENABLE_MARKDOWN)
-target_compile_definitions(cherry PUBLIC CHERRY_ENABLE_MARKDOWN)
 endif()
 
 # ---------------------------------------------------------------------------
@@ -138,6 +137,8 @@ endif()
 target_include_directories(cherry PUBLIC
     "${CMAKE_CURRENT_SOURCE_DIR}/src"
     "${PROJECT_SOURCE_DIR}/lib/stb_image"
+    "${CMAKE_CURRENT_SOURCE_DIR}/lib/imgui"
+    "${CMAKE_CURRENT_SOURCE_DIR}/lib/DearMarkdown"
     "${Vulkan_INCLUDE_DIRS}"
 )
 
@@ -167,4 +168,9 @@ if(CHERRY_ENABLE_NET)
     if(WIN32)
         target_link_libraries(cherry PUBLIC winhttp)
     endif()
+endif()
+
+if(CHERRY_ENABLE_MARKDOWN)
+target_compile_definitions(cherry PUBLIC CHERRY_ENABLE_MARKDOWN)
+target_link_libraries(cherry PUBLIC dearmarkdown)
 endif()

@@ -14,6 +14,8 @@ namespace Cherry {
 // End-User API
 namespace Style {
 // Font size
+static float old_font_size = 1.0f;
+
 inline void SetNextComponentFontSize(const float &font_size) {
   // Set the font size on BeforeComponentRender (generic component callback)
 }
@@ -23,12 +25,12 @@ inline void SetContextFontSize(const float &font_size) {
 }
 
 inline void PopFontSize() {
-  CherryGUI::GetFont()->Scale =
-      Application::GetCurrentRenderedWindow()->m_Specifications.FontGlobalScale;
+  CherryGUI::GetFont()->Scale = old_font_size;
   CherryGUI::PopFont();
 }
 
 inline void PushFontSize(const float &font_size) {
+  old_font_size = CherryGUI::GetFont()->Scale;
   CherryGUI::GetFont()->Scale = font_size;
   CherryGUI::PushFont(CherryGUI::GetFont());
 }

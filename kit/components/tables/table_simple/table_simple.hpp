@@ -35,8 +35,8 @@ public:
     SetProperty("color_border", "theme:table_color_border");
 
     // Visibility
-    SetProperty("header_visible", "true");
-    SetProperty("header_text_visible", "true");
+    SetProperty("header_visible", "false");
+    SetProperty("header_text_visible", "false");
 
     SetProperty("padding_x", "7");
     SetProperty("padding_y", "7");
@@ -63,7 +63,8 @@ public:
     float paddingX = std::stof(GetProperty("padding_x"));
     float paddingY = std::stof(GetProperty("padding_y"));
 
-    CherryGUI::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(paddingX, paddingY));
+    CherryGUI::PushStyleVar(ImGuiStyleVar_FramePadding,
+                            ImVec2(paddingX, paddingY));
     // ImGuiStyle style = CherryGUI::GetStyle();
     // m_HeaderCellPaddingX = style.CellPadding.x;
     // m_HeaderCellPaddingY = style.CellPadding.y;
