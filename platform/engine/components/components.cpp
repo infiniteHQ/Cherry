@@ -89,7 +89,6 @@ std::string Component::SetProperty(const std::string &key, double val) {
 }
 
 std::string Component::SetProperty(const std::string &key, bool val) {
-  std::cout << key << val << std::endl;
   std::string strVal = val ? "true" : "false";
   m_Properties[key] = strVal;
   return strVal;

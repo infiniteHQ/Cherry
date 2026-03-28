@@ -5,7 +5,6 @@
 //
 // TextSimple
 // Summary : A big text.
-// Authors : Infinite, Diego Moreno
 //
 
 #ifndef CHERRY_KIT_TEXT_SIMPLE
