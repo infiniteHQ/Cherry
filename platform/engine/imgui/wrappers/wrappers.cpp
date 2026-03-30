@@ -3,6 +3,15 @@
 namespace Cherry {
 namespace GUI {
 
+        ImGuiContext* GetCurrentContext()
+        {
+return GetCurrentContext();
+        }
+
+         ImVec2 CalcItemSize(ImVec2 size, float default_w, float default_h)
+         {
+          return ImGui::CalcItemSize(size, default_w, default_h);
+         }
 // Drawlist
 void AddLine(ImDrawList *ptr, const ImVec2 &p1, const ImVec2 &p2, ImU32 col,
              float thickness) {
@@ -79,6 +88,30 @@ void AddText(ImDrawList *ptr, const ImFont *font, float font_size,
   ptr->AddText(font, font_size, pos, col, text_begin, text_end, wrap_width,
                cpu_fine_clip_rect);
 }
+
+
+     void  PushClipRect(ImDrawList *ptr, ImVec2 clip_rect_min, ImVec2 clip_rect_max, bool intersect_with_current_clip_rect)
+          {
+      ptr->PushClipRect(clip_rect_min, clip_rect_max, intersect_with_current_clip_rect);
+     }
+     
+     void  PushClipRectFullScreen(ImDrawList *ptr)
+     {
+      ptr->PushClipRectFullScreen();
+     }
+     void  PopClipRect(ImDrawList *ptr)
+     {
+      ptr->PopClipRect();
+     }
+     void  PushTextureID(ImDrawList *ptr, ImTextureID texture_id)
+     {
+      ptr->PushTextureID(texture_id);
+     }
+     void  PopTextureID(ImDrawList *ptr)
+     {
+      ptr->PopTextureID();
+     }
+   
 
 void AddPolyline(ImDrawList *ptr, const ImVec2 *points, int num_points,
                  ImU32 col, ImDrawFlags flags, float thickness) {
@@ -899,6 +932,14 @@ ImGuiStyle &GetStyle() { return ImGui::GetStyle(); }
 
 ImDrawData *GetDrawData() { return ImGui::GetDrawData(); }
 
+float GetDeltaTime() {
+    return ImGui::GetIO().DeltaTime;
+}
+
+bool GetCursorBlink() {
+    return ImGui::GetIO().ConfigInputTextCursorBlink;
+}
+
 void PlotLines(const char *label, const float *values, int values_count,
                int values_offset, const char *overlay_text, float scale_min,
                float scale_max, ImVec2 graph_size, int stride) {
@@ -1496,6 +1537,138 @@ void PopAllowKeyboardFocus() { ImGui::PopItemFlag(); }
 bool IsPopupOpen(const char *str_id, ImGuiPopupFlags flags) {
   return ImGui::IsPopupOpen(str_id, flags);
 } // return true if the popup is open.
+
+    void SetNextWindowScroll(const ImVec2 &scroll){
+      ImGui::SetNextWindowScroll(scroll);
+      }
+
+         ImRect GetWindowScrollbarRect(ImGuiWindow *window, ImGuiAxis axis)
+         {
+          return GetWindowScrollbarRect(window, axis);
+         }
+   
+     ImGuiWindow *GetCurrentWindow()
+     {
+      return ImGui::GetCurrentWindow();
+     }
+
+     
+        // Windows: Display Order and Focus Order
+     void FocusWindow(ImGuiWindow *window)
+     {
+      ImGui::FocusWindow(window);
+     }
+     void FocusTopMostWindowUnderOne(ImGuiWindow *under_this_window, ImGuiWindow *ignore_window)
+     {
+      ImGui::FocusTopMostWindowUnderOne(under_this_window, ignore_window);
+     }
+     void BringWindowToFocusFront(ImGuiWindow *window)
+     {
+      ImGui::BringWindowToFocusFront(window);
+     }
+     void BringWindowToDisplayFront(ImGuiWindow *window)
+     {
+      ImGui::BringWindowToDisplayFront(window);
+     }
+     void BringWindowToDisplayBack(ImGuiWindow *window)
+     {
+      ImGui::BringWindowToDisplayBack(window);
+     }
+     void BringWindowToDisplayBehind(ImGuiWindow *window, ImGuiWindow *above_window)
+     {
+      ImGui::BringWindowToDisplayBehind(window, above_window);
+     }
+     int FindWindowDisplayIndex(ImGuiWindow *window)
+     {
+      return ImGui::FindWindowDisplayIndex(window);
+     }
+     ImGuiWindow *FindBottomMostVisibleWindowWithinBeginStack(ImGuiWindow *window)
+     {
+      return FindBottomMostVisibleWindowWithinBeginStack(window);
+     }
+// Widgets
+         bool ScrollbarEx(const ImRect &bb, ImGuiID id, ImGuiAxis axis, ImS64 *p_scroll_v, ImS64 avail_v, ImS64 contents_v, ImDrawFlags flags)
+         {
+          return ImGui::ScrollbarEx(bb, id, axis, p_scroll_v, avail_v, contents_v, flags);
+         }
+
+                                     bool IsKeyCtrlPressed()
+                                    {
+                                      return CherryGUI::GetIO().KeyCtrl;
+                                    }
+                                     bool IsKeyAltPressed()
+                                    {
+                                      return CherryGUI::GetIO().KeyAlt;
+                                    }
+                                     bool IsKeyShiftPressed()
+                                    {
+                                      return CherryGUI::GetIO().KeyShift;
+                                    }
+                                     bool IsKeySuperPressed()
+                                    {
+                                      return CherryGUI::GetIO().KeySuper;
+                                    }
+
+                                     float GetMouseWheel()
+                                    {
+                                      return CherryGUI::GetIO().MouseWheel;
+                                    }
+                                    
+                                     float GetMouseWheelH()
+                                    {
+                                      return CherryGUI::GetIO().MouseWheelH;
+                                    }
+                                     void SetWantCaptureKeyboard(const bool& val)
+                                     {
+CherryGUI::GetIO().WantCaptureKeyboard = val;
+                                     }
+                                     bool GetWantCaptureKeyboard()
+                                     {
+                                      return CherryGUI::GetIO().WantCaptureKeyboard;
+                                     }
+                                     void SetWantTextInput(const bool& val)
+                                     {
+CherryGUI::GetIO().WantTextInput = val;
+                                      
+                                     }
+
+                                     void SetWantCaptureMouse(const bool& val)
+                                    {
+CherryGUI::GetIO().WantCaptureMouse = val;
+
+                                    }
+                                                                         float GetMouseDoubleClicktime()
+                                                                         {
+                                                                          return CherryGUI::GetIO().MouseDoubleClickTime;
+                                                                         }
+
+
+                                     bool GetWantCaptureMouse()
+                                    {
+                                      return CherryGUI::GetIO().WantCaptureMouse;
+
+                                    }
+
+                                     bool GetWantTextInput()
+                                     {
+                                      return CherryGUI::GetIO().WantTextInput;
+                                     }
+ImVector<ImWchar>& GetInputQueueCharacters()
+{
+                                      return CherryGUI::GetIO().InputQueueCharacters;
+}
+
+int GetInputQueueCharactersCount() {
+    return ImGui::GetIO().InputQueueCharacters.Size;
+}
+
+ImWchar GetInputQueueCharacter(int index) {
+    return ImGui::GetIO().InputQueueCharacters[index];
+}
+
+void ClearInputQueueCharacters() {
+    ImGui::GetIO().InputQueueCharacters.resize(0);
+}
 
 } // namespace GUI
 

@@ -6,6 +6,10 @@
 
 namespace Cherry {
 namespace GUI {
+        CHERRY_API ImGuiContext* GetCurrentContext();
+
+    CHERRY_API ImVec2 CalcItemSize(ImVec2 size, float default_w, float default_h);
+
 // Fonts
 CHERRY_API ImVec2 CalcTextSizeA(ImFont *ptr, float size, float max_width,
                                 float wrap_width, const char *text_begin,
@@ -71,6 +75,15 @@ CHERRY_API void AddText(ImDrawList *ptr, const ImFont *font, float font_size,
 CHERRY_API void AddPolyline(ImDrawList *ptr, const ImVec2 *points,
                             int num_points, ImU32 col, ImDrawFlags flags,
                             float thickness);
+
+    CHERRY_API void  PushClipRect(ImDrawList *ptr, ImVec2 clip_rect_min, ImVec2 clip_rect_max, bool intersect_with_current_clip_rect = false);  // Render-level scissoring. This is passed down to your render function but not used for CPU-side coarse clipping. Prefer using higher-level ImGui::PushClipRect() to affect logic (hit-testing and widget culling)
+    CHERRY_API void  PushClipRectFullScreen(ImDrawList *ptr);
+    CHERRY_API void  PopClipRect(ImDrawList *ptr);
+    CHERRY_API void  PushTextureID(ImDrawList *ptr, ImTextureID texture_id);
+    CHERRY_API void  PopTextureID(ImDrawList *ptr);
+   
+
+
 CHERRY_API void
 AddConvexPolyFilled(ImDrawList *ptr, const ImVec2 *points, int num_points,
                     ImU32 col); // Note: Anti-aliased filling requires points to
@@ -664,6 +677,28 @@ CHERRY_API void ColorConvertRGBtoHSV(float r, float g, float b, float &out_h,
 CHERRY_API void ColorConvertHSVtoRGB(float h, float s, float v, float &out_r,
                                      float &out_g, float &out_b);
 
+                                    CHERRY_API float GetDeltaTime();
+                                    CHERRY_API bool GetCursorBlink();
+                                    CHERRY_API bool IsKeyCtrlPressed();
+                                    CHERRY_API bool IsKeyAltPressed();
+                                    CHERRY_API bool IsKeyShiftPressed();
+                                    CHERRY_API bool IsKeySuperPressed();
+                                    CHERRY_API float GetMouseWheel();
+                                    CHERRY_API float GetMouseWheelH();
+                                    CHERRY_API float GetMouseDoubleClicktime();
+                                    CHERRY_API void SetWantCaptureKeyboard(const bool& val);
+                                    CHERRY_API bool GetWantCaptureKeyboard();
+                                    CHERRY_API void SetWantCaptureMouse(const bool& val);
+                                    CHERRY_API bool GetWantCaptureMouse();
+                                    CHERRY_API void SetWantTextInput(const bool& val);
+                                    CHERRY_API bool GetWantTextInput();
+
+                                    CHERRY_API bool IsInputQueueCharactersEmpty();
+                                    CHERRY_API ImVector<ImWchar>& GetInputQueueCharacters();
+CHERRY_API int GetInputQueueCharactersCount();
+CHERRY_API ImWchar GetInputQueueCharacter(int index);
+CHERRY_API void ClearInputQueueCharacters();
+
 CHERRY_API ImGuiIO &
 GetIO(); // access the IO structure (mouse/keyboard/gamepad inputs,
          // time, various configuration options/flags)
@@ -1143,6 +1178,31 @@ CHERRY_API void PopAllowKeyboardFocus();
 CHERRY_API bool
 IsPopupOpen(const char *str_id,
             ImGuiPopupFlags flags = 0); // return true if the popup is open.
+    CHERRY_API void SetNextWindowScroll(const ImVec2 &scroll); // Use -1.0f on one axis to leave as-is
+
+        CHERRY_API ImRect GetWindowScrollbarRect(ImGuiWindow *window, ImGuiAxis axis);
+   
+    CHERRY_API ImGuiWindow *GetCurrentWindow();
+
+
+
+        // Windows: Display Order and Focus Order
+    CHERRY_API void FocusWindow(ImGuiWindow *window);
+    CHERRY_API void FocusTopMostWindowUnderOne(ImGuiWindow *under_this_window, ImGuiWindow *ignore_window);
+    CHERRY_API void BringWindowToFocusFront(ImGuiWindow *window);
+    CHERRY_API void BringWindowToDisplayFront(ImGuiWindow *window);
+    CHERRY_API void BringWindowToDisplayBack(ImGuiWindow *window);
+    CHERRY_API void BringWindowToDisplayBehind(ImGuiWindow *window, ImGuiWindow *above_window);
+    CHERRY_API int FindWindowDisplayIndex(ImGuiWindow *window);
+    CHERRY_API ImGuiWindow *FindBottomMostVisibleWindowWithinBeginStack(ImGuiWindow *window);
+
+    CHERRY_API bool ScrollbarEx(const ImRect &bb, ImGuiID id, ImGuiAxis axis, ImS64 *p_scroll_v, ImS64 avail_v, ImS64 contents_v, ImDrawFlags flags);
+    inline ImVec2   GetClipRectMin(ImDrawList *ptr) { 
+        return ptr->GetClipRectMin();
+    }
+    inline ImVec2   GetClipRectMax(ImDrawList *ptr) { 
+        return ptr->GetClipRectMax();
+     }
 
 } // namespace GUI
 } // namespace Cherry

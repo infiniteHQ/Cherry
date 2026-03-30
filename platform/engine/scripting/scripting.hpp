@@ -49,11 +49,11 @@ private:
 };
 
 CHERRY_API ScriptingEngine &GetScriptingEngine();
+CHERRY_API void RenderLuaScript(const std::string &lua_file_path);
+CHERRY_API void RenderLuaFreshScript(const std::string &lua_file_path);
 
 void RegisterDrawingAPI(lua_State *L);
 void RegisterLogicAPI(lua_State *L);
-void RenderLuaScript(const std::string &lua_file_path);
-void RenderLuaFreshScript(const std::string &lua_file_path);
 
 } // namespace Script
 

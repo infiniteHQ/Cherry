@@ -260,10 +260,10 @@ LUA_FUNC(IsMouseOverRect) {
 
   ImVec2 winPos = ImGui::GetWindowPos();
 
-  ImVec2 min(winPos.x + x, winPos.y + y);
-  ImVec2 max(min.x + w, min.y + h);
+  ImVec2 vmin(winPos.x + x, winPos.y + y);
+  ImVec2 vmax(vmin.x + w, vmin.y + h);
 
-  bool hovered = ImGui::IsMouseHoveringRect(min, max);
+  bool hovered = ImGui::IsMouseHoveringRect(vmin, vmax);
 
   lua_pushboolean(L, hovered);
   return 1;
