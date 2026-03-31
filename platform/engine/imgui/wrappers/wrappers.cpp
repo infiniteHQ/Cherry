@@ -1653,6 +1653,28 @@ CherryGUI::GetIO().WantCaptureMouse = val;
                                      {
                                       return CherryGUI::GetIO().WantTextInput;
                                      }
+
+                                     
+                                     void SetPlatformeImeDataWantVisible(const bool& val)
+                                     {
+                                      ImGui::GetCurrentContext()->PlatformImeData.WantVisible = val;
+                                     }
+
+                                     bool GetPlatformeImeDataWantVisible()
+                                     {
+                                      return ImGui::GetCurrentContext()->PlatformImeData.WantVisible;
+
+                                     }
+                                     void SetPlatformeImeDataInputPos(const ImVec2& val)
+                                     {
+                                      ImGui::GetCurrentContext()->PlatformImeData.InputPos = val;
+
+                                     }
+                                     ImVec2 GetPlatformeImeDataInputPos()
+                                     {
+                                      return ImGui::GetCurrentContext()->PlatformImeData.InputPos;
+
+                                     }
 ImVector<ImWchar>& GetInputQueueCharacters()
 {
                                       return CherryGUI::GetIO().InputQueueCharacters;

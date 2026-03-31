@@ -693,6 +693,11 @@ CHERRY_API void ColorConvertHSVtoRGB(float h, float s, float v, float &out_r,
                                     CHERRY_API void SetWantTextInput(const bool& val);
                                     CHERRY_API bool GetWantTextInput();
 
+                                    CHERRY_API void SetPlatformeImeDataWantVisible(const bool& val);
+                                    CHERRY_API bool GetPlatformeImeDataWantVisible();
+                                    CHERRY_API void SetPlatformeImeDataInputPos(const ImVec2& val);
+                                    CHERRY_API ImVec2 GetPlatformeImeDataInputPos();
+
                                     CHERRY_API bool IsInputQueueCharactersEmpty();
                                     CHERRY_API ImVector<ImWchar>& GetInputQueueCharacters();
 CHERRY_API int GetInputQueueCharactersCount();
