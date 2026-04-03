@@ -1520,7 +1520,15 @@ void Application::PresentAllWindows() {
 
     ImGui::SetCurrentContext(window->m_ImGuiContext);
 
+    ImGuiIO &inputIO = ImGui::GetIO();
+    const bool prevTrickling = inputIO.ConfigInputTrickleEventQueue;
+    if (prevTrickling && inputIO.WantTextInput) {
+      inputIO.ConfigInputTrickleEventQueue = false;
+    }
+
     ImGui::NewFrame();
+
+    inputIO.ConfigInputTrickleEventQueue = prevTrickling;
 
     window->LoadTheme();
     ImGui::PushFont(Application::GetFontList()["Default"]);
@@ -2004,9 +2012,13 @@ void Application::SingleThreadRuntime() {
         break;
       case SDL_KEYDOWN:
       case SDL_KEYUP:
+        inputTargetSDLWindow = SDL_GetWindowFromID(event.key.windowID);
+        break;
       case SDL_TEXTINPUT:
+        inputTargetSDLWindow = SDL_GetWindowFromID(event.text.windowID);
+        break;
       case SDL_TEXTEDITING:
-        inputTargetSDLWindow = SDL_GetKeyboardFocus();
+        inputTargetSDLWindow = SDL_GetWindowFromID(event.edit.windowID);
         break;
       default:
         inputTargetSDLWindow = nullptr;
