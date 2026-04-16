@@ -265,7 +265,7 @@ public:
   static void FlushCommandBuffer(VkCommandBuffer commandBuffer);
   static void SubmitResourceFree(std::function<void()> &&func,
                                  const std::string &winname);
-  static std::string CookPath(std::string_view input_path);
+  static std::string CookPath(const std::string &input_path);
   static void
   PushRedockEvent(const std::shared_ptr<Cherry::WindowDragDropState> &state);
   static std::vector<uint8_t> LoadPngHexa(const std::string &path);

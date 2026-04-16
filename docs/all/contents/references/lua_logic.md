@@ -50,6 +50,40 @@ end
 
 <bloc>
 
+#### CalcTextSizeX
+Check the size of a rendered text on the X axis.
+
+**Signature and Parameters:**
+```lua
+Cherry.CalcTextSizeX(text)
+```
+* **text**: Text to check.
+
+**Example:**
+```lua
+Cherry.CalcTextSizeX(title)
+```
+</bloc>
+
+<bloc>
+
+#### CalcTextSizeY
+Check the size of a rendered text on the Y axis.
+
+**Signature and Parameters:**
+```lua
+Cherry.CalcTextSizeY(text)
+```
+* **text**: Text to check.
+
+**Example:**
+```lua
+Cherry.CalcTextSizeY(title)
+```
+</bloc>
+
+<bloc>
+
 #### IsKeyPressedOnPos
 Checks if a keyboard key is pressed, but only if the mouse cursor is currently hovering over a specific rectangular area relative to the window.
 

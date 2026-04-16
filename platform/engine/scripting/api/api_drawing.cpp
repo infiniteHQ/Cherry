@@ -33,6 +33,12 @@ LUA_FUNC(DrawRectFixed) {
   return 0;
 }
 
+LUA_FUNC(Sameline) {
+  CherryGUI::SameLine();
+
+  return 0;
+}
+
 LUA_FUNC(DrawRectOutline) {
   float x = lua_getfloat(L, 1);
   float y = lua_getfloat(L, 2);
@@ -732,7 +738,6 @@ LUA_FUNC(DrawQuadGradientFixed) {
   std::string c2 = lua_getstring(L, 10);
   std::string c3 = lua_getstring(L, 11);
   std::string c4 = lua_getstring(L, 12);
-
   Cherry::Draw::QuadGradientScreen(p1, p2, p3, p4, c1, c2, c3, c4);
   return 0;
 }
@@ -855,6 +860,8 @@ void RegisterDrawingAPI(lua_State *L) {
   LUA_REGISTER(L, -1, EndRectMask);
   LUA_REGISTER(L, -1, BeginRectMaskFixed);
   LUA_REGISTER(L, -1, EndRectMaskFixed);
+
+  LUA_REGISTER(L, -1, Sameline);
 }
 
 } // namespace Script

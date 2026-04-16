@@ -3230,7 +3230,7 @@ std::string Application::GetActiveThemeProperty(const std::string &key) {
   return "undefned";
 }
 
-std::string Application::CookPath(std::string_view input_path) {
+std::string Application::CookPath(const std::string &input_path) {
   static const std::string root_path = []() {
     std::string path;
 

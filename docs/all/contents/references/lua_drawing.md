@@ -994,3 +994,25 @@ Cherry.DrawQuadOutlineGradientFixed(x1, y1, x2, y2, x3, y3, x4, y4, c1, c2, [thi
 ```lua
 Cherry.DrawQuadOutlineGradientFixed(100, 100, 300, 120, 280, 300, 80, 280, "#FF00FFFF", "#00FFFFFF")
 ```
+
+</bloc>
+
+
+<bloc>
+
+#### Sameline
+Continue the render on the same line of rendering
+
+**Signature and Parameters:**
+```lua 
+Cherry.Sameline()
+```
+
+**Example:**
+```lua
+# widget 1
+Cherry.Sameline()
+# widget 2
+```
+
+</bloc>

@@ -285,6 +285,26 @@ LUA_FUNC(GetMousePosX) {
   return 1;
 }
 
+LUA_FUNC(CalcTextSizeX) {
+  std::string text = lua_getstring(L, 1);
+
+  float size = CherryGUI::CalcTextSize(text.c_str()).x;
+
+  lua_pushnumber(L, size);
+
+  return 1;
+}
+
+LUA_FUNC(CalcTextSizeY) {
+  std::string text = lua_getstring(L, 1);
+
+  float size = CherryGUI::CalcTextSize(text.c_str()).y;
+
+  lua_pushnumber(L, size);
+
+  return 1;
+}
+
 LUA_FUNC(GetDrawCursorPos) {
   float x = CherryGUI::GetCursorPosX();
   float y = CherryGUI::GetCursorPosY();
@@ -700,6 +720,10 @@ void RegisterLogicAPI(lua_State *L) {
   LUA_REGISTER(L, -1, IsMouseDoubleClickedOnPos);
   LUA_REGISTER(L, -1, IsMouseClickedOnCurrentPos);
   LUA_REGISTER(L, -1, IsKeyPressedOnPos);
+
+  // Calc text
+  LUA_REGISTER(L, -1, CalcTextSizeX);
+  LUA_REGISTER(L, -1, CalcTextSizeY);
 
   // Audio
 #ifdef CHERRY_ENABLE_AUDIO
