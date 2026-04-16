@@ -1618,6 +1618,14 @@ void ClearInputQueueCharacters() {
   ImGui::GetIO().InputQueueCharacters.resize(0);
 }
 
+
+     #ifdef CHERRY_ENABLE_MARKDOWN
+     
+void MarkdownView(const std::string &raw) {
+  ImGui::MarkdownView(raw);
+}
+#endif
+
 } // namespace GUI
 
 } // namespace Cherry

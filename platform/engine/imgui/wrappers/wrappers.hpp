@@ -1,6 +1,10 @@
 #pragma once
 #include "../../base.hpp"
 
+     #ifdef CHERRY_ENABLE_MARKDOWN
+#include "../../../../lib/DearMarkdown/markdown.hpp"
+     #endif
+
 // This ImGui wrapper helps Cherry framework to easely add custom behaviors,
 // control and ui callbacks and other cool stuff for the end-user API.
 
@@ -1209,6 +1213,11 @@ IsPopupOpen(const char *str_id,
         return ptr->GetClipRectMax();
      }
 
+
+     #ifdef CHERRY_ENABLE_MARKDOWN
+     
+     CHERRY_API void MarkdownView(const std::string &raw);
+     #endif
 } // namespace GUI
 } // namespace Cherry
 
