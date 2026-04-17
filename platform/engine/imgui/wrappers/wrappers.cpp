@@ -1626,6 +1626,11 @@ void MarkdownView(const std::string &raw) {
 }
 #endif
 
+
+        ImGuiViewport* GetMainViewport()
+         {
+          return ImGui::GetMainViewport();
+         }
 } // namespace GUI
 
 } // namespace Cherry

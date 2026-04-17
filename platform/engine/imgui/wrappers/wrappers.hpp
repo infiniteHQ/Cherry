@@ -1218,6 +1218,8 @@ IsPopupOpen(const char *str_id,
      
      CHERRY_API void MarkdownView(const std::string &raw);
      #endif
+
+         CHERRY_API ImGuiViewport* GetMainViewport();        
 } // namespace GUI
 } // namespace Cherry
 
