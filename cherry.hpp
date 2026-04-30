@@ -17,9 +17,7 @@
 #define IMGUI_DEFINE_MATH_OPERATORS
 #endif  // IMGUI_DEFINE_MATH_OPERATORS
 
-///////////////////////////////////////////////////////////////
-/// Backends and Render engine                              ///
-///////////////////////////////////////////////////////////////
+/// Backends and Render engine
 #include "./main/core/entry_point.hpp"
 #include "./main/core/layer.hpp"
 #include "./main/core/random.hpp"
@@ -33,11 +31,7 @@
 #include "./main/engine/scripting/scripting.hpp"
 #include "./main/engine/ui/notifications/notifications.hpp"
 #include "./main/engine/ui/ui.hpp"
-///////////////////////////////////////////////////////////////
 
-///////////////////////////////////////////////////////////////
-/// Kit : 80+ Components, All in one windows, theme, utils...   ///
-///////////////////////////////////////////////////////////////
 // Minimal includes
 #include "./kit/components/texts/text_simple/text_simple.hpp"
 #include "./kit/themes/dark/dark.hpp"
@@ -187,7 +181,5 @@ using CherryApplication = Cherry::Application;
 
 // namespace CherryLogic = Cherry::Logic // CherryLogic::PlaySound,
 // IsKeyPressed, etc...
-
-// AIO kits & components includes
 
 #endif  // CHERRY_H
