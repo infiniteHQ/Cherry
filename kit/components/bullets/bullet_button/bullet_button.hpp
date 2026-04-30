@@ -1,6 +1,6 @@
 #pragma once
-#include "../../../../platform/engine/app/app.hpp"
-#include "../../../../platform/engine/components/components.hpp"
+#include "../../../../main/engine/app/app.hpp"
+#include "../../../../main/engine/components/components.hpp"
 
 //
 // BulletButton
@@ -11,42 +11,38 @@
 #define CHERRY_KIT_BULLET_BUTTON
 
 namespace Cherry {
-namespace Components {
-class BulletButton : public Component {
-public:
-  BulletButton(const Cherry::Identifier &id, const std::string &label)
-      : Component(id) {
-    // Identifier
-    SetIdentifier(id);
+  namespace Components {
+    class BulletButton : public Component {
+     public:
+      BulletButton(const Cherry::Identifier &id, const std::string &label) : Component(id) {
+        // Identifier
+        SetIdentifier(id);
 
-    // Colors
-    SetProperty("color_text", "theme:button_color_text");
+        // Colors
+        SetProperty("color_text", "theme:button_color_text");
 
-    // Informations
-    SetProperty("label", label);
-  }
+        // Informations
+        SetProperty("label", label);
+      }
 
-  void Render() override {
-    CherryGUI::Bullet();
-    CherryGUI::Button(GetProperty("label").c_str());
-  }
-};
-} // namespace Components
+      void Render() override {
+        CherryGUI::Bullet();
+        CherryGUI::Button(GetProperty("label").c_str());
+      }
+    };
+  }  // namespace Components
 
-// End-User API
-namespace Kit {
-inline Component &BulletButton(const Identifier &identifier,
-                               const std::string &label) {
-  return CherryApp.PushComponent<Cherry::Components::BulletButton>(identifier,
-                                                                   label);
-}
+  // End-User API
+  namespace Kit {
+    inline Component &BulletButton(const Identifier &identifier, const std::string &label) {
+      return CherryApp.PushComponent<Cherry::Components::BulletButton>(identifier, label);
+    }
 
-inline Component &BulletButton(const std::string &label) {
-  return Cherry::Kit::BulletButton(
-      Application::GenerateUniqueID(label, "BulletButton"), label);
-}
-} // namespace Kit
+    inline Component &BulletButton(const std::string &label) {
+      return Cherry::Kit::BulletButton(Application::GenerateUniqueID(label, "BulletButton"), label);
+    }
+  }  // namespace Kit
 
-} // namespace Cherry
+}  // namespace Cherry
 
-#endif // CHERRY_KIT_BULLET_BUTTON
+#endif  // CHERRY_KIT_BULLET_BUTTON

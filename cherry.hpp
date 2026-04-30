@@ -9,28 +9,27 @@
 #ifdef CHERRY_USER_CONFIG
 #include CHERRY_USER_CONFIG
 #endif
-#if !defined(CHERRY_DISABLE_INCLUDE_CONFIG_H) ||                               \
-    defined(CHERRY_INCLUDE_CONFIG_H)
+#if !defined(CHERRY_DISABLE_INCLUDE_CONFIG_H) || defined(CHERRY_INCLUDE_CONFIG_H)
 #include "options.hpp"
 #endif
 
 #ifndef IMGUI_DEFINE_MATH_OPERATORS
 #define IMGUI_DEFINE_MATH_OPERATORS
-#endif // IMGUI_DEFINE_MATH_OPERATORS
+#endif  // IMGUI_DEFINE_MATH_OPERATORS
 
 ///////////////////////////////////////////////////////////////
 /// Backends and Render engine                              ///
 ///////////////////////////////////////////////////////////////
-#include "./platform/engine/app/app.hpp"
-#include "./platform/engine/components/components.hpp"
-#include "./platform/engine/embed/assets/icons.h"
-#include "./platform/engine/image/image.hpp"
-#include "./platform/engine/imgui/ImGuiTheme.h"
-#include "./platform/engine/imgui/markdown/md.hpp"
-#include "./platform/engine/imgui/wrappers/wrappers.hpp"
-#include "./platform/engine/scripting/scripting.hpp"
-#include "./platform/engine/ui/notifications/notifications.hpp"
-#include "./platform/engine/ui/ui.hpp"
+#include "./main/engine/app/app.hpp"
+#include "./main/engine/components/components.hpp"
+#include "./main/engine/embed/assets/icons.h"
+#include "./main/engine/image/image.hpp"
+#include "./main/engine/imgui/ImGuiTheme.h"
+#include "./main/engine/imgui/markdown/md.hpp"
+#include "./main/engine/imgui/wrappers/wrappers.hpp"
+#include "./main/engine/scripting/scripting.hpp"
+#include "./main/engine/ui/notifications/notifications.hpp"
+#include "./main/engine/ui/ui.hpp"
 #include "./src/entry_point.hpp"
 #include "./src/layer.hpp"
 #include "./src/random.hpp"
@@ -177,7 +176,7 @@
 #include "./kit/themes/light_colorfull/light_colorfull.hpp"
 #include "./kit/themes/light_high_contrast/light_high_contrast.hpp"
 #include "./kit/themes/light_vortex/light_vortex.hpp"
-#endif // CHERRY_ENABLE_KIT
+#endif  // CHERRY_ENABLE_KIT
 
 namespace CherryKit = Cherry::Kit;
 namespace CherryDraw = Cherry::Draw;
@@ -191,4 +190,4 @@ using CherryApplication = Cherry::Application;
 
 // AIO kits & components includes
 
-#endif // CHERRY_H
+#endif  // CHERRY_H

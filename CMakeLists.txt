@@ -74,7 +74,7 @@ endif()
 # Cherry source files
 # ---------------------------------------------------------------------------
 file(GLOB_RECURSE CHERRY_SRC CONFIGURE_DEPENDS
-    "platform/*.[ch]pp" "platform/*.c*" 
+    "main/*.[ch]pp" "main/*.c*" 
     "src/*.[ch]pp" "src/*.c*"
     "components/*.[ch]pp" "components/*.c*"
     "kit/*.[ch]pp" "kit/*.c*"

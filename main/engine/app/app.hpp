@@ -53,6 +53,8 @@ static int current_fps;
 #define CHERRY_APP_H
 
 // If not Disbale Macros
+
+// TODO CHERRY_MAIN CHERRY_APP CHERRY_RUN
 #define CherryCreateApp *Cherry::CreateApplication
 #define CherryMain *Cherry::CreateApplication
 #define CherryAppConfig Cherry::ApplicationSpecification

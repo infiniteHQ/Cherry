@@ -1,6 +1,6 @@
 #pragma once
-#include "../../../../platform/engine/app/app.hpp"
-#include "../../../../platform/engine/components/components.hpp"
+#include "../../../../main/engine/app/app.hpp"
+#include "../../../../main/engine/components/components.hpp"
 
 //
 // TextLeft
@@ -12,42 +12,39 @@
 #define CHERRY_KIT_TEXT_LEFT
 
 namespace Cherry {
-namespace Components {
-class TextLeft : public Component {
-public:
-  TextLeft(const Cherry::Identifier &id, const std::string &label)
-      : Component(id) {
-    // Identifier
-    SetIdentifier(id);
+  namespace Components {
+    class TextLeft : public Component {
+     public:
+      TextLeft(const Cherry::Identifier &id, const std::string &label) : Component(id) {
+        // Identifier
+        SetIdentifier(id);
 
-    // Colors
-    SetProperty("color_text", "theme:text_color_text");
+        // Colors
+        SetProperty("color_text", "theme:text_color_text");
 
-    // Informations
-    SetProperty("label", label);
-  }
+        // Informations
+        SetProperty("label", label);
+      }
 
-  void Render() override {
-    std::string text = GetProperty("label").c_str();
-    CherryGUI::TextWrapped(text.c_str());
-  }
-};
-} // namespace Components
+      void Render() override {
+        std::string text = GetProperty("label").c_str();
+        CherryGUI::TextWrapped(text.c_str());
+      }
+    };
+  }  // namespace Components
 
-// End-User API
-namespace Kit {
-inline Component &TextLeft(const Identifier &identifier,
-                           const std::string &label) {
-  return CherryApp.PushComponent<Cherry::Components::TextLeft>(identifier,
-                                                               label);
-}
+  // End-User API
+  namespace Kit {
+    inline Component &TextLeft(const Identifier &identifier, const std::string &label) {
+      return CherryApp.PushComponent<Cherry::Components::TextLeft>(identifier, label);
+    }
 
-inline Component &TextLeft(const std::string &label) {
-  return Cherry::Kit::TextLeft(Application::GenerateUniqueID(label), label);
-}
+    inline Component &TextLeft(const std::string &label) {
+      return Cherry::Kit::TextLeft(Application::GenerateUniqueID(label), label);
+    }
 
-} // namespace Kit
+  }  // namespace Kit
 
-} // namespace Cherry
+}  // namespace Cherry
 
-#endif // CHERRY_KIT_TEXT_LEFT
+#endif  // CHERRY_KIT_TEXT_LEFT

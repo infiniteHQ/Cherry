@@ -1,6 +1,6 @@
 #pragma once
-#include "../../../../platform/engine/app/app.hpp"
-#include "../../../../platform/engine/components/components.hpp"
+#include "../../../../main/engine/app/app.hpp"
+#include "../../../../main/engine/components/components.hpp"
 
 //
 // InputFloat
@@ -11,59 +11,52 @@
 #define CHERRY_KIT_INPUT_FLOAT
 
 namespace Cherry {
-namespace Components {
-class InputFloat : public Component {
-public:
-  InputFloat(const Cherry::Identifier &id, const std::string &label,
-             float *value)
-      : Component(id), m_Value(value) {
-    // Identifier
-    SetIdentifier(id);
+  namespace Components {
+    class InputFloat : public Component {
+     public:
+      InputFloat(const Cherry::Identifier &id, const std::string &label, float *value) : Component(id), m_Value(value) {
+        // Identifier
+        SetIdentifier(id);
 
-    SetProperty("step", "1.0");
-    SetProperty("step_fast", "5.0");
+        SetProperty("step", "1.0");
+        SetProperty("step_fast", "5.0");
 
-    // Informations
-    SetProperty("label", label);
-  }
+        // Informations
+        SetProperty("label", label);
+      }
 
-  void Render() override {
-    std::string identifier = GetIdentifier().string();
-    std::string Label = GetProperty("label");
+      void Render() override {
+        std::string identifier = GetIdentifier().string();
+        std::string Label = GetProperty("label");
 
-    if (!identifier.empty()) {
-      Label += "####" + identifier;
+        if (!identifier.empty()) {
+          Label += "####" + identifier;
+        }
+
+        if (m_Value) {
+          CherryGUI::InputFloat(Label.c_str(), m_Value, std::stof(GetProperty("step")), std::stof(GetProperty("step_fast")));
+        } else {
+          CherryGUI::Text("INVALID VALUE");
+        }
+      }
+
+     private:
+      float *m_Value;
+    };
+  }  // namespace Components
+
+  // End-User API
+  namespace Kit {
+    inline Component &InputFloat(const Identifier &identifier, const std::string &label, float *value) {
+      return CherryApp.PushComponent<Cherry::Components::InputFloat>(identifier, label, value);
     }
 
-    if (m_Value) {
-      CherryGUI::InputFloat(Label.c_str(), m_Value,
-                            std::stof(GetProperty("step")),
-                            std::stof(GetProperty("step_fast")));
-    } else {
-      CherryGUI::Text("INVALID VALUE");
+    inline Component &InputFloat(const std::string &label, float *value) {
+      return Cherry::Kit::InputFloat(Application::GenerateUniqueID(label, value, "InputFloat"), label, value);
     }
-  }
 
-private:
-  float *m_Value;
-};
-} // namespace Components
+  }  // namespace Kit
 
-// End-User API
-namespace Kit {
-inline Component &InputFloat(const Identifier &identifier,
-                             const std::string &label, float *value) {
-  return CherryApp.PushComponent<Cherry::Components::InputFloat>(identifier,
-                                                                 label, value);
-}
+}  // namespace Cherry
 
-inline Component &InputFloat(const std::string &label, float *value) {
-  return Cherry::Kit::InputFloat(
-      Application::GenerateUniqueID(label, value, "InputFloat"), label, value);
-}
-
-} // namespace Kit
-
-} // namespace Cherry
-
-#endif // CHERRY_KIT_INPUT_FLOAT
+#endif  // CHERRY_KIT_INPUT_FLOAT
