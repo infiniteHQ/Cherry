@@ -4,8 +4,7 @@
 #include <string>
 #include <unordered_map>
 
-#include "../../core/core/color.hpp"
-#include "../../core/layer.hpp"
+#include "../../core/color/color.hpp"
 #include "../options.hpp"
 
 #ifndef CHERRY_THEME_H

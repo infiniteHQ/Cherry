@@ -5,7 +5,7 @@
 #include <iostream>
 #include <thread>
 
-#include "../core/core/log.hpp"
+#include "../core/logs/log.hpp"
 
 static Cherry::Application* s_Instance = nullptr;
 

@@ -5,7 +5,6 @@
 #include <string>
 #include <vector>
 
-#include "../core/layer.hpp"
 #include "../core/timer.hpp"
 
 #ifndef APP_HEADLESS_HPP
@@ -33,17 +32,6 @@ namespace Cherry {
     void SetMenubarCallback(const std::function<void()> &menubarCallback) {
     }
 
-    template<typename T>
-    void PushLayer() {
-      static_assert(std::is_base_of<Layer, T>::value, "Pushed type is not subclass of Layer!");
-      m_LayerStack.emplace_back(std::make_shared<T>())->OnAttach();
-    }
-
-    void PushLayer(const std::shared_ptr<Layer> &layer) {
-      m_LayerStack.emplace_back(layer);
-      layer->OnAttach();
-    }
-
     void Close();
 
     float GetTime();
@@ -60,7 +48,6 @@ namespace Cherry {
     float m_FrameTime = 0.0f;
     float m_LastFrameTime = 0.0f;
 
-    std::vector<std::shared_ptr<Layer>> m_LayerStack;
     Timer m_AppTimer;
   };
 

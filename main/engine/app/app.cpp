@@ -904,10 +904,6 @@ namespace Cherry {
   void Application::Shutdown() {
     RequestShutdown();
 
-    for (auto &layer : m_LayerStack)
-      layer->OnDetach();
-    m_LayerStack.clear();
-
 #ifdef CHERRY_ENABLE_AUDIO
     if (app->m_DefaultSpecification.UseAudioService) {
       StopAudioService();
@@ -1778,10 +1774,6 @@ namespace Cherry {
         }
       }
 
-      for (auto &layer : m_LayerStack) {
-        layer->OnUpdate(m_TimeStep);
-      }
-
 #ifdef CHERRY_DEBUG
       m_TriggerDevtools = false;
 #endif  // CHERRY_DEBUG
@@ -2074,10 +2066,6 @@ namespace Cherry {
         }
       }
 
-      for (auto &layer : m_LayerStack) {
-        layer->OnUpdate(m_TimeStep);
-      }
-
       bool AppWindowRedocked = false;
       for (auto &req : m_RedockRequests) {
         if (req->m_IsObsolete) {
@@ -2180,41 +2168,6 @@ namespace Cherry {
 
   VkDevice Application::GetDevice() {
     return g_Device;
-  }
-
-  VkCommandBuffer Application::GetCommandBufferOfWin(const std::string &win_name, bool begin) {
-    ImGui_ImplVulkanH_Window *wd = nullptr;
-
-    for (auto layer : app->m_LayerStack) {
-      if (layer->ParentWindow == win_name) {
-        for (auto win : app->m_Windows) {
-          if (win->GetName() == layer->ParentWindow) {
-            wd = &win->m_WinData;
-
-            VkCommandPool command_pool = wd->Frames[wd->FrameIndex].CommandPool;
-
-            VkCommandBufferAllocateInfo cmdBufAllocateInfo = {};
-            cmdBufAllocateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-            cmdBufAllocateInfo.commandPool = command_pool;
-            cmdBufAllocateInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-            cmdBufAllocateInfo.commandBufferCount = 1;
-
-            VkCommandBuffer &command_buffer = win->s_AllocatedCommandBuffers[wd->FrameIndex].emplace_back();
-            auto err = vkAllocateCommandBuffers(g_Device, &cmdBufAllocateInfo, &command_buffer);
-
-            VkCommandBufferBeginInfo begin_info = {};
-            begin_info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-            begin_info.flags |= VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
-            err = vkBeginCommandBuffer(command_buffer, &begin_info);
-            check_vk_result(err);
-
-            return command_buffer;
-          }
-        }
-      }
-    }
-
-    return nullptr;
   }
 
   std::vector<uint8_t> Application::LoadPngHexa(const std::string &path) {
@@ -2479,23 +2432,6 @@ namespace Cherry {
       }
     }
   }*/
-
-  void Application::HandleLayerStackUpdate(Window *window) {
-    for (auto &layer : m_LayerStack) {
-      if (!layer->initialized) {
-        layer->ParentWindow = window->GetName();
-        layer->initialized = true;
-      }
-
-      // layer->m_WindowControlCallbalck = [window, io](ImGuiWindow *win) {
-      //
-      // };
-
-      if (layer->ParentWindow == window->GetName()) {
-        layer->OnUIRender();
-      }
-    }
-  }
 
   void Application::PrepareViewport(Window *window) {
     ImGuiViewport *viewport = ImGui::GetMainViewport();
@@ -3130,11 +3066,6 @@ namespace Cherry {
 
     return (input_path.empty() || input_path.front() == '/') ? std::string(input_path)
                                                              : root_path + "/" + std::string(input_path);
-  }
-
-  void Application::PushLayer(const std::shared_ptr<Layer> &layer) {
-    m_LayerStack.emplace_back(layer);
-    layer->OnAttach();
   }
 
   std::string Application::GetComponentData(const Identifier &id, const std::string &topic) {

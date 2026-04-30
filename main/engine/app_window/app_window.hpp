@@ -11,8 +11,7 @@
 #include <string>
 #include <vector>
 
-#include "../../core/core/color.hpp"
-#include "../../core/layer.hpp"
+#include "../../core/color/color.hpp"
 #include "../base.hpp"
 #include "../components/components.hpp"
 #include "../image/image.hpp"

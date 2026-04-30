@@ -18,9 +18,9 @@
 #endif  // IMGUI_DEFINE_MATH_OPERATORS
 
 /// Backends and Render engine
+#include "./main/core/color/color.hpp"
 #include "./main/core/entry_point.hpp"
-#include "./main/core/layer.hpp"
-#include "./main/core/random.hpp"
+#include "./main/core/random/random.hpp"
 #include "./main/engine/app/app.hpp"
 #include "./main/engine/components/components.hpp"
 #include "./main/engine/embed/assets/icons.h"

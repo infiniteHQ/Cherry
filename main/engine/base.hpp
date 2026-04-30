@@ -5,8 +5,7 @@
 #include <mutex>
 #include <string>
 
-#include "../core/core/color.hpp"
-#include "../core/layer.hpp"
+#include "../core/color/color.hpp"
 #include "image/image.hpp"
 #include "themes/themes.hpp"
 

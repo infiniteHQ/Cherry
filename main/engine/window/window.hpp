@@ -11,8 +11,7 @@
 
 #include "../../../lib/sdl2/include/SDL.h"
 #include "../../../lib/sdl2/include/SDL_vulkan.h"
-#include "../../core/core/color.hpp"
-#include "../../core/layer.hpp"
+#include "../../core/color/color.hpp"
 #include "../app/app.hpp"
 #include "../app_window/app_window.hpp"
 #include "../base.hpp"

@@ -1,9 +1,8 @@
 #pragma once
 
 #include "../../../options.hpp"
-#include "../../core/core/color.hpp"
-#include "../../core/core/log.hpp"
-#include "../../core/layer.hpp"
+#include "../../core/color/color.hpp"
+#include "../../core/logs/log.hpp"
 #include "../app_window/app_window.hpp"
 #include "../base.hpp"
 #include "../components/components.hpp"
@@ -185,11 +184,6 @@ namespace Cherry {
     F12
   };
 
-  struct ParentWindow {
-    std::vector<std::shared_ptr<Layer>> m_LayerStack;
-    std::string window_name;
-  };
-
   class CHERRY_API Application {
    public:
     Application(const ApplicationSpecification &applicationSpecification = ApplicationSpecification());
@@ -232,7 +226,6 @@ namespace Cherry {
     static VkInstance GetInstance();
     static VkPhysicalDevice GetPhysicalDevice();
     static VkDevice GetDevice();
-    static VkCommandBuffer GetCommandBufferOfWin(const std::string &win_name, bool begin);
     static VkCommandBuffer GetCommandBuffer(bool begin, const std::shared_ptr<Window> &win);
     static ImFont *GetFont(const std::string &name);
     static std::unordered_map<std::string, ImFont *> &GetFontList();
@@ -354,7 +347,6 @@ namespace Cherry {
                                       // mode. (Worse for third party thread safety
                                       // but more performant.)
 
-    void PushLayer(const std::shared_ptr<Layer> &layer);
     void NewWinInstance(const std::string &name);
 
     void Close();
@@ -440,12 +432,6 @@ namespace Cherry {
     // Component group : Serve as "namespace" to separe component types or nature
     // and add logic for a group Component array : Where components will be stored
     // and managed by the runtime
-
-    template<typename T>
-    void PushLayer() {
-      static_assert(std::is_base_of<Layer, T>::value, "Pushed type is not subclass of Layer!");
-      m_LayerStack.emplace_back(std::make_shared<T>())->OnAttach();
-    }
 
     static Identifier GetAnonymousID() {
       return Identifier(Identifier::GetUniqueIndex());
@@ -680,8 +666,6 @@ namespace Cherry {
     ApplicationSpecification m_DefaultSpecification;
 
     std::shared_ptr<Component> m_FocusedDebugComponent;
-
-    std::vector<std::shared_ptr<Layer>> m_LayerStack;
 
 #ifdef CHERRY_ENABLE_AUDIO
     ma_engine m_AudioEngine;
