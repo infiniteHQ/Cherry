@@ -403,9 +403,9 @@ namespace Cherry {
     if (!win)
       return;
 
-    win->m_WinData.Surface = win->m_Surface;
+    win->GetWinData()->Surface = win->m_Surface;
 
-    ImGui_ImplVulkanH_DestroyWindow(g_Instance, g_Device, &win->m_WinData, g_Allocator);
+    ImGui_ImplVulkanH_DestroyWindow(g_Instance, g_Device, win->GetWinData(), g_Allocator);
 
     win->m_Surface = VK_NULL_HANDLE;
   }
@@ -975,7 +975,7 @@ namespace Cherry {
 
     ImGui_ImplVulkanH_Frame *fd = &wd->Frames[wd->FrameIndex];
 
-    win->s_CurrentFrameIndex = (win->s_CurrentFrameIndex + 1) % win->m_WinData.ImageCount;
+    win->s_CurrentFrameIndex = (win->s_CurrentFrameIndex + 1) % win->GetWinData()->ImageCount;
 
     {
       err = vkWaitForFences(g_Device, 1, &fd->Fence, VK_TRUE, UINT64_MAX);
@@ -1464,13 +1464,13 @@ namespace Cherry {
               g_Instance,
               g_PhysicalDevice,
               g_Device,
-              &window->m_WinData,
+              window->GetWinData(),
               g_QueueFamily,
               g_Allocator,
               width,
               height,
               g_MinImageCount);
-          window->m_WinData.FrameIndex = 0;
+          window->GetWinData()->FrameIndex = 0;
           window->g_SwapChainRebuild = false;
         }
       }
@@ -1582,7 +1582,7 @@ namespace Cherry {
       ImGui::PopFont();
       window->UnloadTheme();
 
-      ImGui_ImplVulkanH_Window *wd = &window->m_WinData;
+      ImGui_ImplVulkanH_Window *wd = window->GetWinData();
       ImGuiIO &io = ImGui::GetIO();
       ImGui::Render();
       ImDrawData *main_draw_data = ImGui::GetDrawData();
@@ -2194,7 +2194,7 @@ namespace Cherry {
   }
 
   VkCommandBuffer Application::GetCommandBuffer(bool begin, const std::shared_ptr<Window> &win) {
-    ImGui_ImplVulkanH_Window *wd = &win->m_WinData;
+    ImGui_ImplVulkanH_Window *wd = win->GetWinData();
 
     VkCommandPool command_pool = wd->Frames[wd->FrameIndex].CommandPool;
 

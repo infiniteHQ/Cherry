@@ -1,3 +1,14 @@
+//  window.cpp
+//  Sources for Cherry windows (desktop environment
+//  window implementation and rendering)
+//
+//  Copyright (c) 2024-2026 Diego Moreno
+//  Copyright (c) 2026 Infinite
+//
+//	This work is licensed under the terms of the MIT license.
+//	For a copy, see <https://opensource.org/licenses/MIT>.
+//
+
 #include "window.hpp"
 
 #include "../embed/not_found_img.embed"
@@ -768,6 +779,23 @@ namespace Cherry {
     ImGui::EndHorizontal();
 
     outTitlebarHeight = titlebarHeight;
+  }
+
+  ImGui_ImplVulkanH_Window *Window::GetWinData() {
+    return &m_WinData;
+  }
+
+  SDL_Window *Window::GetWindowHandle() const {
+    return m_WindowHandler;
+  }
+
+  void Window::BeginFrame() {
+    ImGui_ImplSDL2_NewFrame();
+    ImGui::NewFrame();
+  }
+
+  void Window::EndFrame() {
+    ImGui::Render();
   }
 
   void Window::UI_DrawMenubar() {

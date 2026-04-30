@@ -1,47 +1,38 @@
+//
+//  window.hpp
+//  Headers for Cherry windows (desktop environment
+//  window implementation and rendering)
+//
+//  Copyright (c) 2024-2026 Diego Moreno
+//  Copyright (c) 2026 Infinite
+//
+//	This work is licensed under the terms of the MIT license.
+//	For a copy, see <https://opensource.org/licenses/MIT>.
+//
+
 #pragma once
+
+#include <lib/sdl2/include/SDL.h>
+#include <lib/sdl2/include/SDL_vulkan.h>
+#include <main/engine/imgui/imgui_theme.h>
 
 #include <filesystem>
 #include <functional>
 #include <iostream>
+#include <main/core/color/color.hpp>
+#include <main/engine/app/app.hpp>
+#include <main/engine/app_window/app_window.hpp>
+#include <main/engine/base.hpp>
+#include <main/engine/image/image.hpp>
+#include <main/engine/ui/ui.hpp>
 #include <memory>
 #include <mutex>
 #include <queue>
 #include <string>
 #include <vector>
 
-#include "../../../lib/sdl2/include/SDL.h"
-#include "../../../lib/sdl2/include/SDL_vulkan.h"
-#include "../../core/color/color.hpp"
-#include "../app/app.hpp"
-#include "../app_window/app_window.hpp"
-#include "../base.hpp"
-#include "../image/image.hpp"
-#include "../imgui/imgui_theme.h"
-#include "../ui/ui.hpp"
 #include "vulkan/vulkan.h"
-
-struct ImGuiDockPreviewData {
-  ImGuiDockNode FutureNode;
-  bool IsDropAllowed;
-  bool IsCenterAvailable;
-  bool IsSidesAvailable;    // Hold your breath, grammar freaks..
-  bool IsSplitDirExplicit;  // Set when hovered the drop rect (vs. implicit
-                            // SplitDir==None when hovered the window)
-  ImGuiDockNode *SplitNode;
-  ImGuiDir SplitDir;
-  float SplitRatio;
-  ImRect DropRectsDraw[ImGuiDir_COUNT + 1];  // May be slightly different from hit-testing drop
-                                             // rects used in DockNodeCalcDropRects()
-
-  ImGuiDockPreviewData() : FutureNode(0) {
-    IsDropAllowed = IsCenterAvailable = IsSidesAvailable = IsSplitDirExplicit = false;
-    SplitNode = NULL;
-    SplitDir = ImGuiDir_None;
-    SplitRatio = 0.f;
-    for (int n = 0; n < IM_ARRAYSIZE(DropRectsDraw); n++)
-      DropRectsDraw[n] = ImRect(+FLT_MAX, +FLT_MAX, -FLT_MAX, -FLT_MAX);
-  }
-};
+#include "window_helpers.hpp"
 
 namespace Cherry {
   class Application;
@@ -56,9 +47,7 @@ namespace Cherry {
     void ProcessMouseEvents();
 
     VkCommandBuffer GetCommandBuffer(bool begin);
-    SDL_Window *GetWindowHandle() const {
-      return m_WindowHandler;
-    }
+    SDL_Window *GetWindowHandle() const;
     static void ShowDockingPreview(
         ImGuiID dockspaceID,
         Window *win,
@@ -68,14 +57,8 @@ namespace Cherry {
     // void OnWindowResize(GLFWwindow *windowHandle, int width, int height);
     // void OnWindowMove(int xpos, int ypos);
 
-    void BeginFrame() {
-      ImGui_ImplSDL2_NewFrame();
-      ImGui::NewFrame();
-    }
-
-    void EndFrame() {
-      ImGui::Render();
-    }
+    void BeginFrame();
+    void EndFrame();
 
     void OnUpdate();
 
@@ -218,6 +201,13 @@ namespace Cherry {
     ImDrawData DrawData;
     int m_Width, m_Height;
 
+    ImGui_ImplVulkanH_Window *GetWinData();
+
+   private:
+    std::function<void()> m_MenubarCallback;
+    std::string m_Name;
+    SDL_Window *m_WindowHandler;
+
     ImGui_ImplVulkanH_Window m_WinData;
 
     VkPipelineLayout pipelineLayout;
@@ -225,10 +215,5 @@ namespace Cherry {
     bool m_IsDragging = false;
     ImVec2 m_InitialMousePos;
     ImVec2 m_InitialWindowPos;
-
-   private:
-    std::function<void()> m_MenubarCallback;
-    std::string m_Name;
-    SDL_Window *m_WindowHandler;
   };
 }  // namespace Cherry
