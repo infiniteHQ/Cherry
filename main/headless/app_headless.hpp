@@ -1,11 +1,26 @@
+//
+//  app_headless.hpp
+//  Headers for headless classes of application features of Cherry
+//
+//  Copyright (c) 2024-2026 Diego Moreno
+//  Copyright (c) 2026 Infinite
+//
+//	This work is licensed under the terms of the MIT license.
+//	For a copy, see <https://opensource.org/licenses/MIT>.
+//
+
 #pragma once
 
+#include <chrono>
 #include <functional>
+#include <glm/glm.hpp>
+#include <iostream>
+#include <main/core/logs/log.hpp>
+#include <main/core/timer.hpp>
 #include <memory>
 #include <string>
+#include <thread>
 #include <vector>
-
-#include "../core/timer.hpp"
 
 #ifndef APP_HEADLESS_HPP
 #define APP_HEADLESS_HPP
@@ -15,7 +30,6 @@ namespace Cherry {
     std::string Name = "Devtools";
     uint32_t Width = 1600;
     uint32_t Height = 900;
-
     uint64_t SleepDuration = 0;
   };
 
@@ -27,13 +41,8 @@ namespace Cherry {
     static Application &Get();
 
     void Run();
-
-    // No menubar for headless apps
-    void SetMenubarCallback(const std::function<void()> &menubarCallback) {
-    }
-
+    void SetMenubarCallback(const std::function<void()> &menubarCallback);
     void Close();
-
     float GetTime();
 
    private:

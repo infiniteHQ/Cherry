@@ -1,33 +1,45 @@
+//
+//  app.hpp
+//  Headers for main application features of Cherry
+//
+//  Copyright (c) 2024-2026 Diego Moreno
+//  Copyright (c) 2026 Infinite
+//
+//	This work is licensed under the terms of the MIT license.
+//	For a copy, see <https://opensource.org/licenses/MIT>.
+//
+
 #pragma once
 
-#include "../../../options.hpp"
-#include "../../core/color/color.hpp"
-#include "../../core/logs/log.hpp"
-#include "../app_window/app_window.hpp"
-#include "../base.hpp"
-#include "../components/components.hpp"
-#include "../drawing/drawing.hpp"
-#include "../image/image.hpp"
-#include "../options.hpp"
-#include "../themes/themes.hpp"
-#include "../ui/notifications/notifications.hpp"
-#include "../window/window.hpp"
+#include <lib/sdl2/include/SDL_scancode.h>
 
-// Libs
 #include <filesystem>
 #include <functional>
 #include <iostream>
+#include <main/core/color/color.hpp>
+#include <main/core/logs/log.hpp>
+#include <main/engine/app_window/app_window.hpp>
+#include <main/engine/base.hpp>
+#include <main/engine/components/components.hpp>
+#include <main/engine/drawing/drawing.hpp>
+#include <main/engine/image/image.hpp>
+#include <main/engine/options.hpp>
+#include <main/engine/themes/themes.hpp>
+#include <main/engine/ui/notifications/notifications.hpp>
+#include <main/engine/window/window.hpp>
 #include <memory>
 #include <mutex>
+#include <options.hpp>
 #include <queue>
 #include <string>
 #include <thread>
 #include <vector>
 
+#include "app_helpers.hpp"
+
 #ifdef CHERRY_ENABLE_AUDIO
 #include "../audio/audio.hpp"
-#endif
-#include "../../../lib/sdl2/include/SDL_scancode.h"
+#endif  // CHERRY_ENABLE_AUDIO
 
 #ifdef _WIN32
 #include <windows.h>
@@ -39,7 +51,7 @@
 #include <unistd.h>
 #endif
 
-#include "../imgui/ImGuiTheme.h"
+#include "../imgui/imgui_theme.h"
 #include "../imgui/wrappers/wrappers.hpp"
 #include "../ui/ui.hpp"
 #include "vulkan/vulkan.h"
@@ -48,44 +60,25 @@ static int current_fps;
 
 #define CHERRY_VERSION "1.5 WIP"
 
-#ifndef CHERRY_APP_H
-#define CHERRY_APP_H
+#ifndef CHERRY_APP_HPP
+#define CHERRY_APP_HPP
 
-// If not Disbale Macros
-
-// TODO CHERRY_MAIN CHERRY_APP CHERRY_RUN
-#define CherryCreateApp            *Cherry::CreateApplication
+// usefull macros
 #define CherryMain                 *Cherry::CreateApplication
 #define CherryAppConfig            Cherry::ApplicationSpecification
 #define CherryRunAsync(argc, argv) std::thread([&]() { Cherry::Main(argc, argv); }).join();
 #define CherryRun(argc, argv)      Cherry::Main(argc, argv);
-
-#define CherryComponentsPool std::vector<std::shared_ptr<Cherry::Component>>
-
-// Next component property
+#define CherryComponentsPool       std::vector<std::shared_ptr<Cherry::Component>>
 #define CherryNextProp(key, value) Cherry::SetNextComponentProperty(key, value)
+#define CherryPath(path)           Cherry::GetPath(path)
 
-// Code utils macros
-#define CherryLambda(code) [=]() { code }
+#define CherryApp              Cherry::Application::Get()                                    // Application&
+#define CherryWindow           Cherry::Application::Get().GetSafeCurrentRenderedWindow()     // Window&
+#define CherryAppWindow        Cherry::Application::Get().GetSafeCurrentRenderedAppWindow()  // AppWindow&
+#define CherryLastComponent    Cherry::Application::Get().GetSafeLastComponent()             // Component&
+#define CherryNextComponent    Cherry::Application::Get().GetSafeNextComponent()             // Component&
+#define CherryCurrentComponent Cherry::Application::Get().GetSafeCurrentComponent()          // Component&
 
-// Cherry utils macros
-#define CherryPath(path) Cherry::GetPath(path)
-
-/////////////////////////////////////////////////
-// Cherry dynamic variables
-/////////////////////////////////////////////////
-// 3 Levels of rendering layers (App, Window and AppWindow)
-#define CherryApp       Cherry::Application::Get()                                    // Application&
-#define CherryWindow    Cherry::Application::Get().GetSafeCurrentRenderedWindow()     // Window&
-#define CherryAppWindow Cherry::Application::Get().GetSafeCurrentRenderedAppWindow()  // AppWindow&
-
-// Components
-#define CherryLastComponent    Cherry::Application::Get().GetSafeLastComponent()     // Component&
-#define CherryNextComponent    Cherry::Application::Get().GetSafeNextComponent()     // Component&
-#define CherryCurrentComponent Cherry::Application::Get().GetSafeCurrentComponent()  // Component&
-/////////////////////////////////////////////////
-
-// Cherry Identifier macros
 #define CherryInline     CherryID(Cherry::Identifier::GetUniqueIndex(), Cherry::RenderMode::Inline)
 #define CherryCreateOnly CherryID(Cherry::Identifier::GetUniqueIndex(), Cherry::RenderMode::CreateOnly)
 
@@ -118,72 +111,6 @@ namespace std {
 namespace Cherry {
   class Window;
 
-  enum class ProcessCallback { ON_INITIALIZATION_FINISHED };
-
-  enum class CherryKey {
-    A,
-    B,
-    C,
-    D,
-    E,
-    F,
-    G,
-    H,
-    I,
-    J,
-    K,
-    L,
-    M,
-    N,
-    O,
-    P,
-    Q,
-    R,
-    S,
-    T,
-    U,
-    V,
-    W,
-    X,
-    Y,
-    Z,
-    NUM_0,
-    NUM_1,
-    NUM_2,
-    NUM_3,
-    NUM_4,
-    NUM_5,
-    NUM_6,
-    NUM_7,
-    NUM_8,
-    NUM_9,
-    ESCAPE,
-    SPACE,
-    ENTER,
-    BACKSPACE,
-    KEY_DELETE,
-    TAB,
-    SHIFT,
-    CTRL,
-    ALT,
-    LEFT,
-    RIGHT,
-    UP,
-    DOWN,
-    F1,
-    F2,
-    F3,
-    F4,
-    F5,
-    F6,
-    F7,
-    F8,
-    F9,
-    F10,
-    F11,
-    F12
-  };
-
   class CHERRY_API Application {
    public:
     Application(const ApplicationSpecification &applicationSpecification = ApplicationSpecification());
@@ -201,7 +128,6 @@ namespace Cherry {
 
     static void RequestShutdown();
 
-    // Set static components
     static Application &Get();
     static VkDevice &GetVkDevice();
     static VkPhysicalDevice &GetVkPhysicalDevice();
@@ -214,10 +140,6 @@ namespace Cherry {
     static int &GetMinImageCount();
     static std::shared_ptr<Cherry::Window> &GetCurrentRenderedWindow();
     static std::shared_ptr<Cherry::AppWindow> &GetCurrentRenderedAppWindow();
-
-    Window &GetSafeCurrentRenderedWindow();
-    AppWindow &GetSafeCurrentRenderedAppWindow();
-
     static std::shared_ptr<Cherry::WindowDragDropState> &GetCurrentDragDropState();
     static std::vector<std::shared_ptr<Cherry::AppWindow>> &GetTempAppWindows();
     static bool &GetDockIsDragging();
@@ -230,6 +152,8 @@ namespace Cherry {
     static ImFont *GetFont(const std::string &name);
     static std::unordered_map<std::string, ImFont *> &GetFontList();
     std::vector<std::pair<std::string, std::pair<std::string, float>>> &GetCustomFonts();
+    Window &GetSafeCurrentRenderedWindow();
+    AppWindow &GetSafeCurrentRenderedAppWindow();
 
     // Set static components
     static void SetCurrentDragDropState(const std::shared_ptr<Cherry::WindowDragDropState> &state);
@@ -419,6 +343,7 @@ namespace Cherry {
     void SetLogoPathForAppWindow(const std::string &windowId, const std::string &path);
     const std::string &GetDescriptionForAppWindow(const std::string &windowId);
     const std::string &GetLogoPathForAppWindow(const std::string &windowId);
+    void ClearThemes();
 
     // TODO:
     // SetDataToComponentPool
@@ -485,10 +410,6 @@ namespace Cherry {
       std::size_t label_hash = std::hash<std::string>{}(label);
 
       return Identifier(std::to_string(label_hash));
-    }
-
-    static void ClearAnonymousComponents() {
-      // Application::Get().m_ApplicationAnonymousComponents.clear();
     }
 
     template<typename T>
@@ -620,16 +541,9 @@ namespace Cherry {
     bool IsValidRenderMode(Cherry::RenderMode mode) const {
       return mode != Cherry::RenderMode::None;
     }
-
-    std::vector<RenderMode> m_RenderModeStack;
-
-    std::unordered_map<std::string, Theme> m_Themes;
-    std::vector<Theme> m_ActiveThemes;
-
     // Different than the default theme !
     // When the user specify this, the runtime will search level 1 theme at
     // GetThemeProperty(theme, key) "manually", and not from the active theme.
-    std::string m_SelectedTheme = "undefined";
     void SetTheme(const std::string &theme_name);
     void RemoveTheme();
 
@@ -643,13 +557,6 @@ namespace Cherry {
     std::vector<std::string> m_PushedComponentGroups;                  // List of groups
     std::vector<std::shared_ptr<Component>> m_PushedCurrentComponent;  // List of groups
 
-    // Ordre de création dans un array :
-    //	-- Le CherryID a un array de composants spécifié ? Oui, alors je le crée
-    // dednas, non, je continue
-    //	-- Je crée le composant en faisant un GetComponentArray, il me donnera
-    // un array push si il y a eu un
-    // PushComponentArray sans pop, 	   sinon il l créera dans le pool
-    // général.
     void SetPropertyOnGroup(const std::string &group_name, const std::string &key, const std::string &value);
 
     void SetDataOnGroup(const std::string &group_name, const std::string &key, const std::string &value);
@@ -659,13 +566,6 @@ namespace Cherry {
     // Resources
     // TODO: move out of application class since this can't be tied
     //            to application lifetime
-    std::function<void()> m_MenubarCallback;
-    std::function<void()> m_FramebarCallback;
-    std::function<void()> m_MainRenderCallback;
-    std::function<void()> m_CloseCallback;
-    ApplicationSpecification m_DefaultSpecification;
-
-    std::shared_ptr<Component> m_FocusedDebugComponent;
 
 #ifdef CHERRY_ENABLE_AUDIO
     ma_engine m_AudioEngine;
@@ -688,45 +588,81 @@ namespace Cherry {
     void PopParentComponent();
     std::shared_ptr<Component> GetParent(int parent_number = 0);
 
-    std::string m_RootPath;
-
-    bool m_ClosePending = false;
-
-    std::mutex m_WindowCreationMutex;
-    ImGuiContext *m_ImGuiMasterContext;
-
-    std::string m_WindowSaveDataPath;
-    bool m_SaveWindowData = false;
-    bool m_IsDataSaved = true;
-    bool m_IsDataInitialized = false;
-    nlohmann::json m_PreviousSaveData;
-
-    bool m_NoAppWindowSafetyEnabled = false;
-    bool m_Running = false;
-    bool m_Dragging = false;
-
-    SDL_Window *m_MouseHoveredWindow = nullptr;
-
-    std::vector<std::shared_ptr<Window>> m_Windows;
-    std::vector<std::shared_ptr<RedockRequest>> m_RedockRequests;
-    std::vector<std::shared_ptr<AppWindow>> m_AppWindows;
-    std::vector<std::shared_ptr<AppWindow>> m_SavedAppWindows;
-    std::vector<std::pair<std::string, std::pair<std::string, float>>> m_CustomFonts;
-    std::string m_FavIconPath;
-
     // std::vector<std::shared_ptr<Component>> m_ApplicationComponents;
     // std::vector<std::shared_ptr<Component>> m_ApplicationAnonymousComponents;
 
-    ComponentsPool m_ApplicationComponentPool;
-    std::vector<ComponentsPool *> m_ComponentPoolStack;
+    std::vector<std::shared_ptr<Window>> &GetWindows() {
+      return m_Windows;
+    }
+    std::vector<std::shared_ptr<AppWindow>> &GetAppWindows() {
+      return m_AppWindows;
+    }
+    std::vector<std::shared_ptr<AppWindow>> &GetSavedAppWindows() {
+      return m_SavedAppWindows;
+    }
+    const std::vector<std::shared_ptr<Window>> &GetWindows() const {
+      return m_Windows;
+    }
+    const std::vector<std::shared_ptr<AppWindow>> &GetAppWindows() const {
+      return m_AppWindows;
+    }
+    const std::vector<std::shared_ptr<AppWindow>> &GetSavedAppWindows() const {
+      return m_SavedAppWindows;
+    }
 
-    std::unordered_map<std::string, nlohmann::json> m_Locales;
-    std::string m_SelectedLocale;
-    std::string m_DefaultLocale;
+    bool &GetIsDataSaved() {
+      return m_IsDataSaved;
+    }
+    bool &GetIsDataInitialized() {
+      return m_IsDataInitialized;
+    }
 
-    std::string m_HttpCacheFolderName = "http_cache";
+    const bool &GetIsDataSaved() const {
+      return m_IsDataSaved;
+    }
+    const bool &GetIsDataInitialized() const {
+      return m_IsDataInitialized;
+    }
 
-    std::unordered_map<std::string, WindowMetaData> m_AppWindowRegistry;
+    void SetIsDataSaved(bool value) {
+      m_IsDataSaved = value;
+    }
+    void SetIsDataInitialized(bool value) {
+      m_IsDataInitialized = value;
+    }
+
+    std::function<void()> &GetMenubarCallback() {
+      return m_MenubarCallback;
+    }
+    std::function<void()> &GetFramebarCallback() {
+      return m_FramebarCallback;
+    }
+    std::function<void()> &GetMainRenderCallback() {
+      return m_MainRenderCallback;
+    }
+    std::function<void()> &GetCloseCallback() {
+      return m_CloseCallback;
+    }
+
+    // const overloads
+    const std::function<void()> &GetMenubarCallback() const {
+      return m_MenubarCallback;
+    }
+    const std::function<void()> &GetFramebarCallback() const {
+      return m_FramebarCallback;
+    }
+    const std::function<void()> &GetMainRenderCallback() const {
+      return m_MainRenderCallback;
+    }
+    const std::function<void()> &GetCloseCallback() const {
+      return m_CloseCallback;
+    }
+    ApplicationSpecification &GetDefaultSpecification() {
+      return m_DefaultSpecification;
+    }
+    const ApplicationSpecification &GetDefaultSpecification() const {
+      return m_DefaultSpecification;
+    }
 
    private:
     void Init();
@@ -736,8 +672,53 @@ namespace Cherry {
     float m_TimeStep = 0.0f;
     float m_FrameTime = 0.0f;
     float m_LastFrameTime = 0.0f;
+    std::vector<std::shared_ptr<Window>> m_Windows;
+    std::vector<std::shared_ptr<AppWindow>> m_AppWindows;
+    std::vector<std::shared_ptr<AppWindow>> m_SavedAppWindows;
 
     bool m_TitleBarHovered = false;
+    ComponentsPool m_ApplicationComponentPool;
+    std::vector<ComponentsPool *> m_ComponentPoolStack;
+
+    std::unordered_map<std::string, nlohmann::json> m_Locales;
+    std::string m_SelectedLocale;
+    std::string m_DefaultLocale;
+
+    std::vector<RenderMode> m_RenderModeStack;
+
+    std::unordered_map<std::string, Theme> m_Themes;
+    std::vector<Theme> m_ActiveThemes;
+    std::string m_SelectedTheme = "undefined";
+
+    std::string m_HttpCacheFolderName = "http_cache";
+    std::unordered_map<std::string, WindowMetaData> m_AppWindowRegistry;
+    std::mutex m_WindowCreationMutex;
+
+    std::string m_WindowSaveDataPath;
+    bool m_SaveWindowData = false;
+    bool m_IsDataSaved = true;
+    bool m_IsDataInitialized = false;
+    nlohmann::json m_PreviousSaveData;
+    std::string m_RootPath;
+
+    std::function<void()> m_MenubarCallback;
+    std::function<void()> m_FramebarCallback;
+    std::function<void()> m_MainRenderCallback;
+    std::function<void()> m_CloseCallback;
+    ApplicationSpecification m_DefaultSpecification;
+
+    std::shared_ptr<Component> m_FocusedDebugComponent;
+    bool m_ClosePending = false;
+
+    bool m_NoAppWindowSafetyEnabled = false;
+    bool m_Running = false;
+    bool m_Dragging = false;
+
+    SDL_Window *m_MouseHoveredWindow = nullptr;
+
+    std::vector<std::shared_ptr<RedockRequest>> m_RedockRequests;
+    std::vector<std::pair<std::string, std::pair<std::string, float>>> m_CustomFonts;
+    std::string m_FavIconPath;
   };
 
   //

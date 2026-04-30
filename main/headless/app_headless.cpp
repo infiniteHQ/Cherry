@@ -1,11 +1,16 @@
+//
+//  app_headless.cpp
+//  Sources and definitions for headless classes of application
+//  features of Cherry
+//
+//  Copyright (c) 2024-2026 Diego Moreno
+//  Copyright (c) 2026 Infinite
+//
+//	This work is licensed under the terms of the MIT license.
+//	For a copy, see <https://opensource.org/licenses/MIT>.
+//
+
 #include "app_headless.hpp"
-
-#include <chrono>
-#include <glm/glm.hpp>
-#include <iostream>
-#include <thread>
-
-#include "../core/logs/log.hpp"
 
 static Cherry::Application* s_Instance = nullptr;
 
@@ -30,6 +35,10 @@ namespace Cherry {
 
   void Application::Init() {
     Log::Init();
+  }
+
+  void Application::SetMenubarCallback(const std::function<void()>& menubarCallback) {
+    // No menubar for headless windows
   }
 
   void Application::Shutdown() {

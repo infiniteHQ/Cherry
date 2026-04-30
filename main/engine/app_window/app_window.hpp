@@ -15,7 +15,7 @@
 #include "../base.hpp"
 #include "../components/components.hpp"
 #include "../image/image.hpp"
-#include "../imgui/ImGuiTheme.h"
+#include "../imgui/imgui_theme.h"
 #include "../ui/ui.hpp"
 #include "vulkan/vulkan.h"
 

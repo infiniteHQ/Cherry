@@ -143,7 +143,7 @@ namespace Cherry {
     }
 
     std::shared_ptr<Window> window_instance;
-    for (auto &win : Application::Get().m_Windows) {
+    for (auto &win : Application::Get().GetWindows()) {
       if (win->GetName() == winname) {
         window_instance = win;
       }
@@ -157,7 +157,7 @@ namespace Cherry {
 
     std::shared_ptr<Window> wind;
 
-    for (auto &win : Application::Get().m_Windows) {
+    for (auto &win : Application::Get().GetWindows()) {
       if (win->GetName() == winname) {
         wind = win;
       }
@@ -200,7 +200,7 @@ namespace Cherry {
         }
 
         if (!req->m_FromSave) {
-          Application::Get().m_IsDataSaved = false;
+          Application::Get().SetIsDataSaved(false);
         }
 
         if (parentWindow) {
@@ -426,11 +426,11 @@ namespace Cherry {
 
       if (Application::GetDockIsDragging()) {
         if (m_DockingMode) {
-          for (auto &win : Application::Get().m_AppWindows) {
+          for (auto &win : Application::Get().GetAppWindows()) {
             if (Application::GetCurrentDragDropState()->LastDraggingAppWindowHost == win->m_IdName) {
               if (win->m_HaveParentAppWindow) {
                 if (win->m_ParentAppWindow->m_IdName == this->m_IdName) {
-                  for (auto &winc : Application::Get().m_Windows) {
+                  for (auto &winc : Application::Get().GetWindows()) {
                     if (winc->GetName() == winname) {
                       Window::ShowDockingPreview(dockID, winc.get(), Application::GetCurrentDragDropState());
                     }
@@ -442,7 +442,7 @@ namespace Cherry {
         }
       }
 
-      for (auto &win : Application::Get().m_AppWindows) {
+      for (auto &win : Application::Get().GetAppWindows()) {
         if (win->m_HaveParentAppWindow) {
           if (win->m_ParentAppWindow->m_IdName == this->m_IdName) {
             if (win->CheckWinParent(winname)) {
@@ -680,7 +680,7 @@ namespace Cherry {
   }
 
   std::shared_ptr<Cherry::Image> AppWindow::GetImage(const std::string &path) {
-    for (auto &win : Application::Get().m_Windows) {
+    for (auto &win : Application::Get().GetWindows()) {
       if (this->CheckWinParent(win->GetName())) {
         return win->get(path);
       }
@@ -689,7 +689,7 @@ namespace Cherry {
   }
 
   ImTextureID *AppWindow::GetTexture(const std::string &path) {
-    for (auto &win : Application::Get().m_Windows) {
+    for (auto &win : Application::Get().GetWindows()) {
       if (this->CheckWinParent(win->GetName())) {
         static ImTextureID logoID = this->GetImage(m_Icon)->GetImGuiTextureID(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
         return &logoID;
@@ -700,7 +700,7 @@ namespace Cherry {
 
   void AppWindow::SetParent(const std::shared_ptr<AppWindow> &parent) {
     m_ParentAppWindow = parent;
-    for (auto &appwin : Application::Get().m_AppWindows) {
+    for (auto &appwin : Application::Get().GetAppWindows()) {
       if (appwin->m_IdName == this->m_IdName) {
         parent->m_SubAppWindows.push_back(appwin);
       }

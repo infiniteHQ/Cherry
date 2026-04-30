@@ -2399,7 +2399,7 @@ namespace Cherry {
 
   void Application::HandleSimpleWindowRendering(Window *window) {
     bool finded = false;
-    for (auto &appwin : Application::Get().m_AppWindows) {
+    for (auto &appwin : Application::Get().GetAppWindows()) {
       if (appwin) {
         if (appwin->m_Name == Application::GetCurrentRenderedWindow()->m_Specifications.UniqueAppWindowName) {
           c_CurrentRenderedAppWindow = appwin;
@@ -2920,6 +2920,10 @@ namespace Cherry {
     m_Themes.erase(theme_name);
   }
 
+  void Application::ClearThemes() {
+    m_Themes.clear();
+  }
+
   void Application::PushTheme(const std::string &theme_name) {
     auto it = m_Themes.find(theme_name);
     if (it != m_Themes.end()) {
@@ -3339,7 +3343,7 @@ namespace Cherry {
   }
 
   std::shared_ptr<AppWindow> GetAppWindowByName(const std::string &win_name) {
-    for (auto &appwin : s_Instance->m_AppWindows) {
+    for (auto &appwin : s_Instance->GetAppWindows()) {
       if (appwin->m_IdName == win_name) {
         return appwin;
       }
@@ -3348,7 +3352,7 @@ namespace Cherry {
   }
 
   std::shared_ptr<Window> GetWindowByName(const std::string &win_name) {
-    for (auto &win : s_Instance->m_Windows) {
+    for (auto &win : s_Instance->GetWindows()) {
       if (win->GetName() == win_name) {
         return win;
       }
