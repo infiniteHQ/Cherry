@@ -1,0 +1,2081 @@
+#pragma once
+
+#ifndef IMGUI_DEFINE_MATH_OPERATORS
+#define IMGUI_DEFINE_MATH_OPERATORS
+#endif  // IMGUI_DEFINE_MATH_OPERATORS
+
+#include <lib/imgui/imgui.h>
+#include <lib/imgui/imgui_internal.h>
+#include <lib/imgui/misc/nodes/imgui_node_editor.h>
+#include <lib/imgui/misc/nodes/imgui_node_editor_internal.h>
+#include <main/engine/ui/nodes/utils/builders.h>
+#include <main/engine/ui/nodes/utils/widgets.h>
+
+#include <algorithm>
+#include <main/engine/app/app.hpp>
+#include <main/engine/components/components.hpp>
+#include <main/engine/ui/nodes/api/node_api.hpp>
+#include <map>
+#include <string>
+#include <utility>
+#include <vector>
+
+//
+// NodeAreaOpen
+// Authors : Infinite
+//
+
+#ifndef CHERRY_KIT_NODE_AREA_OPEN
+#define CHERRY_KIT_NODE_AREA_OPEN
+
+// Move into the vortex render engine ?
+namespace ed = ax::NodeEditor;
+namespace util = ax::NodeEditor::Utilities;
+
+using namespace ax;
+
+static inline ImRect ImGui_GetItemRect() {
+  return ImRect(CherryGUI::GetItemRectMin(), CherryGUI::GetItemRectMax());
+}
+
+static inline ImRect ImRect_Expanded(const ImRect &rect, float x, float y) {
+  auto result = rect;
+  result.Min.x -= x;
+  result.Min.y -= y;
+  result.Max.x += x;
+  result.Max.y += y;
+  return result;
+}
+
+namespace ed = ax::NodeEditor;
+namespace util = ax::NodeEditor::Utilities;
+
+using namespace ax;
+
+using ax::Widgets::IconType;
+
+// static ed::EditorContext* m_Editor = nullptr;
+
+// extern "C" __declspec(dllimport) short __stdcall GetAsyncKeyState(int vkey);
+// extern "C" bool Debug_KeyPress(int vkey)
+//{
+//     static std::map<int, bool> state;
+//     auto lastState = state[vkey];
+//     state[vkey] = (GetAsyncKeyState(vkey) & 0x8000) != 0;
+//     if (state[vkey] && !lastState)
+//         return true;
+//     else
+//         return false;
+// }
+
+enum class LabelTooltipIcon { Plus, Cross, None };
+
+enum class PinType {
+  Flow,
+  Bool,
+  Int,
+  Float,
+  String,
+  Object,
+  Function,
+  Delegate,
+};
+
+enum class PinKind { Output, Input };
+
+enum class NodeType { Blueprint, Simple, Tree, Comment, Houdini };
+
+struct Node;
+
+struct Pin {
+  ed::PinId ID;
+  ::Node *Node;
+  std::string Name;
+  // PinType Type;
+  PinKind Kind;
+
+  Cherry::NodeSystem::PinFormat Format;
+
+  /*Pin(int id, const char *name, PinType type) : ID(id), Node(nullptr),
+  Name(name), Type(type), Kind(PinKind::Input)
+  {
+  }*/
+
+  Pin(int id, const char *name, const Cherry::NodeSystem::PinFormat &format)
+      : ID(id),
+        Node(nullptr),
+        Name(name),
+        Format(format),
+        Kind(PinKind::Input) {
+  }
+};
+
+struct Node {
+  ed::NodeId ID;
+  std::string Name;
+  std::string NameColor;
+  std::string SecondName;
+  std::string SecondNameColor;
+  std::string LogoPath;
+  std::string BackgroundColor;
+  std::string BorderColor;
+  std::vector<Pin> Inputs;
+  std::vector<Pin> Outputs;
+  ImColor Color;
+  NodeType Type;
+  ImVec2 Size;
+
+  std::string State;
+  std::string SavedState;
+
+  Cherry::NodeSystem::NodeSchemaStatus Status;
+  std::string InstanceID;
+  std::string TypeID;
+  json Datas = json::object();
+
+  Node(int id, const char *name, ImColor color = ImColor(255, 255, 255))
+      : ID(id),
+        Name(name),
+        Color(color),
+        Type(NodeType::Blueprint),
+        Size(0, 0) {
+  }
+};
+
+struct Link {
+  ed::LinkId ID;
+
+  ed::PinId StartPinID;
+  ed::PinId EndPinID;
+
+  ImColor Color;
+
+  Link(ed::LinkId id, ed::PinId startPinId, ed::PinId endPinId, ImColor color = ImColor(255, 255, 255))
+      : ID(id),
+        StartPinID(startPinId),
+        EndPinID(endPinId),
+        Color(color) {
+  }
+};
+
+struct NodeIdLess {
+  bool operator()(const ed::NodeId &lhs, const ed::NodeId &rhs) const {
+    return lhs.AsPointer() < rhs.AsPointer();
+  }
+};
+
+static bool Splitter(
+    bool split_vertically,
+    float thickness,
+    float *size1,
+    float *size2,
+    float min_size1,
+    float min_size2,
+    float splitter_long_axis_size = -1.0f) {
+  using namespace ImGui;
+  ImGuiContext &g = *GImGui;
+  ImGuiWindow *window = g.CurrentWindow;
+  ImGuiID id = window->GetID("##Splitter");
+  ImRect bb;
+  bb.Min = window->DC.CursorPos + (split_vertically ? ImVec2(*size1, 0.0f) : ImVec2(0.0f, *size1));
+  bb.Max = bb.Min +
+           CalcItemSize(
+               split_vertically ? ImVec2(thickness, splitter_long_axis_size) : ImVec2(splitter_long_axis_size, thickness),
+               0.0f,
+               0.0f);
+  return SplitterBehavior(bb, id, split_vertically ? ImGuiAxis_X : ImGuiAxis_Y, size1, size2, min_size1, min_size2, 0.0f);
+}
+namespace Cherry {
+
+  struct NodeEngine {
+    ed::EditorContext *m_Editor = nullptr;
+
+    Cherry::NodeSystem::NodeContext *m_NodeContext;
+    Cherry::NodeSystem::NodeGraph *m_NodeGraph;
+
+    int GetNextId() {
+      return m_NextId++;
+    }
+
+    // ed::NodeId GetNextNodeId()
+    //{
+    //     return ed::NodeId(GetNextId());
+    // }
+
+    ed::LinkId GetNextLinkId() {
+      return ed::LinkId(GetNextId());
+    }
+
+    void TouchNode(ed::NodeId id) {
+      m_NodeTouchTime[id] = m_TouchTime;
+    }
+
+    float GetTouchProgress(ed::NodeId id) {
+      auto it = m_NodeTouchTime.find(id);
+      if (it != m_NodeTouchTime.end() && it->second > 0.0f)
+        return (m_TouchTime - it->second) / m_TouchTime;
+      else
+        return 0.0f;
+    }
+
+    void UpdateTouch() {
+      const auto deltaTime = CherryGUI::GetIO().DeltaTime;
+      for (auto &entry : m_NodeTouchTime) {
+        if (entry.second > 0.0f)
+          entry.second -= deltaTime;
+      }
+    }
+
+    Node *FindNodeByInstanceID(const std::string &instanceID) {
+      for (auto &node : m_Nodes) {
+        if (node.InstanceID == instanceID)
+          return &node;
+      }
+      return nullptr;
+    }
+
+    Node *FindNode(ed::NodeId id) {
+      for (auto &node : m_Nodes)
+        if (node.ID == id)
+          return &node;
+
+      return nullptr;
+    }
+
+    Link *FindLink(ed::LinkId id) {
+      for (auto &link : m_Links)
+        if (link.ID == id)
+          return &link;
+
+      return nullptr;
+    }
+
+    Pin *FindPin(ed::PinId id) {
+      if (!id)
+        return nullptr;
+
+      for (auto &node : m_Nodes) {
+        for (auto &pin : node.Inputs)
+          if (pin.ID == id)
+            return &pin;
+
+        for (auto &pin : node.Outputs)
+          if (pin.ID == id)
+            return &pin;
+      }
+
+      return nullptr;
+    }
+
+    bool IsPinLinked(ed::PinId id) {
+      if (!id)
+        return false;
+
+      for (auto &link : m_Links)
+        if (link.StartPinID == id || link.EndPinID == id)
+          return true;
+
+      return false;
+    }
+
+    bool CanCreateLink(Pin *a, Pin *b) {
+      if (!a || !b || a == b || a->Kind == b->Kind || a->Format.m_TypeID != b->Format.m_TypeID || a->Node == b->Node)
+        return false;
+
+      return true;
+    }
+
+    // void DrawItemRect(ImColor color, float expand = 0.0f)
+    //{
+    //     CherryGUI::GetWindowDrawList()->AddRect(
+    //         CherryGUI::GetItemRectMin() - ImVec2(expand, expand),
+    //         CherryGUI::GetItemRectMax() + ImVec2(expand, expand),
+    //         color);
+    // };
+
+    // void FillItemRect(ImColor color, float expand = 0.0f, float rounding =
+    // 0.0f)
+    //{
+    //     CherryGUI::GetWindowDrawList()->AddRectFilled(
+    //         CherryGUI::GetItemRectMin() - ImVec2(expand, expand),
+    //         CherryGUI::GetItemRectMax() + ImVec2(expand, expand),
+    //         color, rounding);
+    // };
+
+    void BuildNode(Node *node) {
+      for (auto &input : node->Inputs) {
+        input.Node = node;
+        input.Kind = PinKind::Input;
+      }
+
+      for (auto &output : node->Outputs) {
+        output.Node = node;
+        output.Kind = PinKind::Output;
+      }
+    }
+
+    void RefreshNodeGraph() {
+      if (!m_NodeGraph || !m_NodeContext)
+        return;
+
+      m_Nodes.clear();
+      m_Links.clear();
+
+      for (const auto &inst : m_NodeGraph->m_InstanciatedNodes) {
+        // Note: inst.TypeID can contains '@context', we need to ask the commplete
+        // schema
+        Cherry::NodeSystem::NodeSchema *schema = m_NodeContext->GetSchema(inst.TypeID);
+        if (!schema) {
+          // try fallback: if TypeID contains '@', remove suffix
+          std::string baseType = inst.TypeID;
+          if (auto p = baseType.find('@'); p != std::string::npos)
+            baseType = baseType.substr(0, p);
+          schema = m_NodeContext->GetSchema(baseType);
+        }
+        if (!schema)
+          continue;
+
+        Node *node = SpawnNode(schema);
+        if (!node)
+          continue;
+
+        // restore identity/position/size
+        node->InstanceID = inst.InstanceID;
+        node->TypeID = inst.TypeID;
+        ed::SetNodePosition(node->ID, ImVec2(inst.Position.x, inst.Position.y));
+        node->Size = ImVec2(inst.Size.x, inst.Size.y);
+
+        // Restore custom Datas (if present)
+        if (!inst.Datas.is_null()) {
+          node->Datas = inst.Datas;  // copy JSON object into renderer node
+        } else {
+          node->Datas = json::object();
+        }
+      }
+
+      // Recreate links from graph (call link builder that uses m_Nodes)
+      RefreshNodeGraphLinks();
+    }
+
+    void RefreshNodeGraphLinks() {
+      if (!m_NodeGraph || !m_NodeContext)
+        return;
+
+      m_Links.clear();
+
+      for (const auto &conn : m_NodeGraph->m_Connections) {
+        auto *nodeA = FindNodeByInstanceID(conn.NodeInstanceIDA);
+        auto *nodeB = FindNodeByInstanceID(conn.NodeInstanceIDB);
+        if (!nodeA || !nodeB)
+          continue;
+
+        auto *pinA = FindPinByName(nodeA->Outputs, conn.PinIDA);
+        auto *pinB = FindPinByName(nodeB->Inputs, conn.PinIDB);
+        if (!pinA || !pinB)
+          continue;
+
+        m_Links.emplace_back(Link(GetNextId(), pinA->ID, pinB->ID, Cherry::HexToImColor(pinA->Format.m_Color)));
+      }
+    }
+
+    void SaveNodeGraph() {
+      if (!m_NodeGraph)
+        return;
+
+      for (auto &editorNode : m_Nodes) {
+        auto it = std::find_if(
+            m_NodeGraph->m_InstanciatedNodes.begin(),
+            m_NodeGraph->m_InstanciatedNodes.end(),
+            [&editorNode](const Cherry::NodeSystem::NodeInstance &n) { return n.InstanceID == editorNode.InstanceID; });
+
+        if (it != m_NodeGraph->m_InstanciatedNodes.end()) {
+          ImVec2 pos = ed::GetNodePosition(editorNode.ID);
+          it->Position = { pos.x, pos.y };
+          it->Size = { editorNode.Size.x, editorNode.Size.y };
+        } else {
+          Cherry::NodeSystem::NodeInstance newNode;
+          newNode.InstanceID = editorNode.InstanceID;
+          newNode.TypeID = editorNode.TypeID;
+          ImVec2 pos = ed::GetNodePosition(editorNode.ID);
+          newNode.Position = { pos.x, pos.y };
+          newNode.Size = { editorNode.Size.x, editorNode.Size.y };
+          if (editorNode.Datas.is_object())
+            newNode.Datas = editorNode.Datas;
+          else
+            newNode.Datas = json::object();
+          m_NodeGraph->AddNodeInstance(newNode);
+        }
+      }
+
+      m_NodeGraph->m_Connections.clear();
+      for (const auto &link : m_Links) {
+        auto *pinA = FindPinByID(link.StartPinID);
+        auto *pinB = FindPinByID(link.EndPinID);
+        if (!pinA || !pinB)
+          continue;
+
+        auto *nodeA = FindNodeByPinID(pinA->ID);
+        auto *nodeB = FindNodeByPinID(pinB->ID);
+        if (!nodeA || !nodeB)
+          continue;
+
+        Cherry::NodeSystem::NodeConnection conn;
+        conn.NodeInstanceIDA = nodeA->InstanceID;
+        conn.PinIDA = pinA->Name;
+        conn.NodeInstanceIDB = nodeB->InstanceID;
+        conn.PinIDB = pinB->Name;
+
+        m_NodeGraph->AddConnection(conn);
+      }
+
+      if (!m_NodeGraph->DumpGraphToJsonFile(m_NodeContext)) {
+        std::cerr << "SaveNodeGraph: failed to dump NodeGraph" << std::endl;
+      }
+    }
+
+    Node *SpawnNode(Cherry::NodeSystem::NodeSchema *schema) {
+      if (!m_NodeGraph || !m_NodeContext)
+        return nullptr;
+
+      if (!schema) {
+        std::cout << "Not valid schema" << std::endl;
+        return nullptr;
+      }
+
+      m_Nodes.emplace_back(GetNextId(), schema->GetLabel().c_str(), Cherry::HexToImColor(schema->GetHexHeaderColor()));
+      auto &newNode = m_Nodes.back();
+
+      newNode.NameColor = schema->GetLabelHexColor();
+      newNode.SecondNameColor = schema->GetSecondLabelHexColor();
+      newNode.SecondName = schema->GetSecondLabel();
+      newNode.LogoPath = schema->GetLogoPath();
+      newNode.BackgroundColor = schema->GetHexBackgroundColor();
+      newNode.BorderColor = schema->GetHexBorderColor();
+      newNode.TypeID = schema->m_ID;
+      newNode.InstanceID = GenerateUniqueInstanceID();
+      newNode.Status = schema->m_NodeStatus;
+
+      switch (schema->GetType()) {
+        case Cherry::NodeSystem::NodeType::Simple: newNode.Type = NodeType::Simple; break;
+        case Cherry::NodeSystem::NodeType::Blueprint: newNode.Type = NodeType::Blueprint; break;
+        case Cherry::NodeSystem::NodeType::Houdini: newNode.Type = NodeType::Houdini; break;
+        case Cherry::NodeSystem::NodeType::Comment: newNode.Type = NodeType::Comment; break;
+        case Cherry::NodeSystem::NodeType::Tree: newNode.Type = NodeType::Tree; break;
+        default: return nullptr;
+      }
+
+      for (const auto &in_pin : schema->m_InputPins) {
+        newNode.Inputs.emplace_back(GetNextId(), in_pin.Name.c_str(), m_NodeContext->GetPinFormat(in_pin.TypeName).value());
+      }
+
+      for (const auto &out_pin : schema->m_OutputPins) {
+        newNode.Outputs.emplace_back(
+            GetNextId(), out_pin.Name.c_str(), m_NodeContext->GetPinFormat(out_pin.TypeName).value());
+      }
+
+      BuildNode(&newNode);
+
+      return &newNode;
+    }
+
+    Pin *FindPinByID(ed::PinId pinID) {
+      int id = static_cast<int>(pinID.Get());
+      for (auto &n : m_Nodes) {
+        for (auto &p : n.Inputs)
+          if (p.ID == ed::PinId(pinID))
+            return &p;
+        for (auto &p : n.Outputs)
+          if (p.ID == ed::PinId(pinID))
+            return &p;
+      }
+      return nullptr;
+    }
+
+    Node *FindNodeByPinID(ed::PinId pinID) {
+      int id = static_cast<int>(pinID.Get());
+      for (auto &n : m_Nodes) {
+        for (auto &p : n.Inputs)
+          if (p.ID == ed::PinId(pinID))
+            return &n;
+        for (auto &p : n.Outputs)
+          if (p.ID == ed::PinId(pinID))
+            return &n;
+      }
+      return nullptr;
+    }
+    Pin *FindPinByName(std::vector<Pin> &pins, const std::string &name) {
+      for (auto &p : pins)
+        if (p.Name == name)
+          return &p;
+      return nullptr;
+    }
+
+    std::string GenerateUniqueInstanceID() {
+      return "inst_" + std::to_string(++m_InstanceCounter);
+    }
+
+    int m_InstanceCounter = 0;
+
+    void BuildNodes() {
+      for (auto &node : m_Nodes)
+        BuildNode(&node);
+    }
+
+    ImColor GetIconColor(PinType type) {
+      switch (type) {
+        default:
+        case PinType::Flow: return ImColor(255, 255, 255);
+        case PinType::Bool: return ImColor(220, 48, 48);
+        case PinType::Int: return ImColor(68, 201, 156);
+        case PinType::Float: return ImColor(147, 226, 74);
+        case PinType::String: return ImColor(124, 21, 153);
+        case PinType::Object: return ImColor(51, 150, 215);
+        case PinType::Function: return ImColor(218, 0, 183);
+        case PinType::Delegate: return ImColor(255, 48, 48);
+      }
+    };
+
+    void DrawPinIcon(const Pin &pin, bool connected, int alpha) {
+      IconType iconType;
+      ImColor color = Cherry::HexToImColor(pin.Format.m_Color);
+
+      switch (pin.Format.m_Shape) {
+        case Cherry::NodeSystem::PinShape::Circle: iconType = IconType::Circle; break;
+        case Cherry::NodeSystem::PinShape::Diamond: iconType = IconType::Diamond; break;
+        case Cherry::NodeSystem::PinShape::Flow: iconType = IconType::Flow; break;
+        case Cherry::NodeSystem::PinShape::Grid: iconType = IconType::Grid; break;
+        case Cherry::NodeSystem::PinShape::RoundSquare: iconType = IconType::RoundSquare; break;
+        case Cherry::NodeSystem::PinShape::Square: iconType = IconType::Square; break;
+        default: return;
+      }
+
+      ax::Widgets::Icon(
+          ImVec2(static_cast<float>(m_PinIconSize), static_cast<float>(m_PinIconSize)),
+          iconType,
+          connected,
+          color,
+          ImColor(32, 32, 32, alpha));
+    };
+
+    void ShowStyleEditor(bool *show = nullptr) {
+      if (!CherryGUI::Begin("Style", show)) {
+        CherryGUI::End();
+        return;
+      }
+
+      auto paneWidth = CherryGUI::GetContentRegionAvail().x;
+
+      auto &editorStyle = ed::GetStyle();
+      CherryGUI::BeginHorizontal("Style buttons", ImVec2(paneWidth, 0), 1.0f);
+      CherryGUI::TextUnformatted("Values");
+      CherryGUI::Spring();
+      if (CherryGUI::Button("Reset to defaults"))
+        editorStyle = ed::Style();
+      CherryGUI::EndHorizontal();
+      CherryGUI::Spacing();
+      CherryGUI::DragFloat4("Node Padding", &editorStyle.NodePadding.x, 0.1f, 0.0f, 40.0f);
+      CherryGUI::DragFloat("Node Rounding", &editorStyle.NodeRounding, 0.1f, 0.0f, 40.0f);
+      CherryGUI::DragFloat("Node Border Width", &editorStyle.NodeBorderWidth, 0.1f, 0.0f, 15.0f);
+      CherryGUI::DragFloat("Hovered Node Border Width", &editorStyle.HoveredNodeBorderWidth, 0.1f, 0.0f, 15.0f);
+      CherryGUI::DragFloat("Hovered Node Border Offset", &editorStyle.HoverNodeBorderOffset, 0.1f, -40.0f, 40.0f);
+      CherryGUI::DragFloat("Selected Node Border Width", &editorStyle.SelectedNodeBorderWidth, 0.1f, 0.0f, 15.0f);
+      CherryGUI::DragFloat("Selected Node Border Offset", &editorStyle.SelectedNodeBorderOffset, 0.1f, -40.0f, 40.0f);
+      CherryGUI::DragFloat("Pin Rounding", &editorStyle.PinRounding, 0.1f, 0.0f, 40.0f);
+      CherryGUI::DragFloat("Pin Border Width", &editorStyle.PinBorderWidth, 0.1f, 0.0f, 15.0f);
+      CherryGUI::DragFloat("Link Strength", &editorStyle.LinkStrength, 1.0f, 0.0f, 500.0f);
+      // ImVec2  SourceDirection;
+      // ImVec2  TargetDirection;
+      CherryGUI::DragFloat("Scroll Duration", &editorStyle.ScrollDuration, 0.001f, 0.0f, 2.0f);
+      CherryGUI::DragFloat("Flow Marker Distance", &editorStyle.FlowMarkerDistance, 1.0f, 1.0f, 200.0f);
+      CherryGUI::DragFloat("Flow Speed", &editorStyle.FlowSpeed, 1.0f, 1.0f, 2000.0f);
+      CherryGUI::DragFloat("Flow Duration", &editorStyle.FlowDuration, 0.001f, 0.0f, 5.0f);
+      // ImVec2  PivotAlignment;
+      // ImVec2  PivotSize;
+      // ImVec2  PivotScale;
+      // float   PinCorners;
+      // float   PinRadius;
+      // float   PinArrowSize;
+      // float   PinArrowWidth;
+      CherryGUI::DragFloat("Group Rounding", &editorStyle.GroupRounding, 0.1f, 0.0f, 40.0f);
+      CherryGUI::DragFloat("Group Border Width", &editorStyle.GroupBorderWidth, 0.1f, 0.0f, 15.0f);
+
+      CherryGUI::Separator();
+
+      static ImGuiColorEditFlags edit_mode = ImGuiColorEditFlags_DisplayRGB;
+      CherryGUI::BeginHorizontal("Color Mode", ImVec2(paneWidth, 0), 1.0f);
+      CherryGUI::TextUnformatted("Filter Colors");
+      CherryGUI::Spring();
+      CherryGUI::RadioButton("RGB", &edit_mode, ImGuiColorEditFlags_DisplayRGB);
+      CherryGUI::Spring(0);
+      CherryGUI::RadioButton("HSV", &edit_mode, ImGuiColorEditFlags_DisplayHSV);
+      CherryGUI::Spring(0);
+      CherryGUI::RadioButton("HEX", &edit_mode, ImGuiColorEditFlags_DisplayHex);
+      CherryGUI::EndHorizontal();
+
+      static ImGuiTextFilter filter;
+      filter.Draw("##filter", paneWidth);
+
+      CherryGUI::Spacing();
+
+      CherryGUI::PushItemWidth(-160);
+      for (int i = 0; i < ed::StyleColor_Count; ++i) {
+        auto name = ed::GetStyleColorName((ed::StyleColor)i);
+        if (!filter.PassFilter(name))
+          continue;
+
+        CherryGUI::ColorEdit4(name, &editorStyle.Colors[i].x, edit_mode);
+      }
+      CherryGUI::PopItemWidth();
+
+      CherryGUI::End();
+    }
+
+    void ShowLeftPane(float paneWidth) {
+      auto &io = CherryGUI::GetIO();
+
+      CherryGUI::BeginChild("Selection", ImVec2(paneWidth, 0));
+
+      paneWidth = CherryGUI::GetContentRegionAvail().x;
+
+      static bool showStyleEditor = false;
+      CherryGUI::BeginHorizontal("Style Editor", ImVec2(paneWidth, 0));
+      CherryGUI::Spring(0.0f, 0.0f);
+      if (CherryGUI::Button("Zoom to Content"))
+        ed::NavigateToContent();
+      CherryGUI::Spring(0.0f);
+      if (CherryGUI::Button("Show Flow")) {
+        for (auto &link : m_Links)
+          ed::Flow(link.ID);
+      }
+      CherryGUI::Spring();
+      if (CherryGUI::Button("Edit Style"))
+        showStyleEditor = true;
+      CherryGUI::EndHorizontal();
+      CherryGUI::Checkbox("Show Ordinals", &m_ShowOrdinals);
+
+      if (showStyleEditor)
+        ShowStyleEditor(&showStyleEditor);
+
+      std::vector<ed::NodeId> selectedNodes;
+      std::vector<ed::LinkId> selectedLinks;
+      selectedNodes.resize(ed::GetSelectedObjectCount());
+      selectedLinks.resize(ed::GetSelectedObjectCount());
+
+      int nodeCount = ed::GetSelectedNodes(selectedNodes.data(), static_cast<int>(selectedNodes.size()));
+      int linkCount = ed::GetSelectedLinks(selectedLinks.data(), static_cast<int>(selectedLinks.size()));
+
+      selectedNodes.resize(nodeCount);
+      selectedLinks.resize(linkCount);
+
+      int saveIconWidth = 50;      // GetTextureWidth(m_SaveIcon);
+      int saveIconHeight = 50;     // GetTextureWidth(m_SaveIcon);
+      int restoreIconWidth = 50;   // GetTextureWidth(m_RestoreIcon);
+      int restoreIconHeight = 50;  // GetTextureWidth(m_RestoreIcon);
+
+      CherryGUI::GetWindowDrawList()->AddRectFilled(
+          CherryGUI::GetCursorScreenPos(),
+          CherryGUI::GetCursorScreenPos() + ImVec2(paneWidth, CherryGUI::GetTextLineHeight()),
+          ImColor(CherryGUI::GetStyle().Colors[ImGuiCol_HeaderActive]),
+          CherryGUI::GetTextLineHeight() * 0.25f);
+      CherryGUI::Spacing();
+      CherryGUI::SameLine();
+      CherryGUI::TextUnformatted("Nodes");
+      CherryGUI::Indent();
+      for (auto &node : m_Nodes) {
+        CherryGUI::PushID(node.ID.AsPointer());
+        auto start = CherryGUI::GetCursorScreenPos();
+
+        if (const auto progress = GetTouchProgress(node.ID)) {
+          CherryGUI::GetWindowDrawList()->AddLine(
+              start + ImVec2(-8, 0),
+              start + ImVec2(-8, CherryGUI::GetTextLineHeight()),
+              IM_COL32(255, 0, 0, 255 - (int)(255 * progress)),
+              4.0f);
+        }
+
+        bool isSelected = std::find(selectedNodes.begin(), selectedNodes.end(), node.ID) != selectedNodes.end();
+#if IMGUI_VERSION_NUM >= 18967
+        CherryGUI::SetNextItemAllowOverlap();
+#endif
+        if (CherryGUI::Selectable(
+                (node.Name + "##" + std::to_string(reinterpret_cast<uintptr_t>(node.ID.AsPointer()))).c_str(),
+                &isSelected)) {
+          if (io.KeyCtrl) {
+            if (isSelected)
+              ed::SelectNode(node.ID, true);
+            else
+              ed::DeselectNode(node.ID);
+          } else
+            ed::SelectNode(node.ID, false);
+
+          ed::NavigateToSelection();
+        }
+        if (CherryGUI::IsItemHovered() && !node.State.empty())
+          CherryGUI::SetTooltip("State: %s", node.State.c_str());
+
+        auto id = std::string("(") + std::to_string(reinterpret_cast<uintptr_t>(node.ID.AsPointer())) + ")";
+        auto textSize = CherryGUI::CalcTextSize(id.c_str(), nullptr);
+        auto iconPanelPos =
+            start + ImVec2(
+                        paneWidth - CherryGUI::GetStyle().FramePadding.x - CherryGUI::GetStyle().IndentSpacing -
+                            saveIconWidth - restoreIconWidth - CherryGUI::GetStyle().ItemInnerSpacing.x * 1,
+                        (CherryGUI::GetTextLineHeight() - saveIconHeight) / 2);
+        CherryGUI::GetWindowDrawList()->AddText(
+            ImVec2(iconPanelPos.x - textSize.x - CherryGUI::GetStyle().ItemInnerSpacing.x, start.y),
+            IM_COL32(255, 255, 255, 255),
+            id.c_str(),
+            nullptr);
+
+        auto drawList = CherryGUI::GetWindowDrawList();
+        CherryGUI::SetCursorScreenPos(iconPanelPos);
+#if IMGUI_VERSION_NUM < 18967
+        CherryGUI::SetItemAllowOverlap();
+#else
+        CherryGUI::SetNextItemAllowOverlap();
+#endif
+        if (node.SavedState.empty()) {
+          if (CherryGUI::InvisibleButton("save", ImVec2((float)saveIconWidth, (float)saveIconHeight)))
+            node.SavedState = node.State;
+
+          if (CherryGUI::IsItemActive())
+            drawList->AddImage(
+                m_SaveIcon,
+                CherryGUI::GetItemRectMin(),
+                CherryGUI::GetItemRectMax(),
+                ImVec2(0, 0),
+                ImVec2(1, 1),
+                IM_COL32(255, 255, 255, 96));
+          else if (CherryGUI::IsItemHovered())
+            drawList->AddImage(
+                m_SaveIcon,
+                CherryGUI::GetItemRectMin(),
+                CherryGUI::GetItemRectMax(),
+                ImVec2(0, 0),
+                ImVec2(1, 1),
+                IM_COL32(255, 255, 255, 255));
+          else
+            drawList->AddImage(
+                m_SaveIcon,
+                CherryGUI::GetItemRectMin(),
+                CherryGUI::GetItemRectMax(),
+                ImVec2(0, 0),
+                ImVec2(1, 1),
+                IM_COL32(255, 255, 255, 160));
+        } else {
+          CherryGUI::Dummy(ImVec2((float)saveIconWidth, (float)saveIconHeight));
+          drawList->AddImage(
+              m_SaveIcon,
+              CherryGUI::GetItemRectMin(),
+              CherryGUI::GetItemRectMax(),
+              ImVec2(0, 0),
+              ImVec2(1, 1),
+              IM_COL32(255, 255, 255, 32));
+        }
+
+        CherryGUI::SameLine(0, CherryGUI::GetStyle().ItemInnerSpacing.x);
+#if IMGUI_VERSION_NUM < 18967
+        CherryGUI::SetItemAllowOverlap();
+#else
+        CherryGUI::SetNextItemAllowOverlap();
+#endif
+        if (!node.SavedState.empty()) {
+          if (CherryGUI::InvisibleButton("restore", ImVec2((float)restoreIconWidth, (float)restoreIconHeight))) {
+            node.State = node.SavedState;
+            ed::RestoreNodeState(node.ID);
+            node.SavedState.clear();
+          }
+
+          if (CherryGUI::IsItemActive())
+            drawList->AddImage(
+                m_RestoreIcon,
+                CherryGUI::GetItemRectMin(),
+                CherryGUI::GetItemRectMax(),
+                ImVec2(0, 0),
+                ImVec2(1, 1),
+                IM_COL32(255, 255, 255, 96));
+          else if (CherryGUI::IsItemHovered())
+            drawList->AddImage(
+                m_RestoreIcon,
+                CherryGUI::GetItemRectMin(),
+                CherryGUI::GetItemRectMax(),
+                ImVec2(0, 0),
+                ImVec2(1, 1),
+                IM_COL32(255, 255, 255, 255));
+          else
+            drawList->AddImage(
+                m_RestoreIcon,
+                CherryGUI::GetItemRectMin(),
+                CherryGUI::GetItemRectMax(),
+                ImVec2(0, 0),
+                ImVec2(1, 1),
+                IM_COL32(255, 255, 255, 160));
+        } else {
+          CherryGUI::Dummy(ImVec2((float)restoreIconWidth, (float)restoreIconHeight));
+          drawList->AddImage(
+              m_RestoreIcon,
+              CherryGUI::GetItemRectMin(),
+              CherryGUI::GetItemRectMax(),
+              ImVec2(0, 0),
+              ImVec2(1, 1),
+              IM_COL32(255, 255, 255, 32));
+        }
+
+        CherryGUI::SameLine(0, 0);
+#if IMGUI_VERSION_NUM < 18967
+        CherryGUI::SetItemAllowOverlap();
+#endif
+        CherryGUI::Dummy(ImVec2(0, (float)restoreIconHeight));
+
+        CherryGUI::PopID();
+      }
+      CherryGUI::Unindent();
+
+      static int changeCount = 0;
+
+      CherryGUI::GetWindowDrawList()->AddRectFilled(
+          CherryGUI::GetCursorScreenPos(),
+          CherryGUI::GetCursorScreenPos() + ImVec2(paneWidth, CherryGUI::GetTextLineHeight()),
+          ImColor(CherryGUI::GetStyle().Colors[ImGuiCol_HeaderActive]),
+          CherryGUI::GetTextLineHeight() * 0.25f);
+      CherryGUI::Spacing();
+      CherryGUI::SameLine();
+      CherryGUI::TextUnformatted("Selection");
+
+      CherryGUI::BeginHorizontal("Selection Stats", ImVec2(paneWidth, 0));
+      CherryGUI::Text("Changed %d time%s", changeCount, changeCount > 1 ? "s" : "");
+      CherryGUI::Spring();
+      if (CherryGUI::Button("Deselect All"))
+        ed::ClearSelection();
+      CherryGUI::EndHorizontal();
+      CherryGUI::Indent();
+      for (int i = 0; i < nodeCount; ++i)
+        CherryGUI::Text("Node (%p)", selectedNodes[i].AsPointer());
+      for (int i = 0; i < linkCount; ++i)
+        CherryGUI::Text("Link (%p)", selectedLinks[i].AsPointer());
+      CherryGUI::Unindent();
+
+      if (CherryGUI::IsKeyPressed(CherryGUI::GetKeyIndex(ImGuiKey_Z)))
+        for (auto &link : m_Links)
+          ed::Flow(link.ID);
+
+      if (ed::HasSelectionChanged())
+        ++changeCount;
+
+      CherryGUI::EndChild();
+    }
+    int m_NextId = 1;
+    const int m_PinIconSize = 24;
+    std::vector<Node> m_Nodes;
+    std::vector<Link> m_Links;
+    ImTextureID m_HeaderBackground = nullptr;
+    ImTextureID m_SaveIcon = nullptr;
+    ImTextureID m_RestoreIcon = nullptr;
+    const float m_TouchTime = 1.0f;
+    std::map<ed::NodeId, float, NodeIdLess> m_NodeTouchTime;
+    bool m_ShowOrdinals = false;
+  };
+
+  namespace Components {
+    // A NodeAreaOpen is a flexible and modular area with minimal built-in
+    // functionality. It’s perfect for anyone who wants to create their own
+    // mechanics for managing nodes, displaying them, handling connections, and
+    // interactions.
+    //
+    // If you want a more "ready-to-use" solution with a node builder, linker, and
+    // position manager, please check out "Cherry::NodeAreaMaker".
+    //
+    // In NodeAreaOpen, you need to specify: the array of compatible nodes and the
+    // array of existing nodes.
+
+    class NodeAreaOpen : public Component {
+     public:
+      NodeAreaOpen(
+          const Cherry::Identifier &id,
+          const std::string &label,
+          int width,
+          int height,
+          Cherry::NodeSystem::NodeContext *node_ctx,
+          Cherry::NodeSystem::NodeGraph *graph,
+          NodeEngine *node_system = nullptr)
+          : Component(id),
+            m_NodeEngine(node_system ? node_system : &m_DefaultEngine) {
+        // Identifier
+        SetIdentifier(id);
+
+        // Colors
+        SetProperty("color_border", "#454545B2");
+        SetProperty("color_border_hovered", "#454545B2");
+        SetProperty("color_border_clicked", "#454545B2");
+        SetProperty("color_bg", "#242424FF");
+        SetProperty("color_bg_hovered", "#343434FF");
+        SetProperty("color_bg_clicked", "#444444FF");
+
+        // Images
+        SetProperty("width", std::to_string(width));
+        SetProperty("height", std::to_string(height));
+
+        // Informations
+        SetProperty("label", label);
+
+        // Data & User-level informations
+        SetData("lastClicked", "never");
+        SetData("isClicked", "false");
+
+        // Init
+        m_NodeEngine->m_NodeGraph = graph;
+        m_NodeEngine->m_NodeContext = node_ctx;
+
+        ed::Config config;
+
+        // config.SettingsFile = "Blueprints.json";
+
+        config.UserPointer = m_NodeEngine;
+        config.SaveSettings = nullptr;
+
+        /*config.LoadNodeSettings = [](ed::NodeId nodeId, char *data, void
+        *userPointer) -> size_t
+        {
+            auto self = static_cast<Example *>(userPointer);
+
+            auto node = self->FindNode(nodeId);
+            if (!node)
+                return 0;
+
+            if (data != nullptr)
+                memcpy(data, node->State.data(), node->State.size());
+            return node->State.size();
+        };*/
+
+        /*config.SaveNodeSettings = [](ed::NodeId nodeId, const char *data, size_t
+        size, ed::SaveReasonFlags reason, void *userPointer) -> bool
+        {
+            auto self = static_cast<Example *>(userPointer);
+
+            auto node = self->FindNode(nodeId);
+            if (!node)
+                return false;
+
+            node->State.assign(data, size);
+
+            self->TouchNode(nodeId);
+
+            return true;
+        };*/
+
+        m_NodeEngine->m_Editor = ed::CreateEditor(&config);
+
+        ed::SetCurrentEditor(m_NodeEngine->m_Editor);
+        this->BuildNodeArea();
+      }
+
+      void BuildNodeArea() {
+        m_NodeEngine->RefreshNodeGraph();
+        m_NodeEngine->BuildNodes();
+        m_NodeEngine->RefreshNodeGraphLinks();
+      }
+
+      void Render() override {
+        m_NodeEngine->m_HeaderBackground = Cherry::GetTexture(Cherry::GetPath("resources/base/blueprintbackground.png"));
+        m_NodeEngine->m_SaveIcon = Cherry::GetTexture(Cherry::GetPath("resources/base/x.png"));
+        m_NodeEngine->m_RestoreIcon = Cherry::GetTexture(Cherry::GetPath("resources/base/x.png"));
+
+        NodeEditor::GetStyle().Colors[NodeEditor::StyleColor::StyleColor_Bg] = Cherry::HexToRGBA("#252525");
+
+        m_NodeEngine->UpdateTouch();
+
+        auto &io = CherryGUI::GetIO();
+
+        // CherryGUI::Text("FPS: %.2f (%.2gms)", io.Framerate,
+        //                io.Framerate ? 1000.0f / io.Framerate : 0.0f);
+
+        ed::SetCurrentEditor(m_NodeEngine->m_Editor);
+
+        if (CherryApp.IsKeyPressed(Cherry::CherryKey::CTRL) && CherryApp.IsKeyPressed(Cherry::CherryKey::S)) {
+          m_NodeEngine->SaveNodeGraph();
+          m_NodeEngine->m_NodeGraph->DumpGraphToJsonFile(m_NodeEngine->m_NodeContext);
+        }
+
+        // auto& style = CherryGUI::GetStyle();
+#if 0
+        {
+            for (auto x = -io.DisplaySize.y; x < io.DisplaySize.x; x += 10.0f)
+            {
+                CherryGUI::GetWindowDrawList()->AddLine(ImVec2(x, 0), ImVec2(x + io.DisplaySize.y, io.DisplaySize.y),
+                    IM_COL32(255, 255, 0, 255));
+            }
+        }
+#endif
+
+        static ed::NodeId contextNodeId = 0;
+        static ed::LinkId contextLinkId = 0;
+        static ed::PinId contextPinId = 0;
+        static bool createNewNode = false;
+        static Pin *newNodeLinkPin = nullptr;
+        static Pin *newLinkPin = nullptr;
+
+        static float leftPaneWidth = 400.0f;
+        static float rightPaneWidth = 800.0f;
+        static bool navigated = false;
+
+        if (!navigated) {
+          ed::NavigateToContent();
+          navigated = true;
+        }
+
+        ed::Begin("Node qsd");
+        {
+          auto cursorTopLeft = CherryGUI::GetCursorScreenPos();
+
+          util::BlueprintNodeBuilder builder(
+              m_NodeEngine->m_HeaderBackground,
+              Cherry::GetTextureSize(Cherry::GetPath("resources/base/blueprintbackground.png")).x,
+              Cherry::GetTextureSize(Cherry::GetPath("resources/base/blueprintbackground.png")).y);
+
+          for (auto &node : m_NodeEngine->m_Nodes) {
+            if (node.Type != NodeType::Blueprint && node.Type != NodeType::Simple)
+              continue;
+
+            const auto isSimple = node.Type == NodeType::Simple;
+
+            bool hasOutputDelegates = false;
+            for (auto &output : node.Outputs)
+              if (output.Format.m_Delegate)
+                hasOutputDelegates = true;
+
+            if (!node.BackgroundColor.empty()) {
+              ed::PushStyleColor(ed::StyleColor_NodeBg, Cherry::HexToImColor(node.BackgroundColor));
+            }
+
+            if (!node.BorderColor.empty()) {
+              ed::PushStyleColor(ed::StyleColor_NodeBorder, Cherry::HexToImColor(node.BorderColor));
+            }
+
+            if (node.Status == Cherry::NodeSystem::NodeSchemaStatus::Depreciated) {
+              ed::PushStyleColor(ed::StyleColor_NodeBg, Cherry::HexToImColor("#908c0099"));
+              ed::PushStyleColor(ed::StyleColor_NodeBorder, Cherry::HexToImColor("#d8d100"));
+            } else if (node.Status == Cherry::NodeSystem::NodeSchemaStatus::Obsolete) {
+              ed::PushStyleColor(ed::StyleColor_NodeBg, Cherry::HexToImColor("#89370499"));
+              ed::PushStyleColor(ed::StyleColor_NodeBorder, Cherry::HexToImColor("#d85200"));
+            }
+
+            builder.Begin(node.ID);
+
+            if (!isSimple) {
+              builder.Header(node.Color);
+
+              CherryGUI::Spring(0);
+
+              if (!node.SecondName.empty()) {
+                CherryGUI::BeginHorizontal("horizontal_logo_and_text");
+
+                if (!node.LogoPath.empty()) {
+                  CherryGUI::BeginVertical("logo_align");
+                  CherryGUI::Dummy(ImVec2(0, 4));
+                  CherryGUI::Image(Cherry::GetTexture(node.LogoPath), ImVec2(28, 28));
+                  CherryGUI::EndVertical();
+                }
+
+                CherryGUI::BeginVertical("text_block");
+
+                CherryGUI::Dummy(ImVec2(0, 1));
+
+                CherryGUI::GetFont()->Scale = 1.20f;
+                CherryGUI::PushFont(CherryGUI::GetFont());
+
+                CherryGUI::PushStyleColor(ImGuiCol_Text, Cherry::HexToRGBA(node.NameColor));
+                CherryGUI::TextUnformatted(node.Name.c_str());
+                CherryGUI::PopStyleColor();
+
+                CherryGUI::GetFont()->Scale = Application::GetCurrentRenderedWindow()->m_Specifications.FontGlobalScale;
+                CherryGUI::PopFont();
+
+                CherryGUI::PushStyleColor(ImGuiCol_Text, Cherry::HexToRGBA(node.SecondNameColor));
+                CherryGUI::TextUnformatted(node.SecondName.c_str());
+                CherryGUI::PopStyleColor();
+
+                CherryGUI::Dummy(ImVec2(0, 1));
+
+                CherryGUI::EndVertical();
+
+                CherryGUI::EndHorizontal();
+              } else {
+                if (!node.LogoPath.empty()) {
+                  CherryGUI::Image(Cherry::GetTexture(node.LogoPath), ImVec2(16, 16));
+                }
+
+                CherryGUI::PushStyleColor(ImGuiCol_Text, Cherry::HexToRGBA(node.NameColor));
+                CherryGUI::TextUnformatted(node.Name.c_str());
+                CherryGUI::PopStyleColor();
+              }
+
+              CherryGUI::Spring(1);
+
+              CherryGUI::Dummy(ImVec2(0, 28));
+              if (hasOutputDelegates) {
+                CherryGUI::BeginVertical("delegates", ImVec2(0, 28));
+                CherryGUI::Spring(1, 0);
+                for (auto &output : node.Outputs) {
+                  if (!output.Format.m_Delegate)
+                    continue;
+
+                  auto alpha = CherryGUI::GetStyle().Alpha;
+
+                  if (newLinkPin && !m_NodeEngine->CanCreateLink(newLinkPin, &output) && &output != newLinkPin)
+                    alpha = alpha * (48.0f / 255.0f);
+
+                  ed::BeginPin(output.ID, ed::PinKind::Output);
+                  ed::PinPivotAlignment(ImVec2(1.0f, 0.5f));
+                  ed::PinPivotSize(ImVec2(0, 0));
+                  CherryGUI::BeginHorizontal(output.ID.AsPointer());
+                  CherryGUI::PushStyleVar(ImGuiStyleVar_Alpha, alpha);
+                  if (!output.Name.empty()) {
+                    CherryGUI::TextUnformatted(output.Name.c_str());
+                    CherryGUI::Spring(0);
+                  }
+                  m_NodeEngine->DrawPinIcon(output, m_NodeEngine->IsPinLinked(output.ID), (int)(alpha * 255));
+                  CherryGUI::Spring(0, CherryGUI::GetStyle().ItemSpacing.x / 2);
+                  CherryGUI::EndHorizontal();
+                  CherryGUI::PopStyleVar();
+                  ed::EndPin();
+
+                  // DrawItemRect(ImColor(255, 0, 0));
+                }
+                CherryGUI::Spring(1, 0);
+                CherryGUI::EndVertical();
+                CherryGUI::Spring(0, CherryGUI::GetStyle().ItemSpacing.x / 2);
+              } else
+                CherryGUI::Spring(0);
+              builder.EndHeader();
+            }
+            for (auto &input : node.Inputs) {
+              auto alpha = CherryGUI::GetStyle().Alpha;
+              if (newLinkPin && !m_NodeEngine->CanCreateLink(newLinkPin, &input) && &input != newLinkPin)
+                alpha = alpha * (48.0f / 255.0f);
+
+              builder.Input(input.ID);
+              CherryGUI::PushStyleVar(ImGuiStyleVar_Alpha, alpha);
+
+              auto it = m_NodeEngine->m_NodeGraph->g_NodeDataHandlers.find(input.Format.m_TypeID);
+              if (it != m_NodeEngine->m_NodeGraph->g_NodeDataHandlers.end() && it->second.render) {
+                auto instIt = std::find_if(
+                    m_NodeEngine->m_NodeGraph->m_InstanciatedNodes.begin(),
+                    m_NodeEngine->m_NodeGraph->m_InstanciatedNodes.end(),
+                    [&](const Cherry::NodeSystem::NodeInstance &inst) { return inst.InstanceID == node.InstanceID; });
+
+                if (instIt != m_NodeEngine->m_NodeGraph->m_InstanciatedNodes.end()) {
+                  it->second.render(*instIt);
+                }
+              } else {
+                m_NodeEngine->DrawPinIcon(input, m_NodeEngine->IsPinLinked(input.ID), (int)(alpha * 255));
+                CherryGUI::Spring(0);
+                if (!input.Name.empty()) {
+                  CherryGUI::TextUnformatted(input.Name.c_str());
+                  CherryGUI::Spring(0);
+                }
+              }
+
+              CherryGUI::PopStyleVar();
+              builder.EndInput();
+            }
+
+            if (isSimple) {
+              builder.Middle();
+
+              CherryGUI::Spring(1, 0);
+              CherryGUI::TextUnformatted(node.Name.c_str());
+              CherryGUI::Spring(1, 0);
+            }
+
+            for (auto &output : node.Outputs) {
+              if (!isSimple && output.Format.m_Delegate)
+                continue;
+
+              auto alpha = CherryGUI::GetStyle().Alpha;
+              if (newLinkPin && !m_NodeEngine->CanCreateLink(newLinkPin, &output) && &output != newLinkPin)
+                alpha = alpha * (48.0f / 255.0f);
+
+              CherryGUI::PushStyleVar(ImGuiStyleVar_Alpha, alpha);
+              builder.Output(output.ID);
+
+              auto it = m_NodeEngine->m_NodeGraph->g_NodeDataHandlers.find(node.TypeID);
+              if (it != m_NodeEngine->m_NodeGraph->g_NodeDataHandlers.end() && it->second.render) {
+                auto instIt = std::find_if(
+                    m_NodeEngine->m_NodeGraph->m_InstanciatedNodes.begin(),
+                    m_NodeEngine->m_NodeGraph->m_InstanciatedNodes.end(),
+                    [&](const Cherry::NodeSystem::NodeInstance &inst) { return inst.InstanceID == node.InstanceID; });
+
+                if (instIt != m_NodeEngine->m_NodeGraph->m_InstanciatedNodes.end()) {
+                  it->second.render(*instIt);
+                }
+              } else {
+                if (!output.Name.empty()) {
+                  CherryGUI::Spring(0);
+                  CherryGUI::TextUnformatted(output.Name.c_str());
+                }
+                CherryGUI::Spring(0);
+                m_NodeEngine->DrawPinIcon(output, m_NodeEngine->IsPinLinked(output.ID), (int)(alpha * 255));
+              }
+
+              CherryGUI::PopStyleVar();
+              builder.EndOutput();
+            }
+
+            builder.End();
+
+            if (node.Status == Cherry::NodeSystem::NodeSchemaStatus::Obsolete) {
+              ed::PopStyleColor(2);
+            }
+
+            if (node.Status == Cherry::NodeSystem::NodeSchemaStatus::Depreciated) {
+              ed::PopStyleColor(2);
+            }
+
+            if (!node.BackgroundColor.empty()) {
+              ed::PopStyleColor();
+            }
+
+            if (!node.BorderColor.empty()) {
+              ed::PopStyleColor();
+            }
+          }
+
+          for (auto &node : m_NodeEngine->m_Nodes) {
+            if (node.Type != NodeType::Tree)
+              continue;
+
+            const float rounding = 5.0f;
+            const float padding = 12.0f;
+
+            const auto pinBackground = ed::GetStyle().Colors[ed::StyleColor_NodeBg];
+
+            ed::PushStyleColor(ed::StyleColor_NodeBg, ImColor(128, 128, 128, 200));
+            ed::PushStyleColor(ed::StyleColor_NodeBorder, ImColor(32, 32, 32, 200));
+            ed::PushStyleColor(ed::StyleColor_PinRect, ImColor(60, 180, 255, 150));
+            ed::PushStyleColor(ed::StyleColor_PinRectBorder, ImColor(60, 180, 255, 150));
+
+            ed::PushStyleVar(ed::StyleVar_NodePadding, ImVec4(0, 0, 0, 0));
+            ed::PushStyleVar(ed::StyleVar_NodeRounding, rounding);
+            ed::PushStyleVar(ed::StyleVar_SourceDirection, ImVec2(0.0f, 1.0f));
+            ed::PushStyleVar(ed::StyleVar_TargetDirection, ImVec2(0.0f, -1.0f));
+            ed::PushStyleVar(ed::StyleVar_LinkStrength, 0.0f);
+            ed::PushStyleVar(ed::StyleVar_PinBorderWidth, 1.0f);
+            ed::PushStyleVar(ed::StyleVar_PinRadius, 5.0f);
+            ed::BeginNode(node.ID);
+
+            CherryGUI::BeginVertical(node.ID.AsPointer());
+            CherryGUI::BeginHorizontal("inputs");
+            CherryGUI::Spring(0, padding * 2);
+
+            ImRect inputsRect;
+            int inputAlpha = 200;
+            if (!node.Inputs.empty()) {
+              auto &pin = node.Inputs[0];
+              CherryGUI::Dummy(ImVec2(0, padding));
+              CherryGUI::Spring(1, 0);
+              inputsRect = ImGui_GetItemRect();
+
+              ed::PushStyleVar(ed::StyleVar_PinArrowSize, 10.0f);
+              ed::PushStyleVar(ed::StyleVar_PinArrowWidth, 10.0f);
+#if IMGUI_VERSION_NUM > 18101
+              ed::PushStyleVar(ed::StyleVar_PinCorners, ImDrawFlags_RoundCornersBottom);
+#else
+              ed::PushStyleVar(ed::StyleVar_PinCorners, 12);
+#endif
+              ed::BeginPin(pin.ID, ed::PinKind::Input);
+              ed::PinPivotRect(inputsRect.GetTL(), inputsRect.GetBR());
+              ed::PinRect(inputsRect.GetTL(), inputsRect.GetBR());
+              ed::EndPin();
+              ed::PopStyleVar(3);
+
+              if (newLinkPin && !m_NodeEngine->CanCreateLink(newLinkPin, &pin) && &pin != newLinkPin)
+                inputAlpha = (int)(255 * CherryGUI::GetStyle().Alpha * (48.0f / 255.0f));
+            } else
+              CherryGUI::Dummy(ImVec2(0, padding));
+
+            CherryGUI::Spring(0, padding * 2);
+            CherryGUI::EndHorizontal();
+
+            CherryGUI::BeginHorizontal("content_frame");
+            CherryGUI::Spring(1, padding);
+
+            CherryGUI::BeginVertical("content", ImVec2(0.0f, 0.0f));
+            CherryGUI::Dummy(ImVec2(160, 0));
+            CherryGUI::Spring(1);
+            CherryGUI::TextUnformatted(node.Name.c_str());
+            CherryGUI::Spring(1);
+            CherryGUI::EndVertical();
+            auto contentRect = ImGui_GetItemRect();
+
+            CherryGUI::Spring(1, padding);
+            CherryGUI::EndHorizontal();
+
+            CherryGUI::BeginHorizontal("outputs");
+            CherryGUI::Spring(0, padding * 2);
+
+            ImRect outputsRect;
+            int outputAlpha = 200;
+            if (!node.Outputs.empty()) {
+              auto &pin = node.Outputs[0];
+              CherryGUI::Dummy(ImVec2(0, padding));
+              CherryGUI::Spring(1, 0);
+              outputsRect = ImGui_GetItemRect();
+
+#if IMGUI_VERSION_NUM > 18101
+              ed::PushStyleVar(ed::StyleVar_PinCorners, ImDrawFlags_RoundCornersTop);
+#else
+              ed::PushStyleVar(ed::StyleVar_PinCorners, 3);
+#endif
+              ed::BeginPin(pin.ID, ed::PinKind::Output);
+              ed::PinPivotRect(outputsRect.GetTL(), outputsRect.GetBR());
+              ed::PinRect(outputsRect.GetTL(), outputsRect.GetBR());
+              ed::EndPin();
+              ed::PopStyleVar();
+
+              if (newLinkPin && !m_NodeEngine->CanCreateLink(newLinkPin, &pin) && &pin != newLinkPin)
+                outputAlpha = (int)(255 * CherryGUI::GetStyle().Alpha * (48.0f / 255.0f));
+            } else
+              CherryGUI::Dummy(ImVec2(0, padding));
+
+            CherryGUI::Spring(0, padding * 2);
+            CherryGUI::EndHorizontal();
+
+            CherryGUI::EndVertical();
+
+            ed::EndNode();
+            ed::PopStyleVar(7);
+            ed::PopStyleColor(4);
+
+            auto drawList = ed::GetNodeBackgroundDrawList(node.ID);
+
+            // const auto fringeScale = CherryGUI::GetStyle().AntiAliasFringeScale;
+            // const auto unitSize    = 1.0f / fringeScale;
+
+            // const auto ImDrawList_AddRect = [](ImDrawList* drawList, const
+            // ImVec2& a, const ImVec2& b, ImU32 col, float rounding, int
+            // rounding_corners, float thickness)
+            //{
+            //     if ((col >> 24) == 0)
+            //         return;
+            //     drawList->PathRect(a, b, rounding, rounding_corners);
+            //     drawList->PathStroke(col, true, thickness);
+            // };
+
+#if IMGUI_VERSION_NUM > 18101
+            const auto topRoundCornersFlags = ImDrawFlags_RoundCornersTop;
+            const auto bottomRoundCornersFlags = ImDrawFlags_RoundCornersBottom;
+#else
+            const auto topRoundCornersFlags = 1 | 2;
+            const auto bottomRoundCornersFlags = 4 | 8;
+#endif
+
+            drawList->AddRectFilled(
+                inputsRect.GetTL() + ImVec2(0, 1),
+                inputsRect.GetBR(),
+                IM_COL32(
+                    (int)(255 * pinBackground.x), (int)(255 * pinBackground.y), (int)(255 * pinBackground.z), inputAlpha),
+                4.0f,
+                bottomRoundCornersFlags);
+            // CherryGUI::PushStyleVar(ImGuiStyleVar_AntiAliasFringeScale, 1.0f);
+            drawList->AddRect(
+                inputsRect.GetTL() + ImVec2(0, 1),
+                inputsRect.GetBR(),
+                IM_COL32(
+                    (int)(255 * pinBackground.x), (int)(255 * pinBackground.y), (int)(255 * pinBackground.z), inputAlpha),
+                4.0f,
+                bottomRoundCornersFlags);
+            // CherryGUI::PopStyleVar();
+            drawList->AddRectFilled(
+                outputsRect.GetTL(),
+                outputsRect.GetBR() - ImVec2(0, 1),
+                IM_COL32(
+                    (int)(255 * pinBackground.x), (int)(255 * pinBackground.y), (int)(255 * pinBackground.z), outputAlpha),
+                4.0f,
+                topRoundCornersFlags);
+            // CherryGUI::PushStyleVar(ImGuiStyleVar_AntiAliasFringeScale, 1.0f);
+            drawList->AddRect(
+                outputsRect.GetTL(),
+                outputsRect.GetBR() - ImVec2(0, 1),
+                IM_COL32(
+                    (int)(255 * pinBackground.x), (int)(255 * pinBackground.y), (int)(255 * pinBackground.z), outputAlpha),
+                4.0f,
+                topRoundCornersFlags);
+            // CherryGUI::PopStyleVar();
+            drawList->AddRectFilled(contentRect.GetTL(), contentRect.GetBR(), IM_COL32(24, 64, 128, 200), 0.0f);
+            // CherryGUI::PushStyleVar(ImGuiStyleVar_AntiAliasFringeScale, 1.0f);
+            drawList->AddRect(contentRect.GetTL(), contentRect.GetBR(), IM_COL32(48, 128, 255, 100), 0.0f);
+            // CherryGUI::PopStyleVar();
+          }
+
+          for (auto &node : m_NodeEngine->m_Nodes) {
+            if (node.Type != NodeType::Houdini)
+              continue;
+
+            const float rounding = 10.0f;
+            const float padding = 12.0f;
+
+            ed::PushStyleColor(ed::StyleColor_NodeBg, ImColor(229, 229, 229, 200));
+            ed::PushStyleColor(ed::StyleColor_NodeBorder, ImColor(125, 125, 125, 200));
+            ed::PushStyleColor(ed::StyleColor_PinRect, ImColor(229, 229, 229, 60));
+            ed::PushStyleColor(ed::StyleColor_PinRectBorder, ImColor(125, 125, 125, 60));
+
+            const auto pinBackground = ed::GetStyle().Colors[ed::StyleColor_NodeBg];
+
+            ed::PushStyleVar(ed::StyleVar_NodePadding, ImVec4(0, 0, 0, 0));
+            ed::PushStyleVar(ed::StyleVar_NodeRounding, rounding);
+            ed::PushStyleVar(ed::StyleVar_SourceDirection, ImVec2(0.0f, 1.0f));
+            ed::PushStyleVar(ed::StyleVar_TargetDirection, ImVec2(0.0f, -1.0f));
+            ed::PushStyleVar(ed::StyleVar_LinkStrength, 0.0f);
+            ed::PushStyleVar(ed::StyleVar_PinBorderWidth, 1.0f);
+            ed::PushStyleVar(ed::StyleVar_PinRadius, 6.0f);
+            ed::BeginNode(node.ID);
+
+            CherryGUI::BeginVertical(node.ID.AsPointer());
+            if (!node.Inputs.empty()) {
+              CherryGUI::BeginHorizontal("inputs");
+              CherryGUI::Spring(1, 0);
+
+              ImRect inputsRect;
+              int inputAlpha = 200;
+              for (auto &pin : node.Inputs) {
+                CherryGUI::Dummy(ImVec2(padding, padding));
+                inputsRect = ImGui_GetItemRect();
+                CherryGUI::Spring(1, 0);
+                inputsRect.Min.y -= padding;
+                inputsRect.Max.y -= padding;
+
+#if IMGUI_VERSION_NUM > 18101
+                const auto allRoundCornersFlags = ImDrawFlags_RoundCornersAll;
+#else
+                const auto allRoundCornersFlags = 15;
+#endif
+                // ed::PushStyleVar(ed::StyleVar_PinArrowSize, 10.0f);
+                // ed::PushStyleVar(ed::StyleVar_PinArrowWidth, 10.0f);
+                ed::PushStyleVar(ed::StyleVar_PinCorners, allRoundCornersFlags);
+
+                ed::BeginPin(pin.ID, ed::PinKind::Input);
+                ed::PinPivotRect(inputsRect.GetCenter(), inputsRect.GetCenter());
+                ed::PinRect(inputsRect.GetTL(), inputsRect.GetBR());
+                ed::EndPin();
+                // ed::PopStyleVar(3);
+                ed::PopStyleVar(1);
+
+                auto drawList = CherryGUI::GetWindowDrawList();
+                drawList->AddRectFilled(
+                    inputsRect.GetTL(),
+                    inputsRect.GetBR(),
+                    IM_COL32(
+                        (int)(255 * pinBackground.x),
+                        (int)(255 * pinBackground.y),
+                        (int)(255 * pinBackground.z),
+                        inputAlpha),
+                    4.0f,
+                    allRoundCornersFlags);
+                drawList->AddRect(
+                    inputsRect.GetTL(),
+                    inputsRect.GetBR(),
+                    IM_COL32(
+                        (int)(255 * pinBackground.x),
+                        (int)(255 * pinBackground.y),
+                        (int)(255 * pinBackground.z),
+                        inputAlpha),
+                    4.0f,
+                    allRoundCornersFlags);
+
+                if (newLinkPin && !m_NodeEngine->CanCreateLink(newLinkPin, &pin) && &pin != newLinkPin)
+                  inputAlpha = (int)(255 * CherryGUI::GetStyle().Alpha * (48.0f / 255.0f));
+              }
+
+              // CherryGUI::Spring(1, 0);
+              CherryGUI::EndHorizontal();
+            }
+
+            CherryGUI::BeginHorizontal("content_frame");
+            CherryGUI::Spring(1, padding);
+
+            CherryGUI::BeginVertical("content", ImVec2(0.0f, 0.0f));
+            CherryGUI::Dummy(ImVec2(160, 0));
+            CherryGUI::Spring(1);
+            CherryGUI::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 0.0f, 0.0f, 1.0f));
+            CherryGUI::TextUnformatted(node.Name.c_str());
+            CherryGUI::PopStyleColor();
+            CherryGUI::Spring(1);
+            CherryGUI::EndVertical();
+            auto contentRect = ImGui_GetItemRect();
+
+            CherryGUI::Spring(1, padding);
+            CherryGUI::EndHorizontal();
+
+            if (!node.Outputs.empty()) {
+              CherryGUI::BeginHorizontal("outputs");
+              CherryGUI::Spring(1, 0);
+
+              ImRect outputsRect;
+              int outputAlpha = 200;
+              for (auto &pin : node.Outputs) {
+                CherryGUI::Dummy(ImVec2(padding, padding));
+                outputsRect = ImGui_GetItemRect();
+                CherryGUI::Spring(1, 0);
+                outputsRect.Min.y += padding;
+                outputsRect.Max.y += padding;
+
+#if IMGUI_VERSION_NUM > 18101
+                const auto allRoundCornersFlags = ImDrawFlags_RoundCornersAll;
+                const auto topRoundCornersFlags = ImDrawFlags_RoundCornersTop;
+#else
+                const auto allRoundCornersFlags = 15;
+                const auto topRoundCornersFlags = 3;
+#endif
+
+                ed::PushStyleVar(ed::StyleVar_PinCorners, topRoundCornersFlags);
+                ed::BeginPin(pin.ID, ed::PinKind::Output);
+                ed::PinPivotRect(outputsRect.GetCenter(), outputsRect.GetCenter());
+                ed::PinRect(outputsRect.GetTL(), outputsRect.GetBR());
+                ed::EndPin();
+                ed::PopStyleVar();
+
+                auto drawList = CherryGUI::GetWindowDrawList();
+                drawList->AddRectFilled(
+                    outputsRect.GetTL(),
+                    outputsRect.GetBR(),
+                    IM_COL32(
+                        (int)(255 * pinBackground.x),
+                        (int)(255 * pinBackground.y),
+                        (int)(255 * pinBackground.z),
+                        outputAlpha),
+                    4.0f,
+                    allRoundCornersFlags);
+                drawList->AddRect(
+                    outputsRect.GetTL(),
+                    outputsRect.GetBR(),
+                    IM_COL32(
+                        (int)(255 * pinBackground.x),
+                        (int)(255 * pinBackground.y),
+                        (int)(255 * pinBackground.z),
+                        outputAlpha),
+                    4.0f,
+                    allRoundCornersFlags);
+
+                if (newLinkPin && !m_NodeEngine->CanCreateLink(newLinkPin, &pin) && &pin != newLinkPin)
+                  outputAlpha = (int)(255 * CherryGUI::GetStyle().Alpha * (48.0f / 255.0f));
+              }
+
+              CherryGUI::EndHorizontal();
+            }
+
+            CherryGUI::EndVertical();
+
+            ed::EndNode();
+            ed::PopStyleVar(7);
+            ed::PopStyleColor(4);
+
+            // auto drawList = ed::GetNodeBackgroundDrawList(node.ID);
+
+            // const auto fringeScale = CherryGUI::GetStyle().AntiAliasFringeScale;
+            // const auto unitSize    = 1.0f / fringeScale;
+
+            // const auto ImDrawList_AddRect = [](ImDrawList* drawList, const
+            // ImVec2& a, const ImVec2& b, ImU32 col, float rounding, int
+            // rounding_corners, float thickness)
+            //{
+            //     if ((col >> 24) == 0)
+            //         return;
+            //     drawList->PathRect(a, b, rounding, rounding_corners);
+            //     drawList->PathStroke(col, true, thickness);
+            // };
+
+            // drawList->AddRectFilled(inputsRect.GetTL() + ImVec2(0, 1),
+            // inputsRect.GetBR(),
+            //     IM_COL32((int)(255 * pinBackground.x), (int)(255 *
+            //     pinBackground.y), (int)(255 * pinBackground.z),
+            //     inputAlpha), 4.0f, 12);
+            // CherryGUI::PushStyleVar(ImGuiStyleVar_AntiAliasFringeScale, 1.0f);
+            // drawList->AddRect(inputsRect.GetTL() + ImVec2(0, 1),
+            // inputsRect.GetBR(),
+            //     IM_COL32((int)(255 * pinBackground.x), (int)(255 *
+            //     pinBackground.y), (int)(255 * pinBackground.z),
+            //     inputAlpha), 4.0f, 12);
+            // CherryGUI::PopStyleVar();
+            // drawList->AddRectFilled(outputsRect.GetTL(), outputsRect.GetBR() -
+            // ImVec2(0, 1),
+            //     IM_COL32((int)(255 * pinBackground.x), (int)(255 *
+            //     pinBackground.y), (int)(255 * pinBackground.z),
+            //     outputAlpha), 4.0f, 3);
+            ////CherryGUI::PushStyleVar(ImGuiStyleVar_AntiAliasFringeScale, 1.0f);
+            // drawList->AddRect(outputsRect.GetTL(), outputsRect.GetBR() -
+            // ImVec2(0, 1),
+            //     IM_COL32((int)(255 * pinBackground.x), (int)(255 *
+            //     pinBackground.y), (int)(255 * pinBackground.z),
+            //     outputAlpha), 4.0f, 3);
+            ////CherryGUI::PopStyleVar();
+            // drawList->AddRectFilled(contentRect.GetTL(), contentRect.GetBR(),
+            // IM_COL32(24, 64, 128, 200), 0.0f);
+            // CherryGUI::PushStyleVar(ImGuiStyleVar_AntiAliasFringeScale, 1.0f);
+            // drawList->AddRect(
+            //     contentRect.GetTL(),
+            //     contentRect.GetBR(),
+            //     IM_COL32(48, 128, 255, 100), 0.0f);
+            // CherryGUI::PopStyleVar();
+          }
+
+          for (auto &node : m_NodeEngine->m_Nodes) {
+            if (node.Type != NodeType::Comment)
+              continue;
+
+            const float commentAlpha = 0.75f;
+
+            CherryGUI::PushStyleVar(ImGuiStyleVar_Alpha, commentAlpha);
+            ed::PushStyleColor(ed::StyleColor_NodeBg, ImColor(255, 255, 255, 64));
+            ed::PushStyleColor(ed::StyleColor_NodeBorder, ImColor(255, 255, 255, 64));
+            ed::BeginNode(node.ID);
+            CherryGUI::PushID(node.ID.AsPointer());
+            CherryGUI::BeginVertical("content");
+            CherryGUI::BeginHorizontal("horizontal");
+            CherryGUI::Spring(1);
+            CherryGUI::TextUnformatted(node.Name.c_str());
+            CherryGUI::Spring(1);
+            CherryGUI::EndHorizontal();
+            ed::Group(node.Size);
+            CherryGUI::EndVertical();
+            CherryGUI::PopID();
+            ed::EndNode();
+            ed::PopStyleColor(2);
+            CherryGUI::PopStyleVar();
+
+            if (ed::BeginGroupHint(node.ID)) {
+              // auto alpha   = static_cast<int>(commentAlpha *
+              // CherryGUI::GetStyle().Alpha * 255);
+              auto bgAlpha = static_cast<int>(CherryGUI::GetStyle().Alpha * 255);
+
+              // CherryGUI::PushStyleVar(ImGuiStyleVar_Alpha, commentAlpha *
+              // CherryGUI::GetStyle().Alpha);
+
+              auto min = ed::GetGroupMin();
+              // auto max = ed::GetGroupMax();
+
+              CherryGUI::SetCursorScreenPos(min - ImVec2(-8, CherryGUI::GetTextLineHeightWithSpacing() + 4));
+              CherryGUI::BeginGroup();
+              CherryGUI::TextUnformatted(node.Name.c_str());
+              CherryGUI::EndGroup();
+
+              auto drawList = ed::GetHintBackgroundDrawList();
+
+              auto hintBounds = ImGui_GetItemRect();
+              auto hintFrameBounds = ImRect_Expanded(hintBounds, 8, 4);
+
+              drawList->AddRectFilled(
+                  hintFrameBounds.GetTL(), hintFrameBounds.GetBR(), IM_COL32(255, 255, 255, 64 * bgAlpha / 255), 4.0f);
+
+              drawList->AddRect(
+                  hintFrameBounds.GetTL(), hintFrameBounds.GetBR(), IM_COL32(255, 255, 255, 128 * bgAlpha / 255), 4.0f);
+
+              // CherryGUI::PopStyleVar();
+            }
+            ed::EndGroupHint();
+          }
+
+          for (auto &link : m_NodeEngine->m_Links)
+            ed::Link(link.ID, link.StartPinID, link.EndPinID, link.Color, 2.0f);
+
+          if (!createNewNode) {
+            if (ed::BeginCreate(ImColor(255, 255, 255), 2.0f)) {
+              auto showLabel = [](const char *label, ImColor color, LabelTooltipIcon icon = LabelTooltipIcon::None) {
+                CherryGUI::SetCursorPosY(CherryGUI::GetCursorPosY() - CherryGUI::GetTextLineHeight());
+                auto size = CherryGUI::CalcTextSize(label);
+
+                auto padding = CherryGUI::GetStyle().FramePadding;
+                auto spacing = CherryGUI::GetStyle().ItemSpacing;
+
+                CherryGUI::SetCursorPos(CherryGUI::GetCursorPos() + ImVec2(spacing.x, -spacing.y));
+
+                ImVec2 iconSize = ImVec2(14, 14);
+                ImVec2 pos = CherryGUI::GetCursorScreenPos();
+                ImVec2 rectMin = pos - padding;
+                ImVec2 rectMax = pos + size + padding;
+
+                auto drawList = CherryGUI::GetWindowDrawList();
+
+                drawList->AddRectFilled(rectMin, ImVec2(rectMax.x + iconSize.x, rectMax.y), color, size.y * 0.15f);
+
+                float textOffsetX = 0.0f;
+                if (icon != LabelTooltipIcon::None) {
+                  ImTextureID iconTexture = nullptr;
+
+                  switch (icon) {
+                    case LabelTooltipIcon::Plus:
+                      iconTexture = Cherry::GetTexture(Cherry::GetPath("resources/imgs/add.png"));
+                      break;
+                    case LabelTooltipIcon::Cross:
+                      iconTexture = Cherry::GetTexture(Cherry::GetPath("resources/base/error.png"));
+                      break;
+                    default: break;
+                  }
+
+                  if (iconTexture) {
+                    ImVec2 iconPos = pos;
+                    drawList->AddImage(iconTexture, iconPos, iconPos + iconSize);
+                    textOffsetX = iconSize.x + spacing.x;
+                  }
+                }
+
+                CherryGUI::SetCursorPos(CherryGUI::GetCursorPos() + ImVec2(textOffsetX, 0));
+                CherryGUI::TextUnformatted(label);
+              };
+
+              ed::PinId startPinId = 0, endPinId = 0;
+              if (ed::QueryNewLink(&startPinId, &endPinId)) {
+                auto startPin = m_NodeEngine->FindPin(startPinId);
+                auto endPin = m_NodeEngine->FindPin(endPinId);
+
+                newLinkPin = startPin ? startPin : endPin;
+
+                if (startPin->Kind == PinKind::Input) {
+                  std::swap(startPin, endPin);
+                  std::swap(startPinId, endPinId);
+                }
+
+                if (startPin && endPin) {
+                  if (endPin == startPin) {
+                    ed::RejectNewItem(ImColor(255, 0, 0), 2.0f);
+                  } else if (endPin->Kind == startPin->Kind) {
+                    showLabel("Incompatible Pin Kind", ImColor(45, 32, 32, 180), LabelTooltipIcon::Cross);
+                    ed::RejectNewItem(ImColor(255, 0, 0), 2.0f);
+                  }
+                  // else if (endPin->Node == startPin->Node)
+                  //{
+                  //     showLabel("x Cannot connect to self", ImColor(45, 32, 32,
+                  //     180)); ed::RejectNewItem(ImColor(255, 0, 0), 1.0f);
+                  // }
+                  else if (endPin->Format.m_TypeID != startPin->Format.m_TypeID) {
+                    showLabel("Incompatible Pin Type", ImColor(45, 32, 32, 180), LabelTooltipIcon::Cross);
+                    ed::RejectNewItem(ImColor(255, 128, 128), 1.0f);
+                  } else {
+                    showLabel("Create Link", ImColor(32, 45, 32, 180), LabelTooltipIcon::Plus);
+                    if (ed::AcceptNewItem(ImColor(128, 255, 128), 4.0f)) {
+                      m_NodeEngine->m_Links.emplace_back(Link(m_NodeEngine->GetNextId(), startPinId, endPinId));
+                      m_NodeEngine->m_Links.back().Color = Cherry::HexToImColor(startPin->Format.m_Color);
+                    }
+                  }
+                }
+              }
+
+              ed::PinId pinId = 0;
+              if (ed::QueryNewNode(&pinId)) {
+                newLinkPin = m_NodeEngine->FindPin(pinId);
+                if (newLinkPin)
+                  showLabel("+ Create Node", ImColor(32, 45, 32, 180));
+
+                if (ed::AcceptNewItem()) {
+                  createNewNode = true;
+                  newNodeLinkPin = m_NodeEngine->FindPin(pinId);
+                  newLinkPin = nullptr;
+                  ed::Suspend();
+                  CherryGUI::OpenPopup("Create New Node");
+                  ed::Resume();
+                }
+              }
+            } else
+              newLinkPin = nullptr;
+
+            ed::EndCreate();
+
+            if (ed::BeginDelete()) {
+              ed::NodeId nodeId = 0;
+              while (ed::QueryDeletedNode(&nodeId)) {
+                if (ed::AcceptDeletedItem()) {
+                  auto id = std::find_if(m_NodeEngine->m_Nodes.begin(), m_NodeEngine->m_Nodes.end(), [nodeId](auto &node) {
+                    return node.ID == nodeId;
+                  });
+                  if (id != m_NodeEngine->m_Nodes.end())
+                    m_NodeEngine->m_Nodes.erase(id);
+                }
+              }
+
+              ed::LinkId linkId = 0;
+              while (ed::QueryDeletedLink(&linkId)) {
+                if (ed::AcceptDeletedItem()) {
+                  auto id = std::find_if(m_NodeEngine->m_Links.begin(), m_NodeEngine->m_Links.end(), [linkId](auto &link) {
+                    return link.ID == linkId;
+                  });
+                  if (id != m_NodeEngine->m_Links.end())
+                    m_NodeEngine->m_Links.erase(id);
+                }
+              }
+            }
+            ed::EndDelete();
+          }
+
+          CherryGUI::SetCursorScreenPos(cursorTopLeft);
+        }
+
+#if 1
+        auto openPopupPosition = CherryGUI::GetMousePos();
+        ed::Suspend();
+        if (ed::ShowNodeContextMenu(&contextNodeId))
+          CherryGUI::OpenPopup("Node Context Menu");
+        else if (ed::ShowPinContextMenu(&contextPinId))
+          CherryGUI::OpenPopup("Pin Context Menu");
+        else if (ed::ShowLinkContextMenu(&contextLinkId))
+          CherryGUI::OpenPopup("Link Context Menu");
+        else if (ed::ShowBackgroundContextMenu()) {
+          CherryGUI::OpenPopup("Create New Node");
+          newNodeLinkPin = nullptr;
+        }
+        ed::Resume();
+
+        ed::Suspend();
+        CherryGUI::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(8, 8));
+        if (CherryGUI::BeginPopup("Node Context Menu")) {
+          auto node = m_NodeEngine->FindNode(contextNodeId);
+
+          CherryGUI::TextUnformatted("Node Context Menu");
+          CherryGUI::Separator();
+          if (node) {
+            CherryGUI::Text("ID: %p", node->ID.AsPointer());
+            CherryGUI::Text(
+                "Type: %s",
+                node->Type == NodeType::Blueprint ? "Blueprint" : (node->Type == NodeType::Tree ? "Tree" : "Comment"));
+            CherryGUI::Text("Inputs: %d", (int)node->Inputs.size());
+            CherryGUI::Text("Outputs: %d", (int)node->Outputs.size());
+          } else
+            CherryGUI::Text("Unknown node: %p", contextNodeId.AsPointer());
+          CherryGUI::Separator();
+          if (CherryGUI::MenuItem("Delete"))
+            ed::DeleteNode(contextNodeId);
+          CherryGUI::EndPopup();
+        }
+
+        if (CherryGUI::BeginPopup("Pin Context Menu")) {
+          auto pin = m_NodeEngine->FindPin(contextPinId);
+
+          CherryGUI::TextUnformatted("Pin Context Menu");
+          CherryGUI::Separator();
+          if (pin) {
+            CherryGUI::Text("ID: %p", pin->ID.AsPointer());
+            if (pin->Node)
+              CherryGUI::Text("Node: %p", pin->Node->ID.AsPointer());
+            else
+              CherryGUI::Text("Node: %s", "<none>");
+          } else
+            CherryGUI::Text("Unknown pin: %p", contextPinId.AsPointer());
+
+          CherryGUI::EndPopup();
+        }
+
+        if (CherryGUI::BeginPopup("Link Context Menu")) {
+          auto link = m_NodeEngine->FindLink(contextLinkId);
+
+          CherryGUI::TextUnformatted("Link Context Menu");
+          CherryGUI::Separator();
+          if (link) {
+            CherryGUI::Text("ID: %p", link->ID.AsPointer());
+            CherryGUI::Text("From: %p", link->StartPinID.AsPointer());
+            CherryGUI::Text("To: %p", link->EndPinID.AsPointer());
+          } else
+            CherryGUI::Text("Unknown link: %p", contextLinkId.AsPointer());
+          CherryGUI::Separator();
+          if (CherryGUI::MenuItem("Delete"))
+            ed::DeleteLink(contextLinkId);
+          CherryGUI::EndPopup();
+        }
+
+        if (CherryGUI::BeginPopup("Create New Node")) {
+          static char searchBuf[128] = "";
+          static bool contextSensitive = false;
+
+          CherryGUI::InputText("Search", searchBuf, IM_ARRAYSIZE(searchBuf));
+          CherryGUI::Checkbox("Context Sensitive", &contextSensitive);
+
+          CherryGUI::Separator();
+
+          std::string searchStr = searchBuf;
+          std::transform(searchStr.begin(), searchStr.end(), searchStr.begin(), ::tolower);
+
+          std::unordered_map<std::string, std::vector<Cherry::NodeSystem::NodeSpawnPossibility>> categories;
+
+          for (const auto &poss : m_NodeEngine->m_NodeGraph->GetPossibilities()) {
+            if (!searchStr.empty()) {
+              std::string nameLower = poss.proper_name;
+              std::string descLower = poss.proper_description;
+              std::transform(nameLower.begin(), nameLower.end(), nameLower.begin(), ::tolower);
+              std::transform(descLower.begin(), descLower.end(), descLower.begin(), ::tolower);
+
+              if (nameLower.find(searchStr) == std::string::npos && descLower.find(searchStr) == std::string::npos)
+                continue;
+            }
+
+            std::string category = poss.category.empty() ? "Primitive" : poss.category;
+            if (!category.empty())
+              category[0] = static_cast<char>(::toupper(category[0]));
+            categories[category].push_back(poss);
+          }
+
+          if (CherryGUI::BeginChild("nodes_scroll", ImVec2(420, 320), true)) {
+            for (auto &[category, nodes] : categories) {
+              bool open = (category == "Primitive");
+              if (CherryGUI::CollapsingHeader(category.c_str(), open ? ImGuiTreeNodeFlags_DefaultOpen : 0)) {
+                for (const auto &poss : nodes) {
+                  CherryGUI::PushID(poss.schema_id.c_str());
+
+                  ImVec2 start = CherryGUI::GetCursorScreenPos();
+                  CherryGUI::BeginGroup();
+
+                  if (!poss.proper_logo.empty()) {
+                    CherryGUI::Image(Cherry::GetTexture(poss.proper_logo), ImVec2(32, 32));
+                    CherryGUI::SameLine();
+                  }
+
+                  CherryGUI::BeginGroup();
+
+                  auto drawHighlighted = [&](const std::string &text) {
+                    if (searchStr.empty()) {
+                      CherryGUI::TextUnformatted(text.c_str());
+                      return;
+                    }
+
+                    std::string lower = text;
+                    std::transform(lower.begin(), lower.end(), lower.begin(), ::tolower);
+
+                    size_t pos = 0, match;
+                    while ((match = lower.find(searchStr, pos)) != std::string::npos) {
+                      if (match > pos)
+                        CherryGUI::TextUnformatted(text.substr(pos, match - pos).c_str());
+
+                      CherryGUI::SameLine(0, 0);
+                      CherryGUI::PushStyleColor(ImGuiCol_Text, IM_COL32(255, 255, 0, 255));
+                      CherryGUI::TextUnformatted(text.substr(match, searchStr.size()).c_str());
+                      CherryGUI::PopStyleColor();
+
+                      pos = match + searchStr.size();
+                      CherryGUI::SameLine(0, 0);
+                    }
+
+                    if (pos < text.size())
+                      CherryGUI::TextUnformatted(text.substr(pos).c_str());
+                  };
+
+                  drawHighlighted(poss.proper_name);
+                  if (!poss.proper_description.empty())
+                    CherryGUI::TextDisabled("%s", poss.proper_description.c_str());
+
+                  CherryGUI::EndGroup();
+                  CherryGUI::EndGroup();
+
+                  if (CherryGUI::IsItemClicked()) {
+                    if (m_NodeEngine->m_NodeGraph->m_NodeSpawnCallback) {
+                      m_NodeEngine->m_NodeGraph->m_NodeSpawnCallback(
+                          poss.schema_id,
+                          openPopupPosition.x,
+                          openPopupPosition.y,
+                          newNodeLinkPin ? std::to_string(newNodeLinkPin->ID.Get()) : "");
+                    }
+                    CherryGUI::CloseCurrentPopup();
+                  }
+
+                  if (CherryGUI::IsItemHovered()) {
+                    ImVec2 end = CherryGUI::GetCursorScreenPos();
+                    end.y = start.y + 48;
+                    ImDrawList *dl = ImGui::GetWindowDrawList();
+                    dl->AddRectFilled(start, end, IM_COL32(60, 60, 60, 100));
+                  }
+
+                  CherryGUI::Dummy(ImVec2(0, 8));
+                  CherryGUI::PopID();
+                }
+              }
+            }
+          }
+          CherryGUI::EndChild();
+
+          CherryGUI::EndPopup();
+        } else
+          createNewNode = false;
+        CherryGUI::PopStyleVar();
+        ed::Resume();
+#endif
+
+        ed::End();
+        auto editorMin = CherryGUI::GetItemRectMin();
+        auto editorMax = CherryGUI::GetItemRectMax();
+
+        if (m_NodeEngine->m_ShowOrdinals) {
+          int nodeCount = ed::GetNodeCount();
+          std::vector<ed::NodeId> orderedNodeIds;
+          orderedNodeIds.resize(static_cast<size_t>(nodeCount));
+          ed::GetOrderedNodeIds(orderedNodeIds.data(), nodeCount);
+
+          auto drawList = CherryGUI::GetWindowDrawList();
+          drawList->PushClipRect(editorMin, editorMax);
+
+          int ordinal = 0;
+          for (auto &nodeId : orderedNodeIds) {
+            auto p0 = ed::GetNodePosition(nodeId);
+            auto p1 = p0 + ed::GetNodeSize(nodeId);
+            p0 = ed::CanvasToScreen(p0);
+            p1 = ed::CanvasToScreen(p1);
+
+            ImGuiTextBuffer builder;
+            builder.appendf("#%d", ordinal++);
+
+            auto textSize = CherryGUI::CalcTextSize(builder.c_str());
+            auto padding = ImVec2(2.0f, 2.0f);
+            auto widgetSize = textSize + padding * 2;
+
+            auto widgetPosition = ImVec2(p1.x, p0.y) + ImVec2(0.0f, -widgetSize.y);
+
+            drawList->AddRectFilled(
+                widgetPosition, widgetPosition + widgetSize, IM_COL32(100, 80, 80, 190), 3.0f, ImDrawFlags_RoundCornersAll);
+            drawList->AddRect(
+                widgetPosition,
+                widgetPosition + widgetSize,
+                IM_COL32(200, 160, 160, 190),
+                3.0f,
+                ImDrawFlags_RoundCornersAll);
+            drawList->AddText(widgetPosition + padding, IM_COL32(255, 255, 255, 255), builder.c_str());
+          }
+
+          drawList->PopClipRect();
+        }
+      }
+
+     private:
+      NodeEngine *m_NodeEngine;
+
+      NodeEngine m_DefaultEngine;
+    };
+  }  // namespace Components
+
+  // End-User API
+  namespace Kit {
+    inline Component &NodeAreaOpen(
+        const Identifier &identifier,
+        const std::string &label,
+        int width,
+        int height,
+        Cherry::NodeSystem::NodeContext *node_ctx,
+        Cherry::NodeSystem::NodeGraph *graph,
+        NodeEngine *node_system = nullptr) {
+      return CherryApp.PushComponent<Cherry::Components::NodeAreaOpen>(
+          identifier, label, width, height, node_ctx, graph, node_system);
+    }
+
+    inline Component &NodeAreaOpen(
+        const std::string &label,
+        int width,
+        int height,
+        Cherry::NodeSystem::NodeContext *node_ctx,
+        Cherry::NodeSystem::NodeGraph *graph,
+        NodeEngine *node_system = nullptr) {
+      return Cherry::Kit::NodeAreaOpen(
+          Application::GenerateUniqueID(label, width, height, node_ctx, graph, node_system, "NodeAreaOpen"),
+          label,
+          width,
+          height,
+          node_ctx,
+          graph,
+          node_system);
+    }
+
+  }  // namespace Kit
+}  // namespace Cherry
+
+#endif  // CHERRY_KIT_NODE_AREA_OPEN

@@ -75,7 +75,6 @@ endif()
 # ---------------------------------------------------------------------------
 file(GLOB_RECURSE CHERRY_SRC CONFIGURE_DEPENDS
     "main/*.[ch]pp" "main/*.c*" 
-    "kit/*.[ch]pp" "kit/*.c*"
 )
 
 add_library(cherry ${CHERRY_LIB_TYPE} ${CHERRY_SRC})
@@ -133,7 +132,7 @@ endif()
 # Include directories
 # ---------------------------------------------------------------------------
 target_include_directories(cherry PUBLIC
-    "${CMAKE_CURRENT_SOURCE_DIR}/src"
+    "${CMAKE_CURRENT_SOURCE_DIR}/"
     "${PROJECT_SOURCE_DIR}/lib/stb_image"
     "${CMAKE_CURRENT_SOURCE_DIR}/lib/imgui"
     "${CMAKE_CURRENT_SOURCE_DIR}/lib/DearMarkdown"
