@@ -1,6 +1,6 @@
 #pragma once
-#include "../../../main/engine/app/app.hpp"
-#include "../../../main/engine/themes/themes.hpp"
+#include <main/engine/app/app.hpp>
+#include <main/engine/themes/themes.hpp>
 
 //
 // LightHighContrast
