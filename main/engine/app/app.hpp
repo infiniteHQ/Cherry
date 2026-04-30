@@ -375,11 +375,7 @@ namespace Cherry {
       HashAnyImpl(seed, value, std::is_invocable<std::hash<T>, T>{});
     }
 
-    static Identifier GetAnonymousID(const std::string &label) {
-      std::size_t label_hash = std::hash<std::string>{}(label);
-
-      return Identifier(std::to_string(label_hash));
-    }
+    static Identifier GetAnonymousID(const std::string &label);
 
     template<typename T>
     static std::shared_ptr<Component> CreateAnonymousComponent(const T &component) {

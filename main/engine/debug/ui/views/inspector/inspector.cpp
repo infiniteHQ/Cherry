@@ -32,7 +32,8 @@ void InspectorView::SetupRenderCallback() {
 }
 
 void InspectorView::RenderSimpleTable(
-    const char *label, const std::unordered_map<std::string, std::string> &map,
+    const char *label,
+    const std::unordered_map<std::string, std::string> &map,
     ImVec4 key_color) {
   if (map.empty()) {
     if (ImGui::CollapsingHeader(label)) {
@@ -44,10 +45,7 @@ void InspectorView::RenderSimpleTable(
   }
 
   if (ImGui::CollapsingHeader(label, ImGuiTreeNodeFlags_DefaultOpen)) {
-    if (ImGui::BeginTable(label, 2,
-                          ImGuiTableFlags_BordersInnerH |
-                              ImGuiTableFlags_RowBg |
-                              ImGuiTableFlags_Resizable)) {
+    if (ImGui::BeginTable(label, 2, ImGuiTableFlags_BordersInnerH | ImGuiTableFlags_RowBg | ImGuiTableFlags_Resizable)) {
       ImGui::TableSetupColumn("Key", ImGuiTableColumnFlags_WidthFixed, 130.0f);
       ImGui::TableSetupColumn("Value");
 
@@ -66,8 +64,7 @@ void InspectorView::RenderSimpleTable(
   }
 }
 
-void InspectorView::RenderComponentDetails(
-    std::shared_ptr<Cherry::Component> &comp) {
+void InspectorView::RenderComponentDetails(std::shared_ptr<Cherry::Component> &comp) {
   if (!comp)
     return;
 
@@ -80,8 +77,7 @@ void InspectorView::RenderComponentDetails(
   ImGui::Text(">");
   ImGui::SameLine();
 
-  ImGui::TextColored(ImVec4(0.9f, 0.8f, 0.4f, 1.0f), "%s",
-                     comp->GetType().c_str());
+  ImGui::TextColored(ImVec4(0.9f, 0.8f, 0.4f, 1.0f), "%s", comp->GetType().c_str());
 
   std::string id_str = comp->GetIdentifier().string();
   if (!id_str.empty()) {
@@ -92,7 +88,7 @@ void InspectorView::RenderComponentDetails(
   }
 
   ImGui::SameLine(ImGui::GetWindowWidth() - 85);
-  if (comp->m_IsComponentRendered) {
+  if (comp->GetIsComponentRendered()) {
     ImGui::TextColored(ImVec4(0.3f, 0.8f, 0.3f, 1.0f), "● Rendered");
   } else {
     ImGui::TextDisabled("○ Hidden");
@@ -104,31 +100,25 @@ void InspectorView::RenderComponentDetails(
   ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 10));
 
   if (ImGui::BeginTabBar("InspectorTabs", ImGuiTabBarFlags_None)) {
-
     if (ImGui::BeginTabItem("Properties")) {
-      RenderSimpleTable("Internal Properties", comp->GetPropertiesMap(),
-                        ImVec4(0.5f, 0.75f, 1.0f, 1.0f));
+      RenderSimpleTable("Internal Properties", comp->GetPropertiesMap(), ImVec4(0.5f, 0.75f, 1.0f, 1.0f));
       ImGui::EndTabItem();
     }
 
     if (ImGui::BeginTabItem("Data")) {
-      RenderSimpleTable("Component Data", comp->GetDataMap(),
-                        ImVec4(0.4f, 1.0f, 0.4f, 1.0f));
+      RenderSimpleTable("Component Data", comp->GetDataMap(), ImVec4(0.4f, 1.0f, 0.4f, 1.0f));
       ImGui::EndTabItem();
     }
 
     if (ImGui::BeginTabItem("Context")) {
-      RenderSimpleTable("Context Properties", comp->GetContextPropertiesMap(),
-                        ImVec4(0.4f, 0.6f, 0.9f, 1.0f));
-      RenderSimpleTable("Context Data", comp->GetContextDataMap(),
-                        ImVec4(1.0f, 0.4f, 1.0f, 1.0f));
+      RenderSimpleTable("Context Properties", comp->GetContextPropertiesMap(), ImVec4(0.4f, 0.6f, 0.9f, 1.0f));
+      RenderSimpleTable("Context Data", comp->GetContextDataMap(), ImVec4(1.0f, 0.4f, 1.0f, 1.0f));
       ImGui::EndTabItem();
     }
 
     if (ImGui::BeginTabItem("API Support")) {
       ImGui::Spacing();
-      if (ImGui::CollapsingHeader("Interface Methods",
-                                  ImGuiTreeNodeFlags_DefaultOpen)) {
+      if (ImGui::CollapsingHeader("Interface Methods", ImGuiTreeNodeFlags_DefaultOpen)) {
         ImGui::Indent();
         ImGui::TextColored(ImVec4(0.8f, 0.5f, 1.0f, 1.0f), "f");
         ImGui::SameLine();
@@ -172,12 +162,10 @@ void InspectorView::Render() {
   ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
 
   static int active_main_tab = 0;
-  const char *main_tabs[] = {"Components", "Effects", "Animations", "Drawing",
-                             "Scripting"};
+  const char *main_tabs[] = { "Components", "Effects", "Animations", "Drawing", "Scripting" };
 
   ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.08f, 0.08f, 0.08f, 1.0f));
-  ImGui::BeginChild("TopNav", ImVec2(0, 34), false,
-                    ImGuiWindowFlags_NoScrollbar);
+  ImGui::BeginChild("TopNav", ImVec2(0, 34), false, ImGuiWindowFlags_NoScrollbar);
 
   ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 8));
   float total_width = ImGui::GetContentRegionAvail().x;
@@ -207,22 +195,16 @@ void InspectorView::Render() {
   ImGui::PopStyleColor();
   ImGui::Separator();
   if (active_main_tab == 0) {
-
     float left_panel_w = ImGui::GetContentRegionAvail().x * 0.35f;
 
     ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.11f, 0.11f, 0.11f, 1.0f));
     ImGui::BeginChild("LeftTreePanel", ImVec2(left_panel_w, 0), true);
 
     ImGui::Spacing();
-    if (ImGui::TreeNodeEx("Application Pools",
-                          ImGuiTreeNodeFlags_DefaultOpen |
-                              ImGuiTreeNodeFlags_SpanAvailWidth)) {
-
+    if (ImGui::TreeNodeEx("Application Pools", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_SpanAvailWidth)) {
       std::vector<std::shared_ptr<Cherry::Component>> all_comps;
-      all_comps.insert(all_comps.end(), pool->IdentifiedComponents.begin(),
-                       pool->IdentifiedComponents.end());
-      all_comps.insert(all_comps.end(), pool->AnonymousComponents.begin(),
-                       pool->AnonymousComponents.end());
+      all_comps.insert(all_comps.end(), pool->IdentifiedComponents.begin(), pool->IdentifiedComponents.end());
+      all_comps.insert(all_comps.end(), pool->AnonymousComponents.begin(), pool->AnonymousComponents.end());
 
       for (auto &comp : all_comps) {
         if (!comp)
@@ -239,12 +221,10 @@ void InspectorView::Render() {
         ImVec2 p = ImGui::GetCursorScreenPos();
         if (is_selected)
           draw_list->AddRectFilled(
-              p, ImVec2(p.x + 3, p.y + ImGui::GetTextLineHeightWithSpacing()),
-              IM_COL32(100, 200, 255, 255));
+              p, ImVec2(p.x + 3, p.y + ImGui::GetTextLineHeightWithSpacing()), IM_COL32(100, 200, 255, 255));
 
         ImGui::Indent(2);
-        if (ImGui::Selectable(label.c_str(), is_selected,
-                              ImGuiTreeNodeFlags_SpanAvailWidth)) {
+        if (ImGui::Selectable(label.c_str(), is_selected, ImGuiTreeNodeFlags_SpanAvailWidth)) {
           s_SelectedComponent = comp;
         }
 
@@ -264,17 +244,14 @@ void InspectorView::Render() {
     if (s_SelectedComponent) {
       RenderComponentDetails(s_SelectedComponent);
     } else {
-      ImGui::SetCursorPos(ImVec2(ImGui::GetContentRegionAvail().x * 0.5f - 100,
-                                 ImGui::GetContentRegionAvail().y * 0.45f));
+      ImGui::SetCursorPos(ImVec2(ImGui::GetContentRegionAvail().x * 0.5f - 100, ImGui::GetContentRegionAvail().y * 0.45f));
       ImGui::TextDisabled("Select a component to inspect");
     }
     ImGui::EndChild();
 
   } else {
-    ImGui::BeginChild("WIPContent", ImVec2(0, 0), true,
-                      ImGuiWindowFlags_NoScrollbar);
-    ImGui::SetCursorPos(ImVec2(ImGui::GetContentRegionAvail().x * 0.4f,
-                               ImGui::GetContentRegionAvail().y * 0.4f));
+    ImGui::BeginChild("WIPContent", ImVec2(0, 0), true, ImGuiWindowFlags_NoScrollbar);
+    ImGui::SetCursorPos(ImVec2(ImGui::GetContentRegionAvail().x * 0.4f, ImGui::GetContentRegionAvail().y * 0.4f));
     ImGui::TextColored(ImVec4(1, 0.6f, 0, 1), "Work In Progress");
     ImGui::SetCursorPosX(ImGui::GetContentRegionAvail().x * 0.4f);
     ImGui::TextDisabled("Come back at v1.6!");
@@ -284,4 +261,4 @@ void InspectorView::Render() {
   ImGui::PopStyleVar(3);
 }
 
-#endif // CHERRY_DEBUG
+#endif  // CHERRY_DEBUG

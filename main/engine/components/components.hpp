@@ -1,16 +1,26 @@
+//
+//  components.hpp
+//  Headers for cherry components (for UI objects OOP GUIs)
+//
+//  Copyright (c) 2024-2026 Diego Moreno
+//  Copyright (c) 2026 Infinite
+//
+//	This work is licensed under the terms of the MIT license.
+//	For a copy, see <https://opensource.org/licenses/MIT>.
+//
+
 #pragma once
 
+#include <main/core/color/color.hpp>
 #include <mutex>
+#include <options.hpp>
 #include <string>
 #include <unordered_map>
-
-#include "../../core/color/color.hpp"
-#include "../options.hpp"
 
 #ifndef CHERRY_COMPONENT_H
 #define CHERRY_COMPONENT_H
 
-#include "../identifier/identifier.hpp"
+#include <main/engine/identifier/identifier.hpp>
 
 namespace Cherry {
 
@@ -18,6 +28,26 @@ namespace Cherry {
    public:
     Component(const Identifier &id);
     Component();
+
+    // Main setters
+    void SetType(const std::string &type);
+    void SetIdentifier(const Identifier &id);
+    void SetRenderMode(RenderMode prop);
+    void SetIsComponentRendered(const bool &value);
+
+    // Main getters
+    const Identifier &GetIdentifier() const;
+    const std::string &GetType() const;
+    const std::unordered_map<std::string, std::string> &GetPropertiesMap() const;
+    const std::unordered_map<std::string, std::string> &GetDataMap() const;
+    const std::unordered_map<std::string, std::string> &GetContextPropertiesMap() const;
+    const std::unordered_map<std::string, std::string> &GetContextDataMap() const;
+    const RenderMode &GetRenderMode() const;
+    const bool &GetIsComponentRendered() const;
+
+    // Utils
+    void ClearProperty(const std::string &key);
+    void ClearData(const std::string &key);
 
     // Properties
     std::string SetProperty(const std::string &key, const std::string &val);
@@ -41,62 +71,38 @@ namespace Cherry {
     template<typename T>
     T GetDataAs(const std::string &key);
 
-    void ClearProperty(const std::string &key);
-    void ClearData(const std::string &key);
-
     void RefreshContextProperties();
-
-    // Identifier
-    void SetIdentifier(const Identifier &id);
-    const Identifier &GetIdentifier() const;
-
-    const std::string &GetType() const;
-    void SetType(const std::string &type);
-
     void RenderWrapper();
 
-    RenderMode GetRenderMode() {
-      return m_RenderMode;
-    }
-
-    void SetRenderMode(RenderMode prop) {
-      m_RenderMode = prop;
-    }
-
+    // Overrideable functions
     virtual void Render() { };
     virtual void Refresh() { };
 
-    const std::unordered_map<std::string, std::string> &GetPropertiesMap() const {
-      return m_Properties;
-    }
-    const std::unordered_map<std::string, std::string> &GetDataMap() const {
-      return m_Data;
-    }
-    const std::unordered_map<std::string, std::string> &GetContextPropertiesMap() const {
-      return m_ContextProperties;
-    }
-    const std::unordered_map<std::string, std::string> &GetContextDataMap() const {
-      return m_ContextData;
-    }
-
-    bool m_IsComponentRendered = false;
-
    private:
+    // Identification
     Identifier m_Identifier;
     RenderMode m_RenderMode = RenderMode::None;
 
-    std::string m_ComponentType = "undefined";  // Optionnal, some parent components can ask for a specific
-                                                // type (like NodeArea and Nodes), this type member can help
-                                                // to introduce a type safe component management
-    std::unordered_map<std::string, std::string> m_ContextProperties;  // Cpy of props registered in the cherry context
-                                                                       // (from permanent or ontime), first choice
-    std::unordered_map<std::string, std::string> m_Properties;  // Cpy of props registered in the component, second choice
+    // Optionnal, some parent components can ask for a specific
+    // type (like NodeArea and Nodes), this type member can help
+    // to introduce a type safe component management
+    std::string m_ComponentType = "undefined";
+
+    // States
+    bool m_IsComponentRendered = false;
+
+    // Properties
+    // Cpy of props registered in the cherry context
+    // (from permanent or ontime), first choice
+    std::unordered_map<std::string, std::string> m_ContextProperties;
+    // Cpy of props registered in the component, second choice
+    std::unordered_map<std::string, std::string> m_Properties;
     std::unordered_map<std::string, std::string> m_ContextData;
     std::unordered_map<std::string, std::string> m_Data;
-
     std::unordered_map<std::string, std::string> m_CachedProperties;
   };
 
+  // Templates utils for data and properties of components
   template<>
   inline std::string Component::GetDataAs<std::string>(const std::string &key) {
     return GetData(key);

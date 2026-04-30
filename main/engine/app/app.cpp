@@ -2501,14 +2501,14 @@ namespace Cherry {
         std::remove_if(
             components.begin(),
             components.end(),
-            [](const std::shared_ptr<Component> &component) { return !component->m_IsComponentRendered; }),
+            [](const std::shared_ptr<Component> &component) { return !component->GetIsComponentRendered(); }),
         components.end());
 
     anonymous_components.erase(
         std::remove_if(
             anonymous_components.begin(),
             anonymous_components.end(),
-            [](const std::shared_ptr<Component> &component) { return !component->m_IsComponentRendered; }),
+            [](const std::shared_ptr<Component> &component) { return !component->GetIsComponentRendered(); }),
         anonymous_components.end());
   }
 
@@ -2518,11 +2518,11 @@ namespace Cherry {
     }
 
     for (auto &component : pool->IdentifiedComponents) {
-      component->m_IsComponentRendered = false;
+      component->SetIsComponentRendered(false);
     }
 
     for (auto &component : pool->AnonymousComponents) {
-      component->m_IsComponentRendered = false;
+      component->SetIsComponentRendered(false);
     }
   }
 
@@ -2807,6 +2807,11 @@ namespace Cherry {
         existing_locales.push_back(new_item);
       }
     }
+  }
+
+  Identifier Application::GetAnonymousID(const std::string &label) {
+    std::size_t label_hash = std::hash<std::string>{}(label);
+    return Identifier(std::to_string(label_hash));
   }
 
   Component &Application::GetAnonymousComponent(const Identifier &identifier) {
