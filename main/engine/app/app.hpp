@@ -156,6 +156,7 @@ namespace Cherry {
     AppWindow &GetSafeCurrentRenderedAppWindow();
 
     // Set static components
+    static void SetCurrentRenderedAppWindow(std::shared_ptr<Cherry::AppWindow> appWindow);
     static void SetCurrentDragDropState(const std::shared_ptr<Cherry::WindowDragDropState> &state);
     static void SetValidDropZoneFounded(const bool &founded);
     static void SetCurrentDragDropStateDragOwner(const std::string &new_name);
@@ -184,22 +185,11 @@ namespace Cherry {
     static std::optional<CherryKey> StringToCherryKey(std::string str);
 
     // Set callbacks
-    void SetCloseCallback(const std::function<void()> &closeCallback) {
-      m_CloseCallback = closeCallback;
-    }
-    void SetMenubarCallback(const std::function<void()> &menubarCallback) {
-      m_MenubarCallback = menubarCallback;
-    }
-    void SetFramebarCallback(const std::function<void()> &framebarCallback) {
-      m_FramebarCallback = framebarCallback;
-    }
-    void SetCloseCallback(const std::function<bool()> &closeCallback) {
-      m_CloseCallback = closeCallback;
-    }
-    void SetMainRenderCallback(const std::function<void()> &mainRenderCallback) {
-      m_MainRenderCallback = mainRenderCallback;
-    }
-
+    void SetCloseCallback(const std::function<void()> &closeCallback);
+    void SetMenubarCallback(const std::function<void()> &menubarCallback);
+    void SetFramebarCallback(const std::function<void()> &framebarCallback);
+    void SetCloseCallback(const std::function<bool()> &closeCallback);
+    void SetMainRenderCallback(const std::function<void()> &mainRenderCallback);
     void SetCurrentRedockEvent(const std::shared_ptr<Cherry::WindowDragDropState> &state);
 
     std::string CertifyWindowName(const std::string &name);
@@ -257,9 +247,7 @@ namespace Cherry {
     bool IsMouseDoubleClicked(int btn);
 
     Window *GetWindowByHandle(SDL_Window *window_handle);
-    std::string GetRootPath() {
-      return m_RootPath;
-    }
+    std::string GetRootPath();
 
     bool IsMaximized(const std::shared_ptr<Window> &win) const;
 
@@ -276,9 +264,7 @@ namespace Cherry {
     void Close();
     bool IsMaximized() const;
     float GetTime();
-    bool IsTitleBarHovered() const {
-      return m_TitleBarHovered;
-    }
+    bool IsTitleBarHovered() const;
 
     ImDrawData *RenderWindow(Window *window);
     void InitializeWindowStates();
@@ -311,9 +297,7 @@ namespace Cherry {
 
     std::string GetComponentData(const Identifier &id, const std::string &topic);
 
-    std::string GetName() {
-      return m_DefaultSpecification.Name;
-    }
+    std::string GetName();
 
     Cherry::Component &GetSafeLastComponent();
     void SetLastComponent(Component *component);
@@ -345,22 +329,7 @@ namespace Cherry {
     const std::string &GetLogoPathForAppWindow(const std::string &windowId);
     void ClearThemes();
 
-    // TODO:
-    // SetDataToComponentPool
-    // SetPopertyToComponentPool
-    // GetDataFromComponentPool
-    // GetPopertyFromComponentPool
-    // CherryNextComponent : Set-Get/Property-Data, CreateOnly, Inline
-
-    // WARNING
-    // A component array is différent than a component group.
-    // Component group : Serve as "namespace" to separe component types or nature
-    // and add logic for a group Component array : Where components will be stored
-    // and managed by the runtime
-
-    static Identifier GetAnonymousID() {
-      return Identifier(Identifier::GetUniqueIndex());
-    }
+    static Identifier GetAnonymousID();
 
     template<typename... Args>
     static Identifier GenerateUniqueID(const Args &...args) {
@@ -513,59 +482,19 @@ namespace Cherry {
     void DestroyComponent(const Identifier &id, ComponentsPool *pool = nullptr);
     void RefreshComponent(const Identifier &id, ComponentsPool *pool = nullptr);
 
-    void PushComponentRenderMode(Cherry::RenderMode render_mode) {
-      m_RenderModeStack.push_back(render_mode);
-    }
+    void PushComponentRenderMode(Cherry::RenderMode render_mode);
+    void PopRenderMode(int number = 1);
+    RenderMode GetRenderMode() const;
+    bool IsValidRenderMode(Cherry::RenderMode mode) const;
 
-    void PopRenderMode(int number = 1) {
-      for (int i = 0; i < number && !m_RenderModeStack.empty(); ++i) {
-        m_RenderModeStack.pop_back();
-      }
-    }
-
-    Cherry::RenderMode GetRenderMode() const {
-      auto stackCopy = m_RenderModeStack;
-      if (!stackCopy.empty()) {
-        return stackCopy.back();
-      }
-
-      Cherry::RenderMode fallback = CherryNextComponent.GetRenderMode();
-
-      if (IsValidRenderMode(fallback)) {
-        return fallback;
-      }
-
-      return Cherry::RenderMode::None;
-    }
-
-    bool IsValidRenderMode(Cherry::RenderMode mode) const {
-      return mode != Cherry::RenderMode::None;
-    }
     // Different than the default theme !
     // When the user specify this, the runtime will search level 1 theme at
     // GetThemeProperty(theme, key) "manually", and not from the active theme.
     void SetTheme(const std::string &theme_name);
     void RemoveTheme();
-
-    // FIXME : Groups need to be on the CherryID, not on the pool.
-    // FIXME : Component Arrays need also to be on the CherryID, when we create
-    // the component we see if the CherryID have a group.
-    // FIXME : Add the Identifier class here, on the app.hpp
-    // std::vector<std::shared_ptr<ComponentGroup>> m_ComponentGroups;  // List of
-    // components in groups
-    //
-    std::vector<std::string> m_PushedComponentGroups;                  // List of groups
-    std::vector<std::shared_ptr<Component>> m_PushedCurrentComponent;  // List of groups
-
     void SetPropertyOnGroup(const std::string &group_name, const std::string &key, const std::string &value);
 
     void SetDataOnGroup(const std::string &group_name, const std::string &key, const std::string &value);
-
-    // Add common property/data to all group components
-
-    // Resources
-    // TODO: move out of application class since this can't be tied
-    //            to application lifetime
 
 #ifdef CHERRY_ENABLE_AUDIO
     ma_engine m_AudioEngine;
@@ -675,6 +604,9 @@ namespace Cherry {
     std::vector<std::shared_ptr<Window>> m_Windows;
     std::vector<std::shared_ptr<AppWindow>> m_AppWindows;
     std::vector<std::shared_ptr<AppWindow>> m_SavedAppWindows;
+
+    std::vector<std::string> m_PushedComponentGroups;                  // List of groups
+    std::vector<std::shared_ptr<Component>> m_PushedCurrentComponent;  // List of groups
 
     bool m_TitleBarHovered = false;
     ComponentsPool m_ApplicationComponentPool;
