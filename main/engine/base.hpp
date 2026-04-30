@@ -1,296 +1,329 @@
 #pragma once
 
-#include "../../src/core/color.hpp"
-#include "../../src/layer.hpp"
-#include "image/image.hpp"
-#include "themes/themes.hpp"
-
 #include <atomic>
 #include <memory>
 #include <mutex>
 #include <string>
 
+#include "../core/core/color.hpp"
+#include "../core/layer.hpp"
+#include "image/image.hpp"
+#include "themes/themes.hpp"
+
 namespace Cherry {
-enum class WindowType {
-  Docking,
-  Tabs,
-  Unique,
-};
+  enum class WindowType {
+    Docking,
+    Tabs,
+    Unique,
+  };
 
-enum class ComponentRefreshRate {
-  EveryFrame, // Immediate mode
-};
+  enum class ComponentRefreshRate {
+    EveryFrame,  // Immediate mode
+  };
 
-enum class RenderMode {
-  CreateOnly,
-  Inline,
-  None,
-};
+  enum class RenderMode {
+    CreateOnly,
+    Inline,
+    None,
+  };
 
-enum class Optimization {
-  StopModeOptimization, // An innactive window will be stopped (warning: dont
-                        // choose stop mode on important passive windows)
-  LowModeOptimization,  // An innactive window will be in low mode (less fps,
-                        // better performances)
-  NoOptimization,       // Zero mesures of optimization in the render engine
-};
+  enum class Optimization {
+    StopModeOptimization,  // An innactive window will be stopped (warning: dont
+                           // choose stop mode on important passive windows)
+    LowModeOptimization,   // An innactive window will be in low mode (less fps,
+                           // better performances)
+    NoOptimization,        // Zero mesures of optimization in the render engine
+  };
 
-enum class Runtime {
-  MultiThreadAppWindows, // One thread per app window (not impl yet)
-  MultiThreadWindows,    // One thread per window
-  SingleThread,          // One thread per window
-};
+  enum class Runtime {
+    MultiThreadAppWindows,  // One thread per app window (not impl yet)
+    MultiThreadWindows,     // One thread per window
+    SingleThread,           // One thread per window
+  };
 
-enum class WindowRenderingMethod {
-  DockingWindows, // Unlimited windows with docking
-  TabWidows,      // Unlimited windows without docking.
-  SimpleWindow,   // Need to Put one single window
-  SimpleRender    // Need to use the MainRenderChannel
-};
+  enum class WindowRenderingMethod {
+    DockingWindows,  // Unlimited windows with docking
+    TabWidows,       // Unlimited windows without docking.
+    SimpleWindow,    // Need to Put one single window
+    SimpleRender     // Need to use the MainRenderChannel
+  };
 
-enum class WindowMenubar { CustomTitleBar };
+  enum class WindowMenubar { CustomTitleBar };
 
-enum class DockEmplacement {
-  // Unknow/Unset position
-  DockBlank,
+  enum class DockEmplacement {
+    // Unknow/Unset position
+    DockBlank,
 
-  // Entire place of main dock node
-  DockFull,
+    // Entire place of main dock node
+    DockFull,
 
-  // Main positions
-  DockUp,
-  DockDown,
-  DockRight,
-  DockLeft,
+    // Main positions
+    DockUp,
+    DockDown,
+    DockRight,
+    DockLeft,
 
-  // Secondary, Only used for default behaviors.
-  DockUpLeft,    // AppWindow at up + DockLeft
-  DockUpRight,   // AppWindow at up + DockRight
-  DockDownLeft,  // AppWindow at down + DockLeft
-  DockDownRight, // AppWindow at down + DockRight
-  DockLeftDown,  // AppWindow at left + DockDown
-  DockLeftUp,    // AppWindow at left + DockUp
-  DockRightUp,   // AppWindow at right + DockDown
-  DockRightDown  // AppWindow at right + DockUp
-};
+    // Secondary, Only used for default behaviors.
+    DockUpLeft,     // AppWindow at up + DockLeft
+    DockUpRight,    // AppWindow at up + DockRight
+    DockDownLeft,   // AppWindow at down + DockLeft
+    DockDownRight,  // AppWindow at down + DockRight
+    DockLeftDown,   // AppWindow at left + DockDown
+    DockLeftUp,     // AppWindow at left + DockUp
+    DockRightUp,    // AppWindow at right + DockDown
+    DockRightDown   // AppWindow at right + DockUp
+  };
 
-struct WindowClickEvent {
-  int button;
-  int action;
-  int mods;
-};
+  struct WindowClickEvent {
+    int button;
+    int action;
+    int mods;
+  };
 
-struct WindowMoveEvent {
-  double xpos;
-  double ypos;
-};
+  struct WindowMoveEvent {
+    double xpos;
+    double ypos;
+  };
 
-struct WindowDragDropState {
-  std::string LastDraggingWindow = "unknown";
-  std::string LastDraggingAppWindowHost = "unknown";
-  std::string LastDraggingAppWindow = "unknown";
-  bool LastDraggingAppWindowHaveParent = false;
-  bool DockIsDragging = false;
-  Cherry::DockEmplacement LastDraggingPlace =
-      Cherry::DockEmplacement::DockBlank;
-  bool CreateNewWindow = false;
-  bool FromSave = false;
-  std::string DragOwner = "none";
-  int mouseX;
-  int mouseY;
-};
+  struct WindowDragDropState {
+    std::string LastDraggingWindow = "unknown";
+    std::string LastDraggingAppWindowHost = "unknown";
+    std::string LastDraggingAppWindow = "unknown";
+    bool LastDraggingAppWindowHaveParent = false;
+    bool DockIsDragging = false;
+    Cherry::DockEmplacement LastDraggingPlace = Cherry::DockEmplacement::DockBlank;
+    bool CreateNewWindow = false;
+    bool FromSave = false;
+    std::string DragOwner = "none";
+    int mouseX;
+    int mouseY;
+  };
 
-enum class WindowThemeColorEntry { FrameColor, BackgroundColor, BorderColor };
+  enum class WindowThemeColorEntry { FrameColor, BackgroundColor, BorderColor };
 
-struct WindowThemeColorObject {
-  ImGuiCol_ m_Entry;
-  ImVec4 m_Value;
+  struct WindowThemeColorObject {
+    ImGuiCol_ m_Entry;
+    ImVec4 m_Value;
 
-  WindowThemeColorObject(ImGuiCol_ entry, const ImVec4 val)
-      : m_Entry(entry), m_Value(val) {}
-};
-
-struct WindowThemeColor {
-  std::vector<WindowThemeColorObject> Colors;
-
-  void SetColor(ImGuiCol_ key, std::string val) {
-    Colors.push_back(WindowThemeColorObject(key, Cherry::HexToRGBA(val)));
-  }
-};
-
-struct WindowMetaData {
-  std::string Description = "";
-  std::string LogoPath = "";
-};
-
-struct ApplicationSpecification {
-  std::string Name = "Cherry App";
-  std::string IconPath;
-  std::string FavIconPath;
-  std::string LastFavIconPath;
-  std::string UniqueAppWindowName;
-  std::string DefaultWindowName;
-
-  uint32_t Width = 1850;
-  uint32_t Height = 1000;
-  uint32_t MinWidth = 100;
-  uint32_t MinHeight = 100;
-  uint32_t MaxFps = 60;
-  uint32_t MaxFpsLowMode = 15;
-
-  float GlobalScale = 0.84f;
-  float FontGlobalScale = 0.83f;
-
-  bool CenterWindow =
-      false; // Window will be created in the center of primary monitor
-  bool DisableTitle = false;
-  bool DisableTitleBar = false;
-  bool UseAudioService = false;
-  bool DisableLogo = false;
-  bool DisableMenubar = false;
-  bool DisableResize = false;
-  bool WindowResizeable = true;
-  bool WindowOnlyClosable = false;
-  bool WindowSaves = false;
-  bool DisableWindowManagerTitleBar = false;
-  bool UsingCloseCallback = false;
-  bool CustomTitlebar = false;
-  bool DebugMode = false;
-
-  std::function<void()> MenubarCallback;
-  std::function<void()> FramebarCallback;
-  std::function<void()> MainRenderCallback;
-  std::function<void()> CloseCallback;
-
-  WindowRenderingMethod RenderMode = WindowRenderingMethod::SimpleRender;
-  Runtime RuntimeMode = Runtime::SingleThread;
-  Optimization OptimizationMode = Optimization::NoOptimization;
-
-  std::vector<Theme> Themes;
-  std::string SelectedTheme = "undefined";
-
-public:
-  WindowThemeColor ColorTheme;
-  void UseCustomTitleBar() { CustomTitlebar = true; }
-
-  void SetRenderMode(WindowRenderingMethod method) { RenderMode = method; }
-
-  void SetDebugMode(bool enabled) { DebugMode = enabled; }
-
-  void AddTheme(Theme theme, const std::string &themeid = "") {
-    if (!themeid.empty()) {
-      theme.SetName(themeid);
+    WindowThemeColorObject(ImGuiCol_ entry, const ImVec4 val) : m_Entry(entry), m_Value(val) {
     }
-    Themes.push_back(theme);
+  };
 
-    if (Themes.size() == 1 && SelectedTheme == "undefined") {
-      SelectedTheme = themeid;
+  struct WindowThemeColor {
+    std::vector<WindowThemeColorObject> Colors;
+
+    void SetColor(ImGuiCol_ key, std::string val) {
+      Colors.push_back(WindowThemeColorObject(key, Cherry::HexToRGBA(val)));
     }
-  }
+  };
 
-  void SetDefaultTheme(const std::string &selected_theme) {
-    SelectedTheme = selected_theme;
-  }
+  struct WindowMetaData {
+    std::string Description = "";
+    std::string LogoPath = "";
+  };
 
-  void EnableDebugMode() { DebugMode = true; }
+  struct ApplicationSpecification {
+    std::string Name = "Cherry App";
+    std::string IconPath;
+    std::string FavIconPath;
+    std::string LastFavIconPath;
+    std::string UniqueAppWindowName;
+    std::string DefaultWindowName;
 
-  void SetCloseCallback(const std::function<void()> &closeCallback) {
-    CloseCallback = closeCallback;
-  }
+    uint32_t Width = 1850;
+    uint32_t Height = 1000;
+    uint32_t MinWidth = 100;
+    uint32_t MinHeight = 100;
+    uint32_t MaxFps = 60;
+    uint32_t MaxFpsLowMode = 15;
 
-  void SetMenubarCallback(const std::function<void()> &menubarCallback) {
-    MenubarCallback = menubarCallback;
-  }
+    float GlobalScale = 0.84f;
+    float FontGlobalScale = 0.83f;
 
-  void SetFramebarCallback(const std::function<void()> &framebarCallback) {
-    FramebarCallback = framebarCallback;
-  }
+    bool CenterWindow = false;  // Window will be created in the center of primary monitor
+    bool DisableTitle = false;
+    bool DisableTitleBar = false;
+    bool UseAudioService = false;
+    bool DisableLogo = false;
+    bool DisableMenubar = false;
+    bool DisableResize = false;
+    bool WindowResizeable = true;
+    bool WindowOnlyClosable = false;
+    bool WindowSaves = false;
+    bool DisableWindowManagerTitleBar = false;
+    bool UsingCloseCallback = false;
+    bool CustomTitlebar = false;
+    bool DebugMode = false;
 
-  void SetCloseCallback(const std::function<bool()> &closeCallback) {
-    CloseCallback = closeCallback;
-  }
+    std::function<void()> MenubarCallback;
+    std::function<void()> FramebarCallback;
+    std::function<void()> MainRenderCallback;
+    std::function<void()> CloseCallback;
 
-  void SetMainRenderCallback(const std::function<void()> &mainRenderCallback) {
-    MainRenderCallback = mainRenderCallback;
-  }
+    WindowRenderingMethod RenderMode = WindowRenderingMethod::SimpleRender;
+    Runtime RuntimeMode = Runtime::SingleThread;
+    Optimization OptimizationMode = Optimization::NoOptimization;
 
-  void UseAudio() { UseAudioService = true; }
+    std::vector<Theme> Themes;
+    std::string SelectedTheme = "undefined";
 
-  void UseWindowSaves() { WindowSaves = true; }
+   public:
+    WindowThemeColor ColorTheme;
+    void UseCustomTitleBar() {
+      CustomTitlebar = true;
+    }
 
-  void DisableWindowTitle() { DisableTitle = true; }
+    void SetRenderMode(WindowRenderingMethod method) {
+      RenderMode = method;
+    }
 
-  void DisableDesktopTitleBar() { DisableWindowManagerTitleBar = true; }
+    void SetDebugMode(bool enabled) {
+      DebugMode = enabled;
+    }
 
-  void SetIconPath(const std::string &path) { IconPath = path; }
+    void AddTheme(Theme theme, const std::string &themeid = "") {
+      if (!themeid.empty()) {
+        theme.SetName(themeid);
+      }
+      Themes.push_back(theme);
 
-  void SetFavIconPath(const std::string &path) { FavIconPath = path; }
+      if (Themes.size() == 1 && SelectedTheme == "undefined") {
+        SelectedTheme = themeid;
+      }
+    }
 
-  void SetUniqueAppWindowName(const std::string &name) {
-    UniqueAppWindowName = name;
-  }
+    void SetDefaultTheme(const std::string &selected_theme) {
+      SelectedTheme = selected_theme;
+    }
 
-  void SetCustomTitlebar(bool custom_titlebar) {
-    CustomTitlebar = custom_titlebar;
-  }
+    void EnableDebugMode() {
+      DebugMode = true;
+    }
 
-  void SetName(const std::string &name) { Name = name; }
+    void SetCloseCallback(const std::function<void()> &closeCallback) {
+      CloseCallback = closeCallback;
+    }
 
-  void SetDefaultWindowName(const std::string &name) {
-    DefaultWindowName = name;
-  }
+    void SetMenubarCallback(const std::function<void()> &menubarCallback) {
+      MenubarCallback = menubarCallback;
+    }
 
-  void SetMinimumWidth(int minimum_width) { MinWidth = minimum_width; }
+    void SetFramebarCallback(const std::function<void()> &framebarCallback) {
+      FramebarCallback = framebarCallback;
+    }
 
-  void SetMinimumHeight(int minimum_height) { MinHeight = minimum_height; }
+    void SetCloseCallback(const std::function<bool()> &closeCallback) {
+      CloseCallback = closeCallback;
+    }
 
-  void SetDefaultHeight(int default_height) { Height = default_height; }
+    void SetMainRenderCallback(const std::function<void()> &mainRenderCallback) {
+      MainRenderCallback = mainRenderCallback;
+    }
 
-  void SetDefaultWidth(int default_width) { Width = default_width; }
+    void UseAudio() {
+      UseAudioService = true;
+    }
 
-  void SetGlobalScale(float global_scale) { GlobalScale = global_scale; }
+    void UseWindowSaves() {
+      WindowSaves = true;
+    }
 
-  void SetFontGlobalScale(float font_scale) { FontGlobalScale = font_scale; }
-};
+    void DisableWindowTitle() {
+      DisableTitle = true;
+    }
 
-struct ReattachRequest {
-  ApplicationSpecification m_Specification;
-  std::string m_AppWindowName;
-  bool m_IsFinished = true;
-  bool m_ExistingWindow = false;
-};
+    void DisableDesktopTitleBar() {
+      DisableWindowManagerTitleBar = true;
+    }
 
-struct RedockRequest {
-  std::string m_ParentWindow;
-  std::string m_ParentAppWindowHost;
-  std::string m_ParentAppWindow;
-  DockEmplacement m_DockPlace;
-  bool m_IsHandled;
-  bool m_FromSave;
-  bool m_FromNewWindow;
-  bool m_IsObsolete = false;
-};
+    void SetIconPath(const std::string &path) {
+      IconPath = path;
+    }
 
-struct SimpleStorageItem {
-  std::string m_Data;
-  bool m_Persistant;
+    void SetFavIconPath(const std::string &path) {
+      FavIconPath = path;
+    }
 
-  SimpleStorageItem(const std::string &data, const bool &is_persistant)
-      : m_Persistant(is_persistant), m_Data(data) {};
-};
+    void SetUniqueAppWindowName(const std::string &name) {
+      UniqueAppWindowName = name;
+    }
 
-struct WindowStorageItem {
-  nlohmann::json m_JsonData;
-  bool m_Persistant;
+    void SetCustomTitlebar(bool custom_titlebar) {
+      CustomTitlebar = custom_titlebar;
+    }
 
-  WindowStorageItem(const nlohmann::json &data, const bool &is_persistant)
-      : m_Persistant(is_persistant), m_JsonData(data) {};
-};
+    void SetName(const std::string &name) {
+      Name = name;
+    }
 
-struct EnumClassHash {
-  template <typename T> std::size_t operator()(T t) const {
-    return static_cast<std::size_t>(t);
-  }
-};
+    void SetDefaultWindowName(const std::string &name) {
+      DefaultWindowName = name;
+    }
 
-} // namespace Cherry
+    void SetMinimumWidth(int minimum_width) {
+      MinWidth = minimum_width;
+    }
+
+    void SetMinimumHeight(int minimum_height) {
+      MinHeight = minimum_height;
+    }
+
+    void SetDefaultHeight(int default_height) {
+      Height = default_height;
+    }
+
+    void SetDefaultWidth(int default_width) {
+      Width = default_width;
+    }
+
+    void SetGlobalScale(float global_scale) {
+      GlobalScale = global_scale;
+    }
+
+    void SetFontGlobalScale(float font_scale) {
+      FontGlobalScale = font_scale;
+    }
+  };
+
+  struct ReattachRequest {
+    ApplicationSpecification m_Specification;
+    std::string m_AppWindowName;
+    bool m_IsFinished = true;
+    bool m_ExistingWindow = false;
+  };
+
+  struct RedockRequest {
+    std::string m_ParentWindow;
+    std::string m_ParentAppWindowHost;
+    std::string m_ParentAppWindow;
+    DockEmplacement m_DockPlace;
+    bool m_IsHandled;
+    bool m_FromSave;
+    bool m_FromNewWindow;
+    bool m_IsObsolete = false;
+  };
+
+  struct SimpleStorageItem {
+    std::string m_Data;
+    bool m_Persistant;
+
+    SimpleStorageItem(const std::string &data, const bool &is_persistant) : m_Persistant(is_persistant), m_Data(data) { };
+  };
+
+  struct WindowStorageItem {
+    nlohmann::json m_JsonData;
+    bool m_Persistant;
+
+    WindowStorageItem(const nlohmann::json &data, const bool &is_persistant)
+        : m_Persistant(is_persistant),
+          m_JsonData(data) { };
+  };
+
+  struct EnumClassHash {
+    template<typename T>
+    std::size_t operator()(T t) const {
+      return static_cast<std::size_t>(t);
+    }
+  };
+
+}  // namespace Cherry

@@ -20,6 +20,9 @@
 ///////////////////////////////////////////////////////////////
 /// Backends and Render engine                              ///
 ///////////////////////////////////////////////////////////////
+#include "./main/core/entry_point.hpp"
+#include "./main/core/layer.hpp"
+#include "./main/core/random.hpp"
 #include "./main/engine/app/app.hpp"
 #include "./main/engine/components/components.hpp"
 #include "./main/engine/embed/assets/icons.h"
@@ -30,9 +33,6 @@
 #include "./main/engine/scripting/scripting.hpp"
 #include "./main/engine/ui/notifications/notifications.hpp"
 #include "./main/engine/ui/ui.hpp"
-#include "./src/entry_point.hpp"
-#include "./src/layer.hpp"
-#include "./src/random.hpp"
 ///////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////

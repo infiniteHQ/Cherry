@@ -2,180 +2,231 @@
 #include <string>
 #include <vector>
 
-#include "../../../src/utils/types.hpp"
+#include "../../core/utils/types.hpp"
 
 namespace Cherry {
-namespace Draw {
-void LineWindow(Vec2 start, Vec2 end, const std::string &hexcol,
-                float thickness = 1.0f);
-void LineScreen(Vec2 start, Vec2 end, const std::string &hexcol,
-                float thickness = 1.0f);
-void LineHWindow(float y, float x_start, float x_end, const std::string &hexcol,
-                 float thickness = 1.0f);
-void LineVWindow(float x, float y_start, float y_end, const std::string &hexcol,
-                 float thickness = 1.0f);
-void LineHScreen(float y, float x_start, float x_end, const std::string &hexcol,
-                 float thickness = 1.0f);
-void LineVScreen(float x, float y_start, float y_end, const std::string &hexcol,
-                 float thickness = 1.0f);
-void PolylineWindow(const std::vector<Vec2> &points, const std::string &hexcol,
-                    float thickness = 1.0f);
-void PolylineScreen(const std::vector<Vec2> &points, const std::string &hexcol,
-                    float thickness = 1.0f);
-void CrossWindow(Vec2 center, float size, const std::string &hexcol,
-                 float thickness = 1.0f);
-void CrossScreen(Vec2 center, float size, const std::string &hexcol,
-                 float thickness = 1.0f);
-void RectWindow(Vec2 pos, Vec2 size, const std::string &hexcol);
-void RectScreen(Vec2 pos, Vec2 size, const std::string &hexcol);
+  namespace Draw {
+    void LineWindow(Vec2 start, Vec2 end, const std::string &hexcol, float thickness = 1.0f);
+    void LineScreen(Vec2 start, Vec2 end, const std::string &hexcol, float thickness = 1.0f);
+    void LineHWindow(float y, float x_start, float x_end, const std::string &hexcol, float thickness = 1.0f);
+    void LineVWindow(float x, float y_start, float y_end, const std::string &hexcol, float thickness = 1.0f);
+    void LineHScreen(float y, float x_start, float x_end, const std::string &hexcol, float thickness = 1.0f);
+    void LineVScreen(float x, float y_start, float y_end, const std::string &hexcol, float thickness = 1.0f);
+    void PolylineWindow(const std::vector<Vec2> &points, const std::string &hexcol, float thickness = 1.0f);
+    void PolylineScreen(const std::vector<Vec2> &points, const std::string &hexcol, float thickness = 1.0f);
+    void CrossWindow(Vec2 center, float size, const std::string &hexcol, float thickness = 1.0f);
+    void CrossScreen(Vec2 center, float size, const std::string &hexcol, float thickness = 1.0f);
+    void RectWindow(Vec2 pos, Vec2 size, const std::string &hexcol);
+    void RectScreen(Vec2 pos, Vec2 size, const std::string &hexcol);
 
-// Rectangles (outline)
-void RectOutlineWindow(Vec2 pos, Vec2 size, const std::string &hexcol,
-                       float thickness = 1.0f);
-void RectOutlineScreen(Vec2 pos, Vec2 size, const std::string &hexcol,
-                       float thickness = 1.0f);
+    // Rectangles (outline)
+    void RectOutlineWindow(Vec2 pos, Vec2 size, const std::string &hexcol, float thickness = 1.0f);
+    void RectOutlineScreen(Vec2 pos, Vec2 size, const std::string &hexcol, float thickness = 1.0f);
 
-void RectOutlineRoundedWindow(Vec2 pos, Vec2 size, float rounding,
-                              const std::string &hexcol, float thickness);
-void RectOutlineRoundedScreen(Vec2 pos, Vec2 size, float rounding,
-                              const std::string &hexcol, float thickness);
+    void RectOutlineRoundedWindow(Vec2 pos, Vec2 size, float rounding, const std::string &hexcol, float thickness);
+    void RectOutlineRoundedScreen(Vec2 pos, Vec2 size, float rounding, const std::string &hexcol, float thickness);
 
-// Squares
-void SquareWindow(Vec2 pos, float size, const std::string &hexcol);
-void SquareScreen(Vec2 pos, float size, const std::string &hexcol);
-void QuadWindow(Vec2 p0, Vec2 p1, Vec2 p2, Vec2 p3, const std::string &hexcol);
-void QuadScreen(Vec2 p0, Vec2 p1, Vec2 p2, Vec2 p3, const std::string &hexcol);
+    // Squares
+    void SquareWindow(Vec2 pos, float size, const std::string &hexcol);
+    void SquareScreen(Vec2 pos, float size, const std::string &hexcol);
+    void QuadWindow(Vec2 p0, Vec2 p1, Vec2 p2, Vec2 p3, const std::string &hexcol);
+    void QuadScreen(Vec2 p0, Vec2 p1, Vec2 p2, Vec2 p3, const std::string &hexcol);
 
-// Texts
-void TextWindow(const std::string &text, Vec2 pos, float size,
-                const std::string &hexcol);
-void TextScreen(const std::string &text, Vec2 pos, float size,
-                const std::string &hexcol);
+    // Texts
+    void TextWindow(const std::string &text, Vec2 pos, float size, const std::string &hexcol);
+    void TextScreen(const std::string &text, Vec2 pos, float size, const std::string &hexcol);
 
-void CircleWindow(Vec2 center, float radius, const std::string &hexcol,
-                  int num_segments = 0);
-void CircleScreen(Vec2 center, float radius, const std::string &hexcol,
-                  int num_segments = 0);
+    void CircleWindow(Vec2 center, float radius, const std::string &hexcol, int num_segments = 0);
+    void CircleScreen(Vec2 center, float radius, const std::string &hexcol, int num_segments = 0);
 
-void CircleOutlineWindow(Vec2 center, float radius, const std::string &hexcol,
-                         float thickness = 1.0f, int num_segments = 0);
-void CircleOutlineScreen(Vec2 center, float radius, const std::string &hexcol,
-                         float thickness = 1.0f, int num_segments = 0);
+    void
+    CircleOutlineWindow(Vec2 center, float radius, const std::string &hexcol, float thickness = 1.0f, int num_segments = 0);
+    void
+    CircleOutlineScreen(Vec2 center, float radius, const std::string &hexcol, float thickness = 1.0f, int num_segments = 0);
 
-void TriangleWindow(Vec2 p1, Vec2 p2, Vec2 p3, const std::string &hexcol);
-void TriangleScreen(Vec2 p1, Vec2 p2, Vec2 p3, const std::string &hexcol);
-void TriangleOutlineWindow(Vec2 p1, Vec2 p2, Vec2 p3, const std::string &hexcol,
-                           float thickness = 1.0f);
+    void TriangleWindow(Vec2 p1, Vec2 p2, Vec2 p3, const std::string &hexcol);
+    void TriangleScreen(Vec2 p1, Vec2 p2, Vec2 p3, const std::string &hexcol);
+    void TriangleOutlineWindow(Vec2 p1, Vec2 p2, Vec2 p3, const std::string &hexcol, float thickness = 1.0f);
 
-void RectRoundedWindow(Vec2 pos, Vec2 size, float rounding,
-                       const std::string &hexcol);
-void RectRoundedScreen(Vec2 pos, Vec2 size, float rounding,
-                       const std::string &hexcol);
+    void RectRoundedWindow(Vec2 pos, Vec2 size, float rounding, const std::string &hexcol);
+    void RectRoundedScreen(Vec2 pos, Vec2 size, float rounding, const std::string &hexcol);
 
-void RectRoundedOutlineWindow(Vec2 pos, Vec2 size, float rounding,
-                              const std::string &hexcol,
-                              float thickness = 1.0f);
-void RectRoundedOutlineScreen(Vec2 pos, Vec2 size, float rounding,
-                              const std::string &hexcol,
-                              float thickness = 1.0f);
-void CircleSectorWindow(Vec2 center, float radius, float angle_min,
-                        float angle_max, const std::string &hexcol,
-                        int num_segments = 0);
-void CircleSectorScreen(Vec2 center, float radius, float angle_min,
-                        float angle_max, const std::string &hexcol,
-                        int num_segments = 0);
-void ImageWindow(Vec2 pos, Vec2 size, const std::string &path,
-                 Vec2 uv_min = {0, 0}, Vec2 uv_max = {1, 1},
-                 const std::string &hexcol = "#FFFFFFFF");
-void ImageScreen(Vec2 pos, Vec2 size, const std::string &path,
-                 Vec2 uv_min = {0, 0}, Vec2 uv_max = {1, 1},
-                 const std::string &hexcol = "#FFFFFFFF");
-void ImageQuadWindow(Vec2 p1, Vec2 p2, Vec2 p3, Vec2 p4,
-                     const std::string &path,
-                     const std::string &hexcol = "#FFFFFFFF");
-void ImageQuadScreen(Vec2 p1, Vec2 p2, Vec2 p3, Vec2 p4,
-                     const std::string &path,
-                     const std::string &hexcol = "#FFFFFFFF");
-void ImageRoundedWindow(Vec2 pos, Vec2 size, const std::string &path,
-                        float rounding,
-                        const std::string &hexcol = "#FFFFFFFF");
-void ImageRoundedScreen(Vec2 pos, Vec2 size, const std::string &path,
-                        float rounding,
-                        const std::string &hexcol = "#FFFFFFFF");
+    void RectRoundedOutlineWindow(Vec2 pos, Vec2 size, float rounding, const std::string &hexcol, float thickness = 1.0f);
+    void RectRoundedOutlineScreen(Vec2 pos, Vec2 size, float rounding, const std::string &hexcol, float thickness = 1.0f);
+    void CircleSectorWindow(
+        Vec2 center,
+        float radius,
+        float angle_min,
+        float angle_max,
+        const std::string &hexcol,
+        int num_segments = 0);
+    void CircleSectorScreen(
+        Vec2 center,
+        float radius,
+        float angle_min,
+        float angle_max,
+        const std::string &hexcol,
+        int num_segments = 0);
+    void ImageWindow(
+        Vec2 pos,
+        Vec2 size,
+        const std::string &path,
+        Vec2 uv_min = { 0, 0 },
+        Vec2 uv_max = { 1, 1 },
+        const std::string &hexcol = "#FFFFFFFF");
+    void ImageScreen(
+        Vec2 pos,
+        Vec2 size,
+        const std::string &path,
+        Vec2 uv_min = { 0, 0 },
+        Vec2 uv_max = { 1, 1 },
+        const std::string &hexcol = "#FFFFFFFF");
+    void
+    ImageQuadWindow(Vec2 p1, Vec2 p2, Vec2 p3, Vec2 p4, const std::string &path, const std::string &hexcol = "#FFFFFFFF");
+    void
+    ImageQuadScreen(Vec2 p1, Vec2 p2, Vec2 p3, Vec2 p4, const std::string &path, const std::string &hexcol = "#FFFFFFFF");
+    void ImageRoundedWindow(
+        Vec2 pos,
+        Vec2 size,
+        const std::string &path,
+        float rounding,
+        const std::string &hexcol = "#FFFFFFFF");
+    void ImageRoundedScreen(
+        Vec2 pos,
+        Vec2 size,
+        const std::string &path,
+        float rounding,
+        const std::string &hexcol = "#FFFFFFFF");
 
-void RectGradientWindow(Vec2 pos, Vec2 size, const std::string &col_start,
-                        const std::string &col_end, bool vertical = true,
-                        int steps = 32);
-void RectGradientScreen(Vec2 pos, Vec2 size, const std::string &col_start,
-                        const std::string &col_end, bool vertical = true,
-                        int steps = 32);
+    void RectGradientWindow(
+        Vec2 pos,
+        Vec2 size,
+        const std::string &col_start,
+        const std::string &col_end,
+        bool vertical = true,
+        int steps = 32);
+    void RectGradientScreen(
+        Vec2 pos,
+        Vec2 size,
+        const std::string &col_start,
+        const std::string &col_end,
+        bool vertical = true,
+        int steps = 32);
 
-void CircleGradientWindow(Vec2 center, float radius,
-                          const std::string &col_center,
-                          const std::string &col_edge, int steps = 16);
-void CircleGradientScreen(Vec2 center, float radius,
-                          const std::string &col_center,
-                          const std::string &col_edge, int steps = 16);
+    void CircleGradientWindow(
+        Vec2 center,
+        float radius,
+        const std::string &col_center,
+        const std::string &col_edge,
+        int steps = 16);
+    void CircleGradientScreen(
+        Vec2 center,
+        float radius,
+        const std::string &col_center,
+        const std::string &col_edge,
+        int steps = 16);
 
-void TriangleGradientWindow(Vec2 p1, Vec2 p2, Vec2 p3, const std::string &c1,
-                            const std::string &c2, const std::string &c3);
-void TriangleGradientScreen(Vec2 p1, Vec2 p2, Vec2 p3, const std::string &c1,
-                            const std::string &c2, const std::string &c3);
+    void
+    TriangleGradientWindow(Vec2 p1, Vec2 p2, Vec2 p3, const std::string &c1, const std::string &c2, const std::string &c3);
+    void
+    TriangleGradientScreen(Vec2 p1, Vec2 p2, Vec2 p3, const std::string &c1, const std::string &c2, const std::string &c3);
 
-void QuadGradientWindow(Vec2 p1, Vec2 p2, Vec2 p3, Vec2 p4,
-                        const std::string &c1, const std::string &c2,
-                        const std::string &c3, const std::string &c4);
-void QuadGradientScreen(Vec2 p1, Vec2 p2, Vec2 p3, Vec2 p4,
-                        const std::string &c1, const std::string &c2,
-                        const std::string &c3, const std::string &c4);
+    void QuadGradientWindow(
+        Vec2 p1,
+        Vec2 p2,
+        Vec2 p3,
+        Vec2 p4,
+        const std::string &c1,
+        const std::string &c2,
+        const std::string &c3,
+        const std::string &c4);
+    void QuadGradientScreen(
+        Vec2 p1,
+        Vec2 p2,
+        Vec2 p3,
+        Vec2 p4,
+        const std::string &c1,
+        const std::string &c2,
+        const std::string &c3,
+        const std::string &c4);
 
-void RectOutlineGradientWindow(Vec2 pos, Vec2 size,
-                               const std::string &col_start,
-                               const std::string &col_end,
-                               float thickness = 1.0f);
-void RectOutlineGradientScreen(Vec2 pos, Vec2 size,
-                               const std::string &col_start,
-                               const std::string &col_end,
-                               float thickness = 1.0f);
+    void RectOutlineGradientWindow(
+        Vec2 pos,
+        Vec2 size,
+        const std::string &col_start,
+        const std::string &col_end,
+        float thickness = 1.0f);
+    void RectOutlineGradientScreen(
+        Vec2 pos,
+        Vec2 size,
+        const std::string &col_start,
+        const std::string &col_end,
+        float thickness = 1.0f);
 
-void CircleOutlineGradientWindow(Vec2 center, float radius,
-                                 const std::string &col_start,
-                                 const std::string &col_end,
-                                 float thickness = 1.0f);
-void CircleOutlineGradientScreen(Vec2 center, float radius,
-                                 const std::string &col_start,
-                                 const std::string &col_end,
-                                 float thickness = 1.0f);
+    void CircleOutlineGradientWindow(
+        Vec2 center,
+        float radius,
+        const std::string &col_start,
+        const std::string &col_end,
+        float thickness = 1.0f);
+    void CircleOutlineGradientScreen(
+        Vec2 center,
+        float radius,
+        const std::string &col_start,
+        const std::string &col_end,
+        float thickness = 1.0f);
 
-void TriangleOutlineGradientWindow(Vec2 p1, Vec2 p2, Vec2 p3,
-                                   const std::string &c1, const std::string &c2,
-                                   float thickness = 1.0f);
-void TriangleOutlineGradientScreen(Vec2 p1, Vec2 p2, Vec2 p3,
-                                   const std::string &c1, const std::string &c2,
-                                   float thickness = 1.0f);
+    void TriangleOutlineGradientWindow(
+        Vec2 p1,
+        Vec2 p2,
+        Vec2 p3,
+        const std::string &c1,
+        const std::string &c2,
+        float thickness = 1.0f);
+    void TriangleOutlineGradientScreen(
+        Vec2 p1,
+        Vec2 p2,
+        Vec2 p3,
+        const std::string &c1,
+        const std::string &c2,
+        float thickness = 1.0f);
 
-void QuadOutlineGradientWindow(Vec2 p1, Vec2 p2, Vec2 p3, Vec2 p4,
-                               const std::string &c1, const std::string &c2,
-                               float thickness = 1.0f);
-void QuadOutlineGradientScreen(Vec2 p1, Vec2 p2, Vec2 p3, Vec2 p4,
-                               const std::string &c1, const std::string &c2,
-                               float thickness = 1.0f);
+    void QuadOutlineGradientWindow(
+        Vec2 p1,
+        Vec2 p2,
+        Vec2 p3,
+        Vec2 p4,
+        const std::string &c1,
+        const std::string &c2,
+        float thickness = 1.0f);
+    void QuadOutlineGradientScreen(
+        Vec2 p1,
+        Vec2 p2,
+        Vec2 p3,
+        Vec2 p4,
+        const std::string &c1,
+        const std::string &c2,
+        float thickness = 1.0f);
 
-void BeginRectMask(Vec2 pos, Vec2 size,
-                   bool intersect_with_current_clip_rect = true);
-void BeginRectMaskFixed(Vec2 pos, Vec2 size,
-                        bool intersect_with_current_clip_rect = true);
+    void BeginRectMask(Vec2 pos, Vec2 size, bool intersect_with_current_clip_rect = true);
+    void BeginRectMaskFixed(Vec2 pos, Vec2 size, bool intersect_with_current_clip_rect = true);
 
-void RectGradientRoundedWindow(Vec2 pos, Vec2 size,
-                               const std::string &hexcol_start,
-                               const std::string &hexcol_end, float rounding,
-                               bool vertical);
-void RectGradientRoundedScreen(Vec2 pos, Vec2 size,
-                               const std::string &hexcol_start,
-                               const std::string &hexcol_end, float rounding,
-                               bool vertical);
-void EndRectMask();
-void EndRectMaskFixed();
+    void RectGradientRoundedWindow(
+        Vec2 pos,
+        Vec2 size,
+        const std::string &hexcol_start,
+        const std::string &hexcol_end,
+        float rounding,
+        bool vertical);
+    void RectGradientRoundedScreen(
+        Vec2 pos,
+        Vec2 size,
+        const std::string &hexcol_start,
+        const std::string &hexcol_end,
+        float rounding,
+        bool vertical);
+    void EndRectMask();
+    void EndRectMaskFixed();
 
-} // namespace Draw
-} // namespace Cherry
+  }  // namespace Draw
+}  // namespace Cherry

@@ -1,10 +1,11 @@
 #include "app_headless.hpp"
-#include "../../src/core/log.hpp"
 
 #include <chrono>
-#include <thread>
-#include <iostream>
 #include <glm/glm.hpp>
+#include <iostream>
+#include <thread>
+
+#include "../core/core/log.hpp"
 
 static Cherry::Application* s_Instance = nullptr;
 
@@ -13,34 +14,35 @@ static Cherry::Application* s_Instance = nullptr;
 
 namespace Cherry {
 
-Application::Application(const ApplicationSpecification& specification)
-    : m_Specification(specification) {
+  Application::Application(const ApplicationSpecification& specification) : m_Specification(specification) {
     s_Instance = this;
     Init();
-}
+  }
 
-Application::~Application() {
+  Application::~Application() {
     Shutdown();
     s_Instance = nullptr;
-}
+  }
 
-Application& Application::Get() { return *s_Instance; }
+  Application& Application::Get() {
+    return *s_Instance;
+  }
 
-void Application::Init() {
+  void Application::Init() {
     Log::Init();
-}
+  }
 
-void Application::Shutdown() {
+  void Application::Shutdown() {
     for (auto& layer : m_LayerStack)
-        layer->OnDetach();
+      layer->OnDetach();
     m_LayerStack.clear();
 
     Application::RunningState().store(false, std::memory_order_release);
 
     Log::Shutdown();
-}
+  }
 
-static void PushStyle() {
+  static void PushStyle() {
     ImGuiStyle& style = ImGui::GetStyle();
     ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5.0f);
     ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 1.0f);
@@ -50,35 +52,38 @@ static void PushStyle() {
     ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(15.0f, 6.0f));
     ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(9.0f, 3.0f));
     ImGui::PushStyleVar(ImGuiStyleVar_TabRounding, 7.0f);
-}
+  }
 
-static void PopStyle() { ImGui::PopStyleVar(8); }
+  static void PopStyle() {
+    ImGui::PopStyleVar(8);
+  }
 
-void Application::Run() {
+  void Application::Run() {
     while (Application::RunningState().load(std::memory_order_acquire)) {
-        PushStyle();
+      PushStyle();
 
-        for (auto& layer : m_LayerStack)
-            layer->OnUpdate(m_TimeStep);
+      for (auto& layer : m_LayerStack)
+        layer->OnUpdate(m_TimeStep);
 
-        if (m_Specification.SleepDuration > 0.0f)
-            std::this_thread::sleep_for(
-                std::chrono::milliseconds(m_Specification.SleepDuration));
+      if (m_Specification.SleepDuration > 0.0f)
+        std::this_thread::sleep_for(std::chrono::milliseconds(m_Specification.SleepDuration));
 
-        float time = GetTime();
-        m_FrameTime = time - m_LastFrameTime;
-        m_TimeStep = glm::min<float>(m_FrameTime, 0.0333f);
-        m_LastFrameTime = time;
+      float time = GetTime();
+      m_FrameTime = time - m_LastFrameTime;
+      m_TimeStep = glm::min<float>(m_FrameTime, 0.0333f);
+      m_LastFrameTime = time;
 
-        PopStyle();
+      PopStyle();
     }
-}
+  }
 
-void Application::Close() {
+  void Application::Close() {
     Application::RunningState().store(false, std::memory_order_release);
-}
+  }
 
-float Application::GetTime() { return m_AppTimer.Elapsed(); }
+  float Application::GetTime() {
+    return m_AppTimer.Elapsed();
+  }
 
-} // namespace Cherry
+}  // namespace Cherry
 #endif

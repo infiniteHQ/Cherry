@@ -75,8 +75,6 @@ endif()
 # ---------------------------------------------------------------------------
 file(GLOB_RECURSE CHERRY_SRC CONFIGURE_DEPENDS
     "main/*.[ch]pp" "main/*.c*" 
-    "src/*.[ch]pp" "src/*.c*"
-    "components/*.[ch]pp" "components/*.c*"
     "kit/*.[ch]pp" "kit/*.c*"
 )
 
