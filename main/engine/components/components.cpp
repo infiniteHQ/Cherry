@@ -1,6 +1,6 @@
 //
 //  components.cpp
-//  Sources for cherry components (for UI objects and OOP GUIs)
+//  Sources for Cherry components (for UI objects and OOP GUIs)
 //
 //  Copyright (c) 2024-2026 Diego Moreno
 //  Copyright (c) 2026 Infinite

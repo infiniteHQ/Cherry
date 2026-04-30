@@ -1,6 +1,6 @@
 //
 //  components.hpp
-//  Headers for cherry components (for UI objects OOP GUIs)
+//  Headers for Cherry components (for UI objects OOP GUIs)
 //
 //  Copyright (c) 2024-2026 Diego Moreno
 //  Copyright (c) 2026 Infinite
@@ -12,8 +12,8 @@
 #pragma once
 
 #include <main/core/color/color.hpp>
+#include <main/engine/options.hpp>
 #include <mutex>
-#include <options.hpp>
 #include <string>
 #include <unordered_map>
 
