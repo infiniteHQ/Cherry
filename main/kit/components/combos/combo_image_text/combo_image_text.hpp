@@ -70,7 +70,7 @@ namespace Cherry {
         CherryGUI::SetNextItemWidth(std::stof(GetProperty("size_x")));
 
         if (CherryGUI::BeginCombo(Label.c_str(), [&]() {
-              ImTextureID texture = Application::Get().GetCurrentRenderedWindow()->get_texture(m_List[selected].second);
+              ImTextureID texture = Application::Get().GetCurrentRenderedWindow()->GetTexture(m_List[selected].second);
               CherryGUI::Image(texture, ImVec2(15, 15));
               if (!GetPropertyAs<bool>("disable_text")) {
                 CherryGUI::SameLine();
@@ -90,7 +90,7 @@ namespace Cherry {
 
             CherryGUI::SameLine();
 
-            ImTextureID texture = Application::Get().GetCurrentRenderedWindow()->get_texture(m_List[n].second);
+            ImTextureID texture = Application::Get().GetCurrentRenderedWindow()->GetTexture(m_List[n].second);
             CherryGUI::Image(texture, ImVec2(15, 15));
             CherryGUI::SameLine();
             CherryGUI::Text(m_List[n].first.c_str());

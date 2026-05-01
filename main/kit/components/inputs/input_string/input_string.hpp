@@ -42,7 +42,7 @@ namespace Cherry {
         std::string Label = GetProperty("label");
 
         if (!GetProperty("description_logo").empty()) {
-          m_Logo = Application::Get().GetCurrentRenderedWindow()->get_texture(GetProperty("description_logo"));
+          m_Logo = Application::Get().GetCurrentRenderedWindow()->GetTexture(GetProperty("description_logo"));
         }
 
         if (!identifier.empty()) {

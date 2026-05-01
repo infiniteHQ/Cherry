@@ -33,7 +33,7 @@ namespace Cherry {
       }
 
       void Render() override {
-        ImTextureID texture = Application::Get().GetCurrentRenderedWindow()->get_texture(GetProperty("image_path"));
+        ImTextureID texture = Application::Get().GetCurrentRenderedWindow()->GetTexture(GetProperty("image_path"));
         CherryGUI::Image(texture, ImVec2(15, 15));
 
         if (CherryGUI::IsItemHovered()) {

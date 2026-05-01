@@ -62,7 +62,7 @@ namespace Cherry {
             }
 
             ImVec2 buttonSize(15, 15);
-            ImTextureID texture = Application::Get().GetCurrentRenderedWindow()->get_texture(
+            ImTextureID texture = Application::Get().GetCurrentRenderedWindow()->GetTexture(
                 Cherry::GetPath("resources/imgs/icons/misc/icon_close.png"));
 
             ImGuiToast toast(

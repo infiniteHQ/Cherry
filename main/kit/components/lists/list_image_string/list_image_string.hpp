@@ -49,7 +49,7 @@ namespace Cherry {
 
             CherryGUI::SameLine();
 
-            ImTextureID texture = Application::Get().GetCurrentRenderedWindow()->get_texture(m_Values[n].second);
+            ImTextureID texture = Application::Get().GetCurrentRenderedWindow()->GetTexture(m_Values[n].second);
             CherryGUI::Image(texture, ImVec2(15, 15));
             CherryGUI::SameLine();
             CherryGUI::Text(m_Values[n].first.c_str());

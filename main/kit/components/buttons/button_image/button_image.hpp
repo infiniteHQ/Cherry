@@ -117,7 +117,7 @@ namespace Cherry {
           Label += "####" + identifier;
         }
 
-        ImTextureID texture = Application::Get().GetCurrentRenderedWindow()->get_texture(GetProperty("image_path"));
+        ImTextureID texture = Application::Get().GetCurrentRenderedWindow()->GetTexture(GetProperty("image_path"));
         bool isClicked = CherryGUI::ImageButtonWithText(texture, Label.c_str(), size);
 
         if (CherryGUI::IsItemHovered()) {

@@ -638,7 +638,7 @@ namespace Cherry {
       const ImVec2 logoRectStart = { titlebarMin.x + logoOffset.x, titlebarMin.y + logoOffset.y };
       const ImVec2 logoRectMax = { logoRectStart.x + logoWidth, logoRectStart.y + logoHeight };
 
-      ImTextureID logo = this->get_texture(this->m_Specifications.IconPath);
+      ImTextureID logo = this->GetTexture(this->m_Specifications.IconPath);
       fgDrawList->AddImage(logo, logoRectStart, logoRectMax);
     }
 
@@ -1274,7 +1274,7 @@ namespace Cherry {
     return this->add(data, name);
   }
 
-  ImTextureID Window::get_texture(const std::string &path) {
+  ImTextureID Window::GetTexture(const std::string &path) {
     if (path.empty() || path == "none") {
       return nullptr;
     }
@@ -1294,7 +1294,7 @@ namespace Cherry {
     return nullptr;
   }
 
-  VkDescriptorSet Window::get_texture_descriptor(const std::string &path) {
+  VkDescriptorSet Window::GetTextureDescriptor(const std::string &path) {
     if (path.empty() || path == "none") {
       return nullptr;
     }
@@ -1307,7 +1307,7 @@ namespace Cherry {
     return nullptr;
   }
 
-  ImVec2 Window::get_texture_size(const std::string &path) {
+  ImVec2 Window::GetTextureSize(const std::string &path) {
     if (path.empty() || path == "none") {
       return ImVec2(0, 0);
     }

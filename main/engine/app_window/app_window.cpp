@@ -272,7 +272,7 @@ namespace Cherry {
 
     if (wind->GetSpecifications().RenderMode != WindowRenderingMethod::SimpleWindow) {
       if (this->GetImage(m_Icon)) {
-        ImTextureID texture = Application::Get().GetCurrentRenderedWindow()->get_texture(m_Icon);
+        ImTextureID texture = Application::Get().GetCurrentRenderedWindow()->GetTexture(m_Icon);
         if (m_Closable) {
           ImGui::Begin(
               m_IdName.c_str(), texture, &m_CloseSignal, window_flags, ImVec2(m_InternalPaddingX, m_InternalPaddingY));

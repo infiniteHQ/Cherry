@@ -122,9 +122,9 @@ namespace Cherry {
           Label += "####" + identifier;
         }
 
-        ImTextureID texture = Application::Get().GetCurrentRenderedWindow()->get_texture(GetProperty("image_path"));
+        ImTextureID texture = Application::Get().GetCurrentRenderedWindow()->GetTexture(GetProperty("image_path"));
         ImTextureID second_texture =
-            Application::Get().GetCurrentRenderedWindow()->get_texture(GetProperty("second_image_path"));
+            Application::Get().GetCurrentRenderedWindow()->GetTexture(GetProperty("second_image_path"));
         CherryGUI::SetNextItemWidth(std::stof(GetProperty("size_x")));
 
         bool isClicked = CherryGUI::ImageButtonWithTextWithIcon(

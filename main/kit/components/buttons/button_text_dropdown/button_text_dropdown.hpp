@@ -67,9 +67,9 @@ namespace Cherry {
         ImTextureID texture;
 
         if (GetData("isMenuActivated") == "true") {
-          texture = Application::Get().GetCurrentRenderedWindow()->get_texture(GetProperty("image_dropdown_up"));
+          texture = Application::Get().GetCurrentRenderedWindow()->GetTexture(GetProperty("image_dropdown_up"));
         } else {
-          texture = Application::Get().GetCurrentRenderedWindow()->get_texture(GetProperty("image_dropdown_down"));
+          texture = Application::Get().GetCurrentRenderedWindow()->GetTexture(GetProperty("image_dropdown_down"));
         }
 
         const ImVec2 &size = ImVec2(std::stoi(GetProperty("size_x")), std::stoi(GetProperty("size_y")));

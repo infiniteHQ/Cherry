@@ -46,23 +46,16 @@ namespace Cherry {
 
     void ProcessMouseEvents();
 
-    VkCommandBuffer GetCommandBuffer(bool begin);
-    SDL_Window *GetWindowHandle() const;
     static void ShowDockingPreview(
         ImGuiID dockspaceID,
         Window *win,
         const std::shared_ptr<Cherry::WindowDragDropState> &dragState,
         const std::shared_ptr<AppWindow> appwin = nullptr);
 
-    // void OnWindowResize(GLFWwindow *windowHandle, int width, int height);
-    // void OnWindowMove(int xpos, int ypos);
-
+    void Render();
     void BeginFrame();
     void EndFrame();
-
     void OnUpdate();
-
-    const std::string &GetName() const;
 
     void CreateImage(std::shared_ptr<Cherry::Image> image, void *data);
 
@@ -77,59 +70,17 @@ namespace Cherry {
     void RequestResize(int width, int height);
     void RequestMove(int x, int y);
 
-    std::string GetThemeProperty(const std::string &key);
-
     void LoadTTFFont(const std::string &ttf_font_path);
-
     void RestoreTTFFont();
 
     void PutUniqueAppwindow(const std::shared_ptr<AppWindow> &appwindow);
     void ApplyPendingResize();
-    void SetFavIcon(const std::string &path);
-
-    void Render();
 
     // Different than the default theme !
     // When the user specify this, the runtime will search level 2 theme at
     // GetThemeProperty(theme, key) "manually", and not from the active theme.
     void SetTheme(const std::string &theme_name);
     void RemoveTheme();
-
-    ImGuiContext *&GetImGuiContext();
-    std::string &GetSelectedTheme();
-    ApplicationSpecification &GetSpecifications();
-    bool &GetNeedToRebuildFontMap();
-    bool &GetFontLoaded();
-    std::shared_ptr<AppWindow> &GetUniqueAppWindow();
-    ImFont *&GetFontToRestore();
-    std::vector<char> &GetFontBuffer();
-    void SetImGuiContext(ImGuiContext *ctx);
-    void SetSelectedTheme(const std::string &theme);
-    void SetSpecifications(const ApplicationSpecification &specs);
-    void SetNeedToRebuildFontMap(bool v);
-    void SetFontLoaded(bool v);
-    void SetUniqueAppWindow(std::shared_ptr<AppWindow> appWindow);
-    void SetFontToRestore(ImFont *font);
-    void SetFontBuffer(std::vector<char> buffer);
-
-    std::unordered_map<std::string, ImFont *> &GetFonts();
-    std::unordered_map<std::string, ImTextureID> &GetTextureCache();
-    std::unordered_map<std::string, std::shared_ptr<Cherry::Image>> &GetImageMap();
-    std::unordered_map<std::string, std::shared_ptr<Cherry::Image>> &GetHexImageMap();
-    std::unordered_map<std::string, ImFont *> &GetFontMap();
-
-    std::mutex &GetEventQueueMutex();
-    std::queue<std::function<void()>> &GetEventQueue();
-    bool &GetSwapChainRebuild();
-    VkSwapchainKHR &GetSwapchain();
-    std::vector<VkImage> &GetSwapchainImages();
-    std::vector<VkImageView> &GetSwapchainImageViews();
-    VkFormat &GetSwapchainImageFormat();
-    std::vector<std::vector<std::function<void()>>> &GetResourceFreeQueue();
-    uint32_t &GetCurrentFrameIndex();
-    std::vector<VkCommandBuffer> &GetCommandBuffers();
-    ImGuiWindow *&GetImGuiWindow();
-
     void LoadTheme();
     void UnloadTheme();
 
@@ -137,14 +88,6 @@ namespace Cherry {
     std::shared_ptr<Cherry::Image> add(const uint8_t data[], const std::string &name);
     std::shared_ptr<Cherry::Image> get(const std::string &path);
     std::shared_ptr<Cherry::Image> get(const uint8_t data[], const std::string &name);
-    ImTextureID get_texture(const std::string &path);
-    ImVec2 get_texture_size(const std::string &path);
-    VkDescriptorSet get_texture_descriptor(const std::string &path);
-
-    ImGui_ImplVulkanH_Window *GetWinData();
-    const ImDrawData &GetDrawData() const;
-    ImDrawData *GetDrawData();
-    std::vector<std::vector<VkCommandBuffer>> &GetAllocatedCommandBuffers();
 
     bool &GetResizePending();
     bool &GetMovePending();
@@ -164,6 +107,46 @@ namespace Cherry {
     bool &GetIsDraggingAppWindow();
     bool &GetClosePending();
     bool &GetResizing();
+    VkSurfaceKHR GetSurface() const;
+    int GetWinID() const;
+    ImGui_ImplVulkanH_Window *GetWinData();
+    const ImDrawData &GetDrawData() const;
+    ImDrawData *GetDrawData();
+    std::vector<std::vector<VkCommandBuffer>> &GetAllocatedCommandBuffers();
+    ImTextureID GetTexture(const std::string &path);
+    ImVec2 GetTextureSize(const std::string &path);
+    VkDescriptorSet GetTextureDescriptor(const std::string &path);
+    std::unordered_map<std::string, ImFont *> &GetFonts();
+    std::unordered_map<std::string, ImTextureID> &GetTextureCache();
+    std::unordered_map<std::string, std::shared_ptr<Cherry::Image>> &GetImageMap();
+    std::unordered_map<std::string, std::shared_ptr<Cherry::Image>> &GetHexImageMap();
+    std::unordered_map<std::string, ImFont *> &GetFontMap();
+    std::mutex &GetEventQueueMutex();
+    std::queue<std::function<void()>> &GetEventQueue();
+    bool &GetSwapChainRebuild();
+    VkSwapchainKHR &GetSwapchain();
+    VkFormat &GetSwapchainImageFormat();
+    std::vector<std::vector<std::function<void()>>> &GetResourceFreeQueue();
+    uint32_t &GetCurrentFrameIndex();
+    std::vector<VkCommandBuffer> &GetCommandBuffers();
+    std::vector<VkImage> &GetSwapchainImages();
+    std::vector<VkImageView> &GetSwapchainImageViews();
+    std::vector<char> &GetFontBuffer();
+    std::shared_ptr<WindowClickEvent> GetPendingClick() const;
+    std::shared_ptr<WindowMoveEvent> GetPendingMove() const;
+    std::shared_ptr<WindowDragDropState> GetDragDropState() const;
+    std::shared_ptr<AppWindow> &GetUniqueAppWindow();
+    ImGuiWindow *&GetImGuiWindow();
+    ImGuiContext *&GetImGuiContext();
+    std::string &GetSelectedTheme();
+    ApplicationSpecification &GetSpecifications();
+    bool &GetNeedToRebuildFontMap();
+    bool &GetFontLoaded();
+    ImFont *&GetFontToRestore();
+    VkCommandBuffer GetCommandBuffer(bool begin);
+    SDL_Window *GetWindowHandle() const;
+    const std::string &GetName() const;
+    std::string GetThemeProperty(const std::string &key);
 
     void SetResizePending(bool v);
     void SetMovePending(bool v);
@@ -183,19 +166,20 @@ namespace Cherry {
     void SetIsDraggingAppWindow(bool v);
     void SetClosePending(bool v);
     void SetResizing(bool v);
-
-    VkSurfaceKHR GetSurface() const;
-    int GetWinID() const;
-    std::shared_ptr<WindowClickEvent> GetPendingClick() const;
-    std::shared_ptr<WindowMoveEvent> GetPendingMove() const;
-    std::shared_ptr<WindowDragDropState> GetDragDropState() const;
-
     void SetSurface(VkSurfaceKHR surface);
     void SetWinID(int id);
-
     void SetPendingClick(std::shared_ptr<WindowClickEvent> click);
     void SetPendingMove(std::shared_ptr<WindowMoveEvent> move);
     void SetDragDropState(std::shared_ptr<WindowDragDropState> state);
+    void SetImGuiContext(ImGuiContext *ctx);
+    void SetSelectedTheme(const std::string &theme);
+    void SetSpecifications(const ApplicationSpecification &specs);
+    void SetNeedToRebuildFontMap(bool v);
+    void SetFontLoaded(bool v);
+    void SetUniqueAppWindow(std::shared_ptr<AppWindow> appWindow);
+    void SetFontToRestore(ImFont *font);
+    void SetFontBuffer(std::vector<char> buffer);
+    void SetFavIcon(const std::string &path);
 
    private:
     bool m_ResizePending = false;

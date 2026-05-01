@@ -3016,11 +3016,11 @@ namespace Cherry {
   }
 
   ImTextureID GetTexture(const std::string &path) {
-    return Application::Get().GetCurrentRenderedWindow()->get_texture(path);
+    return Application::Get().GetCurrentRenderedWindow()->GetTexture(path);
   }
 
   ImVec2 GetTextureSize(const std::string &path) {
-    return Application::Get().GetCurrentRenderedWindow()->get_texture_size(path);
+    return Application::Get().GetCurrentRenderedWindow()->GetTextureSize(path);
   }
 
 #ifdef _WIN32
