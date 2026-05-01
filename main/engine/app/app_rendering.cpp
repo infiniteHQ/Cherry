@@ -7,7 +7,7 @@ namespace Cherry {
     ImGuiID dockspaceID = ImGui::GetID("MainDockspace");
 
     float oldsize = ImGui::GetFont()->Scale;
-    ImGui::GetFont()->Scale *= window->m_Specifications.FontGlobalScale;
+    ImGui::GetFont()->Scale *= window->GetSpecifications().FontGlobalScale;
     ImGui::PushFont(ImGui::GetFont());
 
     ImVec4 grayColor = ImVec4(0.4f, 0.4f, 0.4f, 1.0f);
@@ -59,7 +59,7 @@ namespace Cherry {
 
   void Application::HandleSimpleRendering(Window *window) {
     float oldsize = ImGui::GetFont()->Scale;
-    ImGui::GetFont()->Scale *= window->m_Specifications.FontGlobalScale;
+    ImGui::GetFont()->Scale *= window->GetSpecifications().FontGlobalScale;
     ImGui::PushFont(ImGui::GetFont());
     if (m_MainRenderCallback) {
       m_MainRenderCallback();
@@ -72,7 +72,7 @@ namespace Cherry {
     bool finded = false;
     for (auto &appwin : Application::Get().GetAppWindows()) {
       if (appwin) {
-        if (appwin->m_Name == Application::GetCurrentRenderedWindow()->m_Specifications.UniqueAppWindowName) {
+        if (appwin->m_Name == Application::GetCurrentRenderedWindow()->GetSpecifications().UniqueAppWindowName) {
           SetCurrentRenderedAppWindow(appwin);
           appwin->CtxRender(nullptr, window->GetName());
           finded = true;
@@ -94,7 +94,7 @@ namespace Cherry {
     ImGuiID dockspaceID = ImGui::GetID("MainDockspace");
 
     float oldsize = ImGui::GetFont()->Scale;
-    ImGui::GetFont()->Scale *= window->m_Specifications.FontGlobalScale;
+    ImGui::GetFont()->Scale *= window->GetSpecifications().FontGlobalScale;
     ImGui::PushFont(ImGui::GetFont());
 
     ImVec4 grayColor = ImVec4(0.4f, 0.4f, 0.4f, 1.0f);
@@ -165,8 +165,8 @@ namespace Cherry {
 
     PrepareViewport(window);
 
-    float minWidth = window->m_Specifications.MinWidth;
-    float minHeight = window->m_Specifications.MinHeight;
+    float minWidth = window->GetSpecifications().MinWidth;
+    float minHeight = window->GetSpecifications().MinHeight;
     ImGui::SetNextWindowSizeConstraints(ImVec2(minWidth, minHeight), ImVec2(FLT_MAX, FLT_MAX));
 
     ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
@@ -176,12 +176,12 @@ namespace Cherry {
     window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
 
     if (Application::GetCurrentRenderedWindow()) {
-      if (!Application::GetCurrentRenderedWindow()->m_Specifications.WindowResizeable) {
+      if (!Application::GetCurrentRenderedWindow()->GetSpecifications().WindowResizeable) {
         window_flags |= ImGuiWindowFlags_NoResize;
       }
     }
 
-    if (!window->m_Specifications.CustomTitlebar && m_MenubarCallback)
+    if (!window->GetSpecifications().CustomTitlebar && m_MenubarCallback)
       window_flags |= ImGuiWindowFlags_MenuBar;
 
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(1.0f, 1.0f));
@@ -191,7 +191,7 @@ namespace Cherry {
     std::string label = "DockSpaceWindow." + window->GetName();
     ImGui::SetNextWindowDockID(0);
     ImGui::Begin(label.c_str(), nullptr, window_flags);
-    window->m_ImGuiWindow = ImGui::GetCurrentWindow();
+    window->GetImGuiWindow() = ImGui::GetCurrentWindow();
 
     ImVec2 newSize = ImGui::GetWindowSize();
 
@@ -208,9 +208,9 @@ namespace Cherry {
 
     ImVec2 windowPos = ImGui::GetWindowPos();
 
-    window->m_Resizing = false;
+    window->SetResizing(false);
     if (newSize.x != sdlWidth || newSize.y != sdlHeight) {
-      window->m_Resizing = true;
+      window->SetResizing(true);
 
       if (ImGui::IsMouseHoveringRect(windowPos, ImVec2(windowPos.x + sdlWidth, windowPos.y))) {
         windowPos.y -= deltaSize.y;
@@ -229,7 +229,7 @@ namespace Cherry {
     ImGui::PopStyleColor();
     ImGui::PopStyleVar(4);
 
-    if (window->m_Specifications.CustomTitlebar && !window->m_Specifications.DisableTitleBar) {
+    if (window->GetSpecifications().CustomTitlebar && !window->GetSpecifications().DisableTitleBar) {
       float titleBarHeight;
       window->UI_DrawTitlebar(titleBarHeight);
       ImGui::SetCursorPosY(titleBarHeight);
@@ -245,7 +245,7 @@ namespace Cherry {
 
     AppPushTabStyle();
 
-    switch (window->m_Specifications.RenderMode) {
+    switch (window->GetSpecifications().RenderMode) {
       case WindowRenderingMethod::DockingWindows: {
         HandleDockingModeRendering(window);
         break;
@@ -404,7 +404,7 @@ namespace Cherry {
 
     ImGui::End();
 
-    return &window->DrawData;
+    return window->GetDrawData();
   }
 
 }  // namespace Cherry

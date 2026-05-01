@@ -403,11 +403,11 @@ namespace Cherry {
     if (!win)
       return;
 
-    win->GetWinData()->Surface = win->m_Surface;
+    win->GetWinData()->Surface = win->GetSurface();
 
     ImGui_ImplVulkanH_DestroyWindow(g_Instance, g_Device, win->GetWinData(), g_Allocator);
 
-    win->m_Surface = VK_NULL_HANDLE;
+    win->SetSurface(VK_NULL_HANDLE);
   }
 
   void Application::CleanupSpecificVulkanWindow(Cherry::Window *win) {
@@ -924,13 +924,13 @@ namespace Cherry {
       if (!window)
         continue;
 
-      window->m_IsClosing = true;
-      if (window->m_ImGuiContext) {
-        ImGui::SetCurrentContext(window->m_ImGuiContext);
+      window->SetIsClosing(true);
+      if (window->GetImGuiContext()) {
+        ImGui::SetCurrentContext(window->GetImGuiContext());
         ImGui_ImplVulkan_Shutdown();
         ImGui_ImplSDL2_Shutdown();
-        ImGui::DestroyContext(window->m_ImGuiContext);
-        window->m_ImGuiContext = nullptr;
+        ImGui::DestroyContext(window->GetImGuiContext());
+        window->SetImGuiContext(nullptr);
       }
 
       CleanupVulkanWindow(window.get());
@@ -946,8 +946,8 @@ namespace Cherry {
 
     for (auto &window : m_Windows) {
       if (window) {
-        window->m_ImageMap.clear();
-        window->m_HexImageMap.clear();
+        window->GetImageMap().clear();
+        window->GetHexImageMap().clear();
       }
     }
 
@@ -966,7 +966,7 @@ namespace Cherry {
         g_Device, wd->Swapchain, UINT64_MAX, image_acquired_semaphore, VK_NULL_HANDLE, &wd->FrameIndex);
 
     if (err == VK_ERROR_OUT_OF_DATE_KHR || err == VK_SUBOPTIMAL_KHR) {
-      win->g_SwapChainRebuild = true;
+      win->GetSwapChainRebuild() = true;
 
       return;
     }
@@ -975,7 +975,7 @@ namespace Cherry {
 
     ImGui_ImplVulkanH_Frame *fd = &wd->Frames[wd->FrameIndex];
 
-    win->s_CurrentFrameIndex = (win->s_CurrentFrameIndex + 1) % win->GetWinData()->ImageCount;
+    win->GetCurrentFrameIndex() = (win->GetCurrentFrameIndex() + 1) % win->GetWinData()->ImageCount;
 
     {
       err = vkWaitForFences(g_Device, 1, &fd->Fence, VK_TRUE, UINT64_MAX);
@@ -1030,7 +1030,7 @@ namespace Cherry {
   }
 
   void Application::FramePresent(ImGui_ImplVulkanH_Window *wd, Cherry::Window *win) {
-    if (win->g_SwapChainRebuild)
+    if (win->GetSwapChainRebuild())
       return;
     VkSemaphore render_complete_semaphore = wd->FrameSemaphores[wd->SemaphoreIndex].RenderCompleteSemaphore;
     VkPresentInfoKHR info = {};
@@ -1042,7 +1042,7 @@ namespace Cherry {
     info.pImageIndices = &wd->FrameIndex;
     VkResult err = vkQueuePresentKHR(g_Queue, &info);
     if (err == VK_ERROR_OUT_OF_DATE_KHR || err == VK_SUBOPTIMAL_KHR) {
-      win->g_SwapChainRebuild = true;
+      win->GetSwapChainRebuild() = true;
       return;
     }
     check_vk_result(err);
@@ -1437,7 +1437,7 @@ namespace Cherry {
 
   void Application::PresentAllWindows() {
     for (auto &window : m_Windows) {
-      ImGui::SetCurrentContext(window->m_ImGuiContext);
+      ImGui::SetCurrentContext(window->GetImGuiContext());
 
       bool isMouseOver = (m_MouseHoveredWindow == window->GetWindowHandle());
       if (!isMouseOver && m_MouseHoveredWindow != nullptr) {
@@ -1445,17 +1445,17 @@ namespace Cherry {
       }
 
       // Push window selected theme if defined
-      if (window->m_SelectedTheme != "undefined") {
-        PushTheme(window->m_SelectedTheme);
+      if (window->GetSelectedTheme() != "undefined") {
+        PushTheme(window->GetSelectedTheme());
       }
 
       c_CurrentRenderedWindow = window;
 
       if (c_MasterSwapChainRebuild) {
-        window->g_SwapChainRebuild = true;
+        window->GetSwapChainRebuild() = true;
       }
 
-      if (window->g_SwapChainRebuild) {
+      if (window->GetSwapChainRebuild()) {
         int width, height;
         SDL_GetWindowSize(window->GetWindowHandle(), &width, &height);
         if (width > 0 && height > 0) {
@@ -1471,7 +1471,7 @@ namespace Cherry {
               height,
               g_MinImageCount);
           window->GetWinData()->FrameIndex = 0;
-          window->g_SwapChainRebuild = false;
+          window->GetSwapChainRebuild() = false;
         }
       }
 
@@ -1482,7 +1482,7 @@ namespace Cherry {
         ImGui::GetIO().ConfigFlags &= ~ImGuiConfigFlags_NoMouseCursorChange;
       }
 
-      ImGui::SetCurrentContext(window->m_ImGuiContext);
+      ImGui::SetCurrentContext(window->GetImGuiContext());
 
       ImGuiIO &inputIO = ImGui::GetIO();
       const bool prevTrickling = inputIO.ConfigInputTrickleEventQueue;
@@ -1503,7 +1503,7 @@ namespace Cherry {
         SDL_GetGlobalMouseState(&c_CurrentDragDropState->mouseX, &c_CurrentDragDropState->mouseY);
 
         float oldScale = ImGui::GetFont()->Scale;
-        ImGui::GetFont()->Scale *= window->m_Specifications.FontGlobalScale;
+        ImGui::GetFont()->Scale *= window->GetSpecifications().FontGlobalScale;
         ImGui::PushFont(ImGui::GetFont());
 
         ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.12f, 0.12f, 0.12f, 0.95f));
@@ -1602,7 +1602,7 @@ namespace Cherry {
       }
 
       // Push window selected theme if defined
-      if (window->m_SelectedTheme != "undefined") {
+      if (window->GetSelectedTheme() != "undefined") {
         PopTheme();
       }
     }
@@ -1681,9 +1681,9 @@ namespace Cherry {
 #endif
 
   void Application::CleanupWindowIfEmpty(const std::shared_ptr<Window> &win) {
-    if (win->m_Specifications.RenderMode == WindowRenderingMethod::DockingWindows ||
-        win->m_Specifications.RenderMode == WindowRenderingMethod::TabWidows ||
-        win->m_Specifications.RenderMode == WindowRenderingMethod::SimpleWindow) {
+    if (win->GetSpecifications().RenderMode == WindowRenderingMethod::DockingWindows ||
+        win->GetSpecifications().RenderMode == WindowRenderingMethod::TabWidows ||
+        win->GetSpecifications().RenderMode == WindowRenderingMethod::SimpleWindow) {
       if (!win) {
         return;
       }
@@ -1768,13 +1768,13 @@ namespace Cherry {
       }
 
       for (auto &window : m_Windows) {
-        if (window->m_Specifications.FavIconPath != window->m_Specifications.LastFavIconPath) {
-          window->SetFavIcon(window->m_Specifications.FavIconPath);
-          window->m_Specifications.LastFavIconPath = window->m_Specifications.FavIconPath;
+        if (window->GetSpecifications().FavIconPath != window->GetSpecifications().LastFavIconPath) {
+          window->SetFavIcon(window->GetSpecifications().FavIconPath);
+          window->GetSpecifications().LastFavIconPath = window->GetSpecifications().FavIconPath;
         }
 
         c_CurrentRenderedWindow = window;
-        if (window->drag_dropstate->DockIsDragging) {
+        if (window->GetDragDropState()->DockIsDragging) {
           c_DockIsDragging = true;
         }
       }
@@ -1799,7 +1799,7 @@ namespace Cherry {
             continue;
           }
 
-          ImGui::SetCurrentContext(window->m_ImGuiContext);
+          ImGui::SetCurrentContext(window->GetImGuiContext());
           ImGui_ImplSDL2_ProcessEvent(&event);
 
           if (event.type == SDL_QUIT) {
@@ -1810,9 +1810,9 @@ namespace Cherry {
 
           if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE &&
               event.window.windowID == windowID) {
-            if (window->m_Specifications.UsingCloseCallback) {
-              if (window->m_Specifications.CloseCallback) {
-                window->m_Specifications.CloseCallback();
+            if (window->GetSpecifications().UsingCloseCallback) {
+              if (window->GetSpecifications().CloseCallback) {
+                window->GetSpecifications().CloseCallback();
               }
               m_ClosePending = false;
             } else {
@@ -1832,8 +1832,8 @@ namespace Cherry {
 
       bool AppWindowRedocked = false;
       if (s_Instance->m_DefaultSpecification.RenderMode == WindowRenderingMethod::DockingWindows ||
-          Application::GetCurrentRenderedWindow()->m_Specifications.RenderMode == WindowRenderingMethod::TabWidows ||
-          Application::GetCurrentRenderedWindow()->m_Specifications.RenderMode == WindowRenderingMethod::SimpleWindow) {
+          Application::GetCurrentRenderedWindow()->GetSpecifications().RenderMode == WindowRenderingMethod::TabWidows ||
+          Application::GetCurrentRenderedWindow()->GetSpecifications().RenderMode == WindowRenderingMethod::SimpleWindow) {
         for (auto &req : m_RedockRequests) {
           if (req->m_IsObsolete) {
             continue;
@@ -1861,8 +1861,8 @@ namespace Cherry {
       }
 
       if (s_Instance->m_DefaultSpecification.RenderMode == WindowRenderingMethod::DockingWindows ||
-          Application::GetCurrentRenderedWindow()->m_Specifications.RenderMode == WindowRenderingMethod::TabWidows ||
-          Application::GetCurrentRenderedWindow()->m_Specifications.RenderMode == WindowRenderingMethod::SimpleWindow) {
+          Application::GetCurrentRenderedWindow()->GetSpecifications().RenderMode == WindowRenderingMethod::TabWidows ||
+          Application::GetCurrentRenderedWindow()->GetSpecifications().RenderMode == WindowRenderingMethod::SimpleWindow) {
         for (auto &appwin : s_Instance->m_AppWindows) {
           if (!AppWindowRedocked) {
             if (!appwin->m_AttachRequest.m_IsFinished) {
@@ -1941,18 +1941,18 @@ namespace Cherry {
         if (inputTargetSDLWindow) {
           for (auto &window : m_Windows) {
             if (window->GetWindowHandle() == inputTargetSDLWindow) {
-              inputTargetContext = window->m_ImGuiContext;
+              inputTargetContext = window->GetImGuiContext();
               break;
             }
           }
 
           if (!inputTargetContext) {
             for (auto &window : m_Windows) {
-              ImGui::SetCurrentContext(window->m_ImGuiContext);
+              ImGui::SetCurrentContext(window->GetImGuiContext());
               ImGuiPlatformIO &pio = ImGui::GetPlatformIO();
               for (ImGuiViewport *vp : pio.Viewports) {
                 if (vp->PlatformHandle == (void *)inputTargetSDLWindow) {
-                  inputTargetContext = window->m_ImGuiContext;
+                  inputTargetContext = window->GetImGuiContext();
                   break;
                 }
               }
@@ -1966,9 +1966,9 @@ namespace Cherry {
           c_CurrentRenderedWindow = window;
           Uint32 windowID = SDL_GetWindowID(window->GetWindowHandle());
 
-          ImGui::SetCurrentContext(window->m_ImGuiContext);
+          ImGui::SetCurrentContext(window->GetImGuiContext());
 
-          bool isOwner = (inputTargetContext == nullptr) || (inputTargetContext == window->m_ImGuiContext);
+          bool isOwner = (inputTargetContext == nullptr) || (inputTargetContext == window->GetImGuiContext());
 
           if (isOwner) {
             ImGui_ImplSDL2_ProcessEvent(&event);
@@ -2000,9 +2000,9 @@ namespace Cherry {
 
           if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE &&
               event.window.windowID == windowID) {
-            if (window->m_Specifications.UsingCloseCallback) {
-              if (window->m_Specifications.CloseCallback)
-                window->m_Specifications.CloseCallback();
+            if (window->GetSpecifications().UsingCloseCallback) {
+              if (window->GetSpecifications().CloseCallback)
+                window->GetSpecifications().CloseCallback();
               m_ClosePending = false;
             } else {
               if (Application::Get().m_CloseCallback)
@@ -2060,13 +2060,13 @@ namespace Cherry {
       }
 
       for (auto &window : m_Windows) {
-        if (window->m_Specifications.FavIconPath != window->m_Specifications.LastFavIconPath) {
-          window->SetFavIcon(window->m_Specifications.FavIconPath);
-          window->m_Specifications.LastFavIconPath = window->m_Specifications.FavIconPath;
+        if (window->GetSpecifications().FavIconPath != window->GetSpecifications().LastFavIconPath) {
+          window->SetFavIcon(window->GetSpecifications().FavIconPath);
+          window->GetSpecifications().LastFavIconPath = window->GetSpecifications().FavIconPath;
         }
 
         c_CurrentRenderedWindow = window;
-        if (window->drag_dropstate->DockIsDragging) {
+        if (window->GetDragDropState()->DockIsDragging) {
           c_DockIsDragging = true;
         }
       }
@@ -2204,7 +2204,7 @@ namespace Cherry {
     cmdBufAllocateInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
     cmdBufAllocateInfo.commandBufferCount = 1;
 
-    VkCommandBuffer &command_buffer = win->s_AllocatedCommandBuffers[wd->FrameIndex].emplace_back();
+    VkCommandBuffer &command_buffer = win->GetAllocatedCommandBuffers()[wd->FrameIndex].emplace_back();
     auto err = vkAllocateCommandBuffers(g_Device, &cmdBufAllocateInfo, &command_buffer);
 
     VkCommandBufferBeginInfo begin_info = {};
@@ -2245,7 +2245,7 @@ namespace Cherry {
   void Application::SubmitResourceFree(std::function<void()> &&func, const std::string &winname) {
     for (auto win : app->m_Windows) {
       if (win->GetName() == winname) {
-        win->s_ResourceFreeQueue[win->s_CurrentFrameIndex].emplace_back(func);
+        win->GetResourceFreeQueue()[win->GetCurrentFrameIndex()].emplace_back(func);
       }
     }
   }
@@ -2278,10 +2278,10 @@ namespace Cherry {
       auto window_theme_prop = CherryWindow.GetThemeProperty(key);
       if (window_theme_prop == "undefined") {
 
-        if (!m_SelectedTheme) {
+        if (!GetSelectedTheme()) {
           return;
         } else {
-          return m_SelectedTheme->GetProperty(key);
+          return GetSelectedTheme()->GetProperty(key);
         }
       }
     }

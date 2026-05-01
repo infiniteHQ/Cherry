@@ -29,7 +29,7 @@ namespace Cherry {
       void Render() override {
         std::string label = GetProperty("label");
         float text_scale = std::stof(GetProperty("text_scale"));
-        const float &ctx_text_scale = Application::GetCurrentRenderedWindow()->m_Specifications.FontGlobalScale;
+        const float &ctx_text_scale = Application::GetCurrentRenderedWindow()->GetSpecifications().FontGlobalScale;
 
         ImVec4 grayColor = ImVec4(0.4f, 0.4f, 0.4f, 1.0f);
         ImVec4 graySeparatorColor = ImVec4(0.4f, 0.4f, 0.4f, 0.5f);

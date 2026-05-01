@@ -270,7 +270,7 @@ namespace Cherry {
 
     m_IdName = window_name;
 
-    if (wind->m_Specifications.RenderMode != WindowRenderingMethod::SimpleWindow) {
+    if (wind->GetSpecifications().RenderMode != WindowRenderingMethod::SimpleWindow) {
       if (this->GetImage(m_Icon)) {
         ImTextureID texture = Application::Get().GetCurrentRenderedWindow()->get_texture(m_Icon);
         if (m_Closable) {
@@ -293,23 +293,23 @@ namespace Cherry {
     }
 
     // Prevent undock
-    if (wind->m_Specifications.RenderMode == WindowRenderingMethod::DockingWindows ||
-        wind->m_Specifications.RenderMode == WindowRenderingMethod::TabWidows) {
+    if (wind->GetSpecifications().RenderMode == WindowRenderingMethod::DockingWindows ||
+        wind->GetSpecifications().RenderMode == WindowRenderingMethod::TabWidows) {
       if (!ImGui::IsWindowDocked()) {
-        Application::SetCurrentDragDropState(wind->drag_dropstate);
+        Application::SetCurrentDragDropState(wind->GetDragDropState());
 
         Application::SetCurrentDragDropStateAppWindow("none");
         Application::SetCurrentDragDropStateWindow(winname);
         Application::SetCurrentDragDropStateAppWindowHost(this->m_IdName);
         Application::SetCurrentDragDropStateDraggingPlace(DockEmplacement::DockFull);
 
-        Application::PushRedockEvent(wind->drag_dropstate);
+        Application::PushRedockEvent(wind->GetDragDropState());
       }
     }
 
     if (ImGui::BeginMenuBar()) {
       float oldsize = ImGui::GetFont()->Scale;
-      ImGui::GetFont()->Scale *= window_instance->m_Specifications.FontGlobalScale;
+      ImGui::GetFont()->Scale *= window_instance->GetSpecifications().FontGlobalScale;
       ImGui::PushFont(ImGui::GetFont());
 
       float menuBarHeight = ImGui::GetCurrentWindow()->MenuBarHeight();
@@ -365,15 +365,15 @@ namespace Cherry {
     }
 
     // Drag
-    if (m_DockingMode || wind->m_Specifications.RenderMode == WindowRenderingMethod::DockingWindows) {
+    if (m_DockingMode || wind->GetSpecifications().RenderMode == WindowRenderingMethod::DockingWindows) {
       if (ctx->DockTabStaticSelection.Pressed) {
-        wind->drag_dropstate->DockIsDragging = true;
-        wind->drag_dropstate->LastDraggingAppWindowHost = ctx->DockTabStaticSelection.TabName;
-        Application::SetLastWindowPressed(wind->drag_dropstate->LastDraggingAppWindowHost);
-        // wind->drag_dropstate->LastDraggingAppWindow =
+        wind->GetDragDropState()->DockIsDragging = true;
+        wind->GetDragDropState()->LastDraggingAppWindowHost = ctx->DockTabStaticSelection.TabName;
+        Application::SetLastWindowPressed(wind->GetDragDropState()->LastDraggingAppWindowHost);
+        // wind->GetDragDropState()->LastDraggingAppWindow =
         // ctx->DockTabStaticSelection.TabName;
-        wind->drag_dropstate->DragOwner = this->m_IdName;
-        Application::SetCurrentDragDropState(wind->drag_dropstate);
+        wind->GetDragDropState()->DragOwner = this->m_IdName;
+        Application::SetCurrentDragDropState(wind->GetDragDropState());
       }
 
       // Drop
@@ -392,11 +392,11 @@ namespace Cherry {
             /*if (m_HaveParentAppWindow)
             {
                 AddWinParent(winname);
-                wind->drag_dropstate->LastDraggingAppWindowHaveParent = true;
+                wind->GetDragDropState()->LastDraggingAppWindowHaveParent = true;
             }*/
 
-            wind->drag_dropstate->DockIsDragging = false;
-            wind->drag_dropstate->DragOwner = "none";
+            wind->GetDragDropState()->DockIsDragging = false;
+            wind->GetDragDropState()->DragOwner = "none";
           }
         }
       }
@@ -404,7 +404,7 @@ namespace Cherry {
 
     ImGuiID dockID = ImGui::GetID("AppWindowDockspace");
     float oldsize = ImGui::GetFont()->Scale;
-    ImGui::GetFont()->Scale *= window_instance->m_Specifications.FontGlobalScale;
+    ImGui::GetFont()->Scale *= window_instance->GetSpecifications().FontGlobalScale;
     ImGui::PushFont(ImGui::GetFont());
 
     ImVec4 grayColor = ImVec4(0.4f, 0.4f, 0.4f, 1.0f);
@@ -458,7 +458,7 @@ namespace Cherry {
 
     if (ImGui::BeginBottomBar()) {
       float oldsize = ImGui::GetFont()->Scale;
-      ImGui::GetFont()->Scale *= window_instance->m_Specifications.FontGlobalScale;
+      ImGui::GetFont()->Scale *= window_instance->GetSpecifications().FontGlobalScale;
       ImGui::PushFont(ImGui::GetFont());
 
       float menuBarHeight = ImGui::GetCurrentWindow()->BottomBarHeight();
@@ -495,7 +495,7 @@ namespace Cherry {
     ImGui::GetFont()->Scale = oldsize;
     ImGui::PopFont();
 
-    if (wind->m_Specifications.RenderMode != WindowRenderingMethod::SimpleWindow) {
+    if (wind->GetSpecifications().RenderMode != WindowRenderingMethod::SimpleWindow) {
       ImGui::End();
     } else {
       ImGui::EndChild();

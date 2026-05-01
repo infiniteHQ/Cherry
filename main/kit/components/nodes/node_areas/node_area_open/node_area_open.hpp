@@ -1086,7 +1086,7 @@ namespace Cherry {
                 CherryGUI::TextUnformatted(node.Name.c_str());
                 CherryGUI::PopStyleColor();
 
-                CherryGUI::GetFont()->Scale = Application::GetCurrentRenderedWindow()->m_Specifications.FontGlobalScale;
+                CherryGUI::GetFont()->Scale = Application::GetCurrentRenderedWindow()->GetSpecifications().FontGlobalScale;
                 CherryGUI::PopFont();
 
                 CherryGUI::PushStyleColor(ImGuiCol_Text, Cherry::HexToRGBA(node.SecondNameColor));

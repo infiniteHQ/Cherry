@@ -798,6 +798,314 @@ namespace Cherry {
     ImGui::Render();
   }
 
+  void Window::PutUniqueAppwindow(const std::shared_ptr<AppWindow> &appwindow) {
+    m_UniqueAppWindow = appwindow;
+  }
+
+  void Window::ApplyPendingResize() {
+    if (m_ResizePending) {
+      m_WinData.Width = m_PendingWidth;
+      m_WinData.Height = m_PendingHeight;
+      SDL_Window *win = this->GetWindowHandle();
+      ImGui_ImplVulkanH_Window *wd = &this->m_WinData;
+
+      m_ResizePending = false;
+    }
+  }
+
+  void Window::SetFavIcon(const std::string &path) {
+    int width, height, channels;
+    unsigned char *imageData = stbi_load(path.c_str(), &width, &height, &channels, 4);  // 4 channels for RGBA
+    if (!imageData) {
+      return;
+    }
+
+    SDL_Surface *iconSurface =
+        SDL_CreateRGBSurfaceWithFormatFrom(imageData, width, height, 32, width * 4, SDL_PIXELFORMAT_RGBA32);
+
+    if (!iconSurface) {
+      stbi_image_free(imageData);
+      return;
+    }
+
+    SDL_SetWindowIcon(m_WindowHandler, iconSurface);
+
+    SDL_FreeSurface(iconSurface);
+    stbi_image_free(imageData);
+  }
+
+  const std::string &Window::GetName() const {
+    return m_Name;
+  }
+
+  const ImDrawData &Window::GetDrawData() const {
+    return m_DrawData;
+  }
+
+  ImDrawData *Window::GetDrawData() {
+    return &m_DrawData;
+  }
+
+  std::vector<std::vector<VkCommandBuffer>> &Window::GetAllocatedCommandBuffers() {
+    return s_AllocatedCommandBuffers;
+  }
+
+  void Window::SetSurface(VkSurfaceKHR surface) {
+    m_Surface = surface;
+  }
+
+  void Window::SetWinID(int id) {
+    WinID = id;
+  }
+
+  void Window::SetPendingClick(std::shared_ptr<WindowClickEvent> click) {
+    m_PendingClick = std::move(click);
+  }
+
+  void Window::SetPendingMove(std::shared_ptr<WindowMoveEvent> move) {
+    m_PendingMove = std::move(move);
+  }
+
+  void Window::SetDragDropState(std::shared_ptr<WindowDragDropState> state) {
+    drag_dropstate = std::move(state);
+  }
+
+  void Window::SetResizePending(bool v) {
+    m_ResizePending = v;
+  }
+  void Window::SetMovePending(bool v) {
+    m_MovePending = v;
+  }
+  void Window::SetPendingWidth(int v) {
+    m_PendingWidth = v;
+  }
+  void Window::SetPendingHeight(int v) {
+    m_PendingHeight = v;
+  }
+  void Window::SetPendingX(int v) {
+    m_PendingX = v;
+  }
+  void Window::SetPendingY(int v) {
+    m_PendingY = v;
+  }
+  void Window::SetPreviousWidth(int v) {
+    m_PreviousWidth = v;
+  }
+  void Window::SetPreviousHeight(int v) {
+    m_PreviousHeight = v;
+  }
+  void Window::SetPreviousX(int v) {
+    m_PreviousX = v;
+  }
+  void Window::SetPreviousY(int v) {
+    m_PreviousY = v;
+  }
+  void Window::SetPosX(int v) {
+    m_PosX = v;
+  }
+  void Window::SetPosY(int v) {
+    m_PosY = v;
+  }
+  void Window::SetIsClosing(bool v) {
+    m_IsClosing = v;
+  }
+  void Window::SetIsMoving(bool v) {
+    isMoving = v;
+  }
+  void Window::SetClickOffset(ImVec2 v) {
+    clickOffset = v;
+  }
+  void Window::SetIsDraggingAppWindow(bool v) {
+    m_IsDraggingAppWindow = v;
+  }
+  void Window::SetClosePending(bool v) {
+    m_ClosePending = v;
+  }
+  void Window::SetResizing(bool v) {
+    m_Resizing = v;
+  }
+  void Window::SetImGuiContext(ImGuiContext *ctx) {
+    m_ImGuiContext = ctx;
+  }
+  void Window::SetSelectedTheme(const std::string &theme) {
+    m_SelectedTheme = theme;
+  }
+  void Window::SetSpecifications(const ApplicationSpecification &specs) {
+    m_Specifications = specs;
+  }
+  void Window::SetNeedToRebuildFontMap(bool v) {
+    m_NeedToRebuildFontMap = v;
+  }
+  void Window::SetFontLoaded(bool v) {
+    m_FontLoaded = v;
+  }
+  void Window::SetUniqueAppWindow(std::shared_ptr<AppWindow> appWindow) {
+    m_UniqueAppWindow = std::move(appWindow);
+  }
+  void Window::SetFontToRestore(ImFont *font) {
+    m_FontToRestore = font;
+  }
+  void Window::SetFontBuffer(std::vector<char> buffer) {
+    fontBuffer = std::move(buffer);
+  }
+
+  std::unordered_map<std::string, ImFont *> &Window::GetFonts() {
+    return s_Fonts;
+  }
+  std::unordered_map<std::string, ImTextureID> &Window::GetTextureCache() {
+    return m_TextureCache;
+  }
+  std::unordered_map<std::string, std::shared_ptr<Cherry::Image>> &Window::GetImageMap() {
+    return m_ImageMap;
+  }
+  std::unordered_map<std::string, std::shared_ptr<Cherry::Image>> &Window::GetHexImageMap() {
+    return m_HexImageMap;
+  }
+  std::unordered_map<std::string, ImFont *> &Window::GetFontMap() {
+    return m_FontMap;
+  }
+
+  ImGuiContext *&Window::GetImGuiContext() {
+    return m_ImGuiContext;
+  }
+  std::string &Window::GetSelectedTheme() {
+    return m_SelectedTheme;
+  }
+  ApplicationSpecification &Window::GetSpecifications() {
+    return m_Specifications;
+  }
+  bool &Window::GetNeedToRebuildFontMap() {
+    return m_NeedToRebuildFontMap;
+  }
+  bool &Window::GetFontLoaded() {
+    return m_FontLoaded;
+  }
+  std::shared_ptr<AppWindow> &Window::GetUniqueAppWindow() {
+    return m_UniqueAppWindow;
+  }
+  ImFont *&Window::GetFontToRestore() {
+    return m_FontToRestore;
+  }
+  std::vector<char> &Window::GetFontBuffer() {
+    return fontBuffer;
+  }
+
+  bool &Window::GetResizePending() {
+    return m_ResizePending;
+  }
+  bool &Window::GetMovePending() {
+    return m_MovePending;
+  }
+  int &Window::GetPendingWidth() {
+    return m_PendingWidth;
+  }
+  int &Window::GetPendingHeight() {
+    return m_PendingHeight;
+  }
+  int &Window::GetPendingX() {
+    return m_PendingX;
+  }
+  int &Window::GetPendingY() {
+    return m_PendingY;
+  }
+  int &Window::GetPreviousWidth() {
+    return m_PreviousWidth;
+  }
+  int &Window::GetPreviousHeight() {
+    return m_PreviousHeight;
+  }
+  int &Window::GetPreviousX() {
+    return m_PreviousX;
+  }
+  int &Window::GetPreviousY() {
+    return m_PreviousY;
+  }
+  int &Window::GetPosX() {
+    return m_PosX;
+  }
+  int &Window::GetPosY() {
+    return m_PosY;
+  }
+  bool &Window::GetIsClosing() {
+    return m_IsClosing;
+  }
+  bool &Window::GetIsMoving() {
+    return isMoving;
+  }
+  ImVec2 &Window::GetClickOffset() {
+    return clickOffset;
+  }
+  bool &Window::GetIsDraggingAppWindow() {
+    return m_IsDraggingAppWindow;
+  }
+  bool &Window::GetClosePending() {
+    return m_ClosePending;
+  }
+  bool &Window::GetResizing() {
+    return m_Resizing;
+  }
+
+  VkSurfaceKHR Window::GetSurface() const {
+    return m_Surface;
+  }
+
+  int Window::GetWinID() const {
+    return WinID;
+  }
+  std::mutex &Window::GetEventQueueMutex() {
+    return m_EventQueueMutex;
+  }
+
+  std::queue<std::function<void()>> &Window::GetEventQueue() {
+    return m_EventQueue;
+  }
+
+  bool &Window::GetSwapChainRebuild() {
+    return g_SwapChainRebuild;
+  }
+
+  VkSwapchainKHR &Window::GetSwapchain() {
+    return g_Swapchain;
+  }
+
+  std::vector<VkImage> &Window::GetSwapchainImages() {
+    return g_SwapchainImages;
+  }
+
+  std::vector<VkImageView> &Window::GetSwapchainImageViews() {
+    return g_SwapchainImageViews;
+  }
+
+  VkFormat &Window::GetSwapchainImageFormat() {
+    return g_SwapchainImageFormat;
+  }
+
+  std::vector<std::vector<std::function<void()>>> &Window::GetResourceFreeQueue() {
+    return s_ResourceFreeQueue;
+  }
+
+  uint32_t &Window::GetCurrentFrameIndex() {
+    return s_CurrentFrameIndex;
+  }
+
+  std::vector<VkCommandBuffer> &Window::GetCommandBuffers() {
+    return m_CommandBuffers;
+  }
+
+  ImGuiWindow *&Window::GetImGuiWindow() {
+    return m_ImGuiWindow;
+  }
+
+  std::shared_ptr<WindowClickEvent> Window::GetPendingClick() const {
+    return m_PendingClick;
+  }
+  std::shared_ptr<WindowMoveEvent> Window::GetPendingMove() const {
+    return m_PendingMove;
+  }
+  std::shared_ptr<WindowDragDropState> Window::GetDragDropState() const {
+    return drag_dropstate;
+  }
+
   void Window::UI_DrawMenubar() {
     if (!Application::Get().GetMenubarCallback())
       return;
