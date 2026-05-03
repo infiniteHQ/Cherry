@@ -1,5 +1,3 @@
-
-
 <a href="https://cherry.infinite.si">
   <h1 align="center">
     <picture>
