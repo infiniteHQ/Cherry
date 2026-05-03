@@ -29,11 +29,13 @@
 #endif  // IMGUI_DEFINE_MATH_OPERATORS
 
 // Backends
+#include "./main/core/assert/assert.hpp"
 #include "./main/core/color/color.hpp"
 #include "./main/core/entry_point.hpp"
 #include "./main/core/random/random.hpp"
 #include "./main/engine/app/app.hpp"
 #include "./main/engine/components/components.hpp"
+#include "./main/engine/components/factory.hpp"
 #include "./main/engine/embed/assets/icons.h"
 #include "./main/engine/image/image.hpp"
 #include "./main/engine/imgui/imgui_theme.h"
@@ -152,7 +154,7 @@
 #endif  // CHERRY_ENABLE_KIT
 
 namespace CherryKit = Cherry::Kit;
-namespace CherryDraw = Cherry::Draw;
+namespace CherryDrawing = Cherry::Drawing;
 namespace CherryScript = Cherry::Script;
 namespace CherryStyle = Cherry::Style;
 namespace CherryThemes = Cherry::Themes;

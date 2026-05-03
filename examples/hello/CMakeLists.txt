@@ -19,7 +19,7 @@ option(CHERRY_ENABLE_KIT "Enable base component kit"                    OFF)
 option(CHERRY_ENABLE_LINUXDRM "Enable Linux Direct Rendering Manager"   OFF)
 option(CHERRY_ENABLE_NODES "Disable nodal systems"                      OFF)
 option(CHERRY_ENABLE_WORKSPACESAVES "Enable workspace saves"            OFF)
-option(CHERRY_ENABLE_MARKDOWN "Enable Markdown support"                 ON)
+option(CHERRY_ENABLE_MARKDOWN "Enable Markdown support"                 OFF)
 
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../ cherry_build)
 add_executable(hello main.cpp)

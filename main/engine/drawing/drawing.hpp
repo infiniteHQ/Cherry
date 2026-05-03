@@ -15,7 +15,7 @@
 #include <vector>
 
 namespace Cherry {
-  namespace Draw {
+  namespace Drawing {
     void LineWindow(Vec2 start, Vec2 end, const std::string &hexcol, float thickness = 1.0f);
     void LineScreen(Vec2 start, Vec2 end, const std::string &hexcol, float thickness = 1.0f);
     void LineHWindow(float y, float x_start, float x_end, const std::string &hexcol, float thickness = 1.0f);
@@ -238,5 +238,5 @@ namespace Cherry {
     void EndRectMask();
     void EndRectMaskFixed();
 
-  }  // namespace Draw
+  }  // namespace Drawing
 }  // namespace Cherry

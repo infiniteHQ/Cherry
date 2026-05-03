@@ -1,4 +1,6 @@
 #pragma once
+#include <examples/hello/t.h>
+
 #include <main/engine/app/app.hpp>
 #include <main/engine/components/components.hpp>
 
@@ -166,3 +168,9 @@ namespace Cherry {
 }  // namespace Cherry
 
 #endif  // CHERRY_KIT_BUTTON_TEXT
+
+CHERRY_REGISTER_COMPONENT(ButtonText, {
+  const std::string label = Cherry::PropOr<std::string>(props, "label", "");
+  return Cherry::Kit::ButtonText(id, label);
+  // Les prop:/data: sont appliqués automatiquement par Draw() après ce return
+})

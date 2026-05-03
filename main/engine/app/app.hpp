@@ -18,6 +18,7 @@
 #include <iostream>
 #include <main/core/color/color.hpp>
 #include <main/core/logs/log.hpp>
+#include <main/core/types/type_safety.hpp>
 #include <main/engine/app_window/app_window.hpp>
 #include <main/engine/base.hpp>
 #include <main/engine/components/components.hpp>
