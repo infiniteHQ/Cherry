@@ -112,6 +112,7 @@ Whether you’re a beginner or an experienced developer, Cherry makes it easy to
 🟧 <em>: Not fully tested, partially incompatible but planned</em><br>
 ❌ <em>: Not planned, incompatible (for the moment...)</em>
 </p>
+
 # Features
 
 The following section will show you a little bit about the main features of Cherry. You will see some short videos, GIFs, or even examples to explain more about Cherry.
