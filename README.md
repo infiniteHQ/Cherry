@@ -224,7 +224,7 @@ Static rendering is a common and powerful concept in application rendering. It i
 ## Semi-Static Rendering
 
 Semi-static rendering is a hybrid between ImGui-style and static rendering. The graphical part is rendered using ImGui to guarantee instant visuals and highly reactive interactions. Meanwhile, the data and functional part of the component is handled statically, ensuring both low- and high-level persistence.
-> [!INFO]  
+> [!NOTE]  
 > Semi-static rendering is one of Cherry’s unique features.
 
 
