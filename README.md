@@ -3,8 +3,8 @@
 <a href="https://cherry.infinite.si">
   <h1 align="center">
     <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="./.github/imgs/banner.png">
-      <img src="./.github/imgs/banner.png">
+      <source media="(prefers-color-scheme: dark)" srcset="./.github/imgs/b3.png">
+      <img src="./.github/imgs/b3.png">
     </picture>
   </h1>
 </a>
@@ -21,106 +21,68 @@
 </div>
 
 ### What is Cherry ?
-Cherry is a modern, minimalist framework for building cross-platform application or cool user interfaces.
-It avoids heavy web technologies and bloated solutions, focusing instead on being simple yet complete, powered by **ImGui, Vulkan, and SDL**.  
+
+**Cherry is a modern, powerfull and simple C++/Lua library for building cross-platform application or cool user interfaces.**
+
 Whether you’re a beginner or an experienced developer, Cherry makes it easy to create real, efficient, and professional interfaces. 
 
-> *Important: Cherry is part of [Infinite](https://infinite.si/)'s initiative to create free, independent, and ethical technology and computing. Cherry is a library powering many parts of this project, but maintaining libraries like Cherry is a time-consuming and costly process. If you appreciate Cherry, you can support us [on our funding page](https://fund.infinite.si/) if you can.*
-
-
-## All Features
-
-> - 🧰 **80+ Components**, easy and ready to use  
-> - 📗 **60+ Drawing effects**,
-> - 🎨 **20+ Style effects & utilities**, including colors, sizes, padding, and layout management  
-> - 📦 **13+ examples** and ready to use windows, concepts to learn quiclky.
-> - 🌈 **8 Built-in themes**, with full color palettes and properties  
-> - 🛠️ **Unlimited customization**: create your own **components, style effects, and themes**, either through the **low-level drawing API** for maximum control, or from **prefabricated building blocks** for faster development  
-> - 📜 **Scripting engine** with Lua, allowing live scripting, easy UI builds and simplier way of building interfaces !
-> - 🪛 **Many logics and interaction** utils like input detection, key managment, double click, Ctrl+C etc...
-> - 📦 **Complete and simple API** with Sound managment, web asset fetching, rendering possibilities, traduction managment etc...
-
-> **Core engine**
-> - 🔊 **Sound engine**
-> - 📜 **Scripting engine with lua**
-> - 📜 **Complete drawing API (C++ and Lua)**
-> - 🎨 **Themes manager, Dark & Ligth themes**
-> - 📈 **Data handler for windows & components**
-> - 🌍 **Localization & Translation management**  
-> - 🔤 **Fonts management**  
-> - 🌐 **Network media & Web assets**  
-> - 📦 **Assets management**  
-> - 🖼️ **Images & textures manager**
-> - 🗂️ **Menubar & Bottombar simple callbacks**
-> - 💪 **Custom window close behaviors**
-> - 🗄️ **Advanced Docking**
-> - 🖼️ **Toasts, Notifications & pop-ups**
-> - 🛠️ **Behaviros callbacks** (closing, moving, etc...)
-> - 🏗️ **Windows customisations** (size, colors, properties & styles)
-
-> **Backends**
-> - 🛠️ Multi context with contexts cohesion & communication (ImGui/SDL)
-> - 🛠️ Complete image load & show, cache & optimization
-> - 🛠️ Window builder
-
-
-<a href="https://cherry.infinite.si">
-  <h3 align="center">
-    <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="./.github/imgs/component_banner.png">
-      <img src="./.github/imgs/component_banner.png">
-    </picture>
-  </h3>
-</a>
-
-<a href="https://cherry.infinite.si">
-  <h3 align="center">
-    <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="./.github/imgs/theme_banner.png">
-      <img src="./.github/imgs/theme_banner.png">
-    </picture>
-  </h3>
-</a>
 <a href="https://cherry.infinite.si">
   <h1 align="center">
     <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="./.github/imgs/style_banner.png">
-      <img src="./.github/imgs/style_banner.png">
+      <source media="(prefers-color-scheme: dark)" srcset="./.github/imgs/b2.png">
+      <img src="./.github/imgs/b2.png">
     </picture>
   </h1>
 </a>
 
-> [!NOTE]  
-> This framework is new and still under active development, so some bugs may occur, and content is subject to change. We are also working to improve the overall stability of Cherry, particularly with regard to memory safety and the rendering stack, as well as the graphical libraries used. Thank you for your understanding! Stay tuned :)
-
-## Getting started
-> [!WARNING]  
-> The only dependance you need to compile Cherry is the VulkanSDK installed & ready. Please refer to the https://www.lunarg.com/vulkan-sdk/ website to see how install Vulkan on your system (compatible on Linux & Windows).
+> *Important: Cherry is part of [Infinite](https://infinite.si/)'s initiative to create free, independent, and ethical technology and computing. Cherry is a library powering many parts of this project, but maintaining libraries like Cherry is a time-consuming and costly process. If you appreciate Cherry, you can support us [on our funding page](https://fund.infinite.si/) if you can.*
 
 
-> 🪟 On **Microsoft Windows**
-> ``` powershell
-> git clone https://github.com/infiniteHQ/Cherry
-> cd Cherry
-> git submodule update --init --recursive
-> cd examples/hello
-> build.bat
-> .\build\bin\hello.exe
-> ```
+# Table of Contents
+- [**Main goals**](#main-goals)
+- [**Use cases & Compatibility**](#use-cases-and-compatibility)
+- [**Features**](#features)
+  - [**Dear ImGui native compatibility**](#dear-imgui-native-compatibility)
+  - [**Lua Scripting**](#lua-scripting)
+  - [**Sound engine**](#sound-engine)
+  - [**Drawing API**](#drawing-api)
+  - [**Images/Textures**](#imagestextures)
+  - [**Fonts**](#fonts)
+  - [**I/O API**](#io-api)
+  - [**Traduction and accessibility**](#traduction-and-accessibility)
+  - [**Themes builder**](#themes-builder)
+  - [**Components & Widgets builder**](#components--widgets-builder)
+  - [**Customization abilities**](#customization-abilities)
+  - [**Network fetch**](#network-fetch)
+  - [**Advanced docking**](#advanced-docking)
+  - [**Markdown renderer**](#markdown-renderer)
+  - [**Choose your features**](#choose-your-features)
+  - [**Multiple Dear Imgui Context**](#multiple-dear-imgui-context)
+  - [**Debug tools**](#debug-tools)
+  - [**Builtin components**](#builtin-components)
+  - [**Builtin themes**](#builtin-themes)
+- [**Used concepts**](#used-concepts)
+  - [**Immediate mode (imgui)**](#immediate-mode-imgui)
+  - [**Retained mode (classic gui)**](#retained-mode-classic-gui)
+  - [**Semi-static rendering**](#semi-static-rendering)
+- [**Get started**](#get-started)
+- [**Projects using Cherry**](#projects-using-cherry)
+- [**Choices and style**](#choices-and-style)
+- [**Special Thanks**](#special-thanks)
 
-> 🐧 On **Linux** based distributions
-> ``` bash
-> git clone https://github.com/infiniteHQ/Cherry
-> cd Cherry
-> git submodule update --init --recursive
-> cd examples/hello
-> bash build.sh
-> ./build/bin/hello
-> ```
+## Main goals
+Cherry philosophy is to provide a powerfull library to make applications and interfaces, it's avoids heavy web technologies and bloated solutions, focusing instead on being simple yet complete, powered by **ImGui, Vulkan, and SDL**.  
+Whether you’re a beginner or an experienced developer, Cherry makes it easy to create real, efficient, and professional interfaces. 
 
-*Congratulations! If everything is working well, you can now start in the Cherry environment. Please follow our [documentation](https://cherry.infinite.si/). If you encounter any issues, feel free to ask your question or reach out to us on [Discord](https://discord.gg/H2wptkecUg)!*
+## Use cases and Compatibility
 
-<h2>Compatibility</h2>
+<h4>Use cases :</h4>
+
+- Cherry is perfect to create tools with a complete interface quickly.
+- Cherry is capable of making advanced and complexe user interfaces for applications or softwares.
+
+ 
+<h4>Compatibility :</h4>
 
 <table style="width:100%;">
   <tr>
@@ -150,19 +112,164 @@ Whether you’re a beginner or an experienced developer, Cherry makes it easy to
 🟧 <em>: Not fully tested, partially incompatible but planned</em><br>
 ❌ <em>: Not planned, incompatible (for the moment...)</em>
 </p>
+# Features
 
-## Examples & Preview
+The following section will show you a little bit about the main features of Cherry. You will see some short videos, GIFs, or even examples to explain more about Cherry.
+
+## Dear ImGui Native Compatibility
+
+Cherry has native compatibility with [Dear ImGui]()! That means you can directly add Dear ImGui code into your Cherry application rendering, and it will work just perfectly.
+
+VIDEO
+
+> In fact, Cherry uses Dear ImGui to render interfaces internally. We added many abstractions to allow you to create interfaces without Dear ImGui, just with simple high-level features, components, or widgets. But it is highly modular.
+
+## Lua Scripting
+
+Cherry has an entire Lua scripting engine. You don't want to create interfaces with C++? You can script your applications and tools with Lua. In fact, the Lua scripting engine of Cherry embeds most of Cherry's logic and drawing features such as capturing I/O, playing sounds, drawing rectangles, or creating widgets and components.
+
+> Cherry programming with C++ = (code, compilation, wait, run and see)
+>
+> Cherry programming with Lua = (code, ... that's it! Just see the result)
+
+## Sound Engine
+
+Cherry embeds a sound engine powered by [miniaudio](). Cherry adds more layers to create channels and run sounds or music easily.
+
+## Drawing API
+
+Cherry has a high-level and simple-to-use drawing API. With it, you can draw shapes and primitive forms, and bring life to your interfaces.
+
+## Images/Textures
+
+Cherry embeds a high-level and secure image and texture loader, compatible with multiple contexts of Dear ImGui.
+
+## Fonts
+
+Cherry supports font loading and setup. You can easily add new fonts and bring them to your interfaces.
+
+## I/O API
+> [!WARNING]  
+> This feature is still in active development, bugs can occur
+
+Cherry embeds an Inputs/Outputs API to quickly get user actions, key presses, mouse actions, etc.
+
+## Translation and Accessibility
+
+Cherry has an advanced translation and locales system, allowing you to adapt your software, tool, or app to many languages in the world.
+
+## Themes Builder
+
+The theme builder gives you the ability to easily craft your own themes, and gives your users the opportunity to customize your tool as they wish!
+
+## Components & Widgets Builder
+> [!WARNING]  
+> This feature is still in active development, bugs can occur
+
+The component builder gives you another ability: create your own replicable and invokable components. After crafting your own widgets in Lua or C++, you can call and invoke custom versions of them in your renderings.
+
+## Customization Abilities
+
+The entire context, windows, and rendering methods are fully customizable. You can control the behavior of a window, and define whether you want the native desktop environment title bar or your own custom one.
+
+## Network Fetch
+
+There are built-in network features to fetch files from URLs, primarily for the purpose of downloading images from the web.
+
+## Advanced Docking
+
+Cherry can show advanced dockspaces with multiple context-sharing abilities, giving you the possibility to create complex applications with multiple windows and dockspaces that can share ImGui windows between each other.
+
+## Markdown Renderer
+> [!WARNING]  
+> This feature is still in active development, bugs can occur
+
+There is a built-in markdown parser and renderer, allowing you to read and render Markdown files. Ideal for large information files or feature documentation in your applications.
+
+## Choose Your Features
+
+Cherry gives you the possibility to choose what you want to use. If you don't want the markdown renderer, audio engine, or sound — you can disable them. By default, nothing is enabled; you need to enable each feature you want directly from the `CMakeLists.txt` file of your project.
+
+By default, only the minimal render engine and some basic utilities are included. Cherry is not bloated by default.
+
+## Multiple Dear ImGui Contexts
+
+Cherry natively supports multiple Dear ImGui contexts. That is not the only point — each context in your app can communicate with the others!
+
+## Debug Tools
+> [!WARNING]  
+> This feature is still in active development, bugs can occur
+
+If enabled, Cherry embeds native debug tools, including a component inspector, a console, and some debug utilities (similar to the DevTools of some web browsers).
+
+## Built-in Components
+
+Cherry provides an incredible starting set of ready-to-use components such as buttons, sliders, widgets, inputs, etc.
+
+## Built-in Themes
+
+Cherry provides 8 themes of your choice, but [you can create your own](#themes-builder).
+
+
+# Used Concepts
+
+## Immediate Mode (ImGui)
+
+[Immediate mode graphical user interfaces (or ImGui)](https://www.youtube.com/watch?v=Z1qyvQsjK5Y&t=1560s) rendering is a paradigm where the rendering data is stored functionally by the user. It guarantees that all rendering data is refreshed on each frame, following a fully functional approach. This method is ideal for building highly reactive applications, especially when real-time data needs to be displayed — perfect for monitoring or dashboard-style apps!
+
+## Retained Mode (Classic GUI)
+
+Static rendering is a common and powerful concept in application rendering. It involves creating a component and reserving it to be rendered and refreshed only when needed. While it is not immediate-mode, it allows for extremely high performance while still ensuring functional behavior and responsiveness.
+
+## Semi-Static Rendering
+
+Semi-static rendering is a hybrid between ImGui-style and static rendering. The graphical part is rendered using ImGui to guarantee instant visuals and highly reactive interactions. Meanwhile, the data and functional part of the component is handled statically, ensuring both low- and high-level persistence.
+> [!INFO]  
+> Semi-static rendering is one of Cherry’s unique features.
+
+
+# Get started
+> [!WARNING]  
+> The only dependance you need to compile Cherry is the VulkanSDK installed & ready. Please refer to the https://www.lunarg.com/vulkan-sdk/ website to see how install Vulkan on your system (compatible on Linux & Windows).
+
+
+> 🪟 On **Microsoft Windows**
+> ``` powershell
+> git clone https://github.com/infiniteHQ/Cherry
+> cd Cherry
+> git submodule update --init --recursive
+> cd examples/hello
+> build.bat
+> .\build\bin\hello.exe
+> ```
+
+> 🐧 On **Linux** based distributions
+> ``` bash
+> git clone https://github.com/infiniteHQ/Cherry
+> cd Cherry
+> git submodule update --init --recursive
+> cd examples/hello
+> bash build.sh
+> ./build/bin/hello
+> ```
+
+*Congratulations! If everything is working well, you can now start in the Cherry environment. Please follow our [documentation](https://cherry.infinite.si/). If you encounter any issues, feel free to ask your question or reach out to us on [Discord](https://discord.gg/H2wptkecUg)!*
+
+# Projects using Cherry
 
 Cherry is already used in real-world projects, such as:  
 - [**The Vortex Creation Platform**](https://vortex.infinite.si)  
 - [**Vortex Launcher**](https://github.com/infiniteHQ/VortexLauncher)  
 - [**Vortex Installer**](https://github.com/infiniteHQ/VortexInstaller)  
 
-> [!NOTE]  
-> More examples and previews will be uploaded soon.  
+> You have a project using Cherry ? Come talk about that on our Discord, why not showing it here ?
 
+# Choices and style
 
-## Special thanks
+Cherry follows [the Infinite C++ style convention](https://github.com/infiniteHQ/InfiniteCodingStyle-cpp) for coding style. Concerning naming, we wanted to keep Dear ImGui's conventions (PascalCase for functions and methods), primarily to maintain consistency across UI codebases and avoid making ImGui-style coding more complex.
+
+# Special Thanks
+
 - For all contributors of SDL2
 - For all contributors of Vulkan/VulkanSDK
 - For all contributors of STB
