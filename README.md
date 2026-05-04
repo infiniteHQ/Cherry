@@ -47,6 +47,7 @@ Whether you’re a beginner or an experienced developer, Cherry makes it easy to
   - [**Images/Textures**](#imagestextures)
   - [**Fonts**](#fonts)
   - [**I/O API**](#io-api)
+  - [**Hooks**](#hooks)
   - [**Traduction and accessibility**](#traduction-and-accessibility)
   - [**Themes builder**](#themes-builder)
   - [**Components & Widgets builder**](#components--widgets-builder)
@@ -56,6 +57,8 @@ Whether you’re a beginner or an experienced developer, Cherry makes it easy to
   - [**Markdown renderer**](#markdown-renderer)
   - [**Choose your features**](#choose-your-features)
   - [**Multiple Dear Imgui Context**](#multiple-dear-imgui-context)
+  - [**Compute shaders**](#compute-shaders)
+  - [**KMS/DRM Rendering**](#kms-drm-rendering)
   - [**Debug tools**](#debug-tools)
   - [**Builtin components**](#builtin-components)
   - [**Builtin themes**](#builtin-themes)
@@ -153,6 +156,8 @@ Cherry supports font loading and setup. You can easily add new fonts and bring t
 
 Cherry embeds an Inputs/Outputs API to quickly get user actions, key presses, mouse actions, etc.
 
+## Hooks
+
 ## Translation and Accessibility
 
 Cherry has an advanced translation and locales system, allowing you to adapt your software, tool, or app to many languages in the world.
@@ -194,6 +199,9 @@ By default, only the minimal render engine and some basic utilities are included
 ## Multiple Dear ImGui Contexts
 
 Cherry natively supports multiple Dear ImGui contexts. That is not the only point — each context in your app can communicate with the others!
+
+## Compute shaders
+## KMS DRM Rendering
 
 ## Debug Tools
 > [!WARNING]  

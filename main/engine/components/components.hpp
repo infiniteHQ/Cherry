@@ -96,8 +96,8 @@ namespace Cherry {
     // (from permanent or ontime), first choice
     std::unordered_map<std::string, std::string> m_ContextProperties;
     // Cpy of props registered in the component, second choice
-    std::unordered_map<std::string, std::string> m_Properties;
     std::unordered_map<std::string, std::string> m_ContextData;
+    std::unordered_map<std::string, std::string> m_Properties;
     std::unordered_map<std::string, std::string> m_Data;
     std::unordered_map<std::string, std::string> m_CachedProperties;
   };

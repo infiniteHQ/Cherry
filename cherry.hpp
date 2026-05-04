@@ -37,6 +37,7 @@
 #include "./main/engine/components/components.hpp"
 #include "./main/engine/components/factory.hpp"
 #include "./main/engine/embed/assets/icons.h"
+#include "./main/engine/hooks/hooks.hpp"
 #include "./main/engine/image/image.hpp"
 #include "./main/engine/imgui/imgui_theme.h"
 #include "./main/engine/imgui/markdown/md.hpp"

@@ -14,17 +14,15 @@
 #ifndef HOOKS_HELPERS_HPP
 #define HOOKS_HELPERS_HPP
 
+#include <algorithm>
+#include <functional>
+#include <string>
+#include <unordered_map>
+
 namespace Cherry {
 
-  enum class ExecuteHookOn { Frame, Second, Condition };
+  enum class ExecuteHookOn { Frame, Second };
 
-  class Hook {
-   public:
-    Hook();
-
-   private:
-    ExecuteHookOn m_ExecuteHookOn;
-  };
 }  // namespace Cherry
 
 #endif  // HOOKS_HPP

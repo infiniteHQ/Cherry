@@ -94,6 +94,15 @@ namespace Cherry {
 
 }  // namespace Cherry
 
+namespace std {
+  template<>
+  struct hash<Cherry::Identifier> {
+    size_t operator()(const Cherry::Identifier &identifier) const {
+      return std::hash<std::string>{}(identifier.string());
+    }
+  };
+}  // namespace std
+
 // TODO : Macro to allow this
 using CherryID = Cherry::Identifier;
 using RenderMode = Cherry::RenderMode;

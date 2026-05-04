@@ -19,6 +19,7 @@
 #include <main/core/color/color.hpp>
 #include <main/core/logs/log.hpp>
 #include <main/core/types/type_safety.hpp>
+#include <main/engine/app/app.hpp>
 #include <main/engine/app_window/app_window.hpp>
 #include <main/engine/base.hpp>
 #include <main/engine/components/components.hpp>
@@ -99,15 +100,6 @@ static void AppPushTabStyle() {
 static void AppPopTabStyle() {
   ImGui::PopStyleVar(3);
 }
-
-namespace std {
-  template<>
-  struct hash<Cherry::Identifier> {
-    size_t operator()(const Cherry::Identifier &identifier) const {
-      return std::hash<std::string>{}(identifier.string());
-    }
-  };
-}  // namespace std
 
 namespace Cherry {
   class Window;

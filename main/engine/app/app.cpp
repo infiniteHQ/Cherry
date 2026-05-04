@@ -1,12 +1,13 @@
 #include "app.hpp"
 
+#include <main/engine/hooks/hooks.hpp>
+
 #include "../../../lib/sdl2/include/SDL.h"
 #include "../../../lib/sdl2/include/SDL_vulkan.h"
 #include "../app_window/app_window.hpp"
 #include "../base.hpp"
 #include "../components/components.hpp"
 #include "../window/window.hpp"
-
 /**
  * @file app.cpp
  * @brief All sources of master window behaviors & render engine.
@@ -1572,7 +1573,7 @@ namespace Cherry {
           ImGui::Dummy(ImVec2(iconSize + 10.0f + titleSize.x, iconSize));
         }
         ImGui::End();
-        ImGui::End();
+        // ImGui::End();
 
         ImGui::PopStyleVar(3);
         ImGui::PopStyleColor(2);
@@ -2117,6 +2118,7 @@ namespace Cherry {
       m_DevtoolsSwitchUsed = false;
 #endif  // CHERRY_DEBUG
 
+      RenderHooks();
       PresentAllWindows();
 
       float time = GetTime();
