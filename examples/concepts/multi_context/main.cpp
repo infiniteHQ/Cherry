@@ -1,9 +1,6 @@
 #include "../../cherry.hpp"
 
 void Render() {
-  using Cherry::Vec2;
-  using namespace Cherry::Draw;
-
   std::string WindowName = CherryWindow.GetName();
   std::string AppWindowName = CherryAppWindow.GetName();
 
@@ -23,8 +20,7 @@ CherryApplication CherryMain(int argc, char **argv) {
 
   // When created, let's add some components to the runtime
   CherryApp.SetDescriptionForAppWindow("Test window", "A super cool window");
-  CherryApp.SetLogoPathForAppWindow("Test window",
-                                    "/home/diego/Téléchargements/fa_send.png");
+  CherryApp.SetLogoPathForAppWindow("Test window", "/home/diego/Téléchargements/fa_send.png");
   Cherry::AddAppWindow(CherryKit::WindowSimple("Test window", Render));
   Cherry::AddAppWindow(CherryKit::WindowSimple("Test window 2", Render));
   Cherry::AddAppWindow(CherryKit::WindowSimple("Test window 3", Render));

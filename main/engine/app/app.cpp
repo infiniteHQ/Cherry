@@ -1496,6 +1496,7 @@ namespace Cherry {
       inputIO.ConfigInputTrickleEventQueue = prevTrickling;
 
       window->LoadTheme();
+      // TODO probably remove that
       ImGui::PushFont(Application::GetFontList()["Default"]);
 
       app->RenderWindow(window.get());
@@ -1580,7 +1581,7 @@ namespace Cherry {
         ImGui::GetFont()->Scale = oldScale;
         ImGui::PopFont();
       }
-      ImGui::PopFont();
+      // ImGui::PopFont();
       window->UnloadTheme();
 
       ImGui_ImplVulkanH_Window *wd = window->GetWinData();

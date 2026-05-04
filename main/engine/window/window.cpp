@@ -366,6 +366,7 @@ namespace Cherry {
     ImFont *inconsolatas =
         io.Fonts->AddFontFromMemoryTTF((void *)g_Inconsolatas, sizeof(g_Inconsolatas), 20.0f, &fontConfigExtra);
 
+    // TODO Old and obsolete way yo to
     Application::GetFontList()["Default"] = hackFont;
     Application::GetFontList()["Inconsolatas"] = inconsolatas;
     Application::GetFontList()["Bold"] =

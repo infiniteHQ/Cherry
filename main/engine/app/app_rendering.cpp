@@ -83,7 +83,7 @@ namespace Cherry {
     if (!finded) {
       ImGui::TextColored(
           ImVec4(1.0f, 0.2f, 0.2f, 1.0f),
-          "UIKit Error : You need to specify the "
+          "Cherry Error : You need to specify the "
           "\"UniqueAppWindowName\" in spec !");
     }
   }
