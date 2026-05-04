@@ -1,5 +1,4 @@
 #pragma once
-#include <examples/hello/t.h>
 
 #include <main/engine/app/app.hpp>
 #include <main/engine/components/components.hpp>
