@@ -20,6 +20,7 @@
 #include "vulkan/vulkan.h"
 
 namespace Cherry {
+
   enum class DefaultAppWindowBehaviors { DefaultDocking, DefaultSize };
 
   enum class AppWindowTypes { InstanciableWindow, StaticWindow };

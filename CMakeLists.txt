@@ -14,7 +14,6 @@ option(CHERRY_IMGUI_EXPORT "Disable workspace saves"                    OFF)
 option(CHERRY_PACKAGE "Enable packaging features with pyinstaller"      OFF)
 option(CHERRY_MULTIAPP "Use multiple apps in one executable"            OFF)
 
-option(CHERRY_ENABLE_SHADERS "Enable vulkan shaders system"             OFF)
 option(CHERRY_ENABLE_NET "Enable net features"                          OFF)
 option(CHERRY_ENABLE_MARKDOWN "Enable markdown parsing and render"      OFF)
 option(CHERRY_ENABLE_AUDIO "Enable audio features"                      OFF)
@@ -23,6 +22,7 @@ option(CHERRY_ENABLE_LINUXDRM "Enable Linux Direct Rendering Manager"   OFF)
 option(CHERRY_ENABLE_NODES "Disable nodal systems"                      OFF)
 option(CHERRY_ENABLE_SCRIPTING "Enable Lua scripting"                   OFF)
 option(CHERRY_ENABLE_WORKSPACESAVES "Disable workspace saves"           OFF)
+option(CHERRY_ENABLE_COMPUTE_SHADERS "Enable compute shaders system"    OFF)
 
 # ---------------------------------------------------------------------------
 # Compiler flags
@@ -144,6 +144,10 @@ target_include_directories(cherry PUBLIC
 # ---------------------------------------------------------------------------
 if(CHERRY_DEBUG)
     target_compile_definitions(cherry PUBLIC CHERRY_DEBUG)
+endif()
+
+if(CHERRY_ENABLE_COMPUTE_SHADERS)
+    target_compile_definitions(cherry PUBLIC CHERRY_ENABLE_COMPUTE_SHADERS)
 endif()
 
 if(CHERRY_MULTIAPP)

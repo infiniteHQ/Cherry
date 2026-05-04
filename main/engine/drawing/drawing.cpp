@@ -15,7 +15,7 @@
 #include <main/engine/imgui/wrappers/wrappers.hpp>
 
 namespace Cherry {
-  namespace Draw {
+  namespace Drawing {
 
     static inline ImVec2 ToIm(const Vec2 &v) {
       return ImVec2(v.x, v.y);
@@ -714,5 +714,5 @@ namespace Cherry {
       dl->AddLine(ToIm(p3), ToIm(p4), col2, thickness);
       dl->AddLine(ToIm(p4), ToIm(p1), col2, thickness);
     }
-  }  // namespace Draw
+  }  // namespace Drawing
 }  // namespace Cherry

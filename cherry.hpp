@@ -42,6 +42,7 @@
 #include "./main/engine/imgui/markdown/md.hpp"
 #include "./main/engine/imgui/wrappers/wrappers.hpp"
 #include "./main/engine/scripting/scripting.hpp"
+#include "./main/engine/shaders/shaders.hpp"
 #include "./main/engine/ui/notifications/notifications.hpp"
 #include "./main/engine/ui/ui.hpp"
 
