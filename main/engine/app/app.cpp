@@ -1,17 +1,15 @@
+//
+//  app.cpp
+//  Sources for main application features of Cherry
+//
+//  Copyright (c) 2024-2026 Diego Moreno
+//  Copyright (c) 2026 Infinite
+//
+//	This work is licensed under the terms of the MIT license.
+//	For a copy, see <https://opensource.org/licenses/MIT>.
+//
+
 #include "app.hpp"
-
-#include <main/engine/hooks/hooks.hpp>
-
-#include "../../../lib/sdl2/include/SDL.h"
-#include "../../../lib/sdl2/include/SDL_vulkan.h"
-#include "../app_window/app_window.hpp"
-#include "../base.hpp"
-#include "../components/components.hpp"
-#include "../window/window.hpp"
-/**
- * @file app.cpp
- * @brief All sources of master window behaviors & render engine.
- */
 
 #include <stdio.h>   // printf, fprintf
 #include <stdlib.h>  // abort
@@ -24,6 +22,14 @@
 #include <sstream>
 #include <string>
 #include <thread>  // thread
+
+#include "../../../lib/sdl2/include/SDL.h"
+#include "../../../lib/sdl2/include/SDL_vulkan.h"
+#include "../app_window/app_window.hpp"
+#include "../base.hpp"
+#include "../components/components.hpp"
+#include "../shaders/shaders.hpp"
+#include "../window/window.hpp"
 
 #ifdef CHERRY_ENABLE_NET
 
@@ -822,7 +828,6 @@ namespace Cherry {
     // Set main context application ptr
     app = &this->Get();
 #ifdef CHERRY_DEBUG
-    Cherry::Application::DebugToolState().load(std::memory_order_acquire);
     Cherry::Application::DebugToolState().store(false);
 #endif
 #ifdef CHERRY_ENABLE_AUDIO
@@ -1496,8 +1501,6 @@ namespace Cherry {
       inputIO.ConfigInputTrickleEventQueue = prevTrickling;
 
       window->LoadTheme();
-      // TODO probably remove that
-      ImGui::PushFont(Application::GetFontList()["Default"]);
 
       app->RenderWindow(window.get());
 
@@ -1574,14 +1577,12 @@ namespace Cherry {
           ImGui::Dummy(ImVec2(iconSize + 10.0f + titleSize.x, iconSize));
         }
         ImGui::End();
-        // ImGui::End();
 
         ImGui::PopStyleVar(3);
         ImGui::PopStyleColor(2);
         ImGui::GetFont()->Scale = oldScale;
         ImGui::PopFont();
       }
-      // ImGui::PopFont();
       window->UnloadTheme();
 
       ImGui_ImplVulkanH_Window *wd = window->GetWinData();
@@ -1683,15 +1684,13 @@ namespace Cherry {
 #endif
 
   void Application::CleanupWindowIfEmpty(const std::shared_ptr<Window> &win) {
+    if (!win || m_Windows.size() <= 1) {
+      return;
+    }
+
     if (win->GetSpecifications().RenderMode == WindowRenderingMethod::DockingWindows ||
         win->GetSpecifications().RenderMode == WindowRenderingMethod::TabWidows ||
         win->GetSpecifications().RenderMode == WindowRenderingMethod::SimpleWindow) {
-      if (!win) {
-        return;
-      }
-
-      std::vector<std::shared_ptr<Window>> to_remove;
-
       int app_wins_inside = 0;
 
       for (const auto &app_win : m_AppWindows) {
@@ -1701,12 +1700,26 @@ namespace Cherry {
       }
 
       if (app_wins_inside == 0) {
-        to_remove.push_back(win);
-      }
+        if (g_Device != VK_NULL_HANDLE) {
+          vkDeviceWaitIdle(g_Device);
+        }
 
-      for (const auto &win : to_remove) {
-        // TODO : Proper remove
+        win->SetIsClosing(true);
+
+        CleanupVulkanWindow(win.get());
+
+        if (win->GetWindowHandle()) {
+          SDL_DestroyWindow(win->GetWindowHandle());
+        }
+
         m_Windows.erase(std::remove(m_Windows.begin(), m_Windows.end(), win), m_Windows.end());
+
+        if (!m_Windows.empty()) {
+          c_CurrentRenderedWindow = m_Windows.front();
+          if (c_CurrentRenderedWindow->GetImGuiContext()) {
+            ImGui::SetCurrentContext(c_CurrentRenderedWindow->GetImGuiContext());
+          }
+        }
       }
     }
   }
@@ -2115,11 +2128,7 @@ namespace Cherry {
       }
 
       DragRendered = false;
-#ifdef CHERRY_DEBUG
-      m_DevtoolsSwitchUsed = false;
-#endif  // CHERRY_DEBUG
 
-      RenderHooks();
       PresentAllWindows();
 
       float time = GetTime();
@@ -2131,7 +2140,8 @@ namespace Cherry {
       c_DockIsDragging = false;
 
       // Erase empty main windows
-      for (auto win : m_Windows) {
+      auto windowsSnapshot = m_Windows;
+      for (auto win : windowsSnapshot) {
         CleanupWindowIfEmpty(win);
       }
 
@@ -2375,10 +2385,6 @@ namespace Cherry {
     if (!m_ComponentPoolStack.empty()) {
       m_ComponentPoolStack.pop_back();
     }
-  }
-
-  std::vector<ComponentsPool *> &Application::GetComponentPoolStack() {
-    return m_ComponentPoolStack;
   }
 
   ComponentsPool *Application::GetComponentPool() {
