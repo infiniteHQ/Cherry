@@ -312,6 +312,8 @@ namespace Cherry {
     void PopComponentPool();
     ComponentsPool *GetComponentPool();
 
+    std::vector<ComponentsPool *> &GetComponentPoolStack();
+
     void RenderComponent(Component &component);
     void RenderComponent(const std::shared_ptr<Component> &component);
 

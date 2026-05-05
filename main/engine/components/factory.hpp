@@ -82,6 +82,13 @@ namespace Cherry {
       }
     }
 
+    inline void ApplyDynamicProps(Component& comp, const Props& props) {
+      for (const auto& [key, val] : props) {
+        if (key.rfind("dyn:", 0) == 0)
+          comp.SetProperty(key.substr(4), AnyToString(val));
+      }
+    }
+
     inline void ApplyWithDefaults(Component& comp, const Props& callProps, const std::string& name) {
       if (const Props* defs = ComponentDefaultsRegistry::Instance().Get(name))
         ApplyPropsMap(comp, *defs);
@@ -100,6 +107,42 @@ namespace Cherry {
       std::fprintf(stderr, "[Cherry] Component \"%s\" doesn't exist!\n", name.c_str());
       std::fflush(stderr);
     }
+
+    inline ComponentsPool& ActivePool() {
+      const auto& stack = CherryApp.GetComponentPoolStack();
+      if (!stack.empty() && stack.back() != nullptr)
+        return *stack.back();
+      return *CherryApp.GetComponentPool();
+    }
+
+    inline std::shared_ptr<Component> FindInPools(const std::string& id) {
+      const auto& stack = CherryApp.GetComponentPoolStack();
+      for (auto it = stack.rbegin(); it != stack.rend(); ++it) {
+        if (!*it)
+          continue;
+        for (const auto& c : (*it)->IdentifiedComponents) {
+          if (c && c->GetIdentifier().string() == id)
+            return c;
+        }
+      }
+      for (const auto& c : CherryApp.GetComponentPool()->IdentifiedComponents) {
+        if (c && c->GetIdentifier().string() == id)
+          return c;
+      }
+      return nullptr;
+    }
+
+    inline Component& StoreOwnedInPool(std::unique_ptr<Component> uptr) {
+      auto shared = std::shared_ptr<Component>(std::move(uptr));
+      Component* raw = shared.get();
+      ActivePool().IdentifiedComponents.push_back(std::move(shared));
+      return *raw;
+    }
+
+    inline void StoreRefInPool(Component* raw) {
+      ActivePool().IdentifiedComponents.push_back(std::shared_ptr<Component>(raw, [](Component*) { }));
+    }
+
   }  // namespace detail
 
   namespace Components {
@@ -173,30 +216,39 @@ namespace Cherry {
     }
 
     Component* Get(const std::string& id) {
-      auto it = m_cache.find(id);
-      if (it == m_cache.end())
+      auto it = m_frameCache.find(id);
+      if (it != m_frameCache.end()) {
+        it->second.lastSeen = m_frame;
+        return it->second.ptr;
+      }
+
+      auto shared = detail::FindInPools(id);
+      if (!shared)
         return nullptr;
-      it->second.lastSeen = m_frame;
-      return it->second.ptr;
+
+      m_frameCache[id] = { shared.get(), m_frame };
+      return shared.get();
     }
 
     Component& StoreOwned(const std::string& id, std::unique_ptr<Component> c) {
-      Component* raw = c.get();
-      m_cache[id] = { raw, m_frame, std::move(c) };
-      return *raw;
+      Component& ref = detail::StoreOwnedInPool(std::move(c));
+      m_frameCache[id] = { &ref, m_frame };
+      return ref;
     }
 
     void StoreRef(const std::string& id, Component* raw) {
-      m_cache[id] = { raw, m_frame, nullptr };
+      detail::StoreRefInPool(raw);
+      m_frameCache[id] = { raw, m_frame };
     }
 
     void EndFrame() {
       ++m_frame;
       m_instanceCounters.clear();
+
       constexpr uint64_t kKeepFrames = 2;
-      for (auto it = m_cache.begin(); it != m_cache.end();) {
+      for (auto it = m_frameCache.begin(); it != m_frameCache.end();) {
         if (m_frame - it->second.lastSeen > kKeepFrames)
-          it = m_cache.erase(it);
+          it = m_frameCache.erase(it);
         else
           ++it;
       }
@@ -207,12 +259,12 @@ namespace Cherry {
     }
 
    private:
-    struct Entry {
+    struct FrameEntry {
       Component* ptr = nullptr;
       uint64_t lastSeen = 0;
-      std::unique_ptr<Component> owned;
     };
-    std::unordered_map<std::string, Entry> m_cache;
+
+    std::unordered_map<std::string, FrameEntry> m_frameCache;
     std::unordered_map<std::string, uint32_t> m_instanceCounters;
     uint64_t m_frame = 0;
   };
@@ -242,35 +294,60 @@ namespace Cherry {
 
     std::string id;
     if (auto it = props.find("id"); it != props.end())
-      id = componentName + "##" + std::any_cast<std::string>(it->second);
+      id = std::any_cast<std::string>(it->second);
     else
       id = cache.AllocId(componentName);
 
     if (Component* cached = cache.Get(id)) {
-      detail::ApplyPropsMap(*cached, props);
+      detail::ApplyDynamicProps(*cached, props);
+
+      auto shared = detail::FindInPools(id);
+      if (shared)
+        Application::Get().PushCurrentComponent(shared);
+
       cached->RenderWrapper();
+
+      if (shared)
+        Application::Get().PopCurrentComponent();
+
       return *cached;
     }
 
-    // already owned
     if (const FactoryOwned* f = registry.FindOwned(componentName)) {
       auto uptr = (*f)(Identifier(id), props);
       detail::ApplyWithDefaults(*uptr, props, componentName);
+
       Component& ref = cache.StoreOwned(id, std::move(uptr));
+      auto shared = detail::FindInPools(id);
+
+      if (shared)
+        Application::Get().PushCurrentComponent(shared);
+
       ref.RenderWrapper();
+
+      if (shared)
+        Application::Get().PopCurrentComponent();
+
       return ref;
     }
 
-    // ref
     if (const FactoryRef* f = registry.FindRef(componentName)) {
       Component& ref = (*f)(Identifier(id), props);
       detail::ApplyWithDefaults(ref, props, componentName);
       cache.StoreRef(id, &ref);
+
+      auto shared = detail::FindInPools(id);
+      if (shared)
+        Application::Get().PushCurrentComponent(shared);
+
       ref.RenderWrapper();
+
+      if (shared)
+        Application::Get().PopCurrentComponent();
+
       return ref;
     }
 
-    // if unknown
     detail::WarnUnknown(componentName);
     auto unk = std::make_unique<Components::UnknownComponent>(Identifier(id), componentName);
     return cache.StoreOwned(id, std::move(unk));

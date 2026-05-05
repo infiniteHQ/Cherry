@@ -2377,6 +2377,10 @@ namespace Cherry {
     }
   }
 
+  std::vector<ComponentsPool *> &Application::GetComponentPoolStack() {
+    return m_ComponentPoolStack;
+  }
+
   ComponentsPool *Application::GetComponentPool() {
     if (!m_ComponentPoolStack.empty()) {
       return m_ComponentPoolStack.back();
