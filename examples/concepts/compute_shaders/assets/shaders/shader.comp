@@ -1,0 +1,268 @@
+#version 450
+
+layout(local_size_x = 16, local_size_y = 16, local_size_z = 1) in;
+
+layout(binding = 0, rgba8) uniform writeonly image2D outputImage;
+
+layout(push_constant) uniform PushConstants {
+    float time;
+    float scale;
+    float intensity;
+    float colorR;
+    float colorG;
+    float colorB;
+    int effectType;
+    float param1;
+    float camX;
+    float camY;
+    float carX;
+    float carZ;
+    float carAngle;
+    float sunAngle;
+    float laserY;
+    float shieldTime;
+    float tripleShot;
+    float slowMo;
+} params;
+
+#define PI 3.14159265359
+
+float hash(vec2 p) {
+    return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453123);
+}
+
+float noise(vec2 p) {
+    vec2 i = floor(p);
+    vec2 f = fract(p);
+    f = f * f * (3.0 - 2.0 * f);
+    float a = hash(i);
+    float b = hash(i + vec2(1.0, 0.0));
+    float c = hash(i + vec2(0.0, 1.0));
+    float d = hash(i + vec2(1.0, 1.0));
+    return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);
+}
+
+float fbm(vec2 p, int octaves) {
+    float value = 0.0;
+    float amplitude = 0.5;
+    float frequency = 1.0;
+    for (int i = 0; i < octaves; i++) {
+        value += amplitude * noise(p * frequency);
+        amplitude *= 0.5;
+        frequency *= 2.0;
+    }
+    return value;
+}
+
+vec3 safeColor(vec3 col) {
+    if (any(isnan(col)) || any(isinf(col))) return vec3(0.0);
+    return clamp(col, 0.0, 1.0);
+}
+
+vec3 waves(vec2 uv, float t) {
+    vec2 c1 = vec2(0.3, 0.3);
+    vec2 c2 = vec2(-0.3, -0.3);
+    vec2 c3 = vec2(sin(t) * 0.2, cos(t) * 0.2);
+    float d1 = length(uv - c1);
+    float d2 = length(uv - c2);
+    float d3 = length(uv - c3);
+    float v = sin(d1 * params.scale * 10.0 - t * 3.0);
+    v += sin(d2 * params.scale * 10.0 - t * 2.5);
+    v += sin(d3 * params.scale * 8.0 + t * 2.0);
+    v = (v + 3.0) / 6.0;
+    return vec3(params.colorR, params.colorG, params.colorB) * v * params.intensity;
+}
+
+vec3 tunnel(vec2 uv, float t) {
+    float dist = length(uv);
+    if (dist < 0.001) dist = 0.001;
+    float angle = atan(uv.y, uv.x);
+    float u = params.scale / dist + t;
+    float v = angle * 4.0 / PI;
+    float pattern = sin(u * 4.0) * cos(v * 4.0);
+    pattern += sin(u * 2.0 + t) * 0.5;
+    pattern = (pattern + 1.5) / 3.0;
+    float fog = 1.0 - smoothstep(0.0, 2.0, dist);
+    return vec3(params.colorR, params.colorG, params.colorB) * pattern * params.intensity * fog;
+}
+
+vec3 fractal(vec2 uv, float t) {
+    vec2 p = uv * params.scale;
+    float v = fbm(p + vec2(t * 0.3, t * 0.2), 6);
+    float turb = fbm(p * 2.0 + vec2(t * 0.5, t * 0.3), 4);
+    v = v * 0.7 + turb * 0.3;
+    vec3 col = mix(
+        vec3(params.colorR, params.colorG, params.colorB) * 0.3,
+        vec3(params.colorR, params.colorG, params.colorB),
+        v
+    );
+    return col * params.intensity;
+}
+
+vec3 voronoi(vec2 uv, float t) {
+    vec2 p = uv * params.scale;
+    vec2 ip = floor(p);
+    vec2 fp = fract(p);
+    float minDist = 10.0;
+    vec2 minPoint = vec2(0.0);
+    for (int j = -1; j <= 1; j++) {
+        for (int i = -1; i <= 1; i++) {
+            vec2 neighbor = vec2(float(i), float(j));
+            vec2 pointPos = hash(ip + neighbor) + neighbor;
+            pointPos += 0.3 * sin(t + hash(ip + neighbor) * 6.28);
+            float d = length(fp - pointPos);
+            if (d < minDist) {
+                minDist = d;
+                minPoint = ip + neighbor;
+            }
+        }
+    }
+    float cellHash = hash(minPoint);
+    vec3 cellColor = vec3(
+        params.colorR * (0.5 + 0.5 * sin(cellHash * 6.28 + t)),
+        params.colorG * (0.5 + 0.5 * sin(cellHash * 6.28 + t + 2.094)),
+        params.colorB * (0.5 + 0.5 * sin(cellHash * 6.28 + t + 4.188))
+    );
+    float edge = smoothstep(0.0, 0.1, minDist);
+    return cellColor * edge * params.intensity;
+}
+
+vec3 metaballs(vec2 uv, float t) {
+    float v = 0.0;
+    for (int i = 0; i < 5; i++) {
+        float fi = float(i);
+        vec2 pos = vec2(
+            sin(t * (0.5 + fi * 0.1) + fi * 1.3) * 0.5,
+            cos(t * (0.4 + fi * 0.15) + fi * 0.7) * 0.5
+        );
+        float d = length(uv - pos);
+        float radius = 0.1 + 0.05 * sin(t + fi);
+        v += radius / (d + 0.01);
+    }
+    float blob = smoothstep(params.param1, params.param1 + 0.5, v);
+    float glow = v * 0.1;
+    vec3 col = vec3(params.colorR, params.colorG, params.colorB);
+    return (col * blob + col * glow * 0.5) * params.intensity;
+}
+
+vec3 juliaSet(vec2 uv, float t) {
+    vec2 c = vec2(0.355 + sin(t * 0.3) * 0.1, 0.355 + cos(t * 0.2) * 0.1);
+    vec2 z = uv * params.scale;
+    float iter = 0.0;
+    for (int i = 0; i < 64; i++) {
+        if (dot(z, z) > 4.0) break;
+        z = vec2(z.x * z.x - z.y * z.y, 2.0 * z.x * z.y) + c;
+        iter += 1.0;
+    }
+    // smooth iteration count avoids hard banding
+    float f = (iter - log2(log2(dot(z, z))) + 4.0) / 64.0;
+    vec3 col;
+    col.r = 0.5 + 0.5 * sin(f * PI * 4.0 + t + params.colorR * PI);
+    col.g = 0.5 + 0.5 * sin(f * PI * 4.0 + t + params.colorG * PI + 2.094);
+    col.b = 0.5 + 0.5 * sin(f * PI * 4.0 + t + params.colorB * PI + 4.188);
+    return col * params.intensity;
+}
+
+vec3 warpFBM(vec2 uv, float t) {
+    vec2 p = uv * params.scale;
+    vec2 q = vec2(
+        fbm(p + t * 0.1, 4),
+        fbm(p + vec2(5.2, 1.3), 4)
+    );
+    vec2 r = vec2(
+        fbm(p + 4.0 * q + vec2(1.7, 9.2) + t * 0.12, 4),
+        fbm(p + 4.0 * q + vec2(8.3, 2.8), 4)
+    );
+    float f = fbm(p + 4.0 * r, 4);
+    vec3 col = mix(vec3(0.1, 0.1, 0.4), vec3(params.colorR, params.colorG, params.colorB), clamp(f * 2.0, 0.0, 1.0));
+    col = mix(col, vec3(1.0, 0.9, 0.8), clamp(f * f * 4.0, 0.0, 1.0));
+    return col * params.intensity;
+}
+
+vec3 aurora(vec2 uv, float t) {
+    vec3 col = vec3(0.0);
+    col += vec3(0.8, 0.9, 1.0) * pow(max(hash(floor(uv * 200.0)), 0.0), 30.0);
+    for (int i = 0; i < 5; i++) {
+        float fi = float(i);
+        float wave = sin(uv.x * (3.0 + fi) * params.scale + t * (0.5 + fi * 0.2)) * 0.08
+                   + sin(uv.x * (5.0 + fi * 2.0) + t * 0.3) * 0.04;
+        float band = exp(-pow(uv.y - 0.2 - fi * 0.12 - wave, 2.0) * 80.0) * (0.5 + 0.5 * sin(t + fi));
+        col += mix(vec3(0.1, 0.9, 0.4), vec3(params.colorR * 0.5, params.colorG * 0.3, params.colorB), fi / 5.0) * band * params.intensity;
+    }
+    return safeColor(col);
+}
+
+vec3 reactionDiffusion(vec2 uv, float t) {
+    vec2 p = uv * params.scale * 3.0;
+    float u = fbm(p + vec2(t * 0.05, 0.0), 5);
+    float v2 = fbm(p * 1.3 + vec2(0.0, t * 0.07) + vec2(3.1, 7.4), 5);
+    float spots = smoothstep(0.45, 0.55, fbm(p * 2.0 + smoothstep(-0.05, 0.05, u - v2) + t * 0.03, 3));
+    vec3 colA = vec3(params.colorR, params.colorG, params.colorB);
+    vec3 colB = vec3(1.0 - params.colorR, 1.0 - params.colorG, params.colorB * 0.5);
+    return mix(colA, colB, spots) * params.intensity;
+}
+
+vec3 galaxy(vec2 uv, float t) {
+    vec3 col = vec3(0.0);
+    float radius = length(uv);
+    float spiral = fract((atan(uv.y, uv.x) / (2.0 * PI) + radius * params.scale * 0.5 - t * 0.1) * 3.0);
+    float armMask = exp(-spiral * spiral * 8.0) + exp(-(1.0 - spiral) * (1.0 - spiral) * 8.0);
+    float density = exp(-radius * radius * 2.0) + exp(-pow(radius - 0.5, 2.0) * 20.0) * 0.5;
+    col += vec3(params.colorR, params.colorG, params.colorB) * armMask * density * (0.5 + fbm(uv * 6.0 + t * 0.05, 3) * 0.5);
+    col += vec3(1.0, 0.95, 0.8) * exp(-radius * radius * 30.0) * 2.0;
+    col += vec3(0.9, 0.95, 1.0) * pow(max(hash(floor(uv * 300.0)), 0.0), 25.0) * (1.0 - density * 0.5);
+    return safeColor(col * params.intensity);
+}
+
+vec3 neonGrid(vec2 uv, float t) {
+    uv.y = -uv.y;
+    vec3 ro = vec3(0.0, 1.0, -t * 2.0);
+    vec3 rd = normalize(vec3(uv.x * 1.2, uv.y - 0.3, 1.0));
+    float horizon = smoothstep(-0.05, 0.05, uv.y - 0.05);
+    vec3 col = mix(vec3(0.8, 0.1, 0.4), vec3(0.05, 0.02, 0.2), horizon);
+    vec2 sunPos = vec2(0.0, 0.18);
+    float sunD = length(uv - sunPos);
+    col += vec3(1.0, 0.3, 0.7) * smoothstep(0.12, 0.10, sunD);
+    col *= mix(1.0, 0.0, smoothstep(0.11, 0.09, sunD) * step(0.5, fract((uv.y - sunPos.y) * 18.0)));
+    if (rd.y < -0.01) {
+        float dist = ro.y / (-rd.y);
+        vec2 gp = (ro.xz + rd.xz * dist) * params.scale;
+        float line = min(abs(fract(gp.x) - 0.5), abs(fract(gp.y) - 0.5));
+        float gridMask = 1.0 - smoothstep(0.02, 0.06, line);
+        float fog = exp(-dist * 0.08);
+        col = mix(col, vec3(params.colorR, params.colorG, params.colorB) * gridMask, fog * gridMask);
+    }
+    col += vec3(1.0) * pow(max(hash(floor(uv * 250.0)), 0.0), 28.0) * horizon;
+    return safeColor(col * params.intensity);
+}
+
+void main() {
+    ivec2 pixelCoord = ivec2(gl_GlobalInvocationID.xy);
+    ivec2 imageSize = imageSize(outputImage);
+    if (pixelCoord.x >= imageSize.x || pixelCoord.y >= imageSize.y) return;
+
+    vec2 uv = (vec2(pixelCoord) / vec2(imageSize) - 0.5) * 2.0;
+    vec3 color = vec3(0.0);
+
+    switch (params.effectType) {
+        case  0: color = waves(uv, params.time);             break;
+        case  1: color = tunnel(uv, params.time);            break;
+        case  2: color = fractal(uv, params.time);           break;
+        case  3: color = voronoi(uv, params.time);           break;
+        case  4: color = metaballs(uv, params.time);         break;
+        case  5: color = juliaSet(uv, params.time);          break;
+        case  6: color = warpFBM(uv, params.time);           break;
+        case  7: color = aurora(uv, params.time);            break;
+        case  8: color = reactionDiffusion(uv, params.time); break;
+        case  9: color = galaxy(uv, params.time);            break;
+        case 10: color = neonGrid(uv, params.time);          break;
+        default: color = waves(uv, params.time);             break;
+    }
+
+    if (any(isnan(color)) || any(isinf(color))) color = vec3(0.0);
+    color = clamp(color, 0.0, 1.0);
+    color = pow(color, vec3(1.0 / 2.2));
+    color = clamp(color, 0.0, 1.0);
+
+    imageStore(outputImage, pixelCoord, vec4(color, 1.0));
+}
