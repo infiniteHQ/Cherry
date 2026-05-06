@@ -28,6 +28,7 @@
 #include "../app_window/app_window.hpp"
 #include "../base.hpp"
 #include "../components/components.hpp"
+#include "../hooks/hooks.hpp"
 #include "../shaders/shaders.hpp"
 #include "../window/window.hpp"
 
@@ -1891,6 +1892,7 @@ namespace Cherry {
 
       DragRendered = false;
 
+      RenderHooks();
       PresentAllWindows();
 
       float time = GetTime();
@@ -2129,6 +2131,7 @@ namespace Cherry {
 
       DragRendered = false;
 
+      RenderHooks();
       PresentAllWindows();
 
       float time = GetTime();
