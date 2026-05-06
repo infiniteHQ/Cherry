@@ -6,7 +6,13 @@ void Render() {
   // WARNING, to test live scripting, you need to edit
   // "bin/resources/scripts/render.lua", because of Cherry::GetPath, our
   // relative linking feature
-  Cherry::Script::RenderLuaFreshScript(Cherry::GetPath("resources/scripts/render.lua"));
+
+  static bool initialized = false;
+  if (!initialized) {
+    Cherry::Script::RenderLuaFreshScript(Cherry::GetPath("static.lua"));
+    initialized = true;
+  }
+  Cherry::Script::RenderLuaFreshScript(Cherry::GetPath("render.lua"));
 }
 CherryApplication CherryMain(int argc, char **argv) {
   Cherry::ApplicationSpecification config;

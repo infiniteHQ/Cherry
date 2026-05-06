@@ -13,7 +13,6 @@ namespace Cherry {
     CHERRY_API ImGuiContext *GetCurrentContext();
 
     CHERRY_API ImVec2 CalcItemSize(ImVec2 size, float default_w, float default_h);
-
     // Fonts
     CHERRY_API ImVec2 CalcTextSizeA(
         ImFont *ptr,
@@ -388,12 +387,12 @@ namespace Cherry {
     // Items interaction
     CHERRY_API bool IsItemHovered(ImGuiHoveredFlags flags = 0);  // is the last item hovered? (and usable, aka not blocked by
                                                                  // a popup, etc.). See ImGuiHoveredFlags for more options.
-    CHERRY_API bool IsItemActive();   // is the last item active? (e.g. button being held, text
-                                      // field being edited. This will continuously return true
-                                      // while holding mouse button on an item. Items that don't
-                                      // interact will always return false)
-    CHERRY_API bool IsItemFocused();  // is the last item focused for
-                                      // keyboard/gamepad navigation?
+    CHERRY_API bool IsItemActive();                              // is the last item active? (e.g. button being held, text
+                                                                 // field being edited. This will continuously return true
+                                                                 // while holding mouse button on an item. Items that don't
+                                                                 // interact will always return false)
+    CHERRY_API bool IsItemFocused();                             // is the last item focused for
+                                                                 // keyboard/gamepad navigation?
     CHERRY_API bool IsItemClicked(
         ImGuiMouseButton mouse_button = 0);        // is the last item hovered and mouse clicked on? (**)  ==
                                                    // IsMouseClicked(mouse_button) && IsItemHovered()Important. (**)

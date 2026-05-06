@@ -388,6 +388,19 @@ namespace Cherry {
           DebugLine("DPI Scale", (std::to_string(viewport->DpiScale).substr(0, 3) + "x").c_str());
         }
 
+        if (ImGui::CollapsingHeader("Components", ImGuiTreeNodeFlags_DefaultOpen)) {
+          int d_idx = SDL_GetWindowDisplayIndex(window->GetWindowHandle());
+          SDL_DisplayMode d_mode;
+          SDL_GetCurrentDisplayMode(d_idx, &d_mode);
+          DebugLine(
+              "Anonymous",
+              std::to_string(Cherry::Application::Get().GetComponentPool()->AnonymousComponents.size()).c_str());
+          DebugLine(
+              "Identified",
+              std::to_string(Cherry::Application::Get().GetComponentPool()->IdentifiedComponents.size()).c_str());
+          DebugLine("Pool stack size", std::to_string(Cherry::Application::Get().GetComponentPoolStack().size()).c_str());
+        }
+
         if (ImGui::IsMousePosValid()) {
           ImGui::Separator();
           ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));

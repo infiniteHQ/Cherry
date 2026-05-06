@@ -186,6 +186,7 @@ namespace Cherry {
 
       RegisterDrawingAPI(L);
       RegisterLogicAPI(L);
+      RegisterHooksAndComponentsAPI(L);
 
       lua_setglobal(L, "Cherry");  // global lib
     }

@@ -2390,8 +2390,7 @@ namespace Cherry {
     }
   }
 
-  std::vector<ComponentsPool *> &Application::GetComponentPoolStack()
-  {
+  std::vector<ComponentsPool *> &Application::GetComponentPoolStack() {
     return m_ComponentPoolStack;
   }
 
@@ -2401,6 +2400,15 @@ namespace Cherry {
     } else {
       return &m_ApplicationComponentPool;
     }
+  }
+
+  void Application::ClearComponentPool() {
+    m_ApplicationComponentPool.AnonymousComponents.clear();
+    m_ApplicationComponentPool.IdentifiedComponents.clear();
+  }
+
+  void Application::ClearComponentPoolStack() {
+    m_ComponentPoolStack.clear();
   }
 
   void Application::SetDataOnGroup(const std::string &group_name, const std::string &key, const std::string &value) {

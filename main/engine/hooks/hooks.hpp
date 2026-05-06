@@ -105,6 +105,7 @@ namespace Cherry {
   void DeleteHook(const Identifier &id);
 
   void RenderHooks();  // Called each frames
+  void ClearHooks();
 
 #define CherryHook(code)     [](Cherry::Hook *self) { code }
 #define CherryHookCond(code) []() { code }

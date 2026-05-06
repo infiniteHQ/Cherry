@@ -311,8 +311,9 @@ namespace Cherry {
     // created in the application component array
     void PopComponentPool();
     ComponentsPool *GetComponentPool();
-
     std::vector<ComponentsPool *> &GetComponentPoolStack();
+    void ClearComponentPool();
+    void ClearComponentPoolStack();
 
     void RenderComponent(Component &component);
     void RenderComponent(const std::shared_ptr<Component> &component);

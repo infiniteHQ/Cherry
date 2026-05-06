@@ -362,6 +362,12 @@ namespace Cherry {
       return 0;
     }
 
+    LUA_FUNC(AddMarginY) {
+      float y = lua_getfloat(L, 1);
+      CherryGUI::AddMarginY(y);
+      return 0;
+    }
+
     LUA_FUNC(GetWindowSize) {
       ImVec2 winsize = CherryGUI::GetWindowSize();
 
@@ -669,6 +675,7 @@ namespace Cherry {
       LUA_REGISTER(L, -1, SetDrawCursorPos);
       LUA_REGISTER(L, -1, SetDrawCursorPosY);
       LUA_REGISTER(L, -1, SetDrawCursorPosX);
+      LUA_REGISTER(L, -1, AddMarginY);
 
       // Components
       LUA_REGISTER(L, -1, BeginComponent);

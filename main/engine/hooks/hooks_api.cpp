@@ -41,6 +41,10 @@ namespace Cherry {
     hooks.erase(id);
   }
 
+  void ClearHooks() {
+    hooks.clear();
+  }
+
   void RenderHooks() {
     static std::unordered_map<std::string, std::chrono::steady_clock::time_point> last_exec;
     auto now = std::chrono::steady_clock::now();

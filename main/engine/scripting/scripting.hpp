@@ -66,6 +66,7 @@ namespace Cherry {
 
     void RegisterDrawingAPI(lua_State *L);
     void RegisterLogicAPI(lua_State *L);
+    void RegisterHooksAndComponentsAPI(lua_State *L);
 
   }  // namespace Script
 

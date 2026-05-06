@@ -16,6 +16,7 @@
 #include <main/core/assert/assert.hpp>
 #include <main/engine/app/app.hpp>
 #include <main/engine/components/components.hpp>
+#include <main/engine/scripting/scripting.hpp>
 #include <memory>
 #include <string>
 #include <unordered_map>
@@ -184,9 +185,24 @@ namespace Cherry {
       return inst;
     }
 
+    void Clear() {
+#ifdef CHERRY_ENABLE_SCRIPTING
+      for (auto& [name, entry] : m_lua) {
+        if (entry.L && entry.luaRef != LUA_NOREF) {
+          luaL_unref(entry.L, LUA_REGISTRYINDEX, entry.luaRef);
+        }
+      }
+      m_lua.clear();
+#endif  // CHERRY_ENABLE_SCRIPTING
+
+      m_ref.clear();
+      m_owned.clear();
+    }
+
     void RegisterRef(const std::string& name, FactoryRef f) {
       m_ref[name] = std::move(f);
     }
+
     void RegisterOwned(const std::string& name, FactoryOwned f) {
       m_owned[name] = std::move(f);
     }
@@ -195,17 +211,62 @@ namespace Cherry {
       auto it = m_ref.find(n);
       return it != m_ref.end() ? &it->second : nullptr;
     }
+
     const FactoryOwned* FindOwned(const std::string& n) const {
       auto it = m_owned.find(n);
       return it != m_owned.end() ? &it->second : nullptr;
     }
+
     bool Exists(const std::string& n) const {
       return m_ref.count(n) || m_owned.count(n);
     }
 
+#ifdef CHERRY_ENABLE_SCRIPTING
+    struct LuaEntry {
+      lua_State* L = nullptr;
+      int luaRef = LUA_NOREF;
+      std::shared_ptr<Cherry::RenderFn> fn;
+    };
+
+    bool HasLua(const std::string& name) const {
+      return m_lua.find(name) != m_lua.end();
+    }
+
+    int GetLuaRef(const std::string& name) const {
+      auto it = m_lua.find(name);
+      if (it == m_lua.end())
+        return LUA_NOREF;
+      return it->second.luaRef;
+    }
+
+    void RegisterLua(const std::string& name, lua_State* L, int ref) {
+      auto fn = std::make_shared<Cherry::RenderFn>([L, ref]() { CallLuaVoid(L, ref); });
+
+      m_lua[name] = { L, ref, fn };
+
+      RegisterOwned(
+          name, [fn](const Identifier& id, const Props&) { return std::make_unique<Components::DynamicComponent>(id, fn); });
+    }
+
+    void UpdateLua(const std::string& name, lua_State* L, int newRef) {
+      auto& entry = m_lua[name];
+
+      if (entry.L && entry.luaRef != LUA_NOREF) {
+        luaL_unref(entry.L, LUA_REGISTRYINDEX, entry.luaRef);
+      }
+
+      entry.L = L;
+      entry.luaRef = newRef;
+      *entry.fn = [L, newRef]() { CallLuaVoid(L, newRef); };
+    }
+
+#endif  // CHERRY_ENABLE_SCRIPTING
    private:
     std::unordered_map<std::string, FactoryRef> m_ref;
     std::unordered_map<std::string, FactoryOwned> m_owned;
+#ifdef CHERRY_ENABLE_SCRIPTING
+    std::unordered_map<std::string, LuaEntry> m_lua;
+#endif  // CHERRY_ENABLE_SCRIPTING
   };
 
   class ComponentCache {
@@ -234,6 +295,12 @@ namespace Cherry {
       Component& ref = detail::StoreOwnedInPool(std::move(c));
       m_frameCache[id] = { &ref, m_frame };
       return ref;
+    }
+
+    void Clear() {
+      m_frameCache.clear();
+      m_instanceCounters.clear();
+      m_frame = 0;
     }
 
     void StoreRef(const std::string& id, Component* raw) {
@@ -286,6 +353,16 @@ namespace Cherry {
 
   inline void SetComponentDefaults(const std::string& name, Props defaults) {
     ComponentDefaultsRegistry::Instance().SetOnce(name, std::move(defaults));
+  }
+
+  inline void ClearComponentFactoryRegistry() {
+    auto& registry = ComponentRegistry::Instance();
+    registry.Clear();
+  }
+
+  inline void ClearComponentFactoryCache() {
+    auto& cache = ComponentCache::Instance();
+    cache.Clear();
   }
 
   inline Component& Draw(const std::string& componentName, const Props& props = {}) {
