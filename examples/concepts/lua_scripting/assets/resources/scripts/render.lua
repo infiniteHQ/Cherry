@@ -1,4 +1,4 @@
-local t = os.clock() * 64
+local t = os.clock() * 2
 
 local r = math.floor((math.sin(t) * 127) + 128)
 local g = math.floor((math.sin(t + 2) * 127) + 128)
