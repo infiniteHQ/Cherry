@@ -13,6 +13,7 @@ option(CHERRY_ENABLE_AUDIO "Enable audio features" OFF)
 option(CHERRY_ENABLE_LINUXDRM "Enable Linux Direct Rendering Manager" OFF)
 option(CHERRY_DISABLE_NODES "Disable nodal systems" OFF)
 option(CHERRY_DISABLE_WORKSPACESAVES "Disable workspace saves" OFF)
+option(CHERRY_ENABLE_KIT "Enable base component kit"                    ON)
 
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../../ cherry_build)
 add_executable(hello main.cpp)
