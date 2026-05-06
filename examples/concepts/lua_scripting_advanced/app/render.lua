@@ -17,5 +17,5 @@ if active == "true" then
     print("5 seconds trigger !")
 
     -- Reset remotely
-    Cherry.GetHookData("five_second_trigger",  "active", "true")
+    Cherry.GetHookData("five_second_trigger",  "active", "false")
 end
