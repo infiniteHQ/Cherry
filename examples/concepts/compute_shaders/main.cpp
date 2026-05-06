@@ -53,7 +53,7 @@ static void RenderPreview() {
   Cherry::Shaders::ExecuteShader(g_Params, &g_Compute);
 
   ImVec2 avail = ImGui::GetContentRegionAvail();
-  float size = std::min(avail.x, avail.y - 30.f);
+  float size = (std::min)(avail.x, avail.y - 30.f);
   if (size < 80.f)
     size = 80.f;
 
