@@ -18,6 +18,8 @@ CherryApplication CherryMain(int argc, char **argv) {
   Cherry::ApplicationSpecification config;
   config.SetName("Cherry Scripting Demo");
   config.SetMainRenderCallback(Render);
+  config.SetDefaultWidth(500);
+  config.SetDefaultHeight(500);
   auto app = new CherryApplication(config);
 
   Cherry::Kit::RegisterTextSimple();
