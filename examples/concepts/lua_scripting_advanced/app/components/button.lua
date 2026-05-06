@@ -20,7 +20,7 @@ Cherry.Use("Button", {
 
 
     local isHover = Cherry.IsMouseOverRect(x, y, w, h)
-    local clicked = Cherry.IsMouseClickedOnPos(x, y, w, h, 1)
+    local clicked = Cherry.IsMouseClickedOnPos(x, y, w, h, 0)
 
 
     Cherry.SetCurrentComponentData("isClicked", "false")
