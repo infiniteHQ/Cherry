@@ -240,7 +240,7 @@ namespace Cherry {
     }
 
     void RegisterLua(const std::string& name, lua_State* L, int ref) {
-      auto fn = std::make_shared<Cherry::RenderFn>([L, ref]() { CallLuaVoid(L, ref); });
+      auto fn = std::make_shared<Cherry::RenderFn>([L, ref]() { Script::CallLuaVoid(L, ref); });
 
       m_lua[name] = { L, ref, fn };
 
@@ -257,7 +257,7 @@ namespace Cherry {
 
       entry.L = L;
       entry.luaRef = newRef;
-      *entry.fn = [L, newRef]() { CallLuaVoid(L, newRef); };
+      *entry.fn = [L, newRef]() { Script::CallLuaVoid(L, newRef); };
     }
 
 #endif  // CHERRY_ENABLE_SCRIPTING
