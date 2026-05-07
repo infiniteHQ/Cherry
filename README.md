@@ -48,7 +48,7 @@ Whether you’re a beginner or an experienced developer, Cherry makes it easy to
   - [**Fonts**](#fonts)
   - [**I/O API**](#io-api)
   - [**Hooks**](#hooks)
-  - [**Traduction and accessibility**](#traduction-and-accessibility)
+  - [**Translation and accessibility**](#translation-and-accessibility)
   - [**Themes builder**](#themes-builder)
   - [**Components & Widgets builder**](#components--widgets-builder)
   - [**Customization abilities**](#customization-abilities)
@@ -182,7 +182,9 @@ Cherry has an entire Lua scripting engine. You don't want to create interfaces w
 > Cherry programming with Lua = (code, ... that's it! Just see the result)
 
 `Preview :`
-![Lua scripting](./docs/all/media/luascripting.mp4)
+
+https://github.com/user-attachments/assets/38e9b5f2-d8e2-430d-89c7-ac0071e98f2a
+
 
 ## Sound Engine
 
