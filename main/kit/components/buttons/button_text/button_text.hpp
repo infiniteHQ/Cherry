@@ -1,13 +1,19 @@
+//
+//  button_text.hpp
+//  Simple header for text button component
+//
+//  Copyright (c) 2024-2026 Diego Moreno
+//  Copyright (c) 2026 Infinite
+//
+//	This work is licensed under the terms of the MIT license.
+//	For a copy, see <https://opensource.org/licenses/MIT>.
+//
+
 #pragma once
 
 #include <main/engine/app/app.hpp>
 #include <main/engine/components/components.hpp>
-
-//
-// ButtonText
-// Summary : A simple button with a simple text, quite simple !
-// Authors : Infinite, Diego Moreno
-//
+#include <main/engine/components/factory.hpp>
 
 #ifndef CHERRY_KIT_BUTTON_TEXT
 #define CHERRY_KIT_BUTTON_TEXT
@@ -171,5 +177,4 @@ namespace Cherry {
 CHERRY_REGISTER_COMPONENT(ButtonText, {
   const std::string label = Cherry::PropOr<std::string>(props, "label", "");
   return Cherry::Kit::ButtonText(id, label);
-  // Les prop:/data: sont appliqués automatiquement par Draw() après ce return
 })

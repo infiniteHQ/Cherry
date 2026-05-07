@@ -19,3 +19,16 @@ if active == "true" then
     -- Reset remotely
     Cherry.GetHookData("five_second_trigger",  "active", "false")
 end
+
+Cherry.SetDrawCursorPosY(Cherry.GetDrawCursorPosY() + 40)
+
+-- Can call components created in C++
+Cherry.Draw("ButtonText", {
+    ["id"]          = "btnId2",
+    ["prop:label"]  = "Click super !!!"
+})
+
+Cherry.Draw("ButtonImage", {
+    ["id"]          = "btnId3",
+    ["prop:image_path"]  = Cherry.GetPath("resources/images/settings.png")
+})

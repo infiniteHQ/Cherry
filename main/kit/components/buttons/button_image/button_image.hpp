@@ -1,11 +1,18 @@
+//
+//  button_text.hpp
+//  Simple header for image button component
+//
+//  Copyright (c) 2024-2026 Diego Moreno
+//  Copyright (c) 2026 Infinite
+//
+//	This work is licensed under the terms of the MIT license.
+//	For a copy, see <https://opensource.org/licenses/MIT>.
+//
+
 #pragma once
 #include <main/engine/app/app.hpp>
 #include <main/engine/components/components.hpp>
-
-//
-// ButtonImage
-// Authors : Infinite, Diego Moreno
-//
+#include <main/engine/components/factory.hpp>
 
 #ifndef CHERRY_KIT_BUTTON_IMAGE
 #define CHERRY_KIT_BUTTON_IMAGE
@@ -171,3 +178,8 @@ namespace Cherry {
 }  // namespace Cherry
 
 #endif  // CHERRY_KIT_BUTTON_IMAGE
+
+CHERRY_REGISTER_COMPONENT(ButtonImage, {
+  const std::string image_path = Cherry::PropOr<std::string>(props, "image_path", "");
+  return Cherry::Kit::ButtonImage(id, image_path);
+})
