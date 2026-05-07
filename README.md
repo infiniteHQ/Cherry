@@ -182,7 +182,7 @@ Cherry has an entire Lua scripting engine. You don't want to create interfaces w
 > Cherry programming with Lua = (code, ... that's it! Just see the result)
 
 `Preview :`
-<video src="./docs/all/media/luascripting.mp4" controls width="700"></video>
+![Lua scripting](./docs/all/media/luascripting.mp4)
 
 ## Sound Engine
 
