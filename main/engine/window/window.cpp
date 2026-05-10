@@ -711,34 +711,36 @@ namespace Cherry {
         }
       }
       {
-        // Maximize / Restore Button
-        ImGui::Spring(-1.0f, 17.0f);
-        UI::ShiftCursorY(8.0f);
+    // Maximize / Restore Button
+    ImGui::Spring(-1.0f, 17.0f);
+    UI::ShiftCursorY(8.0f);
 
-        if (!m_Specifications.WindowOnlyClosable) {
-          const int iconWidth = this->get(g_WindowMaximizeIcon, "Maximize")->GetWidth();
-          const int iconHeight = this->get(g_WindowMaximizeIcon, "Maximize")->GetHeight();
+    if (!m_Specifications.WindowOnlyClosable) {
+        SDL_Window* sdlWindow = this->GetWindowHandle();
+        Uint32 flags = SDL_GetWindowFlags(sdlWindow);
+        bool isMaximized = (flags & SDL_WINDOW_MAXIMIZED);
 
-          SDL_Window *sdlWindow = this->GetWindowHandle();
-          bool isMaximized = SDL_GetWindowFlags(sdlWindow) & SDL_WINDOW_MAXIMIZED;
+        if (ImGui::InvisibleButton("Maximize", ImVec2(buttonWidth, buttonHeight))) {
+            
+            #ifdef _WIN32
+            SDL_SetWindowResizable(sdlWindow, SDL_TRUE);
+            #endif
 
-          std::string label = "Maximize###" + this->GetName();
-          if (ImGui::InvisibleButton("Maximize", ImVec2(buttonWidth, buttonHeight))) {
             if (isMaximized) {
-              SDL_RestoreWindow(sdlWindow);
+                SDL_RestoreWindow(sdlWindow);
             } else {
-              SDL_MaximizeWindow(sdlWindow);
+                SDL_MaximizeWindow(sdlWindow);
             }
-          }
-
-          UI::DrawButtonImage(
-              isMaximized ? this->get(g_WindowMaximizeIcon, "Maximize") : this->get(g_WindowRestoreIcon, "Restore"),
-              buttonColN,
-              buttonColH,
-              buttonColP);
         }
-      }
-      {
+
+        UI::DrawButtonImage(
+            isMaximized ? this->get(g_WindowRestoreIcon, "Restore") : this->get(g_WindowMaximizeIcon, "Maximize"),
+            buttonColN,
+            buttonColH,
+            buttonColP);
+    }
+} 
+{
         // Close Button
         ImGui::Spring(-1.0f, 15.0f);
         UI::ShiftCursorY(8.0f);
