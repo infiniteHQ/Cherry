@@ -107,7 +107,7 @@ namespace Cherry {
   void RenderHooks();  // Called each frames
   void ClearHooks();
 
-#define CherryHook(code)     [](Cherry::Hook *self) { code }
+#define CherryHook(...)      [](Cherry::Hook *self) { __VA_ARGS__ }
 #define CherryHookCond(code) []() { code }
 #define CherryHookFrame      Cherry::ExecuteHookOn::Frame
 #define CherryHookSecond     Cherry::ExecuteHookOn::Second
