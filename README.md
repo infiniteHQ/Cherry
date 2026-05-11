@@ -269,6 +269,41 @@ ImTextureID t = Cherry::GetTexture(CherryPath("resources/images/infinite.png"));
 
 Cherry supports font loading and setup. You can easily add new fonts and bring them to your interfaces.
 
+> Cherry support TTF and OTF files
+
+<picture>
+  <img width=380 src="./.github/imgs/fonts.png">
+</picture>
+
+```cpp
+void Render() {
+  Cherry::PushFont("rocket");
+  CherryKit::TitleOne("Hello font !!!");
+  Cherry::PopFont();
+
+  Cherry::PushFont("chunky");
+  CherryKit::TitleOne("Hello font !!!");
+  Cherry::PopFont();
+
+  Cherry::PushFont("jetbrainsmono");
+  CherryKit::TitleOne("Hello font !!!");
+  Cherry::PopFont();
+}
+
+CherryApplication CherryMain(int argc, char **argv) {
+  Cherry::ApplicationSpecification config;
+  auto app = new CherryApplication(config);
+  
+  // Add OTF files
+  app->AddFont("rocket", CherryPath("rocket.otf"), 80.0f);
+  app->AddFont("chunky", CherryPath("chunky.otf"), 80.0f);
+  // Add TTF files
+  app->AddFont("jetbrainsmono", CherryPath("jetbrainsmono.ttf"), 80.0f);
+
+  return app;
+}
+```
+
 ## I/O API
 > [!WARNING]  
 > This feature is still in active development, bugs can occur
