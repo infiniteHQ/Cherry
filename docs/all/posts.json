@@ -23,19 +23,19 @@
                     "subpages": []
                 },
                 {
-                    "name": "create_first_app",
-                    "link": "create_first_app.md",
+                    "name": "philosophy",
+                    "link": "philosophy.md",
                     "description": "",
                     "logo": "",
-                    "slug": "Create your first app",
+                    "slug": "Philosophy",
                     "subpages": []
                 }
             ]
         },
         {
-            "name": "understand_concepts",
-            "slug": "Understand concepts",
-            "title": "Understand concepts",
+            "name": "understand_cherry",
+            "slug": "Understand Cherry",
+            "title": "Understand Cherry",
             "sumary": "Introduction to the Cherry UI/UX Framework",
             "pages": [
                 {
@@ -47,21 +47,13 @@
                     "subpages": []
                 },
                 {
-                    "name": "philosophy",
-                    "link": "philosophy.md",
+                    "name": "create_first_app",
+                    "link": "create_first_app.md",
                     "description": "",
                     "logo": "",
-                    "slug": "Philosophy",
+                    "slug": "Create your first app",
                     "subpages": []
-                }
-            ]
-        },
-        {
-            "name": "learn",
-            "slug": "Learning Cherry",
-            "title": "Learning Cherry",
-            "sumary": "Introduction to the Cherry UI/UX Framework API & libraries",
-            "pages": [
+                },
                 {
                     "name": "create_configure_app",
                     "link": "create_configure_app.md",
@@ -77,29 +69,53 @@
                     "logo": "",
                     "slug": "Compilation",
                     "subpages": []
-                },
+                }
+            ]
+        },
+        {
+            "name": "features",
+            "slug": "Features",
+            "title": "Features",
+            "sumary": "Introduction to the Cherry UI/UX Framework API & libraries",
+            "pages": [
                 {
-                    "name": "render_engine",
-                    "link": "render_engine.md",
+                    "name": "dear-imgui-native-compatibility",
+                    "link": "dear-imgui-native-compatibility.md",
                     "description": "",
                     "logo": "",
-                    "slug": "Render engine",
+                    "slug": "Dear ImGui native compatibility",
                     "subpages": []
                 },
                 {
-                    "name": "components_management",
-                    "link": "components_management.md",
+                    "name": "lua-scripting",
+                    "link": "lua-scripting.md",
                     "description": "",
                     "logo": "",
-                    "slug": "Components management",
+                    "slug": "Lua scripting",
                     "subpages": []
                 },
                 {
-                    "name": "theme",
-                    "link": "theme.md",
+                    "name": "sound-engine",
+                    "link": "sound-engine.md",
                     "description": "",
                     "logo": "",
-                    "slug": "Theme & Design",
+                    "slug": "Sound engine",
+                    "subpages": []
+                },
+                {
+                    "name": "drawing-api",
+                    "link": "drawing-api.md",
+                    "description": "",
+                    "logo": "",
+                    "slug": "Drawing API",
+                    "subpages": []
+                },
+                {
+                    "name": "imagestextures",
+                    "link": "imagestextures.md",
+                    "description": "",
+                    "logo": "",
+                    "slug": "Images/Textures",
                     "subpages": []
                 },
                 {
@@ -111,123 +127,131 @@
                     "subpages": []
                 },
                 {
-                    "name": "sound",
-                    "link": "sound.md",
+                    "name": "io-api",
+                    "link": "io-api.md",
                     "description": "",
                     "logo": "",
-                    "slug": "Sounds",
+                    "slug": "Inputs/Outputs API",
                     "subpages": []
                 },
                 {
-                    "name": "path_assets",
-                    "link": "path_assets.md",
+                    "name": "hooks",
+                    "link": "hooks.md",
                     "description": "",
                     "logo": "",
-                    "slug": "Path & Assets",
+                    "slug": "Hooks",
                     "subpages": []
                 },
                 {
-                    "name": "user_inputs",
-                    "link": "user_inputs.md",
+                    "name": "translation-and-accessibility",
+                    "link": "translation-and-accessibility.md",
                     "description": "",
                     "logo": "",
-                    "slug": "User inputs",
+                    "slug": "Translation and accessibility",
                     "subpages": []
                 },
                 {
-                    "name": "locales_traductions",
-                    "link": "locales_traductions.md",
+                    "name": "theme",
+                    "link": "theme.md",
                     "description": "",
                     "logo": "",
-                    "slug": "Locales & Traductions",
+                    "slug": "Theme & Design",
                     "subpages": []
                 },
                 {
-                    "name": "scripting",
-                    "link": "scripting.md",
+                    "name": "components--widgets-builder",
+                    "link": "components--widgets-builder.md",
                     "description": "",
                     "logo": "",
-                    "slug": "Scripting with Lua",
+                    "slug": "Components & Widgets builder",
                     "subpages": []
                 },
                 {
-                    "name": "debugger",
-                    "link": "debugger.md",
+                    "name": "customization-abilities",
+                    "link": "customization-abilities.md",
                     "description": "",
                     "logo": "",
-                    "slug": "Debugging & Devtols",
-                    "subpages": []
-                }
-            ]
-        },
-        {
-            "name": "advanced",
-            "slug": "Advanced features",
-            "title": "Advanced features",
-            "sumary": "Introduction to the Cherry UI/UX Framework",
-            "pages": [
-                {
-                    "name": "callbacks",
-                    "link": "callbacks.md",
-                    "description": "",
-                    "logo": "",
-                    "slug": "Render Callbacks",
+                    "slug": "Customization abilities",
                     "subpages": []
                 },
                 {
-                    "name": "docking",
-                    "link": "docking.md",
+                    "name": "network-fetch",
+                    "link": "network-fetch.md",
                     "description": "",
                     "logo": "",
-                    "slug": "Docking",
+                    "slug": "Network fetch",
                     "subpages": []
                 },
                 {
-                    "name": "saves",
-                    "link": "saves.md",
+                    "name": "advanced-docking",
+                    "link": "advanced-docking.md",
                     "description": "",
                     "logo": "",
-                    "slug": "Saves & States",
+                    "slug": "Advanced docking",
                     "subpages": []
                 },
                 {
-                    "name": "texture_sprites",
-                    "link": "texture_sprites.md",
+                    "name": "markdown-renderer",
+                    "link": "markdown-renderer.md",
                     "description": "",
                     "logo": "",
-                    "slug": "Textures & Sprites",
+                    "slug": "Markdown renderer",
                     "subpages": []
                 },
                 {
-                    "name": "net",
-                    "link": "net.md",
+                    "name": "choose-your-features",
+                    "link": "choose-your-features.md",
                     "description": "",
                     "logo": "",
-                    "slug": "Net features",
+                    "slug": "Choose your features",
                     "subpages": []
                 },
                 {
-                    "name": "id",
-                    "link": "id.md",
+                    "name": "multiple-dear-imgui-contexts",
+                    "link": "multiple-dear-imgui-contexts.md",
                     "description": "",
                     "logo": "",
-                    "slug": "Identifiers & ID Patterns",
+                    "slug": "Multiple Dear Imgui Contexts",
                     "subpages": []
                 },
                 {
-                    "name": "graphics",
-                    "link": "graphics.md",
+                    "name": "compute-shaders",
+                    "link": "compute-shaders.md",
                     "description": "",
                     "logo": "",
-                    "slug": "Graphics API (Vulkan)",
+                    "slug": "Compute shaders",
                     "subpages": []
                 },
                 {
-                    "name": "app_instances",
-                    "link": "app_instances.md",
+                    "name": "kms-drm-rendering",
+                    "link": "kms-drm-rendering.md",
                     "description": "",
                     "logo": "",
-                    "slug": "App instances",
+                    "slug": "KMS/DRM Rendering",
+                    "subpages": []
+                },
+                {
+                    "name": "debug-tools",
+                    "link": "debug-tools.md",
+                    "description": "",
+                    "logo": "",
+                    "slug": "Debug tools",
+                    "subpages": []
+                },
+                {
+                    "name": "builtin-components",
+                    "link": "builtin-components.md",
+                    "description": "",
+                    "logo": "",
+                    "slug": "Builtin components",
+                    "subpages": []
+                },
+                {
+                    "name": "builtin-themes",
+                    "link": "builtin-themes.md",
+                    "description": "",
+                    "logo": "",
+                    "slug": "Builtin themes",
                     "subpages": []
                 }
             ]

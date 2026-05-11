@@ -1,4 +1,4 @@
-#include "../../cherry.hpp"
+#include <cherry.hpp>
 
 CherryApplication *Cherry::CreateApplication(int argc, char **argv) {
   Cherry::ApplicationSpecification config;
