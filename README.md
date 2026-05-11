@@ -456,6 +456,7 @@ CherryApplication *Cherry::CreateApplication(int argc, char **argv) {
 ```
 And this is the result :
 
+<img width="800" height="450" alt="traduction" src="https://github.com/user-attachments/assets/27e9bc38-40a3-4a6d-8ff4-460a5dd36117" />
 
 ## Themes Builder
 
