@@ -560,6 +560,20 @@ if (CherryKit::ButtonText("Spawn window with custom titlebar").GetDataAs<bool>("
 
 There are built-in network features to fetch files from URLs, primarily for the purpose of downloading images from the web.
 
+```cpp
+void Render() {
+  // Net components from the Cherry Kit
+  CherryKit::ImageHttp("https://infinite.si/assets/in_projects.c64028e7.png");
+
+  // Or fetch as Dear ImGui texture directly
+  auto texture = Cherry::GetTexture(Cherry::GetHttpPath("https://infinite.si/assets/in_projects.c64028e7.png"));
+  CherryGUI::Image(texture, 240.0f, 150.0f);
+}
+```
+
+Result :
+
+
 ## Advanced Docking
 
 Cherry can show advanced dockspaces with multiple context-sharing abilities, giving you the possibility to create complex applications with multiple windows and dockspaces that can share ImGui windows between each other.
