@@ -9,9 +9,7 @@ void Render() {
     CherryApp.PlaySound(CherryPath("resources/audio/tick2.wav"));
   }
 
-  if (CherryKit::ButtonTextImage("Infinityyy",
-                                 CherryPath("resources/images/settings.png"))
-          .GetDataAs<bool>("isClicked")) {
+  if (CherryKit::ButtonTextImage("Infinityyy", CherryPath("resources/images/settings.png")).GetDataAs<bool>("isClicked")) {
     CherryApp.PlaySound(CherryPath("resources/audio/tick.wav"));
   }
 }

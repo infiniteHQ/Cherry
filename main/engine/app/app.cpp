@@ -3179,6 +3179,17 @@ namespace Cherry {
     return true;
   }
 
+  float GetDeltaTime() {
+    if (ImGui::GetCurrentContext()) {
+      return ImGui::GetIO().DeltaTime;
+    }
+  }
+  float GetTime() {
+    if (ImGui::GetCurrentContext()) {
+      return (float)ImGui::GetTime();
+    }
+  }
+
   std::string GetData(const Identifier &id, const std::string topic) {
     return CherryApp.GetComponentData(id, topic);
   }

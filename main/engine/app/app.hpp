@@ -690,6 +690,8 @@ namespace Cherry {
   CHERRY_API std::shared_ptr<Component> GetParent(int parent_number = 0);
 
   CHERRY_API bool IsReady();
+  CHERRY_API float GetDeltaTime();
+  CHERRY_API float GetTime();
 
   // Implemented by CLIENT
   Application *CreateApplication(int argc, char **argv);

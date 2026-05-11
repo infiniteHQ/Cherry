@@ -655,6 +655,17 @@ namespace Cherry {
       }
     }
 
+    void TriangleOutlineWindow(Vec2 p1, Vec2 p2, Vec2 p3, const std::string &hexcol, float thickness) {
+      ImVec2 wp = ImGui::GetWindowPos();
+      ImU32 col = Col(hexcol);
+
+      ImDrawList *dl = ImGui::GetWindowDrawList();
+
+      dl->AddLine({ wp.x + p1.x, wp.y + p1.y }, { wp.x + p2.x, wp.y + p2.y }, col, thickness);
+      dl->AddLine({ wp.x + p2.x, wp.y + p2.y }, { wp.x + p3.x, wp.y + p3.y }, col, thickness);
+      dl->AddLine({ wp.x + p3.x, wp.y + p3.y }, { wp.x + p1.x, wp.y + p1.y }, col, thickness);
+    }
+
     void
     TriangleOutlineGradientWindow(Vec2 p1, Vec2 p2, Vec2 p3, const std::string &c1, const std::string &c2, float thickness) {
       ImVec2 wp = ImGui::GetWindowPos();
