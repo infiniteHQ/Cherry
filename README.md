@@ -190,13 +190,58 @@ https://github.com/user-attachments/assets/38e9b5f2-d8e2-430d-89c7-ac0071e98f2a
 
 Cherry embeds a sound engine powered by [miniaudio](). Cherry adds more layers to create channels and run sounds or music easily.
 
+
+`Simple approach :`
+```cpp
+// Play a sound
+CherryApp.PlaySound(CherryPath("resources/audio/tick.wav"));
+```
+
+`Advanced approach :`
+```cpp
+// Create and populate sound channels
+CherryApp.CreateChannel("SFX");
+CherryApp.GetChannel("SFX")->AddSound(CherryPath("resources/audio/tick.wav"));
+CherryApp.GetChannel("SFX")->AddSound(CherryPath("resources/audio/tack.wav"));
+
+// Play once
+CherryApp.GetChannel("SFX")->PlayTick();
+
+// Start Loop
+CherryApp.GetChannel("SFX")->Play();
+
+// Stop Loop
+CherryApp.GetChannel("SFX")->Stop();
+```
+
 ## Drawing API
 
-Cherry has a high-level and simple-to-use drawing API. With it, you can draw shapes and primitive forms, and bring life to your interfaces.
+Cherry has a high-level and simple-to-use drawing API, available in Lua and C++. With it, you can draw shapes and primitive forms, and bring life to your interfaces.
 
 ## Images/Textures
 
 Cherry embeds a high-level and secure image and texture loader, compatible with multiple contexts of Dear ImGui.
+
+`Example using images in components :`
+```cpp  
+CherryStyle::AddMarginX(50.0f);
+CherryStyle::AddMarginY(50.0f);
+CherryKit::ImageLocal(CherryPath("resources/images/infinite.png"), 100.0f, 50.0f);
+
+CherryKit::ButtonText("Click me !");
+CherryKit::ButtonText("And me !");
+CherryKit::ButtonTextImage("Infinityyy", CherryPath("resources/images/settings.png"));
+```
+
+<picture>
+  <img width=380 src="./.github/imgs/image.png">
+</picture>
+
+You can also use Cherry to get native Dear ImGui textures :
+`This is how :`
+```cpp
+ImTextureID t = Cherry::GetTexture(CherryPath("resources/images/infinite.png"));
+```
 
 ## Fonts
 
