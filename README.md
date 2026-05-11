@@ -410,6 +410,53 @@ std::string val = Cherry::GetHookData(CherryID("btn_number_of_clicks"), "clicked
 
 Cherry has an advanced translation and locales system, allowing you to adapt your software, tool, or app to many languages in the world.
 
+This is the format Cherry uses for locales. Everything is in a JSON file.
+```json
+{
+    "locales": [ 
+        {"hello_world":"Hello world !"}
+    ]
+}
+```
+
+And there is how we interact with locales files !
+```cpp
+void Render() {
+  // You can change the selected language dynamically
+  if (CherryKit::ButtonText("Change for English").GetDataAs<bool>("isClicked")) {
+    CherryApp.SetLocale("en");
+  }
+  if (CherryKit::ButtonText("Change for Spanish").GetDataAs<bool>("isClicked")) {
+    CherryApp.SetLocale("es");
+  }
+  if (CherryKit::ButtonText("Change for French").GetDataAs<bool>("isClicked")) {
+    CherryApp.SetLocale("fr");
+  }
+
+  // Get the traduction with topic ID with Cherry::GetLocale
+  CherryKit::TitleOne(Cherry::GetLocale("hello_world"));
+}
+
+CherryApplication *Cherry::CreateApplication(int argc, char **argv) {
+  Cherry::ApplicationSpecification config;
+  config.SetMainRenderCallback(Render);
+
+  auto app = new CherryApplication(config);
+  // Register locales here
+  app->AddLocale("en", Cherry::GetPath("resources/locales/en.json"));
+  app->AddLocale("fr", Cherry::GetPath("resources/locales/fr.json"));
+  app->AddLocale("es", Cherry::GetPath("resources/locales/es.json"));
+
+  // Set default language
+  app->SetDefaultLocale("en");
+  app->SetLocale("en");
+
+  return app;
+}
+```
+And this is the result :
+
+
 ## Themes Builder
 
 The theme builder gives you the ability to easily craft your own themes, and gives your users the opportunity to customize your tool as they wish!
