@@ -170,7 +170,6 @@ Result :
   <img width=500 src="./.github/imgs/nativeimgui.png">
 </picture>
 
-
 > In fact, Cherry uses [Dear ImGui](https://github.com/ocornut/imgui) to render interfaces internally. We added many abstractions to allow you to create interfaces without Dear ImGui, just with simple high-level features, components, or widgets. But it is highly modular.
 
 ## Lua Scripting
@@ -237,6 +236,9 @@ Result :
 
 > More advanced example using C++ drawing API
 
+<img width="800" height="450" alt="gif" src="https://github.com/user-attachments/assets/bb8d01f8-9b2d-470d-ba7a-ef17a4ed748b" />
+
+> This is the [examples/concepts/drawing](https://github.com/infiniteHQ/Cherry/tree/main/examples/concepts/drawing) example of this repository ! You can check the code [here](https://github.com/infiniteHQ/Cherry/tree/main/examples/concepts/drawing)
 
 ## Images/Textures
 
