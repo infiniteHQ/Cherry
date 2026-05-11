@@ -8,12 +8,12 @@ void Render() {
     CherryNextComponent.SetProperty("color_text", "#AA1212");
     CherryKit::TextSimple("Z not pressed !");
   }
-  if (CherryApp.IsKeyPressed(Cherry::CherryKey::LEFT)) {
+  if (CherryApp.IsKeyPressed(Cherry::CherryKey::CTRL)) {
     CherryNextComponent.SetProperty("color_text", "#12AA12");
-    CherryKit::TextSimple("< Pressed !");
+    CherryKit::TextSimple("CTRL Pressed !");
   } else {
     CherryNextComponent.SetProperty("color_text", "#AA1212");
-    CherryKit::TextSimple("< not pressed !");
+    CherryKit::TextSimple("CTRL not pressed !");
   }
   if (CherryApp.IsMouseClicked(0)) {
     CherryNextComponent.SetProperty("color_text", "#12AA12");
