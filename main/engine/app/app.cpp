@@ -2437,6 +2437,10 @@ namespace Cherry {
     return CherryGUI::IsMouseClicked(btn, repeat);
   }
 
+  bool Application::IsMousePressed(int btn) {
+    return CherryGUI::IsMouseDown(btn);
+  }
+
   bool Application::IsMouseDoubleClicked(int btn) {
     return CherryGUI::IsMouseDoubleClicked(btn);
   }

@@ -238,6 +238,7 @@ namespace Cherry {
     bool IsKeyPressed(CherryKey key);
     bool IsMouseClicked(int btn, bool repeat = false);
     bool IsMouseDoubleClicked(int btn);
+    bool IsMousePressed(int btn);
 
     Window *GetWindowByHandle(SDL_Window *window_handle);
     std::string GetRootPath();
