@@ -477,6 +477,9 @@ public:
 
 This is the result of the [theme example of this repository](https://github.com/infiniteHQ/Cherry/tree/main/examples/concepts/theme_simple) :
 
+<img width="800" height="450" alt="theme" src="https://github.com/user-attachments/assets/ec3c89c7-979b-4752-96a6-82040822ad1b" />
+
+
 ## Components & Widgets Builder
 > [!WARNING]  
 > This feature is still in active development, bugs can occur
