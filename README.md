@@ -378,6 +378,7 @@ std::string color = Cherry::GetHookData(CherryID("rgb_channel"), "color");
 ```
 There is the result :
 
+<img width="800" height="450" alt="hooks" src="https://github.com/user-attachments/assets/9befddd6-02e9-4d28-8e4f-a3e9b43d7192" />
 
 > The following example will create a hook that counts the number of clicks on the button "btn".
 ```cpp
