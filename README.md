@@ -120,7 +120,7 @@ The following section will show you a little bit about the main features of Cher
 
 ## Dear ImGui Native Compatibility
 
-Cherry has native compatibility with [Dear ImGui]()! That means you can directly add Dear ImGui code into your Cherry application rendering, and it will work just perfectly.
+Cherry has native compatibility with [Dear ImGui](https://github.com/ocornut/imgui)! That means you can directly add Dear ImGui code into your Cherry application rendering, and it will work just perfectly.
 
 ``` cpp
 // Rendered inside a Cherry application
@@ -171,11 +171,11 @@ Result :
 </picture>
 
 
-> In fact, Cherry uses Dear ImGui to render interfaces internally. We added many abstractions to allow you to create interfaces without Dear ImGui, just with simple high-level features, components, or widgets. But it is highly modular.
+> In fact, Cherry uses [Dear ImGui](https://github.com/ocornut/imgui) to render interfaces internally. We added many abstractions to allow you to create interfaces without Dear ImGui, just with simple high-level features, components, or widgets. But it is highly modular.
 
 ## Lua Scripting
 
-Cherry has an entire Lua scripting engine. You don't want to create interfaces with C++? You can script your applications and tools with Lua. In fact, the Lua scripting engine of Cherry embeds most of Cherry's logic and drawing features such as capturing I/O, playing sounds, drawing rectangles, or creating widgets and components.
+Cherry has an entire [Lua](https://www.lua.org/about.html) scripting engine. You don't want to create interfaces with C++? You can script your applications and tools with Lua. In fact, the Lua scripting engine of Cherry embeds most of Cherry's logic and drawing features such as capturing I/O, playing sounds, drawing rectangles, or creating widgets and components.
 
 > Cherry programming with C++ = (code, compilation, wait, run and see)
 
