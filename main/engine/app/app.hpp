@@ -677,6 +677,8 @@ namespace Cherry {
   CHERRY_API std::string GetLocale(const std::string &topic);
 #ifdef CHERRY_ENABLE_NET
   CHERRY_API std::string GetHttpPath(const std::string &url);
+  CHERRY_API void ShutdownHttpFetcher();
+  CHERRY_API void InitHttpFetcher();
 #endif  // CHERRY_ENABLE_NET
 
   // Data (theses functions can return JSON to string format or legacy string.)

@@ -165,13 +165,12 @@ endif()
 
 if(CHERRY_ENABLE_NET)
     target_compile_definitions(cherry PUBLIC CHERRY_ENABLE_NET)
-    target_link_libraries(cherry PUBLIC httpcl)
+    
+    find_package(CURL REQUIRED)
+    target_link_libraries(cherry PUBLIC CURL::libcurl)
+    
     if(WIN32)
-        target_link_libraries(cherry PUBLIC winhttp)
-    endif()
-    if(UNIX AND NOT APPLE)
-        find_package(CURL REQUIRED)
-        target_link_libraries(cherry PUBLIC CURL::libcurl)
+        target_link_libraries(cherry PUBLIC winhttp ws2_32)
     endif()
 endif()
 

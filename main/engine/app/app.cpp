@@ -35,6 +35,8 @@
 
 #ifdef CHERRY_ENABLE_NET
 
+#include <curl/curl.h>
+
 #include <filesystem>
 #include <fstream>
 #include <string>
@@ -839,6 +841,10 @@ namespace Cherry {
     }
 #endif
 
+#ifdef CHERRY_ENABLE_NET
+    InitHttpFetcher();
+#endif
+
     // Setup SDL
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_GAMECONTROLLER) != 0) {
       printf("Error: %s\n", SDL_GetError());
@@ -921,6 +927,10 @@ namespace Cherry {
     if (app->m_DefaultSpecification.UseAudioService) {
       StopAudioService();
     }
+#endif
+
+#ifdef CHERRY_ENABLE_NET
+    ShutdownHttpFetcher();
 #endif
 
     if (g_Device != VK_NULL_HANDLE) {
@@ -3078,35 +3088,52 @@ namespace Cherry {
   }
 
 #ifdef CHERRY_ENABLE_NET
-
-  static std::unordered_map<std::string, std::future<std::string>> s_http_pending;
+  static std::unordered_map<std::string, std::shared_ptr<std::atomic<int>>> s_http_pending;
   static std::unordered_map<std::string, std::string> s_http_ready;
+  static std::atomic<bool> s_http_shutdown{ false };
 
-  size_t WriteCallback(void *contents, size_t size, size_t nmemb, void *userp) {
+  static size_t WriteCallback(void *contents, size_t size, size_t nmemb, void *userp) {
     std::ofstream *ofs = static_cast<std::ofstream *>(userp);
     size_t totalSize = size * nmemb;
     ofs->write(static_cast<char *>(contents), totalSize);
     return totalSize;
   }
 
-  std::string SanitizeUrl(const std::string &url) {
-    std::string sanitized = url;
-    for (char &c : sanitized) {
-      if (c == '/') {
-        c = '-';
+  static std::string SanitizeUrl(const std::string &url) {
+    std::string sanitized;
+    for (char c : url) {
+      if (std::isalnum(static_cast<unsigned char>(c)) || c == '.' || c == '-') {
+        sanitized += c;
+      } else {
+        sanitized += '_';
       }
+    }
+    if (sanitized.size() > 200) {
+      sanitized = sanitized.substr(0, 200);
     }
     return sanitized;
   }
 
-  std::string GetTemporaryDirectory() {
+  static std::string GetTemporaryDirectory() {
 #ifdef _WIN32
     char tempPath[MAX_PATH];
     if (GetTempPathA(MAX_PATH, tempPath)) {
-      return std::string(tempPath);
+      std::string p(tempPath);
+      if (!p.empty() && p.back() == '\\')
+        p.pop_back();
+      return p;
     } else {
       throw std::runtime_error("Failed to get temporary directory path");
     }
+#elif defined(__APPLE__)
+    const char *tmpDir = getenv("TMPDIR");
+    if (tmpDir) {
+      std::string p(tmpDir);
+      if (!p.empty() && p.back() == '/')
+        p.pop_back();
+      return p;
+    }
+    return "/tmp";
 #else
     const char *tmpDir = getenv("TMPDIR");
     if (tmpDir) {
@@ -3116,88 +3143,120 @@ namespace Cherry {
 #endif
   }
 
+  void InitHttpFetcher() {
+    curl_global_init(CURL_GLOBAL_ALL);
+  }
+
+  void ShutdownHttpFetcher() {
+    s_http_shutdown = true;
+    s_http_pending.clear();
+    s_http_ready.clear();
+    curl_global_cleanup();
+  }
+
   std::string GetHttpPath(const std::string &url) {
     std::string cache_path = GetTemporaryDirectory() + "/" + Application::Get().GetHttpCacheFolderName() + "/";
     if (!fs::exists(cache_path)) {
       fs::create_directories(cache_path);
     }
-
     std::string filename = SanitizeUrl(url);
     std::string file_path = cache_path + filename;
-
-    if (fs::exists(file_path)) {
-      return file_path;
-    }
+    // fallback to trigger texture fail prevention of Cherry
+    std::string fallback_path = cache_path + "no_file.png";
 
     if (s_http_ready.count(url)) {
       return s_http_ready[url];
     }
 
-    if (s_http_pending.count(url)) {
-      auto &fut = s_http_pending[url];
-      if (fut.wait_for(std::chrono::seconds(0)) == std::future_status::ready) {
-        std::string result = fut.get();
-        s_http_pending.erase(url);
-        if (!result.empty()) {
-          s_http_ready[url] = result;
-        }
-        return result;
-      }
-      return "";
+    if (fs::exists(file_path) && fs::file_size(file_path) > 0) {
+      s_http_ready[url] = file_path;
+      return file_path;
     }
 
-    s_http_pending[url] = std::async(std::launch::async, [url, file_path]() -> std::string {
-      const char *URL = url.c_str();
-      naettReq *req = naettRequest_va(URL, 2, naettMethod("GET"), naettHeader("accept", "*/*"));
-      if (!req) {
-        std::cerr << "Failed to create HTTP request for: " << url << std::endl;
-        return "";
+    if (s_http_pending.count(url)) {
+      auto &state = s_http_pending[url];
+      int val = state->load();
+      if (val == 1) {
+        if (fs::exists(file_path) && fs::file_size(file_path) > 0) {
+          s_http_ready[url] = file_path;
+          s_http_pending.erase(url);
+          return file_path;
+        } else {
+          std::cerr << "[HTTP] state==1 but file missing, retrying: " << url << std::endl;
+          s_http_pending.erase(url);
+        }
+      } else if (val == -1) {
+        std::cerr << "[HTTP] Thread failed, retrying: " << url << std::endl;
+        s_http_pending.erase(url);
+      } else {
+        return fallback_path;
+      }
+    }
+
+    auto state = std::make_shared<std::atomic<int>>(0);
+    s_http_pending[url] = state;
+
+    std::thread([url, file_path, state]() {
+      CURL *curl = curl_easy_init();
+      if (!curl) {
+        std::cerr << "[HTTP] curl_easy_init failed" << std::endl;
+        state->store(-1);
+        return;
       }
 
-      naettRes *res = naettMake(req);
-
-      while (!naettComplete(res)) {
-#ifdef _WIN32
-        Sleep(100);
-#else
-            usleep(100 * 1000);
-#endif
-      }
-
-      int status = naettGetStatus(res);
-      if (status != 200) {
-        std::cerr << "HTTP request failed: " << status << " - ";
-        int len = 0;
-        const void *err_body = naettGetBody(res, &len);
-        if (err_body)
-          std::cerr.write(static_cast<const char *>(err_body), len);
-        std::cerr << std::endl;
-        naettClose(res);
-        naettFree(req);
-        return "";
-      }
-
-      int bodyLength = 0;
-      const void *body = naettGetBody(res, &bodyLength);
-
-      std::ofstream ofs(file_path, std::ios::binary);
+      std::string tmp_path = file_path + ".tmp";
+      std::ofstream ofs(tmp_path, std::ios::binary);
       if (!ofs.is_open()) {
-        std::cerr << "Failed to open file for writing: " << file_path << std::endl;
-        naettClose(res);
-        naettFree(req);
-        return "";
+        std::cerr << "[HTTP] Failed to open tmp file: " << tmp_path << std::endl;
+        curl_easy_cleanup(curl);
+        state->store(-1);
+        return;
       }
 
-      ofs.write(static_cast<const char *>(body), bodyLength);
+      curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+      curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+      curl_easy_setopt(curl, CURLOPT_WRITEDATA, &ofs);
+      curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
+      curl_easy_setopt(curl, CURLOPT_TIMEOUT, 30L);
+      curl_easy_setopt(curl, CURLOPT_USERAGENT, "Mozilla/5.0");
+#ifdef _WIN32
+      curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
+#endif
+
+      CURLcode res = curl_easy_perform(curl);
       ofs.close();
 
-      naettClose(res);
-      naettFree(req);
+      if (res != CURLE_OK) {
+        std::cerr << "[HTTP] curl error: " << curl_easy_strerror(res) << std::endl;
+        fs::remove(tmp_path);
+        curl_easy_cleanup(curl);
+        state->store(-1);
+        return;
+      }
 
-      return file_path;
-    });
+      long http_code = 0;
+      curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &http_code);
+      curl_easy_cleanup(curl);
 
-    return "";
+      if (http_code != 200) {
+        fs::remove(tmp_path);
+        state->store(-1);
+        return;
+      }
+
+      std::error_code ec;
+      fs::rename(tmp_path, file_path, ec);
+      if (ec) {
+        std::cerr << "[HTTP] Rename failed: " << ec.message() << std::endl;
+        fs::remove(tmp_path);
+        state->store(-1);
+        return;
+      }
+
+      state->store(1);
+    }).detach();
+
+    return fallback_path;
   }
 #endif  // CHERRY_ENABLE_NET
 
