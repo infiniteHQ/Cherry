@@ -2777,6 +2777,10 @@ namespace Cherry {
     return m_ParentComponentsStack[m_ParentComponentsStack.size() - 1 - parent_number];
   }
 
+  std::string Application::GetSelectedLocale() {
+    return m_SelectedLocale;
+  }
+
   std::string Application::GetLocale(const std::string &locale_type) {
     if (m_SelectedLocale.empty() || m_Locales.find(m_SelectedLocale) == m_Locales.end()) {
       return "locale_undefined";

@@ -278,6 +278,7 @@ namespace Cherry {
     void OverrideLocale(const std::string &locale_name, const std::string &data_path);
     void SetLocale(const std::string &locale_name);
     void SetDefaultLocale(const std::string &locale_name);
+    std::string GetSelectedLocale();
     std::string GetLocale(const std::string &locale_type);
 
     // Net & Cache
