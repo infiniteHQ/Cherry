@@ -604,6 +604,9 @@ CherryApplication CherryMain(int argc, char **argv) {
 
 There is a built-in markdown parser and renderer, allowing you to read and render Markdown files. Ideal for large information files or feature documentation in your applications.
 
+> [!NOTE]  
+> We currently developing this feature. (maybe fully available for `1.7` ?)
+
 ## Choose Your Features
 
 Cherry gives you the possibility to choose what you want to use. If you don't want the markdown renderer, audio engine, or sound. You can disable them. By default, nothing is enabled; you need to enable each feature you want directly from the `CMakeLists.txt` file of your project.
@@ -637,10 +640,30 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/lib/cherry cherry_build)
 
 ## Multiple Dear ImGui Contexts
 
-Cherry natively supports multiple Dear ImGui contexts. That is not the only point — each context in your app can communicate with the others!
+Cherry natively supports multiple Dear ImGui contexts. That is not the only point, each context in your app can communicate with the others!
 
 ## Compute shaders
+
+> [!NOTE]  
+> This is an advanced use of Cherry, you need to be comfortable with GLSL, Cherry, Dear ImGui, Vulkan and core shader concepts.
+
+Cherry supports compute shaders. A compute shader is not necessarily for rendering itself but more for side calculations you can give to the GPU. You can for example calculate custom textures, calculate Perlin noise, or apply complex mathematical problems.
+
+This is an example from the [noises compute shader example]() :
+
+This is another example from the [textures compute shader example]() :
+
+
 ## KMS DRM Rendering
+
+> [!NOTE]  
+> This is an advanced use of Cherry, you need to be comfortable with Linux, KMS, Direct Rendering Manager and Vulkan.
+
+Cherry gives you the opportunity to create your own low-level renderers, without using a desktop manager or a compositor, just Cherry!
+
+With that feature, you can make your own desktop environments and your own system UIs.
+
+This is an example of the use of Cherry using KMS/DRM :
 
 ## Debug Tools
 > [!WARNING]  

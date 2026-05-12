@@ -1,0 +1,228 @@
+#version 450
+
+layout(local_size_x = 16, local_size_y = 16) in;
+
+layout(binding = 0, rgba8) uniform writeonly image2D outImage;
+
+layout(push_constant) uniform Params {
+    float time;
+    float scale;
+    float intensity;
+    float colorR;
+    float colorG;
+    float colorB;
+    int   effectType;
+    float param1;
+    float camX;
+    float camY;
+} p;
+
+vec2 hash2(vec2 v) {
+    v = vec2(dot(v, vec2(127.1, 311.7)),
+             dot(v, vec2(269.5, 183.3)));
+    return fract(sin(v) * 43758.5453123) * 2.0 - 1.0;
+}
+
+float hash(vec2 v) {
+    return fract(sin(dot(v, vec2(127.1, 311.7))) * 43758.5453123);
+}
+
+float perlin(vec2 st) {
+    vec2 i = floor(st);
+    vec2 f = fract(st);
+
+    // Quintic smoothstep
+    vec2 u = f * f * f * (f * (f * 6.0 - 15.0) + 10.0);
+
+    float a = dot(hash2(i + vec2(0,0)), f - vec2(0,0));
+    float b = dot(hash2(i + vec2(1,0)), f - vec2(1,0));
+    float c = dot(hash2(i + vec2(0,1)), f - vec2(0,1));
+    float d = dot(hash2(i + vec2(1,1)), f - vec2(1,1));
+
+    return mix(mix(a, b, u.x), mix(c, d, u.x), u.y) * 0.5 + 0.5;
+}
+
+float fbm(vec2 st, int octaves, float lacunarity, float gain) {
+    float value     = 0.0;
+    float amplitude = 0.5;
+    float frequency = 1.0;
+    for (int i = 0; i < octaves; i++) {
+        value     += amplitude * perlin(st * frequency);
+        frequency *= lacunarity;
+        amplitude *= gain;
+    }
+    return value;
+}
+
+float warpedFbm(vec2 st, float warpStrength) {
+    vec2 offset = vec2(
+        fbm(st + vec2(1.7, 9.2), 4, 2.0, 0.5),
+        fbm(st + vec2(8.3, 2.8), 4, 2.0, 0.5)
+    );
+    return fbm(st + warpStrength * (offset * 2.0 - 1.0), 4, 2.0, 0.5);
+}
+
+float valueNoise(vec2 st) {
+    vec2 i = floor(st);
+    vec2 f = fract(st);
+    vec2 u = f * f * (3.0 - 2.0 * f);
+
+    float a = hash(i + vec2(0,0));
+    float b = hash(i + vec2(1,0));
+    float c = hash(i + vec2(0,1));
+    float d = hash(i + vec2(1,1));
+
+    return mix(mix(a, b, u.x), mix(c, d, u.x), u.y);
+}
+
+float ridged(vec2 st, int octaves) {
+    float value     = 0.0;
+    float amplitude = 0.5;
+    float frequency = 1.0;
+    for (int i = 0; i < octaves; i++) {
+        float n = perlin(st * frequency);
+        value     += amplitude * (1.0 - abs(n * 2.0 - 1.0));
+        frequency *= 2.0;
+        amplitude *= 0.5;
+    }
+    return clamp(value, 0.0, 1.0);
+}
+
+float worley(vec2 st) {
+    vec2 i = floor(st);
+    vec2 f = fract(st);
+    float minDist = 1e9;
+    for (int y = -1; y <= 1; y++)
+    for (int x = -1; x <= 1; x++) {
+        vec2 neighbor = vec2(float(x), float(y));
+        vec2 point    = hash2(i + neighbor) * 0.5 + 0.5;
+        float d = length(neighbor + point - f);
+        minDist = min(minDist, d);
+    }
+    return clamp(minDist, 0.0, 1.0);
+}
+
+vec2 curl(vec2 st, float eps) {
+    float dx = (perlin(st + vec2(eps, 0)) - perlin(st - vec2(eps, 0))) / (2.0 * eps);
+    float dy = (perlin(st + vec2(0, eps)) - perlin(st - vec2(0, eps))) / (2.0 * eps);
+    return vec2(dy, -dx);
+}
+
+vec3 colorize(float n) {
+    vec3 baseColor = vec3(p.colorR, p.colorG, p.colorB);
+
+    // Gradient from dark -> base -> bright
+    vec3 dark   = baseColor * 0.15;
+    vec3 bright = mix(baseColor, vec3(1.0), 0.4);
+    return mix(dark, bright, clamp(n * p.intensity, 0.0, 1.0));
+}
+
+vec3 colorizeContrast(float n) {
+    vec3 col1 = vec3(p.colorR, p.colorG, p.colorB);
+    vec3 col2 = 1.0 - col1;
+    return mix(col1 * 0.2, col2 * 0.9, pow(clamp(n * p.intensity, 0.0, 1.0), 1.5));
+}
+
+void main() {
+    ivec2 gid  = ivec2(gl_GlobalInvocationID.xy);
+    ivec2 size = imageSize(outImage);
+    if (gid.x >= size.x || gid.y >= size.y) return;
+
+    vec2 uv = (vec2(gid) + 0.5) / vec2(size);       // [0,1]
+
+    // Camera offset
+    vec2 cam = vec2(p.camX, p.camY);
+    vec2 st  = (uv - 0.5 + cam) * p.scale;          // centered + scaled
+
+    // Animated offset
+    vec2 animOffset = vec2(p.time * 0.12, p.time * 0.07);
+    int octaves = max(1, int(round(p.param1 * 2.0)));  // param1 [0-5] → [0-10] octaves
+
+    float n   = 0.0;
+    vec3  col = vec3(0.0);
+
+    switch (p.effectType) {
+
+    case 0:
+        n   = perlin(st + animOffset);
+        col = colorize(n);
+        break;
+
+    case 1:
+        n   = fbm(st + animOffset, octaves, 2.0, 0.5);
+        col = colorize(n);
+        break;
+
+    case 2:
+        n   = ridged(st + animOffset, octaves);
+        col = colorize(n);
+        break;
+
+    case 3:
+        n   = warpedFbm(st + animOffset, p.param1);
+        col = colorize(n);
+        break;
+
+    case 4:
+        n   = worley((st + animOffset) * 1.5);
+        col = colorizeContrast(1.0 - n);
+        break;
+
+    case 5: {
+        float w = worley((st + animOffset) * 1.5);
+        float f2 = fbm(st + animOffset, octaves, 2.0, 0.5);
+        n   = mix(1.0 - w, f2, 0.5);
+        col = colorize(n);
+        break;
+    }
+
+    case 6: {
+        vec2 c = curl(st + animOffset, 0.01) * p.param1;
+        n   = perlin(st + c + animOffset);
+        col = colorize(n);
+        break;
+    }
+
+    case 7: {
+        float distortion = fbm(st + animOffset, octaves, 2.0, 0.5) * p.param1 * 4.0;
+        n   = 0.5 + 0.5 * sin(st.x * 6.28318 + distortion);
+        col = colorize(n);
+        break;
+    }
+
+    case 8: {
+        float rings = fbm(st + animOffset, octaves, 2.0, 0.5) * p.param1 * 8.0;
+        float r = length(st) * 3.0 + rings;
+        n   = 0.5 + 0.5 * sin(r * 6.28318);
+        col = colorize(n);
+        break;
+    }
+
+    case 9: {
+        float value = 0.0;
+        float amp   = 0.5;
+        float freq  = 1.0;
+        vec2  s     = st + animOffset;
+        for (int i = 0; i < octaves; i++) {
+            value += amp * abs(perlin(s * freq) * 2.0 - 1.0);
+            freq  *= 2.0;
+            amp   *= 0.5;
+        }
+        n   = 1.0 - clamp(value, 0.0, 1.0);
+        col = colorize(n);
+        break;
+    }
+
+    default: {
+        float v = valueNoise(st + animOffset);
+        float f2 = fbm(st * 0.5 + animOffset, octaves, 2.0, 0.5);
+        n   = smoothstep(0.45, 0.55, v * f2 * p.intensity);
+        vec3 bg = vec3(p.colorR, p.colorG, p.colorB) * 0.1;
+        vec3 fg = vec3(p.colorR, p.colorG, p.colorB);
+        col = mix(bg, fg, n);
+        break;
+    }
+    }
+
+    imageStore(outImage, gid, vec4(col, 1.0));
+}
