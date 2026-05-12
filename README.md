@@ -671,6 +671,12 @@ With that feature, you can make your own desktop environments and your own syste
 
 This is an example of the use of Cherry using KMS/DRM :
 
+<img width="300" alt="kmsdrm" src="https://github.com/user-attachments/assets/b3469521-3b9c-4c5c-b05c-2e79daf06fe0" />
+
+> From [this Bluesky post](https://bsky.app/profile/diegomrn.bsky.social/post/3m2hrjqudec2e)
+> 
+> "The first render of Cherry with vulkan and imgui on Linux KMS/DRM ! Yep, no desktop environment, no compositor, just Cherry."
+
 ## Debug Tools
 > [!WARNING]  
 > This feature is still in active development, bugs can occur
