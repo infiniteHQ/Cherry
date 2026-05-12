@@ -584,9 +584,9 @@ Result :
 
 Cherry can show advanced dockspaces with multiple context-sharing abilities, giving you the possibility to create complex applications with multiple windows and dockspaces that can share ImGui windows between each other.
 
-This is a short video showing the Docking features of Cherry:
+This is a short video showing the Docking features of Cherry (from [Vortex](https://vortex.infinite.si/)):
 
-
+<img width="800" height="450" alt="advanced_docking" src="https://github.com/user-attachments/assets/163f4715-4e57-4b9a-886d-c26a95db4b5b" />
 
 To enable docking, set the RenderMode of Cherry to DockingWindows. Then, every app window of Cherry will be docked into a Dockspace.
 ```cpp
