@@ -16,6 +16,7 @@
 #include <vulkan/vulkan.h>
 
 #include <algorithm>
+#include <future>
 #include <iostream>
 #include <mutex>
 #include <regex>
@@ -3073,6 +3074,10 @@ namespace Cherry {
   }
 
 #ifdef CHERRY_ENABLE_NET
+
+  static std::unordered_map<std::string, std::future<std::string>> s_http_pending;
+  static std::unordered_map<std::string, std::string> s_http_ready;
+
   size_t WriteCallback(void *contents, size_t size, size_t nmemb, void *userp) {
     std::ofstream *ofs = static_cast<std::ofstream *>(userp);
     size_t totalSize = size * nmemb;
@@ -3108,9 +3113,7 @@ namespace Cherry {
   }
 
   std::string GetHttpPath(const std::string &url) {
-    bool use_cache = true;
     std::string cache_path = GetTemporaryDirectory() + "/" + Application::Get().GetHttpCacheFolderName() + "/";
-
     if (!fs::exists(cache_path)) {
       fs::create_directories(cache_path);
     }
@@ -3118,58 +3121,80 @@ namespace Cherry {
     std::string filename = SanitizeUrl(url);
     std::string file_path = cache_path + filename;
 
-    if (use_cache && fs::exists(file_path)) {
+    if (fs::exists(file_path)) {
       return file_path;
     }
 
-    naettReq *req = nullptr;
+    if (s_http_ready.count(url)) {
+      return s_http_ready[url];
+    }
 
-    const char *URL = url.c_str();
-    req = naettRequest_va(URL, 2, naettMethod("GET"), naettHeader("accept", "*/*"));
+    if (s_http_pending.count(url)) {
+      auto &fut = s_http_pending[url];
+      if (fut.wait_for(std::chrono::seconds(0)) == std::future_status::ready) {
+        std::string result = fut.get();
+        s_http_pending.erase(url);
+        if (!result.empty()) {
+          s_http_ready[url] = result;
+        }
+        return result;
+      }
+      return "";
+    }
 
-    naettRes *res = naettMake(req);
+    s_http_pending[url] = std::async(std::launch::async, [url, file_path]() -> std::string {
+      const char *URL = url.c_str();
+      naettReq *req = naettRequest_va(URL, 2, naettMethod("GET"), naettHeader("accept", "*/*"));
+      if (!req) {
+        std::cerr << "Failed to create HTTP request for: " << url << std::endl;
+        return "";
+      }
 
-    while (!naettComplete(res)) {
+      naettRes *res = naettMake(req);
+
+      while (!naettComplete(res)) {
 #ifdef _WIN32
-      Sleep(100);
+        Sleep(100);
 #else
-      usleep(100 * 1000);
+            usleep(100 * 1000);
 #endif
-    }
+      }
 
-    int status = naettGetStatus(res);
-    if (status != 200) {
-      std::cerr << "HTTP request failed: " << status << " - ";
-      int len = 0;
-      const void *err_body = naettGetBody(res, &len);
-      if (err_body)
-        std::cerr.write(static_cast<const char *>(err_body), len);
-      std::cerr << std::endl;
+      int status = naettGetStatus(res);
+      if (status != 200) {
+        std::cerr << "HTTP request failed: " << status << " - ";
+        int len = 0;
+        const void *err_body = naettGetBody(res, &len);
+        if (err_body)
+          std::cerr.write(static_cast<const char *>(err_body), len);
+        std::cerr << std::endl;
+        naettClose(res);
+        naettFree(req);
+        return "";
+      }
+
+      int bodyLength = 0;
+      const void *body = naettGetBody(res, &bodyLength);
+
+      std::ofstream ofs(file_path, std::ios::binary);
+      if (!ofs.is_open()) {
+        std::cerr << "Failed to open file for writing: " << file_path << std::endl;
+        naettClose(res);
+        naettFree(req);
+        return "";
+      }
+
+      ofs.write(static_cast<const char *>(body), bodyLength);
+      ofs.close();
+
       naettClose(res);
       naettFree(req);
-      return "";
-    }
 
-    int bodyLength = 0;
-    const void *body = naettGetBody(res, &bodyLength);
+      return file_path;
+    });
 
-    std::ofstream ofs(file_path, std::ios::binary);
-    if (!ofs.is_open()) {
-      std::cerr << "Failed to open file for writing: " << file_path << std::endl;
-      naettClose(res);
-      naettFree(req);
-      return "";
-    }
-
-    ofs.write(static_cast<const char *>(body), bodyLength);
-    ofs.close();
-
-    naettClose(res);
-    naettFree(req);
-
-    return file_path;
+    return "";
   }
-
 #endif  // CHERRY_ENABLE_NET
 
   std::string GetLocale(const std::string &topic) {

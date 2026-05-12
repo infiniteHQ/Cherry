@@ -2,10 +2,18 @@
 
 // Obviously, you need a internet connexion to test this example
 
-void Render() {  // Or fetch as Dear ImGui texture directly
-  Cherry::GetHttpPath(
-      "https://static.infinite.si/user_contents/uploads/94eb98d1-d1db-4a45-8a4a-73756391a8f7/"
-      "70fa7a77-5f93-4de9-8004-758f8babdbe4.png");
+void Render() {
+  // Net components from the Cherry Kit
+  CherryKit::ImageHttp("https://infinite.si/assets/in_projects.c64028e7.png");
+
+  CherryKit::Separator();
+
+  // Or fetch as Dear ImGui texture directly
+  auto texture = Cherry::GetTexture(Cherry::GetHttpPath("https://infinite.si/assets/in_projects.c64028e7.png"));
+
+  if (texture) {
+    ImGui::Image(texture, ImVec2(240.0f, 150.0f));
+  }
 }
 
 CherryApplication *Cherry::CreateApplication(int argc, char **argv) {
