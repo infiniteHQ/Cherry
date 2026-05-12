@@ -659,6 +659,7 @@ This is an example from the [noises compute shader example](https://github.com/i
 
 This is another example from the [textures compute shader example](https://github.com/infiniteHQ/Cherry/tree/main/examples/concepts/compute_shaders) :
 
+<img width="800" height="450" alt="textures_cs" src="https://github.com/user-attachments/assets/874c0769-0d56-4976-b808-e13d19c5b64d" />
 
 ## KMS DRM Rendering
 
