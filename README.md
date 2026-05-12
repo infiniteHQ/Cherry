@@ -558,6 +558,7 @@ if (CherryKit::ButtonText("Spawn window with custom titlebar").GetDataAs<bool>("
 
 ## Network Fetch
 
+#### HTTP fetches
 There are built-in network features to fetch files from URLs, primarily for the purpose of downloading images from the web.
 
 ```cpp
@@ -573,11 +574,30 @@ void Render() {
 
 Result :
 
+<picture>
+  <img width=380 src="./.github/imgs/netfetch.png">
+</picture>
+
+> Cherry will automaticly put images, medias or http files into a cache in temporary folder to avoid making too many fetches and preserve resources.
 
 ## Advanced Docking
 
 Cherry can show advanced dockspaces with multiple context-sharing abilities, giving you the possibility to create complex applications with multiple windows and dockspaces that can share ImGui windows between each other.
 
+This is a short video showing the Docking features of Cherry:
+
+
+
+To enable docking, set the RenderMode of Cherry to DockingWindows. Then, every app window of Cherry will be docked into a Dockspace.
+```cpp
+CherryApplication CherryMain(int argc, char **argv) {
+  Cherry::ApplicationSpecification config;
+
+  config.SetRenderMode(Cherry::WindowRenderingMethod::DockingWindows);
+
+  return new CherryApplication(config);
+}
+```
 ## Markdown Renderer
 > [!WARNING]  
 > This feature is still in active development, bugs can occur
