@@ -688,10 +688,47 @@ If enabled, Cherry embeds native debug tools, including a component inspector, a
 
 Cherry provides an incredible starting set of ready-to-use components such as buttons, sliders, widgets, inputs, etc.
 
+To access the built-in "Kit", simply enable `CHERRY_ENABLE_KIT` in your CMake file.
+
+Then, you have access to a ton of ready-to-use components and style effects.
+
+```cpp
+CherryKit:: // Access to components 
+
+// Exemple :
+CherryKit::SeparatorText("Camera");
+
+// You can also use the component directly :
+if(CherryKit::SeparatorText("Camera").GetDataAs<bool>("isClicked")) {
+  // Code when the button is clicked
+}
+```
+
+You can go on [`main/kit/components`](https://github.com/infiniteHQ/Cherry/tree/main/main/kit/components) to see all components definitions.
+
 ## Built-in Themes
 
 Cherry provides 8 themes of your choice, but [you can create your own](#themes-builder).
 
+To access the built-in themes, simply enable `CHERRY_ENABLE_KIT` in your CMake file.
+
+Then, you have access to 8 basic themes.
+
+```cpp
+// You can call built-in themes with CherryThemes::
+
+CherryApplication CherryMain(int argc, char **argv) {
+  Cherry::ApplicationSpecification config;
+
+  config.AddTheme(CherryThemes::Dark());
+  config.AddTheme(CherryThemes::Light());
+  config.AddTheme(CherryThemes::DarkColorfull());
+
+  // Other settings like render mode, windows etc...
+
+  return new CherryApplication(config);
+}
+```
 
 # Used Concepts
 
