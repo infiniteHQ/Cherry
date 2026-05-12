@@ -653,9 +653,11 @@ In the following example, we can see multiple Dear ImGui contexts in the same ap
 
 Cherry supports compute shaders. A compute shader is not necessarily for rendering itself but more for side calculations you can give to the GPU. You can for example calculate custom textures, calculate Perlin noise, or apply complex mathematical problems.
 
-This is an example from the [noises compute shader example]() :
+This is an example from the [noises compute shader example](https://github.com/infiniteHQ/Cherry/tree/main/examples/concepts/compute_shaders_noise) :
 
-This is another example from the [textures compute shader example]() :
+<img width="800" height="450" alt="noise_cs" src="https://github.com/user-attachments/assets/80dd8fe4-8465-428b-a8ab-a08b8e78fa52" />
+
+This is another example from the [textures compute shader example](https://github.com/infiniteHQ/Cherry/tree/main/examples/concepts/compute_shaders) :
 
 
 ## KMS DRM Rendering
