@@ -3216,11 +3216,14 @@ namespace Cherry {
     if (ImGui::GetCurrentContext()) {
       return ImGui::GetIO().DeltaTime;
     }
+    return 0.0f;
   }
+
   float GetTime() {
     if (ImGui::GetCurrentContext()) {
       return (float)ImGui::GetTime();
     }
+    return 0.0f;
   }
 
   std::string GetData(const Identifier &id, const std::string topic) {
