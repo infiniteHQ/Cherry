@@ -734,7 +734,7 @@ CherryApplication CherryMain(int argc, char **argv) {
 
 ## Immediate Mode (ImGui)
 
-[Immediate mode graphical user interfaces (or ImGui)](https://www.youtube.com/watch?v=Z1qyvQsjK5Y&t=1560s) rendering is a paradigm where the rendering data is stored functionally by the user. It guarantees that all rendering data is refreshed on each frame, following a fully functional approach. This method is ideal for building highly reactive applications, especially when real-time data needs to be displayed — perfect for monitoring or dashboard-style apps!
+[Immediate mode graphical user interfaces (or ImGui)](https://www.youtube.com/watch?v=Z1qyvQsjK5Y&t=1560s) rendering is a paradigm where the rendering data is stored functionally by the user. It guarantees that all rendering data is refreshed on each frame, following a fully functional approach. This method is ideal for building highly reactive applications, especially when real-time data needs to be displayed, perfect for monitoring or dashboard-style apps!
 
 ## Retained Mode (Classic GUI)
 
