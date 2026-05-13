@@ -21,3 +21,25 @@ Result :
 </picture>
 
 > Cherry will automaticly put images, medias or http files into a cache in temporary folder to avoid making too many fetches and preserve resources.
+
+### Notice for Microsoft Windows users
+
+The **net** feature of Cherry requires **CURL**. You must have CURL installed and visible to CMake to build the project with net features.
+
+#### Recommended Setup (vcpkg)
+
+1. **Install CURL**:
+   Open a terminal in your `vcpkg` directory and run:
+```powershell
+vcpkg install curl:x64-windows
+```
+
+3. Configure Environment Variable:
+To allow CMake and the build.bat script to find CURL without modifying the project files, set a system environment variable:
+
+Variable Name: CMAKE_TOOLCHAIN_FILE
+
+Variable Value: [path to vcpkg]/vcpkg/scripts/buildsystems/vcpkg.cmake
+
+3. Clean and Build:
+If you have already attempted to build, delete the build/ folder to clear the CMake cache and try rebooting. Then, run your build.bat script again.
