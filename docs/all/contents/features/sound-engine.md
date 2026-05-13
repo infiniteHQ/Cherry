@@ -1,6 +1,33 @@
-Cherry provides a full API to play sounds and lets you create all kinds of sound effects to enhance the user experience—for example, with navigation sounds.
 
 <banner type="warning"> You need to compile with the compiler option `CHERRY_ENABLE_AUDIO` set to `ON`! </banner>
+
+### Introduction
+
+Cherry embeds a sound engine powered by [miniaudio](). Cherry adds more layers to create channels and run sounds or music easily.
+
+`Simple approach :`
+```cpp
+// Play a sound
+CherryApp.PlaySound(CherryPath("resources/audio/tick.wav"));
+```
+
+`Advanced approach :`
+```cpp
+// Create and populate sound channels
+CherryApp.CreateChannel("SFX");
+CherryApp.GetChannel("SFX")->AddSound(CherryPath("resources/audio/tick.wav"));
+CherryApp.GetChannel("SFX")->AddSound(CherryPath("resources/audio/tack.wav"));
+
+// Play once
+CherryApp.GetChannel("SFX")->PlayTick();
+
+// Start Loop
+CherryApp.GetChannel("SFX")->Play();
+
+// Stop Loop
+CherryApp.GetChannel("SFX")->Stop();
+```
+
 
 ### Setup the Sound Engine
 First, go to your CMake build file and set the CHERRY_ENABLE_AUDIO option to ON, like so:
