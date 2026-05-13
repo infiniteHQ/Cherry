@@ -794,7 +794,7 @@ Execute another lua script with absolute path
 
 **Signature and Parameters:**
 ```lua
-Cherry.Script(url)
+Cherry.AbsoluteScript(url)
 ```
 * **url**: Relative url of the script.
 
@@ -813,7 +813,7 @@ Execute another lua script with live scripting and absolute path
 
 **Signature and Parameters:**
 ```lua
-Cherry.Script(url)
+Cherry.FreshAbsoluteScript(url)
 ```
 * **url**: Relative url of the script.
 
@@ -850,5 +850,523 @@ Cherry.DrawRect(4, 4, width, 50, "#232323") -- 500
 Cherry.DrawText(4, 4, 50, "#B1FF31", button_label) -- hi component!
 
 return "hello", 42
+```
+</bloc>
+
+<bloc>
+
+#### CreateHook
+Registers a hook that executes a Lua callback on a given schedule. An optional condition callback can gate execution.
+
+**Signature and Parameters:**
+```lua
+Cherry.CreateHook(id, mode, callback, [condition])
+```
+
+| Parameter | Type | Description |
+|---|---|---|
+| `id` | string | Unique identifier for the hook |
+| `mode` | string | Execution schedule: `"frame"` (every frame) or `"second"` (every second) |
+| `callback` | function | Lua function called when the hook fires |
+| `condition` | function | *(optional)* Lua function returning a boolean — hook only fires when it returns `true` |
+
+**Example:**
+```lua
+Cherry.CreateHook("my_hook", "frame", function()
+    -- called every frame
+end)
+
+Cherry.CreateHook("my_cond_hook", "second", function()
+    -- called every second, only when condition is met
+end, function()
+    return someValue == true
+end)
+```
+</bloc>
+
+---
+
+<bloc>
+
+#### GetHookData
+Retrieves a data value associated with a hook by key.
+
+**Signature and Parameters:**
+```lua
+Cherry.GetHookData(id, key)
+```
+
+| Parameter | Type | Description |
+|---|---|---|
+| `id` | string | Identifier of the hook |
+| `key` | string | Key of the data entry to retrieve |
+
+**Example:**
+```lua
+local val = Cherry.GetHookData("my_hook", "counter")
+```
+</bloc>
+
+---
+
+<bloc>
+
+#### SetHookData
+Stores a data value on an existing hook by key.
+
+**Signature and Parameters:**
+```lua
+Cherry.SetHookData(id, key, value)
+```
+
+| Parameter | Type | Description |
+|---|---|---|
+| `id` | string | Identifier of the hook |
+| `key` | string | Key of the data entry to set |
+| `value` | string | Value to store |
+
+**Example:**
+```lua
+Cherry.SetHookData("my_hook", "counter", "42")
+```
+</bloc>
+
+---
+
+<bloc>
+
+#### ClearHooks
+Removes all registered hooks.
+
+**Signature and Parameters:**
+```lua
+Cherry.ClearHooks()
+```
+
+**Example:**
+```lua
+Cherry.ClearHooks()
+```
+</bloc>
+
+---
+
+<bloc>
+
+#### Use
+Defines or updates a component in the component factory. Binds a name to a Lua render function, with optional default props. This is how you register a reusable component implementation.
+
+**Signature and Parameters:**
+```lua
+Cherry.Use(name, render_fn)
+Cherry.Use(name, defaults, render_fn)
+```
+
+| Parameter | Type | Description |
+|---|---|---|
+| `name` | string | Unique name for the component |
+| `defaults` | table | *(optional)* Default props passed to the component if not overridden at draw time |
+| `render_fn` | function | Lua function containing the component's rendering logic |
+
+**Example:**
+```lua
+Cherry.Use("MyButton", { label = "Click me", color = "#FF0000" }, function()
+    -- rendering logic here
+end)
+
+-- Without defaults
+Cherry.Use("MyLabel", function()
+    -- rendering logic here
+end)
+```
+</bloc>
+
+---
+
+<bloc>
+
+#### Draw
+Draws a component that has been registered via `Use`. Instantiates it from the factory with the given props and renders it. Returns the component's identifier string.
+
+**Signature and Parameters:**
+```lua
+local id = Cherry.Draw(name, [props])
+```
+
+| Parameter | Type | Description |
+|---|---|---|
+| `name` | string | Name of the registered component to draw |
+| `props` | table | *(optional)* Props passed to the component, merged with its defaults |
+
+**Example:**
+```lua
+local id = Cherry.Draw("MyButton", { label = "Submit" })
+```
+</bloc>
+
+---
+
+<bloc>
+
+#### ClearComponentsRegistry
+Clears all component definitions registered via `Use`. The factory will no longer know about any previously defined components.
+
+**Signature and Parameters:**
+```lua
+Cherry.ClearComponentsRegistry()
+```
+
+**Example:**
+```lua
+Cherry.ClearComponentsRegistry()
+```
+</bloc>
+
+---
+
+<bloc>
+
+#### ClearComponentsCache
+Clears the component instance cache. Previously drawn component instances are discarded, but their definitions (registered via `Use`) remain intact.
+
+**Signature and Parameters:**
+```lua
+Cherry.ClearComponentsCache()
+```
+
+**Example:**
+```lua
+Cherry.ClearComponentsCache()
+```
+</bloc>
+
+---
+
+<bloc>
+
+#### RefreshComponents
+Fully resets the component system: clears both the registry and the cache, and resets the component pool. Intended for development use only — **do not call every frame**, as it is resource-intensive.
+
+**Signature and Parameters:**
+```lua
+Cherry.RefreshComponents()
+```
+
+**Example:**
+```lua
+-- Use during hot-reload or dev tooling only
+Cherry.RefreshComponents()
+```
+</bloc>
+
+---
+
+<bloc>
+
+#### BeginComponent
+Pushes a component onto the component stack and sets it as the current active component. Must always be paired with `EndComponent`. All rendering or property calls made between `BeginComponent` and `EndComponent` are applied to this component.
+
+**Signature and Parameters:**
+```lua
+Cherry.BeginComponent(id)
+```
+
+| Parameter | Type | Description |
+|---|---|---|
+| `id` | string | Identifier of the component to push and activate |
+
+**Example:**
+```lua
+Cherry.BeginComponent("my_component")
+-- rendering or property calls scoped to this component
+Cherry.EndComponent()
+```
+
+</bloc>
+
+---
+
+<bloc>
+
+#### EndComponent
+Resets the current active component, closing the scope opened by `BeginComponent`. Must always be called after a `BeginComponent`.
+
+**Signature and Parameters:**
+```lua
+Cherry.EndComponent()
+```
+
+**Example:**
+```lua
+Cherry.BeginComponent("my_component")
+-- rendering or property calls scoped to this component
+Cherry.EndComponent()
+```
+
+</bloc>
+
+---
+
+<bloc>
+
+#### SetDrawCursorPos
+Sets the current drawing cursor position on both axes, relative to the current window or container.
+
+**Signature and Parameters:**
+```lua
+Cherry.SetDrawCursorPos(x, y)
+```
+
+| Parameter | Type | Description |
+|---|---|---|
+| `x` | number | Horizontal position of the cursor |
+| `y` | number | Vertical position of the cursor |
+
+**Example:**
+```lua
+Cherry.SetDrawCursorPos(100, 50)
+```
+
+</bloc>
+
+---
+
+<bloc>
+
+#### SetDrawCursorPosX
+Sets only the horizontal position of the drawing cursor, leaving the vertical position unchanged.
+
+**Signature and Parameters:**
+```lua
+Cherry.SetDrawCursorPosX(x)
+```
+
+| Parameter | Type | Description |
+|---|---|---|
+| `x` | number | Horizontal position of the cursor |
+
+**Example:**
+```lua
+Cherry.SetDrawCursorPosX(100)
+```
+
+</bloc>
+
+---
+
+<bloc>
+
+#### SetDrawCursorPosY
+Sets only the vertical position of the drawing cursor, leaving the horizontal position unchanged.
+
+**Signature and Parameters:**
+```lua
+Cherry.SetDrawCursorPosY(y)
+```
+
+| Parameter | Type | Description |
+|---|---|---|
+| `y` | number | Vertical position of the cursor |
+
+**Example:**
+```lua
+Cherry.SetDrawCursorPosY(50)
+```
+
+</bloc>
+
+---
+
+<bloc>
+
+#### PushFont
+Pushes a font onto the font stack, making it the active font for all subsequent rendering calls. Must always be paired with `PopFont`.
+
+**Signature and Parameters:**
+```lua
+Cherry.PushFont(font)
+```
+
+| Parameter | Type | Description |
+|---|---|---|
+| `font` | string | Identifier of the font to activate |
+
+**Example:**
+```lua
+Cherry.PushFont("roboto_bold")
+-- widgets rendered here use roboto_bold
+Cherry.PopFont()
+```
+
+</bloc>
+
+---
+
+<bloc>
+
+
+#### PopFont
+Pops the current font from the font stack, restoring the previously active font. Must always be called after a `PushFont`.
+
+**Signature and Parameters:**
+```lua
+Cherry.PopFont()
+```
+
+**Example:**
+```lua
+Cherry.PushFont("roboto_bold")
+-- widgets rendered here use roboto_bold
+Cherry.PopFont()
+```
+
+</bloc>
+
+
+<bloc>
+
+#### GetCurrentComponentID
+Returns the identifier string of the currently active component.
+
+**Signature and Parameters:**
+```lua
+local id = Cherry.GetCurrentComponentID()
+```
+
+**Example:**
+```lua
+Cherry.BeginComponent("my_component")
+local id = Cherry.GetCurrentComponentID()
+Cherry.EndComponent()
+```
+</bloc>
+
+<bloc>
+
+#### SetCurrentComponentProperty
+Sets a property on the currently active component by key. Properties are typically used for styling or configuration values that affect rendering.
+
+**Signature and Parameters:**
+```lua
+Cherry.SetCurrentComponentProperty(key, value)
+```
+
+* **key**: Name of the property to set.
+* **value**: Value to assign (string).
+
+**Example:**
+```lua
+Cherry.BeginComponent("my_component")
+Cherry.SetCurrentComponentProperty("color", "#FF0000FF")
+Cherry.EndComponent()
+```
+</bloc>
+
+<bloc>
+
+#### GetCurrentComponentProperty
+Retrieves a property value from the currently active component by key.
+
+**Signature and Parameters:**
+```lua
+local value = Cherry.GetCurrentComponentProperty(key)
+```
+
+* **key**: Name of the property to retrieve.
+
+**Example:**
+```lua
+Cherry.BeginComponent("my_component")
+local color = Cherry.GetCurrentComponentProperty("color")
+Cherry.EndComponent()
+```
+</bloc>
+
+<bloc>
+
+#### SetCurrentComponentData
+Stores a data entry on the currently active component by key. Data is typically used for runtime state that persists across frames, as opposed to props or properties.
+
+**Signature and Parameters:**
+```lua
+Cherry.SetCurrentComponentData(key, value)
+```
+
+* **key**: Name of the data entry to set.
+* **value**: Value to assign (string).
+
+**Example:**
+```lua
+Cherry.BeginComponent("my_component")
+Cherry.SetCurrentComponentData("counter", "0")
+Cherry.EndComponent()
+```
+</bloc>
+
+<bloc>
+
+#### GetCurrentComponentData
+Retrieves a data value from the currently active component by key.
+
+**Signature and Parameters:**
+```lua
+local value = Cherry.GetCurrentComponentData(key)
+```
+
+* **key**: Name of the data entry to retrieve.
+
+**Example:**
+```lua
+Cherry.BeginComponent("my_component")
+local counter = Cherry.GetCurrentComponentData("counter")
+Cherry.EndComponent()
+```
+</bloc>
+
+<bloc>
+
+#### IsMouseOverRect
+Returns `true` if the mouse is currently hovering over a rectangle defined in relative window coordinates.
+
+**Signature and Parameters:**
+```lua
+local hovered = Cherry.IsMouseOverRect(x, y, w, h)
+```
+
+* **x, y**: Top-left corner of the rectangle, relative to the current window position.
+* **w, h**: Width and height of the rectangle.
+
+**Example:**
+```lua
+if Cherry.IsMouseOverRect(10, 10, 200, 40) then
+    -- mouse is hovering the zone
+end
+```
+</bloc>
+
+<bloc>
+
+#### IsMouseClickedOnCurrentPos
+Returns `true` if the specified mouse button was clicked inside a rectangle defined in relative window coordinates. Also requires the current window to be hovered.
+
+**Signature and Parameters:**
+```lua
+local clicked = Cherry.IsMouseClickedOnCurrentPos(x, y, w, h, button, [repeat])
+```
+
+* **x, y**: Top-left corner of the rectangle, relative to the current window position.
+* **w, h**: Width and height of the rectangle.
+* **button**: Mouse button index (`0` = left, `1` = right, `2` = middle).
+* **repeat**: *(optional)* Whether to fire repeatedly while the button is held. Default: `false`.
+
+**Example:**
+```lua
+if Cherry.IsMouseClickedOnCurrentPos(10, 10, 200, 40, 0) then
+    -- left click detected inside the zone
+end
+
+if Cherry.IsMouseClickedOnCurrentPos(10, 60, 200, 40, 1, true) then
+    -- right click with repeat enabled
+end
 ```
 </bloc>
