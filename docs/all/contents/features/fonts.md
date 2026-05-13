@@ -1,5 +1,40 @@
 Cherry allows you to manage fonts. You can add and define fonts in your application. You can also vary fonts within the same window or even within a single component.
 
+<banner type="note">Cherry support TTF and OTF files</banner> 
+
+<picture>
+  <img width=380 src="https://static.infinite.si/cherrydocs/1.6/all/media/fonts.png">
+</picture>
+
+```cpp
+void Render() {
+  Cherry::PushFont("rocket");
+  CherryKit::TitleOne("Hello font !!!");
+  Cherry::PopFont();
+
+  Cherry::PushFont("chunky");
+  CherryKit::TitleOne("Hello font !!!");
+  Cherry::PopFont();
+
+  Cherry::PushFont("jetbrainsmono");
+  CherryKit::TitleOne("Hello font !!!");
+  Cherry::PopFont();
+}
+
+CherryApplication CherryMain(int argc, char **argv) {
+  Cherry::ApplicationSpecification config;
+  auto app = new CherryApplication(config);
+  
+  // Add OTF files
+  app->AddFont("rocket", CherryPath("rocket.otf"), 80.0f);
+  app->AddFont("chunky", CherryPath("chunky.otf"), 80.0f);
+  // Add TTF files
+  app->AddFont("jetbrainsmono", CherryPath("jetbrainsmono.ttf"), 80.0f);
+
+  return app;
+}
+```
+
 ### Add fonts
 You can directly add fonts to the application during its creation, so that the font will be available throughout the entire context.
 

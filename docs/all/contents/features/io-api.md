@@ -1,4 +1,22 @@
-Cherry allows you to detect user inputs to create interactive components or elements in your application.
+Cherry embeds an Inputs/Outputs API to quickly get user actions, key presses, mouse actions, etc.
+
+```cpp
+  if (CherryApp.IsKeyPressed(Cherry::CherryKey::Z)) {
+    // code here
+  } 
+  
+  if (CherryApp.IsKeyPressed(Cherry::CherryKey::CTRL)) {
+    // code here
+  }
+  
+  if (CherryApp.IsMouseClicked(0)) {
+    // left click
+  }
+
+  if (CherryApp.IsMousePressed(0)) {
+    // left mouse button pressed
+  }
+```
 
 ### Get input key
 
@@ -10,5 +28,3 @@ if(CherryApp.IsKeyPressed(Cherry::CherryKey::A))
     // Key pressed !
 }
 ```
-
-Soon, we will be able to detect double or triple clicks, key holds, and even mouse input!
