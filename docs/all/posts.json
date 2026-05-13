@@ -191,11 +191,27 @@
                     "subpages": []
                 },
                 {
+                    "name": "path_assets",
+                    "link": "path_assets.md",
+                    "description": "",
+                    "logo": "",
+                    "slug": "Assets & Resources",
+                    "subpages": []
+                },
+                {
                     "name": "markdown-renderer",
                     "link": "markdown-renderer.md",
                     "description": "",
                     "logo": "",
                     "slug": "Markdown renderer",
+                    "subpages": []
+                },
+                {
+                    "name": "render_engine",
+                    "link": "render_engine.md",
+                    "description": "",
+                    "logo": "",
+                    "slug": "Rendering",
                     "subpages": []
                 },
                 {
