@@ -287,22 +287,6 @@
             "sumary": "This is all the references of Cherry",
             "pages": [
                 {
-                    "name": "cpp_drawing",
-                    "link": "cpp_drawing.md",
-                    "description": "",
-                    "logo": "",
-                    "slug": "C++ Drawing API",
-                    "subpages": []
-                },
-                {
-                    "name": "cpp_logic",
-                    "link": "cpp_logic.md",
-                    "description": "",
-                    "logo": "",
-                    "slug": "C++ Logic API",
-                    "subpages": []
-                },
-                {
                     "name": "lua_drawing",
                     "link": "lua_drawing.md",
                     "description": "",
@@ -316,6 +300,22 @@
                     "description": "",
                     "logo": "",
                     "slug": "Lua Logic API",
+                    "subpages": []
+                },
+                {
+                    "name": "cpp_drawing",
+                    "link": "cpp_drawing.md",
+                    "description": "",
+                    "logo": "",
+                    "slug": "C++ Drawing API",
+                    "subpages": []
+                },
+                {
+                    "name": "cpp_logic",
+                    "link": "cpp_logic.md",
+                    "description": "",
+                    "logo": "",
+                    "slug": "C++ Main API",
                     "subpages": []
                 }
             ]
