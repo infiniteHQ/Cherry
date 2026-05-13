@@ -1,3 +1,25 @@
+### Introduction
+
+The theme builder gives you the ability to easily craft your own themes, and gives your users the opportunity to customize your tool as they wish!
+
+```cpp
+// Cherry gives you the ability to create your own themes with custom properties, style parameters and customized behaviors !
+class YellowThemeCherry : public Cherry::Theme {
+public:
+  YellowThemeCherry() {
+    SetName("yellow");
+    SetProperty("color_window_bg", "#888815");
+    SetProperty("color_child_bg", "#888815");
+    SetProperty("color_framebg", "#888815");
+  }
+};
+```
+
+This is the result of the [theme example of this repository](https://github.com/infiniteHQ/Cherry/tree/main/examples/concepts/theme_simple) :
+
+<img width="800" height="450" alt="theme" src="https://static.infinite.si/cherrydocs/1.6/all/media/themes.gif" />
+
+
 Cherry allows you to create and manage color and property themes for your application. These themes are directly applied to components, windows, and app windows.  
 
 You can choose not to manage themes manually, in that case, Cherry will automatically assign a default theme.  

@@ -1,6 +1,57 @@
+### Introduction
+
 Cherry includes a full API for managing translations within your application, allowing you to easily create multilingual software using Cherry's locale system!
 
 You can add your own translation files and define a default one. If other translation files are invalid or incomplete, Cherry will automatically fall back to the default file. This is a great way to give developers time to complete translations without breaking the application.
+
+This is the format Cherry uses for locales. Everything is in a JSON file.
+```json
+{
+    "locales": [ 
+        {"hello_world":"Hello world !"}
+    ]
+}
+```
+
+And there is how we interact with locales files !
+```cpp
+void Render() {
+  // You can change the selected language dynamically
+  if (CherryKit::ButtonText("Change for English").GetDataAs<bool>("isClicked")) {
+    CherryApp.SetLocale("en");
+  }
+  if (CherryKit::ButtonText("Change for Spanish").GetDataAs<bool>("isClicked")) {
+    CherryApp.SetLocale("es");
+  }
+  if (CherryKit::ButtonText("Change for French").GetDataAs<bool>("isClicked")) {
+    CherryApp.SetLocale("fr");
+  }
+
+  // Get the traduction with topic ID with Cherry::GetLocale
+  CherryKit::TitleOne(Cherry::GetLocale("hello_world"));
+}
+
+CherryApplication *Cherry::CreateApplication(int argc, char **argv) {
+  Cherry::ApplicationSpecification config;
+  config.SetMainRenderCallback(Render);
+
+  auto app = new CherryApplication(config);
+  // Register locales here
+  app->AddLocale("en", Cherry::GetPath("resources/locales/en.json"));
+  app->AddLocale("fr", Cherry::GetPath("resources/locales/fr.json"));
+  app->AddLocale("es", Cherry::GetPath("resources/locales/es.json"));
+
+  // Set default language
+  app->SetDefaultLocale("en");
+  app->SetLocale("en");
+
+  return app;
+}
+```
+And this is the result :
+
+<img width="800" height="450" alt="traduction" src="https://static.infinite.si/cherrydocs/1.6/all/media/traductions.gif" />
+
 
 ### Traduction files
 We have created a simple translation file format based on JSON.
