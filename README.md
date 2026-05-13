@@ -688,6 +688,8 @@ You can also trigger devtools with `F12` key like a web browser.
 
 This a view of devtools :
 
+<img width="800" height="450" alt="devtools" src="https://github.com/user-attachments/assets/b016e23f-2dac-4097-bcdf-0111ac662e53" />
+
 ## Built-in Components
 
 Cherry provides an incredible starting set of ready-to-use components such as buttons, sliders, widgets, inputs, etc.
