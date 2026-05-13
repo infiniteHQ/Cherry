@@ -167,6 +167,14 @@
                     "subpages": []
                 },
                 {
+                    "name": "components--widgets-usage",
+                    "link": "components--widgets-usage.md",
+                    "description": "",
+                    "logo": "",
+                    "slug": "Components & Widgets usage",
+                    "subpages": []
+                },
+                {
                     "name": "customization-abilities",
                     "link": "customization-abilities.md",
                     "description": "",
