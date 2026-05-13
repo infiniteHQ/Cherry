@@ -184,7 +184,6 @@ Cherry has an entire [Lua](https://www.lua.org/about.html) scripting engine. You
 
 https://github.com/user-attachments/assets/38e9b5f2-d8e2-430d-89c7-ac0071e98f2a
 
-
 ## Sound Engine
 
 Cherry embeds a sound engine powered by [miniaudio](). Cherry adds more layers to create channels and run sounds or music easily.
@@ -683,6 +682,11 @@ This is an example of the use of Cherry using KMS/DRM :
 > This feature is still in active development, bugs can occur
 
 If enabled, Cherry embeds native debug tools, including a component inspector, a console, and some debug utilities (similar to the DevTools of some web browsers).
+
+To enable debug tools, simply turn CHERRY_DEBUG ON on your cmake, then you have access to the `CherryApp.ToggleDebugTools()` to show/hide devtools.
+You can also trigger devtools with `F12` key like a web browser.
+
+This a view of devtools :
 
 ## Built-in Components
 
