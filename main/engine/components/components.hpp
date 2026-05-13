@@ -31,19 +31,24 @@ namespace Cherry {
 
     // Main setters
     void SetType(const std::string &type);
+    void SetParentType(const std::string &type);
     void SetIdentifier(const Identifier &id);
+    void SetParentIdentifier(const Identifier &id);
     void SetRenderMode(RenderMode prop);
     void SetIsComponentRendered(const bool &value);
 
     // Main getters
     const Identifier &GetIdentifier() const;
+    const Identifier &GetParentIdentifier() const;
     const std::string &GetType() const;
+    const std::string &GetParentType() const;
     const std::unordered_map<std::string, std::string> &GetPropertiesMap() const;
     const std::unordered_map<std::string, std::string> &GetDataMap() const;
     const std::unordered_map<std::string, std::string> &GetContextPropertiesMap() const;
     const std::unordered_map<std::string, std::string> &GetContextDataMap() const;
     const RenderMode &GetRenderMode() const;
     const bool &GetIsComponentRendered() const;
+    const bool &HaveParent() const;
 
     // Utils
     void ClearProperty(const std::string &key);
@@ -81,15 +86,18 @@ namespace Cherry {
    private:
     // Identification
     Identifier m_Identifier;
+    Identifier m_ParentIdentifier;
     RenderMode m_RenderMode = RenderMode::None;
 
     // Optionnal, some parent components can ask for a specific
     // type (like NodeArea and Nodes), this type member can help
     // to introduce a type safe component management
     std::string m_ComponentType = "undefined";
+    std::string m_ParentComponentType = "undefined";
 
     // States
     bool m_IsComponentRendered = false;
+    bool m_HaveParent = false;
 
     // Properties
     // Cpy of props registered in the cherry context

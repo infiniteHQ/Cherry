@@ -139,6 +139,14 @@ namespace Cherry {
     // Pre process actions
     RefreshContextProperties();
 
+    m_HaveParent = false;
+    auto p = Cherry::GetParent();
+    if (p) {
+      SetParentIdentifier(p->GetIdentifier());
+      SetParentType(p->GetType());
+      m_HaveParent = true;
+    }
+
     // Render
     CherryApp.SetCurrentComponent(this);
     this->Render();
@@ -217,12 +225,31 @@ namespace Cherry {
     m_ComponentType = type;
   }
 
+  const std::string &Component::GetParentType() const {
+    return m_ParentComponentType;
+  }
+
+  void Component::SetParentType(const std::string &type) {
+    m_ParentComponentType = type;
+  }
+
   void Component::SetIdentifier(const Cherry::Identifier &id) {
     m_Identifier = id;
+  }
+
+  void Component::SetParentIdentifier(const Identifier &id) {
+    m_ParentIdentifier = id;
   }
 
   const Identifier &Component::GetIdentifier() const {
     return m_Identifier;
   }
 
+  const bool &Component::HaveParent() const {
+    return m_HaveParent;
+  }
+
+  const Identifier &Component::GetParentIdentifier() const {
+    return m_ParentIdentifier;
+  }
 }  // namespace Cherry

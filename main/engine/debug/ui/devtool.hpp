@@ -4,31 +4,29 @@
 #ifndef CHERRY_DEBUG_TOOL
 #define CHERRY_DEBUG_TOOL
 
-#include "views/about/about.hpp"
-#include "views/console/console.hpp"
-#include "views/inspector/inspector.hpp"
-
 #include <memory>
 
+#include "views/components/components.hpp"
+#include "views/console/console.hpp"
+
 namespace Cherry {
-namespace Tools {
+  namespace Tools {
 
-class Devtool {
-public:
-  Devtool();
-  ~Devtool();
+    class Devtool {
+     public:
+      Devtool();
+      ~Devtool();
 
-  void Start();
-  void Stop();
+      void Start();
+      void Stop();
 
-  std::shared_ptr<ConsoleView> ConsoleAppWindow;
-  std::shared_ptr<AboutView> AboutAppWindow;
-  std::shared_ptr<InspectorView> InspectorAppWindow;
+      std::shared_ptr<ConsoleView> ConsoleAppWindow;
+      std::shared_ptr<ComponentsView> ComponentsAppWindow;
 
-private:
-};
-} // namespace Tools
-} // namespace Cherry
+     private:
+    };
+  }  // namespace Tools
+}  // namespace Cherry
 
-#endif // CHERRY_DEBUG_TOOL
-#endif // CHERRY_DEBUG
+#endif  // CHERRY_DEBUG_TOOL
+#endif  // CHERRY_DEBUG

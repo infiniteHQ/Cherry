@@ -287,131 +287,188 @@ namespace Cherry {
 #ifdef CHERRY_DEBUG
     static float ms_values[90] = { 0 };
     static int frame_offset = 0;
+    static bool s_Minimized = false;
 
     if (Application::DebugToolState().load() && window->GetName() != "Cherry devtools") {
       const float PAD = 10.0f;
       const ImGuiViewport *viewport = ImGui::GetMainViewport();
 
-      ImGui::SetNextWindowPos(ImVec2(viewport->WorkPos.x + PAD, viewport->WorkPos.y + PAD), ImGuiCond_Always);
-      ImGui::SetNextWindowSize(ImVec2(250, 0));
-      ImGui::SetNextWindowBgAlpha(0.92f);
+      float fps = ImGui::GetIO().Framerate;
+      float ms = 1000.0f / fps;
+      ms_values[frame_offset] = ms;
+      frame_offset = (frame_offset + 1) % IM_ARRAYSIZE(ms_values);
+
+      ImVec4 perf_color_vec = (fps > 58.0f) ? ImVec4(0.4f, 1.0f, 0.4f, 1.0f) : ImVec4(1.0f, 0.4f, 0.4f, 1.0f);
+      ImU32 perf_color = ImGui::ColorConvertFloat4ToU32(perf_color_vec);
 
       ImGuiWindowFlags overlay_flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize |
                                        ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing |
                                        ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoInputs;
 
-      ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
-      ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(10, 10));
-      ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4, 4));
+      if (s_Minimized) {
+        ImGui::SetNextWindowPos(ImVec2(viewport->WorkPos.x + PAD, viewport->WorkPos.y + PAD), ImGuiCond_Always);
+        ImGui::SetNextWindowSize(ImVec2(0, 0));
+        ImGui::SetNextWindowBgAlpha(0.45f);
 
-      if (ImGui::Begin("##DebugOverlay", nullptr, overlay_flags)) {
-        ImGui::TextColored(ImVec4(0.4f, 0.8f, 1.0f, 1.0f), "CHERRY");
-        ImGui::SameLine();
-        ImGui::TextDisabled("| %s", CHERRY_VERSION);
-        ImGui::Separator();
-        ImGui::Spacing();
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 3.0f);
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(8, 5));
+        ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4, 2));
 
-        float fps = ImGui::GetIO().Framerate;
-        float ms = 1000.0f / fps;
-        ms_values[frame_offset] = ms;
-        frame_offset = (frame_offset + 1) % IM_ARRAYSIZE(ms_values);
+        ImGuiWindowFlags mini_flags = overlay_flags & ~ImGuiWindowFlags_NoInputs;
 
-        ImVec4 perf_color_vec = (fps > 58.0f) ? ImVec4(0.4f, 1.0f, 0.4f, 1.0f) : ImVec4(1.0f, 0.4f, 0.4f, 1.0f);
-        ImU32 perf_color = ImGui::ColorConvertFloat4ToU32(perf_color_vec);
+        if (ImGui::Begin("##DebugOverlayMini", nullptr, mini_flags)) {
+          ImGui::TextColored(ImVec4(0.4f, 0.8f, 1.0f, 0.8f), "CHERRY");
+          ImGui::SameLine(0, 4);
+          ImGui::TextDisabled("v%s", CHERRY_VERSION);
+          ImGui::SameLine(0, 8);
+          ImGui::TextColored(perf_color_vec, "%.0f fps", fps);
+          ImGui::SameLine(0, 8);
 
-        auto DebugLine = [](const char *label, const char *value, ImVec4 val_color = ImVec4(1, 1, 1, 1)) {
-          ImGui::TextDisabled("%s", label);
-          ImGui::SameLine(100);
-          ImGui::TextColored(val_color, "%s", value);
-        };
-
-        DebugLine("FPS", std::to_string((int)fps).c_str(), perf_color_vec);
-        DebugLine("Frame", (std::to_string(ms).substr(0, 4) + " ms").c_str());
-
-        ImGui::Spacing();
-        ImVec2 canvas_pos = ImGui::GetCursorScreenPos();
-        ImVec2 canvas_size = ImVec2(230, 45);
-
-        ImDrawList *draw_list = ImGui::GetWindowDrawList();
-        draw_list->AddRectFilled(
-            canvas_pos, ImVec2(canvas_pos.x + canvas_size.x, canvas_pos.y + canvas_size.y), IM_COL32(20, 20, 20, 255));
-
-        static ImVec2 points[90];
-        float max_v = 33.0f;
-
-        for (int i = 0; i < 90; i++) {
-          int idx = (frame_offset + i) % 90;
-          float val = ImClamp(ms_values[idx], 0.0f, max_v);
-          points[i].x = canvas_pos.x + ((float)i / 89.0f) * canvas_size.x;
-          points[i].y = canvas_pos.y + (1.0f - (val / max_v)) * canvas_size.y;
-        }
-
-        for (int i = 0; i < 89; i++) {
-          ImVec2 p1 = points[i];
-          ImVec2 p2 = points[i + 1];
-          ImVec2 b1 = ImVec2(p1.x, canvas_pos.y + canvas_size.y);
-          ImVec2 b2 = ImVec2(p2.x, canvas_pos.y + canvas_size.y);
-
-          draw_list->AddRectFilledMultiColor(
-              p1,
-              b2,
-              perf_color & 0x00FFFFFF | 0x80000000,
-              perf_color & 0x00FFFFFF | 0x80000000,
-              perf_color & 0x00FFFFFF | 0x00000000,
-              perf_color & 0x00FFFFFF | 0x00000000);
-        }
-
-        for (int i = 0; i < 89; i++) {
-          draw_list->AddLine(points[i], points[i + 1], perf_color, 1.5f);
-        }
-
-        ImGui::Dummy(canvas_size);
-        ImGui::Spacing();
-
-        if (ImGui::CollapsingHeader("SYSTEM", ImGuiTreeNodeFlags_DefaultOpen)) {
-          DebugLine("Renderer", ImGui::GetIO().BackendRendererName ? ImGui::GetIO().BackendRendererName : "N/A");
-          DebugLine("DrawCalls", std::to_string(ImGui::GetDrawData() ? ImGui::GetDrawData()->CmdListsCount : 0).c_str());
-          DebugLine("CPU Cores", (std::to_string(SDL_GetCPUCount()) + " threads").c_str());
-        }
-
-        if (ImGui::CollapsingHeader("DISPLAY", ImGuiTreeNodeFlags_DefaultOpen)) {
-          int d_idx = SDL_GetWindowDisplayIndex(window->GetWindowHandle());
-          SDL_DisplayMode d_mode;
-          SDL_GetCurrentDisplayMode(d_idx, &d_mode);
-
-          DebugLine("Monitor", (std::string("#") + std::to_string(d_idx)).c_str());
-          DebugLine(
-              "Screen size",
-              (std::to_string(ImGui::GetWindowSize().x) + "x" + std::to_string(ImGui::GetWindowSize().y)).c_str());
-          DebugLine("Resolution", (std::to_string(d_mode.w) + "x" + std::to_string(d_mode.h)).c_str());
-          DebugLine("Refresh", (std::to_string(d_mode.refresh_rate) + " Hz").c_str());
-          DebugLine("DPI Scale", (std::to_string(viewport->DpiScale).substr(0, 3) + "x").c_str());
-        }
-
-        if (ImGui::CollapsingHeader("Components", ImGuiTreeNodeFlags_DefaultOpen)) {
-          int d_idx = SDL_GetWindowDisplayIndex(window->GetWindowHandle());
-          SDL_DisplayMode d_mode;
-          SDL_GetCurrentDisplayMode(d_idx, &d_mode);
-          DebugLine(
-              "Anonymous",
-              std::to_string(Cherry::Application::Get().GetComponentPool()->AnonymousComponents.size()).c_str());
-          DebugLine(
-              "Identified",
-              std::to_string(Cherry::Application::Get().GetComponentPool()->IdentifiedComponents.size()).c_str());
-          DebugLine("Pool stack size", std::to_string(Cherry::Application::Get().GetComponentPoolStack().size()).c_str());
-        }
-
-        if (ImGui::IsMousePosValid()) {
-          ImGui::Separator();
-          ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
-          ImGui::TextDisabled("MOUSE: ");
-          ImGui::SameLine();
-          ImGui::Text("%.0f, %.0f", ImGui::GetIO().MousePos.x, ImGui::GetIO().MousePos.y);
+          ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(4, 1));
+          ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.20f, 0.20f, 0.25f, 0.8f));
+          ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.30f, 0.30f, 0.38f, 1.0f));
+          ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.15f, 0.15f, 0.20f, 1.0f));
+          if (ImGui::SmallButton("Show Debug"))
+            s_Minimized = false;
+          ImGui::PopStyleColor(3);
           ImGui::PopStyleVar();
         }
+        ImGui::End();
+        ImGui::PopStyleVar(3);
+      } else {
+        static bool s_OpenSystem = true;
+        static bool s_OpenDisplay = false;
+        static bool s_OpenComponents = false;
+
+        ImGui::SetNextWindowPos(ImVec2(viewport->WorkPos.x + PAD, viewport->WorkPos.y + PAD), ImGuiCond_Always);
+        ImGui::SetNextWindowSize(ImVec2(250, 0));
+        ImGui::SetNextWindowBgAlpha(0.92f);
+
+        ImGuiWindowFlags full_flags = overlay_flags & ~ImGuiWindowFlags_NoInputs;
+
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(10, 10));
+        ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4, 4));
+
+        if (ImGui::Begin("##DebugOverlay", nullptr, full_flags)) {
+          ImGui::TextColored(ImVec4(0.4f, 0.8f, 1.0f, 1.0f), "CHERRY");
+          ImGui::SameLine();
+          ImGui::TextDisabled("| %s", CHERRY_VERSION);
+          ImGui::SameLine(ImGui::GetWindowWidth() - 46);
+          ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(4, 1));
+          ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.25f, 0.20f, 0.20f, 0.9f));
+          ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.45f, 0.25f, 0.25f, 1.0f));
+          ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.20f, 0.15f, 0.15f, 1.0f));
+          if (ImGui::SmallButton("Close"))
+            s_Minimized = true;
+          ImGui::PopStyleColor(3);
+          ImGui::PopStyleVar();
+
+          ImGui::Separator();
+          ImGui::Spacing();
+
+          auto DebugLine = [](const char *label, const char *value, ImVec4 val_color = ImVec4(1, 1, 1, 1)) {
+            ImGui::TextDisabled("%s", label);
+            ImGui::SameLine(100);
+            ImGui::TextColored(val_color, "%s", value);
+          };
+
+          DebugLine("FPS", std::to_string((int)fps).c_str(), perf_color_vec);
+          DebugLine("Frame", (std::to_string(ms).substr(0, 4) + " ms").c_str());
+
+          ImGui::Spacing();
+          ImVec2 canvas_pos = ImGui::GetCursorScreenPos();
+          ImVec2 canvas_size = ImVec2(230, 45);
+          ImDrawList *draw_list = ImGui::GetWindowDrawList();
+
+          draw_list->AddRectFilled(
+              canvas_pos, ImVec2(canvas_pos.x + canvas_size.x, canvas_pos.y + canvas_size.y), IM_COL32(20, 20, 20, 255));
+
+          static ImVec2 points[90];
+          float max_v = 33.0f;
+          for (int i = 0; i < 90; i++) {
+            int idx = (frame_offset + i) % 90;
+            float val = ImClamp(ms_values[idx], 0.0f, max_v);
+            points[i].x = canvas_pos.x + ((float)i / 89.0f) * canvas_size.x;
+            points[i].y = canvas_pos.y + (1.0f - (val / max_v)) * canvas_size.y;
+          }
+          for (int i = 0; i < 89; i++) {
+            ImVec2 p1 = points[i], p2 = points[i + 1];
+            ImVec2 b2 = ImVec2(p2.x, canvas_pos.y + canvas_size.y);
+            draw_list->AddRectFilledMultiColor(
+                p1,
+                b2,
+                perf_color & 0x00FFFFFF | 0x80000000,
+                perf_color & 0x00FFFFFF | 0x80000000,
+                perf_color & 0x00FFFFFF | 0x00000000,
+                perf_color & 0x00FFFFFF | 0x00000000);
+          }
+          for (int i = 0; i < 89; i++)
+            draw_list->AddLine(points[i], points[i + 1], perf_color, 1.5f);
+
+          ImGui::Dummy(canvas_size);
+          ImGui::Spacing();
+
+          {
+            ImGuiTreeNodeFlags flags =
+                s_OpenSystem ? (ImGuiTreeNodeFlags_Leaf & 0) | ImGuiTreeNodeFlags_DefaultOpen : ImGuiTreeNodeFlags_None;
+            ImGui::SetNextItemOpen(s_OpenSystem, ImGuiCond_Always);
+            bool clicked = ImGui::CollapsingHeader("SYSTEM");
+            if (ImGui::IsItemClicked())
+              s_OpenSystem = !s_OpenSystem;
+            if (s_OpenSystem) {
+              DebugLine("Renderer", ImGui::GetIO().BackendRendererName ? ImGui::GetIO().BackendRendererName : "N/A");
+              DebugLine("DrawCalls", std::to_string(ImGui::GetDrawData() ? ImGui::GetDrawData()->CmdListsCount : 0).c_str());
+              DebugLine("CPU Cores", (std::to_string(SDL_GetCPUCount()) + " threads").c_str());
+            }
+          }
+
+          {
+            ImGui::SetNextItemOpen(s_OpenDisplay, ImGuiCond_Always);
+            ImGui::CollapsingHeader("DISPLAY");
+            if (ImGui::IsItemClicked())
+              s_OpenDisplay = !s_OpenDisplay;
+            if (s_OpenDisplay) {
+              int d_idx = SDL_GetWindowDisplayIndex(window->GetWindowHandle());
+              SDL_DisplayMode d_mode;
+              SDL_GetCurrentDisplayMode(d_idx, &d_mode);
+
+              DebugLine("Monitor", (std::string("#") + std::to_string(d_idx)).c_str());
+              DebugLine(
+                  "Screen size",
+                  (std::to_string(ImGui::GetWindowSize().x) + "x" + std::to_string(ImGui::GetWindowSize().y)).c_str());
+              DebugLine("Resolution", (std::to_string(d_mode.w) + "x" + std::to_string(d_mode.h)).c_str());
+              DebugLine("Refresh", (std::to_string(d_mode.refresh_rate) + " Hz").c_str());
+              DebugLine("DPI Scale", (std::to_string(viewport->DpiScale).substr(0, 3) + "x").c_str());
+            }
+          }
+
+          {
+            ImGui::SetNextItemOpen(s_OpenComponents, ImGuiCond_Always);
+            ImGui::CollapsingHeader("Components");
+            if (ImGui::IsItemClicked())
+              s_OpenComponents = !s_OpenComponents;
+            if (s_OpenComponents) {
+              auto *pool = Cherry::Application::Get().GetComponentPool();
+              DebugLine("Anonymous", std::to_string(pool->AnonymousComponents.size()).c_str());
+              DebugLine("Identified", std::to_string(pool->IdentifiedComponents.size()).c_str());
+              DebugLine(
+                  "Pool stack size", std::to_string(Cherry::Application::Get().GetComponentPoolStack().size()).c_str());
+            }
+          }
+
+          if (ImGui::IsMousePosValid()) {
+            ImGui::Separator();
+            ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
+            ImGui::TextDisabled("MOUSE: ");
+            ImGui::SameLine();
+            ImGui::Text("%.0f, %.0f", ImGui::GetIO().MousePos.x, ImGui::GetIO().MousePos.y);
+            ImGui::PopStyleVar();
+          }
+        }
+        ImGui::End();
+        ImGui::PopStyleVar(3);
       }
-      ImGui::End();
-      ImGui::PopStyleVar(3);
     }
 #endif
 

@@ -23,6 +23,7 @@ namespace Cherry {
             m_OtherFlags(flags) {
         // Identifier
         SetIdentifier(id);
+        SetType("TableSimple");
 
         for (auto row : rows) {
           m_Rows.push_back(CherryApp.GetComponentPtr(row.GetIdentifier()));
@@ -117,7 +118,7 @@ namespace Cherry {
                 CherryGUI::TableSetColumnIndex(column);
                 SetData("renderedColumn", std::to_string(column));
                 CherryApp.PushParentComponent(CherryApp.GetComponentPtr(this->GetIdentifier()));
-                row->Render();
+                row->RenderWrapper();
                 CherryApp.PopParentComponent();
               }
             }
