@@ -1,3 +1,4 @@
+//
 //  window.cpp
 //  Sources for Cherry windows (desktop environment
 //  window implementation and rendering)
@@ -711,36 +712,35 @@ namespace Cherry {
         }
       }
       {
-    // Maximize / Restore Button
-    ImGui::Spring(-1.0f, 17.0f);
-    UI::ShiftCursorY(8.0f);
+        // Maximize / Restore Button
+        ImGui::Spring(-1.0f, 17.0f);
+        UI::ShiftCursorY(8.0f);
 
-    if (!m_Specifications.WindowOnlyClosable) {
-        SDL_Window* sdlWindow = this->GetWindowHandle();
-        Uint32 flags = SDL_GetWindowFlags(sdlWindow);
-        bool isMaximized = (flags & SDL_WINDOW_MAXIMIZED);
+        if (!m_Specifications.WindowOnlyClosable) {
+          SDL_Window *sdlWindow = this->GetWindowHandle();
+          Uint32 flags = SDL_GetWindowFlags(sdlWindow);
+          bool isMaximized = (flags & SDL_WINDOW_MAXIMIZED);
 
-        if (ImGui::InvisibleButton("Maximize", ImVec2(buttonWidth, buttonHeight))) {
-            
-            #ifdef _WIN32
+          if (ImGui::InvisibleButton("Maximize", ImVec2(buttonWidth, buttonHeight))) {
+#ifdef _WIN32
             SDL_SetWindowResizable(sdlWindow, SDL_TRUE);
-            #endif
+#endif
 
             if (isMaximized) {
-                SDL_RestoreWindow(sdlWindow);
+              SDL_RestoreWindow(sdlWindow);
             } else {
-                SDL_MaximizeWindow(sdlWindow);
+              SDL_MaximizeWindow(sdlWindow);
             }
-        }
+          }
 
-        UI::DrawButtonImage(
-            isMaximized ? this->get(g_WindowRestoreIcon, "Restore") : this->get(g_WindowMaximizeIcon, "Maximize"),
-            buttonColN,
-            buttonColH,
-            buttonColP);
-    }
-} 
-{
+          UI::DrawButtonImage(
+              isMaximized ? this->get(g_WindowRestoreIcon, "Restore") : this->get(g_WindowMaximizeIcon, "Maximize"),
+              buttonColN,
+              buttonColH,
+              buttonColP);
+        }
+      }
+      {
         // Close Button
         ImGui::Spring(-1.0f, 15.0f);
         UI::ShiftCursorY(8.0f);

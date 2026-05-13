@@ -1,15 +1,27 @@
+//
+//  audio.hpp
+//  Headers for audio engine of Cherry
+//
+//  Copyright (c) 2024-2026 Diego Moreno
+//  Copyright (c) 2026 Infinite
+//
+//	This work is licensed under the terms of the MIT license.
+//	For a copy, see <https://opensource.org/licenses/MIT>.
+//
+
 #ifndef CHERRY_AUDIO_HPP
 #define CHERRY_AUDIO_HPP
 
 #ifdef CHERRY_ENABLE_AUDIO
 
-#include "../../../lib/miniaudio/miniaudio.h"
 #include <algorithm>
 #include <atomic>
 #include <map>
 #include <random>
 #include <string>
 #include <vector>
+
+#include "../../../lib/miniaudio/miniaudio.h"
 
 struct ChannelSettings {
   float volume = 1.0f;
@@ -18,7 +30,7 @@ struct ChannelSettings {
 };
 
 class AudioChannel {
-public:
+ public:
   AudioChannel(ma_engine *engine, const std::string &name);
   ~AudioChannel();
 
@@ -32,7 +44,7 @@ public:
   ChannelSettings m_settings;
   std::string m_name;
 
-private:
+ private:
   void StopCurrentSound();
   int CalculateNextIndex();
   void InternalPlayNextWithCallback();
@@ -42,9 +54,9 @@ private:
   ma_sound m_currentSound;
   int m_currentIndex = 0;
   bool m_isPlaying = false;
-  std::atomic<bool> m_isLoopingActive{false};
-  std::atomic<bool> m_needsRestart{false};
+  std::atomic<bool> m_isLoopingActive{ false };
+  std::atomic<bool> m_needsRestart{ false };
 };
 
-#endif // CHERRY_ENABLE_AUDIO
-#endif // CHERRY_AUDIO_HPP
+#endif  // CHERRY_ENABLE_AUDIO
+#endif  // CHERRY_AUDIO_HPP

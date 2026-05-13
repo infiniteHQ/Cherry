@@ -1,11 +1,24 @@
+//
+//  audio.cpp
+//  Sources for audio engine of Cherry
+//
+//  Copyright (c) 2024-2026 Diego Moreno
+//  Copyright (c) 2026 Infinite
+//
+//	This work is licensed under the terms of the MIT license.
+//	For a copy, see <https://opensource.org/licenses/MIT>.
+//
+
 #include "audio.hpp"
 
 #ifdef CHERRY_ENABLE_AUDIO
 
-AudioChannel::AudioChannel(ma_engine *engine, const std::string &name)
-    : m_engine(engine), m_name(name) {}
+AudioChannel::AudioChannel(ma_engine *engine, const std::string &name) : m_engine(engine), m_name(name) {
+}
 
-AudioChannel::~AudioChannel() { Stop(); }
+AudioChannel::~AudioChannel() {
+  Stop();
+}
 
 void AudioChannel::AddSound(const std::string &path) {
   m_playlist.push_back(path);
@@ -18,8 +31,7 @@ void AudioChannel::PlayTick() {
   StopCurrentSound();
 
   int index = CalculateNextIndex();
-  ma_result result = ma_sound_init_from_file(
-      m_engine, m_playlist[index].c_str(), 0, NULL, NULL, &m_currentSound);
+  ma_result result = ma_sound_init_from_file(m_engine, m_playlist[index].c_str(), 0, NULL, NULL, &m_currentSound);
 
   if (result == MA_SUCCESS) {
     ApplySettings();
@@ -79,8 +91,7 @@ void AudioChannel::InternalPlayNextWithCallback() {
     return;
 
   int index = CalculateNextIndex();
-  ma_result result = ma_sound_init_from_file(
-      m_engine, m_playlist[index].c_str(), 0, NULL, NULL, &m_currentSound);
+  ma_result result = ma_sound_init_from_file(m_engine, m_playlist[index].c_str(), 0, NULL, NULL, &m_currentSound);
 
   if (result == MA_SUCCESS) {
     ApplySettings();
@@ -101,4 +112,4 @@ void AudioChannel::InternalPlayNextWithCallback() {
   }
 }
 
-#endif // CHERRY_ENABLE_AUDIO
+#endif  // CHERRY_ENABLE_AUDIO
