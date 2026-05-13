@@ -22,7 +22,6 @@
 #include "hooks_helpers.hpp"
 
 namespace Cherry {
-
   class Hook {
    public:
     Hook(
@@ -52,6 +51,7 @@ namespace Cherry {
     template<typename T>
     T GetDataAs(const std::string &key);
     ExecuteHookOn GetExecuteOn() const;
+    bool HaveCondition() const;
 
    private:
     Identifier m_Identifier;
@@ -92,7 +92,8 @@ namespace Cherry {
     return val == "true";
   }
 
-  static std::unordered_map<Identifier, std::shared_ptr<Hook>> hooks;
+  std::unordered_map<Identifier, std::shared_ptr<Hook>> &GetHooks();
+
   void CreateHook(
       const std::string &id,
       ExecuteHookOn execute_on,

@@ -108,4 +108,12 @@ namespace Cherry {
       m_HookFunction(this);
     }
   }
+
+  bool Hook::HaveCondition() const {
+    if (m_ConditionEvaluation) {
+      return true;
+    }
+
+    return false;
+  }
 }  // namespace Cherry

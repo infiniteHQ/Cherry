@@ -12,6 +12,11 @@
 #include "hooks.hpp"
 
 namespace Cherry {
+  static std::unordered_map<Identifier, std::shared_ptr<Hook>> hooks;
+
+  std::unordered_map<Identifier, std::shared_ptr<Hook>> &GetHooks() {
+    return hooks;
+  }
 
   void CreateHook(
       const std::string &id,

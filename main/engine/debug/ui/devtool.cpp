@@ -34,12 +34,17 @@ namespace Cherry {
       ComponentsAppWindow->GetAppWindow()->SetVisibility(true);
       Cherry::AddAppWindow(ComponentsAppWindow->GetAppWindow());
       ComponentsAppWindow->GetAppWindow()->AttachOnWindow(window_name);
+
+      HooksAppWindow = HooksView::Create("Hooks");
+      HooksAppWindow->GetAppWindow()->SetVisibility(true);
+      Cherry::AddAppWindow(HooksAppWindow->GetAppWindow());
+      HooksAppWindow->GetAppWindow()->AttachOnWindow(window_name);
     };
 
     void Devtool::Stop() {
-      const std::string window_name = "Cherry devtools";
       Cherry::DeleteAppWindow(ComponentsAppWindow->GetAppWindow());
       Cherry::DeleteAppWindow(ConsoleAppWindow->GetAppWindow());
+      Cherry::DeleteAppWindow(HooksAppWindow->GetAppWindow());
     };
 
   }  // namespace Tools
