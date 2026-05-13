@@ -688,7 +688,7 @@ You can also trigger devtools with `F12` key like a web browser.
 
 This a view of devtools :
 
-<img width="800" height="450" alt="devtools" src="https://github.com/user-attachments/assets/b016e23f-2dac-4097-bcdf-0111ac662e53" />
+<img width="800" height="450" alt="devtools" src="https://github.com/user-attachments/assets/9704f973-cbb6-4e0c-b6ac-5e0bc5108152" />
 
 ## Built-in Components
 
