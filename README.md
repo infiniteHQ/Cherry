@@ -683,7 +683,7 @@ This is an example of the use of Cherry using KMS/DRM :
 
 If enabled, Cherry embeds native debug tools, including a component inspector, a console, and some debug utilities (similar to the DevTools of some web browsers).
 
-To enable debug tools, simply turn CHERRY_DEBUG ON on your cmake, then you have access to the `CherryApp.ToggleDebugTools()` to show/hide devtools.
+To enable debug tools, simply turn `CHERRY_DEBUG` to `ON` on your cmake, then you have access to the `CherryApp.ToggleDebugTools()` to show/hide devtools.
 You can also trigger devtools with `F12` key like a web browser.
 
 This a view of devtools :
