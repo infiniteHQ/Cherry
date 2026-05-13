@@ -86,6 +86,49 @@ Cherry.DrawRectOutlineFixed(10, 10, 200, 50, "#FFFFFFFF", 1.0)
 
 </bloc>
 
+
+<bloc>
+
+#### DrawRectOutlineRounded
+Draws the outline of a rounded rectangle using absolute screen coordinates.
+
+**Signature and Parameters:**
+```lua
+Cherry.DrawRectOutlineRounded(x, y, width, height, hex_color, thickness)
+```
+* **x, y**: Absolute position on the screen (0,0 is the top-left corner).
+* **width, height**: Dimensions of the rectangle.
+* **hex_color**: Color of the outline.
+* **thickness**: Line thickness in pixels.
+
+**Example:**
+```lua
+Cherry.DrawRectOutlineRounded(10, 10, 200, 50, 8.f, "#FFFFFFFF", 1.0)
+```
+
+</bloc>
+
+<bloc>
+
+#### DrawRectOutlineRoundedFixed
+Draws the outline of a rounded rectangle using absolute screen coordinates.
+
+**Signature and Parameters:**
+```lua
+Cherry.DrawRectOutlineRoundedFixed(x, y, width, height, rounding, hex_color, thickness)
+```
+* **x, y**: Absolute position on the screen (0,0 is the top-left corner).
+* **width, height**: Dimensions of the rectangle.
+* **hex_color**: Color of the outline.
+* **thickness**: Line thickness in pixels.
+
+**Example:**
+```lua
+Cherry.DrawRectOutlineRoundedFixed(10, 10, 200, 50, 8.f, "#FFFFFFFF", 1.0)
+```
+
+</bloc>
+
 <bloc>
 
 #### DrawText
@@ -742,6 +785,50 @@ Cherry.DrawRectGradientFixed(0, 0, 1920, 2, "#FFFFFFFF", "#FFFFFF00")
 
 <bloc>
 
+<bloc>
+
+#### DrawRectGradientRounded
+Draws a rectangle with a linear color gradient at absolute screen coordinates.
+
+**Signature and Parameters:**
+```lua
+Cherry.DrawRectGradientRounded(x, y, w, h, color_start, color_end, rounded, vertical)
+```
+* **color_start, color_end**: Gradient colors.
+* **vertical**: Optional: Vertical gradient if it's true.
+
+**Example:**
+```lua
+Cherry.DrawRectGradientRounded(0, 0, 1920, 2, "#FFFFFFFF", "#FFFFFF00", 8.f)
+```
+
+</bloc>
+
+<bloc>
+
+
+<bloc>
+
+#### DrawRectGradientRoundedFixed
+Draws a rectangle with a linear color gradient at absolute screen coordinates.
+
+**Signature and Parameters:**
+```lua
+Cherry.DrawRectGradientRoundedFixed(x, y, w, h, color_start, color_end, rounded, vertical)
+```
+* **color_start, color_end**: Gradient colors.
+* **vertical**: Optional: Vertical gradient if it's true.
+
+**Example:**
+```lua
+Cherry.DrawRectGradientRoundedFixed(0, 0, 1920, 2, "#FFFFFFFF", "#FFFFFF00", 8.f)
+```
+
+</bloc>
+
+<bloc>
+
+
 #### DrawRectOutlineGradient
 Draws the outline of a rectangle with a color gradient.
 
@@ -997,6 +1084,91 @@ Cherry.DrawQuadOutlineGradientFixed(100, 100, 300, 120, 280, 300, 80, 280, "#FF0
 
 </bloc>
 
+<bloc>
+
+#### BeginRectMask
+
+Begins a rectangular clipping mask in relative coordinates. Only drawing calls made between `BeginRectMask` and EndRectMask will be visible inside the defined region.
+
+**Signature and Parameters:**
+```lua
+Cherry.BeginRectMask(x, y, w, h, [intersect])
+```
+* **x, y**: Top-left corner of the mask region (relative coordinates)
+* **w, h**: Width and height of the mask region
+* **intersect**: (optional) Whether to intersect with an existing mask. Default: `true`
+
+**Example:**
+```lua
+Cherry.BeginRectMask(10, 10, 200, 150)
+-- only content drawn here is clipped to the mask
+Cherry.EndRectMask()
+```
+
+</bloc>
+
+<bloc>
+
+#### EndRectMask
+
+Ends the rectangular clipping mask started by `BeginRectMask`. Must always be called after a `BeginRectMask`.
+
+**Signature and Parameters:**
+```lua
+Cherry.EndRectMask()
+```
+
+**Example:**
+```lua
+Cherry.BeginRectMask(10, 10, 200, 150)
+-- masked drawing calls
+Cherry.EndRectMask()
+```
+
+</bloc>
+
+<bloc>
+
+#### BeginRectMaskFixed
+
+Begins a rectangular clipping mask using absolute screen coordinates. Only drawing calls made between `BeginRectMaskFixed` and `EndRectMaskFixed` will be visible inside the defined region.
+
+**Signature and Parameters:**
+```lua
+Cherry.BeginRectMaskFixed(x, y, w, h, [intersect])
+```
+* **x, y**: Top-left corner of the mask region (relative coordinates)
+* **w, h**: Width and height of the mask region
+* **intersect**: (optional) Whether to intersect with an existing mask. Default: `true`
+
+**Example:**
+```lua
+Cherry.BeginRectMaskFixed(100, 100, 400, 300)
+-- only content drawn here is clipped to the mask
+Cherry.EndRectMaskFixed()
+```
+
+</bloc>
+
+<bloc>
+
+#### EndRectMaskFixed
+
+Ends the rectangular clipping mask started by `BeginRectMaskFixed`. Must always be called after a `BeginRectMaskFixed`.
+
+**Signature and Parameters:**
+```lua
+Cherry.EndRectMaskFixed()
+```
+
+**Example:**
+```lua
+Cherry.BeginRectMaskFixed(100, 100, 400, 300)
+-- masked drawing calls
+Cherry.EndRectMaskFixed()
+```
+
+</bloc>
 
 <bloc>
 
