@@ -2075,6 +2075,19 @@ namespace Cherry {
     ImGuiViewport *GetMainViewport() {
       return ImGui::GetMainViewport();
     }
+        
+    bool          BeginTabBar(const char* str_id, ImGuiTabBarFlags flags){ return ImGui::BeginTabBar(str_id, flags); }
+    
+    void          EndTabBar(){ ImGui::EndTabBar(); }
+    
+    bool          BeginTabItem(const char* label, bool* p_open, ImGuiTabItemFlags flags){ return ImGui::BeginTabItem(label, p_open, flags); }
+    
+    void          EndTabItem(){ ImGui::EndTabItem(); }
+    
+    bool          TabItemButton(const char* label, ImGuiTabItemFlags flags){ return ImGui::TabItemButton(label, flags); }
+    
+    void          SetTabItemClosed(const char* tab_or_docked_window_label){ ImGui::SetTabItemClosed(tab_or_docked_window_label); }
+
   }  // namespace GUI
 
 }  // namespace Cherry
