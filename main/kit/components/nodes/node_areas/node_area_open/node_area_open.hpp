@@ -917,6 +917,7 @@ namespace Cherry {
         // Informations
         SetProperty("label", label);
         SetProperty("refresh", "false");
+        SetProperty("save", "false");
 
         // Data & User-level informations
         SetData("lastClicked", "never");
@@ -980,6 +981,12 @@ namespace Cherry {
           m_NodeEngine->RefreshNodeGraph();
           SetProperty("refresh", "false");
           return;
+        }
+
+        if (GetProperty("save") == "true") {
+          m_NodeEngine->SaveNodeGraph();
+          SetData("graph_saved", "true");
+          SetProperty("save", "false");
         }
 
         m_NodeEngine->m_HeaderBackground = Cherry::GetTexture(Cherry::GetPath("resources/base/blueprintbackground.png"));
