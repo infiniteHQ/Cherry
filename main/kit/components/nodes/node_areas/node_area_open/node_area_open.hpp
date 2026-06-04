@@ -428,9 +428,9 @@ namespace Cherry {
         m_NodeGraph->AddConnection(conn);
       }
 
-      if (!m_NodeGraph->DumpGraphToJsonFile(m_NodeContext)) {
-        std::cerr << "SaveNodeGraph: failed to dump NodeGraph" << std::endl;
-      }
+      // if (!m_NodeGraph->DumpGraphToJsonFile(m_NodeContext)) {
+      //   std::cerr << "SaveNodeGraph: failed to dump NodeGraph" << std::endl;
+      // }
     }
 
     Node *SpawnNode(Cherry::NodeSystem::NodeSchema *schema) {
@@ -916,6 +916,7 @@ namespace Cherry {
 
         // Informations
         SetProperty("label", label);
+        SetProperty("refresh", "false");
 
         // Data & User-level informations
         SetData("lastClicked", "never");
@@ -975,6 +976,12 @@ namespace Cherry {
       }
 
       void Render() override {
+        if (GetProperty("refresh") == "true") {
+          m_NodeEngine->RefreshNodeGraph();
+          SetProperty("refresh", "false");
+          return;
+        }
+
         m_NodeEngine->m_HeaderBackground = Cherry::GetTexture(Cherry::GetPath("resources/base/blueprintbackground.png"));
         m_NodeEngine->m_SaveIcon = Cherry::GetTexture(Cherry::GetPath("resources/base/x.png"));
         m_NodeEngine->m_RestoreIcon = Cherry::GetTexture(Cherry::GetPath("resources/base/x.png"));
@@ -1961,6 +1968,10 @@ namespace Cherry {
                   CherryGUI::EndGroup();
 
                   if (CherryGUI::IsItemClicked()) {
+                    if (m_NodeEngine) {
+                      m_NodeEngine->SaveNodeGraph();
+                    }
+
                     if (m_NodeEngine->m_NodeGraph->m_NodeSpawnCallback) {
                       m_NodeEngine->m_NodeGraph->m_NodeSpawnCallback(
                           poss.schema_id,
