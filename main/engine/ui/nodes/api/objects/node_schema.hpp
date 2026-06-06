@@ -16,6 +16,7 @@ namespace Cherry {
 
     struct NodePin {
       std::string Name;
+      std::string ProperName;
       std::string ColorVariuant;  // Hex (#FFFFFF)
       std::string TypeName;
     };
@@ -26,24 +27,27 @@ namespace Cherry {
       NodeSchema(const std::string &id) : m_ID(id) {
       }
 
-      void AddInputPin(const std::string &name, const std::string &pinTypeID) {
+      void AddInputPin(const std::string &name, const std::string &pinTypeID, const std::string &proper_name = "") {
         NodePin pin;
         pin.Name = name;
         pin.TypeName = pinTypeID;
+        pin.ProperName = proper_name;
         m_InputPins.push_back(pin);
       }
 
-      void AddOutputPin(const std::string &name, const std::string &pinTypeID) {
+      void AddOutputPin(const std::string &name, const std::string &pinTypeID, const std::string &proper_name = "") {
         NodePin pin;
         pin.Name = name;
         pin.TypeName = pinTypeID;
+        pin.ProperName = proper_name;
         m_OutputPins.push_back(pin);
       }
 
-      void AddHeaderPin(const std::string &name, const std::string &pinTypeID) {
+      void AddHeaderPin(const std::string &name, const std::string &pinTypeID, const std::string &proper_name = "") {
         NodePin pin;
         pin.Name = name;
         pin.TypeName = pinTypeID;
+        pin.ProperName = proper_name;
         m_HeaderPin = pin;
       }
 

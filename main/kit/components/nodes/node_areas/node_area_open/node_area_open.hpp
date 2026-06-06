@@ -465,12 +465,13 @@ namespace Cherry {
       }
 
       for (const auto &in_pin : schema->m_InputPins) {
-        newNode.Inputs.emplace_back(GetNextId(), in_pin.Name.c_str(), m_NodeContext->GetPinFormat(in_pin.TypeName).value());
+        newNode.Inputs.emplace_back(
+            GetNextId(), in_pin.ProperName.c_str(), m_NodeContext->GetPinFormat(in_pin.TypeName).value());
       }
 
       for (const auto &out_pin : schema->m_OutputPins) {
         newNode.Outputs.emplace_back(
-            GetNextId(), out_pin.Name.c_str(), m_NodeContext->GetPinFormat(out_pin.TypeName).value());
+            GetNextId(), out_pin.ProperName.c_str(), m_NodeContext->GetPinFormat(out_pin.TypeName).value());
       }
 
       BuildNode(&newNode);
@@ -503,6 +504,7 @@ namespace Cherry {
       }
       return nullptr;
     }
+
     Pin *FindPinByName(std::vector<Pin> &pins, const std::string &name) {
       for (auto &p : pins)
         if (p.Name == name)
