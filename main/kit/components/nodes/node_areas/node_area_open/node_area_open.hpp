@@ -1026,6 +1026,9 @@ namespace Cherry {
         static Pin *newNodeLinkPin = nullptr;
         static Pin *newLinkPin = nullptr;
 
+        static bool ctrlRerouteActive = false;
+        static Pin *ctrlReroutePin = nullptr;
+
         static float leftPaneWidth = 400.0f;
         static float rightPaneWidth = 800.0f;
         static bool navigated = false;
@@ -1037,6 +1040,47 @@ namespace Cherry {
 
         ed::Begin("Node qsd");
         {
+          {
+            auto &io2 = CherryGUI::GetIO();
+            if (io2.KeyCtrl && CherryGUI::IsMouseClicked(ImGuiMouseButton_Left)) {
+              ed::PinId hoveredPinId = ed::GetHoveredPin();
+              if (hoveredPinId) {
+                Pin *clickedPin = m_NodeEngine->FindPin(hoveredPinId);
+                if (clickedPin && m_NodeEngine->IsPinLinked(clickedPin->ID)) {
+                  std::vector<Link *> linkedLinks;
+                  for (auto &lnk : m_NodeEngine->m_Links)
+                    if (lnk.StartPinID == clickedPin->ID || lnk.EndPinID == clickedPin->ID)
+                      linkedLinks.push_back(&lnk);
+
+                  Pin *rerouteFromPin = nullptr;
+                  if (!linkedLinks.empty()) {
+                    std::sort(linkedLinks.begin(), linkedLinks.end(), [](const Link *a, const Link *b) {
+                      return a->ID.Get() < b->ID.Get();
+                    });
+
+                    Link *chosen = linkedLinks.front();
+                    ed::PinId oppositeId = (chosen->StartPinID == clickedPin->ID) ? chosen->EndPinID : chosen->StartPinID;
+                    rerouteFromPin = m_NodeEngine->FindPin(oppositeId);
+                  }
+
+                  m_NodeEngine->m_Links.erase(
+                      std::remove_if(
+                          m_NodeEngine->m_Links.begin(),
+                          m_NodeEngine->m_Links.end(),
+                          [&](const Link &lnk) {
+                            return lnk.StartPinID == clickedPin->ID || lnk.EndPinID == clickedPin->ID;
+                          }),
+                      m_NodeEngine->m_Links.end());
+
+                  if (rerouteFromPin) {
+                    ctrlRerouteActive = true;
+                    ctrlReroutePin = rerouteFromPin;
+                    newLinkPin = rerouteFromPin;
+                  }
+                }
+              }
+            }
+          }
           auto cursorTopLeft = CherryGUI::GetCursorScreenPos();
 
           util::BlueprintNodeBuilder builder(
@@ -1733,6 +1777,31 @@ namespace Cherry {
                 CherryGUI::SetCursorPos(CherryGUI::GetCursorPos() + ImVec2(textOffsetX, 0));
                 CherryGUI::TextUnformatted(label);
               };
+              if (ctrlRerouteActive && ctrlReroutePin) {
+                ed::PinId hoveredPin = ed::GetHoveredPin();
+                if (hoveredPin && hoveredPin != ctrlReroutePin->ID) {
+                  Pin *targetPin = m_NodeEngine->FindPin(hoveredPin);
+                  if (targetPin && m_NodeEngine->CanCreateLink(ctrlReroutePin, targetPin) &&
+                      CherryGUI::IsMouseClicked(ImGuiMouseButton_Left)) {
+                    ed::PinId startId = (ctrlReroutePin->Kind == PinKind::Output) ? ctrlReroutePin->ID : targetPin->ID;
+                    ed::PinId endId = (ctrlReroutePin->Kind == PinKind::Output) ? targetPin->ID : ctrlReroutePin->ID;
+
+                    Pin *startPin = m_NodeEngine->FindPin(startId);
+                    m_NodeEngine->m_Links.emplace_back(
+                        Link(m_NodeEngine->GetNextId(), startId, endId, Cherry::HexToImColor(startPin->Format.m_Color)));
+
+                    ctrlRerouteActive = false;
+                    ctrlReroutePin = nullptr;
+                    newLinkPin = nullptr;
+                  }
+                }
+
+                if (CherryGUI::IsKeyPressed(ImGuiKey_Escape) || CherryGUI::IsMouseClicked(ImGuiMouseButton_Right)) {
+                  ctrlRerouteActive = false;
+                  ctrlReroutePin = nullptr;
+                  newLinkPin = nullptr;
+                }
+              }
 
               ed::PinId startPinId = 0, endPinId = 0;
               if (ed::QueryNewLink(&startPinId, &endPinId)) {
