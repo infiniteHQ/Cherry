@@ -91,6 +91,7 @@ struct Pin {
   ed::PinId ID;
   ::Node *Node;
   std::string Name;
+  std::string ProperName;
   // PinType Type;
   PinKind Kind;
 
@@ -101,10 +102,11 @@ struct Pin {
   {
   }*/
 
-  Pin(int id, const char *name, const Cherry::NodeSystem::PinFormat &format)
+  Pin(int id, const char *name, const char *proper_name, const Cherry::NodeSystem::PinFormat &format)
       : ID(id),
         Node(nullptr),
         Name(name),
+        ProperName(proper_name),
         Format(format),
         Kind(PinKind::Input) {
   }
@@ -466,12 +468,18 @@ namespace Cherry {
 
       for (const auto &in_pin : schema->m_InputPins) {
         newNode.Inputs.emplace_back(
-            GetNextId(), in_pin.ProperName.c_str(), m_NodeContext->GetPinFormat(in_pin.TypeName).value());
+            GetNextId(),
+            in_pin.Name.c_str(),
+            in_pin.ProperName.c_str(),
+            m_NodeContext->GetPinFormat(in_pin.TypeName).value());
       }
 
       for (const auto &out_pin : schema->m_OutputPins) {
         newNode.Outputs.emplace_back(
-            GetNextId(), out_pin.ProperName.c_str(), m_NodeContext->GetPinFormat(out_pin.TypeName).value());
+            GetNextId(),
+            out_pin.Name.c_str(),
+            out_pin.ProperName.c_str(),
+            m_NodeContext->GetPinFormat(out_pin.TypeName).value());
       }
 
       BuildNode(&newNode);
@@ -1185,8 +1193,8 @@ namespace Cherry {
                   ed::PinPivotSize(ImVec2(0, 0));
                   CherryGUI::BeginHorizontal(output.ID.AsPointer());
                   CherryGUI::PushStyleVar(ImGuiStyleVar_Alpha, alpha);
-                  if (!output.Name.empty()) {
-                    CherryGUI::TextUnformatted(output.Name.c_str());
+                  if (!output.ProperName.empty()) {
+                    CherryGUI::TextUnformatted(output.ProperName.c_str());
                     CherryGUI::Spring(0);
                   }
                   m_NodeEngine->DrawPinIcon(output, m_NodeEngine->IsPinLinked(output.ID), (int)(alpha * 255));
@@ -1225,8 +1233,8 @@ namespace Cherry {
               } else {
                 m_NodeEngine->DrawPinIcon(input, m_NodeEngine->IsPinLinked(input.ID), (int)(alpha * 255));
                 CherryGUI::Spring(0);
-                if (!input.Name.empty()) {
-                  CherryGUI::TextUnformatted(input.Name.c_str());
+                if (!input.ProperName.empty()) {
+                  CherryGUI::TextUnformatted(input.ProperName.c_str());
                   CherryGUI::Spring(0);
                 }
               }
@@ -1265,9 +1273,9 @@ namespace Cherry {
                   it->second.render(*instIt);
                 }
               } else {
-                if (!output.Name.empty()) {
+                if (!output.ProperName.empty()) {
                   CherryGUI::Spring(0);
-                  CherryGUI::TextUnformatted(output.Name.c_str());
+                  CherryGUI::TextUnformatted(output.ProperName.c_str());
                 }
                 CherryGUI::Spring(0);
                 m_NodeEngine->DrawPinIcon(output, m_NodeEngine->IsPinLinked(output.ID), (int)(alpha * 255));
