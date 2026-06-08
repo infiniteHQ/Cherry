@@ -1001,9 +1001,6 @@ namespace Cherry {
 
         auto &io = CherryGUI::GetIO();
 
-        // CherryGUI::Text("FPS: %.2f (%.2gms)", io.Framerate,
-        //                io.Framerate ? 1000.0f / io.Framerate : 0.0f);
-
         ed::SetCurrentEditor(m_NodeEngine->m_Editor);
 
         if (CherryApp.IsKeyPressed(Cherry::CherryKey::CTRL) && CherryApp.IsKeyPressed(Cherry::CherryKey::S)) {
