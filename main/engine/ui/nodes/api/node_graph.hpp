@@ -1,3 +1,4 @@
+// node_graph.hpp
 #ifndef CHERRY_NODES_NODE_GRAPH
 #define CHERRY_NODES_NODE_GRAPH
 
@@ -11,6 +12,45 @@ using json = nlohmann::json;
 
 namespace Cherry {
   namespace NodeSystem {
+    namespace EffectType {
+      enum class Connection { Pulsating, Flow };
+      enum class Node { Message };
+    }  // namespace EffectType
+
+    struct ConnectionEffectParams {
+      EffectType::Connection type = EffectType::Connection::Pulsating;
+
+      float pulsatingIntensity = 1.0f;
+      float pulsatingRate = 2.0f;
+      std::string pulsatingColor = "#FF4444FF";
+
+      float flowIntensity = 1.0f;
+      float flowSpeed = 120.0f;
+      bool flowReverse = false;
+      std::string flowColor = "#44AAFFFF";
+    };
+
+    struct ConnectionEffect {
+      std::string NodeInstanceIDA;
+      std::string PinIDA;
+      std::string NodeInstanceIDB;
+      std::string PinIDB;
+      ConnectionEffectParams params;
+    };
+
+    struct NodeEffectParams {
+      EffectType::Node type = EffectType::Node::Message;
+
+      std::string messageText = "";
+      std::string messageColor = "#FF4444FF";
+      std::string textColor = "#FFFFFFFF";
+    };
+
+    struct NodeEffect {
+      std::string InstanceID;
+      NodeEffectParams params;
+    };
+
     struct Vec2 {
       float x = 0.0f;
       float y = 0.0f;
@@ -359,6 +399,76 @@ namespace Cherry {
       void AttachRenderCallbackEditorForNodeDataType(const std::string &topic, NodeDataHandler::RenderFn fn) {
         g_NodeDataHandlers[topic].render = fn;
       }
+
+      void AddConnectionEffect(const ConnectionEffect &effect) {
+        for (auto &e : m_ConnectionEffects) {
+          if (e.NodeInstanceIDA == effect.NodeInstanceIDA && e.PinIDA == effect.PinIDA &&
+              e.NodeInstanceIDB == effect.NodeInstanceIDB && e.PinIDB == effect.PinIDB &&
+              e.params.type == effect.params.type) {
+            e = effect;
+            return;
+          }
+        }
+        m_ConnectionEffects.push_back(effect);
+      }
+
+      void RemoveConnectionEffect(
+          const std::string &nodeIDA,
+          const std::string &pinIDA,
+          const std::string &nodeIDB,
+          const std::string &pinIDB) {
+        m_ConnectionEffects.erase(
+            std::remove_if(
+                m_ConnectionEffects.begin(),
+                m_ConnectionEffects.end(),
+                [&](const ConnectionEffect &e) {
+                  return e.NodeInstanceIDA == nodeIDA && e.PinIDA == pinIDA && e.NodeInstanceIDB == nodeIDB &&
+                         e.PinIDB == pinIDB;
+                }),
+            m_ConnectionEffects.end());
+      }
+
+      void AddNodeEffect(const NodeEffect &effect) {
+        for (auto &e : m_NodeEffects) {
+          if (e.InstanceID == effect.InstanceID && e.params.type == effect.params.type) {
+            e = effect;
+            return;
+          }
+        }
+        m_NodeEffects.push_back(effect);
+      }
+
+      void RemoveNodeEffect(const std::string &instanceID) {
+        m_NodeEffects.erase(
+            std::remove_if(
+                m_NodeEffects.begin(), m_NodeEffects.end(), [&](const NodeEffect &e) { return e.InstanceID == instanceID; }),
+            m_NodeEffects.end());
+      }
+
+      void ClearAllEffects() {
+        m_ConnectionEffects.clear();
+        m_NodeEffects.clear();
+      }
+
+      void RemoveConnectionEffect(
+          const std::string &nodeIDA,
+          const std::string &pinIDA,
+          const std::string &nodeIDB,
+          const std::string &pinIDB,
+          EffectType::Connection type) {
+        m_ConnectionEffects.erase(
+            std::remove_if(
+                m_ConnectionEffects.begin(),
+                m_ConnectionEffects.end(),
+                [&](const ConnectionEffect &e) {
+                  return e.NodeInstanceIDA == nodeIDA && e.PinIDA == pinIDA && e.NodeInstanceIDB == nodeIDB &&
+                         e.PinIDB == pinIDB && e.params.type == type;
+                }),
+            m_ConnectionEffects.end());
+      }
+
+      std::vector<ConnectionEffect> m_ConnectionEffects;
+      std::vector<NodeEffect> m_NodeEffects;
 
      private:
       std::string m_GraphFile;

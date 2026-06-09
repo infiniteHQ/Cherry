@@ -191,9 +191,11 @@ namespace Cherry {
 
   struct NodeEngine {
     ed::EditorContext *m_Editor = nullptr;
-
     Cherry::NodeSystem::NodeContext *m_NodeContext;
     Cherry::NodeSystem::NodeGraph *m_NodeGraph;
+
+    std::unordered_map<uintptr_t, ImVec2> m_PinScreenPositions;
+    std::unordered_map<uintptr_t, ImRect> m_NodeScreenRects;
 
     int GetNextId() {
       return m_NextId++;
@@ -1241,6 +1243,12 @@ namespace Cherry {
 
               CherryGUI::PopStyleVar();
               builder.EndInput();
+
+              {
+                ImVec2 rMin = CherryGUI::GetItemRectMin();
+                ImVec2 rMax = CherryGUI::GetItemRectMax();
+                m_NodeEngine->m_PinScreenPositions[input.ID.Get()] = ImVec2(rMin.x, (rMin.y + rMax.y) * 0.5f);
+              }
             }
 
             if (isSimple) {
@@ -1283,9 +1291,21 @@ namespace Cherry {
 
               CherryGUI::PopStyleVar();
               builder.EndOutput();
+
+              {
+                ImVec2 rMin = CherryGUI::GetItemRectMin();
+                ImVec2 rMax = CherryGUI::GetItemRectMax();
+                m_NodeEngine->m_PinScreenPositions[output.ID.Get()] = ImVec2(rMax.x, (rMin.y + rMax.y) * 0.5f);
+              }
             }
 
             builder.End();
+
+            {
+              ImVec2 rMin = CherryGUI::GetItemRectMin();
+              ImVec2 rMax = CherryGUI::GetItemRectMax();
+              m_NodeEngine->m_NodeScreenRects[node.ID.Get()] = ImRect(rMin, rMax);
+            }
 
             if (node.Status == Cherry::NodeSystem::NodeSchemaStatus::Obsolete) {
               ed::PopStyleColor(2);
@@ -1738,6 +1758,128 @@ namespace Cherry {
             ed::EndGroupHint();
           }
 
+          for (const auto &nfx : m_NodeEngine->m_NodeGraph->m_NodeEffects) {
+            if (nfx.params.type != Cherry::NodeSystem::EffectType::Node::Message)
+              continue;
+
+            Node *node = m_NodeEngine->FindNodeByInstanceID(nfx.InstanceID);
+            if (!node)
+              continue;
+
+            auto it = m_NodeEngine->m_NodeScreenRects.find(node->ID.Get());
+            if (it == m_NodeEngine->m_NodeScreenRects.end())
+              continue;
+
+            ImRect screenRect = it->second;
+            ImVec2 p0 = screenRect.Min;
+            ImVec2 p1 = screenRect.Max;
+
+            const float bandH = 18.0f;
+            ImVec2 bandMin = ImVec2(p0.x, p1.y);
+            ImVec2 bandMax = ImVec2(p1.x, p1.y + bandH);
+
+            ImDrawList *dl = CherryGUI::GetWindowDrawList();
+            ImColor bgCol = Cherry::HexToImColor(nfx.params.messageColor);
+            ImColor txtCol = Cherry::HexToImColor(nfx.params.textColor);
+
+            dl->AddRectFilled(bandMin, bandMax, bgCol, 4.0f, ImDrawFlags_RoundCornersBottom);
+            ImColor borderCol = ImColor(bgCol.Value.x * 0.7f, bgCol.Value.y * 0.7f, bgCol.Value.z * 0.7f, bgCol.Value.w);
+            dl->AddRect(bandMin, bandMax, borderCol, 4.0f, ImDrawFlags_RoundCornersBottom, 1.0f);
+
+            if (!nfx.params.messageText.empty()) {
+              ImVec2 textSz = CherryGUI::CalcTextSize(nfx.params.messageText.c_str());
+              ImVec2 textPos =
+                  ImVec2((bandMin.x + bandMax.x) * 0.5f - textSz.x * 0.5f, (bandMin.y + bandMax.y) * 0.5f - textSz.y * 0.5f);
+              dl->AddText(textPos, txtCol, nfx.params.messageText.c_str());
+            }
+          }
+
+          const float currentTime = (float)ImGui::GetTime();
+
+          for (const auto &cfx : m_NodeEngine->m_NodeGraph->m_ConnectionEffects) {
+            Node *nodeA = m_NodeEngine->FindNodeByInstanceID(cfx.NodeInstanceIDA);
+            Node *nodeB = m_NodeEngine->FindNodeByInstanceID(cfx.NodeInstanceIDB);
+            if (!nodeA || !nodeB)
+              continue;
+
+            Pin *pinA = m_NodeEngine->FindPinByName(nodeA->Outputs, cfx.PinIDA);
+            Pin *pinB = m_NodeEngine->FindPinByName(nodeB->Inputs, cfx.PinIDB);
+            if (!pinA || !pinB)
+              continue;
+
+            Link *link = nullptr;
+            for (auto &lnk : m_NodeEngine->m_Links) {
+              if (lnk.StartPinID == pinA->ID && lnk.EndPinID == pinB->ID) {
+                link = &lnk;
+                break;
+              }
+            }
+            if (!link)
+              continue;
+
+            auto itA = m_NodeEngine->m_PinScreenPositions.find(pinA->ID.Get());
+            auto itB = m_NodeEngine->m_PinScreenPositions.find(pinB->ID.Get());
+            if (itA == m_NodeEngine->m_PinScreenPositions.end() || itB == m_NodeEngine->m_PinScreenPositions.end())
+              continue;
+
+            ImVec2 pA = itA->second;
+            ImVec2 pB = itB->second;
+
+            ImDrawList *dl = CherryGUI::GetWindowDrawList();
+
+            if (cfx.params.type == Cherry::NodeSystem::EffectType::Connection::Pulsating) {
+              float pulse = (sinf(currentTime * cfx.params.pulsatingRate * 2.0f * IM_PI) + 1.0f) * 0.5f;
+              ImColor col = Cherry::HexToImColor(cfx.params.pulsatingColor);
+              col.Value.w *= (0.3f + 0.7f * pulse) * cfx.params.pulsatingIntensity;
+              float thickness = 2.0f + 4.0f * pulse * cfx.params.pulsatingIntensity;
+
+              ImVec2 cp1 = ImVec2(pA.x + (pB.x - pA.x) * 0.5f, pA.y);
+              ImVec2 cp2 = ImVec2(pA.x + (pB.x - pA.x) * 0.5f, pB.y);
+              dl->AddBezierCubic(pA, cp1, cp2, pB, col, thickness);
+
+            } else if (cfx.params.type == Cherry::NodeSystem::EffectType::Connection::Flow) {
+              ImColor col = Cherry::HexToImColor(cfx.params.flowColor);
+              col.Value.w *= cfx.params.flowIntensity;
+
+              float dx = pB.x - pA.x, dy = pB.y - pA.y;
+              float approxLen = sqrtf(dx * dx + dy * dy) + 1.0f;
+              float period = approxLen / cfx.params.flowSpeed;
+
+              float t = fmodf(currentTime / period, 1.0f);
+              if (cfx.params.flowReverse)
+                t = 1.0f - t;
+
+              ImVec2 cp1 = ImVec2(pA.x + (pB.x - pA.x) * 0.5f, pA.y);
+              ImVec2 cp2 = ImVec2(pA.x + (pB.x - pA.x) * 0.5f, pB.y);
+
+              auto evalBezier = [&](float u) -> ImVec2 {
+                float inv = 1.0f - u;
+                return ImVec2(
+                    inv * inv * inv * pA.x + 3 * inv * inv * u * cp1.x + 3 * inv * u * u * cp2.x + u * u * u * pB.x,
+                    inv * inv * inv * pA.y + 3 * inv * inv * u * cp1.y + 3 * inv * u * u * cp2.y + u * u * u * pB.y);
+              };
+
+              const int segments = 12;
+              const float trailLen = 0.12f;
+              for (int i = 0; i < segments; i++) {
+                float u0 = t - trailLen + trailLen * (float)i / segments;
+                float u1 = t - trailLen + trailLen * (float)(i + 1) / segments;
+                if (u0 < 0.0f || u1 < 0.0f || u0 > 1.0f || u1 > 1.0f)
+                  continue;
+
+                ImVec2 seg0 = evalBezier(u0);
+                ImVec2 seg1 = evalBezier(u1);
+
+                float alpha = (float)i / segments;
+                ImColor segCol = col;
+                segCol.Value.w = col.Value.w * alpha;
+                dl->AddLine(seg0, seg1, segCol, 2.0f + 3.0f * alpha);
+              }
+
+              ImVec2 head = evalBezier(t);
+              dl->AddCircleFilled(head, 4.0f * cfx.params.flowIntensity, col);
+            }
+          }
           for (auto &link : m_NodeEngine->m_Links)
             ed::Link(link.ID, link.StartPinID, link.EndPinID, link.Color, 2.0f);
 
