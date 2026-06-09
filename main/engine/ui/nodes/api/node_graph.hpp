@@ -467,6 +467,14 @@ namespace Cherry {
             m_ConnectionEffects.end());
       }
 
+      void ClearNodeEffects() {
+        m_NodeEffects.clear();
+      }
+
+      void ClearConnectionEffects() {
+        m_ConnectionEffects.clear();
+      }
+
       std::vector<ConnectionEffect> m_ConnectionEffects;
       std::vector<NodeEffect> m_NodeEffects;
 
