@@ -475,8 +475,13 @@ namespace Cherry {
         m_ConnectionEffects.clear();
       }
 
+      void SetGraphTitle(const std::string &v) {
+        m_GraphTitle = v;
+      }
+
       std::vector<ConnectionEffect> m_ConnectionEffects;
       std::vector<NodeEffect> m_NodeEffects;
+      std::string m_GraphTitle;
 
      private:
       std::string m_GraphFile;

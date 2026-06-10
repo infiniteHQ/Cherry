@@ -2230,8 +2230,32 @@ namespace Cherry {
 #endif
 
         ed::End();
+
         auto editorMin = CherryGUI::GetItemRectMin();
         auto editorMax = CherryGUI::GetItemRectMax();
+
+        if (!m_NodeEngine->m_NodeGraph->m_GraphTitle.empty()) {
+          auto drawList = CherryGUI::GetWindowDrawList();
+          const std::string &title = m_NodeEngine->m_NodeGraph->m_GraphTitle;
+
+          float fontSize = 38.0f;
+          ImFont *font = CherryGUI::GetFont();
+          float prevScale = font->Scale;
+          font->Scale = fontSize / CherryGUI::GetFontSize();
+          CherryGUI::PushFont(font);
+
+          ImVec2 textSize = CherryGUI::CalcTextSize(title.c_str());
+
+          const float margin = 24.0f;
+          ImVec2 textPos = ImVec2(editorMax.x - textSize.x - margin, editorMax.y - textSize.y - margin);
+
+          drawList->PushClipRect(editorMin, editorMax, true);
+          drawList->AddText(font, fontSize, textPos, IM_COL32(255, 255, 255, 45), title.c_str());
+          drawList->PopClipRect();
+
+          CherryGUI::PopFont();
+          font->Scale = prevScale;
+        }
 
         if (m_NodeEngine->m_ShowOrdinals) {
           int nodeCount = ed::GetNodeCount();
