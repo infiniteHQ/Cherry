@@ -1048,6 +1048,38 @@ namespace Cherry {
           navigated = true;
         }
 
+        if (m_NodeEngine->m_NodeGraph->m_FocusRequest.pending) {
+          auto &req = m_NodeEngine->m_NodeGraph->m_FocusRequest;
+
+          ImVec2 canvasPos(req.x, req.y);
+          ed::SetCurrentEditor(m_NodeEngine->m_Editor);
+          ed::NavigateToContent();
+
+          const float halfSize = 50.0f;
+          ImVec2 min(canvasPos.x - halfSize, canvasPos.y - halfSize);
+          ImVec2 max(canvasPos.x + halfSize, canvasPos.y + halfSize);
+
+          ed::ClearSelection();
+          Node *closest = nullptr;
+          float bestDist = FLT_MAX;
+          for (auto &node : m_NodeEngine->m_Nodes) {
+            ImVec2 pos = ed::GetNodePosition(node.ID);
+            float dx = pos.x - req.x, dy = pos.y - req.y;
+            float dist = dx * dx + dy * dy;
+            if (dist < bestDist) {
+              bestDist = dist;
+              closest = &node;
+            }
+          }
+          if (closest) {
+            ed::SelectNode(closest->ID, false);
+            ed::NavigateToSelection(req.zoom > 0.0f, -1.0f);
+            ed::ClearSelection();
+          }
+
+          req.pending = false;
+        }
+
         ed::Begin("Node qsd");
         {
           {

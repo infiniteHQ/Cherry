@@ -79,6 +79,13 @@ namespace Cherry {
       std::string schema_id;
     };
 
+    struct FocusRequest {
+      bool pending = false;
+      float x = 0.0f;
+      float y = 0.0f;
+      float zoom = -1.0f;  // default
+    };
+
     class NodeGraph {
      public:
       NodeGraph() = default;
@@ -479,9 +486,17 @@ namespace Cherry {
         m_GraphTitle = v;
       }
 
+      void FocusAt(float x, float y, float zoom = -1.0f) {
+        m_FocusRequest.pending = true;
+        m_FocusRequest.x = x;
+        m_FocusRequest.y = y;
+        m_FocusRequest.zoom = zoom;
+      }
+
       std::vector<ConnectionEffect> m_ConnectionEffects;
       std::vector<NodeEffect> m_NodeEffects;
       std::string m_GraphTitle;
+      FocusRequest m_FocusRequest;
 
      private:
       std::string m_GraphFile;
