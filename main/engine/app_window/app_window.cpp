@@ -391,20 +391,27 @@ namespace Cherry {
       if (Application::GetCurrentDragDropState()) {
         if (Application::GetCurrentDragDropState()->DragOwner == this->m_IdName) {
           if (!ctx->DockTabStaticSelection.Pressed) {
-            // if (this->CheckWinParent(winname))
-            //{
-            if (Application::GetCurrentDragDropState()->LastDraggingPlace == DockEmplacement::DockBlank) {
-              Application::GetCurrentDragDropState()->CreateNewWindow = true;
-            } else {
-              Application::PushRedockEvent(Application::GetCurrentDragDropState());
+            bool draggingAChild = false;
+            for (auto &win : Application::Get().GetAppWindows()) {
+              if (win->m_IdName == Application::GetCurrentDragDropState()->LastDraggingAppWindowHost) {
+                if (win->m_HaveParentAppWindow) {
+                  draggingAChild = true;
+                  break;
+                }
+              }
             }
-            //}
 
-            /*if (m_HaveParentAppWindow)
-            {
-                AddWinParent(winname);
-                wind->GetDragDropState()->LastDraggingAppWindowHaveParent = true;
-            }*/
+            if (draggingAChild && Application::GetCurrentDragDropState()->LastDraggingPlace == DockEmplacement::DockBlank) {
+              Application::GetCurrentDragDropState()->LastDraggingPlace = DockEmplacement::DockFull;
+              Application::GetCurrentDragDropState()->CreateNewWindow = false;
+              Application::PushRedockEvent(Application::GetCurrentDragDropState());
+            } else {
+              if (Application::GetCurrentDragDropState()->LastDraggingPlace == DockEmplacement::DockBlank) {
+                Application::GetCurrentDragDropState()->CreateNewWindow = true;
+              } else {
+                Application::PushRedockEvent(Application::GetCurrentDragDropState());
+              }
+            }
 
             wind->GetDragDropState()->DockIsDragging = false;
             wind->GetDragDropState()->DragOwner = "none";

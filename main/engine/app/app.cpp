@@ -961,6 +961,24 @@ namespace Cherry {
         LatestRequest = req;
         s_Instance->m_RedockRequests.push_back(req);
         RedockCount++;
+
+        for (auto &child : app_win->m_SubAppWindows) {
+          if (!child)
+            continue;
+
+          std::shared_ptr<Cherry::RedockRequest> child_req = std::make_shared<RedockRequest>();
+          child_req->m_DockPlace = DockEmplacement::DockFull;
+          child_req->m_ParentAppWindow = app_win->m_IdName;
+          child_req->m_ParentAppWindowHost = app_win->m_IdName;
+          child_req->m_ParentWindow = state->LastDraggingWindow;
+          child_req->m_FromSave = state->FromSave;
+          child_req->m_FromNewWindow = false;
+          child_req->m_IsObsolete = false;
+
+          child->m_WinParent = state->LastDraggingWindow;
+
+          s_Instance->m_RedockRequests.push_back(child_req);
+        }
       }
     }
   }
