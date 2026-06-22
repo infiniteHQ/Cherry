@@ -1704,30 +1704,19 @@ namespace Cherry {
         ImGui::PopFont();
       }
 
+      // TODO: Only if spec.EnableSnapToEdge is true
       if (window->GetIsMoving() && window->GetSpecifications().CustomTitlebar &&
           window->GetSpecifications().DisableWindowManagerTitleBar) {
         SnapState &snap = window->GetSnapState();
         HandleSnapToEdge(window.get());
 
         if (snap.snapTarget.w > 0) {
-          int winX, winY, winW, winH;
-          SDL_GetWindowPosition(window->GetWindowHandle(), &winX, &winY);
-          SDL_GetWindowSize(window->GetWindowHandle(), &winW, &winH);
-          ImGuiViewport *vp = ImGui::GetMainViewport();
-          float scaleX = vp->Size.x / (float)winW;
-          float scaleY = vp->Size.y / (float)winH;
-
-          float localX = (float)(snap.snapTarget.x - winX) * scaleX;
-          float localY = (float)(snap.snapTarget.y - winY) * scaleY;
-          float localW = (float)snap.snapTarget.w * scaleX;
-          float localH = (float)snap.snapTarget.h * scaleY;
-
           ImGuiWindowFlags snapFlags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoInputs | ImGuiWindowFlags_NoNav |
                                        ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoSavedSettings |
                                        ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBringToFrontOnFocus;
 
-          ImGui::SetNextWindowPos(ImVec2(localX, localY));
-          ImGui::SetNextWindowSize(ImVec2(localW, localH));
+          ImGui::SetNextWindowPos(ImVec2((float)snap.snapTarget.x, (float)snap.snapTarget.y), ImGuiCond_Always);
+          ImGui::SetNextWindowSize(ImVec2((float)snap.snapTarget.w, (float)snap.snapTarget.h), ImGuiCond_Always);
           ImGui::SetNextWindowBgAlpha(0.20f);
 
           ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.4f, 0.7f, 1.0f, 1.0f));
