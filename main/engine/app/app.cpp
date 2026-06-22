@@ -163,6 +163,113 @@ namespace Cherry {
 #include "../embed/not_found_img.embed"
 #include "../embed/window.embed"
 
+  static void HandleSnapToEdge(Window *window) {
+    if (!window->GetSpecifications().CustomTitlebar || !window->GetSpecifications().DisableWindowManagerTitleBar)
+      return;
+
+    SDL_Window *sdlWin = window->GetWindowHandle();
+    SnapState &snap = window->GetSnapState();
+
+    bool isMoving = window->GetIsMoving();
+
+    if (!isMoving) {
+      snap.isDragging = false;
+      return;
+    }
+
+    if (!snap.isDragging) {
+      SDL_GetWindowPosition(sdlWin, &snap.preSnapX, &snap.preSnapY);
+      SDL_GetWindowSize(sdlWin, &snap.preSnapW, &snap.preSnapH);
+      snap.isDragging = true;
+
+      if (snap.isSnapped) {
+        snap.isSnapped = false;
+        SDL_SetWindowSize(sdlWin, snap.preSnapW, snap.preSnapH);
+      }
+    }
+
+    int mouseX, mouseY;
+    SDL_GetGlobalMouseState(&mouseX, &mouseY);
+
+    int displayIndex = SDL_GetWindowDisplayIndex(sdlWin);
+    if (displayIndex < 0)
+      displayIndex = 0;
+
+    SDL_Rect displayBounds;
+    SDL_GetDisplayUsableBounds(displayIndex, &displayBounds);
+
+    const int SNAP_THRESHOLD = 20;  // px
+
+    int winW, winH;
+    SDL_GetWindowSize(sdlWin, &winW, &winH);
+
+    bool nearLeft = mouseX <= displayBounds.x + SNAP_THRESHOLD;
+    bool nearRight = mouseX >= displayBounds.x + displayBounds.w - SNAP_THRESHOLD;
+    bool nearTop = mouseY <= displayBounds.y + SNAP_THRESHOLD;
+    bool nearBottom = mouseY >= displayBounds.y + displayBounds.h - SNAP_THRESHOLD;
+
+    SDL_Rect target = {};
+    bool shouldSnap = false;
+
+    int halfW = displayBounds.w / 2;
+    int halfH = displayBounds.h / 2;
+
+    if (nearLeft && nearTop) {
+      target = { displayBounds.x, displayBounds.y, halfW, halfH };
+      shouldSnap = true;
+    } else if (nearRight && nearTop) {
+      target = { displayBounds.x + halfW, displayBounds.y, halfW, halfH };
+      shouldSnap = true;
+    } else if (nearLeft && nearBottom) {
+      target = { displayBounds.x, displayBounds.y + halfH, halfW, halfH };
+      shouldSnap = true;
+    } else if (nearRight && nearBottom) {
+      target = { displayBounds.x + halfW, displayBounds.y + halfH, halfW, halfH };
+      shouldSnap = true;
+    } else if (nearLeft) {
+      target = { displayBounds.x, displayBounds.y, halfW, displayBounds.h };
+      shouldSnap = true;
+    } else if (nearRight) {
+      target = { displayBounds.x + halfW, displayBounds.y, halfW, displayBounds.h };
+      shouldSnap = true;
+    } else if (nearTop) {
+      target = { displayBounds.x, displayBounds.y, displayBounds.w, displayBounds.h };
+      shouldSnap = true;
+    }
+
+    if (shouldSnap) {
+      snap.snapTarget = target;
+    } else {
+      snap.snapTarget = {};
+    }
+  }
+
+  static void ApplySnapOnRelease(Window *window) {
+    if (!window->GetSpecifications().CustomTitlebar || !window->GetSpecifications().DisableWindowManagerTitleBar)
+      return;
+
+    SnapState &snap = window->GetSnapState();
+
+    if (!snap.isDragging || snap.isSnapped)
+      return;
+
+    bool wasMoving = window->GetIsMoving();
+    if (wasMoving)
+      return;  // not released yet
+
+    SDL_Window *sdlWin = window->GetWindowHandle();
+
+    if (snap.snapTarget.w > 0) {
+      SDL_SetWindowPosition(sdlWin, snap.snapTarget.x, snap.snapTarget.y);
+      SDL_SetWindowSize(sdlWin, snap.snapTarget.w, snap.snapTarget.h);
+      snap.isSnapped = true;
+      snap.snapTarget = {};
+      window->GetSwapChainRebuild() = true;
+    }
+
+    snap.isDragging = false;
+  }
+
   Application::Application(const ApplicationSpecification &specification) : m_DefaultSpecification(specification) {
     s_Instance = this;
     m_RootPath = Application::CookPath("");
@@ -1588,6 +1695,7 @@ namespace Cherry {
           ImGui::SetCursorScreenPos(p);
           ImGui::Dummy(ImVec2(iconSize + 10.0f + titleSize.x, iconSize));
         }
+
         ImGui::End();
 
         ImGui::PopStyleVar(3);
@@ -1595,6 +1703,50 @@ namespace Cherry {
         ImGui::GetFont()->Scale = oldScale;
         ImGui::PopFont();
       }
+
+      if (window->GetIsMoving() && window->GetSpecifications().CustomTitlebar &&
+          window->GetSpecifications().DisableWindowManagerTitleBar) {
+        SnapState &snap = window->GetSnapState();
+        HandleSnapToEdge(window.get());
+
+        if (snap.snapTarget.w > 0) {
+          int winX, winY, winW, winH;
+          SDL_GetWindowPosition(window->GetWindowHandle(), &winX, &winY);
+          SDL_GetWindowSize(window->GetWindowHandle(), &winW, &winH);
+          ImGuiViewport *vp = ImGui::GetMainViewport();
+          float scaleX = vp->Size.x / (float)winW;
+          float scaleY = vp->Size.y / (float)winH;
+
+          float localX = (float)(snap.snapTarget.x - winX) * scaleX;
+          float localY = (float)(snap.snapTarget.y - winY) * scaleY;
+          float localW = (float)snap.snapTarget.w * scaleX;
+          float localH = (float)snap.snapTarget.h * scaleY;
+
+          ImGuiWindowFlags snapFlags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoInputs | ImGuiWindowFlags_NoNav |
+                                       ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoSavedSettings |
+                                       ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBringToFrontOnFocus;
+
+          ImGui::SetNextWindowPos(ImVec2(localX, localY));
+          ImGui::SetNextWindowSize(ImVec2(localW, localH));
+          ImGui::SetNextWindowBgAlpha(0.20f);
+
+          ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.4f, 0.7f, 1.0f, 1.0f));
+          ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0.5f, 0.8f, 1.0f, 1.0f));
+          ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 6.0f);
+          ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 2.0f);
+
+          ImGui::Begin("##SnapPreview", nullptr, snapFlags);
+          ImGui::End();
+
+          ImGui::PopStyleVar(2);
+          ImGui::PopStyleColor(2);
+        }
+      } else if (
+          !window->GetIsMoving() && window->GetSpecifications().CustomTitlebar &&
+          window->GetSpecifications().DisableWindowManagerTitleBar) {
+        ApplySnapOnRelease(window.get());
+      }
+
       window->UnloadTheme();
 
       ImGui_ImplVulkanH_Window *wd = window->GetWinData();

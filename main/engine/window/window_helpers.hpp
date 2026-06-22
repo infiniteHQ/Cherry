@@ -35,3 +35,11 @@ struct ImGuiDockPreviewData {
       DropRectsDraw[n] = ImRect(+FLT_MAX, +FLT_MAX, -FLT_MAX, -FLT_MAX);
   }
 };
+
+struct SnapState {
+  bool isDragging = false;
+  bool isSnapped = false;
+  int preSnapX = 0, preSnapY = 0;
+  int preSnapW = 0, preSnapH = 0;
+  SDL_Rect snapTarget = {};
+};

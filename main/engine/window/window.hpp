@@ -147,6 +147,9 @@ namespace Cherry {
     SDL_Window *GetWindowHandle() const;
     const std::string &GetName() const;
     std::string GetThemeProperty(const std::string &key);
+    SnapState &GetSnapState() {
+      return m_SnapState;
+    }
 
     void SetResizePending(bool v);
     void SetMovePending(bool v);
@@ -241,6 +244,7 @@ namespace Cherry {
     SDL_Window *m_WindowHandler;
 
     ImGui_ImplVulkanH_Window m_WinData;
+    SnapState m_SnapState;
 
     VkPipelineLayout pipelineLayout;
     ImGuiViewport *m_Viewport = nullptr;
