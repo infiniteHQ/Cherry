@@ -169,7 +169,6 @@ namespace Cherry {
 
     SDL_Window *sdlWin = window->GetWindowHandle();
     SnapState &snap = window->GetSnapState();
-
     bool isMoving = window->GetIsMoving();
 
     if (!isMoving) {
@@ -191,14 +190,24 @@ namespace Cherry {
     int mouseX, mouseY;
     SDL_GetGlobalMouseState(&mouseX, &mouseY);
 
-    int displayIndex = SDL_GetWindowDisplayIndex(sdlWin);
-    if (displayIndex < 0)
-      displayIndex = 0;
+    int numDisplays = SDL_GetNumVideoDisplays();
+    int displayIndex = 0;
+    for (int i = 0; i < numDisplays; i++) {
+      SDL_Rect bounds;
+      if (SDL_GetDisplayBounds(i, &bounds) == 0) {
+        if (mouseX >= bounds.x && mouseX < bounds.x + bounds.w && mouseY >= bounds.y && mouseY < bounds.y + bounds.h) {
+          displayIndex = i;
+          break;
+        }
+      }
+    }
 
     SDL_Rect displayBounds;
     SDL_GetDisplayUsableBounds(displayIndex, &displayBounds);
 
-    const int SNAP_THRESHOLD = 20;  // px
+    const int SNAP_THRESHOLD = 20;
+    const Uint32 SNAP_DELAY_MS = 220;
+    const int SNAP_TOLERANCE_PX = 30;
 
     int winW, winH;
     SDL_GetWindowSize(sdlWin, &winW, &winH);
@@ -238,8 +247,29 @@ namespace Cherry {
     }
 
     if (shouldSnap) {
-      snap.snapTarget = target;
+      if (!snap.inSnapZone || snap.pendingSnapTarget.x != target.x || snap.pendingSnapTarget.y != target.y ||
+          snap.pendingSnapTarget.w != target.w || snap.pendingSnapTarget.h != target.h) {
+        snap.inSnapZone = true;
+        snap.snapZoneEnteredAt = SDL_GetTicks();
+        snap.snapZoneEntryX = mouseX;
+        snap.snapZoneEntryY = mouseY;
+        snap.pendingSnapTarget = target;
+        snap.snapTarget = {};
+      } else {
+        Uint32 elapsed = SDL_GetTicks() - snap.snapZoneEnteredAt;
+        int dx = mouseX - snap.snapZoneEntryX;
+        int dy = mouseY - snap.snapZoneEntryY;
+        bool stillClose = (dx * dx + dy * dy) <= (SNAP_TOLERANCE_PX * SNAP_TOLERANCE_PX);
+
+        if (elapsed >= SNAP_DELAY_MS && stillClose) {
+          snap.snapTarget = snap.pendingSnapTarget;
+        } else {
+          snap.snapTarget = {};
+        }
+      }
     } else {
+      snap.inSnapZone = false;
+      snap.pendingSnapTarget = {};
       snap.snapTarget = {};
     }
   }
