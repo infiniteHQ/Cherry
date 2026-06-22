@@ -152,6 +152,7 @@ namespace Cherry {
     bool CenterWindow = false;  // Window will be created in the center of primary monitor
     bool DisableTitle = false;
     bool DisableTitleBar = false;
+    bool EnableSnapToEdgeSystem = false;
     bool UseAudioService = false;
     bool DisableLogo = false;
     bool DisableMenubar = false;
@@ -184,6 +185,10 @@ namespace Cherry {
 
     void SetRenderMode(WindowRenderingMethod method) {
       RenderMode = method;
+    }
+
+    void EnableSnapToEdge() {
+      EnableSnapToEdgeSystem = true;
     }
 
     void SetDebugMode(bool enabled) {

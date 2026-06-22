@@ -1734,36 +1734,37 @@ namespace Cherry {
         ImGui::PopFont();
       }
 
-      // TODO: Only if spec.EnableSnapToEdge is true
-      if (window->GetIsMoving() && window->GetSpecifications().CustomTitlebar &&
-          window->GetSpecifications().DisableWindowManagerTitleBar) {
-        SnapState &snap = window->GetSnapState();
-        HandleSnapToEdge(window.get());
+      if (window->GetSpecifications().EnableSnapToEdgeSystem) {
+        if (window->GetIsMoving() && window->GetSpecifications().CustomTitlebar &&
+            window->GetSpecifications().DisableWindowManagerTitleBar) {
+          SnapState &snap = window->GetSnapState();
+          HandleSnapToEdge(window.get());
 
-        if (snap.snapTarget.w > 0) {
-          ImGuiWindowFlags snapFlags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoInputs | ImGuiWindowFlags_NoNav |
-                                       ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoSavedSettings |
-                                       ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBringToFrontOnFocus;
+          if (snap.snapTarget.w > 0) {
+            ImGuiWindowFlags snapFlags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoInputs | ImGuiWindowFlags_NoNav |
+                                         ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoSavedSettings |
+                                         ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBringToFrontOnFocus;
 
-          ImGui::SetNextWindowPos(ImVec2((float)snap.snapTarget.x, (float)snap.snapTarget.y), ImGuiCond_Always);
-          ImGui::SetNextWindowSize(ImVec2((float)snap.snapTarget.w, (float)snap.snapTarget.h), ImGuiCond_Always);
-          ImGui::SetNextWindowBgAlpha(0.20f);
+            ImGui::SetNextWindowPos(ImVec2((float)snap.snapTarget.x, (float)snap.snapTarget.y), ImGuiCond_Always);
+            ImGui::SetNextWindowSize(ImVec2((float)snap.snapTarget.w, (float)snap.snapTarget.h), ImGuiCond_Always);
+            ImGui::SetNextWindowBgAlpha(0.20f);
 
-          ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.4f, 0.7f, 1.0f, 1.0f));
-          ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0.5f, 0.8f, 1.0f, 1.0f));
-          ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 6.0f);
-          ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 2.0f);
+            ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.4f, 0.7f, 1.0f, 1.0f));
+            ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0.5f, 0.8f, 1.0f, 1.0f));
+            ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 6.0f);
+            ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 2.0f);
 
-          ImGui::Begin("##SnapPreview", nullptr, snapFlags);
-          ImGui::End();
+            ImGui::Begin("##SnapPreview", nullptr, snapFlags);
+            ImGui::End();
 
-          ImGui::PopStyleVar(2);
-          ImGui::PopStyleColor(2);
+            ImGui::PopStyleVar(2);
+            ImGui::PopStyleColor(2);
+          }
+        } else if (
+            !window->GetIsMoving() && window->GetSpecifications().CustomTitlebar &&
+            window->GetSpecifications().DisableWindowManagerTitleBar) {
+          ApplySnapOnRelease(window.get());
         }
-      } else if (
-          !window->GetIsMoving() && window->GetSpecifications().CustomTitlebar &&
-          window->GetSpecifications().DisableWindowManagerTitleBar) {
-        ApplySnapOnRelease(window.get());
       }
 
       window->UnloadTheme();
