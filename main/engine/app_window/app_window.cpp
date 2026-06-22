@@ -254,10 +254,6 @@ namespace Cherry {
     }
 
     ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoMove;
-
-    ImGui::PushStyleVar(ImGuiStyleVar_PopupRounding, 3.0f);
-    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10, 12));
-
     if (m_SaveMode && !m_Saved) {
       window_flags |= ImGuiWindowFlags_UnsavedDocument;
     }
@@ -280,6 +276,15 @@ namespace Cherry {
     }
 
     m_IdName = window_name;
+
+    // TODO: Evaluate this in many contexts (security to prevent multiple renders of a same dear imgui window)
+    ImGuiWindow *existingWin = ImGui::FindWindowByName(m_IdName.c_str());
+    if (existingWin && existingWin->LastFrameActive == ImGui::GetCurrentContext()->FrameCount) {
+      return;
+    }
+
+    ImGui::PushStyleVar(ImGuiStyleVar_PopupRounding, 3.0f);
+    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10, 12));
 
     if (wind->GetSpecifications().RenderMode != WindowRenderingMethod::SimpleWindow) {
       if (this->GetImage(m_Icon)) {

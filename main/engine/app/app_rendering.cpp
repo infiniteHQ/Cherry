@@ -139,27 +139,32 @@ namespace Cherry {
       }
     }
     bool context_loaded = false;
-    for (auto &appwindow : m_AppWindows) {
-      if (appwindow) {
-        for (auto &subwin : m_AppWindows) {
-          if (context_loaded) {
+    auto appWindowsSnapshot = m_AppWindows;
+
+    for (auto &appwindow : appWindowsSnapshot) {
+      if (!appwindow)
+        continue;
+
+      for (auto &subwin : appWindowsSnapshot) {
+        if (context_loaded)
+          continue;
+
+        if (subwin->m_HaveParentAppWindow) {
+          if (!subwin->m_ParentAppWindow)
             continue;
-          }
 
-          if (subwin->m_HaveParentAppWindow) {
-            if (subwin->m_ParentAppWindow->m_IdName == appwindow->m_IdName) {
-              SetCurrentRenderedAppWindow(appwindow);
-              appwindow->CtxRender(&m_RedockRequests, window->GetName());
-              context_loaded = true;
-            }
+          if (subwin->m_ParentAppWindow->m_IdName == appwindow->m_IdName) {
+            SetCurrentRenderedAppWindow(appwindow);
+            appwindow->CtxRender(&m_RedockRequests, window->GetName());
+            context_loaded = true;
           }
         }
+      }
 
-        if (appwindow->CheckWinParent(window->GetName()) && !appwindow->m_HaveParentAppWindow) {
-          SetCurrentRenderedAppWindow(appwindow);
-          appwindow->CtxRender(&m_RedockRequests, window->GetName());
-          context_loaded = true;
-        }
+      if (appwindow->CheckWinParent(window->GetName()) && !appwindow->m_HaveParentAppWindow) {
+        SetCurrentRenderedAppWindow(appwindow);
+        appwindow->CtxRender(&m_RedockRequests, window->GetName());
+        context_loaded = true;
       }
     }
   }
