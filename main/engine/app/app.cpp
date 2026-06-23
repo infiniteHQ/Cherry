@@ -967,7 +967,7 @@ namespace Cherry {
             continue;
 
           std::shared_ptr<Cherry::RedockRequest> child_req = std::make_shared<RedockRequest>();
-          child_req->m_DockPlace = DockEmplacement::DockFull;
+          child_req->m_DockPlace = DockEmplacement::DockFull;  // TODO from local save
           child_req->m_ParentAppWindow = app_win->m_IdName;
           child_req->m_ParentAppWindowHost = app_win->m_IdName;
           child_req->m_ParentWindow = state->LastDraggingWindow;
@@ -1578,6 +1578,22 @@ namespace Cherry {
           if (!win_initialized && s_Instance->m_Windows[0]) {
             dragdropstate->LastDraggingWindow = s_Instance->m_Windows[0]->GetName();
             dragdropstate->DragOwner = s_Instance->m_Windows[0]->GetName();
+          }
+
+          if (appwin->m_HaveParentAppWindow && appwin->m_ParentAppWindow) {
+            std::shared_ptr<Cherry::RedockRequest> child_req = std::make_shared<RedockRequest>();
+            child_req->m_DockPlace = dragdropstate->LastDraggingPlace;
+            child_req->m_ParentAppWindowHost = appwin->m_IdName;
+            child_req->m_ParentWindow = dragdropstate->LastDraggingWindow;
+            child_req->m_FromNewWindow = false;
+            child_req->m_IsObsolete = false;
+
+            appwin->m_WinParent = dragdropstate->LastDraggingWindow;
+            s_Instance->m_RedockRequests.push_back(child_req);
+
+            appwin->m_WindowRebuilded = true;
+            appwin->m_WindowJustRebuilded = true;
+            continue;
           }
 
           c_CurrentDragDropState = dragdropstate;
