@@ -1553,6 +1553,7 @@ namespace Cherry {
           bool sizex_initialized = false;
 
           std::shared_ptr<WindowDragDropState> dragdropstate = std::make_shared<WindowDragDropState>();
+
           dragdropstate->LastDraggingAppWindowHost = appwin->m_IdName;
           LastWindowPressed = dragdropstate->LastDraggingAppWindowHost;
           dragdropstate->LastDraggingPlace = DockEmplacement::DockFull;
@@ -1593,6 +1594,11 @@ namespace Cherry {
 
             appwin->m_WindowRebuilded = true;
             appwin->m_WindowJustRebuilded = true;
+            dragdropstate->DragOwner = "none";
+            c_CurrentDragDropState = nullptr;
+
+            appwin->m_ParentAppWindow->m_WindowRebuilded = false;
+            appwin->m_ParentAppWindow->m_WindowJustRebuilded = false;
             continue;
           }
 
