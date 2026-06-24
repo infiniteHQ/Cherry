@@ -49,12 +49,18 @@ namespace Cherry {
       HooksAppWindow->GetAppWindow()->SetVisibility(true);
       Cherry::AddAppWindow(HooksAppWindow->GetAppWindow());
       HooksAppWindow->GetAppWindow()->AttachOnWindow(window_name);
+
+      WindowsAppWindow = WindowsView::Create("Windows");
+      WindowsAppWindow->GetAppWindow()->SetVisibility(true);
+      Cherry::AddAppWindow(WindowsAppWindow->GetAppWindow());
+      WindowsAppWindow->GetAppWindow()->AttachOnWindow(window_name);
     };
 
     void Devtool::Stop() {
       Cherry::DeleteAppWindow(ComponentsAppWindow->GetAppWindow());
       Cherry::DeleteAppWindow(ConsoleAppWindow->GetAppWindow());
       Cherry::DeleteAppWindow(HooksAppWindow->GetAppWindow());
+      Cherry::DeleteAppWindow(WindowsAppWindow->GetAppWindow());
     };
 
   }  // namespace Tools

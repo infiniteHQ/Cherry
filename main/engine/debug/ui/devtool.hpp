@@ -20,6 +20,7 @@
 #include "views/components/components.hpp"
 #include "views/console/console.hpp"
 #include "views/hooks/hooks.hpp"
+#include "views/windows/windows.hpp"
 
 namespace Cherry {
   namespace Tools {
@@ -35,6 +36,7 @@ namespace Cherry {
       std::shared_ptr<ConsoleView> ConsoleAppWindow;
       std::shared_ptr<ComponentsView> ComponentsAppWindow;
       std::shared_ptr<HooksView> HooksAppWindow;
+      std::shared_ptr<WindowsView> WindowsAppWindow;
 
      private:
     };
