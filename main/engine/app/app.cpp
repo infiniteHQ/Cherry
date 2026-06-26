@@ -962,6 +962,7 @@ namespace Cherry {
             state->FromSave,
             state->LastDraggingAppWindow,
             c_CurrentDragDropState->CreateNewWindow);
+
         LatestRequest = req;
         s_Instance->m_RedockRequests.push_back(req);
         RedockCount++;
@@ -976,6 +977,7 @@ namespace Cherry {
           if (child->m_HaveParentAppWindow) {
             if (child->m_ParentAppWindow->m_IdName == app_win->m_IdName) {
               child->SetParentWindow(state->LastDraggingWindow);
+              child->m_WindowNeedRebuild = true;
             }
           }
         }
@@ -1612,6 +1614,71 @@ namespace Cherry {
         }
       }
     }
+  }
+
+  void Application::ApplyDockingFromPreviousState(const std::shared_ptr<Cherry::AppWindow> &appwin) {
+    bool dockplace_initialized = false;
+    bool parent_initialized = false;
+    bool win_initialized = false;
+    bool sizex_initialized = false;
+
+    std::shared_ptr<WindowDragDropState> dragdropstate = std::make_shared<WindowDragDropState>();
+
+    dragdropstate->LastDraggingAppWindowHost = appwin->m_IdName;
+    LastWindowPressed = dragdropstate->LastDraggingAppWindowHost;
+    dragdropstate->LastDraggingPlace = DockEmplacement::DockFull;
+
+    if (!dockplace_initialized) {
+      dragdropstate->DragOwner = appwin->m_IdName;
+
+      if (appwin->GetDefaultBehavior(DefaultAppWindowBehaviors::DefaultDocking) == "right") {
+        dragdropstate->LastDraggingPlace = DockEmplacement::DockRight;
+      } else if (appwin->GetDefaultBehavior(DefaultAppWindowBehaviors::DefaultDocking) == "left") {
+        dragdropstate->LastDraggingPlace = DockEmplacement::DockLeft;
+      } else if (appwin->GetDefaultBehavior(DefaultAppWindowBehaviors::DefaultDocking) == "up") {
+        dragdropstate->LastDraggingPlace = DockEmplacement::DockUp;
+      } else if (appwin->GetDefaultBehavior(DefaultAppWindowBehaviors::DefaultDocking) == "down") {
+        dragdropstate->LastDraggingPlace = DockEmplacement::DockDown;
+      } else if (appwin->GetDefaultBehavior(DefaultAppWindowBehaviors::DefaultDocking) == "full") {
+        dragdropstate->LastDraggingPlace = DockEmplacement::DockFull;
+      } else {
+        dragdropstate->LastDraggingPlace = DockEmplacement::DockFull;
+      }
+    }
+
+    for (auto &window : s_Instance->m_Windows) {
+      if (appwin->CheckWinParent(window->GetName())) {
+        dragdropstate->LastDraggingWindow = window->GetName();
+        dragdropstate->DragOwner = window->GetName();
+      }
+    }
+
+    if (appwin->m_HaveParentAppWindow && appwin->m_ParentAppWindow) {
+      std::shared_ptr<Cherry::RedockRequest> child_req = std::make_shared<RedockRequest>();
+      child_req->m_DockPlace = dragdropstate->LastDraggingPlace;
+      child_req->m_ParentAppWindowHost = appwin->m_IdName;
+      child_req->m_ParentWindow = dragdropstate->LastDraggingWindow;
+      child_req->m_FromNewWindow = false;
+      child_req->m_IsObsolete = false;
+
+      appwin->m_WinParent = dragdropstate->LastDraggingWindow;
+      s_Instance->m_RedockRequests.push_back(child_req);
+
+      appwin->m_WindowRebuilded = true;
+      appwin->m_WindowJustRebuilded = true;
+      dragdropstate->DragOwner = "none";
+      c_CurrentDragDropState = nullptr;
+
+      return;
+    }
+
+    c_CurrentDragDropState = dragdropstate;
+    Application::PushRedockEvent(c_CurrentDragDropState);
+    dragdropstate->DragOwner = "none";
+    c_CurrentDragDropState = nullptr;
+
+    appwin->m_WindowRebuilded = true;
+    appwin->m_WindowJustRebuilded = true;
   }
 
   void Application::CurrentDockRequestOnNewWindow() {
@@ -2293,6 +2360,13 @@ namespace Cherry {
         s_Instance->ApplyDockingFromDefault();
       }
 
+      for (auto &appwin : s_Instance->m_AppWindows) {
+        if (appwin->m_WindowNeedRebuild) {
+          s_Instance->ApplyDockingFromPreviousState(appwin);
+          appwin->m_WindowNeedRebuild = false;
+        }
+      }
+
       if (c_CurrentDragDropState) {
         if (c_CurrentDragDropState->CreateNewWindow) {
           s_Instance->CurrentDockRequestOnNewWindow();
@@ -2377,9 +2451,6 @@ namespace Cherry {
       }
 
       for (auto &appwin : s_Instance->m_AppWindows) {
-        if (appwin->m_WindowNeedRebuild) {
-          appwin->m_WindowRebuilded = false;
-        }
         appwin->m_WindowJustRebuilded = false;
       }
 

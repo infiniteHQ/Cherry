@@ -197,6 +197,7 @@ namespace Cherry {
     // Main loop utilities
     void ApplyDockingFromSave();
     void ApplyDockingFromDefault();
+    void ApplyDockingFromPreviousState(const std::shared_ptr<Cherry::AppWindow> &appWindow);
     void ProcessDeferredRequests();
     void RebuildDockingLinks();
     void PresentAllWindows();
