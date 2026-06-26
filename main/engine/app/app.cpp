@@ -963,6 +963,8 @@ namespace Cherry {
             state->LastDraggingAppWindow,
             c_CurrentDragDropState->CreateNewWindow);
 
+        app_win->m_PreviousDocking = state->LastDraggingPlace;
+
         LatestRequest = req;
         s_Instance->m_RedockRequests.push_back(req);
         RedockCount++;
@@ -1578,6 +1580,8 @@ namespace Cherry {
             }
           }
 
+          appwin->m_PreviousDocking = dragdropstate->LastDraggingPlace;
+
           if (!win_initialized && s_Instance->m_Windows[0]) {
             dragdropstate->LastDraggingWindow = s_Instance->m_Windows[0]->GetName();
             dragdropstate->DragOwner = s_Instance->m_Windows[0]->GetName();
@@ -1626,25 +1630,7 @@ namespace Cherry {
 
     dragdropstate->LastDraggingAppWindowHost = appwin->m_IdName;
     LastWindowPressed = dragdropstate->LastDraggingAppWindowHost;
-    dragdropstate->LastDraggingPlace = DockEmplacement::DockFull;
-
-    if (!dockplace_initialized) {
-      dragdropstate->DragOwner = appwin->m_IdName;
-
-      if (appwin->GetDefaultBehavior(DefaultAppWindowBehaviors::DefaultDocking) == "right") {
-        dragdropstate->LastDraggingPlace = DockEmplacement::DockRight;
-      } else if (appwin->GetDefaultBehavior(DefaultAppWindowBehaviors::DefaultDocking) == "left") {
-        dragdropstate->LastDraggingPlace = DockEmplacement::DockLeft;
-      } else if (appwin->GetDefaultBehavior(DefaultAppWindowBehaviors::DefaultDocking) == "up") {
-        dragdropstate->LastDraggingPlace = DockEmplacement::DockUp;
-      } else if (appwin->GetDefaultBehavior(DefaultAppWindowBehaviors::DefaultDocking) == "down") {
-        dragdropstate->LastDraggingPlace = DockEmplacement::DockDown;
-      } else if (appwin->GetDefaultBehavior(DefaultAppWindowBehaviors::DefaultDocking) == "full") {
-        dragdropstate->LastDraggingPlace = DockEmplacement::DockFull;
-      } else {
-        dragdropstate->LastDraggingPlace = DockEmplacement::DockFull;
-      }
-    }
+    dragdropstate->LastDraggingPlace = appwin->m_PreviousDocking;
 
     for (auto &window : s_Instance->m_Windows) {
       if (appwin->CheckWinParent(window->GetName())) {
