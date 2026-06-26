@@ -125,6 +125,7 @@ namespace Cherry {
     bool m_Pressed;
     bool m_DockingMode = false;
     bool m_WindowRebuilded = false;
+    bool m_WindowNeedRebuild = false;
     bool m_WindowJustRebuilded = false;
     bool m_HaveParentAppWindow = false;
 

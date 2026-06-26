@@ -952,6 +952,10 @@ namespace Cherry {
   void Application::PushRedockEvent(const std::shared_ptr<Cherry::WindowDragDropState> &state) {
     for (auto app_win : s_Instance->m_AppWindows) {
       if (app_win->m_IdName == state->LastDraggingAppWindowHost) {
+        //  if (app_win->m_HaveParentAppWindow) {
+        //    continue;
+        //  }
+
         std::shared_ptr<Cherry::RedockRequest> req = app_win->CreateRedockEvent(
             state->LastDraggingWindow,
             state->LastDraggingPlace,
@@ -962,22 +966,18 @@ namespace Cherry {
         s_Instance->m_RedockRequests.push_back(req);
         RedockCount++;
 
-        for (auto &child : app_win->m_SubAppWindows) {
+        if (!app_win->m_HaveParentAppWindow) {
+          app_win->SetParentWindow(state->LastDraggingWindow);
+        }
+
+        for (auto &child : s_Instance->m_AppWindows) {
           if (!child)
             continue;
-
-          std::shared_ptr<Cherry::RedockRequest> child_req = std::make_shared<RedockRequest>();
-          child_req->m_DockPlace = DockEmplacement::DockFull;  // TODO from local save
-          child_req->m_ParentAppWindow = app_win->m_IdName;
-          child_req->m_ParentAppWindowHost = app_win->m_IdName;
-          child_req->m_ParentWindow = state->LastDraggingWindow;
-          child_req->m_FromSave = state->FromSave;
-          child_req->m_FromNewWindow = false;
-          child_req->m_IsObsolete = false;
-
-          child->m_WinParent = state->LastDraggingWindow;
-
-          s_Instance->m_RedockRequests.push_back(child_req);
+          if (child->m_HaveParentAppWindow) {
+            if (child->m_ParentAppWindow->m_IdName == app_win->m_IdName) {
+              child->SetParentWindow(state->LastDraggingWindow);
+            }
+          }
         }
       }
     }
@@ -2377,6 +2377,9 @@ namespace Cherry {
       }
 
       for (auto &appwin : s_Instance->m_AppWindows) {
+        if (appwin->m_WindowNeedRebuild) {
+          appwin->m_WindowRebuilded = false;
+        }
         appwin->m_WindowJustRebuilded = false;
       }
 
