@@ -952,9 +952,9 @@ namespace Cherry {
   void Application::PushRedockEvent(const std::shared_ptr<Cherry::WindowDragDropState> &state) {
     for (auto app_win : s_Instance->m_AppWindows) {
       if (app_win->m_IdName == state->LastDraggingAppWindowHost) {
-        //  if (app_win->m_HaveParentAppWindow) {
-        //    continue;
-        //  }
+        if (app_win->m_HaveParentAppWindow) {
+          continue;
+        }
 
         std::shared_ptr<Cherry::RedockRequest> req = app_win->CreateRedockEvent(
             state->LastDraggingWindow,
