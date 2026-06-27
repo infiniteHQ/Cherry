@@ -48,28 +48,26 @@ static const char *DockEmplacementToString(Cherry::DockEmplacement e) {
   }
 }
 
-// Avoir remit le flag if got parent window empeche de redock en interne...
-
 void DragDropView::Render() {
   if (!CherryApp.LatestRequest) {
     ImGui::TextColored(Cherry::HexToRGBA("#F87171"), "No request");
   } else {
     auto &r = *CherryApp.LatestRequest;
+
     ImGui::TextColored(Cherry::HexToRGBA("#4ADE80"), "Latest request :");
-    ImGui::SameLine();
+    ImGui::Separator();
 
-    ImGui::Text(
-        "%s -> %s (%s)", r.m_ParentWindow.c_str(), r.m_ParentAppWindow.c_str(), DockEmplacementToString(r.m_DockPlace));
+    ImGui::Text("m_ParentWindow       : %s", r.m_ParentWindow.c_str());
+    ImGui::Text("m_ParentAppWindowHost: %s", r.m_ParentAppWindowHost.c_str());
+    ImGui::Text("m_ParentAppWindow    : %s", r.m_ParentAppWindow.c_str());
+    ImGui::Text("m_DockPlace          : %s", DockEmplacementToString(r.m_DockPlace));
 
-    ImGui::SameLine();
-    if (r.m_IsHandled)
-      ImGui::TextDisabled("handled");
-    if (r.m_IsObsolete)
-      ImGui::TextColored(Cherry::HexToRGBA("#F87171"), " OBSOLETE");
-    if (r.m_FromSave)
-      ImGui::TextDisabled(" save");
-    if (r.m_FromNewWindow)
-      ImGui::TextDisabled(" new");
+    ImGui::Separator();
+
+    ImGui::Text("m_IsHandled   : %s", r.m_IsHandled ? "true" : "false");
+    ImGui::Text("m_FromSave    : %s", r.m_FromSave ? "true" : "false");
+    ImGui::Text("m_FromNewWindow: %s", r.m_FromNewWindow ? "true" : "false");
+    ImGui::Text("m_IsObsolete  : %s", r.m_IsObsolete ? "true" : "false");
   }
 }
 #endif  // CHERRY_DEBUG
