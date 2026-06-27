@@ -46,7 +46,7 @@ namespace Cherry {
         SetProperty("color_slidergrab", "#828282B3");              // hex
         SetProperty("color_slidergrab_active", "#A8A8A8FF");       // hex
         SetProperty("color_separator", "#151515FF");               // hex
-        SetProperty("color_separator_active", "#27B9F2FF");        // hex
+        SetProperty("color_separator", "#302F2FFF");               // hex
         SetProperty("color_separator_hovered", "#151515FF");       // hex
         SetProperty("color_window_bg", "#151515FF");               // hex
         SetProperty("color_child_bg", "#242424FF");                // hex
