@@ -19,6 +19,7 @@
 
 #include "views/components/components.hpp"
 #include "views/console/console.hpp"
+#include "views/drag_drop/drag_drop.hpp"
 #include "views/hooks/hooks.hpp"
 #include "views/windows/windows.hpp"
 
@@ -37,6 +38,7 @@ namespace Cherry {
       std::shared_ptr<ComponentsView> ComponentsAppWindow;
       std::shared_ptr<HooksView> HooksAppWindow;
       std::shared_ptr<WindowsView> WindowsAppWindow;
+      std::shared_ptr<DragDropView> DragDropAppWindow;
 
      private:
     };

@@ -319,7 +319,7 @@ namespace Cherry {
         Application::SetCurrentDragDropStateAppWindowHost(this->m_IdName);
         Application::SetCurrentDragDropStateDraggingPlace(DockEmplacement::DockFull);
 
-        Application::PushRedockEvent(wind->GetDragDropState());
+        Application::PushRedockEvent(wind->GetDragDropState(), true);
       }
     }
 

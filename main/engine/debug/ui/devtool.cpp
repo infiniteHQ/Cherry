@@ -54,6 +54,11 @@ namespace Cherry {
       WindowsAppWindow->GetAppWindow()->SetVisibility(true);
       Cherry::AddAppWindow(WindowsAppWindow->GetAppWindow());
       WindowsAppWindow->GetAppWindow()->AttachOnWindow(window_name);
+
+      DragDropAppWindow = DragDropView::Create("Drag/Drop");
+      DragDropAppWindow->GetAppWindow()->SetVisibility(true);
+      Cherry::AddAppWindow(DragDropAppWindow->GetAppWindow());
+      DragDropAppWindow->GetAppWindow()->AttachOnWindow(window_name);
     };
 
     void Devtool::Stop() {
@@ -61,6 +66,7 @@ namespace Cherry {
       Cherry::DeleteAppWindow(ConsoleAppWindow->GetAppWindow());
       Cherry::DeleteAppWindow(HooksAppWindow->GetAppWindow());
       Cherry::DeleteAppWindow(WindowsAppWindow->GetAppWindow());
+      Cherry::DeleteAppWindow(DragDropAppWindow->GetAppWindow());
     };
 
   }  // namespace Tools

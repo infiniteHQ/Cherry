@@ -109,6 +109,7 @@ namespace Cherry {
     Application(const ApplicationSpecification &applicationSpecification = ApplicationSpecification());
     ~Application();
 
+    std::shared_ptr<Cherry::RedockRequest> LatestRequest;
     static std::atomic<bool> &RunningState();
 #ifdef CHERRY_DEBUG
     static std::atomic<bool> &DebugToolState();
@@ -166,7 +167,9 @@ namespace Cherry {
     static void FlushCommandBuffer(VkCommandBuffer commandBuffer);
     static void SubmitResourceFree(std::function<void()> &&func, const std::string &winname);
     static std::string CookPath(const std::string &input_path);
-    static void PushRedockEvent(const std::shared_ptr<Cherry::WindowDragDropState> &state);
+    static void PushRedockEvent(
+        const std::shared_ptr<Cherry::WindowDragDropState> &state,
+        const bool &exclude_childs = false);
     static std::vector<uint8_t> LoadPngHexa(const std::string &path);
     static void SetExecutablePath();
     static std::string &GetExecutablePath();

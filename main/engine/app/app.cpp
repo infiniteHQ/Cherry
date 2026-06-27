@@ -117,7 +117,6 @@ static std::string LastWindowPressed = "";
 static int RedockCount = 0;
 static bool DragRendered = false;
 
-static std::shared_ptr<Cherry::RedockRequest> LatestRequest;
 static std::vector<std::pair<Cherry::ProcessCallback, std::function<void()>>> g_ProcessCallbacks;
 
 // Per-frame-in-flight
@@ -949,11 +948,13 @@ namespace Cherry {
     }
   }
 
-  void Application::PushRedockEvent(const std::shared_ptr<Cherry::WindowDragDropState> &state) {
+  void Application::PushRedockEvent(const std::shared_ptr<Cherry::WindowDragDropState> &state, const bool &exclude_childs) {
     for (auto app_win : s_Instance->m_AppWindows) {
       if (app_win->m_IdName == state->LastDraggingAppWindowHost) {
-        if (app_win->m_HaveParentAppWindow) {
-          continue;
+        if (exclude_childs) {
+          if (app_win->m_HaveParentAppWindow) {
+            continue;
+          }
         }
 
         std::shared_ptr<Cherry::RedockRequest> req = app_win->CreateRedockEvent(
@@ -965,7 +966,7 @@ namespace Cherry {
 
         app_win->m_PreviousDocking = state->LastDraggingPlace;
 
-        LatestRequest = req;
+        s_Instance->LatestRequest = req;
         s_Instance->m_RedockRequests.push_back(req);
         RedockCount++;
 
@@ -1534,7 +1535,7 @@ namespace Cherry {
           }
 
           c_CurrentDragDropState = dragdropstate;
-          Application::PushRedockEvent(c_CurrentDragDropState);
+          Application::PushRedockEvent(c_CurrentDragDropState, true);
           dragdropstate->DragOwner = "none";
           c_CurrentDragDropState = nullptr;
 
@@ -1609,7 +1610,7 @@ namespace Cherry {
           }
 
           c_CurrentDragDropState = dragdropstate;
-          Application::PushRedockEvent(c_CurrentDragDropState);
+          Application::PushRedockEvent(c_CurrentDragDropState, true);
           dragdropstate->DragOwner = "none";
           c_CurrentDragDropState = nullptr;
 
@@ -1659,7 +1660,7 @@ namespace Cherry {
     }
 
     c_CurrentDragDropState = dragdropstate;
-    Application::PushRedockEvent(c_CurrentDragDropState);
+    Application::PushRedockEvent(c_CurrentDragDropState, true);
     dragdropstate->DragOwner = "none";
     c_CurrentDragDropState = nullptr;
 
@@ -1775,7 +1776,13 @@ namespace Cherry {
           const std::string &logoPath = GetLogoPathForAppWindow(windowId);
           const std::string &descStr = GetDescriptionForAppWindow(windowId);
 
-          const char *titleText = windowId.c_str();
+          std::string title = windowId;
+          size_t pos = title.find("####");
+          if (pos != std::string::npos) {
+            title.erase(pos);
+          }
+
+          const char *titleText = title.c_str();
           const char *descText = descStr.c_str();
           bool hasDesc = (descText && descText[0] != '\0');
 
