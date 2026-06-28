@@ -316,7 +316,15 @@ namespace Cherry {
     // Prevent undock
     if (wind->GetSpecifications().RenderMode == WindowRenderingMethod::DockingWindows ||
         wind->GetSpecifications().RenderMode == WindowRenderingMethod::TabWidows) {
-      if (!ImGui::IsWindowDocked()) {
+      if (!ImGui::IsWindowDocked() && !m_HaveParentAppWindow) {
+        Application::SetCurrentDragDropState(wind->GetDragDropState());
+
+        Application::SetCurrentDragDropStateAppWindow("none");
+        Application::SetCurrentDragDropStateWindow(winname);
+        Application::SetCurrentDragDropStateAppWindowHost(this->m_IdName);
+        Application::SetCurrentDragDropStateDraggingPlace(DockEmplacement::DockFull);
+
+        Application::PushRedockEvent(wind->GetDragDropState());
       }
     }
 
