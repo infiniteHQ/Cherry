@@ -440,6 +440,7 @@ namespace Cherry {
       ImGui::PushStyleVar(ImGuiStyleVar_PopupRounding, 3.0f);
 
       ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(6.0f, 5.0f));
+      float savedPaddingY = ImGui::GetCurrentContext()->Style.DockSpaceMenubarPaddingY;
       ImGui::GetCurrentContext()->Style.DockSpaceMenubarPaddingY = 18.0f;
 
       ImGui::DockSpace(dockID, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_None);
@@ -472,6 +473,7 @@ namespace Cherry {
         }
       }
       ImGui::PopStyleVar(2);
+      ImGui::GetCurrentContext()->Style.DockSpaceMenubarPaddingY = savedPaddingY;
     } else {
       this->m_Render();
     }
