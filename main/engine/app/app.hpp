@@ -179,6 +179,7 @@ namespace Cherry {
 
     static const std::unordered_map<CherryKey, SDL_Scancode> &GetKeyMap();
     static std::optional<CherryKey> StringToCherryKey(std::string str);
+    static void FocusAppWindow(const std::string &appWindowIdName);
 
     // Set callbacks
     void SetCloseCallback(const std::function<void()> &closeCallback);

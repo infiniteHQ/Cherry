@@ -3610,4 +3610,60 @@ namespace Cherry {
     ImGui::PopFont();
   }
 
+  void Application::FocusAppWindow(const std::string &appWindowIdName) {
+    std::shared_ptr<AppWindow> targetAppWindow = nullptr;
+    for (auto &appwin : s_Instance->m_AppWindows) {
+      if (appwin && appwin->m_IdName == appWindowIdName) {
+        targetAppWindow = appwin;
+        break;
+      }
+    }
+
+    if (!targetAppWindow) {
+      for (auto &appwin : s_Instance->m_AppWindows) {
+        if (appwin && (appwin->m_Name == appWindowIdName || appwin->m_ID == appWindowIdName)) {
+          targetAppWindow = appwin;
+          break;
+        }
+      }
+    }
+
+    if (!targetAppWindow) {
+      return;
+    }
+
+    std::shared_ptr<Window> parentWindow = nullptr;
+    for (auto &win : s_Instance->m_Windows) {
+      if (win && win->GetName() == targetAppWindow->m_WinParent) {
+        parentWindow = win;
+        break;
+      }
+    }
+
+    if (!parentWindow) {
+      return;
+    }
+
+    ImGuiContext *previousContext = ImGui::GetCurrentContext();
+
+    ImGui::SetCurrentContext(parentWindow->GetImGuiContext());
+
+    ImGuiWindow *imguiWin = ImGui::FindWindowByName(targetAppWindow->m_IdName.c_str());
+
+    if (imguiWin) {
+      ImGui::FocusWindow(imguiWin);
+      if (imguiWin->DockNode && imguiWin->DockNode->TabBar) {
+        ImGuiTabBar *tabBar = imguiWin->DockNode->TabBar;
+        for (int i = 0; i < tabBar->Tabs.Size; i++) {
+          if (tabBar->Tabs[i].Window == imguiWin) {
+            tabBar->SelectedTabId = tabBar->Tabs[i].ID;
+            tabBar->NextSelectedTabId = tabBar->Tabs[i].ID;
+            break;
+          }
+        }
+      }
+    }
+
+    ImGui::SetCurrentContext(previousContext);
+  }
 }  // namespace Cherry
