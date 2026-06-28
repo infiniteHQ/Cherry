@@ -139,6 +139,11 @@ namespace Cherry {
       return;
     }
 
+    // TODO: Verify and analyze the impact of this new prevention before releasing 1.7
+    if (!CheckWinParent(winname)) {
+      return;
+    }
+
     if (m_Closable) {
       if (!m_CloseSignal) {
         if (this->m_CloseCallback) {
@@ -312,14 +317,6 @@ namespace Cherry {
     if (wind->GetSpecifications().RenderMode == WindowRenderingMethod::DockingWindows ||
         wind->GetSpecifications().RenderMode == WindowRenderingMethod::TabWidows) {
       if (!ImGui::IsWindowDocked()) {
-        Application::SetCurrentDragDropState(wind->GetDragDropState());
-
-        Application::SetCurrentDragDropStateAppWindow("none");
-        Application::SetCurrentDragDropStateWindow(winname);
-        Application::SetCurrentDragDropStateAppWindowHost(this->m_IdName);
-        Application::SetCurrentDragDropStateDraggingPlace(DockEmplacement::DockFull);
-
-        Application::PushRedockEvent(wind->GetDragDropState(), true);
       }
     }
 
