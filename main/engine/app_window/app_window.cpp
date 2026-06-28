@@ -417,6 +417,7 @@ namespace Cherry {
 
             wind->GetDragDropState()->DockIsDragging = false;
             wind->GetDragDropState()->DragOwner = "none";
+            Application::GetDockIsDragging() = false;
           }
         }
       }
