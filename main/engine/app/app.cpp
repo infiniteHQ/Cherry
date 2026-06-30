@@ -162,6 +162,50 @@ namespace Cherry {
 #include "../embed/not_found_img.embed"
 #include "../embed/window.embed"
 
+  // TODO: Move this to a better place
+  enum class EdgeAxis { Leftmost, Rightmost, Topmost, Bottommost };
+
+  static std::shared_ptr<Cherry::AppWindow> FindEdgeSiblingAppWindow(
+      const std::shared_ptr<Cherry::AppWindow> &current,
+      EdgeAxis edge) {
+    if (!current || !s_Instance)
+      return nullptr;
+
+    std::shared_ptr<Cherry::AppWindow> result = nullptr;
+    float best = (edge == EdgeAxis::Leftmost || edge == EdgeAxis::Topmost) ? std::numeric_limits<float>::max()
+                                                                           : std::numeric_limits<float>::lowest();
+
+    for (auto &candidate : s_Instance->GetAppWindows()) {
+      if (!candidate || candidate->m_IdName == current->m_IdName)
+        continue;
+
+      if (candidate->m_HaveParentAppWindow != current->m_HaveParentAppWindow)
+        continue;
+      if (current->m_HaveParentAppWindow) {
+        if (!candidate->m_ParentAppWindow || !current->m_ParentAppWindow ||
+            candidate->m_ParentAppWindow->m_IdName != current->m_ParentAppWindow->m_IdName)
+          continue;
+      }
+
+      if (!candidate->m_WindowRebuilded)
+        continue;
+
+      ImGuiWindow *imguiWin = ImGui::FindWindowByName(candidate->m_IdName.c_str());
+      if (!imguiWin || !imguiWin->DockNode)
+        continue;
+
+      float val = (edge == EdgeAxis::Topmost || edge == EdgeAxis::Bottommost) ? imguiWin->DockNode->Pos.y
+                                                                              : imguiWin->DockNode->Pos.x;
+
+      bool better = (edge == EdgeAxis::Leftmost || edge == EdgeAxis::Topmost) ? (val < best) : (val > best);
+      if (better) {
+        best = val;
+        result = candidate;
+      }
+    }
+    return result;
+  }
+
   static void HandleSnapToEdge(Window *window) {
     if (!window->GetSpecifications().CustomTitlebar || !window->GetSpecifications().DisableWindowManagerTitleBar)
       return;
@@ -1566,15 +1610,86 @@ namespace Cherry {
           if (!dockplace_initialized) {
             dragdropstate->DragOwner = appwin->m_IdName;
 
-            if (appwin->GetDefaultBehavior(DefaultAppWindowBehaviors::DefaultDocking) == "right") {
+            std::string defaultDocking = appwin->GetDefaultBehavior(DefaultAppWindowBehaviors::DefaultDocking);
+
+            auto findSiblingByBehavior = [&](const std::string &targetBehavior) -> std::shared_ptr<AppWindow> {
+              for (auto &candidate : s_Instance->m_AppWindows) {
+                if (!candidate || candidate->m_IdName == appwin->m_IdName)
+                  continue;
+                if (!candidate->m_WindowRebuilded)
+                  continue;
+
+                bool isSibling = false;
+                if (appwin->m_HaveParentAppWindow && appwin->m_ParentAppWindow) {
+                  isSibling = candidate->m_HaveParentAppWindow && candidate->m_ParentAppWindow &&
+                              candidate->m_ParentAppWindow->m_IdName == appwin->m_ParentAppWindow->m_IdName;
+                } else {
+                  isSibling = !candidate->m_HaveParentAppWindow;
+                }
+
+                if (!isSibling)
+                  continue;
+                if (candidate->GetDefaultBehavior(DefaultAppWindowBehaviors::DefaultDocking) == targetBehavior)
+                  return candidate;
+              }
+              return nullptr;
+            };
+
+            std::string compoundPrimary;
+            DockEmplacement compoundSecondary = DockEmplacement::DockFull;
+            bool isCompound = false;
+
+            if (defaultDocking == "left_down") {
+              compoundPrimary = "left";
+              compoundSecondary = DockEmplacement::DockDown;
+              isCompound = true;
+            } else if (defaultDocking == "left_up") {
+              compoundPrimary = "left";
+              compoundSecondary = DockEmplacement::DockUp;
+              isCompound = true;
+            } else if (defaultDocking == "right_down") {
+              compoundPrimary = "right";
+              compoundSecondary = DockEmplacement::DockDown;
+              isCompound = true;
+            } else if (defaultDocking == "right_up") {
+              compoundPrimary = "right";
+              compoundSecondary = DockEmplacement::DockUp;
+              isCompound = true;
+            } else if (defaultDocking == "up_left") {
+              compoundPrimary = "up";
+              compoundSecondary = DockEmplacement::DockLeft;
+              isCompound = true;
+            } else if (defaultDocking == "up_right") {
+              compoundPrimary = "up";
+              compoundSecondary = DockEmplacement::DockRight;
+              isCompound = true;
+            } else if (defaultDocking == "down_left") {
+              compoundPrimary = "down";
+              compoundSecondary = DockEmplacement::DockLeft;
+              isCompound = true;
+            } else if (defaultDocking == "down_right") {
+              compoundPrimary = "down";
+              compoundSecondary = DockEmplacement::DockRight;
+              isCompound = true;
+            }
+
+            if (isCompound) {
+              auto anchor = findSiblingByBehavior(compoundPrimary);
+              if (anchor) {
+                dragdropstate->LastDraggingAppWindow = anchor->m_IdName;
+                dragdropstate->LastDraggingPlace = compoundSecondary;
+              } else {
+                dragdropstate->LastDraggingPlace = DockEmplacement::DockFull;
+              }
+            } else if (defaultDocking == "right") {
               dragdropstate->LastDraggingPlace = DockEmplacement::DockRight;
-            } else if (appwin->GetDefaultBehavior(DefaultAppWindowBehaviors::DefaultDocking) == "left") {
+            } else if (defaultDocking == "left") {
               dragdropstate->LastDraggingPlace = DockEmplacement::DockLeft;
-            } else if (appwin->GetDefaultBehavior(DefaultAppWindowBehaviors::DefaultDocking) == "up") {
+            } else if (defaultDocking == "up") {
               dragdropstate->LastDraggingPlace = DockEmplacement::DockUp;
-            } else if (appwin->GetDefaultBehavior(DefaultAppWindowBehaviors::DefaultDocking) == "down") {
+            } else if (defaultDocking == "down") {
               dragdropstate->LastDraggingPlace = DockEmplacement::DockDown;
-            } else if (appwin->GetDefaultBehavior(DefaultAppWindowBehaviors::DefaultDocking) == "full") {
+            } else if (defaultDocking == "full") {
               dragdropstate->LastDraggingPlace = DockEmplacement::DockFull;
             } else {
               dragdropstate->LastDraggingPlace = DockEmplacement::DockFull;
@@ -1582,6 +1697,10 @@ namespace Cherry {
           }
 
           appwin->m_PreviousDocking = dragdropstate->LastDraggingPlace;
+          appwin->m_PreviousDockingAppWindow =
+              (dragdropstate->LastDraggingAppWindow.empty() || dragdropstate->LastDraggingAppWindow == "none")
+                  ? "none"
+                  : dragdropstate->LastDraggingAppWindow;
 
           if (!win_initialized && s_Instance->m_Windows[0]) {
             dragdropstate->LastDraggingWindow = s_Instance->m_Windows[0]->GetName();
@@ -1593,6 +1712,7 @@ namespace Cherry {
             child_req->m_DockPlace = dragdropstate->LastDraggingPlace;
             child_req->m_ParentAppWindowHost = appwin->m_IdName;
             child_req->m_ParentWindow = dragdropstate->LastDraggingWindow;
+            child_req->m_ParentAppWindow = dragdropstate->LastDraggingAppWindow;
             child_req->m_FromNewWindow = false;
             child_req->m_IsObsolete = false;
 
@@ -1633,6 +1753,10 @@ namespace Cherry {
     LastWindowPressed = dragdropstate->LastDraggingAppWindowHost;
     dragdropstate->LastDraggingPlace = appwin->m_PreviousDocking;
 
+    if (!appwin->m_PreviousDockingAppWindow.empty() && appwin->m_PreviousDockingAppWindow != "none") {
+      dragdropstate->LastDraggingAppWindow = appwin->m_PreviousDockingAppWindow;
+    }
+
     for (auto &window : s_Instance->m_Windows) {
       if (appwin->CheckWinParent(window->GetName())) {
         dragdropstate->LastDraggingWindow = window->GetName();
@@ -1645,6 +1769,7 @@ namespace Cherry {
       child_req->m_DockPlace = dragdropstate->LastDraggingPlace;
       child_req->m_ParentAppWindowHost = appwin->m_IdName;
       child_req->m_ParentWindow = dragdropstate->LastDraggingWindow;
+      child_req->m_ParentAppWindow = dragdropstate->LastDraggingAppWindow;
       child_req->m_FromNewWindow = false;
       child_req->m_IsObsolete = false;
 

@@ -148,6 +148,9 @@ namespace Cherry {
     AppWindowTypes m_AppWindowType = AppWindowTypes::StaticWindow;
     ReattachRequest m_AttachRequest;
     DockEmplacement m_PreviousDocking = DockEmplacement::DockFull;
+    std::string m_PreviousDockingAppWindow = "none";
+    std::string m_PreviousDockingAnchor = "none";
+    int m_FrameCounterPreventUndock = 0;
 
     // Different than the default theme !
     // When the user specify this, the runtime will search level 3 theme at

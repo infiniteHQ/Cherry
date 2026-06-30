@@ -316,6 +316,7 @@ namespace Cherry {
     // Prevent undock
     if (wind->GetSpecifications().RenderMode == WindowRenderingMethod::DockingWindows ||
         wind->GetSpecifications().RenderMode == WindowRenderingMethod::TabWidows) {
+      // TODO: Evaluate impact of removing  && !m_HaveParentAppWindow
       if (!ImGui::IsWindowDocked() && !m_HaveParentAppWindow) {
         Application::SetCurrentDragDropState(wind->GetDragDropState());
 
@@ -325,6 +326,21 @@ namespace Cherry {
         Application::SetCurrentDragDropStateDraggingPlace(DockEmplacement::DockFull);
 
         Application::PushRedockEvent(wind->GetDragDropState());
+      }
+      if (!ImGui::IsWindowDocked() && m_HaveParentAppWindow) {
+        if (m_FrameCounterPreventUndock > 2) {
+          Application::SetCurrentDragDropState(wind->GetDragDropState());
+
+          Application::SetCurrentDragDropStateAppWindow("none");
+          Application::SetCurrentDragDropStateWindow(winname);
+          Application::SetCurrentDragDropStateAppWindowHost(this->m_IdName);
+          Application::SetCurrentDragDropStateDraggingPlace(DockEmplacement::DockFull);
+
+          Application::PushRedockEvent(wind->GetDragDropState());
+          m_FrameCounterPreventUndock = 0;
+        } else {
+          m_FrameCounterPreventUndock++;
+        }
       }
     }
 
