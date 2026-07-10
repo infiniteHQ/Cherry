@@ -988,7 +988,23 @@ namespace Cherry {
         m_NodeEngine->RefreshNodeGraphLinks();
       }
 
+      ed::NodeId contextNodeId = 0;
+      ed::LinkId contextLinkId = 0;
+      ed::PinId contextPinId = 0;
+      bool createNewNode = false;
+      Pin *newNodeLinkPin = nullptr;
+      Pin *newLinkPin = nullptr;
+
+      bool ctrlRerouteActive = false;
+      Pin *ctrlReroutePin = nullptr;
+
+      float leftPaneWidth = 400.0f;
+      float rightPaneWidth = 800.0f;
+      bool navigated = false;
+
       void Render() override {
+        ed::SetCurrentEditor(m_NodeEngine->m_Editor);
+
         if (GetProperty("refresh") == "true") {
           m_NodeEngine->RefreshNodeGraph();
           SetProperty("refresh", "false");
@@ -1011,8 +1027,6 @@ namespace Cherry {
 
         auto &io = CherryGUI::GetIO();
 
-        ed::SetCurrentEditor(m_NodeEngine->m_Editor);
-
         if (CherryApp.IsKeyPressed(Cherry::CherryKey::CTRL) && CherryApp.IsKeyPressed(Cherry::CherryKey::S)) {
           m_NodeEngine->SaveNodeGraph();
           m_NodeEngine->m_NodeGraph->DumpGraphToJsonFile(m_NodeEngine->m_NodeContext);
@@ -1028,20 +1042,6 @@ namespace Cherry {
             }
         }
 #endif
-
-        static ed::NodeId contextNodeId = 0;
-        static ed::LinkId contextLinkId = 0;
-        static ed::PinId contextPinId = 0;
-        static bool createNewNode = false;
-        static Pin *newNodeLinkPin = nullptr;
-        static Pin *newLinkPin = nullptr;
-
-        static bool ctrlRerouteActive = false;
-        static Pin *ctrlReroutePin = nullptr;
-
-        static float leftPaneWidth = 400.0f;
-        static float rightPaneWidth = 800.0f;
-        static bool navigated = false;
 
         if (!navigated) {
           ed::NavigateToContent();
@@ -1178,6 +1178,7 @@ namespace Cherry {
 
                 CherryGUI::Dummy(ImVec2(0, 1));
 
+                float prevScale = CherryGUI::GetFont()->Scale;
                 CherryGUI::GetFont()->Scale = 1.20f;
                 CherryGUI::PushFont(CherryGUI::GetFont());
 
@@ -1185,7 +1186,7 @@ namespace Cherry {
                 CherryGUI::TextUnformatted(node.Name.c_str());
                 CherryGUI::PopStyleColor();
 
-                CherryGUI::GetFont()->Scale = Application::GetCurrentRenderedWindow()->GetSpecifications().FontGlobalScale;
+                CherryGUI::GetFont()->Scale = prevScale;
                 CherryGUI::PopFont();
 
                 CherryGUI::PushStyleColor(ImGuiCol_Text, Cherry::HexToRGBA(node.SecondNameColor));

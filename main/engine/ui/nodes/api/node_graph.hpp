@@ -496,6 +496,11 @@ namespace Cherry {
       std::vector<ConnectionEffect> m_ConnectionEffects;
       std::vector<NodeEffect> m_NodeEffects;
       std::string m_GraphTitle;
+
+      std::string m_HeaderIcon;
+      std::string m_HeaderTitle;
+      bool m_ShowHeader;
+
       FocusRequest m_FocusRequest;
 
      private:
