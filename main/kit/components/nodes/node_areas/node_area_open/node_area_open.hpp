@@ -1056,8 +1056,8 @@ namespace Cherry {
           ed::NavigateToContent();
 
           const float halfSize = 50.0f;
-          ImVec2 min(canvasPos.x - halfSize, canvasPos.y - halfSize);
-          ImVec2 max(canvasPos.x + halfSize, canvasPos.y + halfSize);
+          ImVec2 bmin(canvasPos.x - halfSize, canvasPos.y - halfSize);
+          ImVec2 bmax(canvasPos.x + halfSize, canvasPos.y + halfSize);
 
           ed::ClearSelection();
           Node *closest = nullptr;
