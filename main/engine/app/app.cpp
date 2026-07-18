@@ -172,9 +172,8 @@ namespace Cherry {
       return nullptr;
 
     std::shared_ptr<Cherry::AppWindow> result = nullptr;
-    float best = (edge == EdgeAxis::Leftmost || edge == EdgeAxis::Topmost) ? std::numeric_limits<float>::max()
-                                                                           : std::numeric_limits<float>::lowest();
-
+    float best = (edge == EdgeAxis::Leftmost || edge == EdgeAxis::Topmost) ? (std::numeric_limits<float>::max)()
+                                                                        : (std::numeric_limits<float>::lowest)();
     for (auto &candidate : s_Instance->GetAppWindows()) {
       if (!candidate || candidate->m_IdName == current->m_IdName)
         continue;
