@@ -2100,6 +2100,26 @@ namespace Cherry {
       ImGui::SetTabItemClosed(tab_or_docked_window_label);
     }
 
+  void ItemSize(const ImVec2 &size, float text_baseline_y){
+    ImGui::ItemSize(size, text_baseline_y);
+  }
+   void ItemSize(const ImRect &bb, float text_baseline_y){
+    ImGui::ItemSize(bb);
+   }
+   bool ItemAdd(const ImRect &bb, ImGuiID id, const ImRect *nav_bb, ImGuiItemFlags extra_flags){
+    return ImGui::ItemAdd(bb, id, nav_bb, extra_flags);
+   }
+   bool ItemHoverable(const ImRect &bb, ImGuiID id){
+    return ImGui::ItemHoverable(bb, id);
+   }
+  // Widgets low-level behaviors
+  bool ButtonBehavior(const ImRect &bb, ImGuiID id, bool *out_hovered, bool *out_held, ImGuiButtonFlags flags){
+     return ImGui::ButtonBehavior(bb, id, out_hovered, out_held, flags);
+  }
+
+   ImGuiID GetWindowID(ImGuiWindow *window, const char *str, const char *str_end){
+return window->GetID(str, str_end);
+  }
   }  // namespace GUI
 
 }  // namespace Cherry

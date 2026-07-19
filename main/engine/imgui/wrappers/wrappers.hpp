@@ -1310,7 +1310,16 @@ namespace Cherry {
             *tab_or_docked_window_label);  // notify TabBar or Docking system of a closed tab/window ahead (useful to reduce
                                            // visual flicker on reorderable tab bars). For tab-bar: call after BeginTabBar()
                                            // and before Tab submissions. Otherwise call with a window name.
+  CHERRY_API void ItemSize(const ImVec2 &size, float text_baseline_y = -1.0f);
+  CHERRY_API void ItemSize(const ImRect &bb, float text_baseline_y = -1.0f);
+  CHERRY_API bool ItemAdd(const ImRect &bb, ImGuiID id, const ImRect *nav_bb = NULL, ImGuiItemFlags extra_flags = 0);
+  CHERRY_API bool ItemHoverable(const ImRect &bb, ImGuiID id);
+ 
+  
+  // Widgets low-level behaviors
+  CHERRY_API bool ButtonBehavior(const ImRect &bb, ImGuiID id, bool *out_hovered, bool *out_held, ImGuiButtonFlags flags = 0);
 
+  CHERRY_API ImGuiID GetWindowID(ImGuiWindow *window, const char *str, const char *str_end = NULL);
   }  // namespace GUI
 }  // namespace Cherry
 
