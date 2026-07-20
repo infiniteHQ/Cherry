@@ -13,7 +13,7 @@
 //------------------------------------------------------------------------------
 # include "../../../../../lib/imgui/misc/nodes/imgui_node_editor.h"
 
-
+#include "../../../options.hpp"  
 //------------------------------------------------------------------------------
 namespace ax {
 namespace NodeEditor {
@@ -21,7 +21,7 @@ namespace Utilities {
 
 
 //------------------------------------------------------------------------------
-struct BlueprintNodeBuilder
+struct CHERRY_API BlueprintNodeBuilder
 {
     BlueprintNodeBuilder(ImTextureID texture = nullptr, int textureWidth = 0, int textureHeight = 0);
 
