@@ -2343,6 +2343,8 @@ namespace Cherry {
 
       SDL_Event event;
 
+      m_NavigateForwardRequested = false;
+      m_NavigateBackRequested = false;
       while (SDL_PollEvent(&event)) {
         bool eventHandled = false;
 
@@ -2358,6 +2360,14 @@ namespace Cherry {
           case SDL_TEXTINPUT: inputTargetSDLWindow = SDL_GetWindowFromID(event.text.windowID); break;
           case SDL_TEXTEDITING: inputTargetSDLWindow = SDL_GetWindowFromID(event.edit.windowID); break;
           default: inputTargetSDLWindow = nullptr; break;
+        }
+
+         if (event.type == SDL_MOUSEBUTTONDOWN) {
+          if (event.button.button == SDL_BUTTON_X1) {
+            m_NavigateBackRequested = true;
+          } else if (event.button.button == SDL_BUTTON_X2) {
+            m_NavigateForwardRequested = true;
+          }
         }
 
         ImGuiContext *inputTargetContext = nullptr;
@@ -3789,5 +3799,13 @@ namespace Cherry {
     }
 
     ImGui::SetCurrentContext(previousContext);
+  }
+  
+  bool Application::IsNavigateBackRequested() {
+    return m_NavigateBackRequested;
+  }
+
+  bool Application::IsNavigateForwardRequested() {
+    return m_NavigateForwardRequested;
   }
 }  // namespace Cherry

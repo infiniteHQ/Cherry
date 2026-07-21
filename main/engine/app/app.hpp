@@ -244,6 +244,8 @@ namespace Cherry {
     bool IsMouseClicked(int btn, bool repeat = false);
     bool IsMouseDoubleClicked(int btn);
     bool IsMousePressed(int btn);
+    bool IsNavigateBackRequested()
+    bool IsNavigateForwardRequested()
 
     Window *GetWindowByHandle(SDL_Window *window_handle);
     std::string GetRootPath();
@@ -637,6 +639,9 @@ namespace Cherry {
     std::function<void()> m_MainRenderCallback;
     std::function<void()> m_CloseCallback;
     ApplicationSpecification m_DefaultSpecification;
+
+    bool m_NavigateBackRequested = false;
+    bool m_NavigateForwardRequested = false;
 
     std::shared_ptr<Component> m_FocusedDebugComponent;
     bool m_ClosePending = false;
