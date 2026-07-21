@@ -244,8 +244,8 @@ namespace Cherry {
     bool IsMouseClicked(int btn, bool repeat = false);
     bool IsMouseDoubleClicked(int btn);
     bool IsMousePressed(int btn);
-    bool IsNavigateBackRequested()
-    bool IsNavigateForwardRequested()
+    bool IsNavigateBackRequested();
+    bool IsNavigateForwardRequested();
 
     Window *GetWindowByHandle(SDL_Window *window_handle);
     std::string GetRootPath();
