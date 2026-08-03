@@ -173,7 +173,7 @@ namespace Cherry {
 
     std::shared_ptr<Cherry::AppWindow> result = nullptr;
     float best = (edge == EdgeAxis::Leftmost || edge == EdgeAxis::Topmost) ? (std::numeric_limits<float>::max)()
-                                                                        : (std::numeric_limits<float>::lowest)();
+                                                                           : (std::numeric_limits<float>::lowest)();
     for (auto &candidate : s_Instance->GetAppWindows()) {
       if (!candidate || candidate->m_IdName == current->m_IdName)
         continue;
@@ -2362,7 +2362,7 @@ namespace Cherry {
           default: inputTargetSDLWindow = nullptr; break;
         }
 
-         if (event.type == SDL_MOUSEBUTTONDOWN) {
+        if (event.type == SDL_MOUSEBUTTONDOWN) {
           if (event.button.button == SDL_BUTTON_X1) {
             m_NavigateBackRequested = true;
           } else if (event.button.button == SDL_BUTTON_X2) {
@@ -3800,7 +3800,23 @@ namespace Cherry {
 
     ImGui::SetCurrentContext(previousContext);
   }
-  
+
+  std::vector<std::shared_ptr<AppWindow>> Application::GetAllAppWindowOfWindow(const std::string &window_name) {
+    std::vector<std::shared_ptr<AppWindow>> res;
+
+    for (auto &w : s_Instance->m_Windows) {
+      if (w->GetName() == window_name) {
+        for (auto &a : s_Instance->m_AppWindows) {
+          if (a->CheckWinParent(w->GetName())) {
+            res.push_back(a);
+          }
+        }
+      }
+    }
+
+    return res;
+  }
+
   bool Application::IsNavigateBackRequested() {
     return m_NavigateBackRequested;
   }

@@ -226,9 +226,10 @@ namespace Cherry {
       FramebarCallback = framebarCallback;
     }
 
-    void SetCloseCallback(const std::function<bool()> &closeCallback) {
-      CloseCallback = closeCallback;
-    }
+    // TODO ??? This is a old duplication ? Evaluate that removed.
+    // void SetCloseCallback(const std::function<bool()> &closeCallback) {
+    //  CloseCallback = closeCallback;
+    //}
 
     void SetMainRenderCallback(const std::function<void()> &mainRenderCallback) {
       MainRenderCallback = mainRenderCallback;
