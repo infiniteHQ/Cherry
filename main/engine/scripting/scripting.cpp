@@ -181,15 +181,18 @@ namespace Cherry {
       ScriptingEngine::InternalRenderScript(lua_file_path, true, 0);
     }
 
-    void ScriptingEngine::RegisterCherryAPI() {
+    void InjectCherryAPI(lua_State *L) {
       lua_newtable(L);
-
       RegisterDrawingAPI(L);
       RegisterLogicAPI(L);
       RegisterHooksAndComponentsAPI(L);
-
-      lua_setglobal(L, "Cherry");  // global lib
+      lua_setglobal(L, "Cherry");
     }
+
+    void ScriptingEngine::RegisterCherryAPI() {
+      InjectCherryAPI(L);
+    }
+
   }  // namespace Script
 }  // namespace Cherry
 
