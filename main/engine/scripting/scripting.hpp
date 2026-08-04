@@ -23,7 +23,7 @@
 namespace Cherry {
   namespace Script {
 
-    class ScriptingEngine {
+    class CHERRY_API ScriptingEngine {
      public:
       ScriptingEngine();
       ~ScriptingEngine();
