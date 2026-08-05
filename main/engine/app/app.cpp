@@ -3824,4 +3824,35 @@ namespace Cherry {
   bool Application::IsNavigateForwardRequested() {
     return m_NavigateForwardRequested;
   }
+
+  void Application::QuickRedock(const std::string &appwindow_name, const std::string &window_name) {
+    std::shared_ptr<Window> target_window;
+    for (auto &win : s_Instance->m_Windows) {
+      if (win->GetName() == window_name) {
+        target_window = win;
+        break;
+      }
+    }
+
+    if (!target_window) {
+      return;
+    }
+
+    std::shared_ptr<WindowDragDropState> state = target_window->GetDragDropState();
+
+    state->LastDraggingAppWindowHost = appwindow_name;
+    state->LastDraggingAppWindow = "none";
+    state->LastDraggingWindow = window_name;
+    state->LastDraggingPlace = DockEmplacement::DockFull;
+    state->FromSave = false;
+    state->CreateNewWindow = false;
+    state->DragOwner = appwindow_name;
+
+    Application::SetCurrentDragDropState(state);
+
+    Application::PushRedockEvent(state);
+
+    state->DragOwner = "none";
+    c_CurrentDragDropState = nullptr;
+  }
 }  // namespace Cherry

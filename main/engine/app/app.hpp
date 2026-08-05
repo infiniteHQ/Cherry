@@ -208,6 +208,7 @@ namespace Cherry {
     void PresentAllWindows();
     void CleanupWindowIfEmpty(const std::shared_ptr<Window> &win);
     void CurrentDockRequestOnNewWindow();
+    void QuickRedock(const std::string &appwindow_name, const std::string &window_name);
 
     // Window "Low" Rendering
     void HandleResizing(Window *window);
