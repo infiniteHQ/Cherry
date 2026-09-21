@@ -26,6 +26,7 @@ namespace Cherry {
         SetProperty("padding_y", "7");
         SetProperty("enter_return", "false");
         SetProperty("focus_on_appear", "false");
+        SetProperty("maintain_focus", "false");
 
         // Informations
         SetProperty("label", label);
@@ -35,6 +36,8 @@ namespace Cherry {
 
         // Data
         SetData("active", "false");
+        SetData("focused", "false");
+        SetData("submitted", "false");
       }
 
       void Render() override {
@@ -51,7 +54,8 @@ namespace Cherry {
 
         if (m_Value) {
           char buffer[256];
-          std::strncpy(buffer, m_Value->c_str(), sizeof(buffer));
+          std::strncpy(buffer, m_Value->c_str(), sizeof(buffer) - 1);
+          buffer[sizeof(buffer) - 1] = '\0';
 
           float sizeX = std::stof(GetProperty("size_x"));
           float paddingX = std::stof(GetProperty("padding_x"));
@@ -74,9 +78,14 @@ namespace Cherry {
           ImVec2 cursorPos = CherryGUI::GetCursorScreenPos();
           ImVec2 padding = CherryGUI::GetStyle().FramePadding;
 
-          ImGuiInputTextFlags flags;
+          ImGuiInputTextFlags flags = ImGuiInputTextFlags_None;
           if (GetProperty("enter_return") == "true") {
             flags |= ImGuiInputTextFlags_EnterReturnsTrue;
+          }
+
+          if (GetProperty("focus_on_appear") == "true" && !m_FocusRequested) {
+            CherryGUI::SetKeyboardFocusHere();
+            m_FocusRequested = true;
           }
 
           bool submitted = CherryGUI::InputText(Label.c_str(), buffer, sizeof(buffer), flags);
@@ -85,10 +94,6 @@ namespace Cherry {
             if (CherryGUI::IsItemDeactivated() && !CherryGUI::IsMouseClicked(0)) {
               CherryGUI::SetKeyboardFocusHere(-1);
             }
-          }
-
-          if (GetProperty("focus_on_appear") == "true" && CherryGUI::IsItemVisible()) {
-            CherryGUI::SetKeyboardFocusHere(-1);
           }
 
           bool is_focused = CherryGUI::IsItemFocused();
@@ -151,8 +156,9 @@ namespace Cherry {
       }
 
      private:
-      std::string *m_Value;
-      ImTextureID m_Logo;
+      std::string *m_Value = nullptr;
+      ImTextureID m_Logo = nullptr;
+      bool m_FocusRequested = false;
     };
   }  // namespace Components
 
