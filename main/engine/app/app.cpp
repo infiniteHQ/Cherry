@@ -78,8 +78,8 @@ namespace fs = std::filesystem;
 #define IMGUI_VULKAN_DEBUG_REPORT
 #endif
 
-static Cherry::Application *s_Instance = nullptr;
-static Cherry::Application *app;
+static Cherry::Application* s_Instance = nullptr;
+static Cherry::Application* app;
 
 static bool c_ValidDropZoneFounded = false;
 static bool c_DockIsDragging = false;
@@ -91,13 +91,13 @@ static Cherry::Component s_EmptyComponent;
 static Cherry::AppWindow s_EmptyAppWindow;
 static std::shared_ptr<Cherry::Window> c_CurrentRenderedWindow;
 static std::shared_ptr<Cherry::AppWindow> c_CurrentRenderedAppWindow;
-static Cherry::Component *c_LastComponent;
+static Cherry::Component* c_LastComponent;
 static std::unique_ptr<Cherry::Component> c_NextComponent;
-static Cherry::Component *c_CurrentComponent;
+static Cherry::Component* c_CurrentComponent;
 
 static std::string g_ExecutablePath;
 
-static VkAllocationCallbacks *g_Allocator = NULL;
+static VkAllocationCallbacks* g_Allocator = NULL;
 static VkInstance g_Instance = VK_NULL_HANDLE;
 static VkPhysicalDevice g_PhysicalDevice = VK_NULL_HANDLE;
 static VkDevice g_Device = VK_NULL_HANDLE;
@@ -105,7 +105,7 @@ static uint32_t g_QueueFamily = (uint32_t)-1;
 static VkQueue g_Queue = VK_NULL_HANDLE;
 static VkDebugReportCallbackEXT g_DebugReport = VK_NULL_HANDLE;
 static VkPipelineCache g_PipelineCache = VK_NULL_HANDLE;
-static std::unordered_map<std::string, ImFont *> s_Fonts;
+static std::unordered_map<std::string, ImFont*> s_Fonts;
 static VkDescriptorPool g_DescriptorPool = VK_NULL_HANDLE;
 static std::vector<std::shared_ptr<Cherry::AppWindow>> g_TempAppWindows;  // To be able to create app window before create
                                                                           // applications
@@ -138,9 +138,9 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL debug_report(
     uint64_t object,
     size_t location,
     int32_t messageCode,
-    const char *pLayerPrefix,
-    const char *pMessage,
-    void *pUserData) {
+    const char* pLayerPrefix,
+    const char* pMessage,
+    void* pUserData) {
   (void)flags;
   (void)object;
   (void)location;
@@ -153,7 +153,7 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL debug_report(
 }
 #endif  // IMGUI_VULKAN_DEBUG_REPORT
 
-static void glfw_error_callback(int error, const char *description) {
+static void glfw_error_callback(int error, const char* description) {
   fprintf(stderr, "Glfw Error %d: %s\n", error, description);
 }
 
@@ -166,7 +166,7 @@ namespace Cherry {
   enum class EdgeAxis { Leftmost, Rightmost, Topmost, Bottommost };
 
   static std::shared_ptr<Cherry::AppWindow> FindEdgeSiblingAppWindow(
-      const std::shared_ptr<Cherry::AppWindow> &current,
+      const std::shared_ptr<Cherry::AppWindow>& current,
       EdgeAxis edge) {
     if (!current || !s_Instance)
       return nullptr;
@@ -174,7 +174,7 @@ namespace Cherry {
     std::shared_ptr<Cherry::AppWindow> result = nullptr;
     float best = (edge == EdgeAxis::Leftmost || edge == EdgeAxis::Topmost) ? (std::numeric_limits<float>::max)()
                                                                            : (std::numeric_limits<float>::lowest)();
-    for (auto &candidate : s_Instance->GetAppWindows()) {
+    for (auto& candidate : s_Instance->GetAppWindows()) {
       if (!candidate || candidate->m_IdName == current->m_IdName)
         continue;
 
@@ -189,7 +189,7 @@ namespace Cherry {
       if (!candidate->m_WindowRebuilded)
         continue;
 
-      ImGuiWindow *imguiWin = ImGui::FindWindowByName(candidate->m_IdName.c_str());
+      ImGuiWindow* imguiWin = ImGui::FindWindowByName(candidate->m_IdName.c_str());
       if (!imguiWin || !imguiWin->DockNode)
         continue;
 
@@ -205,12 +205,12 @@ namespace Cherry {
     return result;
   }
 
-  static void HandleSnapToEdge(Window *window) {
+  static void HandleSnapToEdge(Window* window) {
     if (!window->GetSpecifications().CustomTitlebar || !window->GetSpecifications().DisableWindowManagerTitleBar)
       return;
 
-    SDL_Window *sdlWin = window->GetWindowHandle();
-    SnapState &snap = window->GetSnapState();
+    SDL_Window* sdlWin = window->GetWindowHandle();
+    SnapState& snap = window->GetSnapState();
     bool isMoving = window->GetIsMoving();
 
     if (!isMoving) {
@@ -316,11 +316,11 @@ namespace Cherry {
     }
   }
 
-  static void ApplySnapOnRelease(Window *window) {
+  static void ApplySnapOnRelease(Window* window) {
     if (!window->GetSpecifications().CustomTitlebar || !window->GetSpecifications().DisableWindowManagerTitleBar)
       return;
 
-    SnapState &snap = window->GetSnapState();
+    SnapState& snap = window->GetSnapState();
 
     if (!snap.isDragging || snap.isSnapped)
       return;
@@ -329,7 +329,7 @@ namespace Cherry {
     if (wasMoving)
       return;  // not released yet
 
-    SDL_Window *sdlWin = window->GetWindowHandle();
+    SDL_Window* sdlWin = window->GetWindowHandle();
 
     if (snap.snapTarget.w > 0) {
       SDL_SetWindowPosition(sdlWin, snap.snapTarget.x, snap.snapTarget.y);
@@ -342,7 +342,7 @@ namespace Cherry {
     snap.isDragging = false;
   }
 
-  Application::Application(const ApplicationSpecification &specification) : m_DefaultSpecification(specification) {
+  Application::Application(const ApplicationSpecification& specification) : m_DefaultSpecification(specification) {
     s_Instance = this;
     m_RootPath = Application::CookPath("");
 
@@ -393,7 +393,7 @@ namespace Cherry {
     Shutdown();
   }
 
-  void Application::SetMasterSwapChainRebuild(const bool &new_state) {
+  void Application::SetMasterSwapChainRebuild(const bool& new_state) {
     c_MasterSwapChainRebuild = new_state;
   }
 
@@ -401,7 +401,7 @@ namespace Cherry {
     c_WindowsCount++;
   }
 
-  void Application::SetupVulkan(const char **extensions, uint32_t extensions_count) {
+  void Application::SetupVulkan(const char** extensions, uint32_t extensions_count) {
     VkResult err;
 
     // Create Vulkan Instance
@@ -412,14 +412,14 @@ namespace Cherry {
       create_info.ppEnabledExtensionNames = extensions;
 #ifdef IMGUI_VULKAN_DEBUG_REPORT
       // Enabling validation layers
-      const char *layers[] = { "VK_LAYER_KHRONOS_validation" };
+      const char* layers[] = { "VK_LAYER_KHRONOS_validation" };
       create_info.enabledLayerCount = 1;
       create_info.ppEnabledLayerNames = layers;
 
       // Enable debug report extension (we need additional storage, so we
       // duplicate the user array to add our new extension to it)
-      const char **extensions_ext = (const char **)malloc(sizeof(const char *) * (extensions_count + 1));
-      memcpy(extensions_ext, extensions, extensions_count * sizeof(const char *));
+      const char** extensions_ext = (const char**)malloc(sizeof(const char*) * (extensions_count + 1));
+      memcpy(extensions_ext, extensions, extensions_count * sizeof(const char*));
       extensions_ext[extensions_count] = "VK_EXT_debug_report";
       create_info.enabledExtensionCount = extensions_count + 1;
       create_info.ppEnabledExtensionNames = extensions_ext;
@@ -458,7 +458,7 @@ namespace Cherry {
       check_vk_result(err);
       IM_ASSERT(gpu_count > 0);
 
-      VkPhysicalDevice *gpus = (VkPhysicalDevice *)malloc(sizeof(VkPhysicalDevice) * gpu_count);
+      VkPhysicalDevice* gpus = (VkPhysicalDevice*)malloc(sizeof(VkPhysicalDevice) * gpu_count);
       err = vkEnumeratePhysicalDevices(g_Instance, &gpu_count, gpus);
       check_vk_result(err);
 
@@ -484,7 +484,7 @@ namespace Cherry {
     if (!g_LogicalDeviceInitialized) {
       uint32_t count;
       vkGetPhysicalDeviceQueueFamilyProperties(g_PhysicalDevice, &count, NULL);
-      VkQueueFamilyProperties *queues = (VkQueueFamilyProperties *)malloc(sizeof(VkQueueFamilyProperties) * count);
+      VkQueueFamilyProperties* queues = (VkQueueFamilyProperties*)malloc(sizeof(VkQueueFamilyProperties) * count);
       vkGetPhysicalDeviceQueueFamilyProperties(g_PhysicalDevice, &count, queues);
       for (uint32_t i = 0; i < count; i++)
         if (queues[i].queueFlags & VK_QUEUE_GRAPHICS_BIT) {
@@ -498,7 +498,7 @@ namespace Cherry {
     // Create Logical Device (with 1 queue)
     if (!g_LogicalDeviceInitialized) {
       int device_extension_count = 1;
-      const char *device_extensions[] = { "VK_KHR_swapchain" };
+      const char* device_extensions[] = { "VK_KHR_swapchain" };
       const float queue_priority[] = { 1.0f };
       VkDeviceQueueCreateInfo queue_info[1] = {};
       queue_info[0].sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
@@ -544,11 +544,11 @@ namespace Cherry {
   // All the ImGui_ImplVulkanH_XXX structures/functions are optional helpers used
   // by the demo. Your real engine/app may not use them.
   void Application::SetupVulkanWindow(
-      ImGui_ImplVulkanH_Window *wd,
+      ImGui_ImplVulkanH_Window* wd,
       VkSurfaceKHR surface,
       int width,
       int height,
-      Cherry::Window *win) {
+      Cherry::Window* win) {
     wd->Surface = surface;
 
     // Check for WSI support
@@ -589,7 +589,7 @@ namespace Cherry {
         g_Instance, g_PhysicalDevice, g_Device, wd, g_QueueFamily, g_Allocator, width, height, g_MinImageCount);
   }
 
-  void Application::CleanupVulkanWindow(Cherry::Window *win) {
+  void Application::CleanupVulkanWindow(Cherry::Window* win) {
     if (!win)
       return;
 
@@ -600,11 +600,11 @@ namespace Cherry {
     win->SetSurface(VK_NULL_HANDLE);
   }
 
-  void Application::CleanupSpecificVulkanWindow(Cherry::Window *win) {
+  void Application::CleanupSpecificVulkanWindow(Cherry::Window* win) {
     CleanupVulkanWindow(win);
   }
 
-  void Application::CleanupVulkan(Cherry::Window *win) {
+  void Application::CleanupVulkan(Cherry::Window* win) {
     if (g_Device == VK_NULL_HANDLE)
       return;
 
@@ -636,62 +636,62 @@ namespace Cherry {
     }
   }
 
-  Application &Application::Get() {
+  Application& Application::Get() {
     return *s_Instance;
   }
 
-  VkDevice &Application::GetVkDevice() {
+  VkDevice& Application::GetVkDevice() {
     return g_Device;
   }
 
-  VkPhysicalDevice &Application::GetVkPhysicalDevice() {
+  VkPhysicalDevice& Application::GetVkPhysicalDevice() {
     return g_PhysicalDevice;
   }
 
-  uint32_t &Application::GetQueueFamily() {
+  uint32_t& Application::GetQueueFamily() {
     return g_QueueFamily;
   }
 
-  VkQueue &Application::GetVkQueue() {
+  VkQueue& Application::GetVkQueue() {
     return g_Queue;
   }
 
-  VkAllocationCallbacks &Application::GetVkAllocationCallbacks() {
+  VkAllocationCallbacks& Application::GetVkAllocationCallbacks() {
     return *g_Allocator;
   }
 
-  VkDebugReportCallbackEXT &Application::GetVkDebugReportCallbackEXT() {
+  VkDebugReportCallbackEXT& Application::GetVkDebugReportCallbackEXT() {
     return g_DebugReport;
   }
 
   void Application::SetExecutablePath() {
     g_ExecutablePath = "test";
   }
-  std::string &Application::GetExecutablePath() {
+  std::string& Application::GetExecutablePath() {
     return g_ExecutablePath;
   }
 
-  VkPipelineCache &Application::GetVkPipelineCache() {
+  VkPipelineCache& Application::GetVkPipelineCache() {
     return g_PipelineCache;
   }
 
-  VkDescriptorPool &Application::GetVkDescriptorPool() {
+  VkDescriptorPool& Application::GetVkDescriptorPool() {
     return g_DescriptorPool;
   }
 
-  int &Application::GetMinImageCount() {
+  int& Application::GetMinImageCount() {
     return g_MinImageCount;
   }
 
-  std::shared_ptr<Cherry::Window> &Application::GetCurrentRenderedWindow() {
+  std::shared_ptr<Cherry::Window>& Application::GetCurrentRenderedWindow() {
     return c_CurrentRenderedWindow;
   }
 
-  Cherry::Component &Application::GetSafeLastComponent() {
+  Cherry::Component& Application::GetSafeLastComponent() {
     return c_LastComponent ? *c_LastComponent : s_EmptyComponent;
   }
 
-  void Application::SetLastComponent(Component *component) {
+  void Application::SetLastComponent(Component* component) {
     c_LastComponent = component;
   }
 
@@ -699,20 +699,20 @@ namespace Cherry {
     c_LastComponent = nullptr;
   }
 
-  Cherry::Component &Application::GetSafeNextComponent() {
+  Cherry::Component& Application::GetSafeNextComponent() {
     return c_NextComponent ? *c_NextComponent : s_EmptyComponent;
   }
 
-  void Application::RenderComponent(const std::shared_ptr<Component> &component) {
+  void Application::RenderComponent(const std::shared_ptr<Component>& component) {
     if (component)
       component->RenderWrapper();
   }
 
-  void Application::RenderComponent(Component &component) {
+  void Application::RenderComponent(Component& component) {
     component.RenderWrapper();
   }
 
-  void Application::SetNextComponent(Component *component) {
+  void Application::SetNextComponent(Component* component) {
     if (component) {
       c_NextComponent = std::make_unique<Component>(*component);
     } else {
@@ -724,11 +724,11 @@ namespace Cherry {
     c_NextComponent = std::make_unique<Cherry::Component>(s_EmptyComponent);
   }
 
-  Cherry::Component &Application::GetSafeCurrentComponent() {
+  Cherry::Component& Application::GetSafeCurrentComponent() {
     return c_CurrentComponent ? *c_CurrentComponent : s_EmptyComponent;
   }
 
-  void Application::SetCurrentComponent(Component *component) {
+  void Application::SetCurrentComponent(Component* component) {
     c_CurrentComponent = component;
   }
 
@@ -736,7 +736,7 @@ namespace Cherry {
     c_CurrentComponent = nullptr;
   }
 
-  std::shared_ptr<Cherry::AppWindow> &Application::GetCurrentRenderedAppWindow() {
+  std::shared_ptr<Cherry::AppWindow>& Application::GetCurrentRenderedAppWindow() {
     return c_CurrentRenderedAppWindow;
   }
 
@@ -744,75 +744,75 @@ namespace Cherry {
     c_CurrentRenderedAppWindow = appWindow;
   }
 
-  Cherry::Window &Application::GetSafeCurrentRenderedWindow() {
+  Cherry::Window& Application::GetSafeCurrentRenderedWindow() {
     return c_CurrentRenderedWindow ? *c_CurrentRenderedWindow : s_EmptyWindow;
   }
 
-  Cherry::AppWindow &Application::GetSafeCurrentRenderedAppWindow() {
+  Cherry::AppWindow& Application::GetSafeCurrentRenderedAppWindow() {
     return c_CurrentRenderedAppWindow ? *c_CurrentRenderedAppWindow : s_EmptyAppWindow;
   }
 
-  std::shared_ptr<Cherry::WindowDragDropState> &Application::GetCurrentDragDropState() {
+  std::shared_ptr<Cherry::WindowDragDropState>& Application::GetCurrentDragDropState() {
     return c_CurrentDragDropState;
   }
 
-  bool &Application::GetDockIsDragging() {
+  bool& Application::GetDockIsDragging() {
     return c_DockIsDragging;
   }
 
-  std::string &Application::GetLastWindowPressed() {
+  std::string& Application::GetLastWindowPressed() {
     return LastWindowPressed;
   }
 
-  std::vector<std::shared_ptr<Cherry::AppWindow>> &Application::GetTempAppWindows() {
+  std::vector<std::shared_ptr<Cherry::AppWindow>>& Application::GetTempAppWindows() {
     return g_TempAppWindows;
   }
 
-  std::vector<std::pair<std::string, std::pair<std::string, float>>> &Application::GetCustomFonts() {
+  std::vector<std::pair<std::string, std::pair<std::string, float>>>& Application::GetCustomFonts() {
     return m_CustomFonts;
   }
 
-  bool &Application::GetValidDropZoneFounded() {
+  bool& Application::GetValidDropZoneFounded() {
     return c_ValidDropZoneFounded;
   }
 
-  void Application::SetValidDropZoneFounded(const bool &founded) {
+  void Application::SetValidDropZoneFounded(const bool& founded) {
     c_ValidDropZoneFounded = founded;
   }
 
-  void Application::SetCurrentDragDropState(const std::shared_ptr<Cherry::WindowDragDropState> &state) {
+  void Application::SetCurrentDragDropState(const std::shared_ptr<Cherry::WindowDragDropState>& state) {
     c_CurrentDragDropState = state;
   }
 
-  void Application::SetCurrentDragDropStateDragOwner(const std::string &new_name) {
+  void Application::SetCurrentDragDropStateDragOwner(const std::string& new_name) {
     c_CurrentDragDropState->DragOwner = new_name;
   }
 
-  void Application::SetCurrentDragDropStateDockIsDragging(const bool &is_dragging) {
+  void Application::SetCurrentDragDropStateDockIsDragging(const bool& is_dragging) {
     c_CurrentDragDropState->DockIsDragging = is_dragging;
   }
 
-  void Application::SetCurrentDragDropStateAppWindow(const std::string &new_name) {
+  void Application::SetCurrentDragDropStateAppWindow(const std::string& new_name) {
     c_CurrentDragDropState->LastDraggingAppWindow = new_name;
   }
 
-  void Application::SetCurrentDragDropStateAppWindowHost(const std::string &new_name) {
+  void Application::SetCurrentDragDropStateAppWindowHost(const std::string& new_name) {
     c_CurrentDragDropState->LastDraggingAppWindowHost = new_name;
   }
 
-  void Application::SetCurrentDragDropStateWindow(const std::string &new_name) {
+  void Application::SetCurrentDragDropStateWindow(const std::string& new_name) {
     c_CurrentDragDropState->LastDraggingWindow = new_name;
   }
 
-  void Application::SetLastWindowPressed(const std::string &name) {
+  void Application::SetLastWindowPressed(const std::string& name) {
     LastWindowPressed = name;
   }
 
-  void Application::SetCurrentDragDropStateDraggingPlace(const DockEmplacement &place) {
+  void Application::SetCurrentDragDropStateDraggingPlace(const DockEmplacement& place) {
     c_CurrentDragDropState->LastDraggingPlace = place;
   }
 
-  std::unordered_map<std::string, ImFont *> &Application::GetFontList() {
+  std::unordered_map<std::string, ImFont*>& Application::GetFontList() {
     return s_Fonts;
   }
 
@@ -820,7 +820,7 @@ namespace Cherry {
     g_ProcessCallbacks.push_back({ process, callback });
   }
 
-  const std::unordered_map<CherryKey, SDL_Scancode> &Application::GetKeyMap() {
+  const std::unordered_map<CherryKey, SDL_Scancode>& Application::GetKeyMap() {
     static std::unordered_map<CherryKey, SDL_Scancode> keyMap = { { CherryKey::A, SDL_SCANCODE_A },
                                                                   { CherryKey::B, SDL_SCANCODE_B },
                                                                   { CherryKey::C, SDL_SCANCODE_C },
@@ -991,7 +991,7 @@ namespace Cherry {
     }
   }
 
-  void Application::PushRedockEvent(const std::shared_ptr<Cherry::WindowDragDropState> &state, const bool &exclude_childs) {
+  void Application::PushRedockEvent(const std::shared_ptr<Cherry::WindowDragDropState>& state, const bool& exclude_childs) {
     for (auto app_win : s_Instance->m_AppWindows) {
       if (app_win->m_IdName == state->LastDraggingAppWindowHost) {
         if (exclude_childs) {
@@ -1017,7 +1017,7 @@ namespace Cherry {
           app_win->SetParentWindow(state->LastDraggingWindow);
         }
 
-        for (auto &child : s_Instance->m_AppWindows) {
+        for (auto& child : s_Instance->m_AppWindows) {
           if (!child)
             continue;
           if (child->m_HaveParentAppWindow) {
@@ -1067,7 +1067,7 @@ namespace Cherry {
     return m_HttpCacheFolderName;
   }
 
-  void Application::SetHttpCacheFolderName(const std::string &name) {
+  void Application::SetHttpCacheFolderName(const std::string& name) {
     m_HttpCacheFolderName = name;
   }
 
@@ -1085,7 +1085,7 @@ namespace Cherry {
             name, app->m_DefaultSpecification.Width, app->m_DefaultSpecification.Height, app->m_DefaultSpecification));
   }
 
-  std::atomic<bool> &Application::RunningState() {
+  std::atomic<bool>& Application::RunningState() {
     static std::atomic<bool> running{ true };
     return running;
   }
@@ -1095,7 +1095,7 @@ namespace Cherry {
   }
 
 #ifdef CHERRY_DEBUG
-  std::atomic<bool> &Application::DebugToolState() {
+  std::atomic<bool>& Application::DebugToolState() {
     static std::atomic<bool> devtools{ true };
     return devtools;
   }
@@ -1141,7 +1141,7 @@ namespace Cherry {
     }
 
     for (size_t i = 0; i < m_Windows.size(); ++i) {
-      auto &window = m_Windows[i];
+      auto& window = m_Windows[i];
       if (!window)
         continue;
 
@@ -1165,7 +1165,7 @@ namespace Cherry {
       CleanupVulkan(nullptr);
     }
 
-    for (auto &window : m_Windows) {
+    for (auto& window : m_Windows) {
       if (window) {
         window->GetImageMap().clear();
         window->GetHexImageMap().clear();
@@ -1178,7 +1178,7 @@ namespace Cherry {
     s_Instance = nullptr;
   }
 
-  void Application::FrameRender(ImGui_ImplVulkanH_Window *wd, Cherry::Window *win, ImDrawData *draw_data) {
+  void Application::FrameRender(ImGui_ImplVulkanH_Window* wd, Cherry::Window* win, ImDrawData* draw_data) {
     VkResult err;
     VkSemaphore image_acquired_semaphore = wd->FrameSemaphores[wd->SemaphoreIndex].ImageAcquiredSemaphore;
     VkSemaphore render_complete_semaphore = wd->FrameSemaphores[wd->SemaphoreIndex].RenderCompleteSemaphore;
@@ -1194,7 +1194,7 @@ namespace Cherry {
 
     check_vk_result(err);
 
-    ImGui_ImplVulkanH_Frame *fd = &wd->Frames[wd->FrameIndex];
+    ImGui_ImplVulkanH_Frame* fd = &wd->Frames[wd->FrameIndex];
 
     win->GetCurrentFrameIndex() = (win->GetCurrentFrameIndex() + 1) % win->GetWinData()->ImageCount;
 
@@ -1250,7 +1250,7 @@ namespace Cherry {
     }
   }
 
-  void Application::FramePresent(ImGui_ImplVulkanH_Window *wd, Cherry::Window *win) {
+  void Application::FramePresent(ImGui_ImplVulkanH_Window* wd, Cherry::Window* win) {
     if (win->GetSwapChainRebuild())
       return;
     VkSemaphore render_complete_semaphore = wd->FrameSemaphores[wd->SemaphoreIndex].RenderCompleteSemaphore;
@@ -1279,7 +1279,7 @@ namespace Cherry {
       name = CertifyWindowName(spec.DefaultWindowName);
     }
 
-    ImGuiContext *res_ctx = ImGui::GetCurrentContext();
+    ImGuiContext* res_ctx = ImGui::GetCurrentContext();
 
     std::shared_ptr<Window> new_win = std::make_shared<Window>(name, spec.Width, spec.Height, spec);
 
@@ -1290,10 +1290,10 @@ namespace Cherry {
     return name;
   }
 
-  void Application::SpawnWindow(const std::string &winname, ApplicationSpecification spec) {
+  void Application::SpawnWindow(const std::string& winname, ApplicationSpecification spec) {
     std::string name = CertifyWindowName(winname);
 
-    ImGuiContext *res_ctx = ImGui::GetCurrentContext();
+    ImGuiContext* res_ctx = ImGui::GetCurrentContext();
 
     std::shared_ptr<Window> new_win = std::make_shared<Window>(name, spec.Width, spec.Height, spec);
 
@@ -1311,7 +1311,7 @@ namespace Cherry {
       name = CertifyWindowName(app->m_DefaultSpecification.DefaultWindowName);
     }
 
-    ImGuiContext *res_ctx = ImGui::GetCurrentContext();
+    ImGuiContext* res_ctx = ImGui::GetCurrentContext();
 
     std::shared_ptr<Window> new_win = std::make_shared<Window>(
         name, app->m_DefaultSpecification.Width, app->m_DefaultSpecification.Height, app->m_DefaultSpecification);
@@ -1322,10 +1322,10 @@ namespace Cherry {
     return name;
   }
 
-  void Application::SpawnWindow(const std::string &winname) {
+  void Application::SpawnWindow(const std::string& winname) {
     std::string name = CertifyWindowName(winname);
 
-    ImGuiContext *res_ctx = ImGui::GetCurrentContext();
+    ImGuiContext* res_ctx = ImGui::GetCurrentContext();
 
     std::shared_ptr<Window> new_win = std::make_shared<Window>(
         name, app->m_DefaultSpecification.Width, app->m_DefaultSpecification.Height, app->m_DefaultSpecification);
@@ -1335,7 +1335,7 @@ namespace Cherry {
     ImGui::SetCurrentContext(res_ctx);
   }
 
-  void Application::UnspawnWindow(const std::string &name) {
+  void Application::UnspawnWindow(const std::string& name) {
     for (auto window : m_Windows) {
       if (name == window->GetName()) {
         // TODO Unspawn window
@@ -1348,7 +1348,7 @@ namespace Cherry {
       if (s_Instance->m_PreviousSaveData.find("data") != s_Instance->m_PreviousSaveData.end()) {
         auto windowsJson = s_Instance->m_PreviousSaveData["data"].value("windows", nlohmann::json::array());
 
-        for (const auto &appWindowJson : windowsJson) {
+        for (const auto& appWindowJson : windowsJson) {
           std::string appWindowName = appWindowJson.value("name", "");
           std::string dockPlace = appWindowJson.value("dockplace", "");
           std::string type = appWindowJson.value("type", "");
@@ -1396,7 +1396,7 @@ namespace Cherry {
 
     nlohmann::json appWindowsJson = nlohmann::json::array();
 
-    for (auto &app_window : s_Instance->m_AppWindows) {
+    for (auto& app_window : s_Instance->m_AppWindows) {
       std::string dockspace_state = "default";
       std::string docknodeparent = "default";
 
@@ -1423,7 +1423,7 @@ namespace Cherry {
       nlohmann::json simpleStorage = nlohmann::json::array();
       nlohmann::json windowStorage = nlohmann::json::array();
 
-      for (auto &window_storage_item : app_window->DumpWindowStorage()) {
+      for (auto& window_storage_item : app_window->DumpWindowStorage()) {
         if (window_storage_item.second->m_Persistant) {
           nlohmann::json item;
           item["key"] = window_storage_item.first;
@@ -1432,7 +1432,7 @@ namespace Cherry {
         }
       }
 
-      for (auto &simple_storage_item : app_window->DumpSimpleStorage()) {
+      for (auto& simple_storage_item : app_window->DumpSimpleStorage()) {
         if (simple_storage_item.second->m_Persistant) {
           nlohmann::json item;
           item["key"] = simple_storage_item.first;
@@ -1462,7 +1462,7 @@ namespace Cherry {
 
   std::vector<std::shared_ptr<AppWindow>> Application::GetLastSaveInstanciableAppWindows() {
     std::vector<std::shared_ptr<AppWindow>> results;
-    for (auto &savedappwins : Application::Get().m_SavedAppWindows) {
+    for (auto& savedappwins : Application::Get().m_SavedAppWindows) {
       if (savedappwins->m_AppWindowType == AppWindowTypes::InstanciableWindow) {
         results.push_back(savedappwins);
       }
@@ -1474,7 +1474,7 @@ namespace Cherry {
     if (s_Instance->m_DefaultSpecification.RenderMode == WindowRenderingMethod::DockingWindows ||
         s_Instance->m_DefaultSpecification.RenderMode == WindowRenderingMethod::TabWidows ||
         s_Instance->m_DefaultSpecification.RenderMode == WindowRenderingMethod::SimpleWindow) {
-      for (auto &appwin : s_Instance->m_AppWindows) {
+      for (auto& appwin : s_Instance->m_AppWindows) {
         bool dockplace_initialized = false;
         bool parent_initialized = false;
         bool win_initialized = false;
@@ -1485,7 +1485,7 @@ namespace Cherry {
           dragdropstate->LastDraggingAppWindowHost = appwin->m_IdName;
           dragdropstate->FromSave = true;
           LastWindowPressed = dragdropstate->LastDraggingAppWindowHost;
-          for (auto &savedappwin : s_Instance->m_SavedAppWindows) {
+          for (auto& savedappwin : s_Instance->m_SavedAppWindows) {
             if (appwin->m_IdName == savedappwin->m_IdName) {
               if (savedappwin->GetFetchedSaveData("docknodeparent") != "undefined") {
                 dragdropstate->LastDraggingAppWindow = savedappwin->GetFetchedSaveData("docknodeparent");
@@ -1529,7 +1529,7 @@ namespace Cherry {
                 appwin->m_WinParent = savedappwin->GetFetchedSaveData("win");
 
                 bool is_win_existing = false;
-                for (auto &win : s_Instance->m_Windows) {
+                for (auto& win : s_Instance->m_Windows) {
                   if (win->GetName() == appwin->GetFetchedSaveData("win")) {
                     is_win_existing = true;
                   }
@@ -1568,7 +1568,7 @@ namespace Cherry {
           }
 
           bool win_finded = false;
-          for (auto &win : s_Instance->m_Windows) {
+          for (auto& win : s_Instance->m_Windows) {
             if (dragdropstate->LastDraggingWindow == win->GetName()) {
               win_finded = true;
             }
@@ -1593,7 +1593,7 @@ namespace Cherry {
     if (s_Instance->m_DefaultSpecification.RenderMode == WindowRenderingMethod::DockingWindows ||
         s_Instance->m_DefaultSpecification.RenderMode == WindowRenderingMethod::TabWidows ||
         s_Instance->m_DefaultSpecification.RenderMode == WindowRenderingMethod::SimpleWindow) {
-      for (auto &appwin : s_Instance->m_AppWindows) {
+      for (auto& appwin : s_Instance->m_AppWindows) {
         if (!appwin->m_WindowRebuilded) {
           bool dockplace_initialized = false;
           bool parent_initialized = false;
@@ -1611,8 +1611,8 @@ namespace Cherry {
 
             std::string defaultDocking = appwin->GetDefaultBehavior(DefaultAppWindowBehaviors::DefaultDocking);
 
-            auto findSiblingByBehavior = [&](const std::string &targetBehavior) -> std::shared_ptr<AppWindow> {
-              for (auto &candidate : s_Instance->m_AppWindows) {
+            auto findSiblingByBehavior = [&](const std::string& targetBehavior) -> std::shared_ptr<AppWindow> {
+              for (auto& candidate : s_Instance->m_AppWindows) {
                 if (!candidate || candidate->m_IdName == appwin->m_IdName)
                   continue;
                 if (!candidate->m_WindowRebuilded)
@@ -1740,7 +1740,7 @@ namespace Cherry {
     }
   }
 
-  void Application::ApplyDockingFromPreviousState(const std::shared_ptr<Cherry::AppWindow> &appwin) {
+  void Application::ApplyDockingFromPreviousState(const std::shared_ptr<Cherry::AppWindow>& appwin) {
     bool dockplace_initialized = false;
     bool parent_initialized = false;
     bool win_initialized = false;
@@ -1756,7 +1756,7 @@ namespace Cherry {
       dragdropstate->LastDraggingAppWindow = appwin->m_PreviousDockingAppWindow;
     }
 
-    for (auto &window : s_Instance->m_Windows) {
+    for (auto& window : s_Instance->m_Windows) {
       if (appwin->CheckWinParent(window->GetName())) {
         dragdropstate->LastDraggingWindow = window->GetName();
         dragdropstate->DragOwner = window->GetName();
@@ -1804,12 +1804,12 @@ namespace Cherry {
     c_CurrentDragDropState->CreateNewWindow = false;
   }
 
-  void Application::SetCurrentRedockEvent(const std::shared_ptr<Cherry::WindowDragDropState> &state) {
+  void Application::SetCurrentRedockEvent(const std::shared_ptr<Cherry::WindowDragDropState>& state) {
     c_CurrentDragDropState = state;
   }
 
   void Application::PresentAllWindows() {
-    for (auto &window : m_Windows) {
+    for (auto& window : m_Windows) {
       ImGui::SetCurrentContext(window->GetImGuiContext());
 
       bool isMouseOver = (m_MouseHoveredWindow == window->GetWindowHandle());
@@ -1857,7 +1857,7 @@ namespace Cherry {
 
       ImGui::SetCurrentContext(window->GetImGuiContext());
 
-      ImGuiIO &inputIO = ImGui::GetIO();
+      ImGuiIO& inputIO = ImGui::GetIO();
       const bool prevTrickling = inputIO.ConfigInputTrickleEventQueue;
       if (prevTrickling && inputIO.WantTextInput) {
         inputIO.ConfigInputTrickleEventQueue = false;
@@ -1896,9 +1896,9 @@ namespace Cherry {
           float iconSize = 30.0f;
           ImVec2 p = ImGui::GetCursorScreenPos();
 
-          const std::string &windowId = c_CurrentDragDropState->LastDraggingAppWindowHost;
-          const std::string &logoPath = GetLogoPathForAppWindow(windowId);
-          const std::string &descStr = GetDescriptionForAppWindow(windowId);
+          const std::string& windowId = c_CurrentDragDropState->LastDraggingAppWindowHost;
+          const std::string& logoPath = GetLogoPathForAppWindow(windowId);
+          const std::string& descStr = GetDescriptionForAppWindow(windowId);
 
           std::string title = windowId;
           size_t pos = title.find("####");
@@ -1906,15 +1906,15 @@ namespace Cherry {
             title.erase(pos);
           }
 
-          const char *titleText = title.c_str();
-          const char *descText = descStr.c_str();
+          const char* titleText = title.c_str();
+          const char* descText = descStr.c_str();
           bool hasDesc = (descText && descText[0] != '\0');
 
           if (!logoPath.empty()) {
             ImGui::SetCursorScreenPos(p);
             CherryGUI::Image(Cherry::GetTexture(logoPath), ImVec2(iconSize, iconSize));
           } else {
-            ImDrawList *drawList = ImGui::GetWindowDrawList();
+            ImDrawList* drawList = ImGui::GetWindowDrawList();
             ImU32 colGray = IM_COL32(200, 200, 200, 255);
             ImU32 colAccent = IM_COL32(230, 40, 40, 255);
 
@@ -1961,7 +1961,7 @@ namespace Cherry {
       if (window->GetSpecifications().EnableSnapToEdgeSystem) {
         if (window->GetIsMoving() && window->GetSpecifications().CustomTitlebar &&
             window->GetSpecifications().DisableWindowManagerTitleBar) {
-          SnapState &snap = window->GetSnapState();
+          SnapState& snap = window->GetSnapState();
           HandleSnapToEdge(window.get());
 
           if (snap.snapTarget.w > 0) {
@@ -1993,10 +1993,10 @@ namespace Cherry {
 
       window->UnloadTheme();
 
-      ImGui_ImplVulkanH_Window *wd = window->GetWinData();
-      ImGuiIO &io = ImGui::GetIO();
+      ImGui_ImplVulkanH_Window* wd = window->GetWinData();
+      ImGuiIO& io = ImGui::GetIO();
       ImGui::Render();
-      ImDrawData *main_draw_data = ImGui::GetDrawData();
+      ImDrawData* main_draw_data = ImGui::GetDrawData();
       const bool main_is_minimized = (main_draw_data->DisplaySize.x <= 0.0f || main_draw_data->DisplaySize.y <= 0.0f);
 
       if (!main_is_minimized) {
@@ -2020,14 +2020,14 @@ namespace Cherry {
   }
 
 #ifndef _WIN32
-  std::string Application::CertifyWindowName(const std::string &name) {
+  std::string Application::CertifyWindowName(const std::string& name) {
     int max_suffix = 0;
     bool name_exists = false;
 
     std::regex suffix_regex(R"(^(.*?)(?: <(\d+)>)?$)");
     std::smatch match;
 
-    for (const auto &win : s_Instance->m_Windows) {
+    for (const auto& win : s_Instance->m_Windows) {
       std::string window_name = win->GetName();
 
       if (std::regex_match(window_name, match, suffix_regex)) {
@@ -2056,14 +2056,14 @@ namespace Cherry {
 #endif
 
 #ifdef _WIN32
-  std::string Application::CertifyWindowName(const std::string &name) {
+  std::string Application::CertifyWindowName(const std::string& name) {
     int max_suffix = 0;
     bool name_exists = false;
 
     std::regex suffix_regex(R"(^(.*?)(?: <(\d+)>)?$)");
     std::smatch match;
 
-    for (const auto &win : s_Instance->m_Windows) {
+    for (const auto& win : s_Instance->m_Windows) {
       std::string window_name = win->GetName();
 
       if (std::regex_match(window_name, match, suffix_regex)) {
@@ -2091,7 +2091,7 @@ namespace Cherry {
   }
 #endif
 
-  void Application::CleanupWindowIfEmpty(const std::shared_ptr<Window> &win) {
+  void Application::CleanupWindowIfEmpty(const std::shared_ptr<Window>& win) {
     if (!win || m_Windows.size() <= 1) {
       return;
     }
@@ -2101,7 +2101,7 @@ namespace Cherry {
         win->GetSpecifications().RenderMode == WindowRenderingMethod::SimpleWindow) {
       int app_wins_inside = 0;
 
-      for (const auto &app_win : m_AppWindows) {
+      for (const auto& app_win : m_AppWindows) {
         if (app_win->CheckWinParent(win->GetName())) {
           app_wins_inside++;
         }
@@ -2190,7 +2190,7 @@ namespace Cherry {
         }
       }
 
-      for (auto &window : m_Windows) {
+      for (auto& window : m_Windows) {
         if (window->GetSpecifications().FavIconPath != window->GetSpecifications().LastFavIconPath) {
           window->SetFavIcon(window->GetSpecifications().FavIconPath);
           window->GetSpecifications().LastFavIconPath = window->GetSpecifications().FavIconPath;
@@ -2209,12 +2209,12 @@ namespace Cherry {
       SDL_Event event;
 
       while (SDL_PollEvent(&event)) {
-        SDL_Window *focusedWindow = SDL_GetMouseFocus();
+        SDL_Window* focusedWindow = SDL_GetMouseFocus();
         Uint32 focusedWindowID = focusedWindow ? SDL_GetWindowID(focusedWindow) : 0;
 
         bool eventHandled = false;
 
-        for (auto &window : m_Windows) {
+        for (auto& window : m_Windows) {
           c_CurrentRenderedWindow = window;
           Uint32 windowID = SDL_GetWindowID(window->GetWindowHandle());
 
@@ -2257,15 +2257,15 @@ namespace Cherry {
       if (s_Instance->m_DefaultSpecification.RenderMode == WindowRenderingMethod::DockingWindows ||
           Application::GetCurrentRenderedWindow()->GetSpecifications().RenderMode == WindowRenderingMethod::TabWidows ||
           Application::GetCurrentRenderedWindow()->GetSpecifications().RenderMode == WindowRenderingMethod::SimpleWindow) {
-        for (auto &req : m_RedockRequests) {
+        for (auto& req : m_RedockRequests) {
           if (req->m_IsObsolete) {
             continue;
           }
 
-          for (auto &app_win : m_AppWindows) {
+          for (auto& app_win : m_AppWindows) {
             if (req->m_ParentAppWindowHost == app_win->m_IdName) {
               bool parentFound = false;
-              for (auto &win : m_Windows) {
+              for (auto& win : m_Windows) {
                 if (win->GetName() == req->m_ParentWindow) {
                   app_win->SetParentWindow(win->GetName());
 
@@ -2286,7 +2286,7 @@ namespace Cherry {
       if (s_Instance->m_DefaultSpecification.RenderMode == WindowRenderingMethod::DockingWindows ||
           Application::GetCurrentRenderedWindow()->GetSpecifications().RenderMode == WindowRenderingMethod::TabWidows ||
           Application::GetCurrentRenderedWindow()->GetSpecifications().RenderMode == WindowRenderingMethod::SimpleWindow) {
-        for (auto &appwin : s_Instance->m_AppWindows) {
+        for (auto& appwin : s_Instance->m_AppWindows) {
           if (!AppWindowRedocked) {
             if (!appwin->m_AttachRequest.m_IsFinished) {
               std::string win = Application::Get().SpawnWindow(appwin->m_AttachRequest.m_Specification);
@@ -2313,7 +2313,7 @@ namespace Cherry {
       // Erase empty main windows
       // CleanupEmptyWindows();
 
-      for (auto &appwin : s_Instance->m_AppWindows) {
+      for (auto& appwin : s_Instance->m_AppWindows) {
         appwin->m_WindowJustRebuilded = false;
       }
 
@@ -2348,7 +2348,7 @@ namespace Cherry {
       while (SDL_PollEvent(&event)) {
         bool eventHandled = false;
 
-        SDL_Window *inputTargetSDLWindow = nullptr;
+        SDL_Window* inputTargetSDLWindow = nullptr;
 
         switch (event.type) {
           case SDL_MOUSEBUTTONDOWN:
@@ -2370,10 +2370,10 @@ namespace Cherry {
           }
         }
 
-        ImGuiContext *inputTargetContext = nullptr;
+        ImGuiContext* inputTargetContext = nullptr;
 
         if (inputTargetSDLWindow) {
-          for (auto &window : m_Windows) {
+          for (auto& window : m_Windows) {
             if (window->GetWindowHandle() == inputTargetSDLWindow) {
               inputTargetContext = window->GetImGuiContext();
               break;
@@ -2381,11 +2381,11 @@ namespace Cherry {
           }
 
           if (!inputTargetContext) {
-            for (auto &window : m_Windows) {
+            for (auto& window : m_Windows) {
               ImGui::SetCurrentContext(window->GetImGuiContext());
-              ImGuiPlatformIO &pio = ImGui::GetPlatformIO();
-              for (ImGuiViewport *vp : pio.Viewports) {
-                if (vp->PlatformHandle == (void *)inputTargetSDLWindow) {
+              ImGuiPlatformIO& pio = ImGui::GetPlatformIO();
+              for (ImGuiViewport* vp : pio.Viewports) {
+                if (vp->PlatformHandle == (void*)inputTargetSDLWindow) {
                   inputTargetContext = window->GetImGuiContext();
                   break;
                 }
@@ -2396,7 +2396,7 @@ namespace Cherry {
           }
         }
 
-        for (auto &window : m_Windows) {
+        for (auto& window : m_Windows) {
           c_CurrentRenderedWindow = window;
           Uint32 windowID = SDL_GetWindowID(window->GetWindowHandle());
 
@@ -2426,7 +2426,7 @@ namespace Cherry {
               m_MouseHoveredWindow = SDL_GetWindowFromID(event.window.windowID);
 
             } else if (event.window.event == SDL_WINDOWEVENT_LEAVE) {
-              SDL_Window *leavingWindow = SDL_GetWindowFromID(event.window.windowID);
+              SDL_Window* leavingWindow = SDL_GetWindowFromID(event.window.windowID);
               if (m_MouseHoveredWindow == leavingWindow)
                 m_MouseHoveredWindow = nullptr;
             }
@@ -2487,7 +2487,7 @@ namespace Cherry {
         s_Instance->ApplyDockingFromDefault();
       }
 
-      for (auto &appwin : s_Instance->m_AppWindows) {
+      for (auto& appwin : s_Instance->m_AppWindows) {
         if (appwin->m_WindowNeedRebuild) {
           s_Instance->ApplyDockingFromPreviousState(appwin);
           appwin->m_WindowNeedRebuild = false;
@@ -2500,7 +2500,7 @@ namespace Cherry {
         }
       }
 
-      for (auto &window : m_Windows) {
+      for (auto& window : m_Windows) {
         if (window->GetSpecifications().FavIconPath != window->GetSpecifications().LastFavIconPath) {
           window->SetFavIcon(window->GetSpecifications().FavIconPath);
           window->GetSpecifications().LastFavIconPath = window->GetSpecifications().FavIconPath;
@@ -2513,15 +2513,15 @@ namespace Cherry {
       }
 
       bool AppWindowRedocked = false;
-      for (auto &req : m_RedockRequests) {
+      for (auto& req : m_RedockRequests) {
         if (req->m_IsObsolete) {
           continue;
         }
 
-        for (auto &app_win : m_AppWindows) {
+        for (auto& app_win : m_AppWindows) {
           if (req->m_ParentAppWindowHost == app_win->m_IdName) {
             bool parentFound = false;
-            for (auto &win : m_Windows) {
+            for (auto& win : m_Windows) {
               if (win->GetName() == req->m_ParentWindow) {
                 app_win->SetParentWindow(win->GetName());
 
@@ -2538,7 +2538,7 @@ namespace Cherry {
         }
       }
 
-      for (auto &appwin : s_Instance->m_AppWindows) {
+      for (auto& appwin : s_Instance->m_AppWindows) {
         if (!AppWindowRedocked) {
           if (!appwin->m_AttachRequest.m_IsFinished) {
             std::string win;
@@ -2577,7 +2577,7 @@ namespace Cherry {
         PopTheme();
       }
 
-      for (auto &appwin : s_Instance->m_AppWindows) {
+      for (auto& appwin : s_Instance->m_AppWindows) {
         appwin->m_WindowJustRebuilded = false;
       }
 
@@ -2594,7 +2594,7 @@ namespace Cherry {
     m_Running = false;
   }
 
-  bool Application::IsMaximized(const std::shared_ptr<Window> &win) const {
+  bool Application::IsMaximized(const std::shared_ptr<Window>& win) const {
     Uint32 flags = SDL_GetWindowFlags(win->GetWindowHandle());
     return (flags & SDL_WINDOW_MAXIMIZED) != 0;
   }
@@ -2615,7 +2615,7 @@ namespace Cherry {
     return g_Device;
   }
 
-  std::vector<uint8_t> Application::LoadPngHexa(const std::string &path) {
+  std::vector<uint8_t> Application::LoadPngHexa(const std::string& path) {
     std::ifstream file(path, std::ios::binary);
 
     if (!file) {
@@ -2628,13 +2628,13 @@ namespace Cherry {
 
     std::vector<uint8_t> hexContent(fileSize);
 
-    file.read(reinterpret_cast<char *>(hexContent.data()), fileSize);
+    file.read(reinterpret_cast<char*>(hexContent.data()), fileSize);
 
     return hexContent;
   }
 
-  VkCommandBuffer Application::GetCommandBuffer(bool begin, const std::shared_ptr<Window> &win) {
-    ImGui_ImplVulkanH_Window *wd = win->GetWinData();
+  VkCommandBuffer Application::GetCommandBuffer(bool begin, const std::shared_ptr<Window>& win) {
+    ImGui_ImplVulkanH_Window* wd = win->GetWinData();
 
     VkCommandPool command_pool = wd->Frames[wd->FrameIndex].CommandPool;
 
@@ -2644,7 +2644,7 @@ namespace Cherry {
     cmdBufAllocateInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
     cmdBufAllocateInfo.commandBufferCount = 1;
 
-    VkCommandBuffer &command_buffer = win->GetAllocatedCommandBuffers()[wd->FrameIndex].emplace_back();
+    VkCommandBuffer& command_buffer = win->GetAllocatedCommandBuffers()[wd->FrameIndex].emplace_back();
     auto err = vkAllocateCommandBuffers(g_Device, &cmdBufAllocateInfo, &command_buffer);
 
     VkCommandBufferBeginInfo begin_info = {};
@@ -2682,7 +2682,7 @@ namespace Cherry {
     vkDestroyFence(g_Device, fence, nullptr);
   }
 
-  void Application::SubmitResourceFree(std::function<void()> &&func, const std::string &winname) {
+  void Application::SubmitResourceFree(std::function<void()>&& func, const std::string& winname) {
     for (auto win : app->m_Windows) {
       if (win->GetName() == winname) {
         win->GetResourceFreeQueue()[win->GetCurrentFrameIndex()].emplace_back(func);
@@ -2690,7 +2690,7 @@ namespace Cherry {
     }
   }
 
-  ImFont *Application::GetFont(const std::string &name) {
+  ImFont* Application::GetFont(const std::string& name) {
     auto it = s_Fonts.find(name);
     if (it != s_Fonts.end()) {
       return it->second;
@@ -2699,7 +2699,7 @@ namespace Cherry {
     return nullptr;
   }
 
-  SDL_Window *Application::GetWindowHandle(const std::string &winname) {
+  SDL_Window* Application::GetWindowHandle(const std::string& winname) {
     for (auto win : app->m_Windows) {
       if (winname == win->GetName()) {
         return win->GetWindowHandle();
@@ -2708,7 +2708,7 @@ namespace Cherry {
     return nullptr;
   }
 
-  void Application::HandleResizing(Window *window) {
+  void Application::HandleResizing(Window* window) {
   }
 
   /*std::string Application::GetThemeProperty(const std::string &key) {
@@ -2727,7 +2727,7 @@ namespace Cherry {
     }
   }*/
 
-  Window *Application::GetWindowByHandle(SDL_Window *window_handle) {
+  Window* Application::GetWindowByHandle(SDL_Window* window_handle) {
     for (auto win : this->m_Windows) {
       if (win->GetWindowHandle() == window_handle) {
         return win.get();
@@ -2736,7 +2736,7 @@ namespace Cherry {
     return nullptr;
   }
 
-  unsigned int SimpleHash(const std::string &str) {
+  unsigned int SimpleHash(const std::string& str) {
     unsigned int hash = 0;
     for (char c : str) {
       hash = (hash * 31) + static_cast<unsigned int>(c);
@@ -2753,7 +2753,7 @@ namespace Cherry {
     return IM_COL32(r, g, b, a);
   }
 
-  void Application::SetWindowSaveDataFile(const std::string &input_path, const bool &relative) {
+  void Application::SetWindowSaveDataFile(const std::string& input_path, const bool& relative) {
     std::string path = input_path;
     if (relative) {
       path = std::filesystem::current_path().string() + "/" + path;
@@ -2801,7 +2801,7 @@ namespace Cherry {
     this->m_SaveWindowData = true;
   }
 
-  void Application::PushComponentPool(ComponentsPool *component_pool) {
+  void Application::PushComponentPool(ComponentsPool* component_pool) {
     if (component_pool == nullptr) {
       return;
     }
@@ -2814,11 +2814,11 @@ namespace Cherry {
     }
   }
 
-  std::vector<ComponentsPool *> &Application::GetComponentPoolStack() {
+  std::vector<ComponentsPool*>& Application::GetComponentPoolStack() {
     return m_ComponentPoolStack;
   }
 
-  ComponentsPool *Application::GetComponentPool() {
+  ComponentsPool* Application::GetComponentPool() {
     if (!m_ComponentPoolStack.empty()) {
       return m_ComponentPoolStack.back();
     } else {
@@ -2835,14 +2835,14 @@ namespace Cherry {
     m_ComponentPoolStack.clear();
   }
 
-  void Application::SetDataOnGroup(const std::string &group_name, const std::string &key, const std::string &value) {
+  void Application::SetDataOnGroup(const std::string& group_name, const std::string& key, const std::string& value) {
     for (auto component : CherryApp.GetComponentPool()->IdentifiedComponents) {
       if (component->GetIdentifier().component_group() == group_name) {
         component->SetData(key, value);
       }
     }
   }
-  void Application::SetPropertyOnGroup(const std::string &group_name, const std::string &key, const std::string &value) {
+  void Application::SetPropertyOnGroup(const std::string& group_name, const std::string& key, const std::string& value) {
     for (auto component : CherryApp.GetComponentPool()->IdentifiedComponents) {
       if (component->GetIdentifier().component_group() == group_name) {
         component->SetProperty(key, value);
@@ -2851,8 +2851,8 @@ namespace Cherry {
   }
 
   bool Application::IsKeyPressed(CherryKey key) {
-    const Uint8 *state = SDL_GetKeyboardState(NULL);
-    const auto &keyMap = GetKeyMap();
+    const Uint8* state = SDL_GetKeyboardState(NULL);
+    const auto& keyMap = GetKeyMap();
     auto it = keyMap.find(key);
     return it != keyMap.end() && state[it->second];
   }
@@ -2869,7 +2869,7 @@ namespace Cherry {
     return CherryGUI::IsMouseDoubleClicked(btn);
   }
 
-  void Application::PushCurrentComponent(const std::shared_ptr<Component> &component) {
+  void Application::PushCurrentComponent(const std::shared_ptr<Component>& component) {
     m_PushedCurrentComponent.push_back(component);
   }
 
@@ -2891,15 +2891,19 @@ namespace Cherry {
     return m_PushedCurrentComponent.back();
   }
 
-  void Application::SetTheme(const std::string &theme_name) {
+  void Application::SetTheme(const std::string& theme_name) {
     m_SelectedTheme = theme_name;
+  }
+
+  std::string Application::GetTheme() const {
+    return m_SelectedTheme;
   }
 
   void Application::RemoveTheme() {
     m_SelectedTheme = "undefined";
   }
 
-  void Application::PushComponentGroup(const std::string &groupname) {
+  void Application::PushComponentGroup(const std::string& groupname) {
     m_PushedComponentGroups.push_back(groupname);
   }
 
@@ -2921,11 +2925,11 @@ namespace Cherry {
     return m_PushedComponentGroups.back();
   }
 
-  void Application::AddTheme(const Theme &theme) {
+  void Application::AddTheme(const Theme& theme) {
     m_Themes[theme.GetName()] = theme;
   }
 
-  void Application::RemoveTheme(const std::string &theme_name) {
+  void Application::RemoveTheme(const std::string& theme_name) {
     m_Themes.erase(theme_name);
   }
 
@@ -2933,7 +2937,7 @@ namespace Cherry {
     m_Themes.clear();
   }
 
-  void Application::PushTheme(const std::string &theme_name) {
+  void Application::PushTheme(const std::string& theme_name) {
     auto it = m_Themes.find(theme_name);
     if (it != m_Themes.end()) {
       m_ActiveThemes.push_back(it->second);
@@ -2946,67 +2950,67 @@ namespace Cherry {
     }
   }
 
-  void Application::PurgeNoRenderedComponents(ComponentsPool *pool) {
+  void Application::PurgeNoRenderedComponents(ComponentsPool* pool) {
     if (!pool) {
       pool = &m_ApplicationComponentPool;
     }
 
-    auto &components = pool->IdentifiedComponents;
-    auto &anonymous_components = pool->AnonymousComponents;
+    auto& components = pool->IdentifiedComponents;
+    auto& anonymous_components = pool->AnonymousComponents;
 
     components.erase(
         std::remove_if(
             components.begin(),
             components.end(),
-            [](const std::shared_ptr<Component> &component) { return !component->GetIsComponentRendered(); }),
+            [](const std::shared_ptr<Component>& component) { return !component->GetIsComponentRendered(); }),
         components.end());
 
     anonymous_components.erase(
         std::remove_if(
             anonymous_components.begin(),
             anonymous_components.end(),
-            [](const std::shared_ptr<Component> &component) { return !component->GetIsComponentRendered(); }),
+            [](const std::shared_ptr<Component>& component) { return !component->GetIsComponentRendered(); }),
         anonymous_components.end());
   }
 
-  void Application::RefreshComponentsRenderFlags(ComponentsPool *pool) {
+  void Application::RefreshComponentsRenderFlags(ComponentsPool* pool) {
     if (!pool) {
       pool = &m_ApplicationComponentPool;
     }
 
-    for (auto &component : pool->IdentifiedComponents) {
+    for (auto& component : pool->IdentifiedComponents) {
       component->SetIsComponentRendered(false);
     }
 
-    for (auto &component : pool->AnonymousComponents) {
+    for (auto& component : pool->AnonymousComponents) {
       component->SetIsComponentRendered(false);
     }
   }
 
-  void Application::RefreshComponent(const Identifier &id, ComponentsPool *pool) {
+  void Application::RefreshComponent(const Identifier& id, ComponentsPool* pool) {
     if (!pool) {
       pool = &m_ApplicationComponentPool;
     }
 
-    auto &components = pool->IdentifiedComponents;
+    auto& components = pool->IdentifiedComponents;
 
-    for (const auto &component : components) {
+    for (const auto& component : components) {
       if (component->GetIdentifier() == id) {
         component->Refresh();
       }
     }
   }
 
-  void Application::DestroyComponent(const Identifier &id, ComponentsPool *pool) {
+  void Application::DestroyComponent(const Identifier& id, ComponentsPool* pool) {
     if (!pool) {
       pool = &m_ApplicationComponentPool;
     }
 
-    auto &components = pool->IdentifiedComponents;
+    auto& components = pool->IdentifiedComponents;
 
     size_t beforeSize = components.size();
 
-    auto it = std::remove_if(components.begin(), components.end(), [&id](const std::shared_ptr<Component> &component) {
+    auto it = std::remove_if(components.begin(), components.end(), [&id](const std::shared_ptr<Component>& component) {
       return component->GetIdentifier() == id;
     });
 
@@ -3024,7 +3028,7 @@ namespace Cherry {
     }
   }
 
-  std::string Application::GetThemeProperty(const std::string &theme_name, const std::string &key) {
+  std::string Application::GetThemeProperty(const std::string& theme_name, const std::string& key) {
     auto it = m_Themes.find(theme_name);
     if (it != m_Themes.end()) {
       return it->second.GetProperty(key);
@@ -3032,7 +3036,7 @@ namespace Cherry {
     return "undefined";
   }
 
-  std::string Application::GetActiveThemeProperty(const std::string &key) {
+  std::string Application::GetActiveThemeProperty(const std::string& key) {
     for (auto it = m_ActiveThemes.rbegin(); it != m_ActiveThemes.rend(); ++it) {
       std::string val = it->GetProperty(key);
       if (val != "undefined") {
@@ -3042,7 +3046,7 @@ namespace Cherry {
     return "undefned";
   }
 
-  std::string Application::CookPath(const std::string &input_path) {
+  std::string Application::CookPath(const std::string& input_path) {
     static const std::string root_path = []() {
       std::string path;
 
@@ -3081,16 +3085,16 @@ namespace Cherry {
                                                              : root_path + "/" + std::string(input_path);
   }
 
-  std::string Application::GetComponentData(const Identifier &id, const std::string &topic) {
+  std::string Application::GetComponentData(const Identifier& id, const std::string& topic) {
     if (id.component_array_ptr() != nullptr) {
-      for (const auto &component : id.component_array_ptr()->IdentifiedComponents) {
+      for (const auto& component : id.component_array_ptr()->IdentifiedComponents) {
         if (component->GetIdentifier() == id) {
           return component->GetData(topic);
         }
       }
     } else {
-      ComponentsPool *pool = GetComponentPool();
-      for (const auto &component : pool->IdentifiedComponents) {
+      ComponentsPool* pool = GetComponentPool();
+      for (const auto& component : pool->IdentifiedComponents) {
         if (component->GetIdentifier() == id) {
           return component->GetData(topic);
         }
@@ -3100,7 +3104,7 @@ namespace Cherry {
     return "undefined";
   }
 
-  std::string Application::PutWindow(const std::shared_ptr<AppWindow> &win) {
+  std::string Application::PutWindow(const std::shared_ptr<AppWindow>& win) {
     if (Cherry::IsReady()) {
       m_AppWindows.push_back(win);
     } else {
@@ -3110,15 +3114,15 @@ namespace Cherry {
     return "id";
   }
 
-  void Application::AddFont(const std::string &name, const std::string &ttf_file_path, const float &size) {
+  void Application::AddFont(const std::string& name, const std::string& ttf_file_path, const float& size) {
     m_CustomFonts.push_back({ name, { ttf_file_path, size } });
   };
 
-  void Application::SetFavIconPath(const std::string &icon_path) {
+  void Application::SetFavIconPath(const std::string& icon_path) {
     m_FavIconPath = icon_path;
   }
 
-  void Application::AddLocale(const std::string &locale_name, const std::string &data_path) {
+  void Application::AddLocale(const std::string& locale_name, const std::string& data_path) {
     std::ifstream file(data_path);
     if (file.is_open()) {
       nlohmann::json json_data;
@@ -3126,8 +3130,8 @@ namespace Cherry {
       file.close();
 
       if (m_Locales.find(locale_name) != m_Locales.end()) {
-        auto &existing_locale = m_Locales[locale_name]["locales"];
-        for (const auto &new_item : json_data["locales"]) {
+        auto& existing_locale = m_Locales[locale_name]["locales"];
+        for (const auto& new_item : json_data["locales"]) {
           existing_locale.push_back(new_item);
         }
       } else {
@@ -3136,19 +3140,19 @@ namespace Cherry {
     }
   }
 
-  void Application::SetLocale(const std::string &locale_name) {
+  void Application::SetLocale(const std::string& locale_name) {
     if (m_Locales.find(locale_name) != m_Locales.end()) {
       m_SelectedLocale = locale_name;
     }
   }
 
-  void Application::SetDefaultLocale(const std::string &locale_name) {
+  void Application::SetDefaultLocale(const std::string& locale_name) {
     if (m_Locales.find(locale_name) != m_Locales.end()) {
       m_DefaultLocale = locale_name;
     }
   }
 
-  void Application::PushPermanentProperty(const std::string &property, const std::string &value) {
+  void Application::PushPermanentProperty(const std::string& property, const std::string& value) {
     m_PermanentProperties.push_back({ property, value });
   }
 
@@ -3171,19 +3175,19 @@ namespace Cherry {
     m_OnTimeProperties.clear();
   }
 
-  void Application::RemoveOneTimeProperty(const std::string &key) {
+  void Application::RemoveOneTimeProperty(const std::string& key) {
     m_OnTimeProperties.erase(key);
   }
 
-  const std::unordered_map<std::string, std::string> &Application::GetOneTimeProperties() {
+  const std::unordered_map<std::string, std::string>& Application::GetOneTimeProperties() {
     return m_OnTimeProperties;
   }
 
-  void Application::AddOneTimeProperty(const std::string &property, const std::string &value) {
+  void Application::AddOneTimeProperty(const std::string& property, const std::string& value) {
     m_OnTimeProperties[property] = value;
   }
 
-  void Application::PushParentComponent(const std::shared_ptr<Component> &component) {
+  void Application::PushParentComponent(const std::shared_ptr<Component>& component) {
     m_ParentComponentsStack.push_back(component);
   }
 
@@ -3204,14 +3208,14 @@ namespace Cherry {
     return m_SelectedLocale;
   }
 
-  std::string Application::GetLocale(const std::string &locale_type) {
+  std::string Application::GetLocale(const std::string& locale_type) {
     if (m_SelectedLocale.empty() || m_Locales.find(m_SelectedLocale) == m_Locales.end()) {
       return "locale_undefined";
     }
 
-    const nlohmann::json &current_locale = m_Locales[m_SelectedLocale];
+    const nlohmann::json& current_locale = m_Locales[m_SelectedLocale];
 
-    for (const auto &item : current_locale["locales"]) {
+    for (const auto& item : current_locale["locales"]) {
       if (item.contains(locale_type)) {
         return item[locale_type].get<std::string>();
       }
@@ -3222,9 +3226,9 @@ namespace Cherry {
       return "locale_undefined";
     }
 
-    const nlohmann::json &current_def_locale = m_Locales[m_DefaultLocale];
+    const nlohmann::json& current_def_locale = m_Locales[m_DefaultLocale];
 
-    for (const auto &item : current_def_locale["locales"]) {
+    for (const auto& item : current_def_locale["locales"]) {
       if (item.contains(locale_type)) {
         return item[locale_type].get<std::string>();
       }
@@ -3233,7 +3237,7 @@ namespace Cherry {
     return "locale_undefined";
   }
 
-  void Application::OverrideLocale(const std::string &locale_name, const std::string &data_path) {
+  void Application::OverrideLocale(const std::string& locale_name, const std::string& data_path) {
     std::ifstream file(data_path);
     if (!file.is_open())
       return;
@@ -3247,16 +3251,16 @@ namespace Cherry {
       return;
     }
 
-    auto &existing_locales = m_Locales[locale_name]["locales"];
+    auto& existing_locales = m_Locales[locale_name]["locales"];
 
-    for (const auto &new_item : json_data["locales"]) {
+    for (const auto& new_item : json_data["locales"]) {
       auto new_it = new_item.begin();
-      const std::string &new_key = new_it.key();
-      const auto &new_value = new_it.value();
+      const std::string& new_key = new_it.key();
+      const auto& new_value = new_it.value();
 
       bool replaced = false;
 
-      for (auto &existing_item : existing_locales) {
+      for (auto& existing_item : existing_locales) {
         if (existing_item.contains(new_key)) {
           existing_item[new_key] = new_value;
           replaced = true;
@@ -3270,21 +3274,21 @@ namespace Cherry {
     }
   }
 
-  Identifier Application::GetAnonymousID(const std::string &label) {
+  Identifier Application::GetAnonymousID(const std::string& label) {
     std::size_t label_hash = std::hash<std::string>{}(label);
     return Identifier(std::to_string(label_hash));
   }
 
-  Component &Application::GetAnonymousComponent(const Identifier &identifier) {
+  Component& Application::GetAnonymousComponent(const Identifier& identifier) {
     if (identifier.component_array_ptr() != nullptr) {
-      for (const auto &existing_component : identifier.component_array_ptr()->IdentifiedComponents) {
+      for (const auto& existing_component : identifier.component_array_ptr()->IdentifiedComponents) {
         if (existing_component->GetIdentifier() == identifier) {
           return existing_component ? *existing_component : s_EmptyComponent;
         }
       }
     } else {
-      ComponentsPool *pool = Application::Get().GetComponentPool();
-      for (const auto &existing_component : pool->AnonymousComponents) {
+      ComponentsPool* pool = Application::Get().GetComponentPool();
+      for (const auto& existing_component : pool->AnonymousComponents) {
         if (existing_component->GetIdentifier() == identifier) {
           return existing_component ? *existing_component : s_EmptyComponent;
         }
@@ -3294,12 +3298,12 @@ namespace Cherry {
     return s_EmptyComponent;
   }
 
-  Component &Application::GetComponent(const Identifier &identifier) {
-    auto &components = identifier.component_array_ptr() != nullptr
+  Component& Application::GetComponent(const Identifier& identifier) {
+    auto& components = identifier.component_array_ptr() != nullptr
                            ? identifier.component_array_ptr()->IdentifiedComponents
                            : Application::Get().GetComponentPool()->IdentifiedComponents;
 
-    for (const auto &existing_component : components) {
+    for (const auto& existing_component : components) {
       if (existing_component && existing_component->GetIdentifier() == identifier) {
         return *existing_component;
       }
@@ -3308,12 +3312,12 @@ namespace Cherry {
     return s_EmptyComponent;
   }
 
-  std::shared_ptr<Component> Application::GetComponentPtr(const Identifier &identifier) {
-    auto &components = identifier.component_array_ptr() != nullptr
+  std::shared_ptr<Component> Application::GetComponentPtr(const Identifier& identifier) {
+    auto& components = identifier.component_array_ptr() != nullptr
                            ? identifier.component_array_ptr()->IdentifiedComponents
                            : Application::Get().GetComponentPool()->IdentifiedComponents;
 
-    for (const auto &existing_component : components) {
+    for (const auto& existing_component : components) {
       if (existing_component && existing_component->GetIdentifier() == identifier) {
         return existing_component;
       }
@@ -3322,23 +3326,23 @@ namespace Cherry {
     return nullptr;
   }
 
-  void Application::SetDescriptionForAppWindow(const std::string &windowId, const std::string &description) {
+  void Application::SetDescriptionForAppWindow(const std::string& windowId, const std::string& description) {
     m_AppWindowRegistry[windowId].Description = description;
   }
 
-  void Application::SetCloseCallback(const std::function<void()> &closeCallback) {
+  void Application::SetCloseCallback(const std::function<void()>& closeCallback) {
     m_CloseCallback = closeCallback;
   }
-  void Application::SetMenubarCallback(const std::function<void()> &menubarCallback) {
+  void Application::SetMenubarCallback(const std::function<void()>& menubarCallback) {
     m_MenubarCallback = menubarCallback;
   }
-  void Application::SetFramebarCallback(const std::function<void()> &framebarCallback) {
+  void Application::SetFramebarCallback(const std::function<void()>& framebarCallback) {
     m_FramebarCallback = framebarCallback;
   }
-  void Application::SetCloseCallback(const std::function<bool()> &closeCallback) {
+  void Application::SetCloseCallback(const std::function<bool()>& closeCallback) {
     m_CloseCallback = closeCallback;
   }
-  void Application::SetMainRenderCallback(const std::function<void()> &mainRenderCallback) {
+  void Application::SetMainRenderCallback(const std::function<void()>& mainRenderCallback) {
     m_MainRenderCallback = mainRenderCallback;
   }
 
@@ -3387,11 +3391,11 @@ namespace Cherry {
     return mode != Cherry::RenderMode::None;
   }
 
-  void Application::SetLogoPathForAppWindow(const std::string &windowId, const std::string &path) {
+  void Application::SetLogoPathForAppWindow(const std::string& windowId, const std::string& path) {
     m_AppWindowRegistry[windowId].LogoPath = path;
   }
 
-  const std::string &Application::GetDescriptionForAppWindow(const std::string &windowId) {
+  const std::string& Application::GetDescriptionForAppWindow(const std::string& windowId) {
     auto it = m_AppWindowRegistry.find(windowId);
     if (it != m_AppWindowRegistry.end()) {
       return it->second.Description;
@@ -3400,7 +3404,7 @@ namespace Cherry {
     return defaultDesc;
   }
 
-  const std::string &Application::GetLogoPathForAppWindow(const std::string &windowId) {
+  const std::string& Application::GetLogoPathForAppWindow(const std::string& windowId) {
     auto it = m_AppWindowRegistry.find(windowId);
     if (it != m_AppWindowRegistry.end()) {
       return it->second.LogoPath;
@@ -3411,18 +3415,18 @@ namespace Cherry {
 
   // Simplicity utils
 
-  std::shared_ptr<Cherry::Window> &GetCurrentRenderedWindow() {
+  std::shared_ptr<Cherry::Window>& GetCurrentRenderedWindow() {
     return Application::GetCurrentRenderedWindow();
   }
 
-  void AddAppWindow(const std::shared_ptr<AppWindow> &win) {
+  void AddAppWindow(const std::shared_ptr<AppWindow>& win) {
     if (win) {
       Application::Get().PutWindow(win);
     }
   }
 
-  std::shared_ptr<AppWindow> GetAppWindowByName(const std::string &win_name) {
-    for (auto &appwin : s_Instance->GetAppWindows()) {
+  std::shared_ptr<AppWindow> GetAppWindowByName(const std::string& win_name) {
+    for (auto& appwin : s_Instance->GetAppWindows()) {
       if (appwin->m_IdName == win_name) {
         return appwin;
       }
@@ -3430,8 +3434,8 @@ namespace Cherry {
     return nullptr;
   }
 
-  std::shared_ptr<Window> GetWindowByName(const std::string &win_name) {
-    for (auto &win : s_Instance->GetWindows()) {
+  std::shared_ptr<Window> GetWindowByName(const std::string& win_name) {
+    for (auto& win : s_Instance->GetWindows()) {
       if (win->GetName() == win_name) {
         return win;
       }
@@ -3439,7 +3443,7 @@ namespace Cherry {
     return nullptr;
   }
 
-  void Application::DeleteAppWindow(const std::shared_ptr<AppWindow> &win) {
+  void Application::DeleteAppWindow(const std::shared_ptr<AppWindow>& win) {
     if (win) {
       if (m_AppWindows.size() == 1) {
         EnableNoAppWindowSafety();
@@ -3472,27 +3476,27 @@ namespace Cherry {
     m_NoAppWindowSafetyEnabled = false;
   }
 
-  void DeleteAppWindow(const std::shared_ptr<AppWindow> &win) {
+  void DeleteAppWindow(const std::shared_ptr<AppWindow>& win) {
     Application::Get().DeleteAppWindow(win);
   }
 
-  ImTextureID GetTexture(const std::string &path) {
+  ImTextureID GetTexture(const std::string& path) {
     return Application::Get().GetCurrentRenderedWindow()->GetTexture(path);
   }
 
-  ImVec2 GetTextureSize(const std::string &path) {
+  ImVec2 GetTextureSize(const std::string& path) {
     return Application::Get().GetCurrentRenderedWindow()->GetTextureSize(path);
   }
 
 #ifdef _WIN32
-  std::string convertPathToWindowsStyle(const std::string &path) {
+  std::string convertPathToWindowsStyle(const std::string& path) {
     std::string windowsPath = path;
     std::replace(windowsPath.begin(), windowsPath.end(), '/', '\\');
     return windowsPath;
   }
 #endif
 
-  std::string GetPath(const std::string &path) {
+  std::string GetPath(const std::string& path) {
 #ifdef _WIN32
     return convertPathToWindowsStyle(Application::CookPath(path));
 #else
@@ -3505,14 +3509,14 @@ namespace Cherry {
   static std::unordered_map<std::string, std::string> s_http_ready;
   static std::atomic<bool> s_http_shutdown{ false };
 
-  static size_t WriteCallback(void *contents, size_t size, size_t nmemb, void *userp) {
-    std::ofstream *ofs = static_cast<std::ofstream *>(userp);
+  static size_t WriteCallback(void* contents, size_t size, size_t nmemb, void* userp) {
+    std::ofstream* ofs = static_cast<std::ofstream*>(userp);
     size_t totalSize = size * nmemb;
-    ofs->write(static_cast<char *>(contents), totalSize);
+    ofs->write(static_cast<char*>(contents), totalSize);
     return totalSize;
   }
 
-  static std::string SanitizeUrl(const std::string &url) {
+  static std::string SanitizeUrl(const std::string& url) {
     std::string sanitized;
     for (char c : url) {
       if (std::isalnum(static_cast<unsigned char>(c)) || c == '.' || c == '-') {
@@ -3539,7 +3543,7 @@ namespace Cherry {
       throw std::runtime_error("Failed to get temporary directory path");
     }
 #elif defined(__APPLE__)
-    const char *tmpDir = getenv("TMPDIR");
+    const char* tmpDir = getenv("TMPDIR");
     if (tmpDir) {
       std::string p(tmpDir);
       if (!p.empty() && p.back() == '/')
@@ -3548,7 +3552,7 @@ namespace Cherry {
     }
     return "/tmp";
 #else
-    const char *tmpDir = getenv("TMPDIR");
+    const char* tmpDir = getenv("TMPDIR");
     if (tmpDir) {
       return std::string(tmpDir);
     }
@@ -3567,7 +3571,7 @@ namespace Cherry {
     curl_global_cleanup();
   }
 
-  std::string GetHttpPath(const std::string &url) {
+  std::string GetHttpPath(const std::string& url) {
     std::string cache_path = GetTemporaryDirectory() + "/" + Application::Get().GetHttpCacheFolderName() + "/";
     if (!fs::exists(cache_path)) {
       fs::create_directories(cache_path);
@@ -3587,7 +3591,7 @@ namespace Cherry {
     }
 
     if (s_http_pending.count(url)) {
-      auto &state = s_http_pending[url];
+      auto& state = s_http_pending[url];
       int val = state->load();
       if (val == 1) {
         if (fs::exists(file_path) && fs::file_size(file_path) > 0) {
@@ -3610,7 +3614,7 @@ namespace Cherry {
     s_http_pending[url] = state;
 
     std::thread([url, file_path, state]() {
-      CURL *curl = curl_easy_init();
+      CURL* curl = curl_easy_init();
       if (!curl) {
         std::cerr << "[HTTP] curl_easy_init failed" << std::endl;
         state->store(-1);
@@ -3673,7 +3677,7 @@ namespace Cherry {
   }
 #endif  // CHERRY_ENABLE_NET
 
-  std::string GetLocale(const std::string &topic) {
+  std::string GetLocale(const std::string& topic) {
     return Application::Get().GetLocale(topic);
   }
 
@@ -3698,11 +3702,11 @@ namespace Cherry {
     return 0.0f;
   }
 
-  std::string GetData(const Identifier &id, const std::string topic) {
+  std::string GetData(const Identifier& id, const std::string topic) {
     return CherryApp.GetComponentData(id, topic);
   }
 
-  void PushPermanentProperty(const std::string &property, const std::string &value) {
+  void PushPermanentProperty(const std::string& property, const std::string& value) {
     Application::Get().PushPermanentProperty(property, value);
   }
 
@@ -3710,11 +3714,11 @@ namespace Cherry {
     Application::Get().PopPermanentProperty(number_of_pops);
   }
 
-  void SetNextComponentProperty(const std::string &property, const std::string &value) {
+  void SetNextComponentProperty(const std::string& property, const std::string& value) {
     Application::Get().AddOneTimeProperty(property, value);
   }
 
-  void PushParentComponent(const std::shared_ptr<Component> &component) {
+  void PushParentComponent(const std::shared_ptr<Component>& component) {
     Application::Get().PushParentComponent(component);
   }
 
@@ -3726,11 +3730,11 @@ namespace Cherry {
     return Application::Get().GetParent(parent_number);
   }
 
-  void AddNotification(const ImGuiToast &toast) {
+  void AddNotification(const ImGuiToast& toast) {
     ImGui::InsertNotification(toast);
   }
 
-  void PushFont(const std::string &font_name) {
+  void PushFont(const std::string& font_name) {
     auto font = Cherry::Application::GetFont(font_name);
 
     if (font) {
@@ -3744,9 +3748,9 @@ namespace Cherry {
     ImGui::PopFont();
   }
 
-  void Application::FocusAppWindow(const std::string &appWindowIdName) {
+  void Application::FocusAppWindow(const std::string& appWindowIdName) {
     std::shared_ptr<AppWindow> targetAppWindow = nullptr;
-    for (auto &appwin : s_Instance->m_AppWindows) {
+    for (auto& appwin : s_Instance->m_AppWindows) {
       if (appwin && appwin->m_IdName == appWindowIdName) {
         targetAppWindow = appwin;
         break;
@@ -3754,7 +3758,7 @@ namespace Cherry {
     }
 
     if (!targetAppWindow) {
-      for (auto &appwin : s_Instance->m_AppWindows) {
+      for (auto& appwin : s_Instance->m_AppWindows) {
         if (appwin && (appwin->m_Name == appWindowIdName || appwin->m_ID == appWindowIdName)) {
           targetAppWindow = appwin;
           break;
@@ -3767,7 +3771,7 @@ namespace Cherry {
     }
 
     std::shared_ptr<Window> parentWindow = nullptr;
-    for (auto &win : s_Instance->m_Windows) {
+    for (auto& win : s_Instance->m_Windows) {
       if (win && win->GetName() == targetAppWindow->m_WinParent) {
         parentWindow = win;
         break;
@@ -3778,16 +3782,16 @@ namespace Cherry {
       return;
     }
 
-    ImGuiContext *previousContext = ImGui::GetCurrentContext();
+    ImGuiContext* previousContext = ImGui::GetCurrentContext();
 
     ImGui::SetCurrentContext(parentWindow->GetImGuiContext());
 
-    ImGuiWindow *imguiWin = ImGui::FindWindowByName(targetAppWindow->m_IdName.c_str());
+    ImGuiWindow* imguiWin = ImGui::FindWindowByName(targetAppWindow->m_IdName.c_str());
 
     if (imguiWin) {
       ImGui::FocusWindow(imguiWin);
       if (imguiWin->DockNode && imguiWin->DockNode->TabBar) {
-        ImGuiTabBar *tabBar = imguiWin->DockNode->TabBar;
+        ImGuiTabBar* tabBar = imguiWin->DockNode->TabBar;
         for (int i = 0; i < tabBar->Tabs.Size; i++) {
           if (tabBar->Tabs[i].Window == imguiWin) {
             tabBar->SelectedTabId = tabBar->Tabs[i].ID;
@@ -3801,12 +3805,12 @@ namespace Cherry {
     ImGui::SetCurrentContext(previousContext);
   }
 
-  std::vector<std::shared_ptr<AppWindow>> Application::GetAllAppWindowOfWindow(const std::string &window_name) {
+  std::vector<std::shared_ptr<AppWindow>> Application::GetAllAppWindowOfWindow(const std::string& window_name) {
     std::vector<std::shared_ptr<AppWindow>> res;
 
-    for (auto &w : s_Instance->m_Windows) {
+    for (auto& w : s_Instance->m_Windows) {
       if (w->GetName() == window_name) {
-        for (auto &a : s_Instance->m_AppWindows) {
+        for (auto& a : s_Instance->m_AppWindows) {
           if (a->CheckWinParent(w->GetName())) {
             res.push_back(a);
           }
@@ -3825,9 +3829,9 @@ namespace Cherry {
     return m_NavigateForwardRequested;
   }
 
-  void Application::QuickRedock(const std::string &appwindow_name, const std::string &window_name) {
+  void Application::QuickRedock(const std::string& appwindow_name, const std::string& window_name) {
     std::shared_ptr<Window> target_window;
-    for (auto &win : s_Instance->m_Windows) {
+    for (auto& win : s_Instance->m_Windows) {
       if (win->GetName() == window_name) {
         target_window = win;
         break;
