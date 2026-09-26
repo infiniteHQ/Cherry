@@ -660,7 +660,7 @@ namespace Cherry {
         ImGui::SetItemAllowOverlap();
         float logoHorizontalOffset = 16.0f * 2.0f + 48.0f + windowPadding.x;
         if (m_Specifications.CustomTitlebarIsLittle) {
-          logoHorizontalOffset -= 58.0f;
+          logoHorizontalOffset -= 70.0f;
         }
         ImGui::SetCursorPos(ImVec2(logoHorizontalOffset, 6.0f + titlebarVerticalOffset));
         UI_DrawMenubar();
