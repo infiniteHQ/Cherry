@@ -137,7 +137,7 @@ This is what the translation file looks like :
         {"loc.menubar.menu.vortex":"Vortex"},
         {"loc.menubar.menu.options":"Options"},
         {"loc.menubar.summary.general":"General"},
-        {"loc.menubar.summary.vortex_labs":"Vortex Labs"},
+        {"loc.menubar.summary.garage":"Infinite Garage"},
         {"loc.menubar.summary.manage":"Manage"},
         {"loc.menubar.summary.other":"Other"},
     ]

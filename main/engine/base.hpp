@@ -164,6 +164,7 @@ namespace Cherry {
     bool UsingCloseCallback = false;
     bool CustomTitlebar = false;
     bool DebugMode = false;
+    bool CustomTitlebarIsLittle = false;
 
     std::function<void()> MenubarCallback;
     std::function<void()> FramebarCallback;
@@ -195,7 +196,7 @@ namespace Cherry {
       DebugMode = enabled;
     }
 
-    void AddTheme(Theme theme, const std::string &themeid = "") {
+    void AddTheme(Theme theme, const std::string& themeid = "") {
       if (!themeid.empty()) {
         theme.SetName(themeid);
       }
@@ -206,7 +207,7 @@ namespace Cherry {
       }
     }
 
-    void SetDefaultTheme(const std::string &selected_theme) {
+    void SetDefaultTheme(const std::string& selected_theme) {
       SelectedTheme = selected_theme;
     }
 
@@ -214,15 +215,15 @@ namespace Cherry {
       DebugMode = true;
     }
 
-    void SetCloseCallback(const std::function<void()> &closeCallback) {
+    void SetCloseCallback(const std::function<void()>& closeCallback) {
       CloseCallback = closeCallback;
     }
 
-    void SetMenubarCallback(const std::function<void()> &menubarCallback) {
+    void SetMenubarCallback(const std::function<void()>& menubarCallback) {
       MenubarCallback = menubarCallback;
     }
 
-    void SetFramebarCallback(const std::function<void()> &framebarCallback) {
+    void SetFramebarCallback(const std::function<void()>& framebarCallback) {
       FramebarCallback = framebarCallback;
     }
 
@@ -231,7 +232,7 @@ namespace Cherry {
     //  CloseCallback = closeCallback;
     //}
 
-    void SetMainRenderCallback(const std::function<void()> &mainRenderCallback) {
+    void SetMainRenderCallback(const std::function<void()>& mainRenderCallback) {
       MainRenderCallback = mainRenderCallback;
     }
 
@@ -251,15 +252,15 @@ namespace Cherry {
       DisableWindowManagerTitleBar = true;
     }
 
-    void SetIconPath(const std::string &path) {
+    void SetIconPath(const std::string& path) {
       IconPath = path;
     }
 
-    void SetFavIconPath(const std::string &path) {
+    void SetFavIconPath(const std::string& path) {
       FavIconPath = path;
     }
 
-    void SetUniqueAppWindowName(const std::string &name) {
+    void SetUniqueAppWindowName(const std::string& name) {
       UniqueAppWindowName = name;
     }
 
@@ -267,11 +268,11 @@ namespace Cherry {
       CustomTitlebar = custom_titlebar;
     }
 
-    void SetName(const std::string &name) {
+    void SetName(const std::string& name) {
       Name = name;
     }
 
-    void SetDefaultWindowName(const std::string &name) {
+    void SetDefaultWindowName(const std::string& name) {
       DefaultWindowName = name;
     }
 
@@ -322,14 +323,14 @@ namespace Cherry {
     std::string m_Data;
     bool m_Persistant;
 
-    SimpleStorageItem(const std::string &data, const bool &is_persistant) : m_Persistant(is_persistant), m_Data(data) { };
+    SimpleStorageItem(const std::string& data, const bool& is_persistant) : m_Persistant(is_persistant), m_Data(data) { };
   };
 
   struct WindowStorageItem {
     nlohmann::json m_JsonData;
     bool m_Persistant;
 
-    WindowStorageItem(const nlohmann::json &data, const bool &is_persistant)
+    WindowStorageItem(const nlohmann::json& data, const bool& is_persistant)
         : m_Persistant(is_persistant),
           m_JsonData(data) { };
   };

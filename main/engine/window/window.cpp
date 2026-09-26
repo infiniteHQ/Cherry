@@ -30,13 +30,13 @@ namespace ImGui {
   static const float DOCKING_SPLITTER_SIZE = 2.0f;
 
   void DockNodeCalcTabBarLayout(
-      const ImGuiDockNode *node,
-      ImRect *out_title_rect,
-      ImRect *out_tab_bar_rect,
-      ImVec2 *out_window_menu_button_pos,
-      ImVec2 *out_close_button_pos) {
-    ImGuiContext &g = *GImGui;
-    ImGuiStyle &style = g.Style;
+      const ImGuiDockNode* node,
+      ImRect* out_title_rect,
+      ImRect* out_tab_bar_rect,
+      ImVec2* out_window_menu_button_pos,
+      ImVec2* out_close_button_pos) {
+    ImGuiContext& g = *GImGui;
+    ImGuiStyle& style = g.Style;
 
     ImRect r = ImRect(
         node->Pos.x, node->Pos.y, node->Pos.x + node->Size.x, node->Pos.y + g.FontSize + g.Style.FramePadding.y * 2.0f);
@@ -71,14 +71,14 @@ namespace ImGui {
     }
   }
 
-  bool DockNodeIsDropAllowedOne(ImGuiWindow *payload, ImGuiWindow *host_window) {
+  bool DockNodeIsDropAllowedOne(ImGuiWindow* payload, ImGuiWindow* host_window) {
     if (host_window->DockNodeAsHost && host_window->DockNodeAsHost->IsDockSpace() &&
         payload->BeginOrderWithinContext < host_window->BeginOrderWithinContext)
       return false;
 
-    ImGuiWindowClass *host_class =
+    ImGuiWindowClass* host_class =
         host_window->DockNodeAsHost ? &host_window->DockNodeAsHost->WindowClass : &host_window->WindowClass;
-    ImGuiWindowClass *payload_class = &payload->WindowClass;
+    ImGuiWindowClass* payload_class = &payload->WindowClass;
     if (host_class->ClassId != payload_class->ClassId) {
       if (host_class->ClassId != 0 && host_class->DockingAllowUnclassed && payload_class->ClassId == 0)
         return true;
@@ -94,9 +94,9 @@ namespace ImGui {
     // it would requires more work on our end because the dock host windows is
     // technically created in NewFrame() and our ->ParentXXX and ->RootXXX
     // pointers inside windows are currently mislading or lacking.
-    ImGuiContext &g = *GImGui;
+    ImGuiContext& g = *GImGui;
     for (int i = g.OpenPopupStack.Size - 1; i >= 0; i--)
-      if (ImGuiWindow *popup_window = g.OpenPopupStack[i].Window)
+      if (ImGuiWindow* popup_window = g.OpenPopupStack[i].Window)
         if (ImGui::IsWindowWithinBeginStackOf(payload, popup_window))  // Payload is created from within a popup
                                                                        // begin stack.
           return false;
@@ -105,11 +105,11 @@ namespace ImGui {
   }
 
   void DockNodePreviewDockR(
-      ImGuiWindow *host_window,
-      ImGuiDockNode *host_node,
-      ImGuiWindow *root_payload,
-      const ImGuiDockPreviewData *data) {
-    ImGuiContext &g = *GImGui;
+      ImGuiWindow* host_window,
+      ImGuiDockNode* host_node,
+      ImGuiWindow* root_payload,
+      const ImGuiDockPreviewData* data) {
+    ImGuiContext& g = *GImGui;
     IM_ASSERT(g.CurrentWindow == host_window);  // Because we rely on font size to calculate tab sizes
 
     // With this option, we only display the preview on the target viewport, and
@@ -121,7 +121,7 @@ namespace ImGui {
     // In case the two windows involved are on different viewports, we will draw
     // the overlay on each of them.
     int overlay_draw_lists_count = 0;
-    ImDrawList *overlay_draw_lists[2];
+    ImDrawList* overlay_draw_lists[2];
     overlay_draw_lists[overlay_draw_lists_count++] = GetForegroundDrawList(host_window->Viewport);
     if (host_window->Viewport != root_payload->Viewport && !is_transparent_payload)
       overlay_draw_lists[overlay_draw_lists_count++] = GetForegroundDrawList(root_payload->Viewport);
@@ -174,11 +174,11 @@ namespace ImGui {
       // window carrying multiple tabbed windows)
       if (root_payload->DockNodeAsHost)
         IM_ASSERT(root_payload->DockNodeAsHost->Windows.Size <= root_payload->DockNodeAsHost->TabBar->Tabs.Size);
-      ImGuiTabBar *tab_bar_with_payload = root_payload->DockNodeAsHost ? root_payload->DockNodeAsHost->TabBar : NULL;
+      ImGuiTabBar* tab_bar_with_payload = root_payload->DockNodeAsHost ? root_payload->DockNodeAsHost->TabBar : NULL;
       const int payload_count = tab_bar_with_payload ? tab_bar_with_payload->Tabs.Size : 1;
       for (int payload_n = 0; payload_n < payload_count; payload_n++) {
         // DockNode's TabBar may have non-window Tabs manually appended by user
-        ImGuiWindow *payload_window = tab_bar_with_payload ? tab_bar_with_payload->Tabs[payload_n].Window : root_payload;
+        ImGuiWindow* payload_window = tab_bar_with_payload ? tab_bar_with_payload->Tabs[payload_n].Window : root_payload;
         if (tab_bar_with_payload && payload_window == NULL)
           continue;
         if (!DockNodeIsDropAllowedOne(payload_window, host_window))
@@ -252,7 +252,7 @@ namespace Cherry {
   Window::Window() : m_Name("empty") {
   }
 
-  Window::Window(const std::string &name, int width, int height, ApplicationSpecification specs, bool cold_start)
+  Window::Window(const std::string& name, int width, int height, ApplicationSpecification specs, bool cold_start)
       : m_Name(name),
         m_Width(specs.Width),
         m_Height(specs.Height) {
@@ -293,7 +293,7 @@ namespace Cherry {
     // Setup Vulkan
     uint32_t extensions_count = 0;
     SDL_Vulkan_GetInstanceExtensions(m_WindowHandler, &extensions_count, nullptr);
-    const char **extensions = new const char *[extensions_count];
+    const char** extensions = new const char*[extensions_count];
     SDL_Vulkan_GetInstanceExtensions(m_WindowHandler, &extensions_count, extensions);
     Application::SetupVulkan(extensions, extensions_count);
     delete[] extensions;
@@ -322,13 +322,13 @@ namespace Cherry {
     // Create Framebuffers
     int w, h;
     SDL_GetWindowSize(m_WindowHandler, &w, &h);
-    ImGui_ImplVulkanH_Window *wd = &this->m_WinData;
+    ImGui_ImplVulkanH_Window* wd = &this->m_WinData;
     Application::SetupVulkanWindow(wd, m_Surface, w, h, this);
     this->s_AllocatedCommandBuffers.resize(wd->ImageCount);
     s_ResourceFreeQueue.resize(wd->ImageCount);
 
     // Create the ImGui context
-    ImGuiIO &io = ImGui::GetIO();
+    ImGuiIO& io = ImGui::GetIO();
     (void)io;
     io.IniFilename = NULL;
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;  // Enable Keyboard Controls
@@ -341,7 +341,7 @@ namespace Cherry {
     UI::SetTheme();
     // ImGui::StyleColorsClassic();
     // Style
-    ImGuiStyle &style = ImGui::GetStyle();
+    ImGuiStyle& style = ImGui::GetStyle();
     style.WindowPadding = ImVec2(10.0f, 10.0f);
     style.FramePadding = ImVec2(8.0f, 6.0f);
     style.ItemSpacing = ImVec2(6.0f, 6.0f);
@@ -357,26 +357,25 @@ namespace Cherry {
     // Load default font
     ImFontConfig fontConfig;
     fontConfig.FontDataOwnedByAtlas = false;
-    ImFont *robotoFont =
-        io.Fonts->AddFontFromMemoryTTF((void *)g_RobotoRegular, sizeof(g_RobotoRegular), 20.0f, &fontConfig);
-    ImFont *hackFont = io.Fonts->AddFontFromMemoryTTF((void *)g_HackRegular, sizeof(g_HackRegular), 20.0f, &fontConfig);
+    ImFont* robotoFont = io.Fonts->AddFontFromMemoryTTF((void*)g_RobotoRegular, sizeof(g_RobotoRegular), 20.0f, &fontConfig);
+    ImFont* hackFont = io.Fonts->AddFontFromMemoryTTF((void*)g_HackRegular, sizeof(g_HackRegular), 20.0f, &fontConfig);
 
     ImFontConfig fontConfigExtra;
     fontConfigExtra.FontDataOwnedByAtlas = false;
     fontConfigExtra.GlyphExtraSpacing.x = 1.3f;
-    ImFont *inconsolatas =
-        io.Fonts->AddFontFromMemoryTTF((void *)g_Inconsolatas, sizeof(g_Inconsolatas), 20.0f, &fontConfigExtra);
+    ImFont* inconsolatas =
+        io.Fonts->AddFontFromMemoryTTF((void*)g_Inconsolatas, sizeof(g_Inconsolatas), 20.0f, &fontConfigExtra);
 
     Application::GetFontList()["Default"] = hackFont;
     Application::GetFontList()["Inconsolatas"] = inconsolatas;
     Application::GetFontList()["Bold"] =
-        io.Fonts->AddFontFromMemoryTTF((void *)g_RobotoBold, sizeof(g_RobotoBold), 20.0f, &fontConfig);
+        io.Fonts->AddFontFromMemoryTTF((void*)g_RobotoBold, sizeof(g_RobotoBold), 20.0f, &fontConfig);
     Application::GetFontList()["Italic"] =
-        io.Fonts->AddFontFromMemoryTTF((void *)g_RobotoItalic, sizeof(g_RobotoItalic), 20.0f, &fontConfig);
+        io.Fonts->AddFontFromMemoryTTF((void*)g_RobotoItalic, sizeof(g_RobotoItalic), 20.0f, &fontConfig);
     Application::GetFontList()["HackRegular"] =
-        io.Fonts->AddFontFromMemoryTTF((void *)g_HackRegular, sizeof(g_HackRegular), 20.0f, &fontConfig);
+        io.Fonts->AddFontFromMemoryTTF((void*)g_HackRegular, sizeof(g_HackRegular), 20.0f, &fontConfig);
 
-    for (auto &font : Application::Get().GetCustomFonts()) {
+    for (auto& font : Application::Get().GetCustomFonts()) {
       Application::GetFontList()[font.first] =
           io.Fonts->AddFontFromFileTTF(font.second.first.c_str(), font.second.second, &fontConfig);
     }
@@ -452,8 +451,8 @@ namespace Cherry {
         m_WindowHandler = nullptr;
       }
 
-      for (auto &frameQueue : s_ResourceFreeQueue) {
-        for (auto &func : frameQueue) {
+      for (auto& frameQueue : s_ResourceFreeQueue) {
+        for (auto& func : frameQueue) {
           func();
         }
       }
@@ -465,14 +464,14 @@ namespace Cherry {
 
   void Window::ShowDockingPreview(
       ImGuiID dockspaceID,
-      Window *win,
-      const std::shared_ptr<Cherry::WindowDragDropState> &dragState,
+      Window* win,
+      const std::shared_ptr<Cherry::WindowDragDropState>& dragState,
       const std::shared_ptr<AppWindow> appwin) {
-    ImGuiContext *ctx = ImGui::GetCurrentContext();
+    ImGuiContext* ctx = ImGui::GetCurrentContext();
     if (ctx == nullptr)
       return;
 
-    ImGuiDockNode *dock_node = ImGui::DockBuilderGetNode(dockspaceID);
+    ImGuiDockNode* dock_node = ImGui::DockBuilderGetNode(dockspaceID);
 
     if (dock_node == nullptr || !dock_node->IsVisible) {
       return;
@@ -494,7 +493,7 @@ namespace Cherry {
       }
     }
 
-    auto ShowDropZones = [&](ImGuiDockNode *node) {
+    auto ShowDropZones = [&](ImGuiDockNode* node) {
       if (node == nullptr || !node->IsVisible)
         return;
 
@@ -518,7 +517,7 @@ namespace Cherry {
 
       ImGui::DockNodePreviewDockR(ImGui::GetCurrentWindow(), node, ImGui::GetCurrentWindow(), &preview_data);
 
-      ImDrawList *draw_list = ImGui::GetForegroundDrawList();
+      ImDrawList* draw_list = ImGui::GetForegroundDrawList();
 
       for (int dir = ImGuiDir_None; dir < ImGuiDir_COUNT; dir++) {
         ImRect drop_rect = preview_data.DropRectsDraw[dir];
@@ -575,8 +574,8 @@ namespace Cherry {
       }
     };
 
-    std::function<void(ImGuiDockNode *)> TraverseAndShowDropZones;
-    TraverseAndShowDropZones = [&](ImGuiDockNode *node) {
+    std::function<void(ImGuiDockNode*)> TraverseAndShowDropZones;
+    TraverseAndShowDropZones = [&](ImGuiDockNode* node) {
       if (node == nullptr)
         return;
 
@@ -593,11 +592,15 @@ namespace Cherry {
     TraverseAndShowDropZones(dock_node);
   }
 
-  void Window::UI_DrawTitlebar(float &outTitlebarHeight) {
+  void Window::UI_DrawTitlebar(float& outTitlebarHeight) {
     ImGui::SetCurrentContext(this->m_ImGuiContext);
 
     float titlebarVerticalOffset = 0.0f;
-    const float titlebarHeight = 58.0f;
+    float titlebarHeight = 58.0f;
+    if (m_Specifications.CustomTitlebarIsLittle) {
+      titlebarHeight = 32.0f;
+    }
+
     const ImVec2 windowPadding = ImGui::GetCurrentWindow()->WindowPadding;
 
     ImVec2 titlebarMin = ImGui::GetCursorScreenPos();
@@ -613,7 +616,7 @@ namespace Cherry {
     if (this->isMoving && ImGui::IsMouseDragging(ImGuiMouseButton_Left)) {
       if (!m_Resizing) {
         ImVec2 mousePos = ImGui::GetMousePos();
-        SDL_Window *sdlWindow = this->GetWindowHandle();
+        SDL_Window* sdlWindow = this->GetWindowHandle();
         SDL_SetWindowPosition(
             sdlWindow,
             static_cast<int>(mousePos.x - this->clickOffset.x),
@@ -625,14 +628,14 @@ namespace Cherry {
       this->isMoving = false;
     }
 
-    auto *fgDrawList = ImGui::GetForegroundDrawList();
-    auto *bgDrawList = ImGui::GetBackgroundDrawList();
+    auto* fgDrawList = ImGui::GetForegroundDrawList();
+    auto* bgDrawList = ImGui::GetBackgroundDrawList();
 
     bgDrawList->AddRectFilled(titlebarMin, titlebarMax, UI::Colors::Theme::titlebar);
     // DEBUG TITLEBAR BOUNDS
     // fgDrawList->AddRect(titlebarMin, titlebarMax,
     // UI::Colors::Theme::invalidPrefab); Logo
-    if (!m_Specifications.DisableLogo && !m_Specifications.IconPath.empty()) {
+    if (!m_Specifications.DisableLogo && !m_Specifications.IconPath.empty() && !m_Specifications.CustomTitlebarIsLittle) {
       const int logoWidth = 48;   // Largeur du logo
       const int logoHeight = 48;  // Hauteur du logo
       const ImVec2 logoOffset(16.0f + windowPadding.x, 5.0f + windowPadding.y + titlebarVerticalOffset);
@@ -655,7 +658,10 @@ namespace Cherry {
       ImGui::SuspendLayout();
       {
         ImGui::SetItemAllowOverlap();
-        const float logoHorizontalOffset = 16.0f * 2.0f + 48.0f + windowPadding.x;
+        float logoHorizontalOffset = 16.0f * 2.0f + 48.0f + windowPadding.x;
+        if (m_Specifications.CustomTitlebarIsLittle) {
+          logoHorizontalOffset -= 58.0f;
+        }
         ImGui::SetCursorPos(ImVec2(logoHorizontalOffset, 6.0f + titlebarVerticalOffset));
         UI_DrawMenubar();
       }
@@ -717,7 +723,7 @@ namespace Cherry {
         UI::ShiftCursorY(8.0f);
 
         if (!m_Specifications.WindowOnlyClosable) {
-          SDL_Window *sdlWindow = this->GetWindowHandle();
+          SDL_Window* sdlWindow = this->GetWindowHandle();
           Uint32 flags = SDL_GetWindowFlags(sdlWindow);
           bool isMaximized = (flags & SDL_WINDOW_MAXIMIZED);
 
@@ -783,11 +789,11 @@ namespace Cherry {
     outTitlebarHeight = titlebarHeight;
   }
 
-  ImGui_ImplVulkanH_Window *Window::GetWinData() {
+  ImGui_ImplVulkanH_Window* Window::GetWinData() {
     return &m_WinData;
   }
 
-  SDL_Window *Window::GetWindowHandle() const {
+  SDL_Window* Window::GetWindowHandle() const {
     return m_WindowHandler;
   }
 
@@ -800,7 +806,7 @@ namespace Cherry {
     ImGui::Render();
   }
 
-  void Window::PutUniqueAppwindow(const std::shared_ptr<AppWindow> &appwindow) {
+  void Window::PutUniqueAppwindow(const std::shared_ptr<AppWindow>& appwindow) {
     m_UniqueAppWindow = appwindow;
   }
 
@@ -808,21 +814,21 @@ namespace Cherry {
     if (m_ResizePending) {
       m_WinData.Width = m_PendingWidth;
       m_WinData.Height = m_PendingHeight;
-      SDL_Window *win = this->GetWindowHandle();
-      ImGui_ImplVulkanH_Window *wd = &this->m_WinData;
+      SDL_Window* win = this->GetWindowHandle();
+      ImGui_ImplVulkanH_Window* wd = &this->m_WinData;
 
       m_ResizePending = false;
     }
   }
 
-  void Window::SetFavIcon(const std::string &path) {
+  void Window::SetFavIcon(const std::string& path) {
     int width, height, channels;
-    unsigned char *imageData = stbi_load(path.c_str(), &width, &height, &channels, 4);  // 4 channels for RGBA
+    unsigned char* imageData = stbi_load(path.c_str(), &width, &height, &channels, 4);  // 4 channels for RGBA
     if (!imageData) {
       return;
     }
 
-    SDL_Surface *iconSurface =
+    SDL_Surface* iconSurface =
         SDL_CreateRGBSurfaceWithFormatFrom(imageData, width, height, 32, width * 4, SDL_PIXELFORMAT_RGBA32);
 
     if (!iconSurface) {
@@ -836,19 +842,19 @@ namespace Cherry {
     stbi_image_free(imageData);
   }
 
-  const std::string &Window::GetName() const {
+  const std::string& Window::GetName() const {
     return m_Name;
   }
 
-  const ImDrawData &Window::GetDrawData() const {
+  const ImDrawData& Window::GetDrawData() const {
     return m_DrawData;
   }
 
-  ImDrawData *Window::GetDrawData() {
+  ImDrawData* Window::GetDrawData() {
     return &m_DrawData;
   }
 
-  std::vector<std::vector<VkCommandBuffer>> &Window::GetAllocatedCommandBuffers() {
+  std::vector<std::vector<VkCommandBuffer>>& Window::GetAllocatedCommandBuffers() {
     return s_AllocatedCommandBuffers;
   }
 
@@ -926,13 +932,13 @@ namespace Cherry {
   void Window::SetResizing(bool v) {
     m_Resizing = v;
   }
-  void Window::SetImGuiContext(ImGuiContext *ctx) {
+  void Window::SetImGuiContext(ImGuiContext* ctx) {
     m_ImGuiContext = ctx;
   }
-  void Window::SetSelectedTheme(const std::string &theme) {
+  void Window::SetSelectedTheme(const std::string& theme) {
     m_SelectedTheme = theme;
   }
-  void Window::SetSpecifications(const ApplicationSpecification &specs) {
+  void Window::SetSpecifications(const ApplicationSpecification& specs) {
     m_Specifications = specs;
   }
   void Window::SetNeedToRebuildFontMap(bool v) {
@@ -944,106 +950,106 @@ namespace Cherry {
   void Window::SetUniqueAppWindow(std::shared_ptr<AppWindow> appWindow) {
     m_UniqueAppWindow = std::move(appWindow);
   }
-  void Window::SetFontToRestore(ImFont *font) {
+  void Window::SetFontToRestore(ImFont* font) {
     m_FontToRestore = font;
   }
   void Window::SetFontBuffer(std::vector<char> buffer) {
     fontBuffer = std::move(buffer);
   }
 
-  std::unordered_map<std::string, ImFont *> &Window::GetFonts() {
+  std::unordered_map<std::string, ImFont*>& Window::GetFonts() {
     return s_Fonts;
   }
-  std::unordered_map<std::string, ImTextureID> &Window::GetTextureCache() {
+  std::unordered_map<std::string, ImTextureID>& Window::GetTextureCache() {
     return m_TextureCache;
   }
-  std::unordered_map<std::string, std::shared_ptr<Cherry::Image>> &Window::GetImageMap() {
+  std::unordered_map<std::string, std::shared_ptr<Cherry::Image>>& Window::GetImageMap() {
     return m_ImageMap;
   }
-  std::unordered_map<std::string, std::shared_ptr<Cherry::Image>> &Window::GetHexImageMap() {
+  std::unordered_map<std::string, std::shared_ptr<Cherry::Image>>& Window::GetHexImageMap() {
     return m_HexImageMap;
   }
-  std::unordered_map<std::string, ImFont *> &Window::GetFontMap() {
+  std::unordered_map<std::string, ImFont*>& Window::GetFontMap() {
     return m_FontMap;
   }
 
-  ImGuiContext *&Window::GetImGuiContext() {
+  ImGuiContext*& Window::GetImGuiContext() {
     return m_ImGuiContext;
   }
-  std::string &Window::GetSelectedTheme() {
+  std::string& Window::GetSelectedTheme() {
     return m_SelectedTheme;
   }
-  ApplicationSpecification &Window::GetSpecifications() {
+  ApplicationSpecification& Window::GetSpecifications() {
     return m_Specifications;
   }
-  bool &Window::GetNeedToRebuildFontMap() {
+  bool& Window::GetNeedToRebuildFontMap() {
     return m_NeedToRebuildFontMap;
   }
-  bool &Window::GetFontLoaded() {
+  bool& Window::GetFontLoaded() {
     return m_FontLoaded;
   }
-  std::shared_ptr<AppWindow> &Window::GetUniqueAppWindow() {
+  std::shared_ptr<AppWindow>& Window::GetUniqueAppWindow() {
     return m_UniqueAppWindow;
   }
-  ImFont *&Window::GetFontToRestore() {
+  ImFont*& Window::GetFontToRestore() {
     return m_FontToRestore;
   }
-  std::vector<char> &Window::GetFontBuffer() {
+  std::vector<char>& Window::GetFontBuffer() {
     return fontBuffer;
   }
 
-  bool &Window::GetResizePending() {
+  bool& Window::GetResizePending() {
     return m_ResizePending;
   }
-  bool &Window::GetMovePending() {
+  bool& Window::GetMovePending() {
     return m_MovePending;
   }
-  int &Window::GetPendingWidth() {
+  int& Window::GetPendingWidth() {
     return m_PendingWidth;
   }
-  int &Window::GetPendingHeight() {
+  int& Window::GetPendingHeight() {
     return m_PendingHeight;
   }
-  int &Window::GetPendingX() {
+  int& Window::GetPendingX() {
     return m_PendingX;
   }
-  int &Window::GetPendingY() {
+  int& Window::GetPendingY() {
     return m_PendingY;
   }
-  int &Window::GetPreviousWidth() {
+  int& Window::GetPreviousWidth() {
     return m_PreviousWidth;
   }
-  int &Window::GetPreviousHeight() {
+  int& Window::GetPreviousHeight() {
     return m_PreviousHeight;
   }
-  int &Window::GetPreviousX() {
+  int& Window::GetPreviousX() {
     return m_PreviousX;
   }
-  int &Window::GetPreviousY() {
+  int& Window::GetPreviousY() {
     return m_PreviousY;
   }
-  int &Window::GetPosX() {
+  int& Window::GetPosX() {
     return m_PosX;
   }
-  int &Window::GetPosY() {
+  int& Window::GetPosY() {
     return m_PosY;
   }
-  bool &Window::GetIsClosing() {
+  bool& Window::GetIsClosing() {
     return m_IsClosing;
   }
-  bool &Window::GetIsMoving() {
+  bool& Window::GetIsMoving() {
     return isMoving;
   }
-  ImVec2 &Window::GetClickOffset() {
+  ImVec2& Window::GetClickOffset() {
     return clickOffset;
   }
-  bool &Window::GetIsDraggingAppWindow() {
+  bool& Window::GetIsDraggingAppWindow() {
     return m_IsDraggingAppWindow;
   }
-  bool &Window::GetClosePending() {
+  bool& Window::GetClosePending() {
     return m_ClosePending;
   }
-  bool &Window::GetResizing() {
+  bool& Window::GetResizing() {
     return m_Resizing;
   }
 
@@ -1054,47 +1060,47 @@ namespace Cherry {
   int Window::GetWinID() const {
     return WinID;
   }
-  std::mutex &Window::GetEventQueueMutex() {
+  std::mutex& Window::GetEventQueueMutex() {
     return m_EventQueueMutex;
   }
 
-  std::queue<std::function<void()>> &Window::GetEventQueue() {
+  std::queue<std::function<void()>>& Window::GetEventQueue() {
     return m_EventQueue;
   }
 
-  bool &Window::GetSwapChainRebuild() {
+  bool& Window::GetSwapChainRebuild() {
     return g_SwapChainRebuild;
   }
 
-  VkSwapchainKHR &Window::GetSwapchain() {
+  VkSwapchainKHR& Window::GetSwapchain() {
     return g_Swapchain;
   }
 
-  std::vector<VkImage> &Window::GetSwapchainImages() {
+  std::vector<VkImage>& Window::GetSwapchainImages() {
     return g_SwapchainImages;
   }
 
-  std::vector<VkImageView> &Window::GetSwapchainImageViews() {
+  std::vector<VkImageView>& Window::GetSwapchainImageViews() {
     return g_SwapchainImageViews;
   }
 
-  VkFormat &Window::GetSwapchainImageFormat() {
+  VkFormat& Window::GetSwapchainImageFormat() {
     return g_SwapchainImageFormat;
   }
 
-  std::vector<std::vector<std::function<void()>>> &Window::GetResourceFreeQueue() {
+  std::vector<std::vector<std::function<void()>>>& Window::GetResourceFreeQueue() {
     return s_ResourceFreeQueue;
   }
 
-  uint32_t &Window::GetCurrentFrameIndex() {
+  uint32_t& Window::GetCurrentFrameIndex() {
     return s_CurrentFrameIndex;
   }
 
-  std::vector<VkCommandBuffer> &Window::GetCommandBuffers() {
+  std::vector<VkCommandBuffer>& Window::GetCommandBuffers() {
     return m_CommandBuffers;
   }
 
-  ImGuiWindow *&Window::GetImGuiWindow() {
+  ImGuiWindow*& Window::GetImGuiWindow() {
     return m_ImGuiWindow;
   }
 
@@ -1158,12 +1164,12 @@ namespace Cherry {
   }
 
   template<typename Func>
-  void Window::QueueEvent(Func &&func) {
+  void Window::QueueEvent(Func&& func) {
     m_EventQueue.push(func);
   }
 
   void Window::Render() {
-    ImGuiIO &io = ImGui::GetIO();
+    ImGuiIO& io = ImGui::GetIO();
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
     static int counter = 0;
@@ -1181,8 +1187,8 @@ namespace Cherry {
     ImGui::End();
 
     ImGui::Render();
-    ImDrawData *main_draw_data = ImGui::GetDrawData();
-    ImGui_ImplVulkanH_Window *wd = &this->m_WinData;
+    ImDrawData* main_draw_data = ImGui::GetDrawData();
+    ImGui_ImplVulkanH_Window* wd = &this->m_WinData;
     const bool main_is_minimized = (main_draw_data->DisplaySize.x <= 0.0f || main_draw_data->DisplaySize.y <= 0.0f);
     wd->ClearValue.color.float32[0] = clear_color.x * clear_color.w;
     wd->ClearValue.color.float32[1] = clear_color.y * clear_color.w;
@@ -1201,7 +1207,7 @@ namespace Cherry {
       Application::FramePresent(wd, this);
   }
 
-  std::shared_ptr<Cherry::Image> Window::add(const std::string &path) {
+  std::shared_ptr<Cherry::Image> Window::add(const std::string& path) {
     if (path.empty() || path == "none") {
       return nullptr;
     }
@@ -1213,10 +1219,10 @@ namespace Cherry {
 
     uint32_t w = 0, h = 0;
     std::vector<uint8_t> hexTable = Application::LoadPngHexa(path);
-    const uint8_t *hexData = hexTable.empty() ? g_NotFoundIcon : hexTable.data();
+    const uint8_t* hexData = hexTable.empty() ? g_NotFoundIcon : hexTable.data();
 
     size_t dataSize = hexTable.empty() ? sizeof(g_NotFoundIcon) : hexTable.size();
-    void *data = Cherry::Image::Decode(hexData, dataSize, w, h);
+    void* data = Cherry::Image::Decode(hexData, dataSize, w, h);
 
     if (!data) {
       return nullptr;
@@ -1231,7 +1237,7 @@ namespace Cherry {
     return _icon;
   }
 
-  std::shared_ptr<Cherry::Image> Window::get(const std::string &path) {
+  std::shared_ptr<Cherry::Image> Window::get(const std::string& path) {
     if (path.empty() || path == "none") {
       return nullptr;
     }
@@ -1244,7 +1250,7 @@ namespace Cherry {
     return this->add(path);
   }
 
-  std::shared_ptr<Cherry::Image> Window::add(const uint8_t data[], const std::string &name) {
+  std::shared_ptr<Cherry::Image> Window::add(const uint8_t data[], const std::string& name) {
     auto it = m_HexImageMap.find(name);
     if (it != m_HexImageMap.end()) {
       return it->second;
@@ -1253,7 +1259,7 @@ namespace Cherry {
     uint32_t w = 0, h = 0;
     const size_t dataSize = sizeof(g_NotFoundIcon);
 
-    void *icondata = Cherry::Image::Decode(data, dataSize, w, h);
+    void* icondata = Cherry::Image::Decode(data, dataSize, w, h);
     if (!icondata) {
       return nullptr;
     }
@@ -1267,7 +1273,7 @@ namespace Cherry {
     return _icon;
   }
 
-  std::shared_ptr<Cherry::Image> Window::get(const uint8_t data[], const std::string &name) {
+  std::shared_ptr<Cherry::Image> Window::get(const uint8_t data[], const std::string& name) {
     auto it = m_HexImageMap.find(name);
     if (it != m_HexImageMap.end()) {
       return it->second;
@@ -1276,7 +1282,7 @@ namespace Cherry {
     return this->add(data, name);
   }
 
-  ImTextureID Window::GetTexture(const std::string &path) {
+  ImTextureID Window::GetTexture(const std::string& path) {
     if (path.empty() || path == "none") {
       return nullptr;
     }
@@ -1296,7 +1302,7 @@ namespace Cherry {
     return nullptr;
   }
 
-  VkDescriptorSet Window::GetTextureDescriptor(const std::string &path) {
+  VkDescriptorSet Window::GetTextureDescriptor(const std::string& path) {
     if (path.empty() || path == "none") {
       return nullptr;
     }
@@ -1309,7 +1315,7 @@ namespace Cherry {
     return nullptr;
   }
 
-  ImVec2 Window::GetTextureSize(const std::string &path) {
+  ImVec2 Window::GetTextureSize(const std::string& path) {
     if (path.empty() || path == "none") {
       return ImVec2(0, 0);
     }
@@ -1451,7 +1457,7 @@ namespace Cherry {
         ImGuiCol_MenuBarBg,
         Cherry::HexToRGBA(CherryApp.GetActiveThemeProperty("color_menubar_bg")));  // color_menubar_bg
 
-    auto &style = ImGui::GetStyle();
+    auto& style = ImGui::GetStyle();
     style.FrameRounding = 5.0f;    // rounding_frame
     style.FrameBorderSize = 1.0f;  // size_frame_border
     style.IndentSpacing = 11.0f;   // spacing_ident
@@ -1471,7 +1477,7 @@ namespace Cherry {
   }
 
   VkCommandBuffer Window::GetCommandBuffer(bool begin) {
-    ImGui_ImplVulkanH_Window *wd = &this->m_WinData;
+    ImGui_ImplVulkanH_Window* wd = &this->m_WinData;
 
     VkCommandPool command_pool = wd->Frames[wd->FrameIndex].CommandPool;
 
@@ -1481,7 +1487,7 @@ namespace Cherry {
     cmdBufAllocateInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
     cmdBufAllocateInfo.commandBufferCount = 1;
 
-    VkCommandBuffer &command_buffer = this->s_AllocatedCommandBuffers[wd->FrameIndex].emplace_back();
+    VkCommandBuffer& command_buffer = this->s_AllocatedCommandBuffers[wd->FrameIndex].emplace_back();
     auto err = vkAllocateCommandBuffers(Application::GetDevice(), &cmdBufAllocateInfo, &command_buffer);
 
     VkCommandBufferBeginInfo begin_info = {};
@@ -1493,8 +1499,8 @@ namespace Cherry {
     return command_buffer;
   }
 
-  void Window::LoadTTFFont(const std::string &ttf_font_path) {
-    ImFont *font = Application::GetFontList()[ttf_font_path];
+  void Window::LoadTTFFont(const std::string& ttf_font_path) {
+    ImFont* font = Application::GetFontList()[ttf_font_path];
 
     if (font) {
       ImGui::PushFont(font);
@@ -1509,7 +1515,7 @@ namespace Cherry {
     }
   }
 
-  std::string Window::GetThemeProperty(const std::string &key) {
+  std::string Window::GetThemeProperty(const std::string& key) {
     if (m_SelectedTheme == "undefined") {
       return "undefined";
     } else {
@@ -1522,7 +1528,7 @@ namespace Cherry {
     }
   }
 
-  void Window::SetTheme(const std::string &theme_name) {
+  void Window::SetTheme(const std::string& theme_name) {
     m_SelectedTheme = theme_name;
   }
 
