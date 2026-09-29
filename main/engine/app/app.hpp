@@ -60,7 +60,7 @@
 
 static int current_fps;
 
-#define CHERRY_VERSION "1.7 WIP"
+#define CHERRY_VERSION "1.7"
 
 #ifndef CHERRY_APP_HPP
 #define CHERRY_APP_HPP
