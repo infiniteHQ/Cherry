@@ -5,8 +5,8 @@
  * Based on imgui-notify by patrickcjk
  * https://github.com/patrickcjk/imgui-notify
  *
- * @version 0.0.3 WIP by TyomaVader
- * @date 18.01.2024
+ * Copyright (c) 2024 TyomaVader
+ * Copyright (c) 2026 Diego Moreno 
  */
 
 #ifndef IMGUI_NOTIFY
@@ -526,13 +526,7 @@ inline void RenderNotifications() {
 
     // Generate new unique name for this toast
     char windowName[50];
-#ifdef _WIN32
-    sprintf_s(windowName, "##TOAST%d", (int)i);
-#elif defined(__linux__) || defined(__EMSCRIPTEN__)
-    sprintf(windowName, "##TOAST%d", (int)i);
-#else
-    throw "Unsupported platform";
-#endif
+    snprintf(windowName, sizeof(windowName), "##TOAST%d", (int)i);
 
     // PushStyleColor(ImGuiCol_Text, textColor);
     SetNextWindowBgAlpha(opacity);
