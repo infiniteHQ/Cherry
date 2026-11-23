@@ -2,7 +2,7 @@
 
 #include <random>
 
-#include "../../lib/glm/glm/glm.hpp"
+#include <lib/glm/glm/glm.hpp>
 
 namespace Cherry {
 
