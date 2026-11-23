@@ -1,11 +1,11 @@
 #pragma once
 
-#include "../../lib/glm/glm/glm.hpp"
-#include "../../lib/imgui/backends/imgui_impl_vulkan.h"
-#include "../../lib/imgui/imgui.h"
-#include "../../lib/imgui/imgui_internal.h"
-#include "../../lib/json/single_include/nlohmann/json.hpp"
-#include "../../lib/stb-image/stb_image.h"
+#include <lib/glm/glm/glm.hpp>
+#include <lib/imgui/backends/imgui_impl_vulkan.h>
+#include <lib/imgui/imgui.h>
+#include <lib/imgui/imgui_internal.h>
+#include <lib/json/single_include/nlohmann/json.hpp>
+#include <lib/stb-image/stb_image.h>
 
 namespace Cherry {
   static std::string HslaHex(float h, float s, float l, float a = 1.0f) {
