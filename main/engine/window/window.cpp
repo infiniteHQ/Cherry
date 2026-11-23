@@ -1528,6 +1528,17 @@ namespace Cherry {
     }
   }
 
+  void Window::SetWindowScale(float scale) {
+    static const ImGuiStyle base_style = ImGui::GetStyle();
+
+    ImGuiIO& io = ImGui::GetIO();
+    io.FontGlobalScale = scale;
+
+    ImGuiStyle& style = ImGui::GetStyle();
+    style = base_style;
+    style.ScaleAllSizes(scale);
+  }
+
   void Window::SetTheme(const std::string& theme_name) {
     m_SelectedTheme = theme_name;
   }
