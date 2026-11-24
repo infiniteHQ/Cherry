@@ -1543,8 +1543,9 @@ namespace Cherry {
     return ImGui::GetIO().FontGlobalScale;
   }
 
-  void Window::ApplyScale(float& value) {
+  float Window::ApplyScale(float& value) {
     value *= GetWindowScale();
+    return value;
   }
 
   ImVec2 Window::ApplyScale(const ImVec2& value) {
