@@ -70,7 +70,10 @@ namespace Cherry {
     void RequestResize(int width, int height);
     void RequestMove(int x, int y);
 
+    float GetWindowScale();
     void SetWindowScale(float scale);
+    void ApplyScale(float& value);
+    ImVec2 ApplyScale(const ImVec2& value);
 
     void LoadTTFFont(const std::string &ttf_font_path);
     void RestoreTTFFont();

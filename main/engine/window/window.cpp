@@ -1539,6 +1539,19 @@ namespace Cherry {
     style.ScaleAllSizes(scale);
   }
 
+  float Window::GetWindowScale() {
+    return ImGui::GetIO().FontGlobalScale;
+  }
+
+  void Window::ApplyScale(float& value) {
+    value *= GetWindowScale();
+  }
+
+  ImVec2 Window::ApplyScale(const ImVec2& value) {
+    const float s = GetWindowScale();
+    return ImVec2(value.x * s, value.y * s);
+  }
+
   void Window::SetTheme(const std::string& theme_name) {
     m_SelectedTheme = theme_name;
   }
