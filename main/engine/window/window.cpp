@@ -1543,7 +1543,7 @@ namespace Cherry {
     return ImGui::GetIO().FontGlobalScale;
   }
 
-  float Window::ApplyScale(float& value) {
+  float Window::ApplyScale(float value) {
     value *= GetWindowScale();
     return value;
   }
